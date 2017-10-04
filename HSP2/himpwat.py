@@ -142,9 +142,10 @@ def iwater_(general, ui, ts):
                         if d > sursm:
                             surse = d
                             dummy = sursm * (1.0 + 0.6 * (sursm / surse)**3)    #$526,527
-                tsuro = delt60 * src * dummy**1.67                              #$538
-                suro  = msupy if tsuro > msupy else tsuro                       #$541,543,546
-                surs  = 0.0   if tsuro > msupy else msupy - suro                #$541,544,547
+
+                    tsuro = delt60 * src * dummy**1.67                              #$538
+                    suro  = msupy if tsuro > msupy else tsuro                       #$541,543,546
+                    surs  = 0.0   if tsuro > msupy else msupy - suro                #$541,544,547
 
             # EVRETN
             if rets > 0.0:                                                      #$340
@@ -184,34 +185,35 @@ def iwater_(general, ui, ts):
                 else:
                     ssupr  = suri / delt60                                      #$446
                     surse  = dec * ssupr**0.6 if ssupr > 0.0 else 0.0           #$448-451
-                sursnw = msupy                                                  #$454
-                suro   = 0.0                                                    #$455
 
-                for count in range(MAXLOOPS):                                   #$456,458,506
-                    if ssupr > 0.0:                                             #$459
-                        ratio = sursnw / surse                                  #$460
-                        fact = 1.0 + 0.6 * ratio**3  if ratio <= 1.0 else 1.6   #$461,463
+                    sursnw = msupy                                                  #$454
+                    suro   = 0.0                                                    #$455
+
+                    for count in range(MAXLOOPS):                                   #$456,458,506
+                        if ssupr > 0.0:                                             #$459
+                            ratio = sursnw / surse                                  #$460
+                            fact = 1.0 + 0.6 * ratio**3  if ratio <= 1.0 else 1.6   #$461,463
+                        else:
+                            fact  = 1.6                                             #$465,470
+                            ratio = 1e30                                            #$469
+
+                        ffact  = (delt60 * src * fact**1.667) * (sursnw**1.667)     #$474,475,477
+                        fsuro  = ffact - suro                                       #$478
+                        dfact  = -1.667 * ffact                                     #$479
+
+                        dfsuro = dfact/sursnw - 1.0                                 #$480
+                        if ratio <= 1.0:                                            #$481
+                            dfsuro += (dfact/(fact * surse)) * 1.8 * ratio**2       #$483
+                        dsuro = fsuro / dfsuro                                      #$486
+
+                        suro = suro - dsuro                                         #$503
+                        sursnw = msupy - suro                                       #$504
+
+                        if abs(dsuro / suro) < TOLERANCE:
+                            break
                     else:
-                        fact  = 1.6                                             #$465,470
-                        ratio = 1e30                                            #$469
-
-                    ffact  = (delt60 * src * fact**1.667) * (sursnw**1.667)     #$474,475,477
-                    fsuro  = ffact - suro                                       #$478
-                    dfact  = -1.667 * ffact                                     #$479
-
-                    dfsuro = dfact/sursnw - 1.0                                 #$480
-                    if ratio <= 1.0:                                            #$481
-                        dfsuro += (dfact/(fact * surse)) * 1.8 * ratio**2       #$483
-                    dsuro = fsuro / dfsuro                                      #$486
-
-                    suro = suro - dsuro                                         #$503
-                    sursnw = msupy - suro                                       #$504
-
-                    if abs(dsuro / suro) < TOLERANCE:
-                        break
-                else:
-                    errorsV[0] = errorsV[0] + 1  # IROUTE did not converge      #$448-499
-                surs = sursnw                                                   #$508
+                        errorsV[0] = errorsV[0] + 1  # IROUTE did not converge      #$448-499
+                    surs = sursnw                                                   #$508
 
             # this section replaces EVRETN
             if rets > 0.0:                                                      #$340

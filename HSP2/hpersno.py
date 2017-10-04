@@ -151,10 +151,16 @@ def snow_(general, ui, ts):
     mneghs = 0.0
     snotmp = tsnow
 
+    if tindex.hour[0] >= 7:
+        hr6update = 0
+    else:
+        hr6update = 1
+
     if packf + packw <= 1.0e-5:             # reset state variables
         #NOPACK
         covinx = 0.1 * COVIND[0]
         paktmp = 32.0                                                           #$530
+        hr6update = 1
         packf  = 0.0
         packi  = 0.0
         packw  = 0.0
@@ -423,10 +429,15 @@ def snow_(general, ui, ts):
 
         if icefg:                                                               #$101,466
             #ICING
-            if hr6fg and snocov < 1.0:
-                xlnem = -reltmp * 0.01                                          #$963,965
-                if xlnem > xlnmlt:                                              #$969
-                    xlnmlt = xlnem                                              #$970
+            if tindex.hour[loop] >= 7:
+                if hr6update <> 0:
+                    if snocov < 1.0:
+                        xlnem = -reltmp * 0.01                                          #$963,965
+                        if xlnem > xlnmlt:                                              #$969
+                            xlnmlt = xlnem                                              #$970
+                    hr6update = 0
+            else:
+                hr6update = 1
 
             if wyield > 0.0 and xlnmlt > 0.0:                                   #$987
                 if wyield < xlnmlt:                                             #$990
@@ -478,6 +489,7 @@ def snow_(general, ui, ts):
             covinx = 0.1 * covind                                               #$1356
             paktmp = 32.0                                                       #$1360
             rdenpf = nan                                                        #$1355
+            hr6update = 1
             packf  = 0.0                                                        #$1350
             packi  = 0.0                                                        #$1351
             packw  = 0.0                                                        #$1352
