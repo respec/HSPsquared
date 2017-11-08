@@ -36,7 +36,7 @@ def run_DoE(hdfname, simname, doe, saveall=False):
         return
 
     logpath = os.path.join(os.path.dirname(hdfname), 'logfile.txt')
-    with pd.get_store(hdfname) as store, open(logpath, 'w') as logfile:
+    with pd.HDFStore(hdfname) as store, open(logpath, 'w') as logfile:
         msg = messages(logfile)
         msg(1, 'HSP2 Started for file ' + hdfname)
         msg(2, 'Design of Experiment HDF5 directory is ' + simname)

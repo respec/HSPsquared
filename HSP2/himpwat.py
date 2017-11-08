@@ -66,7 +66,6 @@ def iwater(store, general, ui, ts):
     return errorsV, ERRMSG
 
 
-@jit
 def iwater_(general, ui, ts):
     ''' Impervious Water module'''
     errorsV = zeros(len(ERRMSG), dtype=int)      # storage for error counts
@@ -99,16 +98,26 @@ def iwater_(general, ui, ts):
     surs = ui['SURS']                                                           #$89
     msupy = surs
 
-    # Needed by Numba 0.31
+    # MAIN LOOPS
+    iwater_liftedloop(HR1FG, IMPEV, NSUR, PET, RETS, RETSC, RTLIFG, SURI, SURLI,
+     SURO, SURS, delt60, errorsV, lsur, msupy, retiV, rets, simlen, slsur,
+     surs, ui['RTOPFG'])
+
+    # done with looping
+    # WATIN, WATDIF, IMPS not saved since trival calculation from saved data
+    #    WATIN  = SUPY + SURLI                                                  #$309
+    #    WATDIF = WATIN - (SURO + IMPEV)                                        #$312
+    #    IMPS   = RETS + SURS                                                   #$93,315
+    return errorsV
+
+
+@jit(nopython=True, cache=True)
+def iwater_liftedloop(HR1FG, IMPEV, NSUR, PET, RETS, RETSC, RTLIFG, SURI, SURLI,
+ SURO, SURS, delt60, errorsV, lsur, msupy, retiV, rets, simlen, slsur,
+ surs, RTOPFG):
     dec   = nan
     src   = nan
-    surse = nan
-    ssupr = nan
-    dummy = nan
-    d     = nan
-
-    # MAIN LOOPS (cleaner to not fix interweave both code blocks together!)
-    if ui['RTOPFG']:                                                            #$442
+    if RTOPFG:    # (cleaner to not fix interweave both code blocks together!)  #$442
         for loop in range(simlen):
             # save on loop lookup code - do once per loop
             pet   = PET[loop]
@@ -225,16 +234,10 @@ def iwater_(general, ui, ts):
             SURI[loop] = suri
             SURS[loop] = surs
             SURO[loop] = suro
-
-    # done with looping
-    # WATIN, WATDIF, IMPS not saved since trival calculation from saved data
-    #    WATIN  = SUPY + SURLI                                                  #$309
-    #    WATDIF = WATIN - (SURO + IMPEV)                                        #$312
-    #    IMPS   = RETS + SURS                                                   #$93,315
-    return errorsV
+    return
 
 
-@jit(nopython=True)
+@jit(nopython=True, cache=True)
 def adjust_pet(AIRTMP, SNOCOV, PETINP, PETMAX, PETMIN):
     size = len(AIRTMP)
     petadj = 1.0 - SNOCOV[0]     # Numba needs varible to have an initial value

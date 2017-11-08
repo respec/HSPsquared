@@ -1,6 +1,6 @@
 # HSP2, Hydrologic Simulation Program Python (HSPsquared)
 
-HSPsquared or HSP2 is a Python version of HSPF. Currently it supports the major hydrology modules.
+HSPsquared or HSP2 is a Python version of HSPF. Currently it supports the major hydrology modules.  It is copyrighted by RESPEC and released under the GNU Affero General Public License.
 
 ## MAJOR REPOSITORY DIRECTORIES:
 

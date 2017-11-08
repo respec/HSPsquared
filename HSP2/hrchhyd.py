@@ -6,9 +6,6 @@ no category version of HSPF HRCHHYD'''
 ''' Development Notes:
   Categories not implimented in this version
   Irregation only partially implimented in this version
-
-  Numba limitation: (version 0.26) has most, but not slice to slice assignments
-  Numba limitation: (version 0.26) break sometimes supported, while statements OK
 '''
 
 TOLERANCE = 0.001
@@ -82,17 +79,14 @@ def hydr(store, general, ui, ts):
     errorsV = hydr_(general, ui, ts)              # run reaches simulation code
 
     # The following lines output the Numba text files for debugging Numba implementation
-    '''
-    with open('numba_hydr.txt', 'w') as fnumba:
-        hydr_.inspect_types(file= fnumba)
-
-    with open('numba_hydr_demand.txt', 'w') as fnumba:
-        demand.inspect_types(file= fnumba)
-    with open('numba_hydr_auxil.txt', 'w') as fnumba:
-        auxil.inspect_types(file= fnumba)
-    with open('numba_hydr_fndrow.txt', 'w') as fnumba:
-        fndrow.inspect_types(file=fnumba)
-    '''
+    #with open('numba_hydr.txt', 'w') as fnumba:
+    #    hydr_.inspect_types(file= fnumba)
+    #with open('numba_hydr_demand.txt', 'w') as fnumba:
+    #    demand.inspect_types(file= fnumba)
+    #with open('numba_hydr_auxil.txt', 'w') as fnumba:
+    #    auxil.inspect_types(file= fnumba)
+    #with open('numba_hydr_fndrow.txt', 'w') as fnumba:
+    #    fndrow.inspect_types(file=fnumba)
     ############################################################################
 
     if ui['NEXITS'] == 1:
@@ -101,7 +95,6 @@ def hydr(store, general, ui, ts):
     return errorsV, ERRMSG
 
 
-@jit
 def hydr_(general, ui, ts):
     '''find the state of the reach or reservoir at the end of the time interval
     and the outflows during the interval'''
@@ -141,7 +134,6 @@ def hydr_(general, ui, ts):
     PREC   = ts['PREC']  / 12.0
     dep    = 0.0  #nan
     sarea  = 0.0  #nan
-    volev  = 0.0                                                             #$2114
     avvel  = nan
 
     # faster to preallocate arrays - like MATLAB)
@@ -215,6 +207,41 @@ def hydr_(general, ui, ts):
     DELTH  = ui['DELTH']                                #$153
 
     # simulation main loop - HYDR (except where noted)      #$1841
+    hydr_liftedloop(AUX1FG, AUX2FG, AUX3FG, COLIND, CONVF, DB50, DELTH, DEP, IVOL,
+    LEN, LKFG, O, ODGTF, OUTDGT, OVOL, POTEV, PREC, PRSUPY, RO, ROVOL, SAREA, TAU,
+    USTAR, VOL, VOLEV, avvel, coks, colind, delts, depthFT, errorsV, facta1,
+    funct, indx, irexit, irminv, irrdem, irrdemV, ks, nexits, nodfv, nrows, o,
+    od1, od2, odz, oseff, outdgt, ovol, rirwdl, ro, rowsFT, sarea, sareaFT,
+    simlen, topvolume, vol, volumeFT, zeroindex)
+
+    # END MAIN LOOP - save computed timeseries & convert to expected units
+    if nexits > 1:
+        O    *= SFACTA * LFACTA
+        OVOL *= VFACTA
+    PRSUPY *= AFACTA
+    RO     *= SFACTA * LFACTA
+    ROVOL  *= VFACTA
+    VOL    *= VFACTA
+    VOLEV  *= VFACTA
+
+    if AUX1FG:   #save results except stage, avdep, hrad, and twid which can be trivially calculated
+        SAREA *= AFACTA
+        if AUX3FG:
+            USTAR *= LFACTA
+            TAU   *= TFACTA
+    if irexit >= 0:
+        IRRDEM = irrdemV
+    return errorsV
+
+
+@jit(nopython=True, cache=True)
+def hydr_liftedloop(AUX1FG, AUX2FG, AUX3FG, COLIND, CONVF, DB50, DELTH, DEP, IVOL,
+ LEN, LKFG, O, ODGTF, OUTDGT, OVOL, POTEV, PREC, PRSUPY, RO, ROVOL, SAREA, TAU,
+ USTAR, VOL, VOLEV, avvel, coks, colind, delts, depthFT, errorsV, facta1, funct,
+ indx, irexit, irminv, irrdem, irrdemV, ks, nexits, nodfv, nrows, o, od1, od2,
+ odz, oseff, outdgt, ovol, rirwdl, ro, rowsFT, sarea, sareaFT, simlen, topvolume,
+ vol, volumeFT, zeroindex):
+
     for loop in range(simlen):
         convf  = CONVF[loop]
         outdgt[:] = OUTDGT[loop,0:nexits]
@@ -239,9 +266,7 @@ def hydr_(general, ui, ts):
                 aa1 = (vv2 - vol) / (vv2 - vv1)                                 #$1151
 
                 ro   = (aa1 * rod1) + ((1.0 - aa1) * rod2)                                         #$1152-1156
-                #o[:] = (aa1 * od1)  + ((1.0 - aa1) * od2)             #$1152,1155
-                for _ in range(nexits):  # NUMBA 0.31 issue
-                    o[_] = (aa1 * od1[_])  + ((1.0 - aa1) * od2[_])
+                o[:] = (aa1 * od1)  + ((1.0 - aa1) * od2)             #$1152,1155
 
                 # back to HYDR
                 if AUX1FG >= 1:     # recompute surface area and depth          #$1949
@@ -274,9 +299,7 @@ def hydr_(general, ui, ts):
             o[:]  = 0.0                                                         #$3300
             rovol = volt                                                        #$3302
             if roseff > 0.0:                                                    #$3203-3311
-                ovol[:] = oseff
-                ovol[:] *=  (rovol/ roseff)
-                #ovol[:] = (rovol/roseff) * oseff
+                ovol[:] = (rovol/roseff) * oseff
             else:
                 ovol[:] = rovol / nexits
 
@@ -346,11 +369,7 @@ def hydr_(general, ui, ts):
                     else:                                                       #$3597
                         diff  = vol - vv1                                       #$3598
                         factr = 0.0 if diff < 0.01 else  diff / (vv2 - vv1)     #$3599-3605
-
-                        #o[:]  = od1 + (od2 - od1) * factr                       #$3606-3608
-                        for _ in range(nexits):
-                            o[_] = od1[_] + (od2[_] - od1[_]) * factr  #??? NUMBA 0.31                     #$3606-3608
-                        #o[:] = od1[0:nexits] + (od2[0:nexits] - od1[0:nexits]) * factr
+                        o[:]  = od1 + (od2 - od1) * factr                       #$3606-3608
 
                 else:
                     # case 2 -- outflow demands cannot be met in full           #$3336, 3043-3083
@@ -398,9 +417,7 @@ def hydr_(general, ui, ts):
                 irrdemV[loop] = irrdem
 
             # estimate the volumes of outflow                                       #$3105-3107
-            #ovol[:] = (ks * oseff   + coks * o)  * delts                            #$3368-3371
-            for _ in range(nexits):
-                ovol[_] = (ks * oseff[_]   + coks * o[_])  * delts #??? NUMBA 0.31
+            ovol[:] = (ks * oseff   + coks * o)  * delts                            #$3368-3371
             rovol   = (ks * roseff  + coks * ro) * delts                            #$3367
 
         # HYDR
@@ -449,28 +466,10 @@ def hydr_(general, ui, ts):
                 tau = 0.0
             USTAR[loop] = ustar
             TAU[loop] = tau
-
-    # END MAIN LOOP - save computed timeseries & convert to expected units
-    if nexits > 1:
-        O    *= SFACTA * LFACTA
-        OVOL *= VFACTA
-    PRSUPY *= AFACTA
-    RO     *= SFACTA * LFACTA
-    ROVOL  *= VFACTA
-    VOL    *= VFACTA
-    VOLEV  *= VFACTA
-
-    if AUX1FG:   #save results except stage, avdep, hrad, and twid which can be trivially calculated
-        SAREA *= AFACTA
-        if AUX3FG:
-            USTAR *= LFACTA
-            TAU   *= TFACTA
-    if irexit >= 0:
-        IRRDEM = irrdemV
-    return errorsV
+    return
 
 
-@jit(nopython=True)
+@jit(nopython=True, cache=True)
 def fndrow(v, volFT):
     ''' finds highest index in FTable volume column whose volume  < v'''
     for indx,vol in enumerate(volFT):
@@ -479,7 +478,7 @@ def fndrow(v, volFT):
     return len(volFT) - 2
 
 
-@jit(nopython=True)
+@jit(nopython=True, cache=True)
 def demand(vol, rowFT, funct, nexits, delts, convf, colind, outdgt, ODGTF):            #$2283
     od = zeros(nexits)                                                          #$2421
     for i in range(nexits):
@@ -505,7 +504,7 @@ def demand(vol, rowFT, funct, nexits, delts, convf, colind, outdgt, ODGTF):     
     return od.sum(), od
 
 
-@jit(nopython=True)
+@jit(nopython=True, cache=True)
 def auxil(volumeFT, depthFT, sareaFT, indx, vol, AUX1FG, errorsV):
     ''' Compute depth and surface area'''
     if vol > 0.0:                                                               #$3747

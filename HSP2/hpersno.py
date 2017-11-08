@@ -69,7 +69,7 @@ def snow(store, general, ui, ts):
     return [0], ERRMSG
 
 
-@jit
+
 def snow_(general, ui, ts):
     ''' SNOW processing '''
     delt    = general['sim_delt']               # simulation interval in minutes
@@ -142,32 +142,29 @@ def snow_(general, ui, ts):
     DEWTMP = ts['DEWTMP'] = zeros(simlen)
     ALBEDO = ts['ALBEDO'] = zeros(simlen)
 
-    melt   = 0.0
-    prain  = 0.0
-    wyield = 0.0
-    snowe  = 0.0
     packwc = 0.0
     prec   = 0.0
     mneghs = 0.0
     snotmp = tsnow
 
+    '''
     if tindex.hour[0] >= 7:
         hr6update = 0
     else:
         hr6update = 1
+    '''
 
     if packf + packw <= 1.0e-5:             # reset state variables
         #NOPACK
         covinx = 0.1 * COVIND[0]
         paktmp = 32.0                                                           #$530
-        hr6update = 1
+        #hr6update = 1
         packf  = 0.0
         packi  = 0.0
         packw  = 0.0
         pdepth = 0.0
         rdenpf = nan
         snocov = 0.0
-        snowe  = 0.0                                                            #$528
         neghts = 0.0                                                            #$529
         dull   = 0.0
         albedo = 0.0
@@ -187,12 +184,43 @@ def snow_(general, ui, ts):
     snowep = 0.0
     mostht = 0.0
     vap = 0.0
-    satvap = 0.0
     neght = 0.0
     gmeltr = 0.0
     albedo = 0.0
 
     # MAIN LOOP (this can't be done functionally, must be loop)
+    snow_liftedloop(AIRTMP, ALBEDO, CCFACT, CLOUD, COVIND, COVINX, DEWTMP, DTMPG,
+     DULL, HR6FG, KMELT, MELT, MGMELT, MWATER, NEGHTS, PACKF, PACKI, PACKW,
+     PAKTMP, PDEPTH, PRAIN, PREC, RAINF, RDENPF, SEASONS, SHADE, SKYCLR, SNOCOV,
+     SNOEVP, SNOTMP, SNOWCF, SNOWE, SNOWF, SOLRAD, WINMOV, WYIELD, XLNMLT,
+     albedo, cloudfg, compct, covinx, delt, delt60, dewtmp, dull, gmeltr,
+     #hr6update,
+     icefg, melev, mneghs, mostht, neght, neghts, packf, packi, packw,
+     packwc, pdepth, prec, rdcsn, rdnsn, simlen, skyclr, snocov, snopfg, snotmp,
+     snowep, svp, tbase,
+     #tindex,
+     tsnow, vap, xlnmlt)
+
+    # after masterloop - work completed
+    # pack, pakin, pakdif not saved since trival recalulation from saved data
+    #    pack = packf + packw                                                   #$163
+    #    pakin = snowf + prain                                                  #$534
+    #    pakdif = pakin - (snowe + wyield)                                      #$537
+    return
+
+
+@jit(nopython=True, cache=True)
+def snow_liftedloop(AIRTMP, ALBEDO, CCFACT, CLOUD, COVIND, COVINX, DEWTMP, DTMPG,
+ DULL, HR6FG, KMELT, MELT, MGMELT, MWATER, NEGHTS, PACKF, PACKI, PACKW, PAKTMP,
+ PDEPTH, PRAIN, PREC, RAINF, RDENPF, SEASONS, SHADE, SKYCLR, SNOCOV, SNOEVP,
+ SNOTMP, SNOWCF, SNOWE, SNOWF, SOLRAD, WINMOV, WYIELD, XLNMLT, albedo, cloudfg,
+ compct, covinx, delt, delt60, dewtmp, dull, gmeltr,
+ #hr6update,
+ icefg, melev,
+ mneghs, mostht, neght, neghts, packf, packi, packw, packwc, pdepth, prec, rdcsn,
+ rdnsn, simlen, skyclr, snocov, snopfg, snotmp, snowep, svp, tbase,
+ #tindex,
+ tsnow, vap, xlnmlt):
     for loop in range(simlen):
         oldprec = prec
 
@@ -429,6 +457,7 @@ def snow_(general, ui, ts):
 
         if icefg:                                                               #$101,466
             #ICING
+            '''
             if tindex.hour[loop] >= 7:
                 if hr6update <> 0:
                     if snocov < 1.0:
@@ -438,6 +467,11 @@ def snow_(general, ui, ts):
                     hr6update = 0
             else:
                 hr6update = 1
+            '''
+            if hr6fg and snocov < 1.0:
+                xlnem = -reltmp * 0.01                                          #$963,965
+                if xlnem > xlnmlt:                                              #$969
+                    xlnmlt = xlnem                                              #$970
 
             if wyield > 0.0 and xlnmlt > 0.0:                                   #$987
                 if wyield < xlnmlt:                                             #$990
@@ -489,7 +523,7 @@ def snow_(general, ui, ts):
             covinx = 0.1 * covind                                               #$1356
             paktmp = 32.0                                                       #$1360
             rdenpf = nan                                                        #$1355
-            hr6update = 1
+            #hr6update = 1
             packf  = 0.0                                                        #$1350
             packi  = 0.0                                                        #$1351
             packw  = 0.0                                                        #$1352
@@ -525,16 +559,10 @@ def snow_(general, ui, ts):
         SKYCLR[loop] = skyclr
         DULL[loop]   = dull
         ALBEDO[loop] = albedo
-
-    # after masterloop - work completed
-    # pack, pakin, pakdif not saved since trival recalulation from saved data
-    #    pack = packf + packw                                                   #$163
-    #    pakin = snowf + prain                                                  #$534
-    #    pakdif = pakin - (snowe + wyield)                                      #$537
     return
 
 
-@jit(nopython=True)
+@jit(nopython=True, cache=True)
 def vapor(svp, temp):
     indx = (temp + 100.0) * 0.2 - 1.0
     lower = int(floor(indx))

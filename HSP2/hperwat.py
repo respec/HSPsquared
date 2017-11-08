@@ -73,12 +73,11 @@ def pwater(store, general, ui, ts):
     #   pwatrx.inspect_types(file= fnumba) # ??? numba testing
     #with open('numba_pwater_proute.txt', 'w') as fnumba:
     #    proute.inspect_types(file= fnumba)
-
     ############################################################################
 
     return errorsV, ERRMSG
 
-@jit
+
 def pwatrx(general, ui, ts):
     ''' simulate the water budget for a pervious land segment'''
     errorsV = zeros(len(ERRMSG), dtype=int)
@@ -228,12 +227,6 @@ def pwatrx(general, ui, ts):
     ts['SUPY'] = SUPY
     ts['PET']  = PET
 
-    msupy = 0.0
-    dec = nan
-    src = nan
-    kifw  = nan
-    ifwk2 = nan
-    ifwk1 = nan
 
     # adjust inffac based on soil temperature
     if IFFCFG == 2:
@@ -241,6 +234,33 @@ def pwatrx(general, ui, ts):
 
     # PWATRX
     # MASTER LOOP
+    pwater_liftedloop(AGWET, AGWI, AGWLI, AGWO, AGWS, BASET, CEPE, CEPS, CEPSC,
+     DAYFG, DEEPFR, GWVS, IFRDFG, IFWI, IFWLI, IFWO, IFWS, IGWI, INFFAC, INFIL,
+     INFILT, INTFW, IRC, KVARY, LZET, LZETP, LZI, LZLI, LZS, LZSN, NSUR, PERC, PERO,
+     PERS, PET, RPARM, RTOPFG, SUPY, SURI, SURLI, SURO, SURS, TAET, TGWS, UZET,
+     UZFG, UZI, UZLI, UZS, UZSN, VLEFG, agwetp, agws, ans, basetp, ceps, delt60,
+     errorsV, gwvs, ifws, infexp, infild, intgrl, irrappV, irrcep, kgwV, lsur,
+     lzfrac, lzs, rlzrat, rparm, simlen, slsur, surs, uzra, uzs)
+
+    #WATIN  = SUPY + SURLI + UZLI + IFWLI + LZLI + AGWLI+ irrapp[6]   # total input of water to the pervious land segment
+    #WATDIF = WATIN - (PERO + IGWI + TAET + irdraw[2])                # net input of water to the pervious land segment
+    return errorsV
+
+
+@jit(nopython=True, cache=True)
+def pwater_liftedloop(AGWET, AGWI, AGWLI, AGWO, AGWS, BASET, CEPE, CEPS, CEPSC,
+  DAYFG, DEEPFR, GWVS, IFRDFG, IFWI, IFWLI, IFWO, IFWS, IGWI, INFFAC, INFIL,
+  INFILT, INTFW, IRC, KVARY, LZET, LZETP, LZI, LZLI, LZS, LZSN, NSUR, PERC, PERO,
+  PERS, PET, RPARM, RTOPFG, SUPY, SURI, SURLI, SURO, SURS, TAET, TGWS, UZET,
+  UZFG, UZI, UZLI, UZS, UZSN, VLEFG, agwetp, agws, ans, basetp, ceps, delt60,
+  errorsV, gwvs, ifws, infexp, infild, intgrl, irrappV, irrcep, kgwV, lsur,
+  lzfrac, lzs, rlzrat, rparm, simlen, slsur, surs, uzra, uzs):
+
+    msupy = 0.0
+    dec = nan
+    src = nan
+    ifwk2 = nan
+    ifwk1 = nan
     for loop in range(simlen):
         dayfg  = DAYFG[loop]
         inffac = INFFAC[loop]
@@ -619,14 +639,10 @@ def pwatrx(general, ui, ts):
         UZS[loop]   = uzs
         PERO[loop]  = suro + ifwo + agwo
         PERS[loop]  = ceps + surs + ifws + uzs + lzs + TGWS[loop]
-
-        # done with MASTER LOOP
-    #WATIN  = SUPY + SURLI + UZLI + IFWLI + LZLI + AGWLI+ irrapp[6]   # total input of water to the pervious land segment
-    #WATDIF = WATIN - (PERO + IGWI + TAET + irdraw[2])                # net input of water to the pervious land segment
-    return errorsV
+    return
 
 
-@jit(nopython=True)
+@jit(nopython=True, cache=True)
 def proute(psur, RTOPFG, delt60, dec, src, surs, ans):                          #$3775
     ''' Determine how much potential surface detention (PSUR) runs off in one simulation interval.'''
     err = 0

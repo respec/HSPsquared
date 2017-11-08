@@ -33,7 +33,7 @@ def run(hdfname, saveall=False, reloadkeys= False):
         return
 
     logpath = os.path.join(os.path.dirname(hdfname), 'logfile.txt')
-    with pd.get_store(hdfname) as store, open(logpath, 'w') as logfile:
+    with pd.HDFStore(hdfname) as store, open(logpath, 'w') as logfile:
         msg = messages(logfile)
         msg(1, 'Run Started for file ' + hdfname)
 
