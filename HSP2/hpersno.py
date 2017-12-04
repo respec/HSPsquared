@@ -54,7 +54,7 @@ def snow(store, general, ui, ts):
     # kmelt code below converts                                                 #$117,118,395,2247,126,138-148,2254,389,2255-2258
     if 'KMELT' not in ts:
         if 'KMELTM' in ui:
-            d1 = transform(ui['KMELTM'], tindex, 'DAYVAL')
+            d1 = transform(ui['KMELTM'], tindex, 'DAYVAL').values
         ts['KMELT'] = d1  if 'KMELTM' in ui else full(simlen, ui['KMELT'])
 
     ############################################################################

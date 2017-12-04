@@ -31,7 +31,7 @@ def run(hdfname, saveall=False, reloadkeys= False):
     if not os.path.exists(hdfname):
         print (hdfname + ' HDF5 File Not Found, QUITTING')
         return
-
+    stime = dt.now()
     logpath = os.path.join(os.path.dirname(hdfname), 'logfile.txt')
     with pd.HDFStore(hdfname) as store, open(logpath, 'w') as logfile:
         msg = messages(logfile)
@@ -147,6 +147,7 @@ def run(hdfname, saveall=False, reloadkeys= False):
         data = f.read()
         ds = hdf['/RUN_INFO/'].create_dataset('log', shape=(1,), dtype='S' + str(len(data)))
         ds[:] = data
+    print('Run time is ' + str(dt.now()-stime))
     return      # RUN is DONE
 
 
