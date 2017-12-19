@@ -15,7 +15,7 @@ The remaining directories are versions of Tim Cera's open source code (wdmtoolbo
 
 ## INSTALLATION INSTRUCTIONS
 
-Install Python 2.7 and the additional scientific, open source libraries.  Ananconda (formerly Continuum Analytics) and Enthought provide free, simple installation of all the required Python and scientific libraries.  Check that numpy, Pandas, matplotlib, and numba are loaded.  The package managers included with Anaconda or Enthought's downloads makes this easy to check and add any missing packages.
+Install Python 2.7 and the additional scientific, open source libraries.  Ananconda (formerly Continuum Analytics) and Enthought provide free, simple installation of all the required Python and scientific libraries.  Check that numpy, Pandas, matplotlib, and numba are loaded.  Qgrid (version > 1.0) is also used in some of the Jupyter notebook tutorials.  Qgrid is a Jupyter notebook widget which uses SlickGrid to render pandas DataFrames within a Jupyter notebook. This allows you to explore your DataFrames with intuitive scrolling, sorting, and filtering controls, as well as edit your DataFrames by double clicking cells.The package managers included with Anaconda or Enthought's downloads makes this easy to check and add any missing packages.
 
 From this Github site, click on the green "Clone or Download" dropdown button to select "Download ZIP".  Unzip the downloaded zipfile (in your Windows "Downloads" directory) and move it  to a convenient location such as your Desktop. You should now be able to run the Tutorials and create your own Jupyter Notebooks in this directory.
 
