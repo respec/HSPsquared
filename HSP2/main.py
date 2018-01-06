@@ -230,7 +230,7 @@ def get_timeseries(tsdd, tindex, store):
         else:
             tmp = row.TMEMSB.split()
             if len(tmp) == 1:
-                tmemsb = '' if int(tmp[0]) == 1 else str(int(tmp[0])-1)
+                tmemsb = '' if int(tmp[0]) == 1 else str(int(tmp[0]))    # pbd fix to get proper subscript (like OUTDGT2)
                 if row.TMEMN + tmemsb in ts:
                     ts[row.TMEMN + tmemsb] += temp.values.astype(float)
                 else:

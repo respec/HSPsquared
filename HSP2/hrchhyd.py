@@ -494,13 +494,17 @@ def demand(vol, rowFT, funct, nexits, delts, convf, colind, outdgt, ODGTF):     
 
         icol = int(ODGTF[i])              #$2389          #$2390-2430
         if icol != 0:
-            a = od[i]
-            b = outdgt[icol-1]
-            c = (vol - b)  / delts  #???
-            if   funct[i] == 1: od[i] = min(a,c)
-            elif funct[i] == 2: od[i] = max(a,b)
-            elif funct[i] == 3: od[i] = a+b
-            elif funct[i] == 4: od[i] = max(a,c)
+            if col > 0.0:   # both f(time) and f(vol)
+                a = od[i]
+                b = outdgt[icol-1]
+                c = (vol - b)  / delts  #???
+                if   funct[i] == 1: od[i] = min(a,b)  # pbd fix in arguments to min function
+                elif funct[i] == 2: od[i] = max(a,b)
+                elif funct[i] == 3: od[i] = a+b
+                elif funct[i] == 4: od[i] = max(a,c)
+            else:
+                od[i] = outdgt[icol-1]  # pbd added for f(time) only
+
     return od.sum(), od
 
 
