@@ -34,8 +34,13 @@ def build_graph(links, sep):
         dg.add_edge(sourceID, destinationID)   #, label=edgelabel)
 
     for x in dg.nodes():
-        npred = len(dg.predecessors(x))
-        nsucc = len(dg.successors(x))
+        #npred = len(dg.predecessors(x))
+        iter = (i for i in dg.predecessors(x))
+        npred = sum(1 for _ in iter)
+        
+        #nsucc = len(dg.successors(x))
+        iter = (i for i in dg.successors(x))
+        nsucc = sum(1 for _ in iter)
 
         dg.node[x]['optype']  = x.split(sep)[0]
         dg.node[x]['segment'] = x.split(sep)[1]
