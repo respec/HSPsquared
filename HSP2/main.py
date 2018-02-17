@@ -14,19 +14,35 @@ improvements in progress:
 
 import os
 import importlib
-import h5py
-import pandas as pd
-import numpy as np
 from datetime import datetime as dt
 from collections import defaultdict
 
+import h5py
+import pandas as pd
+import numpy as np
+import mando
+from mando.rst_text_formatter import RSTHelpFormatter
+
 import HSP2
 
+@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
+def run(hdfname,
+        saveall=False,
+        reloadkeys=False):
+    '''Runs main HSP2 program.
 
-def run(hdfname, saveall=False, reloadkeys= False):
-    ''' runs main HSP2 program
-     saveall    - (optional) saves all calculated data ignoring SAVE tables
-     reloadkeys - (optional) regenerates keys, used after adding new modules'''
+    Parameters
+    ----------
+    hdfname: str
+        HDF5 filename for both input and
+        output.
+    saveall
+        saves all calculated data ignoring SAVE
+        tables
+    reloadkeys
+        regenerates keys, used after adding new
+        modules
+    '''
 
     if not os.path.exists(hdfname):
         print (hdfname + ' HDF5 File Not Found, QUITTING')
@@ -387,3 +403,11 @@ def initm(general, ui, ts, flag, monthly, name):
         ts[name] = transform(ui[monthly], general['tindex'], 'DAYVAL').values
     else:
         ts[name] = np.full(general['sim_len'], ui[name])
+
+
+def main():
+    mando.main()
+
+
+if __name__ == '__main__':
+    main()
