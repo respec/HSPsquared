@@ -34,14 +34,14 @@ def run(hdfname,
     Parameters
     ----------
     hdfname: str
-        HDF5 filename for both input and
+        HDF5 filename used for both input and
         output.
     saveall
-        saves all calculated data ignoring SAVE
-        tables
+        [optional] Default is False.
+        Saves all calculated data ignoring SAVE tables.
     reloadkeys
-        regenerates keys, used after adding new
-        modules
+        [optional] Default is False.
+        Regenerates keys, used after adding new modules.
     '''
 
     if not os.path.exists(hdfname):
