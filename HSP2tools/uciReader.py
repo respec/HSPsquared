@@ -444,7 +444,7 @@ def read_segment(f, hdffile, target, h2, prefix, HSPF, metric=False):
                     dff.to_hdf(hdffile, 'RCHRES/HYDR/STATE', data_columns=True, format='t')
                     df = df.drop(['VOL'], axis=1)
             '''
-            df = df.convert_objects(convert_numeric=True)
+            df = df.to_numeric
             if 'ICAT' in df.columns:
                 df['ICAT'] = df['ICAT'].fillna('').astype(str)
             df = df.dropna(axis='columns', how='all')
