@@ -1,6 +1,8 @@
 ''' Copyright 2017 by RESPEC, INC. - see License.txt with this HSP2 distribution
 Author: Robert Heaphy, Ph.D. '''
 
+from __future__ import print_function
+
 import pandas as pd
 
 def read(fname, indexcol=None):
@@ -10,7 +12,7 @@ def read(fname, indexcol=None):
     elif ext.lower() == 'xlsx':
         return pd.read_excel(fname, index_col=indexcol) if indexcol else pd.read_excel(fname)
     else:
-        print 'Unknown file extension', ext
+        print('Unknown file extension: ', ext)
         return None
 
 
