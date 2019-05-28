@@ -28,6 +28,8 @@ install_requires = [
     'numba',
     'h5py',
     'networkx',
+    'hspfbintoolbox',
+    'wdmtoolbox',
 ]
 
 setup(name='HSPsquared',
@@ -47,7 +49,9 @@ setup(name='HSPsquared',
           'Natural Language :: English',
           'Operating System :: OS Independent',
           'Programming Language :: Python :: 2.7',
-          'Programming Language :: Python :: 3',
+          'Programming Language :: Python :: 3.5',
+          'Programming Language :: Python :: 3.6',
+          'Programming Language :: Python :: 3.7',
           'Topic :: Scientific/Engineering',
           'Topic :: Software Development :: Libraries :: Python Modules',
       ],
@@ -64,4 +68,5 @@ setup(name='HSPsquared',
               ['hsp2=HSP2.main:main']
       },
       test_suite='tests',
+      python_requires='>=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*',
       )
