@@ -1,170 +1,99 @@
-''' Copyright 2017 by RESPEC, INC. - see License.txt with this HSP2 distribution
-Author: Robert Heaphy, Ph.D.'''
-
-"""
-improvements in progress:
-    Allow timeseries to be called for MFACTOR and AFACTR
-    Allow timeseries to have arbitrary math specified in MFACTOR and AFACTR
-    Make sure midnight issue is fixed
-    GENERAL: have separate HSPF start& stop datetime from HSP2 datetimes
-    Read LAPSE and SEASONS once?
-    Add MEAN, INTREP to transform()
-"""
-
-
-import os
-import importlib
-from datetime import datetime as dt
+from numpy import zeros, float64
+from pandas import HDFStore, Timestamp, Timedelta, read_hdf, DataFrame, date_range
+from pandas.tseries.offsets import Minute
+from numba import types
+from numba.typed import Dict
 from collections import defaultdict
+from importlib import import_module
+from datetime import datetime as dt
+import os
+from utilities import transform
 
-import h5py
-import pandas as pd
-import numpy as np
-import mando
-from mando.rst_text_formatter import RSTHelpFormatter
+def noop (store, siminfo, ui, ts):
+    ERRMSGS = []
+    errors = zeros(len(ERRMSGS), dtype=int)
+    return errors, ERRMSGS
 
-import HSP2
 
-@mando.command(formatter_class=RSTHelpFormatter, doctype='numpy')
-def run(hdfname,
-        saveall=False,
-        reloadkeys=False):
-    '''Runs main HSP2 program.
+# Note: activities define execution order. Default preset to noop(). Users may modify this
+activities = {
+  'PERLND': {'ATEMP':noop, 'SNOW':noop, 'PWATER':noop, 'SEDMNT':noop,
+     'PSTEMP':noop, 'PWTGAS':noop, 'PQUAL':noop, 'MSTLAY':noop, 'PEST':noop,
+     'NITR':noop, 'PHOS':noop, 'TRACER':noop},
+  'IMPLND': {'ATEMP':noop, 'SNOW':noop, 'IWATER':noop, 'SOLIDS':noop,
+     'IWTGAS':noop, 'IQUAL':noop},
+  'RCHRES': {'HYDR':noop, 'ADCALC':noop, 'CONS':noop, 'HTRCH':noop,
+     'SEDTRN':noop, 'GQUAL':noop, 'OXRX':noop, 'NUTRX':noop, 'PLANK':noop,
+     'PHCARB':noop}}
 
-    Parameters
-    ----------
-    hdfname: str
-        HDF5 filename used for both input and
-        output.
-    saveall
-        [optional] Default is False.
-        Saves all calculated data ignoring SAVE tables.
-    reloadkeys
-        [optional] Default is False.
-        Regenerates keys, used after adding new modules.
-    '''
 
+def main(hdfname, saveall=False):          # primary HSP2 highest level routine
     if not os.path.exists(hdfname):
-        print (hdfname + ' HDF5 File Not Found, QUITTING')
+        print(f'{hdfname} HDF5 File Not Found, QUITTING')
         return
-    stime = dt.now()
+
+    # Dynamically imports HSP2 functions.  Function name is lower case of
+    # file name: snow() is main function of module SNOW.py, etc.
+    s = set(os.listdir('.'))
+    for op in ('PERLND', 'IMPLND', 'RCHRES'):
+        for key in activities[op]:
+            if f'{key}.py' in s:
+                activities[op][key] = getattr(import_module(key), key.lower())
+
+    uic = defaultdict(dict)
+    siminfo = {}
     logpath = os.path.join(os.path.dirname(hdfname), 'logfile.txt')
-    with pd.HDFStore(hdfname) as store, open(logpath, 'w') as logfile:
+    with HDFStore(hdfname) as store, open(logpath, 'w') as logfile:
         msg = messages(logfile)
-        msg(1, 'Run Started for file ' + hdfname)
+        msg(1, f'Run Started for file {hdfname}')
 
-        # ordered list of modules replacing function names with real functions
-        sequence = defaultdict(list)
-        for _,x in store['HSP2/CONFIGURATION'].sort_values(by=['Order']).iterrows():
-            if x.Function and x.Function != 'noop':
-                importlib.import_module(x.Module)
-                x.Function = eval(x.Module + '.' + x.Function)
-                sequence[x.Target].append(x)
+        # read user control and user data from HDF5 file
+        opseq, ddlinks, ddmasslinks, ext_sourcesdd = get_uc(store,uic,siminfo)
 
-        if 'TIMESERIES/LAPSE24'   not in store:
-            store['TIMESERIES/LAPSE24']   = store['HSP2/LAPSE24']
-        if 'TIMESERIES/SEASONS12' not in store:
-            store['TIMESERIES/SEASONS12'] = store['HSP2/SEASONS12']
-        if 'TIMESERIES/SaturatedVaporPressureTable' not in store:
-            store['TIMESERIES/SaturatedVaporPressureTable'] = store['HSP2/SaturatedVaporPressureTable']
+        start = siminfo['start']
+        stop  = siminfo['stop']
+        msg(1, f'Simulation Start {start},  Simulation Stop {stop}')
 
-        # initial values for simulation wide data dictionary
-        general = store['CONTROL/GLOBAL'].Data.to_dict()
-        general['msg'] = msg
-        msg(1, '  Start ' + general['sim_start'] + '    Stop ' + general['sim_end'])
+        # main processing loop
+        for _, operation, segment, delt in opseq.itertuples():
+            msg(2, f'{operation} {segment} DELT(minutes) = {delt}')
 
-        if reloadkeys:
-            store['HSP2/KEYS'] = pd.Series(store.keys())
-        keys = store['HSP2/KEYS']
+            siminfo['operation'] = operation
+            siminfo['segment']   = segment
+            siminfo['delt']      = delt
+            siminfo['freq']      = Minute(int(delt))
+            siminfo['steps']     = int((stop-start)/Timedelta('1H')) + 1
 
-        #create monthly tables; Example: monthlys['PERLND', 'P001']['CEPSCM']
-        monthlys = defaultdict(dict)
-        for key in [key for key in keys if 'MONTHLY' in key]:
-            tokens = key.split('/')     # target=tokens[1], variable=tokens[-1]
-            for indx,row in store[key].iterrows():
-                monthlys[(tokens[1], indx)][tokens[-1]] = tuple(row)
+            # explicit creation of Numba dictionary with signatures
+            ts = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
+            get_timeseries(store, ts, ext_sourcesdd[(operation,segment)], siminfo)
 
-        ucs = get_ucs(keys, store, msg)     # read all default user control info
-        tsdd = defaultdict(list)
-        for row in store['/CONTROL/EXT_SOURCES'].itertuples():
-            tsdd[row.TVOL,row.TVOLNO].append(row)      # get timeseries' info
+            # now conditionally execute all activity modules for the op, segment
+            flags = uic[(operation, 'GENERAL')]['ACTIVITY'][segment]
+            for activity, function in activities[operation].items():
+                if function == noop:
+                    continue
 
-        # get data for LINK (combined NETWORK & SCHEMATIC) and MASSLINK information
-        linkdd = defaultdict(list)
-        for _,row in store['CONTROL/LINKS'].iterrows():
-            linkdd[row.TVOL, row.TVOLNO].append(row)
-        mldd = defaultdict(list)
-        for i,row in store['CONTROL/MASS_LINK'].iterrows():
-            mldd[row.MLNO].append(row)
-        xflow = store['/HSP2/FLOWEXPANSION']
-        xflowdd = {}
-        lookup = defaultdict(list)
-        for _,row in xflow.iterrows():
-            xflowdd[row.Flag, row.INFLOW] = row
-            lookup[row.Flag].append(row.INFLOW)
-        flowdata = {'linkdd':linkdd, 'mldd':mldd, 'xflowdd':xflowdd, 'lookup':lookup}
-        msg(1, 'Finished setup')
+                if flags[activity]:
+                    msg(3, f'{activity}')
 
-        # main program -- loop over OP_SEQUENCE table
-        for opseq in store['/CONTROL/OP_SEQUENCE'].itertuples():
-            msg(2, opseq.TARGET + ' ' + opseq.ID + '   DELT=' + opseq.DELT)
-
-            tindex = pd.date_range(general['sim_start'],general['sim_end'],freq=opseq.DELT+'min')
-            general['tindex']   = tindex
-            general['sim_len']  = len(general['tindex'])
-            general['sim_delt'] = float(opseq.DELT)
-
-            ts = get_timeseries(tsdd[opseq.TARGET,opseq.ID], general['tindex'], store)
-
-            # Loop over each activity Flag for the operation, do function if available
-            activity = ucs[opseq.TARGET, 'ACTIVITY', opseq.ID]
-            for x in sequence[opseq.TARGET]:
-                if activity[x.Flag]:
-                    uc = ucs[opseq.TARGET,x.Flag, opseq.ID].to_dict()
-                    if (opseq.TARGET,opseq.ID) in monthlys:
-                        uc.update(dict(monthlys[opseq.TARGET, opseq.ID]))
-                    uc.update(ucs[opseq.TARGET, 'GENERAL_INFO', opseq.ID])
-                    if opseq.TARGET=='RCHRES' and x.Flag=='HYDRFG':
-                        uc['rchtab'] = store['FTABLES/' + uc['FTBUCI']]  # get FTABLE
-
-                    if (opseq.TARGET, opseq.ID) in linkdd:
-                        flows(ts,opseq.TARGET,opseq.ID,x.Flag,flowdata,tindex,store)
+                    siminfo['activity'] = activity
+                    ui = uic[(operation, activity)]
+                    if operation == 'RCHRES':
+                        get_flows(store,ts,activity,segment,ddlinks,ddmasslinks)
 
                     ###########################################################
-                    errs, errstrs = x.Function(store, general, uc, ts)   # calls core HSP2 functions
+                    # calls activity function, like iwater()
+                    errors, errmessages = function(store, siminfo, ui, ts)
                     ###########################################################
 
-                    # save computed timeseries (at computation DELT)
-                    savetable = ucs[opseq.TARGET, x.Flag, 'SAVE', opseq.ID]
-                    save = tuple(savetable.index) if saveall else tuple(savetable[savetable==True].index)
-                    save = set(save) & set(ts)
-                    df = pd.DataFrame(index=tindex)
-                    for y in save:
-                        if ts[y].ndim == 1:
-                            df[y] = ts[y]
-                        else:
-                            for i in range(ts[y].shape[1]):
-                                df[y+str(i+1)] = ts[y][:,i]
-                    df = df.sort_index(axis=1)
-                    path = '/RESULTS/' + opseq.TARGET + '_' + opseq.ID + '/' + x.Path.split('/')[1]
-                    store.put(path, df.astype(np.float32))
-
-                    for errorcnt, errormsg in zip(errs, errstrs):  # print returned error messages and counts
+                    for errorcnt, errormsg in zip(errors, errmessages):  # print returned error messages and counts
                         if errorcnt > 0:
-                            msg(3, 'Message count ' + str(errorcnt) +  '   Message ' + errormsg)
+                            msg(4, f'Error count {errorcnt}: {errormsg}')
 
+                    save_timeseries(store,ts,ui['SAVE'][segment],siminfo,saveall)
         msg(1, 'Run completed')
-        store.put('/RUN_INFO/VERSIONS', versions(), format='t', data_columns=True)
-
-    # Copy runtime log file to the HDF5 file as record of run
-    with h5py.File(hdfname, 'a') as hdf, open(logpath, 'r') as f:
-        if '/RUN_INFO/log' in hdf:
-            del hdf['/RUN_INFO/log']
-        data = f.read()
-        ds = hdf['/RUN_INFO/'].create_dataset('log', shape=(1,), dtype='S' + str(len(data)))
-        ds[:] = data
-    print('Run time is ' + str(dt.now()-stime))
-    return      # RUN is DONE
+    return
 
 
 def messages(fname):
@@ -176,238 +105,148 @@ def messages(fname):
     return msg
 
 
-def get_ucs(keys, store, msg):
-    ''' create the UCI dictionary: ucis['PERLND','PWATFG'].loc['P001',:].to_dict()'''
-    ucs = {}
-    for x in ['PERLND', 'IMPLND', 'RCHRES']:
-        for indx, row in store[x + '/GENERAL_INFO'].iterrows():
-            ucs[x, 'GENERAL_INFO', indx] = row.to_dict()
-        for indx, row in store[x + '/ACTIVITY'].iterrows():
-            ucs[x, 'ACTIVITY', indx] = row
-
-    getflag = {}
-    for x in store['HSP2/CONFIGURATION'].itertuples():
-        getflag[x.Path[:-1] if x.Path.endswith('/') else x.Path] = x.Flag
-    data = defaultdict(list)
-    for key in keys:
-        tokens = key.split('/')
-        if (tokens[1] in ['PERLND', 'IMPLND', 'RCHRES'] and 'MONTHLY' not in key
-         and 'ACTIVITY' not in key and 'SAVE' not in key and 'GENERAL_INFO' not in key):
-            indx = tokens[1] + '/' + tokens[2]
-            data[tokens[1], getflag[indx]].append(key)
-
-    for x in data:
-        temp = pd.concat([store[path] for path in data[x]], axis=1)
-        tempnames = temp.columns
-        if x[0]=='RCHRES' and x[1]=='HYDRFG':
-            for var in ['COLIN', 'OUTDG']:
-                names = [name for name in tempnames if var in name]
-                temp[var] = temp.apply(lambda x: tuple([x[name] for name in names]),axis=1)
-                for name in names:
-                    del temp[name]
-            for var in ['FUNCT', 'ODGTF', 'ODFVF']:
-                names = [name for name in tempnames if var in name]
-                for name in names:
-                    temp[name] = temp[name].astype(int)
-                temp[var] = temp.apply(lambda x: tuple([x[name] for name in names]),axis=1)
-                for name in names:
-                    del temp[name]
-        for indx,row in temp.iterrows():
-            ucs[x[0], x[1], indx] = row
-
-        tokens = data[x][0].split('/')
-        for indx, row in store[tokens[1] + '/' + tokens[2] + '/' + 'SAVE'].iterrows():
-            ucs[x[0], x[1], 'SAVE', indx] = row
-    return ucs
+def get_uc(store, uic, siminfo):
+    # read user control and user data from HDF5 file
+    for path in store.keys():   # finds ALL data sets into HDF5 file
+        op, module, *other = path[1:].split(sep='/', maxsplit=3)
+        s = '_'.join(other)
+        if op == 'CONTROL':
+            if module =='GLOBAL':
+                temp = store[path].to_dict()['Info']
+                siminfo['start'] = Timestamp(temp['Start'])
+                siminfo['stop']  = Timestamp(temp['Stop'])
+            elif module == 'LINKS':
+                ddlinks = defaultdict(list)
+                for row in store[path].itertuples():
+                    ddlinks[row.TVOLNO].append(row)
+            elif module == 'MASS_LINKS':
+                ddmasslinks = defaultdict(list)
+                for row in store[path].itertuples():
+                    ddmasslinks[row.MLNO].append(row)
+            elif module == 'EXT_SOURCES':
+                ext_sourcesdd = defaultdict(list)
+                for row in store[path].itertuples():
+                    ext_sourcesdd[(row.TVOL, row.TVOLNO)].append(row)
+            elif module == 'OP_SEQUENCE':
+                opseq = store[path]
+        elif op in {'PERLND', 'IMPLND', 'RCHRES'}:
+            uic[(op, module)][s] = store[path].to_dict('index')
+    return opseq, ddlinks, ddmasslinks, ext_sourcesdd
 
 
-def get_timeseries(tsdd, tindex, store):
-    ''' gets timeseries at the current timestep and trucated to the sim interval'''
-    ts = {}
-    if not tsdd:
-        return ts
+def get_timeseries(store, ts, ext_sourcesdd, siminfo):
+    ''' makes timeseries for the current timestep and trucated to the sim interval'''
+    if not ext_sourcesdd:
+        return
 
-    for row in tsdd:
-        path = 'TIMESERIES/' + row.SVOLNO
-        temp = store[path] if row.SVOL == '*' else pd.read_hdf(row.SVOL, path)
-        tran = 'SAME' if not row.TRAN else row.TRAN
-        if type(row.MFACTOR) == str and row.MFACTOR[0] == '*':
-            mfactor = store['TIMERSERIES/' + row.MFACTOR[1:]]
-            mfactor = transform(mfactor, tindex, 'SAME')
-        else:
-            mfactor = float(row.MFACTOR)
+    for row in ext_sourcesdd:
+        path = f'TIMESERIES/{row.SVOLNO}'
+        temp1 = store[path] if row.SVOL == '*' else read_hdf(row.SVOL, path)
 
-        temp = transform(temp, tindex, tran) * mfactor
+        if row.MFACTOR != 1.0:
+            temp1 *= row.MFACTOR
+
+        temp = transform(temp1, row.TRAN, siminfo).to_numpy().astype(float)
+        if len(temp) > siminfo['steps']:
+            temp = temp[0:siminfo['steps']]
+
         if row.TMEMSB == '':
             if row.TMEMN in ts:
-                ts[row.TMEMN] += temp.values.astype(float)
+                ts[row.TMEMN] += temp
             else:
-                ts[row.TMEMN]  = temp.values.astype(float)
+                ts[row.TMEMN]  = temp
         else:
             tmp = row.TMEMSB.split()
             if len(tmp) == 1:
-                tmemsb = '' if int(tmp[0]) == 1 else str(int(tmp[0]))    # pbd fix to get proper subscript (like OUTDGT2)
+                tmemsb = '' if int(tmp[0]) == 1 else str(int(tmp[0])-1)
                 if row.TMEMN + tmemsb in ts:
-                    ts[row.TMEMN + tmemsb] += temp.values.astype(float)
+                    ts[row.TMEMN + tmemsb] += temp
                 else:
-                    ts[row.TMEMN + tmemsb]  = temp.values.astype(float)
+                    ts[row.TMEMN + tmemsb]  = temp
             else:
                 for i in range(int(tmp[0])-1, int(tmp[1])):
                     tmemsb = '' if i==0 else str(i)
                     if row.TMEMN + tmemsb in ts:
-                        ts[row.TMEMN + tmemsb] += temp.values.astype(float)
+                        ts[row.TMEMN + tmemsb] += temp
                     else:
-                        ts[row.TMEMN + tmemsb]  = temp.values.astype(float)
-    return ts
-
-
-def get_trans(fname):
-    fn = fname.to_upper()
-    if   'MONTHLY12' in fn: return 'MONTHLY12'
-    elif 'HOURLY24'  in fn: return 'HOURLY24'
-    elif 'SPARSE'    in fn: return 'SPARSE'
-    else:                   return 'SAME'   # default
-
-
-def transform(ts, tindex, how):
-    if len(ts)==len(tindex) and ts.index[0]==tindex[0] and ts.index.freq==tindex.freq:
-        pass
-
-    elif how == 'SAME' and 'M' in ts.index.freqstr:  # possible Pandas bug
-        ts = ts.reindex(tindex, method='bfill')
-
-    elif  how in ['SAME', 'LAST']:
-        if ts.index.freq > tindex.freq:
-            ts = ts.reindex(tindex, method='PAD')
-        elif ts.index.freq < tindex.freq:
-            ts = ts.resample(tindex.freqstr).last()
-
-    elif  how in ['MEAN']:
-        if ts.index.freq > tindex.freq:
-            ts = ts.reindex(tindex, method='PAD')
-        elif ts.index.freq < tindex.freq:
-            ts = ts.resample(tindex.freqstr).mean()
-
-    elif how in ['DIV', 'SUM']:
-        if ts.index.freq > tindex.freq:
-            ratio = float(tindex.freq.nanos) / float(ts.index.freq.nanos)
-            ts = ts.reindex(tindex, method='PAD') * ratio
-        elif ts.index.freq < tindex.freq:
-            ts = ts.resample(tindex.freqstr).sum()
-
-    elif how in ['MONTHLY12', 'DAYVAL'] and len(ts) == 12:
-        start = pd.to_datetime('01/01/' + str(tindex[0].year-1))
-        stop  = pd.to_datetime('12/31/' + str(tindex[-1].year+1))
-        tempindex = pd.date_range(start, stop, freq='MS')
-        tiled = np.tile(ts, len(tempindex)/12)
-        if how == 'DAYVAL':  # HSPF "interpolation"  interp to day, pad fill the day
-            daily = pd.Series(tiled,index=tempindex).resample('D')
-            ts = daily.interpolate(method='time').resample(tindex.freqstr).pad()
-        else:
-            ts = pd.Series(tiled, index=tempindex).resample(tindex.freqstr).pad()
-
-    elif how in ['HOURLY24', 'LAPSE'] and  len(ts) == 24:
-        start = pd.to_datetime('01/01/' + str(tindex[0].year-1))
-        stop  = pd.to_datetime('12/31/' + str(tindex[-1].year+1) + ' 23:59')
-        tempindex = pd.date_range(start, stop, freq='H')
-        tile = np.tile(ts, len(tempindex)/24)
-        ts = pd.Series(tile, index=tempindex)
-        if tindex.freq > tempindex.freq:
-            ts = ts.resample(tindex.freqstr).mean()
-        elif tindex.freq < tempindex.freq:
-            ts = ts.reindex(ts, method='PAD')
-
-    elif how == 'SPARSE':
-        x = pd.Series(np.NaN, tindex)
-        for indx,value in ts.iteritems():
-            iloc = tindex.get_loc(indx, method='nearest')
-            x[x.index[iloc]] = value
-            ts = x.fillna(method='pad')
-
-    else:
-        print('UNKNOWN AGG/DISAGG METHOD: ' + how)
-
-    ts = ts[tindex[0]: tindex[-1]] # truncate to simulation [start,stop]
-    if len(ts) != len(tindex):  # shouldn't happen - debug
-        print(' '.join(['LENGTH mismatch', len(ts), len(tindex)]))
-    return ts
-
-
-def flows(ts, tvol, tvolno, flag, flowdata, tindex, store):
-    xflowdd = flowdata['xflowdd']
-    fetchlist = []
-    for lnk in flowdata['linkdd'][tvol, tvolno]:
-        for infl in flowdata['lookup'][flag]:
-            if not lnk.MLNO:
-                dd = lnk.to_dict()
-                if not dd['SMEMN']:
-                    dd['SMEMN'] = xflowdd[flag, infl][dd['SGRPN']]
-                    dd['TMEMN'] = xflowdd[flag, infl][dd['TGRPN']]
-                    dd['SGRPN'] = xflowdd[flag, infl]['Name']
-                fetchlist.append(dd)
-            else:
-                mlno = lnk.MLNO
-                for x in flowdata['mldd'][mlno]:
-                    if not x.TMEMN or x.TMEMN == infl:
-                        dd = lnk.to_dict()
-                        dd.update(x)
-                        if not dd['SMEMN']:
-                            dd['SMEMN'] = xflowdd[flag, infl][dd['SGRPN']]
-                            dd['TMEMN'] = xflowdd[flag, infl][dd['TGRPN']]
-                            dd['SGRPN'] = xflowdd[flag, infl]['Name']
-                        fetchlist.append(dd)
-
-    for x in fetchlist:
-        path = '/RESULTS/' + x['SVOL'] + '_' + x['SVOLNO'] + '/' + x['SGRPN']
-        t = store[path][x['SMEMN'] + x['SMEMSB']]
-
-        if type(x['AFACTR']) == str and x['AFACTR'][0] == '*':
-            afactr = store['TIMESERIES/' + x['AFACTR'][1:]]
-            afactr = transform(afactr, tindex, 'SAME')
-        else:
-            afactr = float(x['AFACTR'])
-
-        if type(x['MFACTOR']) == str and x['MFACTOR'][0] == '*':
-            mfactor = store['TIMERSERIES/' + x['MFACTOR'][1:]]
-            mfactor = transform(mfactor, tindex, 'SAME')
-        else:
-            mfactor = float(x['MFACTOR'])
-
-        t = transform(t, tindex, 'SAME') * mfactor * afactr
-        if x['TMEMN'] in ts:
-            ts[x['TMEMN']] += t.values
-        else:
-            ts[x['TMEMN']]  = t.values
+                        ts[row.TMEMN + tmemsb]  = temp
     return
 
 
-def versions():
-    ''' Returns the versions of the Python and HSP2 library modules in a DataFrame'''
-    import sys
-    import platform    # not used, but reports on current CPU and operating system
-    import numba       # not used by main but used by other HSP2 functions
-    import tables      # used internally by Pandas
+def save_timeseries(store, ts, savedict, siminfo, saveall):
+    # save computed timeseries (at computation DELT)
+    #save = set(savedict.keys()) if saveall else {k for k,v in savedict.items() if v}
+    save = {k for k,v in savedict.items() if v or saveall}
 
-    packages = {'HSP2': HSP2.__version__, 'PYTHON': sys.version.replace('\n', ''),
-     'NUMBA': numba.__version__, 'NUMPY': np.__version__, 'PANDAS': pd.__version__,
-     'H5PY': h5py.__version__, 'PYTABLES': tables.__version__,
-     'os': platform.platform(), 'processor': platform.processor()}
+    tindex = date_range(siminfo['start'],siminfo['stop'],freq=siminfo['freq'])
+    df = DataFrame(index=tindex)
+    for y in (save & set(ts.keys())):
+        df[y] = ts[y]
+    df = df.astype('float32').sort_index(axis='columns')
 
-    cols = ['HSP2','PYTHON','NUMBA','NUMPY','PANDAS','H5PY','PYTABLES','os','processor']
-    return pd.DataFrame(packages, index=['Version'], columns=cols).T.astype(str)
-
-
-def initm(general, ui, ts, flag, monthly, name):
-    ''' initialize timeseries with HSPF interpolation of monthly array or with fixed value'''
-    if ui[flag] and monthly in ui:
-        ts[name] = transform(ui[monthly], general['tindex'], 'DAYVAL').values
-    else:
-        ts[name] = np.full(general['sim_len'], ui[name])
+    path = f"/RESULTS/{siminfo['operation']}_{siminfo['segment']}/{siminfo['activity']}"
+    df.to_hdf(store, path, data_columns=True, format='t')
+    return
 
 
-def main():
-    mando.main()
+def get_flows(store, ts, activity, segment, ddlinks, ddmasslinks):
+    for x in ddlinks[segment]:
+        mldata = ddmasslinks[x.MLNO]
+        for dat in mldata:
+            if x.MLNO == '':  # Data from NETWORK part of Links table
+                factor = x.MFACTOR if x.AFACTR == '' else x.FACTOR * x.AFACTR
+                sgrpn  = x.SGRPN
+                smemn  = x.SMEMN
+                smemsb = x.SMEMSB
+                tmemn  = x.TMEMN
+                tmemsb = x.TMEMSB
+            else:   # Data from SCHEMATIC part of Links table
+                factor = dat.MFACTOR * x.AFACTR
+                sgrpn  = dat.SGRPN
+                smemn  = dat.SMEMN
+                smemsb = dat.SMEMSB
+                tmemn  = dat.TMEMN
+                tmemsb = dat.TMEMSB
+
+            # KLUDGE until remaining HSP2 modules are available.
+            if tmemn not in {'IVOL', ''}:
+                continue
+            if sgrpn == 'OFLOW' and dat.SVOL == 'RCHRES':
+                tmemn = 'IVOL'
+                smemn = 'OVOL'
+                sgrpn = 'HYDR'
+            if sgrpn == 'ROFLOW' and dat.SVOL == 'RCHRES':
+                tmemn = 'IVOL'
+                smemn = 'ROVOL'
+                sgrpn = 'HYDR'
+
+            path = f'RESULTS/{x.SVOL}_{x.SVOLNO}/{sgrpn}'
+            data = f'{smemn}{smemsb}'
+
+            t = factor * store[path][data].astype(float64).to_numpy()
+            if tmemn in ts:
+                ts[tmemn] += t
+            else:
+                ts[tmemn] = t
+    return
 
 
-if __name__ == '__main__':
-    main()
+'''
+
+    # This table defines the expansion to INFLOW, ROFLOW, OFLOW for RCHRES networks
+    d = [
+        ['IVOL',  'ROVOL',  'OVOL',  'HYDRFG', 'HYDR'],
+        ['ICON',  'ROCON',  'OCON',  'CONSFG', 'CONS'],
+        ['IHEAT', 'ROHEAT', 'OHEAT', 'HTFG',   'HTRCH'],
+        ['ISED',  'ROSED',  'OSED',  'SEDFG',  'SEDTRN'],
+        ['IDQAL', 'RODQAL', 'ODQAL', 'GQALFG', 'GQUAL'],
+        ['ISQAL', 'ROSQAL', 'OSQAL', 'GQALFG', 'GQUAL'],
+        ['OXIF',  'OXCF1',  'OXCF2', 'OXFG',   'OXRX'],
+        ['NUIF1', 'NUCF1',  'NUCF1', 'NUTFG',  'NUTRX'],
+        ['NUIF2', 'NUCF2',  'NUCF9', 'NUTFG',  'NUTRX'],
+        ['PKIF',  'PKCF1',  'PKCH2', 'PLKFG',  'PLANK'],
+        ['PHIF',  'PHCF1',  'PHCF2', 'PHFG',   'PHCARB']]
+    df = pd.DataFrame(d, columns=['INFLOW', 'ROFLOW', 'OFLOW', 'Flag', 'Name'])
+    df.to_hdf(h2name, '/FLOWEXPANSION', format='t', data_columns=True)
+
+'''
