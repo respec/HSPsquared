@@ -1,1 +1,0 @@
-HSPF version 12.2 used in this HSP2 conversion. Not all features include - yet.
