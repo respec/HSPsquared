@@ -1,3 +1,6 @@
+This branch is the development version of HSP2 for Python3 --
+The info below will be updated.
+
 HSP2, Hydrologic Simulation Program Python (HSPsquared)
 =======================================================
 HSPsquared or HSP2 is a Python version of HSPF. Currently it supports the major
