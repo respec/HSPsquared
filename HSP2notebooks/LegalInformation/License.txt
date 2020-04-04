@@ -1,7 +1,0 @@
-HSP2 and Tutorials are Copyright 2017 by RESPEC, INC.
-
-
-HSP2 is released with the GNU AFFERO General Public License.  For details of this license see: https://www.gnu.org/licenses/agpl-3.0.en.html
-
-
-
