@@ -1,3 +1,8 @@
+''' Copyright (c) 2020 by RESPEC, INC.
+Author: Robert Heaphy, Ph.D.
+License: LGPL2
+'''
+
 from struct import unpack
 from numpy import fromfile, reshape, datetime64, timedelta64, empty
 from pandas import DataFrame
@@ -12,7 +17,7 @@ def read_HBN(hbnfile, hdffile):
     if data[0] != 0xFD:
         print('BAD HBN FILE - must start with magic number 0xFD')
         return
-    
+
     # Build layout maps of the file's contents
     map = {}
     mapf = defaultdict(list)
@@ -26,36 +31,36 @@ def read_HBN(hbnfile, hdffile):
         reclen  = reclen >> 2
         optype  = optype.decode().strip()  # Python3 converts to bytearray not string
         section = section.decode().strip()
-        
+
         if rectype:
             level = unpack('I', data[index+32 : index+36])[0]  # 28 + 4
-            mapf[(optype, lue, section, level)].append(index)            
+            mapf[(optype, lue, section, level)].append(index)
         else:
             map[(optype, lue, section)] = (index, reclen)
         index += reclen + 6
-    
+
     # For each mapf key, use map to extract floating point values. Save to HDF5 file
     for optype, lue, section, level in mapf.keys():
         index, reclen = map[(optype, lue, section)]
-        
+
         # field names are concatenation of length, string pairs.  Use trick to ignore lengths.
-        fields = ''.join([' ' if chr(y) < 'A' else chr(y) for y in data[index+28:index+reclen+4]]).split()  # 4 ??? why   
+        fields = ''.join([' ' if chr(y) < 'A' else chr(y) for y in data[index+28:index+reclen+4]]).split()  # 4 ??? why
         nfields = len(fields)
-        
+
         dindex = mapf[(optype, lue, section, level)]
         d = empty(len(dindex) * nfields)      # preallocate for speed, just like MATLAB
         t = empty(len(dindex)).astype('datetime64[ns]')
 
-        findex = 0  
+        findex = 0
         tindex = 0
         for di in dindex:
             yr, mo, dy, hr, mn = unpack('5I', data[di+36 : di+56])  # 28 + 8
             t[tindex] = todatetime64(yr, mo, dy, hr)
             tindex += 1
-            
+
             d[findex:findex+nfields] = unpack(f'{nfields}f', data[di+56:di+56+nfields*4])
             findex += nfields
-            
+
         # fix duplicate names in DataFrame (from nexits for example)
         cnts = Counter(fields)
         copy = cnts.copy()
@@ -67,7 +72,7 @@ def read_HBN(hbnfile, hdffile):
             else:
                 temp.append(x+str(count))
                 cnts[x] -= 1
-                   
+
         d = reshape(d, (len(dindex), nfields))
         df = DataFrame(d, index=t, columns=reversed(temp)).astype('float32')
         df.to_hdf(hdffile, f'/RESULTS{tcodes[level]}/{optype}/{section}/{optype[0]}{lue:03d}')
