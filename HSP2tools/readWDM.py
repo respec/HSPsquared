@@ -1,3 +1,8 @@
+''' Copyright (c) 2020 by RESPEC, INC.
+Author: Robert Heaphy, Ph.D.
+License: LGPL2
+'''
+
 import numpy as np
 import pandas as pd
 from numba import jit
