@@ -13,9 +13,23 @@ The Tutorials will be replaced soon as they are tested with the new code.
 
 Major development of the water quality modules is currently ongoing.  Please look for future announcements as they become available.
 
-INSTALLATION INSTRUCTIONS
+
+Repository Directories
+============================
+**HSP2** contains the hydrology codes converted from HSPF and the main programs
+to run HSP2.
+
+**HSP2notebooks** contains tutorials and useful Juptyer Notebooks.
+
+**HSP2tools** contains supporting software modules such as the code to convert
+legacy WDM and UCI files to HDF5 files for HSP2, and to provide additional new
+and legacy capabilities.
+
+
+Installation Instructions
 =========================
-HSP2 utilizes Python 3.7. For a quick installation, we recommend you begin by installing
+HSP2 has been developed for Python 3.6, 3.7 and 3.8.
+For a quick installation, we recommend you begin by installing
 the Python 3.7 version of Ananconda Individual Edition (https://www.anaconda.com/distribution).
 
 A quick overview of the installation process is provided below. A full and more detailed guide
