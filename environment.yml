@@ -1,0 +1,14 @@
+name: hsp2_limno
+channels:
+  - conda-forge
+  - https://conda.anaconda.org/conda-forge
+  - defaults
+dependencies:
+  - jupyterlab
+  - numba
+  - numpy
+  - pandas>=1.0.0
+  - pip
+  - python>=3.8.0
+  - pip:
+    - tables
