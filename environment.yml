@@ -1,4 +1,4 @@
-name: hsp2_limno
+name: hsp2_py37
 channels:
   - conda-forge
   - https://conda.anaconda.org/conda-forge
@@ -9,6 +9,6 @@ dependencies:
   - numpy
   - pandas>=1.0.0
   - pip
-  - python>=3.8.0
+  - python>=3.7.0
   - pip:
     - tables
