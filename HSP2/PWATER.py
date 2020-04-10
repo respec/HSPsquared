@@ -7,7 +7,7 @@ Conversion of HSPF HPERWAT.FOR into Python
 from numpy import zeros, ones, sqrt, array, full, nan, argmax, int64
 from math import log, exp
 from numba import njit
-from utilities import initm, hourflag, hoursval, make_numba_dict
+from HSP2.utilities import initm, hourflag, hoursval, make_numba_dict
 
 MAXLOOPS  = 100      # newton method max loops
 TOLERANCE = 0.01     # newton method exit tolerance
@@ -168,7 +168,6 @@ def _pwater_(ui, ts):
     CEPSC  = ts['CEPSC']
     DEEPFR = ts['DEEPFR']
     IFWLI  = ts['IFWLI']
-    INFFAC = ts['INFFAC']
     INFILT = ts['INFILT'] * delt60        # convert to internal units
     INTFW  = ts['INTFW']
     IRC    = ts['IRC']
@@ -206,7 +205,7 @@ def _pwater_(ui, ts):
     ifwk2 = nan
     ifwk1 = nan
 
-    # MASTER step
+    # MASTER lOOP
     for step in range(steps):
         oldmsupy = msupy
 
@@ -229,7 +228,6 @@ def _pwater_(ui, ts):
             airtmp = AIRTMP[step]
             petmax = PETMAX[step]
             petmin = PETMIN[step]
-
             snocov = SNOCOV[step]
             SUPY[step] = RAINF[step] * (1.0 - snocov) + WYIELD[step]
             if hrfg:
@@ -259,7 +257,7 @@ def _pwater_(ui, ts):
             ceps = cepsc
         # END ICEPT
 
-       # in PWATRX
+        # in PWATRX
         suri  = cepo + SURLI[step]                # surface inflow
         msupy = suri + surs + irrappV[2]
         lzrat = lzs / lzsn   # determine the current value of the lower zone storage ratio
@@ -464,9 +462,8 @@ def _pwater_(ui, ts):
         elif agws > 1.0e-20:
             agwo = kgw * agws  # enough water to have outflow
 
-        if agwo < 0.0:     #??? DEBUG ???
-            errors[8] += 1    #ERRMSG8: Reset AGWS to zero
-            agwo = 0.0     #??? DEGUB ???
+        if agwo < 0.0:
+            agwo = 0.0
 
         # no remaining water - this should happen only with hwtfg=1 it may
         # happen from lateral inflows, which is a bug, in which case negative
