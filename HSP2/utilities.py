@@ -142,8 +142,8 @@ def initm(siminfo, ui, flag, monthly, default):
         return full(siminfo['steps'], default)
 
 
-def versions(import_list):
-    '''prints versions of libraries in import_lint as a pandas Dataframe'''
+def versions(import_list=[]):
+    '''prints versions of libraries in import_list as a pandas Dataframe'''
     import sys
     import platform
     import pandas
@@ -152,6 +152,7 @@ def versions(import_list):
 
     names = ['Python']
     data  = [sys.version]
+    import_list = ['HSP2', 'numpy', 'numba', 'pandas'] + list(import_list)
     for import_ in import_list:
         imodule = importlib.import_module(import_)
         names.append(import_)
