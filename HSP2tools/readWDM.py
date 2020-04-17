@@ -1,5 +1,7 @@
 ''' Copyright (c) 2020 by RESPEC, INC.
 Author: Robert Heaphy, Ph.D.
+
+Based on MATLAB program by Seth Kenner, RESPEC
 License: LGPL2
 '''
 
@@ -21,7 +23,7 @@ attrinfo = {1:('TSTYPE','S',4),     2:('STAID','S',16),    11:('DAREA','R',1),
 
 freq = {7:'100YS', 6:'YS', 5:'MS', 4:'D', 3:'H', 2:'min', 1:'S'}   # pandas date_range() frequency by TCODE, TGROUP
 
-def read_WDM(wdmfile, hdffile):
+def readWDM(wdmfile, hdffile):
     iarray = np.fromfile(wdmfile, dtype=np.int32)
     farray = np.fromfile(wdmfile, dtype=np.float32)
 
@@ -39,6 +41,8 @@ def read_WDM(wdmfile, hdffile):
         print('PROGRAM ERROR, wrong number of DSN records found')
 
     with pd.HDFStore(hdffile) as store:
+        summary = []
+        summaryindx = []
         for index in dsnlist:
             # get layout information for TimeSeries Dataset frame
             dsn   = iarray[index+4]
@@ -98,21 +102,17 @@ def read_WDM(wdmfile, hdffile):
             ## Write to HDF5 file
             series = pd.Series(floats[:findex], index=tindex[:findex])
             dsname = f'TIMESERIES/TS{dsn:03d}'
-
-            print(dsn, str(tindex[0]), str(tindex[-1]), str(tstep) + freq[tcode], len(series))
-
             store.put(dsname, series)
 
-            '''
-            dattr['start_date']  = str(tindex[0])
-            dattr['stop_date']   = str(tindex[-1])
-            dattr['freq']        = str(tstep) + freq[tcode]
-            dattr['dsn']         = dsn
+            summaryindx.append(dsname[11:])
+            summary.append((str(tindex[0]), str(tindex[-1]), str(tstep) + freq[tcode],
+             len(series), dattr['TSTYPE'], dattr['TFILL'], dattr['STAID'],
+             dattr['STNAM']))
 
-            for nam, atr in dattr.items():
-                store.get_storer(dsname).attrs['nam'] = atr
-            #store.get_storer(dsname).attrs.metadata = dattr
-            '''
+        dfsummary = pd.DataFrame(summary, index=summaryindx, columns=('start',
+         'stop', 'Freq', 'length', 'TSTYPE', 'TFILL', 'STAID', 'STNAM'))
+        store.put('TIMESERIES/SUMMARY',dfsummary, format='t', data_columns=True)
+    return dfsummary
 
 
 def todatetime(yr=1900, mo=1, dy=1, hr=0):

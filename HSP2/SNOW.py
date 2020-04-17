@@ -1,20 +1,22 @@
 ''' Copyright (c) 2020 by RESPEC, INC.
 Author: Robert Heaphy, Ph.D.
 License: LGPL2
-Conversion of HSPF 12.2 HPERSNO module into Python'''
-
-'''  TODO
-if icefg and delt > 360: print errormsg
-vkmfg == 1 =? KMELT_M available
-airtfg == 0:  AIRTMP available
-snopfg == 0: dtmpg available
-snopfg == 0: WINMOV and SOLRAD available
+Conversion of HSPF 12.2 HPERSNO module into Python
 '''
+
+
+'''
+pack, pakin, pakdif not saved since trival recalulation from saved data
+    pack = packf + packw
+    pakin = snowf + prain
+    pakdif = pakin - (snowe + wyield)
+'''
+
 
 from numpy import zeros, ones, full, nan, int64
 from math import sqrt, floor
 from numba import njit
-from utilities import hourflag, monthval, hoursval, make_numba_dict
+from HSP2.utilities import hourflag, monthval, hoursval, make_numba_dict
 
 ERRMSGS = ('Snow simulation cannot function properly with delt> 360',   #ERRMSG0
  )
@@ -64,7 +66,7 @@ def snow(store, siminfo, uci, ts):
     errors = _snow_(ui, ts)
     ############################################################################
 
-    if siminfo['delt'] > 360:
+    if siminfo['delt'] > 360 and int(siminfo['ICEFLG']):
         errors[0] += 1
 
     return errors, ERRMSGS
@@ -397,13 +399,6 @@ def _snow_(ui, ts):
         else:
             melt = 0.0
 
-        '''# back to PSNOW
-        if sumht > packf:
-            packi  = 0.0
-        elif sumht > 0.0 and packi > packf :
-            packi = packf
-        '''
-
         # LIQUID
         if iregfg and packf > 0.0:
             rdenpf = packf / pdepth
@@ -510,11 +505,6 @@ def _snow_(ui, ts):
         SNOWF[step]  = snowf
         WYIELD[step] = wyield
         XLNMLT[step] = xlnmlt
-
-        # pack, pakin, pakdif not saved since trival recalulation from saved data
-        #    pack = packf + packw
-        #    pakin = snowf + prain
-        #    pakdif = pakin - (snowe + wyield)
     return errors
 
 

@@ -11,7 +11,7 @@ from numba.typed import Dict
 from collections import defaultdict
 from datetime import datetime as dt
 import os
-from utilities import transform, versions
+from HSP2.utilities import transform, versions
 
 def noop (store, siminfo, ui, ts):
     ERRMSGS = []
@@ -19,11 +19,11 @@ def noop (store, siminfo, ui, ts):
     return errors, ERRMSGS
 
 # new activity modules must be added here and in *activites* below
-from ATEMP  import atemp
-from SNOW   import snow
-from PWATER import pwater
-from IWATER import iwater
-from HYDR   import hydr
+from HSP2.ATEMP  import atemp
+from HSP2.SNOW   import snow
+from HSP2.PWATER import pwater
+from HSP2.IWATER import iwater
+from HSP2.HYDR   import hydr
 
 # Note: This is the ONLY place in HSP2 that defines activity execution order
 activities = {
@@ -37,7 +37,18 @@ activities = {
      'PHCARB':noop}}
 
 
-def main(hdfname, saveall=False):          # primary HSP2 highest level routine
+def main(hdfname, saveall=False):
+    '''Runs main HSP2 program.
+
+    Parameters
+    ----------
+    hdfname: str
+        HDF5 (path) filename used for both input and output.
+    saveall: Boolean
+        [optional] Default is False.
+        Saves all calculated data ignoring SAVE tables.
+    '''
+
     if not os.path.exists(hdfname):
         print(f'{hdfname} HDF5 File Not Found, QUITTING')
         return
@@ -55,7 +66,7 @@ def main(hdfname, saveall=False):          # primary HSP2 highest level routine
         for _, operation, segment, delt in opseq.itertuples():
             msg(2, f'{operation} {segment} DELT(minutes): {delt}')
             siminfo['delt']      = delt
-            siminfo['tindex']    = date_range(start, stop, freq=Minute(delt))
+            siminfo['tindex']    = date_range(start, stop, freq=Minute(delt))[0:-1]
             siminfo['steps']     = len(siminfo['tindex'])
 
             # now conditionally execute all activity modules for the op, segment
@@ -78,13 +89,12 @@ def main(hdfname, saveall=False):          # primary HSP2 highest level routine
                     if errorcnt > 0:
                         msg(4, f'Error count {errorcnt}: {errormsg}')
                 save_timeseries(store,ts,ui['SAVE'],siminfo,saveall,operation,segment,activity)
-
-        # print Done message with timing and write logfile to HDF5 file
         msglist = msg(1, 'Done', final=True)
+
         df = DataFrame(msglist, columns=['logfile'])
         df.to_hdf(store, 'RUN_INFO/LOGFILE', data_columns=True, format='t')
 
-        df = versions(['jupyterlab', 'notebook', 'numpy', 'numba', 'pandas'])
+        df = versions(['jupyterlab', 'notebook'])
         df.to_hdf(store, 'RUN_INFO/VERSIONS', data_columns=True, format='t')
         print('\n\n', df)
     return
