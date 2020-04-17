@@ -7,7 +7,7 @@ Conversion of HSPF HIMPWAT.FOR module into Python'''
 from numpy import zeros, ones, full, nan, int64
 from math import sqrt
 from numba import njit
-from utilities import hourflag, hoursval, initm, make_numba_dict
+from HSP2.utilities import hourflag, hoursval, initm, make_numba_dict
 
 MAXLOOPS  = 100      # newton method max steps
 TOLERANCE = 0.01     # newton method exit tolerance
@@ -22,6 +22,11 @@ def iwater(store, siminfo, uci, ts):
        general is a dictionary with simulation level infor (OP_SEQUENCE for example)
        ui is a dictionary with ILS specific HSPF UCI like data
        ts is a dictionary with ILS specific timeseries'''
+
+    # WATIN, WATDIF, IMPS not saved since trival calculation from saved data
+    #    WATIN  = SUPY + SURLI
+    #    WATDIF = WATIN - (SURO + IMPEV)
+    #    IMPS   = RETS + SURS
 
     steps   = siminfo['steps']                  # number of simulation points
 
@@ -252,12 +257,6 @@ def _iwater_(ui, ts):
             SURI[step] = suri
             SURS[step] = surs
             SURO[step] = suro
-
-    # done with steping
-    # WATIN, WATDIF, IMPS not saved since trival calculation from saved data
-    #    WATIN  = SUPY + SURLI
-    #    WATDIF = WATIN - (SURO + IMPEV)
-    #    IMPS   = RETS + SURS
     return errors
 
 

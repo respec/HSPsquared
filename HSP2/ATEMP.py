@@ -6,7 +6,7 @@ Conversion of HSPF HPERAIR.FOR module. '''
 
 from numba import njit
 from numpy import empty, zeros, int64
-from utilities import hoursval, make_numba_dict
+from HSP2.utilities import hoursval, make_numba_dict
 
 ERRMSGS = ()
 

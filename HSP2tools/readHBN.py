@@ -1,5 +1,7 @@
 ''' Copyright (c) 2020 by RESPEC, INC.
 Author: Robert Heaphy, Ph.D.
+
+Based on MATLAB program by Seth Kenner, RESPEC
 License: LGPL2
 '''
 
@@ -11,7 +13,7 @@ from collections import defaultdict, Counter
 
 tcodes = {1:'_Minutely', 2:'_Hourly', 3:'_Daily', 4:'_Monthly', 5:'_Yearly'}
 
-def read_HBN(hbnfile, hdffile):
+def readHBN(hbnfile, hdffile):
     ''' Extracts all data in hbnfile and saves to HDF5 file'''
     data = fromfile(hbnfile, 'B')
     if data[0] != 0xFD:
