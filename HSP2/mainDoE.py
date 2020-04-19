@@ -11,6 +11,7 @@ from numba.typed import Dict
 from collections import defaultdict
 from datetime import datetime as dt
 import os
+from copy import deepcopy
 from HSP2.utilities import transform, versions
 
 def noop (store, siminfo, ui, ts):
@@ -37,17 +38,73 @@ activities = {
      'PHCARB':noop}}
 
 
-def main(hdfname, saveall=False):
-    '''Runs main HSP2 program.
+def main(hdfname, doe, doename='DOE_RESULTS', saveall=False):
+    '''
+    Runs main HSP2 program with a Design of Experiments.
 
     Parameters
     ----------
-    hdfname: str
-        HDF5 (path) filename used for both input and output.
+    hdfname: string
+        HDF5 filename used for both input and output.
+    doe : List of run lines. Best explaned by example:
+        doe = [
+         [1, 'PERLND/PWATER/PARAMETERS', 'P001', 'FOREST', 0.02],
+         [1, 'PERLND/PWATER/PARAMETERS', 'P001', 'INFILT', 0.15],
+         [2, 'PERLND/PWATER/PARAMETERS', 'P001', 'FOREST', 0.01],
+         [2, 'PERLND/PWATER/PARAMETERS', 'P001', 'INFILT', 0.20],
+         [3, 'PERLND/PWATER/PARAMETERS', 'P001', 'FOREST', 0.02],
+         [3, 'PERLND/PWATER/PARAMETERS', 'P001', 'INFILT', 0.15],
+         [4, 'PERLND/PWATER/PARAMETERS', 'P001', 'FOREST', 0.01],
+         [4, 'PERLND/PWATER/PARAMETERS', 'P001', 'INFILT', 0.20],
+
+         [5, 'PERLND/PWATER/PARAMETERS', 'P001', 'INFILT', 0.05],
+         [6, 'PERLND/PWATER/PARAMETERS', 'P001', 'INFILT', 0.10],
+         [7, 'PERLND/PWATER/PARAMETERS', 'P001', 'INFILT', 0.15],
+         [8, 'PERLND/PWATER/PARAMETERS', 'P001', 'INFILT', 0.20],
+         [9, 'PERLND/PWATER/PARAMETERS', 'P001', 'INFILT', 0.25],
+
+         [10, 'PERLND/SNOW/PARAMETERS', 'P001', 'MWATER', 0.09],
+         [10, 'IMPLND/SNOW/PARAMETERS', 'I001', 'MWATER', 0.09],
+
+         [11, 'PERLND/SNOW/PARAMETERS',   'P001', 'MWATER', 0.07],
+         [11, 'PERLND/PWATER/PARAMETERS', 'P001', 'FOREST', 0.02],
+
+         [12, 'PERLND/PWATER/MONTHLY/CEPSC', 'P001', 'MAR', 0.04],
+         [13, 'PERLND/PWATER/MONTHLY/CEPSC', 'P001', 'MAY', 0.05],
+
+         [14, 'PERLND/SNOW/PARAMETERS', 'P001', 'MWATER', 0.09],
+         [14, 'IMPLND/SNOW/PARAMETERS', 'I001', 'MWATER', 0.09],
+
+         [14, 'PERLND/SNOW/FLAGS', 'P001', 'ICEFG', 0],
+         [14, 'IMPLND/SNOW/FLAGS', 'I001', 'ICEFG', 0],
+         [15, 'PERLND/SNOW/FLAGS', 'P001', 'ICEFG', 1],
+         [15, 'IMPLND/SNOW/FLAGS', 'I001', 'ICEFG', 1]]
+
+
+        Each line has the stucture:
+         [runnumber, pathtodatatable, segment, name, value]
+        All lines with the same runnumber are combined in that run.
+        The original UCI dictionary is used at the start of each run.
+
+    doename : string, optional
+        Prefix for all run results.
+        The default is 'DOE_RESULTS'.
+        Resulting HDF5 structure is
+            'DOE_RESULTS'
+                RUN1
+                    (contents like normal /RESULTS with parameters from first line of DOE)
+                ***
+                RUNx
+                    (contents like norma /RESULTS with parameters from the x line of DOE)
     saveall: Boolean
         [optional] Default is False.
         Saves all calculated data ignoring SAVE tables.
+
+    Returns
+    -------
+    None.
     '''
+
 
     if not os.path.exists(hdfname):
         print(f'{hdfname} HDF5 File Not Found, QUITTING')
@@ -58,39 +115,54 @@ def main(hdfname, saveall=False):
         msg(1, f'Processing started for file {hdfname}')
 
         # read user control, parameters, states, and flags  from HDF5 file
-        opseq, ddlinks, ddmasslinks, ddext_sources, uci, siminfo = get_uci(store)
+        opseq, ddlinks, ddmasslinks, ddext_sources, ucioriginal, siminfo = get_uci(store)
         start, stop = siminfo['start'], siminfo['stop']
+
+        # construct dictionary parallel in form to uciorginal from doe
+        rundict = make_runlist(store, doe, doename)
 
         # main processing loop
         msg(1, f'Simulation Start: {start}, Stop: {stop}')
-        for _, operation, segment, delt in opseq.itertuples():
-            msg(2, f'{operation} {segment} DELT(minutes): {delt}')
-            siminfo['delt']      = delt
-            siminfo['tindex']    = date_range(start, stop, freq=Minute(delt))[0:-1]
-            siminfo['steps']     = len(siminfo['tindex'])
+        for run in rundict:
+            msg(2, f'Starting Run {run}')
+            savepath = f'{doename}/RUN{run}'
 
-            # now conditionally execute all activity modules for the op, segment
-            ts = get_timeseries(store,ddext_sources[(operation,segment)],siminfo)
-            flags = uci[(operation, 'GENERAL', segment)]['ACTIVITY']
-            for activity, function in activities[operation].items():
-                if function == noop or not flags[activity]:
-                    continue
+            uci = deepcopy(ucioriginal)
+            for _, operation, segment, delt in opseq.itertuples():
+                msg(3, f'{operation} {segment} DELT(minutes): {delt}')
+                siminfo['delt']      = delt
+                siminfo['tindex']    = date_range(start, stop, freq=Minute(delt))[0:-1]
+                siminfo['steps']     = len(siminfo['tindex'])
 
-                msg(3, f'{activity}')
-                if operation == 'RCHRES':
-                    get_flows(store,ts,activity,segment,ddlinks,ddmasslinks)
-                ui = uci[(operation, activity, segment)] # ui is a dictionary
+                # now conditionally execute all activity modules for the op, segment
+                ts = get_timeseries(store,ddext_sources[(operation,segment)],siminfo)
+                flags = uci[(operation, 'GENERAL', segment)]['ACTIVITY']
+                for activity, function in activities[operation].items():
+                    if function == noop or not flags[activity]:
+                        continue
 
-                ############ calls activity function like snow() ##############
-                errors, errmessages = function(store, siminfo, ui, ts)
-                ###############################################################
+                    msg(4, f'{activity}')
+                    if operation == 'RCHRES':
+                        get_flows(store,ts,activity,segment,ddlinks,ddmasslinks)
+                    ui = uci[operation, activity, segment] # ui is a dictionary
 
-                for errorcnt, errormsg in zip(errors, errmessages):
-                    if errorcnt > 0:
-                        msg(4, f'Error count {errorcnt}: {errormsg}')
-                save_timeseries(store,ts,ui['SAVE'],siminfo,saveall,operation,segment,activity)
+                    # update deep copy of UCI dict with run dict
+                    ruci = rundict[run]
+                    if (operation, activity, segment) in ruci:
+                        for table in ruci[operation, activity, segment]:
+                            ui[table].update(ruci[operation, activity, segment][table])
+
+                    ############ calls activity function like snow() ##############
+                    errors, errmessages = function(store, siminfo, ui, ts)
+                    ###############################################################
+
+                    for errorcnt, errormsg in zip(errors, errmessages):
+                        if errorcnt > 0:
+                            msg(5, f'Error count {errorcnt}: {errormsg}')
+                    save_timeseries(store,ts,ui['SAVE'],siminfo,saveall,operation,segment,activity, savepath)
+
+        # print Done message with timing and write logfile to HDF5 file
         msglist = msg(1, 'Done', final=True)
-
         df = DataFrame(msglist, columns=['logfile'])
         df.to_hdf(store, 'RUN_INFO/LOGFILE', data_columns=True, format='t')
 
@@ -149,6 +221,23 @@ def get_uci(store):
     return opseq, ddlinks, ddmasslinks, ddext_sources, uci, siminfo
 
 
+def make_runlist(store, doe, doename):
+    df = DataFrame(doe, columns=['Run', 'DataPath', 'Segment', 'Name', 'Value'])
+    df.to_hdf(store, f'{doename}/DoE', format='t', data_columns=True
+             )
+    rundict = defaultdict(defaultdict)
+    for line in doe:
+        run, path, segment, name, value = line[:]
+        operation, module, *temp = path.split(sep='/', maxsplit=3)
+        table = '_'.join(temp)
+        runstr = f'Run{run}'
+
+        if (operation, module, segment) not in rundict[runstr]:
+            rundict[runstr][operation, module, segment] = defaultdict(dict)
+        rundict[runstr][operation, module, segment][table]  [name] = value
+    return rundict
+
+
 def get_timeseries(store, ext_sourcesdd, siminfo):
     ''' makes timeseries for the current timestep and trucated to the sim interval'''
     # explicit creation of Numba dictionary with signatures
@@ -167,7 +256,7 @@ def get_timeseries(store, ext_sourcesdd, siminfo):
     return ts
 
 
-def save_timeseries(store, ts, savedict, siminfo, saveall, operation, segment, activity):
+def save_timeseries(store, ts, savedict, siminfo, saveall, operation, segment, activity,savepath):
     # save computed timeseries (at computation DELT)
     save = {k for k,v in savedict.items() if v or saveall}
     df = DataFrame(index=siminfo['tindex'])
@@ -175,7 +264,7 @@ def save_timeseries(store, ts, savedict, siminfo, saveall, operation, segment, a
         df[y] = ts[y]
     df = df.astype('float32').sort_index(axis='columns')
 
-    path = f'/RESULTS/{operation}_{segment}/{activity}'
+    path = f'{savepath}/RESULTS/{operation}_{segment}/{activity}'
     df.to_hdf(store, path, data_columns=True, format='t')
     return
 
