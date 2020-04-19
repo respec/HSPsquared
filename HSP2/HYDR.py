@@ -7,7 +7,6 @@ Conversion of no category version of HSPF HRCHHYD.FOR into Python'''
 ''' Development Notes:
   Categories not implimented in this version
   Irregation only partially implimented in this version
-  COLIND, OUTDGT wrong if multiple timeseries in one WDM array
   Only English units currently supported
 '''
 
@@ -16,7 +15,8 @@ from numpy import zeros, any, full, nan, array, int64
 from pandas import DataFrame
 from math import sqrt, log10
 from numba import njit
-from utilities import initm, make_numba_dict
+from numba.typed import List
+from HSP2.utilities import initm, make_numba_dict
 
 
 ERRMSGS =('HYDR: SOLVE equations are indeterminate',             #ERRMSG0
@@ -65,14 +65,14 @@ def hydr(store, siminfo, uci, ts):
     names = list(sorted([n for n in ts if n.startswith('COLIND')], reverse=True))
     df = DataFrame()
     for i,c in enumerate(ODFVF):
-        df[i] = ts[names.pop()] if c < 0 else full(steps, c)
+        df[i] = ts[names.pop()][0:steps] if c < 0 else full(steps, c)
     COLIND = df.to_numpy()
 
     # OUTDGT timeseries might come in as OUTDGT, OUTDGT0, etc. otherwise UCI default
     names = list(sorted([n for n in ts if n.startswith('OUTDG')], reverse=True))
     df = DataFrame()
     for i,c in enumerate(ODGTF):
-        df[i] = ts[names.pop()] if c > 0 else full(steps, c)
+        df[i] = ts[names.pop()][0:steps] if c > 0 else full(steps, c)
     OUTDGT = df.to_numpy()
 
     # generic SAVE table doesn't know nexits for output flows and rates
@@ -107,15 +107,24 @@ def hydr(store, siminfo, uci, ts):
     ui['errlen'] = len(ERRMSGS)
     ui['nrows']  = rchtab.shape[0]
 
+    # Numba can't do 'O' + str(i) stuff yet, so do it here. Also need new style lists
+    Olabels = List()
+    OVOLlabels = List()
+    for i in range(nexits):
+        Olabels.append(f'O{i+1}')
+        OVOLlabels.append(f'OVOL{i+1}')
+
     ############################################################################
-    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab.values, funct, ODGTF, ODFVF )                  # run reaches simulation code
+    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab.values, funct, ODGTF, ODFVF, Olabels, OVOLlabels )                  # run reaches simulation code
     ############################################################################
 
+    if '0'   in ts:  del ts['O']
+    if'OVOL' in ts:  del ts['OVOL']
     return errors, ERRMSGS
 
 
 @njit(cache=True)
-def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, ODGTF, ODFVF):
+def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, ODGTF, ODFVF, Olabels, OVOLlabels):
     errors = zeros(int(ui['errlen'])).astype(int64)
 
     steps  = int(ui['steps'])            # number of simulation steps
@@ -214,7 +223,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, ODGTF, ODFVF):
         outdgt[:] = OUTDGT[step, :]
         colind[:] = COLIND[step, :]
         roseff = ro
-        oseff[:] = o
+        oseff[:] = o[:]
 
         # vols, sas variables and their initializations  not needed.
         if irexit >= 0:             # irrigation exit is set, zero based number
@@ -304,7 +313,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, ODGTF, ODFVF):
                                 move   = 1
                                 indx  += 1
                                 vv1    = vv2
-                                od1[:] = od2
+                                od1[:] = od2[:]
                                 rod1   = rod2
                                 vv2    = volumeFT[indx+1]
                                 rod2,od2[:] = demand(vv2, rowsFT[indx+1,:], funct, nexits, delts, convf, colind, outdgt, ODGTF)
@@ -312,7 +321,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, ODGTF, ODFVF):
                             indx  -= 1
                             move   = -1
                             vv2    = vv1
-                            od2[:] = od1
+                            od2[:] = od1[:]
                             rod2   = rod1
                             vv1    = volumeFT[indx]
                             rod1,od1[:] = demand(vv1, rowsFT[indx,:], funct, nexits, delts, convf, colind, outdgt, ODGTF)
@@ -388,7 +397,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, ODGTF, ODFVF):
         # HYDR
         if nexits > 1:
             O[step,:]    = o[:]    * SFACTA * LFACTA
-            OVOL[step,:] = ovol[:] * SFACTA * LFACTA
+            OVOL[step,:] = ovol[:] * VFACTA
         PRSUPY[step] = prsupy * AFACTA
         RO[step]     = ro     * SFACTA * LFACTA
         ROVOL[step]  = rovol  * VFACTA
@@ -435,12 +444,9 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, ODGTF, ODFVF):
 
     # NUMBA limitation for ts, and saving to HDF5 file is in individual columns
     if nexits > 1:
-        # Numba can't do 'O' + str(i) stuff yet, so save more than enough strings
-        On = ('O1','O2','O3','O4','O5','O6','O7','O8','O9')
-        OVOLn = ('OVOL1','OVOL2','OVOL3','OVOL4','OVOL5','OVOL6','OVOL7','OVOL8','OVOL9')
         for i in range(nexits):
-            ts[On[i]]    = O[:,i]
-            ts[OVOLn[i]] = OVOL[:,i]
+            ts[Olabels[i]]    = O[:,i]
+            ts[OVOLlabels[i]] = OVOL[:,i]
     return errors
 
 

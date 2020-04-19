@@ -8,6 +8,9 @@ from pandas import Series, DataFrame, concat, HDFStore, set_option, to_numeric
 from pandas import Timestamp, Timedelta, read_hdf
 set_option('io.hdf.default_format', 'table')
 
+import os.path
+import HSP2tools
+
 
  # USERS may modify HSPF DataSets here
 Lapse = Series ([0.0035, 0.0035, 0.0035, 0.0035, 0.0035, 0.0035, 0.0037,
@@ -143,7 +146,8 @@ def get_parsedata(EnglishUnits=True):
 
         # iterate over file lines, but skip blank lines if any
         operation = filename.split('.')[0].upper()
-        with open(filename, 'r') as file:
+        datapath = os.path.join(HSP2tools.__path__[0], 'data', filename)
+        with open(datapath, 'r') as file:
             for line in file:
                 if not line.strip():  # Skip blank lines
                     continue
@@ -844,7 +848,7 @@ skip = {
 
 ops = {'PERLND','IMPLND','RCHRES'}
 conlike = {'CONS':'NCONS', 'PQUAL':'NQUAL', 'IQUAL':'NQUAL'}
-def read_UCI(uciname, hdfname):
+def readUCI(uciname, hdfname):
     parse, dsave = get_parsedata()
 
     # create defaults by op, table,item dict

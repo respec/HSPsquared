@@ -12,7 +12,21 @@ from numba.typed import Dict
 
 
 def make_numba_dict(uci):
-    ''' move UCI like data from uci dictionary to Numba dict '''
+    '''
+    Move UCI dictionary data to Numba dict for FLAGS, STATES, PARAMETERS.
+
+    Parameters
+    ----------
+    uci : Python dictionary
+        The uci dictionary contains xxxx.uci file data
+
+    Returns
+    -------
+    ui : Numba dictionary
+        Same content as uci except for strings
+
+    '''
+
     ui = Dict.empty(key_type=types.unicode_type, value_type=types.float64)
     for name in set(uci.keys()) & {'FLAGS', 'PARAMETERS', 'STATES'}:
         for key, value in uci[name].items():
@@ -142,8 +156,21 @@ def initm(siminfo, ui, flag, monthly, default):
         return full(siminfo['steps'], default)
 
 
-def versions(import_list):
-    '''prints versions of libraries in import_lint as a pandas Dataframe'''
+def versions(import_list=[]):
+    '''
+    Versions of libraries required by HSP2
+
+    Parameters
+    ----------
+    import_list : list of strings, optional
+        DESCRIPTION. The default is [].
+
+    Returns
+    -------
+    Pandas DataFrame
+        Libary verson strings.
+    '''
+
     import sys
     import platform
     import pandas
@@ -152,11 +179,12 @@ def versions(import_list):
 
     names = ['Python']
     data  = [sys.version]
+    import_list = ['HSP2', 'numpy', 'numba', 'pandas'] + list(import_list)
     for import_ in import_list:
         imodule = importlib.import_module(import_)
         names.append(import_)
         data.append(imodule.__version__)
     names.extend(['os', 'processor', 'Date/Time'])
     data.extend([platform.platform(), platform.processor(),
-                 str(datetime.datetime.now())[0:19]])
+      str(datetime.datetime.now())[0:19]])
     return pandas.DataFrame(data, index=names, columns=['version'])
