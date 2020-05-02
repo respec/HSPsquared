@@ -104,13 +104,20 @@ def readWDM(wdmfile, hdffile):
             dsname = f'TIMESERIES/TS{dsn:03d}'
             store.put(dsname, series)
 
-            summaryindx.append(dsname[11:])
-            summary.append((str(tindex[0]), str(tindex[-1]), str(tstep) + freq[tcode],
-             len(series), dattr['TSTYPE'], dattr['TFILL'], dattr['STAID'],
-             dattr['STNAM']))
+            data = [str(tindex[0]), str(tindex[-1]), str(tstep) + freq[tcode],
+             len(series),  dattr['TSTYPE'], dattr['TFILL']]
+            columns = ['Start', 'Stop', 'Freq','Length', 'TSTYPE', 'TFILL']
+            search = ['STAID', 'STNAM', 'SCENARIO', 'CONSTITUENT','LOCATION']
+            for x in search:
+                if x in dattr:
+                    data.append(dattr[x])
+                    columns.append(x)
 
-        dfsummary = pd.DataFrame(summary, index=summaryindx, columns=('start',
-         'stop', 'Freq', 'length', 'TSTYPE', 'TFILL', 'STAID', 'STNAM'))
+            summary.append(data)
+            summaryindx.append(dsname[11:])
+
+
+        dfsummary = pd.DataFrame(summary, index=summaryindx, columns=columns)
         store.put('TIMESERIES/SUMMARY',dfsummary, format='t', data_columns=True)
     return dfsummary
 

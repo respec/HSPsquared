@@ -50,13 +50,10 @@ def readHBN(hbnfile, hdfname):
         operation = operation.decode('ascii').strip()  # Python3 converts to bytearray not string
         activity  = activity.decode('ascii').strip()
 
-        if operation not in {'PERLND', 'IMPLND', 'RCHRES'}:
-            print('ALIGNMENT ERROR', operation)
-
-        if rectype==1:    # data record
+        if rectype:
             tcode = unpack('I', data[index+32 : index+36])[0]
-            mapd[operation, id, activity, tcode].append((index,reclen))
-        elif rectype == 0:  # data names record
+            mapd[operation, id, activity, tcode].append((index, reclen))
+        else:
             i = index + 28
             slen = 0
             while slen < reclen:
@@ -64,10 +61,7 @@ def readHBN(hbnfile, hdfname):
                 n  = unpack(f'{ln}s', data[i+slen+4 : i+slen+4+ln])[0].decode('ascii').strip()
                 mapn[operation, id, activity].append(n.replace('-',''))
                 slen += 4+ln
-        else:
-            print('UNKNOW RECTYPE', rectype)
         index += reclen + 30                        # found by trial and error
-
 
     summary = []
     summarycols = ['Operation', 'Activity', 'segment', 'Frequency', 'Shape', 'Start', 'Stop']
@@ -80,6 +74,12 @@ def readHBN(hbnfile, hdfname):
             yr,mo,dy,hr,mn = unpack('5I', data[index+36 : index+56 ])
             dt = datetime(yr,mo,dy,0,mn) + timedelta(hours=hr)
             times.append(dt)
+
+            calcn = int((reclen - 56)/4)
+            expnames = mapn[operation, id, activity]
+            if calcn < nvals:
+                print('NO STORAGE', calcn, nvals, expnames)
+
 
             index += 56
             row = unpack(f'{nvals}f', data[index:index+(4*nvals)])
