@@ -31,3 +31,4 @@ __pycache__/*
 stats.dat
 .ropeproject
 *.ipynb
+*.h5
