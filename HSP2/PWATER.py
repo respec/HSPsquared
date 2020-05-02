@@ -72,7 +72,10 @@ def pwater(store, siminfo, uci, ts):
     ui = make_numba_dict(uci)  # Note: all values coverted to float automatically
     ui['steps']  = siminfo['steps']
     ui['delt']   = siminfo['delt']
-    ui['ICEFG']  = siminfo['ICEFG']  # kludgw to make ICEFG available from SNOW to PWATER
+    if 'ICEFG' in siminfo:
+        ui['ICEFG']  = siminfo['ICEFG']  # kludgw to make ICEFG available from SNOW to PWATER
+    if 'ICEFG' not in ui:
+        ui['ICEFG'] = 0
     ui['errlen'] = len(ERRMSGS)
 
     ############################################################################

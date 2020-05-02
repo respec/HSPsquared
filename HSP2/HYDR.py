@@ -54,7 +54,7 @@ def hydr(store, siminfo, uci, ts):
        ts is a dictionary with RID specific timeseries'''
 
     steps   = siminfo['steps']                # number of simulation points
-    nexits  = uci['PARAMETERS']['NEXITS']
+    nexits  = int(uci['PARAMETERS']['NEXITS'])
 
     u = uci['PARAMETERS']
     funct  = array([u[name] for name in u.keys() if name.startswith('FUNCT')]).astype(int)[0:nexits]
@@ -118,8 +118,9 @@ def hydr(store, siminfo, uci, ts):
     errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab.values, funct, ODGTF, ODFVF, Olabels, OVOLlabels )                  # run reaches simulation code
     ############################################################################
 
-    if '0'   in ts:  del ts['O']
-    if'OVOL' in ts:  del ts['OVOL']
+    if 'O'    in ts:  del ts['O']
+    if 'OVOL' in ts:  del ts['OVOL']
+
     return errors, ERRMSGS
 
 

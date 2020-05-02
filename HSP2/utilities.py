@@ -44,38 +44,35 @@ def transform(ts, how, siminfo):
     NOTE: these routines work for both regular and sparse timeseries input
     '''
 
+    if not how:
+        how = 'SAME'
+
+    start, stop, steps = siminfo['start'], siminfo['stop'], siminfo['steps']
     freq = Minute(siminfo['delt'])
-    if ts.index.freq == freq and how == 'SAME':
-        return ts
+    if ts.index.freq == freq and ts.index[0] == start and ts.index[-1] <= stop:
+        return ts[0:steps]
 
     # need to append duplicate of last point to force processing last full interval
-    ts[ts.index[-1] + Timedelta(ts.index.freq)] = ts[-1]
+    if ts.index.freq in ('1M', '1MS'):
+        ts[ts.index[-1] + Timedelta('31D')] = ts[-1]
+    else:
+        ts[ts.index[-1] + Timedelta(ts.index.freq)] = ts[-1]
 
-    if how == 'MEAN':
-        return ts.resample(freq).mean()
-    elif how == 'SUM':
-        return ts.resample(freq).sum()
-    elif how == 'MAX':
-        return ts.resample(freq).max()
-    elif how == 'MIN':
-        return ts.resample(freq).min()
-
-    elif how == 'LAST':
-        return ts.resample(freq).ffill()
-    elif how == 'SAME':
-        return ts.resample(freq).ffill()
-
-    elif how == 'DIV':
-        ts = ts * (freq / ts.index.freq)
-        return ts.resample(freq).ffill()
-    elif how == 'ZEROFILL':
-        return ts.resample(freq).asfreq().fillna(0.0)
-    elif how == 'INTERPOLATE':
-        return ts.resample(r=freq).interpolate()
+    if how == 'MEAN':          ts = ts.resample(freq).mean()
+    elif how == 'SUM':         ts = ts.resample(freq).sum()
+    elif how == 'MAX':         ts = ts.resample(freq).max()
+    elif how == 'MIN':         ts = ts.resample(freq).min()
+    elif how == 'LAST':        ts = ts.resample(freq).ffill()
+    elif how == 'SAME':        ts = ts.resample(freq).ffill()
+    elif how == 'DIV':         ts = (ts * (freq / ts.index.freq)).resample(freq).ffill()
+    elif how == 'ZEROFILL':    ts = ts.resample(freq).fillna(0.0)
+    elif how == 'INTERPOLATE': ts = ts.resample(freq).interpolate()
 
     else:
         print(f'UNKNOWN method in TRANS, {how}')
         return zeros(1)
+
+    return ts[start:stop][0:steps]
 
 
 def hoursval(siminfo, hours24, dofirst=False, lapselike=False):
