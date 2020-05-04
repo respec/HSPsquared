@@ -185,8 +185,7 @@ def save_timeseries(store, ts, savedict, siminfo, saveall, operation, segment, a
     df = df.astype(float32).sort_index(axis='columns')
     path = f'/RESULTS/{operation}_{segment}/{activity}'
     if not df.empty:
-        store.put(path, df)
-        store.flush()
+        df.to_hdf(store, path, complib='blosc', complevel=9)
     else:
         print('Save DataFrame Empty for', path)
     return
