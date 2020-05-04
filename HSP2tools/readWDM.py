@@ -102,7 +102,7 @@ def readWDM(wdmfile, hdffile):
             ## Write to HDF5 file
             series = pd.Series(floats[:findex], index=tindex[:findex])
             dsname = f'TIMESERIES/TS{dsn:03d}'
-            store.put(dsname, series)
+            series.to_hdf(store, dsname, complib='blosc', complevel=9)
 
             data = [str(tindex[0]), str(tindex[-1]), str(tstep) + freq[tcode],
              len(series),  dattr['TSTYPE'], dattr['TFILL']]
