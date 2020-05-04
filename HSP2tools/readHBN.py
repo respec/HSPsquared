@@ -86,7 +86,7 @@ def readHBN(hbnfile, hdfname):
             rows.append(row)
         dfname = f'{operation}_{activity}_{id:03d}_{tcode}'
         df = DataFrame(rows, index=times, columns=mapn[operation,id,activity]).sort_index('index')
-        df.to_hdf(hdfname, dfname)
+        df.to_hdf(hdfname, dfname, complib='blosc', complevel=9)
 
         summaryindx.append(dfname)
         summary.append((operation, activity, str(id), tcodes[tcode], str(df.shape), df.index[0], df.index[-1]))
