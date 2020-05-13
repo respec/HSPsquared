@@ -257,13 +257,13 @@ def get_timeseries(store, ext_sourcesdd, siminfo):
 
         if row.MFACTOR != 1.0:
             temp1 *= row.MFACTOR
-        t = transform(temp1, row.TRAN, siminfo).to_numpy().astype(float64)
+        t = transform(temp1, row.TMEMN, row.TRAN, siminfo)
 
-        name = f'{row.TMEMN}{row.TMEMSB}'
-        if name in ts:
-            ts[name] += t
+        tname = f'{row.TMEMN}{row.TMEMSB}'
+        if tname in ts:
+            ts[tname] += t
         else:
-            ts[name]  = t
+            ts[tname]  = t
     return ts
 
 

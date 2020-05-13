@@ -8,6 +8,7 @@ Conversion of no category version of HSPF HRCHHYD.FOR into Python'''
   Categories not implimented in this version
   Irregation only partially implimented in this version
   Only English units currently supported
+  FTABLE can come from WDM or UCI file based on FTBDSN 1 or 0
 '''
 
 
@@ -61,6 +62,10 @@ def hydr(store, siminfo, uci, ts):
     ODGTF  = array([u[name] for name in u.keys() if name.startswith('ODGTF')]).astype(int)[0:nexits]
     ODFVF  = array([u[name] for name in u.keys() if name.startswith('ODFVF')]).astype(int)[0:nexits]
 
+    u = uci['STATES']
+    colin = array([u[name] for name in u.keys() if name.startswith('COLIN')]).astype(float)[0:nexits]
+    outdg = array([u[name] for name in u.keys() if name.startswith('OUTDG')]).astype(float)[0:nexits]
+
     # COLIND timeseries might come in as COLIND, COLIND0, etc. otherwise UCI default
     names = list(sorted([n for n in ts if n.startswith('COLIND')], reverse=True))
     df = DataFrame()
@@ -72,7 +77,7 @@ def hydr(store, siminfo, uci, ts):
     names = list(sorted([n for n in ts if n.startswith('OUTDG')], reverse=True))
     df = DataFrame()
     for i,c in enumerate(ODGTF):
-        df[i] = ts[names.pop()][0:steps] if c > 0 else full(steps, c)
+        df[i] = ts[names.pop()][0:steps] if c > 0 else zeros(steps)
     OUTDGT = df.to_numpy()
 
     # generic SAVE table doesn't know nexits for output flows and rates
@@ -96,9 +101,10 @@ def hydr(store, siminfo, uci, ts):
 
     # extract key columns of specified FTable for faster access (1d vs. 2d)
     rchtab = store[f"FTABLES/{uci['PARAMETERS']['FTBUCI']}"]
-    ts['volumeFT'] = rchtab['Volume'].values * VFACT
-    ts['depthFT']  = rchtab['Depth'].values
-    ts['sareaFT']  = rchtab['Area'].values   * AFACT
+    ts['volumeFT'] = rchtab['Volume'].to_numpy() * VFACT
+    ts['depthFT']  = rchtab['Depth'].to_numpy()
+    ts['sareaFT']  = rchtab['Area'].to_numpy()   * AFACT
+    rchtab = rchtab.to_numpy()
 
     ui = make_numba_dict(uci) # Note: all values coverted to float automatically
     ui['steps']  = steps
@@ -106,6 +112,7 @@ def hydr(store, siminfo, uci, ts):
     ui['nexits'] = nexits
     ui['errlen'] = len(ERRMSGS)
     ui['nrows']  = rchtab.shape[0]
+    ui['nodfv']  = any(ODFVF)
 
     # Numba can't do 'O' + str(i) stuff yet, so do it here. Also need new style lists
     Olabels = List()
@@ -114,9 +121,9 @@ def hydr(store, siminfo, uci, ts):
         Olabels.append(f'O{i+1}')
         OVOLlabels.append(f'OVOL{i+1}')
 
-    ############################################################################
-    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab.values, funct, ODGTF, ODFVF, Olabels, OVOLlabels )                  # run reaches simulation code
-    ############################################################################
+    ###########################################################################
+    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels)                  # run reaches simulation code
+    ###########################################################################
 
     if 'O'    in ts:  del ts['O']
     if 'OVOL' in ts:  del ts['OVOL']
@@ -125,7 +132,7 @@ def hydr(store, siminfo, uci, ts):
 
 
 @njit(cache=True)
-def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, ODGTF, ODFVF, Olabels, OVOLlabels):
+def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
     errors = zeros(int(ui['errlen'])).astype(int64)
 
     steps  = int(ui['steps'])            # number of simulation steps
@@ -144,7 +151,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, ODGTF, ODFVF, Olabels, OVOLlab
     depthFT  = ts['depthFT']
     sareaFT  = ts['sareaFT']
 
-    nodfv  = bool(any(ODFVF))
+    nodfv  = ui['nodfv']
     ks     = ui['KS']
     coks   = 1 - ks
     facta1 = 1.0 / (coks * delts)
@@ -197,13 +204,13 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, ODGTF, ODFVF, Olabels, OVOLlab
     if nodfv:  # simple interpolation, the hard way!!
         v1 = volumeFT[indx]
         v2 = volumeFT[indx+1]
-        rod1,od1[:] = demand(v1, rowsFT[indx,  :], funct, nexits, delts, convf, colind, outdgt, ODGTF)
-        rod2,od2[:] = demand(v2, rowsFT[indx+1,:], funct, nexits, delts, convf, colind, outdgt, ODGTF)
+        rod1,od1[:] = demand(v1, rowsFT[indx,  :], funct, nexits, delts, convf, colind, outdgt)
+        rod2,od2[:] = demand(v2, rowsFT[indx+1,:], funct, nexits, delts, convf, colind, outdgt)
         a1 = (v2 - vol) / (v2 - v1)
         o[:] = a1 * od1[:] + (1.0 - a1) * od2[:]
         ro   = (a1 * rod1) + ((1.0 - a1) * rod2)
     else:
-        ro,o[:] = demand(vol, rowsFT[indx,:], funct, nexits, delts, convf, colind, outdgt, ODGTF)  #$1159-1160
+        ro,o[:] = demand(vol, rowsFT[indx,:], funct, nexits, delts, convf, colind, outdgt)  #$1159-1160
 
     # back to PHYDR
     if AUX1FG >= 1:
@@ -236,9 +243,9 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, ODGTF, ODFVF, Olabels, OVOLlab
                 # DISCH with hydrologic routing
                 indx = fndrow(vol, volumeFT)                 # find row index that brackets the VOL
                 vv1 = volumeFT[indx]
-                rod1,od1[:] = demand(vv1, rowsFT[indx,  :], funct, nexits, delts, convf, colind, outdgt, ODGTF)
+                rod1,od1[:] = demand(vv1, rowsFT[indx,  :], funct, nexits, delts, convf, colind, outdgt)
                 vv2 = volumeFT[indx+1]
-                rod2,od2[:] = demand(vv2, rowsFT[indx+1,:], funct, nexits, delts, convf, colind, outdgt, ODGTF)
+                rod2,od2[:] = demand(vv2, rowsFT[indx+1,:], funct, nexits, delts, convf, colind, outdgt)
                 aa1 = (vv2 - vol) / (vv2 - vv1)
                 ro   = (aa1 * rod1)    + ((1.0 - aa1) * rod2)
                 o[:] = (aa1 * od1[:])  + ((1.0 - aa1) * od2[:])
@@ -283,24 +290,24 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, ODGTF, ODFVF, Olabels, OVOLlab
             oint = volint * facta1      # == ointsp, so ointsp variable dropped
             if nodfv:
                 # ROUTE
-                rodz,odz[:] = demand(0.0, rowsFT[zeroindex,:], funct, nexits, delts, convf, colind,  outdgt, ODGTF)
+                rodz,odz[:] = demand(0.0, rowsFT[zeroindex,:], funct, nexits, delts, convf, colind,  outdgt)
                 if oint > rodz:
-                    # SOLVE,  Solve the simultaneous equations for case 1-- outflow demands can be met in full
+                    # SOLVE - case 1-- outflow demands can be met in full
                     # premov will be used to check whether we are in a trap, arbitrary value
                     premov = -20
                     move   = 10
 
                     vv1 = volumeFT[indx]
-                    rod1,od1[:] = demand(vv1, rowsFT[indx, :], funct, nexits, delts, convf,colind, outdgt, ODGTF)
+                    rod1,od1[:] = demand(vv1, rowsFT[indx, :], funct, nexits, delts, convf,colind, outdgt)
                     vv2 = volumeFT[indx+1]
-                    rod2,od2[:] = demand(vv2, rowsFT[indx+1,:], funct, nexits, delts, convf, colind, outdgt, ODGTF)
+                    rod2,od2[:] = demand(vv2, rowsFT[indx+1,:], funct, nexits, delts, convf, colind, outdgt)
 
                     while move != 0:
                         facta2 = rod1 - rod2
                         factb2 = vv2 - vv1
                         factc2 = vv2 * rod1 - vv1 * rod2
                         det = facta1 * factb2 - facta2
-                        if det == 0.0:
+                        if det <= 0.0:
                             det = 0.0001
                             errors[0] += 1  # ERRMSG0: SOLVE is indeterminate
 
@@ -317,7 +324,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, ODGTF, ODFVF, Olabels, OVOLlab
                                 od1[:] = od2[:]
                                 rod1   = rod2
                                 vv2    = volumeFT[indx+1]
-                                rod2,od2[:] = demand(vv2, rowsFT[indx+1,:], funct, nexits, delts, convf, colind, outdgt, ODGTF)
+                                rod2,od2[:] = demand(vv2, rowsFT[indx+1,:], funct, nexits, delts, convf, colind, outdgt)
                         elif vol < vv1:
                             indx  -= 1
                             move   = -1
@@ -325,7 +332,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, ODGTF, ODFVF, Olabels, OVOLlab
                             od2[:] = od1[:]
                             rod2   = rod1
                             vv1    = volumeFT[indx]
-                            rod1,od1[:] = demand(vv1, rowsFT[indx,:], funct, nexits, delts, convf, colind, outdgt, ODGTF)
+                            rod1,od1[:] = demand(vv1, rowsFT[indx,:], funct, nexits, delts, convf, colind, outdgt)
                         else:
                             move = 0
 
@@ -362,7 +369,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, ODGTF, ODFVF, Olabels, OVOLlab
                     indx = zeroindex
             else:
                 # NOROUT
-                rod1,od1[:] = demand(vol, rowsFT[indx,:], funct, nexits, delts, convf, colind, outdgt, ODGTF)
+                rod1,od1[:] = demand(vol, rowsFT[indx,:], funct, nexits, delts, convf, colind, outdgt)
                 if oint >= rod1: #case 1 -outflow demands are met in full
                     ro   = rod1
                     vol  = volint - coks * ro * delts
@@ -427,18 +434,19 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, ODGTF, ODFVF, Olabels, OVOLlab
                 avvel = (length * ro / vol) if vol > 0.0 else 0.0
             if AUX3FG:
                 if avdep > 0.0:
-                    # these lines replace SHEAR; ustar (bed shear velocity), tau (bed shear stress)
+                    # SHEAR; ustar (bed shear velocity), tau (bed shear stress)
                     if LKFG:              # flag, 1:lake, 0:stream
                         ustar = (2.3/AKAPPA) * avvel / (17.66 + log10(avdep/(96.5*DB50)))
                         tau   =  GAM/GRAV * ustar**2              #3796
                     else:
-                        hrad = (avdep*twid)/(2.0*avdep + twid)  if avdep > 0.0 else 0.0 # hydraulic radius, manual eq (41
+                        hrad = (avdep*twid)/(2.0*avdep + twid) # hydraulic radius, manual eq 41
                         slope = DELTH / length
                         ustar = sqrt(GRAV * slope * hrad)
                         tau = (GAM * slope) * hrad
                 else:
                     ustar = 0.0
-                    tau = 0.0
+                    tau   = 0.0
+                    hrad  = 0.0
                 USTAR[step] = ustar * LFACTA
                 TAU[step]   = tau   * TFACTA
     # END MAIN LOOP
@@ -461,7 +469,7 @@ def fndrow(v, volFT):
 
 
 @njit(cache=True)
-def demand(vol, rowFT, funct, nexits, delts, convf, colind, outdgt, ODGTF):
+def demand(vol, rowFT, funct, nexits, delts, convf, colind, outdgt):
     od = zeros(nexits)
     for i in range(nexits):
         col = colind[i]
@@ -470,19 +478,25 @@ def demand(vol, rowFT, funct, nexits, delts, convf, colind, outdgt, ODGTF):
             diff = col - float(icol)
             if diff >= 1.0e-6:
                 _od1 = rowFT[icol-1]
-                od[i] = _od1 + diff * (_od1 - rowFT[icol]) * convf
-            else:                                        # no interpolation ???
-                od[i] = rowFT[icol-1] * convf
+                odfv = _od1 + diff * (_od1 - rowFT[icol]) * convf
+            else:
+                odfv = rowFT[icol-1] * convf
+        else:
+            odfv = 0.0
 
-        icol = int(ODGTF[i])
-        if icol != 0:
-            a = od[i]
-            b = outdgt[icol-1]
-            c = (vol - b)  / delts                     #???
-            if   funct[i] == 1: od[i] = min(a,c)
-            elif funct[i] == 2: od[i] = max(a,b)
-            elif funct[i] == 3: od[i] = a+b
-            elif funct[i] == 4: od[i] = max(a,c)
+        odgt = outdgt[i]
+
+        if odfv == 0.0 and odgt == 0.0:
+            od[i] = 0.0
+        elif odfv != 0.0 and odgt == 0.0:
+            od[i] = odfv
+        elif odfv == 0.0 and odgt != 0.0:
+            od[i] = odgt
+        else:
+            if   funct[i] == 1: od[i] = min(odfv,odgt)
+            elif funct[i] == 2: od[i] = max(odfv,odgt)
+            elif funct[i] == 3: od[i] = odfv + odgt
+            elif funct[i] == 4: od[i] = max(odfv, (vol - odgt) / delts)
     return od.sum(), od
 
 

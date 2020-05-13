@@ -4,9 +4,9 @@ License: LGPL2
 General routines for HSP2 '''
 
 
-from pandas import Series, date_range, Timedelta
+from pandas import Series, date_range
 from pandas.tseries.offsets import Minute
-from numpy import zeros, full, tile
+from numpy import zeros, full, tile, float64
 from numba import types
 from numba.typed import Dict
 
@@ -35,7 +35,9 @@ def make_numba_dict(uci):
     return ui
 
 
-def transform(ts, how, siminfo):
+flowtype = {'PREC','WIND','WINMOV','SOLRAD','PETINP','POTEV','SURLI','IFWLI',
+  'AGWLI','SLSED','IVOL','ICON'}
+def transform(ts, name, how, siminfo):
     '''
      upsample (disaggregate) /downsample (aggregate) ts to freq and trim to [start:stop]
      how methods (default is SAME)
@@ -44,35 +46,48 @@ def transform(ts, how, siminfo):
     NOTE: these routines work for both regular and sparse timeseries input
     '''
 
-    if not how:
-        how = 'SAME'
+    tsfreq = ts.index.freq
+    freq   = Minute(siminfo['delt'])
+    stop   = siminfo['stop']
 
-    start, stop, steps = siminfo['start'], siminfo['stop'], siminfo['steps']
-    freq = Minute(siminfo['delt'])
-    if ts.index.freq == freq and ts.index[0] == start and ts.index[-1] <= stop:
-        return ts[0:steps]
+    # append duplicate of last point to force processing last full interval
+    if ts.index[-1] < stop:
+        ts[stop] = ts[-1]
 
-    # need to append duplicate of last point to force processing last full interval
-    if ts.index.freq in ('1M', '1MS'):
-        ts[ts.index[-1] + Timedelta('31D')] = ts[-1]
-    else:
-        ts[ts.index[-1] + Timedelta(ts.index.freq)] = ts[-1]
-
-    if how == 'MEAN':          ts = ts.resample(freq).mean()
+    if freq == tsfreq:
+        pass
+    elif tsfreq == None:     # Sparse time base, frequency not defined
+        ts = ts.reindex(siminfo['tbase']).ffill().bfill()
+    elif how == 'SAME':
+        ts = ts.resample(freq).ffill()  # tsfreq >= freq assumed, or bad user choice
+    elif not how:
+        if name in flowtype:
+            if 'Y' in str(tsfreq) or 'M' in str(tsfreq) or tsfreq > freq:
+                if   'M' in str(tsfreq):  ratio = 1.0/730.5
+                elif 'Y' in str(tsfreq):  ratio = 1.0/8766.0
+                else:                     ratio = freq / tsfreq
+                ts = (ratio * ts).resample(freq).ffill()   # HSP2 how = div
+            else:
+                ts = ts.resample(freq).sum()
+        else:
+            if 'Y' in str(tsfreq) or 'M' in str(tsfreq) or tsfreq > freq:
+                ts = ts.resample(freq).ffill()
+            else:
+                ts = ts.resample(freq).mean()
+    elif how == 'MEAN':        ts = ts.resample(freq).mean()
     elif how == 'SUM':         ts = ts.resample(freq).sum()
     elif how == 'MAX':         ts = ts.resample(freq).max()
     elif how == 'MIN':         ts = ts.resample(freq).min()
     elif how == 'LAST':        ts = ts.resample(freq).ffill()
-    elif how == 'SAME':        ts = ts.resample(freq).ffill()
     elif how == 'DIV':         ts = (ts * (freq / ts.index.freq)).resample(freq).ffill()
     elif how == 'ZEROFILL':    ts = ts.resample(freq).fillna(0.0)
     elif how == 'INTERPOLATE': ts = ts.resample(freq).interpolate()
-
     else:
         print(f'UNKNOWN method in TRANS, {how}')
         return zeros(1)
 
-    return ts[start:stop][0:steps]
+    start, steps = siminfo['start'], siminfo['steps']
+    return ts[start:stop].to_numpy().astype(float64)[0:steps]
 
 
 def hoursval(siminfo, hours24, dofirst=False, lapselike=False):
