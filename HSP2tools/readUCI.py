@@ -33,14 +33,15 @@ Savedict = {
                    'PDEPTH':0, 'PRAIN':0, 'RAINF':1, 'RDENPF':1, 'SKYCLR':1,
                    'SNOCOV':1, 'SNOTMP':0, 'SNOWE':0, 'SNOWF':0, 'WYIELD':1,
                    'XLNMLT':1},
-        'PWATER': {'AGWET':0, 'AGWI':0, 'AGWO':1, 'AGWS':1, 'BASET':0,
-                   'CEPE':0, 'CEPS':1, 'GWEL':0, 'GWVS':1, 'IFWI':0, 'IFWO':1,
-                   'IFWS':1, 'IGWI':0, 'INFFAC':0, 'INFIL':0, 'IRDRAW':0,
-                   'IRRAPP':0, 'IRRDEM':0, 'IRSHRT':0, 'LZET':0, 'LZI':0,
-                   'LZS':1, 'RPARM':0, 'PERC':0, 'PERO':1, 'PERS':0, 'PET': 0,
-                   'PETADJ':0, 'RPARM':0, 'RZWS':0, 'SUPY':0, 'SURET':0,
-                   'SURI':0, 'SURO':1, 'SURS':1, 'TAET':0, 'TGWS':0, 'UZET':0,
-                   'UZI':0, 'UZS':1},
+        'PWATER': {'AGWET':0, 'AGWLI':0, 'AGWI':0, 'AGWO':1, 'AGWS':1,
+                   'BASET':0, 'CEPE':0, 'CEPS':1, 'GWVS':1, 'IFWI':0,
+                   'IFWLI':0, 'IFWO':1,'IFWS':1, 'IGWI':0, 'INFIL':0,
+                   'IRDRAW':0, 'IRRAPP':0, 'IRRDEM':0, 'IRSHRT':0, 'LZET':0,
+                   'LZI':0, 'LZLI':0, 'LZS':1, 'RPARM':0, 'PERC':0, 'PERO':1,
+                   'PERS':0, 'PET': 0, 'PETADJ':0, 'RPARM':0, 'RZWS':0,
+                   'SUPY':0, 'SURET':0, 'SURLI':0, 'SURI':0, 'SURO':1,
+                   'SURS':1, 'TAET':0, 'TGWS':0, 'UZET':0, 'UZI':0, 'UZLI':0,
+                   'UZS':1, 'INFFAC':0},
         'SEDMNT': {'COVER':0, 'DET':0, 'DETS':0, 'NVSI':0, 'SCRSD':0,
                    'SOSED':0, 'STCAP':0, 'WSSD':0},
         'PSTEMP': {'AIRTC':0, 'LGTMP':0, 'SLTMP':0, 'ULTMP':0},
@@ -640,17 +641,15 @@ def get_opnid(opnidstr, operation):
         yield f'{operation[0]}{x:03d}'
 
 
-def fix_df(df, op, save, ddfaults, valid, sortflag=False):
+def fix_df(df, op, save, ddfaults, valid):
     '''fix NANs and excess rids, missing indicies'''
-    if set(df.index) - valid[op]:
-        df.drop(index = set(df.index) - valid[op]) # drop unnecessary rids
-    for name1 in valid[op] - set(df.index):
+    if set(df.index) - valid:
+        df.drop(index = set(df.index) - valid) # drop unnecessary rids
+    for name1 in valid - set(df.index):
         df = df.append(Series(name=name1))         # add missing rids with NaNs
     if df.isna().any().any():                      # replace NaNs with defaults
         for col in df.columns:
             df[col] = df[col].fillna(ddfaults[op, save, col])
-    if sortflag:
-        df = df.sort_index(axis=1)
     return df
 
 
@@ -883,12 +882,13 @@ def readUCI(uciname, hdfname):
         for cname in colnames:
             if cname not in linkage.columns:
                 linkage[cname]=''
-        linkage = linkage.sort_values('TVOLNO')
+        linkage = linkage.sort_values(by=['TVOLNO'])
         linkage.to_hdf(store, '/CONTROL/LINKS', data_columns=True)
 
         Lapse.to_hdf(store, 'TIMESERIES/LAPSE_Table')
         Seasons.to_hdf(store, 'TIMESERIES/SEASONS_Table')
         Svp.to_hdf(store, 'TIMESERIES/Saturated_Vapor_Pressure_Table')
+        store.flush()
 
         keys = set(store.keys())
         # rename needed for restart. NOTE issue with line 157 in PERLND SNOW HSPF
@@ -898,12 +898,14 @@ def readUCI(uciname, hdfname):
             df = read_hdf(store, path)
             df=df.rename(columns={'PKSNOW':'PACKF','PKICE':'PACKI','PKWATR':'PACKW'})
             df.to_hdf(store, path, data_columns=True)
+            store.flush()
 
         path = '/IMPLND/SNOW/STATES'
         if path in keys:
             df = read_hdf(store, path)
             df=df.rename(columns={'PKSNOW':'PACKF','PKICE':'PACKI','PKWATR':'PACKW'})
             df.to_hdf(store, path, data_columns=True)
+            store.flush()
 
         path = '/PERLND/SNOW/FLAGS'
         if path in keys:
@@ -911,6 +913,7 @@ def readUCI(uciname, hdfname):
             if 'SNOPFG' not in df.columns:   # didn't read IWAT-PARM2 table
                 df['SNOPFG']  = 0
                 df.to_hdf(store, path, data_columns=True)
+                store.flush()
 
         path = '/IMPLND/SNOW/FLAGS'
         if path in keys:
@@ -918,6 +921,7 @@ def readUCI(uciname, hdfname):
             if 'SNOPFG' not in df.columns:   # didn't read IWAT-PARM2 table
                 df['SNOPFG']  = 0
                 df.to_hdf(store, path, data_columns=True)
+                store.flush()
 
         # Need to fixup missing data
         path = '/IMPLND/IWATER/PARAMETERS'
@@ -927,6 +931,7 @@ def readUCI(uciname, hdfname):
                 df['PETMIN'] = 0.35
                 df['PETMAX'] = 40.0
                 df.to_hdf(store, path, data_columns=True)
+                store.flush()
 
         path = '/PERLND/PWATER/PARAMETERS'
         if path in keys:
@@ -935,6 +940,7 @@ def readUCI(uciname, hdfname):
                 df['FZG']  = 1.0
                 df['FZGL'] = 0.1
                 df.to_hdf(store, path, data_columns=True)
+                store.flush()
 
         dfinfo = read_hdf(store, 'RCHRES/GENERAL/INFO')
         path = '/RCHRES/HYDR/PARAMETERS'
@@ -950,6 +956,7 @@ def readUCI(uciname, hdfname):
         del dfinfo['NEXITS']
         del dfinfo['LKFG']
         dfinfo.to_hdf(store, 'RCHRES/GENERAL/INFO', data_columns=True)
+        store.flush()
 
     return
 
@@ -1036,6 +1043,7 @@ def ftables(info, llines):
         elif line[2:5] == 'END':
             dfftable = DataFrame(lst, columns=header[0:int(cols)])
             dfftable.to_hdf(store, f'/FTABLES/{name}', data_columns=True)
+            store.flush()
         else:
             lst.append(parseD(line, parse, ('FTABLES','FTABLE')))
 
@@ -1054,18 +1062,20 @@ def ext(info, lines):
             for i in range(int(d['TOPFST']), toplst + 1):
                 d['TVOLNO'] = f"{d['TVOL'][0]}{i:03d}"
                 lst.append(d.copy())
+
     dfext = DataFrame(lst, columns = d)
+    if dfext.empty:   # ignore EXT TARGET table
+        return
+    dfext['COMMENT'] = ''
     del dfext['TOPFST']
     del dfext['TOPLST']
-    del dfext['SMEMSB']
-    dfext = dfext.sort_values('TVOLNO')
+    dfext = dfext.sort_values(by=['TVOLNO'])
     dfext.to_hdf(store, '/CONTROL/EXT_SOURCES', data_columns=True)
-
+    store.flush()
 
 Months=('JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC')
 def operation(info, llines, op):
     store, parse, dsave, ddfaults = info
-    valid = {}
     parsed = {}
     nonempty = []
     lines = iter(llines)
@@ -1105,29 +1115,46 @@ def operation(info, llines, op):
                     x.columns =  ['CLAY_' + z for z in x.columns]
                 lst.append(x)
             df = concat(lst, axis=1, sort=False)
+            if cat == 'INFO':
+                valid = set(df.index)
+
             if cat == 'ACTIVITY':
-                valid[op] = set(df.index)
-            flag = True if cat not in {'ACTIVITY', 'INFO'} else False
-            df = fix_df(df, op, save, ddfaults, valid, sortflag=flag)
-            df = df.apply(to_numeric, errors='ignore')
-            if op == 'PERLND' and cat == 'ACTIVITY':
-                df = df.rename(columns = {'AIRTFG':'ATEMP', 'SNOWFG':'SNOW',
-                 'PWATFG':'PWATER', 'SEDFG':'SEDMNT', 'PSTFG':'PSTEMP',
-                 'PWGFG':'PWTGAS', 'PQALFG':'PQUAL','MSTLFG':'MSTLAY',
-                 'PESTFG':'PEST', 'NITRFG':'NITR', 'PHOSFG':'PHOS',
-                 'TRACFG':'TRACER'})
-            if op == 'IMPLND' and cat == 'ACTIVITY':
-                df = df.rename(columns = {'ATMPFG':'ATEMP', 'SNOWFG':'SNOW',
-                 'IWATFG':'IWATER', 'SLDFG':'SOLIDS', 'IWGFG':'IWTGAS',
-                 'IQALFG':'IQUAL'})
-            if op == 'RCHRES' and cat == 'ACTIVITY':
-                df = df.rename(columns  = {'HYDRFG':'HYDR', 'ADFG':'ADCALC',
-                 'CONSFG':'CONS', 'HTFG':'HTRCH', 'SEDFG':'SEDTRN',
-                 'GQALFG':'GQUAL', 'OXFG':'OXRX', 'NUTFG':'NUTRX',
-                 'PLKFG':'PLANK', 'PHFG':'PHCARB'})
-            df.columns = [s.replace('(','_').replace(')', '') for s in df.columns]
-            df.to_hdf(store, f'{op}/{save}/{cat}', data_columns=True)
-            nonempty.append(save)
+                if op == 'PERLND':
+                    df = df.rename(columns = {'AIRTFG':'ATEMP', 'SNOWFG':'SNOW',
+                     'PWATFG':'PWATER', 'SEDFG':'SEDMNT', 'PSTFG':'PSTEMP',
+                     'PWGFG':'PWTGAS', 'PQALFG':'PQUAL','MSTLFG':'MSTLAY',
+                     'PESTFG':'PEST', 'NITRFG':'NITR', 'PHOSFG':'PHOS',
+                     'TRACFG':'TRACER'})
+                if op == 'IMPLND':
+                    df = df.rename(columns = {'ATMPFG':'ATEMP', 'SNOWFG':'SNOW',
+                     'IWATFG':'IWATER', 'SLDFG':'SOLIDS', 'IWGFG':'IWTGAS',
+                     'IQALFG':'IQUAL'})
+                if op == 'RCHRES':
+                    df = df.rename(columns  = {'HYDRFG':'HYDR', 'ADFG':'ADCALC',
+                     'CONSFG':'CONS', 'HTFG':'HTRCH', 'SEDFG':'SEDTRN',
+                     'GQALFG':'GQUAL', 'OXFG':'OXRX', 'NUTFG':'NUTRX',
+                     'PLKFG':'PLANK', 'PHFG':'PHCARB'})
+                dfactivity = df
+                activitysave = save
+            elif cat == 'INFO':
+                nonempty.append(activitysave)
+                nonempty.append(save)
+
+                df = df.apply(to_numeric, errors='ignore')
+                df.to_hdf(store, f'{op}/{save}/INFO', data_columns=True)
+
+                dfactivity = fix_df(dfactivity, op, activitysave, ddfaults, valid)
+                dfactivity = dfactivity.apply(to_numeric, errors='ignore')
+                dfactivity.to_hdf(store, f'{op}/{activitysave}/ACTIVITY', data_columns=True)
+                store.flush()
+            else:
+                df = fix_df(df, op, save, ddfaults, valid).sort_index('columns')
+                df = df.apply(to_numeric, errors='ignore')
+                df.columns = [s.replace('(','_').replace(')', '') for s in df.columns]
+                df.to_hdf(store, f'{op}/{save}/{cat}', data_columns=True)
+                store.flush()
+                nonempty.append(save)
+
         elif cat == 'MONTHLYS':
             for tablekey in parsed[(save,cat)].keys():
                 name = rename[(op, tablekey)]
@@ -1137,6 +1164,7 @@ def operation(info, llines, op):
                 df.columns = Months
                 df = fix_df(df, op, save, ddfaults, valid)
                 df.to_hdf(store, f'{op}/{save}/MONTHLY/{name}', data_columns=True)
+                store.flush()
         elif cat == 'EXTENDED':
             for tablekey in parsed[(save,cat)].keys():
                 length, name = extended[(op, tablekey)]
@@ -1151,6 +1179,7 @@ def operation(info, llines, op):
                 df = DataFrame(data, index=d.keys(), columns=cnames )
                 df = fix_df(df, op, save, ddfaults, valid)
                 df.to_hdf(store, f'{op}/{save}/EXTENDEDS/{name}', data_columns=True)
+                store.flush()
                 nonempty.append(save)
         elif cat in {'CONS', 'PQUAL', 'IQUAL'}:
             d = parsed[(save,cat)]
@@ -1169,9 +1198,10 @@ def operation(info, llines, op):
                 df = concat(lst, axis=1, sort=False)
                 df = fix_df(df, op, save, ddfaults, valid)
                 df.to_hdf(store, f'{op}/{save}/{savename}', data_columns=True)
+                store.flush()
                 nonempty.append(save)
 
-    sortedids = sorted(valid[op])
+    sortedids = sorted(valid)
     nonempty = set(nonempty)
     for key in Savedict[op].keys():
         if key in nonempty:
@@ -1179,3 +1209,4 @@ def operation(info, llines, op):
             for name,value in Savedict[op][key].items():
                 df[name] = int(value)
             df.to_hdf(store, f'{op}/{key}/SAVE', data_columns=True)
+            store.flush()

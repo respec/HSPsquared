@@ -1,13 +1,23 @@
 HSP2, Hydrologic Simulation Program Python (HSPsquared)
 =======================================================
 HSPsquared or HSP2 is a Python version of HSPF. Currently it supports the major
-hydrology modules.  It is copyrighted by RESPEC and released under the GNU
+hydrology modules.  It is copyrighted 2020 by RESPEC and released under the GNU
 Affero General Public License.
 
 
 **ANNOUNCEMENT**
 
-HSP2 code has been updated to Python 3.6+.
+HSP2 code has been updated to Python 3.7+.
+
+
+Please use [Anaconda](https://www.anaconda.com/distribution/) to download Python 3.7 or above.
+Instead of the older Jupyter Notebook, please run Jupyter Lab and use its Notebook. In the future, the original Jupyter Notebook will be replaced by the Notebook in Jupyter Lab.
+
+The following Jupyter Lab extensions are useful (but not required):
++ jupyter-matplotlib
++ jupyterlab/toc
++ qgrid2
+
 
 The Tutorials will be replaced soon as they are tested with the new code.
 
