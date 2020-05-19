@@ -30,3 +30,5 @@ __pycache__/*
 .tox/*
 stats.dat
 .ropeproject
+*.ipynb
+*.h5
