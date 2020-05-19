@@ -61,7 +61,7 @@ def make_opsequence(hdfname, delt=60):
     return
 
 
-def HDF5_is_connected(hdfname):
+def HDF5_isconnected(hdfname):
     '''
     Boolean value if the DAG for the HDF5 file has only one connected subset
 

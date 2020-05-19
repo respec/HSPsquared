@@ -4,7 +4,7 @@ Author: Robert Heaphy, Ph.D.
 Conversion of HSPF HIMPWAT.FOR module into Python'''
 
 
-from numpy import zeros, ones, full, nan, int64
+from numpy import zeros, ones, full, nan, int64, float64
 from math import sqrt
 from numba import njit
 from HSP2.utilities import hourflag, hoursval, initm, make_numba_dict
@@ -33,17 +33,16 @@ def iwater(store, siminfo, uci, ts):
     # insure defined, but not usable
     for name in ('AIRTMP', 'PETINP', 'PREC', 'RAINF', 'SNOCOV', 'WYIELD'):
         if name not in ts:
-            ts[name] = full(steps, nan)
+            ts[name] = full(steps, nan, dtype=float64)
 
     # treat missing flows as zero flow
-    for name in ['SURLI']:
+    for name in ['SURLI']:   # RTLIFG = 1 requires this timeseries
         if name not in ts:
-            ts[name] = zeros(steps)
-
+            ts[name] = zeros(steps, dtype=float64)
     # Replace fixed parameters in HSPF with timeseries
     for name in ['PETMAX', 'PETMIN']:
         if name not in ts:
-            ts[name] = full(steps, uci['PARAMETERS'][name])
+            ts[name] = full(steps, uci['PARAMETERS'][name], dtype=float64)
 
     # process optional monthly arrays to return interpolated data or constant array
     u = uci['PARAMETERS']
@@ -51,10 +50,10 @@ def iwater(store, siminfo, uci, ts):
     ts['NSUR']  = initm(siminfo, uci, u['VNNFG'], 'MONTHLY_NSUR',  u['NSUR'])
 
     # true the first time and at 1am every day of simulation
-    ts['HR1FG'] = hourflag(siminfo, 1, dofirst=True).astype(float)  # numba Dict limitation
+    ts['HR1FG'] = hourflag(siminfo, 1, dofirst=True).astype(float64)  # numba Dict limitation
 
     # true the first time and at every hour of simulation
-    ts['HRFG'] = hoursval(siminfo, ones(24), dofirst=True).astype(float)  # numba Dict limitation
+    ts['HRFG'] = hoursval(siminfo, ones(24), dofirst=True).astype(float64)  # numba Dict limitation
 
     ui = make_numba_dict(uci)  # Note: all values coverted to float automatically
     ui['steps']  = steps
@@ -80,8 +79,8 @@ def _iwater_(ui, ts):
     slsur  = ui['SLSUR']
     RTLIFG = int(ui['RTLIFG'])
 
-    HRFG   = ts['HRFG']
-    HR1FG  = ts['HR1FG']
+    HRFG   = ts['HRFG'].astype(int64)
+    HR1FG  = ts['HR1FG'].astype(int64)
     RETSC  = ts['RETSC']
     NSUR   = ts['NSUR']
     AIRTMP = ts['AIRTMP']
@@ -95,19 +94,21 @@ def _iwater_(ui, ts):
     PREC   = ts['PREC']
 
     # like MATLAB, much faster to preinitialize variables. Store in ts Dict
-    ts['IMPEV'] = IMPEV = zeros(steps)
-    ts['PET']   = PET   = zeros(steps)
-    ts['PETADJ']= PETADJ= zeros(steps)
-    ts['RETS']  = RETS  = zeros(steps)
-    ts['SUPY']  = SUPY  = zeros(steps)
-    ts['SURI']  = SURI  = zeros(steps)
-    ts['SURO']  = SURO  = zeros(steps)
-    ts['SURS']  = SURS  = zeros(steps)
+    ts['IMPEV'] = IMPEV = zeros(steps, dtype=float64)
+    ts['PET']   = PET   = zeros(steps, dtype=float64)
+    ts['PETADJ']= PETADJ= zeros(steps, dtype=float64)
+    ts['RETS']  = RETS  = zeros(steps, dtype=float64)
+    ts['SUPY']  = SUPY  = zeros(steps, dtype=float64)
+    ts['SURI']  = SURI  = zeros(steps, dtype=float64)
+    ts['SURO']  = SURO  = zeros(steps, dtype=float64)
+    ts['SURS']  = SURS  = zeros(steps, dtype=float64)
 
     # initial conditions
     rets = ui['RETS']
     surs = ui['SURS']
     msupy = surs
+
+    RTLIFG = int(ui['RTLIFG'])
 
     # Needed by Numba 0.31
     dec   = nan
@@ -118,47 +119,67 @@ def _iwater_(ui, ts):
     d     = nan
     supy  = 0.0
 
-    # MAIN LOOP (cleaner to not fix interweave both code blocks together!)
-    if ui['RTOPFG']:
-        for step in range(steps):
-            # save on step lookup code - do once per step
-            oldmsupy = msupy
-            retsc = RETSC[step]
-            petinp = PETINP[step]
+    # MAIN LOOP
+    for step in range(steps):
+        # save on step lookup code - do once per step
+        oldmsupy = msupy
+        retsc = RETSC[step]
+        petinp = PETINP[step]
 
-            if int(ui['CSNOFG']):
-                airtmp = AIRTMP[step]
-                petmax = PETMAX[step]
-                petmin = PETMIN[step]
-
-                snocov = SNOCOV[step]
-                SUPY[step] = RAINF[step] * (1.0 - snocov) + WYIELD[step]
-                if int(HRFG[step]):
-                    petadj = 1.0 - snocov
-                    if (airtmp < petmax) and (petadj > 0.5):
-                        petadj = 0.5
+        if int(ui['CSNOFG']):
+            airtmp = AIRTMP[step]
+            petmax = PETMAX[step]
+            petmin = PETMIN[step]
+            snocov = SNOCOV[step]
+            supy   = RAINF[step] * (1.0 - snocov) + WYIELD[step]
+            if HRFG[step]:
+                petadj = 1.0 - snocov
+                if airtmp < petmax:
                     if airtmp < petmin:
                         petadj = 0.0
-                    PETADJ[step] = petadj
-                PET[step] = petinp * petadj
-            else:
-                SUPY[step] = PREC[step]
-                PET[step] = petinp
-            pet  = PET[step]
-            supy = SUPY[step]
+                    if petadj > 0.5:
+                        petadj = 0.5
+                PETADJ[step] = petadj
+            pet = petinp * petadj
+        else:
+            supy = PREC[step]
+            pet  = petinp
+        PET[step]  = pet
+        SUPY[step] = supy
+
+
+        surli = SURLI[step]
+        retsc = RETSC[step]
+        if RTLIFG: # surface lateral inflow (if any) is subject to retention
+            reti = supy + surli
 
             # RETN
-            reti = supy + SURLI[step] if RTLIFG else supy
-            rets = rets + reti
-            reto = rets - retsc if rets > retsc else 0.0
-            rets = min(rets, retsc)
+            rets += reti
+            if rets > retsc:
+                reto = rets - retsc
+                rets = retsc
+            else:
+                reto = 0.0
 
-            # IWATER
-            suri  = reto if RTLIFG else reto + SURLI[step]
-            msupy = suri + surs
-            surs = 0.0
-            suro = 0.0
-            if msupy > 0.0:
+            suri = reto
+        else:
+            reti = supy
+
+            # RETN
+            rets += reti
+            if rets > retsc:
+                reto = rets - retsc
+                rets = retsc
+            else:
+                reto = 0.0
+
+            suri = reto + surli
+        # IWATER
+        msupy = suri + surs
+        surs = 0.0
+        suro = 0.0
+        if msupy > 0.0:
+            if ui['RTOPFG']:
                 # IROUTE for RTOPFG==True, the way it is done in arm, nps, and hspx
                 if oldmsupy == 0.0 or HR1FG[step]:   # Time to recompute
                     dummy  = NSUR[step] * lsur
@@ -178,35 +199,7 @@ def _iwater_(ui, ts):
                 tsuro = delt60 * src * dummy**1.67
                 suro  = msupy if tsuro > msupy else tsuro
                 surs  = 0.0   if tsuro > msupy else msupy - suro
-
-            # EVRETN
-            if rets > 0.0:
-                IMPEV[step] = rets if pet > rets else pet
-                rets        = 0.0  if pet > rets else rets - IMPEV[step]
-
-            RETS[step] = rets
-            SURI[step] = suri
-            SURO[step] = suro
-            SURS[step] = surs
-    else:
-        for step in range(steps):
-            # save on step lookup code - do once per step
-            retsc = RETSC[step]
-            oldmsupy = msupy
-
-            # RETN
-            reti = supy + SURLI[step] if RTLIFG else supy
-            rets = rets + reti
-            reto = rets - retsc if rets > retsc else 0.0
-            rets = min(rets, retsc)
-
-            # IWATER
-            suri  = reto if RTLIFG else reto + SURLI[step]
-            msupy = suri + surs
-
-            surs = 0.0
-            suro = 0.0
-            if msupy > 0.0:
+            else:
                 # IROUTE for RTOPFG==False
                 if oldmsupy == 0.0 or HR1FG[step]:   # Time to recompute
                     dummy = NSUR[step] * lsur
@@ -247,16 +240,22 @@ def _iwater_(ui, ts):
                     errors[0] = errors[0] + 1  # IROUTE did not converge
                 surs = sursnw
 
-            # EVRETN
-            if rets > 0.0:
-                IMPEV[step] = rets if PET[step] > rets else PET[step]
-                rets = 0.0  if PET[step] > rets else rets - IMPEV[step]
+        # EVRETN
+        if rets > 0.0:
+            if pet > rets:
+                impev = rets
+                rets  = 0.0
+            else:
+                impev = pet
+                rets -= impev
+        else:
+            impev = 0.0
+        IMPEV[step] = impev
 
-            #save results
-            RETS[step] = rets
-            SURI[step] = suri
-            SURS[step] = surs
-            SURO[step] = suro
+        RETS[step] = rets
+        SURI[step] = suri
+        SURO[step] = suro
+        SURS[step] = surs
     return errors
 
 

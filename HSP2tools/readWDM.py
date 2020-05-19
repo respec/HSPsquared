@@ -102,15 +102,22 @@ def readWDM(wdmfile, hdffile):
             ## Write to HDF5 file
             series = pd.Series(floats[:findex], index=tindex[:findex])
             dsname = f'TIMESERIES/TS{dsn:03d}'
-            store.put(dsname, series)
+            series.to_hdf(store, dsname, complib='blosc', complevel=9)
 
+            data = [str(tindex[0]), str(tindex[-1]), str(tstep) + freq[tcode],
+             len(series),  dattr['TSTYPE'], dattr['TFILL']]
+            columns = ['Start', 'Stop', 'Freq','Length', 'TSTYPE', 'TFILL']
+            search = ['STAID', 'STNAM', 'SCENARIO', 'CONSTITUENT','LOCATION']
+            for x in search:
+                if x in dattr:
+                    data.append(dattr[x])
+                    columns.append(x)
+
+            summary.append(data)
             summaryindx.append(dsname[11:])
-            summary.append((str(tindex[0]), str(tindex[-1]), str(tstep) + freq[tcode],
-             len(series), dattr['TSTYPE'], dattr['TFILL'], dattr['STAID'],
-             dattr['STNAM']))
 
-        dfsummary = pd.DataFrame(summary, index=summaryindx, columns=('start',
-         'stop', 'Freq', 'length', 'TSTYPE', 'TFILL', 'STAID', 'STNAM'))
+
+        dfsummary = pd.DataFrame(summary, index=summaryindx, columns=columns)
         store.put('TIMESERIES/SUMMARY',dfsummary, format='t', data_columns=True)
     return dfsummary
 

@@ -112,10 +112,10 @@ def main(hdfname, doe, doename='DOE_RESULTS', saveall=False):
 
     with HDFStore(hdfname) as store:
         msg = messages()
-        msg(1, f'Processing started for file {hdfname}')
+        msg(1, f'Processing started for file {hdfname}; saveall={saveall}')
 
         # read user control, parameters, states, and flags  from HDF5 file
-        opseq, ddlinks, ddmasslinks, ddext_sources, ucioriginal, siminfo = get_uci(store)
+        opseq, ddlinks, ddmasslinks, ddext_sources, originaluci, siminfo = get_uci(store)
         start, stop = siminfo['start'], siminfo['stop']
 
         # construct dictionary parallel in form to uciorginal from doe
@@ -124,10 +124,11 @@ def main(hdfname, doe, doename='DOE_RESULTS', saveall=False):
         # main processing loop
         msg(1, f'Simulation Start: {start}, Stop: {stop}')
         for run in rundict:
-            msg(2, f'Starting Run {run}')
             savepath = f'{doename}/RUN{run}'
+            msg(2, f'Starting Run {run}; saving as {savepath}')
 
-            uci = deepcopy(ucioriginal)
+
+            uci = deepcopy(originaluci)
             for _, operation, segment, delt in opseq.itertuples():
                 msg(3, f'{operation} {segment} DELT(minutes): {delt}')
                 siminfo['delt']      = delt
@@ -143,13 +144,14 @@ def main(hdfname, doe, doename='DOE_RESULTS', saveall=False):
 
                     msg(4, f'{activity}')
                     if operation == 'RCHRES':
-                        get_flows(store,ts,activity,segment,ddlinks,ddmasslinks)
+                        get_flows(store,ts,activity,segment,ddlinks,ddmasslinks,msg,savepath)
                     ui = uci[operation, activity, segment] # ui is a dictionary
 
                     # update deep copy of UCI dict with run dict
                     ruci = rundict[run]
                     if (operation, activity, segment) in ruci:
                         for table in ruci[operation, activity, segment]:
+                            msg(5, str(ruci[operation, activity, segment][table]))
                             ui[table].update(ruci[operation, activity, segment][table])
 
                     ############ calls activity function like snow() ##############
@@ -230,11 +232,11 @@ def make_runlist(store, doe, doename):
         run, path, segment, name, value = line[:]
         operation, module, *temp = path.split(sep='/', maxsplit=3)
         table = '_'.join(temp)
-        runstr = f'Run{run}'
+        runstr = f'{run}'
 
         if (operation, module, segment) not in rundict[runstr]:
             rundict[runstr][operation, module, segment] = defaultdict(dict)
-        rundict[runstr][operation, module, segment][table]  [name] = value
+        rundict[runstr][operation, module, segment][table]  [name] = float(value)
     return rundict
 
 
@@ -243,50 +245,65 @@ def get_timeseries(store, ext_sourcesdd, siminfo):
     # explicit creation of Numba dictionary with signatures
     ts = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
     for row in ext_sourcesdd:
-        path = f'TIMESERIES/{row.SVOLNO}'
-        temp1 = store[path] if row.SVOL == '*' else read_hdf(row.SVOL, path)
+        if row.SVOL == '*':
+            path = f'TIMESERIES/{row.SVOLNO}'
+            if path in store:
+                temp1 = store[path]
+            else:
+                print('Get Timeseries ERROR for', path)
+                continue
+        else:
+            temp1 = read_hdf(row.SVOL, path)
 
         if row.MFACTOR != 1.0:
             temp1 *= row.MFACTOR
-        name = f'{row.TMEMN}{row.TMEMSB}'
-        if name in ts:
-            ts[name] += transform(temp1, row.TRAN, siminfo).to_numpy().astype(float)
+        t = transform(temp1, row.TMEMN, row.TRAN, siminfo)
+
+        tname = f'{row.TMEMN}{row.TMEMSB}'
+        if tname in ts:
+            ts[tname] += t
         else:
-            ts[name]  = transform(temp1, row.TRAN, siminfo).to_numpy().astype(float)
+            ts[tname]  = t
     return ts
 
 
-def save_timeseries(store, ts, savedict, siminfo, saveall, operation, segment, activity,savepath):
+def save_timeseries(store,ts,savedict,siminfo,saveall,operation,segment,activity,savepath):
     # save computed timeseries (at computation DELT)
     save = {k for k,v in savedict.items() if v or saveall}
     df = DataFrame(index=siminfo['tindex'])
     for y in (save & set(ts.keys())):
         df[y] = ts[y]
     df = df.astype('float32').sort_index(axis='columns')
-
-    path = f'{savepath}/RESULTS/{operation}_{segment}/{activity}'
-    df.to_hdf(store, path, data_columns=True, format='t')
+    path = f'/RESULTS/{operation}_{segment}/{activity}'
+    if not df.empty:
+        store.put(path, df)
+        store.flush()
+    else:
+        print('Save DataFrame Empty for', path)
     return
 
 
-def get_flows(store, ts, activity, segment, ddlinks, ddmasslinks):
+def get_flows(store, ts, activity, segment, ddlinks, ddmasslinks, msg, savepath):
     for x in ddlinks[segment]:
         mldata = ddmasslinks[x.MLNO]
         for dat in mldata:
             if x.MLNO == '':  # Data from NETWORK part of Links table
-                factor = x.MFACTOR if x.AFACTR == '' else x.FACTOR * x.AFACTR
-                sgrpn  = x.SGRPN
-                smemn  = x.SMEMN
-                smemsb = x.SMEMSB
-                tmemn  = x.TMEMN
-                tmemsb = x.TMEMSB
+                mfactor = x.MFACTOR
+                sgrpn   = x.SGRPN
+                smemn   = x.SMEMN
+                smemsb  = x.SMEMSB
+                tmemn   = x.TMEMN
+                tmemsb  = x.TMEMSB
             else:   # Data from SCHEMATIC part of Links table
-                factor = dat.MFACTOR * x.AFACTR
-                sgrpn  = dat.SGRPN
-                smemn  = dat.SMEMN
-                smemsb = dat.SMEMSB
-                tmemn  = dat.TMEMN
-                tmemsb = dat.TMEMSB
+                mfactor = dat.MFACTOR
+                sgrpn   = dat.SGRPN
+                smemn   = dat.SMEMN
+                smemsb  = dat.SMEMSB
+                tmemn   = dat.TMEMN
+                tmemsb  = dat.TMEMSB
+
+            afactr = x.AFACTR
+            factor = afactr * mfactor
 
             # KLUDGE until remaining HSP2 modules are available.
             if tmemn not in {'IVOL', ''}:
@@ -300,15 +317,33 @@ def get_flows(store, ts, activity, segment, ddlinks, ddmasslinks):
                 smemn = 'ROVOL'
                 sgrpn = 'HYDR'
 
-            path = f'RESULTS/{x.SVOL}_{x.SVOLNO}/{sgrpn}'
+            path = f'{savepath}/{x.SVOL}_{x.SVOLNO}/{sgrpn}'
+            MFname = f'{x.SVOL}{x.SVOLNO}_MFACTOR'
+            AFname = f'{x.SVOL}{x.SVOLNO}_AFACTR'
             data = f'{smemn}{smemsb}'
 
-            t = factor * store[path][data].astype(float64).to_numpy()
-            # ??? ISSUE: can fetched data be at different frequency - don't know how to transform.
-            if tmemn in ts:
-                ts[tmemn] += t
+            if path in store:
+                t = store[path][data].astype(float64).to_numpy()[0:steps]
+                if MFname in ts and AFname in ts:
+                    t *= ts[MFname][:steps] * ts[AFname][0:steps]
+                    msg(4, f'MFACTOR modified by timeseries {MFname}')
+                    msg(4, f'AFACTR modified by timeseries {AFname}')
+                elif MFname in ts:
+                    t *= afactr * ts[MFname][0:steps]
+                    msg(4, f'MFACTOR modified by timeseries {MFname}')
+                elif AFname in ts:
+                    t *= mfactor * ts[AFname][0:steps]
+                    msg(4, f'AFACTR modified by timeseries {AFname}')
+                else:
+                    t *= factor
+
+                # ??? ISSUE: can fetched data be at different frequency - don't know how to transform.
+                if tmemn in ts:
+                    ts[tmemn] += t
+                else:
+                    ts[tmemn] = t
             else:
-                ts[tmemn] = t
+                print('ERROR in FLOWS for', path)
     return
 
 
