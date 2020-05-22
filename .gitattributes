@@ -1,0 +1,2 @@
+# Treat Jupyter notebook JSON files as binary
+*.ipynb binary
