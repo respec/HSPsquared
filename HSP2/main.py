@@ -131,15 +131,15 @@ def get_uci(store):
                 siminfo['stop']  = Timestamp(temp['Stop'])
             elif module == 'LINKS':
                 ddlinks = defaultdict(list)
-                for row in store[path].itertuples():
+                for row in store[path].replace('na','').itertuples():
                     ddlinks[row.TVOLNO].append(row)
             elif module == 'MASS_LINKS':
                 ddmasslinks = defaultdict(list)
-                for row in store[path].itertuples():
+                for row in store[path].replace('na','').itertuples():
                     ddmasslinks[row.MLNO].append(row)
             elif module == 'EXT_SOURCES':
                 ddext_sources = defaultdict(list)
-                for row in store[path].itertuples():
+                for row in store[path].replace('na','').itertuples():
                     ddext_sources[(row.TVOL, row.TVOLNO)].append(row)
             elif module == 'OP_SEQUENCE':
                 opseq = store[path]
