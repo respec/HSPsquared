@@ -86,7 +86,6 @@ skip = {
 ops = {'PERLND','IMPLND','RCHRES'}
 conlike = {'CONS':'NCONS', 'PQUAL':'NQUAL', 'IQUAL':'NQUAL'}
 def readUCI(uciname, hdfname):
-
     # create lookup dictionaries from 'ParseTable.csv' and 'rename.csv'
     parse = defaultdict(list)
     defaults = {}
@@ -131,8 +130,8 @@ def readUCI(uciname, hdfname):
         linkage = concat((net, sc), ignore_index=True, sort=True)
         for cname in colnames:
             if cname not in linkage.columns:
-                linkage[cname]=''
-        linkage = linkage.sort_values(by=['TVOLNO'])
+                linkage[cname] = ''
+        linkage = linkage.sort_values(by=['TVOLNO']).replace('na','')
         linkage.to_hdf(store, '/CONTROL/LINKS', data_columns=True)
 
         Lapse.to_hdf(store, 'TIMESERIES/LAPSE_Table')
@@ -265,7 +264,7 @@ def masslink(info, lines):
             d['MLNO'] = f'ML{int(name):03d}'
             lst.append(d)
     if lst:
-        dfmasslink = DataFrame(lst, columns=d)
+        dfmasslink = DataFrame(lst, columns=d).replace('na','')
         del dfmasslink['TGRPN']
         dfmasslink['COMMENTS'] = ''
         dfmasslink.to_hdf(store, '/CONTROL/MASS_LINKS', data_columns=True)
@@ -304,7 +303,7 @@ def ext(info, lines):
                 lst.append(d.copy())
 
     if lst:
-        dfext = DataFrame(lst, columns = d)
+        dfext = DataFrame(lst, columns = d).replace('na','')
         dfext['COMMENT'] = ''
         del dfext['TOPFST']
         del dfext['TOPLST']

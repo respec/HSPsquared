@@ -19,7 +19,7 @@ ERRMSGS =  ('IWATER: IROUTE Newton Method did not converge',    #ERRMSG0
 def iwater(store, siminfo, uci, ts):
     ''' Driver for IMPLND IWATER code. CALL: iwater(store, general, ui, ts)
        store is the Pandas/PyTable open store
-       general is a dictionary with simulation level infor (OP_SEQUENCE for example)
+       general is a dictionary with simulation info (OP_SEQUENCE for example)
        ui is a dictionary with ILS specific HSPF UCI like data
        ts is a dictionary with ILS specific timeseries'''
 
@@ -30,13 +30,13 @@ def iwater(store, siminfo, uci, ts):
 
     steps   = siminfo['steps']                  # number of simulation points
 
-    # insure defined, but not usable
+    # insure defined, but not usable - just in case
     for name in ('AIRTMP', 'PETINP', 'PREC', 'RAINF', 'SNOCOV', 'WYIELD'):
         if name not in ts:
             ts[name] = full(steps, nan, dtype=float64)
 
     # treat missing flows as zero flow
-    for name in ['SURLI']:   # RTLIFG = 1 requires this timeseries
+    for name in ['SURLI']:           # RTLIFG = 1 requires this timeseries
         if name not in ts:
             ts[name] = zeros(steps, dtype=float64)
     # Replace fixed parameters in HSPF with timeseries
@@ -147,7 +147,6 @@ def _iwater_(ui, ts):
         PET[step]  = pet
         SUPY[step] = supy
 
-
         surli = SURLI[step]
         retsc = RETSC[step]
         if RTLIFG: # surface lateral inflow (if any) is subject to retention
@@ -160,7 +159,6 @@ def _iwater_(ui, ts):
                 rets = retsc
             else:
                 reto = 0.0
-
             suri = reto
         else:
             reti = supy
@@ -172,7 +170,6 @@ def _iwater_(ui, ts):
                 rets = retsc
             else:
                 reto = 0.0
-
             suri = reto + surli
         # IWATER
         msupy = suri + surs
