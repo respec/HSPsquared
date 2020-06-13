@@ -3,7 +3,7 @@ Author: Robert Heaphy, Ph.D.
 License: LGPL2
 '''
 
-from numpy import zeros, float64
+from numpy import float64, float32
 from pandas import HDFStore, Timestamp, read_hdf, DataFrame, date_range
 from pandas.tseries.offsets import Minute
 from numba import types
@@ -13,29 +13,7 @@ from datetime import datetime as dt
 import os
 from copy import deepcopy
 from HSP2.utilities import transform, versions
-
-def noop (store, siminfo, ui, ts):
-    ERRMSGS = []
-    errors = zeros(len(ERRMSGS), dtype=int)
-    return errors, ERRMSGS
-
-# new activity modules must be added here and in *activites* below
-from HSP2.ATEMP  import atemp
-from HSP2.SNOW   import snow
-from HSP2.PWATER import pwater
-from HSP2.IWATER import iwater
-from HSP2.HYDR   import hydr
-
-# Note: This is the ONLY place in HSP2 that defines activity execution order
-activities = {
-  'PERLND': {'ATEMP':atemp, 'SNOW':snow, 'PWATER':pwater, 'SEDMNT':noop,
-     'PSTEMP':noop, 'PWTGAS':noop, 'PQUAL':noop, 'MSTLAY':noop, 'PEST':noop,
-     'NITR':noop, 'PHOS':noop, 'TRACER':noop},
-  'IMPLND': {'ATEMP':atemp, 'SNOW':snow, 'IWATER':iwater, 'SOLIDS':noop,
-     'IWTGAS':noop, 'IQUAL':noop},
-  'RCHRES': {'HYDR':hydr, 'ADCALC':noop, 'CONS':noop, 'HTRCH':noop,
-     'SEDTRN':noop, 'GQUAL':noop, 'OXRX':noop, 'NUTRX':noop, 'PLANK':noop,
-     'PHCARB':noop}}
+from HSP2.configuration import activities, noop
 
 
 def main(hdfname, doe, doename='DOE_RESULTS', saveall=False):
@@ -105,7 +83,6 @@ def main(hdfname, doe, doename='DOE_RESULTS', saveall=False):
     None.
     '''
 
-
     if not os.path.exists(hdfname):
         print(f'{hdfname} HDF5 File Not Found, QUITTING')
         return
@@ -127,7 +104,6 @@ def main(hdfname, doe, doename='DOE_RESULTS', saveall=False):
             savepath = f'{doename}/RUN{run}'
             msg(2, f'Starting Run {run}; saving as {savepath}')
 
-
             uci = deepcopy(originaluci)
             for _, operation, segment, delt in opseq.itertuples():
                 msg(3, f'{operation} {segment} DELT(minutes): {delt}')
@@ -144,7 +120,7 @@ def main(hdfname, doe, doename='DOE_RESULTS', saveall=False):
 
                     msg(4, f'{activity}')
                     if operation == 'RCHRES':
-                        get_flows(store,ts,activity,segment,ddlinks,ddmasslinks,msg,savepath)
+                        get_flows(store,ts,activity,segment,ddlinks,ddmasslinks,siminfo['steps'],msg,savepath)
                     ui = uci[operation, activity, segment] # ui is a dictionary
 
                     # update deep copy of UCI dict with run dict
@@ -273,17 +249,16 @@ def save_timeseries(store,ts,savedict,siminfo,saveall,operation,segment,activity
     df = DataFrame(index=siminfo['tindex'])
     for y in (save & set(ts.keys())):
         df[y] = ts[y]
-    df = df.astype('float32').sort_index(axis='columns')
-    path = f'/RESULTS/{operation}_{segment}/{activity}'
+    df = df.astype(float32).sort_index(axis='columns')
+    path = f'{savepath}/{operation}_{segment}/{activity}'
     if not df.empty:
         store.put(path, df)
-        store.flush()
     else:
         print('Save DataFrame Empty for', path)
     return
 
 
-def get_flows(store, ts, activity, segment, ddlinks, ddmasslinks, msg, savepath):
+def get_flows(store, ts, activity, segment, ddlinks, ddmasslinks, steps, msg, savepath):
     for x in ddlinks[segment]:
         mldata = ddmasslinks[x.MLNO]
         for dat in mldata:
