@@ -281,7 +281,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
             o[:]  = 0.0
             rovol = volt
 
-            if roseff > 0.0:
+            if roseff > 0.0: # numba limitation, cant combine into one line
                 ovol[:] = (rovol/roseff) * oseff[:]
             else:
                 ovol[:] = rovol / nexits
@@ -483,10 +483,9 @@ def demand(vol, rowFT, funct, nexits, delts, convf, colind, outdgt):
                 odfv = rowFT[icol-1] * convf
         else:
             odfv = 0.0
-
         odgt = outdgt[i]
 
-        if odfv == 0.0 and odgt == 0.0:
+        if   odfv == 0.0 and odgt == 0.0:
             od[i] = 0.0
         elif odfv != 0.0 and odgt == 0.0:
             od[i] = odfv
