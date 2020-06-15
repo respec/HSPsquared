@@ -208,7 +208,7 @@ def _snow_(ui, ts):
         ''
         # METEOR
         if prec > 0.0:
-            fprfg = oldprec == 0.0
+            fprfg = (oldprec == 0.0)
         else:
             fprfg = False
 

@@ -38,7 +38,7 @@ def pwater(store, siminfo, uci, ts):
     #    surtab = typeT(ui['SURTAB'])   # FTable
 
     # missing flows are treated as zeros
-    for name in ('AGWLI','IFWLI','LGTMP', 'LZLI','PETINP','PREC','SURLI','UZLI'):
+    for name in ('AGWLI','IFWLI','LGTMP','LZLI','PETINP','PREC','SURLI','UZLI'):
         if name not in ts:
             ts[name] = zeros(steps)
 
@@ -680,7 +680,6 @@ def proute(psur, RTOPFG, delt60, dec, src, surs, errors):
         # send what is on the overland flow plane straight to the channel
         suro = psur
         surs = 0.0
-
     if suro <= 1.0e-10:
         suro = 0.0     # fix bug in on pc - underflow leads to "not a number"
 
