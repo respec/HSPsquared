@@ -3,7 +3,7 @@ Author: Robert Heaphy, Ph.D.
 License: LGPL2
 '''
 
-from numpy import zeros, float64, float32
+from numpy import float64, float32
 from pandas import HDFStore, Timestamp, read_hdf, DataFrame, date_range
 from pandas.tseries.offsets import Minute
 from numba import types
@@ -12,29 +12,7 @@ from collections import defaultdict
 from datetime import datetime as dt
 import os
 from HSP2.utilities import transform, versions
-
-def noop (store, siminfo, ui, ts):
-    ERRMSGS = []
-    errors = zeros(len(ERRMSGS), dtype=int)
-    return errors, ERRMSGS
-
-# new activity modules must be added here and in *activites* below
-from HSP2.ATEMP  import atemp
-from HSP2.SNOW   import snow
-from HSP2.PWATER import pwater
-from HSP2.IWATER import iwater
-from HSP2.HYDR   import hydr
-
-# Note: This is the ONLY place in HSP2 that defines activity execution order
-activities = {
-  'PERLND': {'ATEMP':atemp, 'SNOW':snow, 'PWATER':pwater, 'SEDMNT':noop,
-     'PSTEMP':noop, 'PWTGAS':noop, 'PQUAL':noop, 'MSTLAY':noop, 'PEST':noop,
-     'NITR':noop, 'PHOS':noop, 'TRACER':noop},
-  'IMPLND': {'ATEMP':atemp, 'SNOW':snow, 'IWATER':iwater, 'SOLIDS':noop,
-     'IWTGAS':noop, 'IQUAL':noop},
-  'RCHRES': {'HYDR':hydr, 'ADCALC':noop, 'CONS':noop, 'HTRCH':noop,
-     'SEDTRN':noop, 'GQUAL':noop, 'OXRX':noop, 'NUTRX':noop, 'PLANK':noop,
-     'PHCARB':noop}}
+from HSP2.configuration import activities, noop
 
 
 def main(hdfname, saveall=False):
@@ -131,15 +109,15 @@ def get_uci(store):
                 siminfo['stop']  = Timestamp(temp['Stop'])
             elif module == 'LINKS':
                 ddlinks = defaultdict(list)
-                for row in store[path].itertuples():
+                for row in store[path].replace('na','').itertuples():
                     ddlinks[row.TVOLNO].append(row)
             elif module == 'MASS_LINKS':
                 ddmasslinks = defaultdict(list)
-                for row in store[path].itertuples():
+                for row in store[path].replace('na','').itertuples():
                     ddmasslinks[row.MLNO].append(row)
             elif module == 'EXT_SOURCES':
                 ddext_sources = defaultdict(list)
-                for row in store[path].itertuples():
+                for row in store[path].replace('na','').itertuples():
                     ddext_sources[(row.TVOL, row.TVOLNO)].append(row)
             elif module == 'OP_SEQUENCE':
                 opseq = store[path]
@@ -183,7 +161,7 @@ def save_timeseries(store, ts, savedict, siminfo, saveall, operation, segment, a
     for y in (save & set(ts.keys())):
         df[y] = ts[y]
     df = df.astype(float32).sort_index(axis='columns')
-    path = f'/RESULTS/{operation}_{segment}/{activity}'
+    path = f'RESULTS/{operation}_{segment}/{activity}'
     if not df.empty:
         df.to_hdf(store, path, complib='blosc', complevel=9)
     else:
