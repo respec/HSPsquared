@@ -11,6 +11,27 @@ from numba import types
 from numba.typed import Dict
 
 
+flowtype = {
+  # EXTERNAL FLOWS
+  'PREC','WIND','WINMOV','SOLRAD','PETINP','POTEV','SURLI','IFWLI','AGWLI',
+  'SLSED','IVOL','ICON',
+  # COMPUTED FLOWS
+  'PRECIP','SNOWF','PRAIN','SNOWE','WYIELD','MELT',                     #SNOW
+  'SUPY','SURO','IFWO','AGWO','PERO','IGWI','PET','CEPE','UZET','LZET', #PWATER
+  'AGWET','BASET','TAET','IFWI','UZI','INFIL','PERC','LZI','AGWI',      #PWATER
+  'SOHT','IOHT','AOHT','POHT','SODOXM','SOCO2M','IODOXM','IOCO2M',      #PWTGAS
+  'AODOXM','AOCO2M','PODOXM','POCO2M',                                  #PWTGAS
+  'SUPY','SURO','PET','IMPEV'                                           #IWATER
+  'SOSLD',                                                              #SOLIDS
+  'SOHT','SODOXM','SOCO2M',                                             #IWTGAS
+  'SOQS','SOQO','SOQUAL',                                               #IQUAL
+  'IVOL','PRSUPY','VOLEV','ROVOL','POTEV',                              #HYDR
+  'ICON','ROCON',                                                       #CONS
+  'IHEAT','HTEXCH','ROHEAT','QTOTAL','QSOLAR','QLONGW','QEVAP','QCON',  #HTRCH
+  'QPREC','QBED',                                                       #HTRCH
+  }
+
+
 def make_numba_dict(uci):
     '''
     Move UCI dictionary data to Numba dict for FLAGS, STATES, PARAMETERS.
@@ -35,8 +56,7 @@ def make_numba_dict(uci):
     return ui
 
 
-flowtype = {'PREC','WIND','WINMOV','SOLRAD','PETINP','POTEV','SURLI','IFWLI',
-  'AGWLI','SLSED','IVOL','ICON'}
+
 def transform(ts, name, how, siminfo):
     '''
      upsample (disaggregate) /downsample (aggregate) ts to freq and trim to [start:stop]
