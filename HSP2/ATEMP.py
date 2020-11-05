@@ -28,7 +28,7 @@ def atemp(store, siminfo, uci, ts):
     return errors, ERRMSGS
 
 
-@njit(cache=True)
+# @njit(cache=True)
 def _atemp_(ui, ts):
     ''' computes airtemp by correcting gage temp with prec and elevation
     general, ui, ts are Python dictionaries for user input and time series,
@@ -40,7 +40,7 @@ def _atemp_(ui, ts):
 
     # pay for lookup once
     k     = ui['k']      # calculated in atemp()
-    eldat = ui['eldat']
+    eldat = ui['ELDAT']
     steps = int(ui['steps'])
 
     # all series already aggregated/disaggregated to runtime delt frequecy
