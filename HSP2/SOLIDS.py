@@ -5,8 +5,8 @@ License: LGPL2
 Conversion of HSPF HIMPSLD.FOR module into Python''' 
 
 from numpy import zeros, where
-from numba import jit
-from HSP2  import initm
+from numba import njit
+from HSP2.utilities  import initm, make_numba_dict, hourflag
 
 
 MFACTA = 1.0  # english units
@@ -14,14 +14,15 @@ MFACTA = 1.0  # english units
 ERRMSG = []
 
 
-def solids(store, general, ui, ts):
+def solids(store, siminfo, uci, ts):
 	'''Accumulate and remove solids from the impervious land segment'''
 	
 	errorsV = zeros(len(ERRMSG), dtype=int)
-	delt60 = general['sim_delt'] / 60     # delt60 - simulation time interval in hours
-	simlen = general['sim_len']
-	tindex = general['tindex']
+	delt60 = siminfo['delt'] / 60     # delt60 - simulation time interval in hours
+	simlen = siminfo['steps']
+	tindex = siminfo['tindex']
 
+	ui = make_numba_dict(uci)  # Note: all values converted to float automatically
 	SDOPFG = ui['SDOPFG']
 	keim   = ui['KEIM']
 	jeim   = ui['JEIM']
@@ -40,15 +41,17 @@ def solids(store, general, ui, ts):
 	SLDS  = ts['SLDS']  = zeros(simlen)
 
 	drydfg = 1  # assume day is dry
-	DAYFG = where(tindex.hour==1, True, False)   # ??? need to check if minute == 0
-	
+	DAYFG = hourflag(siminfo, 0, dofirst=True).astype(bool)
+
+	u = uci['PARAMETERS']
 	# process optional monthly arrays to return interpolated data or constant array
-	initm(general, ui, ts, 'VASDFG', 'ACCSDM', 'ACCSDP')
-	initm(general, ui, ts, 'VRSDFG', 'REMSDM', 'REMSDP')
+	ts['ACCSDP'] = initm(siminfo, uci, u['VASDFG'], 'ACCSDM', u['ACCSDP'])
+	ts['REMSDP'] = initm(siminfo, uci, u['VRSDFG'], 'REMSDM', u['REMSDP'])
 	ACCSDP = ts['ACCSDP']
 	REMSDP = ts['REMSDP']
-	
-	for loop in range(sim_length):
+
+	slds = ui['SLDS']
+	for loop in range(simlen):
 		suro   = SURO[loop]
 		surs   = SURS[loop]
 		prec   = PREC[loop]
@@ -91,9 +94,12 @@ def solids(store, general, ui, ts):
 			if drydfg == 1:       # precipitation did not occur during the previous day
 				# update storage due to accumulation and removal which  occurs independent of runoff - units are lbs/acre
 				slds = accsdp + slds * (1.0 - remsdp)
-				
+
+			if prec > 0.0:
 				# there is precipitation on the first interval of the new day
-				drydfg = 0 if prec > 0.0 else drydfg = 1
+				drydfg = 0
+			else:
+				drydfg = 1
 
 		SOSLD[loop] = sosld  # * MFACTA
 		SLDS[loop]  = slds   # * MFACTA

@@ -58,6 +58,9 @@ def main(hdfname, saveall=False):
                 if operation == 'RCHRES':
                     get_flows(store,ts,activity,segment,ddlinks,ddmasslinks,siminfo['steps'], msg)
                 ui = uci[(operation, activity, segment)]   # ui is a dictionary
+                if operation == 'PERLND' and activity == 'SEDMNT':
+                    # special exception here to make CSNOFG available
+                    ui['PARAMETERS']['CSNOFG'] = uci[(operation, 'PWATER', segment)]['PARAMETERS']['CSNOFG']
 
                 ############ calls activity function like snow() ##############
                 errors, errmessages = function(store, siminfo, ui, ts)
