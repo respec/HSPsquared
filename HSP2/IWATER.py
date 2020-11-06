@@ -173,7 +173,7 @@ def _iwater_(ui, ts):
             suri = reto + surli
         # IWATER
         msupy = suri + surs
-        surs = 0.0
+
         suro = 0.0
         if msupy > 0.0:
             if ui['RTOPFG']:
