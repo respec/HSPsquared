@@ -4,9 +4,9 @@ License: LGPL2
 
 Conversion of HSPF HPERSED.FOR module into Python''' 
 
-from numpy import zeros, where
-from numba import jit
-from HSP2  import initm
+from numpy import zeros, where, int64
+from numba import njit
+from HSP2.utilities  import initm, make_numba_dict, hourflag
 
 ERRMSG = []
 
@@ -18,39 +18,42 @@ MFACTA = 1.0
 PDETS= DETS*MFACTA # convert dimensional variables to external units
 '''
 
-ERRMSG = []
-
-def sedmnt(store, general, ui, ts):
+def sedmnt(store, siminfo, uci, ts):
 	''' Produce and remove sediment from the land surface'''
 	
 	errorsV = zeros(len(ERRMSG), dtype=int)
-	delt   = general['sim_delt'] 
-	simlen = general['sim_len']
-	tindex = general['tindex']
-    
+
+	delt   = siminfo['delt']
+	simlen = siminfo['steps']
+	tindex = siminfo['tindex']
+
+	ui = make_numba_dict(uci)  # Note: all values converted to float automatically
 	VSIVFG = ui['VSIVFG']
 	SDOPFG = ui['SDOPFG']
+	CSNOFG = int(ui['CSNOFG'])
 	smpf   = ui['SMPF']
 	krer   = ui['KRER']
 	jrer   = ui['JRER']
 	affix  = ui['AFFIX']
-	nvsi   = ui['NVSI'] * DELT / 1440.
+	nvsi   = ui['NVSI'] * delt / 1440.
 	kser   = ui['KSER']
 	jser   = ui['JSER']
 	kger   = ui['KGER']
 	jger   = ui['JGER']
-	nvsim  = ui['NVSIM']
-	
-	initm(general, ui, ts, 'CRVFG', 'COVERM', 'COVER')
-	COVER = ts['COVER']
-	cover = COVER[0]   # for numba
 
-	if RAINF in ts:
+	u = uci['PARAMETERS']
+	ts['COVERI'] = initm(siminfo, uci, u['CRVFG'], 'MONTHLY_COVER', u['COVER'])
+	COVERI = ts['COVERI']
+	cover = COVERI[0]   # for numba
+	ts['NVSI'] = initm(siminfo, uci, u['VSIVFG'], 'MONTHLY_NVSI', u['NVSI'])
+	NVSI = ts['NVSI'] * delt / 1440.
+
+	if 'RAINF' in ts:
 		RAIN = ts['RAINF']
 	else:
 		RAIN = ts['PREC']
 		
-	for name in ['PREC', 'SLSED', 'SNOCOV', 'SURO', 'SURS',]:
+	for name in ['PREC', 'SLSED', 'SNOCOV', 'SURO', 'SURS']:
 		if name not in ts:
 			ts[name] = zeros(simlen)
 	PREC   = ts['PREC']
@@ -60,48 +63,54 @@ def sedmnt(store, general, ui, ts):
 	SURS   = ts['SURS']
 	
 	# preallocate output arrays
-	DETS  = ts['DETS']  = zeros(sim_len)
-	WSSD  = ts['WSSD']  = zeros(sim_len)
-	SCRSD = ts['SCRSD'] = zeros(sim_len)
-	SOSED = ts['SOSED'] = zeros(sim_len)
+	DETS  = ts['DETS']  = zeros(simlen)
+	WSSD  = ts['WSSD']  = zeros(simlen)
+	SCRSD = ts['SCRSD'] = zeros(simlen)
+	SOSED = ts['SOSED'] = zeros(simlen)
+	COVER = ts['COVER'] = zeros(simlen)
+
+        # HSPF 12.5 has only one sediment block
+	dets = ui['DETS']
 
 	# BLOCK SPECIFIC VALUES
-	nblks = ui['NBLKS']
+	# nblks = ui['NBLKS']
 	
-	''' the initial storages are repeated for each block'''
-	sursb = ui['SURSB']
-	uzsb  = ui['UZSB']
-	ifwsb = ui['IFWSB']
-	detsb  = ui['DETSB']
+	# ''' the initial storages are repeated for each block'''
+	# sursb = ui['SURSB']
+	# uzsb  = ui['UZSB']
+	# ifwsb = ui['IFWSB']
+	# detsb  = ui['DETSB']
 	
-	if nblks > 1:
-		SUROB  = ts['SIROB']  # if NBLKS > 1
-		SURB   = ts['SURSB']  # if NBLKS > 1
+	# if nblks > 1:
+	#	SUROB  = ts['SIROB']  # if NBLKS > 1
+	#	SURB   = ts['SURSB']  # if NBLKS > 1
 
-		DETSB  = ts['DETSB']  = zeros(NBLKS, sim_len)
-		WSSDB  = ts['WSSDB']  = zeros(NBLKS, sim_len)
-		SCRSDB = ts['SCRSDB'] = zeros(NBLKS, sim_len)
-		SOSDB  = ts['SOSDB']  = zeros(NBLKS, sim_len)
-		
+	#	DETSB  = ts['DETSB']  = zeros(nblks, simlen)
+	#	WSSDB  = ts['WSSDB']  = zeros(nblks, simlen)
+	#	SCRSDB = ts['SCRSDB'] = zeros(nblks, simlen)
+	#	SOSDB  = ts['SOSDB']  = zeros(nblks, simlen)
 
 	# initialize sediment transport capacity
+	surs = SURS[0]
+	delt60 = delt / 60.0  # simulation interval in hours
 	stcap = delt60 * kser * (surs / delt60)**jser if SDOPFG else 0.0
 
-	DAYFG = where(tindex.hour==1, True, False)   # ??? need to check if minute == 0	
-	DAYFG[0] = True
+	# DAYFG = where(tindex.hour==1, True, False)   # ??? need to check if minute == 0
+	DAYFG = hourflag(siminfo, 0, dofirst=True).astype(bool)
 	
 	DRYDFG = 1
 	
-	for loop in range(sim_len):
+	for loop in range(simlen):
 		dayfg  = DAYFG[loop]
 		rain   = RAIN[loop]
 		prec   = PREC[loop]
 		suro   = SURO[loop]
 		surs   = SURS[loop]
 		snocov = SNOCOV[loop]
+		slsed  = SLSED[loop]
 		
 		if dayfg:
-			cover = COVER[loop]
+			cover = COVERI[loop]
 		
 		# estimate the quantity of sediment particles detached from the soil surface by rainfall and augment the detached sediment storage
 		# detach()
@@ -119,8 +128,8 @@ def sedmnt(store, general, ui, ts):
 			det = 0.0
 		# end detach()
 		
-		if DAYFG:     # it is the first interval of the day
-			nvsi = ???  # update nvsi
+		if dayfg:     # it is the first interval of the day
+			nvsi = NVSI[loop]
 			if VSIVFG == 2 and DRYDFG:  # last day was dry, add a whole days load in first interval detailed output will show load added over the whole day.;
 				dummy = nvsi * (1440. / delt)
 				dets  = dets + dummy
@@ -200,5 +209,6 @@ def sedmnt(store, general, ui, ts):
 		WSSD[loop]  = wssd
 		SCRSD[loop] = scrsd
 		SOSED[loop] = sosed
+		COVER[loop] = cover
 
 	return errorsV, ERRMSG
