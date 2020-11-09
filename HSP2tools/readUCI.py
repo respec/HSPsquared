@@ -237,7 +237,10 @@ def network(info, lines):
         d = parseD(line, parse['NETWORK','na'])
         if d['SVOL'] in ops and d['TVOL'] in ops:
             d['SVOLNO'] = f"{d['SVOL'][0]}{int(d['SVOLNO']):03d}"
-            d['TVOLNO'] = f"{d['TVOL'][0]}{int(d['TVOLNO']):03d}"
+            if 'TVOLNO' in d:
+                d['TVOLNO'] = f"{d['TVOL'][0]}{int(d['TVOLNO']):03d}"
+            elif 'TOPFST' in d:
+                d['TOPFST'] = f"{d['TVOL'][0]}{int(d['TOPFST']):03d}"
             lst.append(d)
     return DataFrame(lst, columns=d) if lst else DataFrame()
 
