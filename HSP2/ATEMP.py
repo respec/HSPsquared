@@ -40,7 +40,7 @@ def _atemp_(ui, ts):
 
     # pay for lookup once
     k     = ui['k']      # calculated in atemp()
-    eldat = ui['eldat']
+    eldat = ui['ELDAT']
     steps = int(ui['steps'])
 
     # all series already aggregated/disaggregated to runtime delt frequecy
