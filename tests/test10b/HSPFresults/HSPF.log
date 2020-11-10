@@ -1,0 +1,1319 @@
+00:00:00.006	Main:StartToFile 2020-11-04 09:21:05
+00:00:00.026	Main:HSPF:entry: ("c:\basins45\models\winhspf31\bin\hspfenginenet.exe" 3588)
+00:00:00.037	Main:ProcessDetails HspfEngineNet
+00:00:00.062	Main: Parent WinHSPF
+00:00:00.063	Main:CreatePipes 1048 1052
+00:00:00.073	Main:Token:MSG7 In M_SPIPH    0 1052
+00:00:00.933	InputCallback:Process 9 bytes
+00:00:00.948	ProcessInput:MONITOR
+00:00:00.949	ProcessInput:HSPF:F90_WDBOPN:entry (c:\basins45\models\winhspf31\bin\hspfmsg.wdm, 44)
+00:00:00.959	ProcessInput:HSPF:F90_WDBOPN:exit  (100)
+00:00:00.993	FindFile:Finding file: statusMonitor.exe
+00:00:01.028	FindFile:Found file: c:\basins45\models\winhspf31\bin\statusmonitor.exe
+00:00:01.383	Status:MonitorLaunched
+00:00:01.386	WriteStatus:(Progress Percent Off)
+00:00:01.391	ProcessInput:InputProcessed
+00:00:01.393	InputCallback:Process 31 bytes
+00:00:01.393	ProcessInput:W99OPN
+00:00:01.393	ProcessInput:DBG F90_W99OPN
+00:00:01.395	ProcessInput:InputProcessed
+00:00:01.395	ProcessInput:ACTIVATE TEST10bin -1
+00:00:01.396	ProcessInput:DBG F90_ACTSCN(-1, 0, 100, 0, TEST10bin, 9
+00:00:01.443	ProcessInput:Activate complete 0
+
+00:00:01.444	ProcessInput:InputProcessed
+00:00:01.446	Main:Token:MSG7 File Status at begin activate
+00:00:01.446	WriteStatus:(MSG7 File Status at begin activate)
+00:00:01.446	Main:Token:MSG7   unit  99 file ERROR.FIL is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:01.447	WriteStatus:(MSG7   unit  99 file ERROR.FIL is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:01.447	Main:Token:MSG7   unit 100 file c:\basins45\models\winhspf31\bin\hspfmsg.wdm is open, access:DIRECT form:UNFORMATTED r/w:NO recl: 2048
+00:00:01.447	WriteStatus:(MSG7   unit 100 file c:\basins45\models\winhspf31\bin\hspfmsg.wdm is open, access:DIRECT form:UNFORMATTED r/w:NO recl: 2048)
+00:00:01.447	Main:Token:MSG7 M_ACTSCN:entry:TEST10bin           0         100
+00:00:01.447	WriteStatus:(MSG7 M_ACTSCN:entry:TEST10bin           0         100)
+00:00:01.447	Main:Token:MSG7  M_ACTSCN:MSGFL:100 c:\basins45\models\winhspf31\bin\hspfmsg.wdm
+00:00:01.447	WriteStatus:(MSG7  M_ACTSCN:MSGFL:100 c:\basins45\models\winhspf31\bin\hspfmsg.wdm)
+00:00:01.447	Main:Token:MSG7  M_ACTSCN:UCIFL: 10 TEST10bin.UCI
+00:00:01.447	WriteStatus:(MSG7  M_ACTSCN:UCIFL: 10 TEST10bin.UCI)
+00:00:01.448	Main:Token:MSG7 M_ACTSCN:about to call FILSET
+00:00:01.448	WriteStatus:(MSG7 M_ACTSCN:about to call FILSET)
+00:00:01.448	Main:Token:MSG7 M_ACTSCN:back from FILSET           0
+00:00:01.448	WriteStatus:(MSG7 M_ACTSCN:back from FILSET           0)
+00:00:01.448	Main:Token:MSG7  M_ACTSCN:WDMFL: 21 test.wdm
+00:00:01.449	WriteStatus:(MSG7  M_ACTSCN:WDMFL: 21 test.wdm)
+00:00:01.449	Main:Token:MSG7  M_ACTSCN:ECHFL: 22 test10.ech
+00:00:01.449	WriteStatus:(MSG7  M_ACTSCN:ECHFL: 22 test10.ech)
+00:00:01.449	Main:Token:MSG7 M_ACTSCN:skip INTERP
+00:00:01.449	WriteStatus:(MSG7 M_ACTSCN:skip INTERP)
+00:00:01.449	Main:Token:MSG7 File Status at before File Closing in M_ACTSCN
+00:00:01.449	WriteStatus:(MSG7 File Status at before File Closing in M_ACTSCN)
+00:00:01.449	Main:Token:MSG7   unit   1 file test10.out is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:01.450	WriteStatus:(MSG7   unit   1 file test10.out is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:01.450	Main:Token:MSG7   unit  21 file test.wdm is open, access:DIRECT form:UNFORMATTED r/w:YES recl: 2048
+00:00:01.450	WriteStatus:(MSG7   unit  21 file test.wdm is open, access:DIRECT form:UNFORMATTED r/w:YES recl: 2048)
+00:00:01.450	Main:Token:MSG7   unit  22 file test10.ech is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:01.450	WriteStatus:(MSG7   unit  22 file test10.ech is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:01.450	Main:Token:MSG7   unit  66 file test10.d66 is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:01.451	WriteStatus:(MSG7   unit  66 file test10.d66 is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:01.451	Main:Token:MSG7   unit  92 file test10.hbn is open, access:SEQUENTIAL form:UNFORMATTED r/w:YES recl:   80
+00:00:01.451	WriteStatus:(MSG7   unit  92 file test10.hbn is open, access:SEQUENTIAL form:UNFORMATTED r/w:YES recl:   80)
+00:00:01.451	Main:Token:MSG7   unit  94 file test10.p94 is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:01.451	WriteStatus:(MSG7   unit  94 file test10.p94 is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:01.451	Main:Token:MSG7   unit  95 file test10.p95 is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:01.451	WriteStatus:(MSG7   unit  95 file test10.p95 is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:01.451	Main:Token:MSG7   unit  99 file ERROR.FIL is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:01.451	WriteStatus:(MSG7   unit  99 file ERROR.FIL is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:01.452	Main:Token:MSG7   unit 100 file c:\basins45\models\winhspf31\bin\hspfmsg.wdm is open, access:DIRECT form:UNFORMATTED r/w:NO recl: 2048
+00:00:01.452	WriteStatus:(MSG7   unit 100 file c:\basins45\models\winhspf31\bin\hspfmsg.wdm is open, access:DIRECT form:UNFORMATTED r/w:NO recl: 2048)
+00:00:01.452	Main:Token:MSG99 
+00:00:01.452	WriteStatus:(MSG99 )
+00:00:01.452	Main:Token:MSG7 File Status at before WDM closing in M_ACTSCN
+00:00:01.452	WriteStatus:(MSG7 File Status at before WDM closing in M_ACTSCN)
+00:00:01.452	Main:Token:MSG7   unit  21 file test.wdm is open, access:DIRECT form:UNFORMATTED r/w:YES recl: 2048
+00:00:01.452	WriteStatus:(MSG7   unit  21 file test.wdm is open, access:DIRECT form:UNFORMATTED r/w:YES recl: 2048)
+00:00:01.452	Main:Token:MSG7   unit  99 file ERROR.FIL is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:01.452	WriteStatus:(MSG7   unit  99 file ERROR.FIL is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:01.452	Main:Token:MSG7   unit 100 file c:\basins45\models\winhspf31\bin\hspfmsg.wdm is open, access:DIRECT form:UNFORMATTED r/w:NO recl: 2048
+00:00:01.453	WriteStatus:(MSG7   unit 100 file c:\basins45\models\winhspf31\bin\hspfmsg.wdm is open, access:DIRECT form:UNFORMATTED r/w:NO recl: 2048)
+00:00:01.453	Main:Token:MSG7 File Status at about to close           21
+00:00:01.453	WriteStatus:(MSG7 File Status at about to close           21)
+00:00:01.453	Main:Token:MSG7   unit  21 file test.wdm is open, access:DIRECT form:UNFORMATTED r/w:YES recl: 2048
+00:00:01.453	WriteStatus:(MSG7   unit  21 file test.wdm is open, access:DIRECT form:UNFORMATTED r/w:YES recl: 2048)
+00:00:01.453	Main:Token:MSG7   unit  99 file ERROR.FIL is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:01.453	WriteStatus:(MSG7   unit  99 file ERROR.FIL is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:01.454	Main:Token:MSG7   unit 100 file c:\basins45\models\winhspf31\bin\hspfmsg.wdm is open, access:DIRECT form:UNFORMATTED r/w:NO recl: 2048
+00:00:01.454	WriteStatus:(MSG7   unit 100 file c:\basins45\models\winhspf31\bin\hspfmsg.wdm is open, access:DIRECT form:UNFORMATTED r/w:NO recl: 2048)
+00:00:01.454	Main:Token:MSG7 File Status at after one WDM closing in M_ACTSCN
+00:00:01.454	WriteStatus:(MSG7 File Status at after one WDM closing in M_ACTSCN)
+00:00:01.455	Main:Token:MSG7   unit  99 file ERROR.FIL is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:01.455	WriteStatus:(MSG7   unit  99 file ERROR.FIL is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:01.455	Main:Token:MSG7   unit 100 file c:\basins45\models\winhspf31\bin\hspfmsg.wdm is open, access:DIRECT form:UNFORMATTED r/w:NO recl: 2048
+00:00:01.455	WriteStatus:(MSG7   unit 100 file c:\basins45\models\winhspf31\bin\hspfmsg.wdm is open, access:DIRECT form:UNFORMATTED r/w:NO recl: 2048)
+00:00:01.455	Main:Token:MSG7 File Status at at end of File Closing in M_ACTSCN
+00:00:01.455	WriteStatus:(MSG7 File Status at at end of File Closing in M_ACTSCN)
+00:00:01.455	Main:Token:MSG7   unit  99 file ERROR.FIL is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:01.456	WriteStatus:(MSG7   unit  99 file ERROR.FIL is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:01.456	Main:Token:MSG7   unit 100 file c:\basins45\models\winhspf31\bin\hspfmsg.wdm is open, access:DIRECT form:UNFORMATTED r/w:NO recl: 2048
+00:00:01.456	WriteStatus:(MSG7   unit 100 file c:\basins45\models\winhspf31\bin\hspfmsg.wdm is open, access:DIRECT form:UNFORMATTED r/w:NO recl: 2048)
+00:00:01.456	Main:Token:MSG7 M_ACTSCN:exit            0
+00:00:01.456	WriteStatus:(MSG7 M_ACTSCN:exit            0)
+00:00:01.456	Main:Token:MSG7 File Status at after activate, retcod:0 i:-1
+
+00:00:01.456	WriteStatus:MSG7 File Status at after activate, retcod:0 i:-1
+
+00:00:01.457	Main:Token:MSG7   unit  99 file ERROR.FIL is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:01.457	WriteStatus:(MSG7   unit  99 file ERROR.FIL is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:01.457	Main:Token:MSG7   unit 100 file c:\basins45\models\winhspf31\bin\hspfmsg.wdm is open, access:DIRECT form:UNFORMATTED r/w:NO recl: 2048
+00:00:01.457	WriteStatus:(MSG7   unit 100 file c:\basins45\models\winhspf31\bin\hspfmsg.wdm is open, access:DIRECT form:UNFORMATTED r/w:NO recl: 2048)
+00:00:03.457	InputCallback:Process 10 bytes
+00:00:03.458	ProcessInput:SIMULATE
+00:00:03.459	ProcessInput:DBG F90_SIMSCN
+00:00:03.492	Main:Token:MSG7 M_SIMSCN:entry:test10.ech
+00:00:03.493	WriteStatus:(MSG7 M_SIMSCN:entry:test10.ech)
+00:00:03.498	Main:Token:MSG7 File Status at before FILSET in M_SIMSCN
+00:00:03.498	WriteStatus:(MSG7 File Status at before FILSET in M_SIMSCN)
+00:00:03.501	Main:Token:MSG7   unit  99 file ERROR.FIL is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:03.503	WriteStatus:(MSG7   unit  99 file ERROR.FIL is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:03.504	Main:Token:MSG7   unit 100 file c:\basins45\models\winhspf31\bin\hspfmsg.wdm is open, access:DIRECT form:UNFORMATTED r/w:NO recl: 2048
+00:00:03.505	WriteStatus:(MSG7   unit 100 file c:\basins45\models\winhspf31\bin\hspfmsg.wdm is open, access:DIRECT form:UNFORMATTED r/w:NO recl: 2048)
+00:00:03.506	Main:Token:MSG7 M_SIMSCN:about to call FILSET         100          10           0           0           0           0
+00:00:03.506	WriteStatus:(MSG7 M_SIMSCN:about to call FILSET         100          10           0           0           0           0)
+00:00:03.507	Main:Token:MSG7 File Status at at end of FilSet in M_SIMSCN
+00:00:03.508	WriteStatus:(MSG7 File Status at at end of FilSet in M_SIMSCN)
+00:00:03.509	Main:Token:MSG7   unit   1 file test10.out is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:03.509	WriteStatus:(MSG7   unit   1 file test10.out is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:03.510	Main:Token:MSG7   unit  21 file test.wdm is open, access:DIRECT form:UNFORMATTED r/w:YES recl: 2048
+00:00:03.511	WriteStatus:(MSG7   unit  21 file test.wdm is open, access:DIRECT form:UNFORMATTED r/w:YES recl: 2048)
+00:00:03.512	Main:Token:MSG7   unit  22 file test10.ech is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:03.512	WriteStatus:(MSG7   unit  22 file test10.ech is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:03.513	Main:Token:MSG7   unit  66 file test10.d66 is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:03.514	WriteStatus:(MSG7   unit  66 file test10.d66 is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:03.517	Main:Token:MSG7   unit  92 file test10.hbn is open, access:SEQUENTIAL form:UNFORMATTED r/w:YES recl:   80
+00:00:03.518	WriteStatus:(MSG7   unit  92 file test10.hbn is open, access:SEQUENTIAL form:UNFORMATTED r/w:YES recl:   80)
+00:00:03.520	Main:Token:MSG7   unit  94 file test10.p94 is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:03.520	WriteStatus:(MSG7   unit  94 file test10.p94 is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:03.521	Main:Token:MSG7   unit  95 file test10.p95 is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:03.522	WriteStatus:(MSG7   unit  95 file test10.p95 is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:03.523	Main:Token:MSG7   unit  99 file ERROR.FIL is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:03.524	WriteStatus:(MSG7   unit  99 file ERROR.FIL is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:03.525	Main:Token:MSG7   unit 100 file c:\basins45\models\winhspf31\bin\hspfmsg.wdm is open, access:DIRECT form:UNFORMATTED r/w:NO recl: 2048
+00:00:03.527	WriteStatus:(MSG7   unit 100 file c:\basins45\models\winhspf31\bin\hspfmsg.wdm is open, access:DIRECT form:UNFORMATTED r/w:NO recl: 2048)
+00:00:03.529	Main:Token:MSG7 M_SIMSCN:about to call HSPF          22           0           0           0           0           0           0           0           0           0          21           0           0           0         100
+00:00:03.531	WriteStatus:(MSG7 M_SIMSCN:about to call HSPF          22           0           0           0           0           0           0           0           0           0          21           0           0           0         100)
+00:00:03.534	Main:Token:MSG10 HSPF
+00:00:03.535	WriteStatus:(MSG10 HSPF)
+00:00:03.536	Main:Token:MSG1  Processing a RUN data set from user's input file.
+00:00:03.537	WriteStatus:(MSG1  Processing a RUN data set from user's input file.)
+00:00:03.538	Main:Token:MSG2 GLOBAL
+00:00:03.538	WriteStatus:(MSG2 GLOBAL)
+00:00:03.539	Main:Token:MSG2 OPN SEQUENCE
+00:00:03.540	WriteStatus:(MSG2 OPN SEQUENCE)
+00:00:03.541	Main:Token:MSG2 FTABLES
+00:00:03.541	WriteStatus:(MSG2 FTABLES)
+00:00:03.542	Main:Token:MSG2 MASS-LINK
+00:00:03.543	WriteStatus:(MSG2 MASS-LINK)
+00:00:03.544	Main:Token:MSG3 
+00:00:03.544	WriteStatus:(MSG3 )
+00:00:03.546	Main:Token:MSG4 
+00:00:03.547	WriteStatus:(MSG4 )
+00:00:03.548	Main:Token:MSG2 PERLND
+00:00:03.549	WriteStatus:(MSG2 PERLND)
+00:00:03.550	Main:Token:MSG3      1
+00:00:03.551	WriteStatus:(MSG3      1)
+00:00:03.552	Main:Token:MSG4 ACTIVITY
+00:00:03.552	WriteStatus:(MSG4 ACTIVITY)
+00:00:03.553	Main:Token:MSG4 PRINT-INFO
+00:00:03.554	WriteStatus:(MSG4 PRINT-INFO)
+00:00:03.555	Main:Token:MSG4 BINARY-INFO
+00:00:03.556	WriteStatus:(MSG4 BINARY-INFO)
+00:00:03.557	Main:Token:MSG4 GEN-INFO
+00:00:03.557	WriteStatus:(MSG4 GEN-INFO)
+00:00:03.558	Main:Token:MSG4 ICE-FLAG
+00:00:03.559	WriteStatus:(MSG4 ICE-FLAG)
+00:00:03.560	Main:Token:MSG4 SNOW-FLAGS
+00:00:03.561	WriteStatus:(MSG4 SNOW-FLAGS)
+00:00:03.562	Main:Token:MSG4 SNOW-PARM1
+00:00:03.564	WriteStatus:(MSG4 SNOW-PARM1)
+00:00:03.565	Main:Token:MSG4 SNOW-PARM2
+00:00:03.565	WriteStatus:(MSG4 SNOW-PARM2)
+00:00:03.566	Main:Token:MSG4 SNOW-INIT1
+00:00:03.566	WriteStatus:(MSG4 SNOW-INIT1)
+00:00:03.567	Main:Token:MSG4 SNOW-INIT2
+00:00:03.567	WriteStatus:(MSG4 SNOW-INIT2)
+00:00:03.568	Main:Token:MSG4 PWAT-PARM1
+00:00:03.568	WriteStatus:(MSG4 PWAT-PARM1)
+00:00:03.569	Main:Token:MSG4 PWAT-PARM2
+00:00:03.569	WriteStatus:(MSG4 PWAT-PARM2)
+00:00:03.570	Main:Token:MSG4 PWAT-PARM3
+00:00:03.571	WriteStatus:(MSG4 PWAT-PARM3)
+00:00:03.571	Main:Token:MSG4 PWAT-PARM4
+00:00:03.571	WriteStatus:(MSG4 PWAT-PARM4)
+00:00:03.572	Main:Token:MSG4 PWAT-PARM5
+00:00:03.572	WriteStatus:(MSG4 PWAT-PARM5)
+00:00:03.573	Main:Token:MSG4 MON-INTERCEP
+00:00:03.573	WriteStatus:(MSG4 MON-INTERCEP)
+00:00:03.574	Main:Token:MSG4 MON-UZSN
+00:00:03.574	WriteStatus:(MSG4 MON-UZSN)
+00:00:03.574	Main:Token:MSG4 MON-MANNING
+00:00:03.574	WriteStatus:(MSG4 MON-MANNING)
+00:00:03.576	Main:Token:MSG4 MON-LZETPARM
+00:00:03.576	WriteStatus:(MSG4 MON-LZETPARM)
+00:00:03.576	Main:Token:MSG4 PWAT-STATE1
+00:00:03.577	WriteStatus:(MSG4 PWAT-STATE1)
+00:00:03.577	Main:Token:MSG4 PSTEMP-PARM1
+00:00:03.577	WriteStatus:(MSG4 PSTEMP-PARM1)
+00:00:03.578	Main:Token:MSG4 PSTEMP-PARM2
+00:00:03.578	WriteStatus:(MSG4 PSTEMP-PARM2)
+00:00:03.579	Main:Token:MSG4 PSTEMP-TEMPS
+00:00:03.579	WriteStatus:(MSG4 PSTEMP-TEMPS)
+00:00:03.580	Main:Token:MSG4 PWT-PARM1
+00:00:03.580	WriteStatus:(MSG4 PWT-PARM1)
+00:00:03.580	Main:Token:MSG4 PWT-PARM2
+00:00:03.580	WriteStatus:(MSG4 PWT-PARM2)
+00:00:03.581	Main:Token:MSG4 LAT-FACTOR
+00:00:03.581	WriteStatus:(MSG4 LAT-FACTOR)
+00:00:03.581	Main:Token:MSG4 PWT-TEMPS
+00:00:03.582	WriteStatus:(MSG4 PWT-TEMPS)
+00:00:03.582	Main:Token:MSG4 PWT-GASES
+00:00:03.582	WriteStatus:(MSG4 PWT-GASES)
+00:00:03.582	Main:Token:MSG3 
+00:00:03.582	WriteStatus:(MSG3 )
+00:00:03.583	Main:Token:MSG4 
+00:00:03.583	WriteStatus:(MSG4 )
+00:00:03.583	Main:Token:MSG2 IMPLND
+00:00:03.583	WriteStatus:(MSG2 IMPLND)
+00:00:03.584	Main:Token:MSG3      1
+00:00:03.584	WriteStatus:(MSG3      1)
+00:00:03.584	Main:Token:MSG4 ACTIVITY
+00:00:03.585	WriteStatus:(MSG4 ACTIVITY)
+00:00:03.585	Main:Token:MSG4 PRINT-INFO
+00:00:03.585	WriteStatus:(MSG4 PRINT-INFO)
+00:00:03.585	Main:Token:MSG4 BINARY-INFO
+00:00:03.586	WriteStatus:(MSG4 BINARY-INFO)
+00:00:03.586	Main:Token:MSG4 GEN-INFO
+00:00:03.586	WriteStatus:(MSG4 GEN-INFO)
+00:00:03.587	Main:Token:MSG4 ICE-FLAG
+00:00:03.587	WriteStatus:(MSG4 ICE-FLAG)
+00:00:03.587	Main:Token:MSG4 SNOW-FLAGS
+00:00:03.587	WriteStatus:(MSG4 SNOW-FLAGS)
+00:00:03.588	Main:Token:MSG4 SNOW-PARM1
+00:00:03.588	WriteStatus:(MSG4 SNOW-PARM1)
+00:00:03.588	Main:Token:MSG4 SNOW-PARM2
+00:00:03.588	WriteStatus:(MSG4 SNOW-PARM2)
+00:00:03.589	Main:Token:MSG4 SNOW-INIT1
+00:00:03.589	WriteStatus:(MSG4 SNOW-INIT1)
+00:00:03.589	Main:Token:MSG4 SNOW-INIT2
+00:00:03.589	WriteStatus:(MSG4 SNOW-INIT2)
+00:00:03.590	Main:Token:MSG4 IWAT-PARM1
+00:00:03.590	WriteStatus:(MSG4 IWAT-PARM1)
+00:00:03.590	Main:Token:MSG4 IWAT-PARM2
+00:00:03.591	WriteStatus:(MSG4 IWAT-PARM2)
+00:00:03.591	Main:Token:MSG4 IWAT-PARM3
+00:00:03.591	WriteStatus:(MSG4 IWAT-PARM3)
+00:00:03.591	Main:Token:MSG4 IWAT-STATE1
+00:00:03.592	WriteStatus:(MSG4 IWAT-STATE1)
+00:00:03.592	Main:Token:MSG4 SLD-PARM1
+00:00:03.592	WriteStatus:(MSG4 SLD-PARM1)
+00:00:03.592	Main:Token:MSG4 SLD-PARM2
+00:00:03.592	WriteStatus:(MSG4 SLD-PARM2)
+00:00:03.593	Main:Token:MSG4 SLD-STOR
+00:00:03.593	WriteStatus:(MSG4 SLD-STOR)
+00:00:03.593	Main:Token:MSG4 IWT-PARM1
+00:00:03.593	WriteStatus:(MSG4 IWT-PARM1)
+00:00:03.593	Main:Token:MSG4 IWT-PARM2
+00:00:03.594	WriteStatus:(MSG4 IWT-PARM2)
+00:00:03.594	Main:Token:MSG4 LAT-FACTOR
+00:00:03.594	WriteStatus:(MSG4 LAT-FACTOR)
+00:00:03.594	Main:Token:MSG4 IWT-INIT
+00:00:03.594	WriteStatus:(MSG4 IWT-INIT)
+00:00:03.595	Main:Token:MSG4 NQUALS
+00:00:03.595	WriteStatus:(MSG4 NQUALS)
+00:00:03.595	Main:Token:MSG4 IQL-AD-FLAGS
+00:00:03.595	WriteStatus:(MSG4 IQL-AD-FLAGS)
+00:00:03.596	Main:Token:MSG4 QUAL-PROPS
+00:00:03.596	WriteStatus:(MSG4 QUAL-PROPS)
+00:00:03.596	Main:Token:MSG4 QUAL-INPUT
+00:00:03.597	WriteStatus:(MSG4 QUAL-INPUT)
+00:00:03.597	Main:Token:MSG3 
+00:00:03.597	WriteStatus:(MSG3 )
+00:00:03.597	Main:Token:MSG4 
+00:00:03.597	WriteStatus:(MSG4 )
+00:00:03.598	Main:Token:MSG2 RCHRES
+00:00:03.598	WriteStatus:(MSG2 RCHRES)
+00:00:03.598	Main:Token:MSG3      1
+00:00:03.598	WriteStatus:(MSG3      1)
+00:00:03.599	Main:Token:MSG4 ACTIVITY
+00:00:03.599	WriteStatus:(MSG4 ACTIVITY)
+00:00:03.599	Main:Token:MSG4 PRINT-INFO
+00:00:03.599	WriteStatus:(MSG4 PRINT-INFO)
+00:00:03.600	Main:Token:MSG4 BINARY-INFO
+00:00:03.600	WriteStatus:(MSG4 BINARY-INFO)
+00:00:03.600	Main:Token:MSG4 GEN-INFO
+00:00:03.600	WriteStatus:(MSG4 GEN-INFO)
+00:00:03.600	Main:Token:MSG4 HYDR-PARM1
+00:00:03.601	WriteStatus:(MSG4 HYDR-PARM1)
+00:00:03.601	Main:Token:MSG4 HYDR-PARM2
+00:00:03.601	WriteStatus:(MSG4 HYDR-PARM2)
+00:00:03.601	Main:Token:MSG4 HYDR-IRRIG
+00:00:03.601	WriteStatus:(MSG4 HYDR-IRRIG)
+00:00:03.602	Main:Token:MSG4 HYDR-INIT
+00:00:03.602	WriteStatus:(MSG4 HYDR-INIT)
+00:00:03.602	Main:Token:MSG4 ADCALC-DATA
+00:00:03.602	WriteStatus:(MSG4 ADCALC-DATA)
+00:00:03.602	Main:Token:MSG4 NCONS
+00:00:03.603	WriteStatus:(MSG4 NCONS)
+00:00:03.603	Main:Token:MSG4 CONS-AD-FLAG
+00:00:03.603	WriteStatus:(MSG4 CONS-AD-FLAG)
+00:00:03.603	Main:Token:MSG4 CONS-DATA
+00:00:03.603	WriteStatus:(MSG4 CONS-DATA)
+00:00:03.603	Main:Token:MSG4 HT-BED-FLAGS
+00:00:03.604	WriteStatus:(MSG4 HT-BED-FLAGS)
+00:00:03.604	Main:Token:MSG4 HEAT-PARM
+00:00:03.604	WriteStatus:(MSG4 HEAT-PARM)
+00:00:03.604	Main:Token:MSG4 SHADE-PARM
+00:00:03.604	WriteStatus:(MSG4 SHADE-PARM)
+00:00:03.605	Main:Token:MSG4 HEAT-INIT
+00:00:03.605	WriteStatus:(MSG4 HEAT-INIT)
+00:00:03.605	Main:Token:MSG4 SANDFG
+00:00:03.605	WriteStatus:(MSG4 SANDFG)
+00:00:03.606	Main:Token:MSG4 SED-GENPARM
+00:00:03.606	WriteStatus:(MSG4 SED-GENPARM)
+00:00:03.606	Main:Token:MSG4 SAND-PM
+00:00:03.606	WriteStatus:(MSG4 SAND-PM)
+00:00:03.606	Main:Token:MSG4 SILT-CLAY-PM
+00:00:03.607	WriteStatus:(MSG4 SILT-CLAY-PM)
+00:00:03.607	Main:Token:MSG4 SILT-CLAY-PM
+00:00:03.607	WriteStatus:(MSG4 SILT-CLAY-PM)
+00:00:03.607	Main:Token:MSG4 SSED-INIT
+00:00:03.607	WriteStatus:(MSG4 SSED-INIT)
+00:00:03.607	Main:Token:MSG4 BED-INIT
+00:00:03.608	WriteStatus:(MSG4 BED-INIT)
+00:00:03.608	Main:Token:MSG4 GQ-GENDATA
+00:00:03.608	WriteStatus:(MSG4 GQ-GENDATA)
+00:00:03.608	Main:Token:MSG4 GQ-AD-FLAGS
+00:00:03.608	WriteStatus:(MSG4 GQ-AD-FLAGS)
+00:00:03.609	Main:Token:MSG4 GQ-QALDATA
+00:00:03.609	WriteStatus:(MSG4 GQ-QALDATA)
+00:00:03.609	Main:Token:MSG4 GQ-QALFG
+00:00:03.609	WriteStatus:(MSG4 GQ-QALFG)
+00:00:03.609	Main:Token:MSG4 GQ-FLG2
+00:00:03.609	WriteStatus:(MSG4 GQ-FLG2)
+00:00:03.610	Main:Token:MSG4 GQ-HYDPM
+00:00:03.610	WriteStatus:(MSG4 GQ-HYDPM)
+00:00:03.610	Main:Token:MSG4 GQ-ROXPM
+00:00:03.610	WriteStatus:(MSG4 GQ-ROXPM)
+00:00:03.610	Main:Token:MSG4 GQ-PHOTPM
+00:00:03.610	WriteStatus:(MSG4 GQ-PHOTPM)
+00:00:03.611	Main:Token:MSG4 GQ-CFGAS
+00:00:03.611	WriteStatus:(MSG4 GQ-CFGAS)
+00:00:03.611	Main:Token:MSG4 GQ-BIOPM
+00:00:03.611	WriteStatus:(MSG4 GQ-BIOPM)
+00:00:03.611	Main:Token:MSG4 GQ-GENDECAY
+00:00:03.611	WriteStatus:(MSG4 GQ-GENDECAY)
+00:00:03.612	Main:Token:MSG4 GQ-SEDDECAY
+00:00:03.612	WriteStatus:(MSG4 GQ-SEDDECAY)
+00:00:03.612	Main:Token:MSG4 GQ-KD
+00:00:03.612	WriteStatus:(MSG4 GQ-KD)
+00:00:03.612	Main:Token:MSG4 GQ-ADRATE
+00:00:03.613	WriteStatus:(MSG4 GQ-ADRATE)
+00:00:03.613	Main:Token:MSG4 GQ-ADTHETA
+00:00:03.613	WriteStatus:(MSG4 GQ-ADTHETA)
+00:00:03.613	Main:Token:MSG4 GQ-SEDCONC
+00:00:03.613	WriteStatus:(MSG4 GQ-SEDCONC)
+00:00:03.613	Main:Token:MSG4 GQ-VALUES
+00:00:03.613	WriteStatus:(MSG4 GQ-VALUES)
+00:00:03.614	Main:Token:MSG4 GQ-ALPHA
+00:00:03.614	WriteStatus:(MSG4 GQ-ALPHA)
+00:00:03.614	Main:Token:MSG4 GQ-GAMMA
+00:00:03.614	WriteStatus:(MSG4 GQ-GAMMA)
+00:00:03.614	Main:Token:MSG4 GQ-DELTA
+00:00:03.614	WriteStatus:(MSG4 GQ-DELTA)
+00:00:03.615	Main:Token:MSG4 GQ-CLDFACT
+00:00:03.615	WriteStatus:(MSG4 GQ-CLDFACT)
+00:00:03.615	Main:Token:MSG4 OX-FLAGS
+00:00:03.615	WriteStatus:(MSG4 OX-FLAGS)
+00:00:03.615	Main:Token:MSG4 OX-CFOREA
+00:00:03.615	WriteStatus:(MSG4 OX-CFOREA)
+00:00:03.615	Main:Token:MSG4 BENTH-FLAG
+00:00:03.616	WriteStatus:(MSG4 BENTH-FLAG)
+00:00:03.616	Main:Token:MSG4 SCOUR-PARMS
+00:00:03.616	WriteStatus:(MSG4 SCOUR-PARMS)
+00:00:03.616	Main:Token:MSG4 OX-BENPARM
+00:00:03.616	WriteStatus:(MSG4 OX-BENPARM)
+00:00:03.616	Main:Token:MSG4 OX-GENPARM
+00:00:03.617	WriteStatus:(MSG4 OX-GENPARM)
+00:00:03.617	Main:Token:MSG4 OX-INIT
+00:00:03.617	WriteStatus:(MSG4 OX-INIT)
+00:00:03.617	Main:Token:MSG4 NUT-FLAGS
+00:00:03.617	WriteStatus:(MSG4 NUT-FLAGS)
+00:00:03.617	Main:Token:MSG4 NUT-AD-FLAGS
+00:00:03.617	WriteStatus:(MSG4 NUT-AD-FLAGS)
+00:00:03.618	Main:Token:MSG4 CONV-VAL1
+00:00:03.618	WriteStatus:(MSG4 CONV-VAL1)
+00:00:03.618	Main:Token:MSG4 NUT-BENPARM
+00:00:03.618	WriteStatus:(MSG4 NUT-BENPARM)
+00:00:03.618	Main:Token:MSG4 NUT-NITDENIT
+00:00:03.619	WriteStatus:(MSG4 NUT-NITDENIT)
+00:00:03.619	Main:Token:MSG4 NUT-NH3VOLAT
+00:00:03.619	WriteStatus:(MSG4 NUT-NH3VOLAT)
+00:00:03.619	Main:Token:MSG4 NUT-DINIT
+00:00:03.619	WriteStatus:(MSG4 NUT-DINIT)
+00:00:03.619	Main:Token:MSG4 PLNK-FLAGS
+00:00:03.619	WriteStatus:(MSG4 PLNK-FLAGS)
+00:00:03.619	Main:Token:MSG4 PLNK-AD-FLAG
+00:00:03.620	WriteStatus:(MSG4 PLNK-AD-FLAG)
+00:00:03.620	Main:Token:MSG4 PLNK-PARM1
+00:00:03.620	WriteStatus:(MSG4 PLNK-PARM1)
+00:00:03.620	Main:Token:MSG4 PLNK-PARM2
+00:00:03.620	WriteStatus:(MSG4 PLNK-PARM2)
+00:00:03.621	Main:Token:MSG4 PLNK-PARM3
+00:00:03.621	WriteStatus:(MSG4 PLNK-PARM3)
+00:00:03.621	Main:Token:MSG4 PLNK-PARM4
+00:00:03.621	WriteStatus:(MSG4 PLNK-PARM4)
+00:00:03.621	Main:Token:MSG4 PHYTO-PARM
+00:00:03.621	WriteStatus:(MSG4 PHYTO-PARM)
+00:00:03.622	Main:Token:MSG4 ZOO-PARM1
+00:00:03.622	WriteStatus:(MSG4 ZOO-PARM1)
+00:00:03.622	Main:Token:MSG4 ZOO-PARM2
+00:00:03.622	WriteStatus:(MSG4 ZOO-PARM2)
+00:00:03.622	Main:Token:MSG4 BENAL-PARM
+00:00:03.622	WriteStatus:(MSG4 BENAL-PARM)
+00:00:03.622	Main:Token:MSG4 BENAL-RIFF1
+00:00:03.622	WriteStatus:(MSG4 BENAL-RIFF1)
+00:00:03.623	Main:Token:MSG4 BENAL-RIFF2
+00:00:03.623	WriteStatus:(MSG4 BENAL-RIFF2)
+00:00:03.623	Main:Token:MSG4 PLNK-INIT
+00:00:03.623	WriteStatus:(MSG4 PLNK-INIT)
+00:00:03.623	Main:Token:MSG4 PH-PARM1
+00:00:03.623	WriteStatus:(MSG4 PH-PARM1)
+00:00:03.624	Main:Token:MSG4 PH-PARM2
+00:00:03.624	WriteStatus:(MSG4 PH-PARM2)
+00:00:03.624	Main:Token:MSG4 PH-INIT
+00:00:03.624	WriteStatus:(MSG4 PH-INIT)
+00:00:03.624	Main:Token:MSG3      2
+00:00:03.624	WriteStatus:(MSG3      2)
+00:00:03.624	Main:Token:MSG4 ACTIVITY
+00:00:03.625	WriteStatus:(MSG4 ACTIVITY)
+00:00:03.625	Main:Token:MSG4 PRINT-INFO
+00:00:03.625	WriteStatus:(MSG4 PRINT-INFO)
+00:00:03.625	Main:Token:MSG4 BINARY-INFO
+00:00:03.625	WriteStatus:(MSG4 BINARY-INFO)
+00:00:03.625	Main:Token:MSG4 GEN-INFO
+00:00:03.626	WriteStatus:(MSG4 GEN-INFO)
+00:00:03.626	Main:Token:MSG4 HYDR-PARM1
+00:00:03.626	WriteStatus:(MSG4 HYDR-PARM1)
+00:00:03.626	Main:Token:MSG4 HYDR-PARM2
+00:00:03.626	WriteStatus:(MSG4 HYDR-PARM2)
+00:00:03.626	Main:Token:MSG4 HYDR-IRRIG
+00:00:03.626	WriteStatus:(MSG4 HYDR-IRRIG)
+00:00:03.627	Main:Token:MSG4 HYDR-INIT
+00:00:03.627	WriteStatus:(MSG4 HYDR-INIT)
+00:00:03.627	Main:Token:MSG4 ADCALC-DATA
+00:00:03.627	WriteStatus:(MSG4 ADCALC-DATA)
+00:00:03.627	Main:Token:MSG4 NCONS
+00:00:03.627	WriteStatus:(MSG4 NCONS)
+00:00:03.627	Main:Token:MSG4 CONS-AD-FLAG
+00:00:03.627	WriteStatus:(MSG4 CONS-AD-FLAG)
+00:00:03.628	Main:Token:MSG4 CONS-DATA
+00:00:03.628	WriteStatus:(MSG4 CONS-DATA)
+00:00:03.628	Main:Token:MSG4 HT-BED-FLAGS
+00:00:03.628	WriteStatus:(MSG4 HT-BED-FLAGS)
+00:00:03.628	Main:Token:MSG4 HEAT-PARM
+00:00:03.628	WriteStatus:(MSG4 HEAT-PARM)
+00:00:03.629	Main:Token:MSG4 SHADE-PARM
+00:00:03.629	WriteStatus:(MSG4 SHADE-PARM)
+00:00:03.629	Main:Token:MSG4 HEAT-INIT
+00:00:03.629	WriteStatus:(MSG4 HEAT-INIT)
+00:00:03.629	Main:Token:MSG4 SANDFG
+00:00:03.629	WriteStatus:(MSG4 SANDFG)
+00:00:03.629	Main:Token:MSG4 SED-GENPARM
+00:00:03.629	WriteStatus:(MSG4 SED-GENPARM)
+00:00:03.630	Main:Token:MSG4 SAND-PM
+00:00:03.630	WriteStatus:(MSG4 SAND-PM)
+00:00:03.630	Main:Token:MSG4 SILT-CLAY-PM
+00:00:03.630	WriteStatus:(MSG4 SILT-CLAY-PM)
+00:00:03.630	Main:Token:MSG4 SILT-CLAY-PM
+00:00:03.630	WriteStatus:(MSG4 SILT-CLAY-PM)
+00:00:03.630	Main:Token:MSG4 SSED-INIT
+00:00:03.630	WriteStatus:(MSG4 SSED-INIT)
+00:00:03.630	Main:Token:MSG4 BED-INIT
+00:00:03.631	WriteStatus:(MSG4 BED-INIT)
+00:00:03.631	Main:Token:MSG4 GQ-GENDATA
+00:00:03.631	WriteStatus:(MSG4 GQ-GENDATA)
+00:00:03.631	Main:Token:MSG4 GQ-AD-FLAGS
+00:00:03.631	WriteStatus:(MSG4 GQ-AD-FLAGS)
+00:00:03.631	Main:Token:MSG4 GQ-QALDATA
+00:00:03.631	WriteStatus:(MSG4 GQ-QALDATA)
+00:00:03.631	Main:Token:MSG4 GQ-QALFG
+00:00:03.632	WriteStatus:(MSG4 GQ-QALFG)
+00:00:03.632	Main:Token:MSG4 GQ-FLG2
+00:00:03.632	WriteStatus:(MSG4 GQ-FLG2)
+00:00:03.632	Main:Token:MSG4 GQ-HYDPM
+00:00:03.632	WriteStatus:(MSG4 GQ-HYDPM)
+00:00:03.632	Main:Token:MSG4 GQ-ROXPM
+00:00:03.632	WriteStatus:(MSG4 GQ-ROXPM)
+00:00:03.632	Main:Token:MSG4 GQ-PHOTPM
+00:00:03.632	WriteStatus:(MSG4 GQ-PHOTPM)
+00:00:03.632	Main:Token:MSG4 GQ-CFGAS
+00:00:03.633	WriteStatus:(MSG4 GQ-CFGAS)
+00:00:03.633	Main:Token:MSG4 GQ-BIOPM
+00:00:03.633	WriteStatus:(MSG4 GQ-BIOPM)
+00:00:03.633	Main:Token:MSG4 GQ-GENDECAY
+00:00:03.633	WriteStatus:(MSG4 GQ-GENDECAY)
+00:00:03.633	Main:Token:MSG4 GQ-SEDDECAY
+00:00:03.633	WriteStatus:(MSG4 GQ-SEDDECAY)
+00:00:03.634	Main:Token:MSG4 GQ-KD
+00:00:03.634	WriteStatus:(MSG4 GQ-KD)
+00:00:03.634	Main:Token:MSG4 GQ-ADRATE
+00:00:03.634	WriteStatus:(MSG4 GQ-ADRATE)
+00:00:03.634	Main:Token:MSG4 GQ-ADTHETA
+00:00:03.634	WriteStatus:(MSG4 GQ-ADTHETA)
+00:00:03.634	Main:Token:MSG4 GQ-SEDCONC
+00:00:03.635	WriteStatus:(MSG4 GQ-SEDCONC)
+00:00:03.635	Main:Token:MSG4 GQ-VALUES
+00:00:03.635	WriteStatus:(MSG4 GQ-VALUES)
+00:00:03.635	Main:Token:MSG4 GQ-ALPHA
+00:00:03.635	WriteStatus:(MSG4 GQ-ALPHA)
+00:00:03.635	Main:Token:MSG4 GQ-GAMMA
+00:00:03.635	WriteStatus:(MSG4 GQ-GAMMA)
+00:00:03.635	Main:Token:MSG4 GQ-DELTA
+00:00:03.636	WriteStatus:(MSG4 GQ-DELTA)
+00:00:03.636	Main:Token:MSG4 GQ-CLDFACT
+00:00:03.636	WriteStatus:(MSG4 GQ-CLDFACT)
+00:00:03.636	Main:Token:MSG4 OX-FLAGS
+00:00:03.636	WriteStatus:(MSG4 OX-FLAGS)
+00:00:03.636	Main:Token:MSG4 OX-TSIVOGLOU
+00:00:03.636	WriteStatus:(MSG4 OX-TSIVOGLOU)
+00:00:03.636	Main:Token:MSG4 BENTH-FLAG
+00:00:03.636	WriteStatus:(MSG4 BENTH-FLAG)
+00:00:03.637	Main:Token:MSG4 SCOUR-PARMS
+00:00:03.637	WriteStatus:(MSG4 SCOUR-PARMS)
+00:00:03.637	Main:Token:MSG4 OX-GENPARM
+00:00:03.637	WriteStatus:(MSG4 OX-GENPARM)
+00:00:03.637	Main:Token:MSG4 OX-INIT
+00:00:03.637	WriteStatus:(MSG4 OX-INIT)
+00:00:03.637	Main:Token:MSG4 NUT-FLAGS
+00:00:03.637	WriteStatus:(MSG4 NUT-FLAGS)
+00:00:03.637	Main:Token:MSG4 NUT-AD-FLAGS
+00:00:03.637	WriteStatus:(MSG4 NUT-AD-FLAGS)
+00:00:03.638	Main:Token:MSG4 CONV-VAL1
+00:00:03.638	WriteStatus:(MSG4 CONV-VAL1)
+00:00:03.638	Main:Token:MSG4 NUT-BENPARM
+00:00:03.638	WriteStatus:(MSG4 NUT-BENPARM)
+00:00:03.638	Main:Token:MSG4 NUT-NITDENIT
+00:00:03.638	WriteStatus:(MSG4 NUT-NITDENIT)
+00:00:03.638	Main:Token:MSG4 NUT-NH3VOLAT
+00:00:03.638	WriteStatus:(MSG4 NUT-NH3VOLAT)
+00:00:03.638	Main:Token:MSG4 NUT-DINIT
+00:00:03.639	WriteStatus:(MSG4 NUT-DINIT)
+00:00:03.639	Main:Token:MSG4 PLNK-FLAGS
+00:00:03.639	WriteStatus:(MSG4 PLNK-FLAGS)
+00:00:03.639	Main:Token:MSG4 PLNK-AD-FLAG
+00:00:03.639	WriteStatus:(MSG4 PLNK-AD-FLAG)
+00:00:03.639	Main:Token:MSG4 PLNK-PARM1
+00:00:03.639	WriteStatus:(MSG4 PLNK-PARM1)
+00:00:03.639	Main:Token:MSG4 PLNK-PARM2
+00:00:03.639	WriteStatus:(MSG4 PLNK-PARM2)
+00:00:03.640	Main:Token:MSG4 PLNK-PARM3
+00:00:03.640	WriteStatus:(MSG4 PLNK-PARM3)
+00:00:03.640	Main:Token:MSG4 PLNK-PARM4
+00:00:03.640	WriteStatus:(MSG4 PLNK-PARM4)
+00:00:03.640	Main:Token:MSG4 PHYTO-PARM
+00:00:03.640	WriteStatus:(MSG4 PHYTO-PARM)
+00:00:03.640	Main:Token:MSG4 ZOO-PARM1
+00:00:03.640	WriteStatus:(MSG4 ZOO-PARM1)
+00:00:03.641	Main:Token:MSG4 ZOO-PARM2
+00:00:03.641	WriteStatus:(MSG4 ZOO-PARM2)
+00:00:03.641	Main:Token:MSG4 BENAL-PARM
+00:00:03.641	WriteStatus:(MSG4 BENAL-PARM)
+00:00:03.641	Main:Token:MSG4 BENAL-RIFF1
+00:00:03.641	WriteStatus:(MSG4 BENAL-RIFF1)
+00:00:03.641	Main:Token:MSG4 BENAL-RIFF2
+00:00:03.641	WriteStatus:(MSG4 BENAL-RIFF2)
+00:00:03.641	Main:Token:MSG4 PLNK-INIT
+00:00:03.642	WriteStatus:(MSG4 PLNK-INIT)
+00:00:03.642	Main:Token:MSG4 PH-PARM1
+00:00:03.642	WriteStatus:(MSG4 PH-PARM1)
+00:00:03.642	Main:Token:MSG4 PH-PARM2
+00:00:03.642	WriteStatus:(MSG4 PH-PARM2)
+00:00:03.642	Main:Token:MSG4 PH-INIT
+00:00:03.642	WriteStatus:(MSG4 PH-INIT)
+00:00:03.642	Main:Token:MSG3      3
+00:00:03.642	WriteStatus:(MSG3      3)
+00:00:03.643	Main:Token:MSG4 ACTIVITY
+00:00:03.643	WriteStatus:(MSG4 ACTIVITY)
+00:00:03.643	Main:Token:MSG4 PRINT-INFO
+00:00:03.643	WriteStatus:(MSG4 PRINT-INFO)
+00:00:03.643	Main:Token:MSG4 BINARY-INFO
+00:00:03.643	WriteStatus:(MSG4 BINARY-INFO)
+00:00:03.643	Main:Token:MSG4 GEN-INFO
+00:00:03.643	WriteStatus:(MSG4 GEN-INFO)
+00:00:03.643	Main:Token:MSG4 HYDR-PARM1
+00:00:03.643	WriteStatus:(MSG4 HYDR-PARM1)
+00:00:03.644	Main:Token:MSG4 HYDR-PARM2
+00:00:03.644	WriteStatus:(MSG4 HYDR-PARM2)
+00:00:03.644	Main:Token:MSG4 HYDR-IRRIG
+00:00:03.644	WriteStatus:(MSG4 HYDR-IRRIG)
+00:00:03.644	Main:Token:MSG4 HYDR-INIT
+00:00:03.644	WriteStatus:(MSG4 HYDR-INIT)
+00:00:03.644	Main:Token:MSG4 ADCALC-DATA
+00:00:03.644	WriteStatus:(MSG4 ADCALC-DATA)
+00:00:03.645	Main:Token:MSG4 NCONS
+00:00:03.645	WriteStatus:(MSG4 NCONS)
+00:00:03.645	Main:Token:MSG4 CONS-AD-FLAG
+00:00:03.645	WriteStatus:(MSG4 CONS-AD-FLAG)
+00:00:03.645	Main:Token:MSG4 CONS-DATA
+00:00:03.645	WriteStatus:(MSG4 CONS-DATA)
+00:00:03.646	Main:Token:MSG4 HT-BED-FLAGS
+00:00:03.646	WriteStatus:(MSG4 HT-BED-FLAGS)
+00:00:03.646	Main:Token:MSG4 HEAT-PARM
+00:00:03.646	WriteStatus:(MSG4 HEAT-PARM)
+00:00:03.646	Main:Token:MSG4 SHADE-PARM
+00:00:03.647	WriteStatus:(MSG4 SHADE-PARM)
+00:00:03.647	Main:Token:MSG4 HEAT-INIT
+00:00:03.647	WriteStatus:(MSG4 HEAT-INIT)
+00:00:03.647	Main:Token:MSG4 SANDFG
+00:00:03.647	WriteStatus:(MSG4 SANDFG)
+00:00:03.647	Main:Token:MSG4 SED-GENPARM
+00:00:03.647	WriteStatus:(MSG4 SED-GENPARM)
+00:00:03.647	Main:Token:MSG4 SAND-PM
+00:00:03.648	WriteStatus:(MSG4 SAND-PM)
+00:00:03.648	Main:Token:MSG4 SILT-CLAY-PM
+00:00:03.648	WriteStatus:(MSG4 SILT-CLAY-PM)
+00:00:03.648	Main:Token:MSG4 SILT-CLAY-PM
+00:00:03.648	WriteStatus:(MSG4 SILT-CLAY-PM)
+00:00:03.648	Main:Token:MSG4 SSED-INIT
+00:00:03.648	WriteStatus:(MSG4 SSED-INIT)
+00:00:03.649	Main:Token:MSG4 BED-INIT
+00:00:03.649	WriteStatus:(MSG4 BED-INIT)
+00:00:03.649	Main:Token:MSG4 GQ-GENDATA
+00:00:03.649	WriteStatus:(MSG4 GQ-GENDATA)
+00:00:03.649	Main:Token:MSG4 GQ-AD-FLAGS
+00:00:03.649	WriteStatus:(MSG4 GQ-AD-FLAGS)
+00:00:03.649	Main:Token:MSG4 GQ-QALDATA
+00:00:03.649	WriteStatus:(MSG4 GQ-QALDATA)
+00:00:03.650	Main:Token:MSG4 GQ-QALFG
+00:00:03.650	WriteStatus:(MSG4 GQ-QALFG)
+00:00:03.650	Main:Token:MSG4 GQ-FLG2
+00:00:03.651	WriteStatus:(MSG4 GQ-FLG2)
+00:00:03.651	Main:Token:MSG4 GQ-HYDPM
+00:00:03.651	WriteStatus:(MSG4 GQ-HYDPM)
+00:00:03.651	Main:Token:MSG4 GQ-ROXPM
+00:00:03.651	WriteStatus:(MSG4 GQ-ROXPM)
+00:00:03.651	Main:Token:MSG4 GQ-PHOTPM
+00:00:03.651	WriteStatus:(MSG4 GQ-PHOTPM)
+00:00:03.652	Main:Token:MSG4 GQ-CFGAS
+00:00:03.652	WriteStatus:(MSG4 GQ-CFGAS)
+00:00:03.652	Main:Token:MSG4 GQ-BIOPM
+00:00:03.652	WriteStatus:(MSG4 GQ-BIOPM)
+00:00:03.652	Main:Token:MSG4 GQ-GENDECAY
+00:00:03.652	WriteStatus:(MSG4 GQ-GENDECAY)
+00:00:03.652	Main:Token:MSG4 GQ-SEDDECAY
+00:00:03.652	WriteStatus:(MSG4 GQ-SEDDECAY)
+00:00:03.653	Main:Token:MSG4 GQ-KD
+00:00:03.653	WriteStatus:(MSG4 GQ-KD)
+00:00:03.653	Main:Token:MSG4 GQ-ADRATE
+00:00:03.653	WriteStatus:(MSG4 GQ-ADRATE)
+00:00:03.653	Main:Token:MSG4 GQ-ADTHETA
+00:00:03.654	WriteStatus:(MSG4 GQ-ADTHETA)
+00:00:03.654	Main:Token:MSG4 GQ-SEDCONC
+00:00:03.654	WriteStatus:(MSG4 GQ-SEDCONC)
+00:00:03.654	Main:Token:MSG4 GQ-VALUES
+00:00:03.654	WriteStatus:(MSG4 GQ-VALUES)
+00:00:03.654	Main:Token:MSG4 GQ-ALPHA
+00:00:03.654	WriteStatus:(MSG4 GQ-ALPHA)
+00:00:03.655	Main:Token:MSG4 GQ-GAMMA
+00:00:03.655	WriteStatus:(MSG4 GQ-GAMMA)
+00:00:03.655	Main:Token:MSG4 GQ-DELTA
+00:00:03.655	WriteStatus:(MSG4 GQ-DELTA)
+00:00:03.655	Main:Token:MSG4 GQ-CLDFACT
+00:00:03.655	WriteStatus:(MSG4 GQ-CLDFACT)
+00:00:03.655	Main:Token:MSG4 OX-FLAGS
+00:00:03.656	WriteStatus:(MSG4 OX-FLAGS)
+00:00:03.656	Main:Token:MSG4 OX-TSIVOGLOU
+00:00:03.656	WriteStatus:(MSG4 OX-TSIVOGLOU)
+00:00:03.656	Main:Token:MSG4 BENTH-FLAG
+00:00:03.656	WriteStatus:(MSG4 BENTH-FLAG)
+00:00:03.657	Main:Token:MSG4 SCOUR-PARMS
+00:00:03.657	WriteStatus:(MSG4 SCOUR-PARMS)
+00:00:03.657	Main:Token:MSG4 OX-GENPARM
+00:00:03.657	WriteStatus:(MSG4 OX-GENPARM)
+00:00:03.657	Main:Token:MSG4 OX-INIT
+00:00:03.657	WriteStatus:(MSG4 OX-INIT)
+00:00:03.657	Main:Token:MSG4 NUT-FLAGS
+00:00:03.657	WriteStatus:(MSG4 NUT-FLAGS)
+00:00:03.658	Main:Token:MSG4 NUT-AD-FLAGS
+00:00:03.658	WriteStatus:(MSG4 NUT-AD-FLAGS)
+00:00:03.658	Main:Token:MSG4 CONV-VAL1
+00:00:03.658	WriteStatus:(MSG4 CONV-VAL1)
+00:00:03.658	Main:Token:MSG4 NUT-BENPARM
+00:00:03.658	WriteStatus:(MSG4 NUT-BENPARM)
+00:00:03.658	Main:Token:MSG4 NUT-NITDENIT
+00:00:03.658	WriteStatus:(MSG4 NUT-NITDENIT)
+00:00:03.659	Main:Token:MSG4 NUT-NH3VOLAT
+00:00:03.659	WriteStatus:(MSG4 NUT-NH3VOLAT)
+00:00:03.659	Main:Token:MSG4 NUT-DINIT
+00:00:03.659	WriteStatus:(MSG4 NUT-DINIT)
+00:00:03.659	Main:Token:MSG4 PLNK-FLAGS
+00:00:03.659	WriteStatus:(MSG4 PLNK-FLAGS)
+00:00:03.660	Main:Token:MSG4 PLNK-AD-FLAG
+00:00:03.660	WriteStatus:(MSG4 PLNK-AD-FLAG)
+00:00:03.660	Main:Token:MSG4 PLNK-PARM1
+00:00:03.660	WriteStatus:(MSG4 PLNK-PARM1)
+00:00:03.660	Main:Token:MSG4 PLNK-PARM2
+00:00:03.660	WriteStatus:(MSG4 PLNK-PARM2)
+00:00:03.660	Main:Token:MSG4 PLNK-PARM3
+00:00:03.661	WriteStatus:(MSG4 PLNK-PARM3)
+00:00:03.661	Main:Token:MSG4 PLNK-PARM4
+00:00:03.661	WriteStatus:(MSG4 PLNK-PARM4)
+00:00:03.661	Main:Token:MSG4 PHYTO-PARM
+00:00:03.661	WriteStatus:(MSG4 PHYTO-PARM)
+00:00:03.661	Main:Token:MSG4 ZOO-PARM1
+00:00:03.662	WriteStatus:(MSG4 ZOO-PARM1)
+00:00:03.662	Main:Token:MSG4 ZOO-PARM2
+00:00:03.662	WriteStatus:(MSG4 ZOO-PARM2)
+00:00:03.662	Main:Token:MSG4 BENAL-PARM
+00:00:03.662	WriteStatus:(MSG4 BENAL-PARM)
+00:00:03.662	Main:Token:MSG4 BENAL-RIFF1
+00:00:03.662	WriteStatus:(MSG4 BENAL-RIFF1)
+00:00:03.662	Main:Token:MSG4 BENAL-RIFF2
+00:00:03.663	WriteStatus:(MSG4 BENAL-RIFF2)
+00:00:03.663	Main:Token:MSG4 PLNK-INIT
+00:00:03.663	WriteStatus:(MSG4 PLNK-INIT)
+00:00:03.663	Main:Token:MSG4 PH-PARM1
+00:00:03.663	WriteStatus:(MSG4 PH-PARM1)
+00:00:03.663	Main:Token:MSG4 PH-PARM2
+00:00:03.663	WriteStatus:(MSG4 PH-PARM2)
+00:00:03.663	Main:Token:MSG4 PH-INIT
+00:00:03.663	WriteStatus:(MSG4 PH-INIT)
+00:00:03.664	Main:Token:MSG3      4
+00:00:03.664	WriteStatus:(MSG3      4)
+00:00:03.664	Main:Token:MSG4 ACTIVITY
+00:00:03.664	WriteStatus:(MSG4 ACTIVITY)
+00:00:03.664	Main:Token:MSG4 PRINT-INFO
+00:00:03.664	WriteStatus:(MSG4 PRINT-INFO)
+00:00:03.664	Main:Token:MSG4 BINARY-INFO
+00:00:03.664	WriteStatus:(MSG4 BINARY-INFO)
+00:00:03.664	Main:Token:MSG4 GEN-INFO
+00:00:03.665	WriteStatus:(MSG4 GEN-INFO)
+00:00:03.665	Main:Token:MSG4 HYDR-PARM1
+00:00:03.665	WriteStatus:(MSG4 HYDR-PARM1)
+00:00:03.665	Main:Token:MSG4 HYDR-PARM2
+00:00:03.665	WriteStatus:(MSG4 HYDR-PARM2)
+00:00:03.665	Main:Token:MSG4 HYDR-IRRIG
+00:00:03.665	WriteStatus:(MSG4 HYDR-IRRIG)
+00:00:03.666	Main:Token:MSG4 HYDR-INIT
+00:00:03.666	WriteStatus:(MSG4 HYDR-INIT)
+00:00:03.666	Main:Token:MSG4 ADCALC-DATA
+00:00:03.666	WriteStatus:(MSG4 ADCALC-DATA)
+00:00:03.666	Main:Token:MSG4 NCONS
+00:00:03.666	WriteStatus:(MSG4 NCONS)
+00:00:03.667	Main:Token:MSG4 CONS-AD-FLAG
+00:00:03.667	WriteStatus:(MSG4 CONS-AD-FLAG)
+00:00:03.667	Main:Token:MSG4 CONS-DATA
+00:00:03.667	WriteStatus:(MSG4 CONS-DATA)
+00:00:03.667	Main:Token:MSG4 HT-BED-FLAGS
+00:00:03.667	WriteStatus:(MSG4 HT-BED-FLAGS)
+00:00:03.667	Main:Token:MSG4 HEAT-PARM
+00:00:03.667	WriteStatus:(MSG4 HEAT-PARM)
+00:00:03.668	Main:Token:MSG4 SHADE-PARM
+00:00:03.668	WriteStatus:(MSG4 SHADE-PARM)
+00:00:03.668	Main:Token:MSG4 HEAT-INIT
+00:00:03.668	WriteStatus:(MSG4 HEAT-INIT)
+00:00:03.668	Main:Token:MSG4 SANDFG
+00:00:03.668	WriteStatus:(MSG4 SANDFG)
+00:00:03.668	Main:Token:MSG4 SED-GENPARM
+00:00:03.669	WriteStatus:(MSG4 SED-GENPARM)
+00:00:03.669	Main:Token:MSG4 SAND-PM
+00:00:03.669	WriteStatus:(MSG4 SAND-PM)
+00:00:03.669	Main:Token:MSG4 SILT-CLAY-PM
+00:00:03.669	WriteStatus:(MSG4 SILT-CLAY-PM)
+00:00:03.669	Main:Token:MSG4 SILT-CLAY-PM
+00:00:03.669	WriteStatus:(MSG4 SILT-CLAY-PM)
+00:00:03.669	Main:Token:MSG4 SSED-INIT
+00:00:03.670	WriteStatus:(MSG4 SSED-INIT)
+00:00:03.670	Main:Token:MSG4 BED-INIT
+00:00:03.670	WriteStatus:(MSG4 BED-INIT)
+00:00:03.670	Main:Token:MSG4 GQ-GENDATA
+00:00:03.670	WriteStatus:(MSG4 GQ-GENDATA)
+00:00:03.670	Main:Token:MSG4 GQ-AD-FLAGS
+00:00:03.670	WriteStatus:(MSG4 GQ-AD-FLAGS)
+00:00:03.671	Main:Token:MSG4 GQ-QALDATA
+00:00:03.671	WriteStatus:(MSG4 GQ-QALDATA)
+00:00:03.671	Main:Token:MSG4 GQ-QALFG
+00:00:03.671	WriteStatus:(MSG4 GQ-QALFG)
+00:00:03.671	Main:Token:MSG4 GQ-FLG2
+00:00:03.671	WriteStatus:(MSG4 GQ-FLG2)
+00:00:03.672	Main:Token:MSG4 GQ-HYDPM
+00:00:03.672	WriteStatus:(MSG4 GQ-HYDPM)
+00:00:03.672	Main:Token:MSG4 GQ-ROXPM
+00:00:03.673	WriteStatus:(MSG4 GQ-ROXPM)
+00:00:03.673	Main:Token:MSG4 GQ-PHOTPM
+00:00:03.673	WriteStatus:(MSG4 GQ-PHOTPM)
+00:00:03.673	Main:Token:MSG4 GQ-CFGAS
+00:00:03.673	WriteStatus:(MSG4 GQ-CFGAS)
+00:00:03.674	Main:Token:MSG4 GQ-BIOPM
+00:00:03.674	WriteStatus:(MSG4 GQ-BIOPM)
+00:00:03.674	Main:Token:MSG4 GQ-GENDECAY
+00:00:03.674	WriteStatus:(MSG4 GQ-GENDECAY)
+00:00:03.674	Main:Token:MSG4 GQ-SEDDECAY
+00:00:03.674	WriteStatus:(MSG4 GQ-SEDDECAY)
+00:00:03.674	Main:Token:MSG4 GQ-KD
+00:00:03.675	WriteStatus:(MSG4 GQ-KD)
+00:00:03.675	Main:Token:MSG4 GQ-ADRATE
+00:00:03.675	WriteStatus:(MSG4 GQ-ADRATE)
+00:00:03.675	Main:Token:MSG4 GQ-ADTHETA
+00:00:03.675	WriteStatus:(MSG4 GQ-ADTHETA)
+00:00:03.675	Main:Token:MSG4 GQ-SEDCONC
+00:00:03.675	WriteStatus:(MSG4 GQ-SEDCONC)
+00:00:03.675	Main:Token:MSG4 GQ-VALUES
+00:00:03.676	WriteStatus:(MSG4 GQ-VALUES)
+00:00:03.676	Main:Token:MSG4 GQ-ALPHA
+00:00:03.676	WriteStatus:(MSG4 GQ-ALPHA)
+00:00:03.676	Main:Token:MSG4 GQ-GAMMA
+00:00:03.676	WriteStatus:(MSG4 GQ-GAMMA)
+00:00:03.676	Main:Token:MSG4 GQ-DELTA
+00:00:03.676	WriteStatus:(MSG4 GQ-DELTA)
+00:00:03.677	Main:Token:MSG4 GQ-CLDFACT
+00:00:03.677	WriteStatus:(MSG4 GQ-CLDFACT)
+00:00:03.677	Main:Token:MSG4 OX-FLAGS
+00:00:03.677	WriteStatus:(MSG4 OX-FLAGS)
+00:00:03.677	Main:Token:MSG4 OX-REAPARM
+00:00:03.677	WriteStatus:(MSG4 OX-REAPARM)
+00:00:03.677	Main:Token:MSG4 BENTH-FLAG
+00:00:03.677	WriteStatus:(MSG4 BENTH-FLAG)
+00:00:03.678	Main:Token:MSG4 SCOUR-PARMS
+00:00:03.678	WriteStatus:(MSG4 SCOUR-PARMS)
+00:00:03.678	Main:Token:MSG4 OX-BENPARM
+00:00:03.678	WriteStatus:(MSG4 OX-BENPARM)
+00:00:03.678	Main:Token:MSG4 OX-GENPARM
+00:00:03.678	WriteStatus:(MSG4 OX-GENPARM)
+00:00:03.679	Main:Token:MSG4 OX-INIT
+00:00:03.679	WriteStatus:(MSG4 OX-INIT)
+00:00:03.679	Main:Token:MSG4 NUT-FLAGS
+00:00:03.679	WriteStatus:(MSG4 NUT-FLAGS)
+00:00:03.679	Main:Token:MSG4 NUT-AD-FLAGS
+00:00:03.679	WriteStatus:(MSG4 NUT-AD-FLAGS)
+00:00:03.679	Main:Token:MSG4 CONV-VAL1
+00:00:03.679	WriteStatus:(MSG4 CONV-VAL1)
+00:00:03.679	Main:Token:MSG4 NUT-BENPARM
+00:00:03.680	WriteStatus:(MSG4 NUT-BENPARM)
+00:00:03.680	Main:Token:MSG4 NUT-NITDENIT
+00:00:03.680	WriteStatus:(MSG4 NUT-NITDENIT)
+00:00:03.680	Main:Token:MSG4 NUT-NH3VOLAT
+00:00:03.680	WriteStatus:(MSG4 NUT-NH3VOLAT)
+00:00:03.681	Main:Token:MSG4 NUT-DINIT
+00:00:03.681	WriteStatus:(MSG4 NUT-DINIT)
+00:00:03.681	Main:Token:MSG4 PLNK-FLAGS
+00:00:03.681	WriteStatus:(MSG4 PLNK-FLAGS)
+00:00:03.681	Main:Token:MSG4 PLNK-AD-FLAG
+00:00:03.681	WriteStatus:(MSG4 PLNK-AD-FLAG)
+00:00:03.681	Main:Token:MSG4 PLNK-PARM1
+00:00:03.681	WriteStatus:(MSG4 PLNK-PARM1)
+00:00:03.682	Main:Token:MSG4 PLNK-PARM2
+00:00:03.682	WriteStatus:(MSG4 PLNK-PARM2)
+00:00:03.682	Main:Token:MSG4 PLNK-PARM3
+00:00:03.682	WriteStatus:(MSG4 PLNK-PARM3)
+00:00:03.682	Main:Token:MSG4 PLNK-PARM4
+00:00:03.682	WriteStatus:(MSG4 PLNK-PARM4)
+00:00:03.682	Main:Token:MSG4 PHYTO-PARM
+00:00:03.682	WriteStatus:(MSG4 PHYTO-PARM)
+00:00:03.682	Main:Token:MSG4 ZOO-PARM1
+00:00:03.683	WriteStatus:(MSG4 ZOO-PARM1)
+00:00:03.683	Main:Token:MSG4 ZOO-PARM2
+00:00:03.683	WriteStatus:(MSG4 ZOO-PARM2)
+00:00:03.683	Main:Token:MSG4 BENAL-PARM
+00:00:03.683	WriteStatus:(MSG4 BENAL-PARM)
+00:00:03.683	Main:Token:MSG4 BENAL-RIFF1
+00:00:03.683	WriteStatus:(MSG4 BENAL-RIFF1)
+00:00:03.683	Main:Token:MSG4 BENAL-RIFF2
+00:00:03.684	WriteStatus:(MSG4 BENAL-RIFF2)
+00:00:03.684	Main:Token:MSG4 PLNK-INIT
+00:00:03.684	WriteStatus:(MSG4 PLNK-INIT)
+00:00:03.684	Main:Token:MSG4 PH-PARM1
+00:00:03.684	WriteStatus:(MSG4 PH-PARM1)
+00:00:03.684	Main:Token:MSG4 PH-PARM2
+00:00:03.685	WriteStatus:(MSG4 PH-PARM2)
+00:00:03.685	Main:Token:MSG4 PH-INIT
+00:00:03.685	WriteStatus:(MSG4 PH-INIT)
+00:00:03.685	Main:Token:MSG3      5
+00:00:03.685	WriteStatus:(MSG3      5)
+00:00:03.685	Main:Token:MSG4 ACTIVITY
+00:00:03.685	WriteStatus:(MSG4 ACTIVITY)
+00:00:03.685	Main:Token:MSG4 PRINT-INFO
+00:00:03.686	WriteStatus:(MSG4 PRINT-INFO)
+00:00:03.686	Main:Token:MSG4 BINARY-INFO
+00:00:03.686	WriteStatus:(MSG4 BINARY-INFO)
+00:00:03.686	Main:Token:MSG4 GEN-INFO
+00:00:03.686	WriteStatus:(MSG4 GEN-INFO)
+00:00:03.686	Main:Token:MSG4 HYDR-PARM1
+00:00:03.686	WriteStatus:(MSG4 HYDR-PARM1)
+00:00:03.687	Main:Token:MSG4 HYDR-PARM2
+00:00:03.687	WriteStatus:(MSG4 HYDR-PARM2)
+00:00:03.687	Main:Token:MSG4 HYDR-IRRIG
+00:00:03.687	WriteStatus:(MSG4 HYDR-IRRIG)
+00:00:03.687	Main:Token:MSG4 HYDR-INIT
+00:00:03.687	WriteStatus:(MSG4 HYDR-INIT)
+00:00:03.687	Main:Token:MSG4 ADCALC-DATA
+00:00:03.687	WriteStatus:(MSG4 ADCALC-DATA)
+00:00:03.688	Main:Token:MSG4 NCONS
+00:00:03.688	WriteStatus:(MSG4 NCONS)
+00:00:03.688	Main:Token:MSG4 CONS-AD-FLAG
+00:00:03.688	WriteStatus:(MSG4 CONS-AD-FLAG)
+00:00:03.688	Main:Token:MSG4 CONS-DATA
+00:00:03.688	WriteStatus:(MSG4 CONS-DATA)
+00:00:03.688	Main:Token:MSG4 HT-BED-FLAGS
+00:00:03.688	WriteStatus:(MSG4 HT-BED-FLAGS)
+00:00:03.689	Main:Token:MSG4 HEAT-PARM
+00:00:03.689	WriteStatus:(MSG4 HEAT-PARM)
+00:00:03.689	Main:Token:MSG4 SHADE-PARM
+00:00:03.689	WriteStatus:(MSG4 SHADE-PARM)
+00:00:03.689	Main:Token:MSG4 HEAT-INIT
+00:00:03.689	WriteStatus:(MSG4 HEAT-INIT)
+00:00:03.689	Main:Token:MSG4 SANDFG
+00:00:03.690	WriteStatus:(MSG4 SANDFG)
+00:00:03.690	Main:Token:MSG4 SED-GENPARM
+00:00:03.690	WriteStatus:(MSG4 SED-GENPARM)
+00:00:03.690	Main:Token:MSG4 SAND-PM
+00:00:03.690	WriteStatus:(MSG4 SAND-PM)
+00:00:03.690	Main:Token:MSG4 SILT-CLAY-PM
+00:00:03.690	WriteStatus:(MSG4 SILT-CLAY-PM)
+00:00:03.690	Main:Token:MSG4 SILT-CLAY-PM
+00:00:03.691	WriteStatus:(MSG4 SILT-CLAY-PM)
+00:00:03.691	Main:Token:MSG4 SSED-INIT
+00:00:03.691	WriteStatus:(MSG4 SSED-INIT)
+00:00:03.691	Main:Token:MSG4 BED-INIT
+00:00:03.691	WriteStatus:(MSG4 BED-INIT)
+00:00:03.691	Main:Token:MSG4 GQ-GENDATA
+00:00:03.691	WriteStatus:(MSG4 GQ-GENDATA)
+00:00:03.692	Main:Token:MSG4 GQ-AD-FLAGS
+00:00:03.692	WriteStatus:(MSG4 GQ-AD-FLAGS)
+00:00:03.692	Main:Token:MSG4 GQ-QALDATA
+00:00:03.692	WriteStatus:(MSG4 GQ-QALDATA)
+00:00:03.692	Main:Token:MSG4 GQ-QALFG
+00:00:03.692	WriteStatus:(MSG4 GQ-QALFG)
+00:00:03.692	Main:Token:MSG4 GQ-FLG2
+00:00:03.692	WriteStatus:(MSG4 GQ-FLG2)
+00:00:03.692	Main:Token:MSG4 GQ-HYDPM
+00:00:03.693	WriteStatus:(MSG4 GQ-HYDPM)
+00:00:03.693	Main:Token:MSG4 GQ-ROXPM
+00:00:03.693	WriteStatus:(MSG4 GQ-ROXPM)
+00:00:03.693	Main:Token:MSG4 GQ-PHOTPM
+00:00:03.693	WriteStatus:(MSG4 GQ-PHOTPM)
+00:00:03.693	Main:Token:MSG4 GQ-CFGAS
+00:00:03.693	WriteStatus:(MSG4 GQ-CFGAS)
+00:00:03.693	Main:Token:MSG4 GQ-BIOPM
+00:00:03.693	WriteStatus:(MSG4 GQ-BIOPM)
+00:00:03.693	Main:Token:MSG4 GQ-GENDECAY
+00:00:03.694	WriteStatus:(MSG4 GQ-GENDECAY)
+00:00:03.694	Main:Token:MSG4 GQ-SEDDECAY
+00:00:03.694	WriteStatus:(MSG4 GQ-SEDDECAY)
+00:00:03.694	Main:Token:MSG4 GQ-KD
+00:00:03.694	WriteStatus:(MSG4 GQ-KD)
+00:00:03.694	Main:Token:MSG4 GQ-ADRATE
+00:00:03.694	WriteStatus:(MSG4 GQ-ADRATE)
+00:00:03.694	Main:Token:MSG4 GQ-ADTHETA
+00:00:03.694	WriteStatus:(MSG4 GQ-ADTHETA)
+00:00:03.695	Main:Token:MSG4 GQ-SEDCONC
+00:00:03.695	WriteStatus:(MSG4 GQ-SEDCONC)
+00:00:03.695	Main:Token:MSG4 GQ-VALUES
+00:00:03.696	WriteStatus:(MSG4 GQ-VALUES)
+00:00:03.696	Main:Token:MSG4 GQ-ALPHA
+00:00:03.696	WriteStatus:(MSG4 GQ-ALPHA)
+00:00:03.696	Main:Token:MSG4 GQ-GAMMA
+00:00:03.696	WriteStatus:(MSG4 GQ-GAMMA)
+00:00:03.696	Main:Token:MSG4 GQ-DELTA
+00:00:03.696	WriteStatus:(MSG4 GQ-DELTA)
+00:00:03.696	Main:Token:MSG4 GQ-CLDFACT
+00:00:03.696	WriteStatus:(MSG4 GQ-CLDFACT)
+00:00:03.697	Main:Token:MSG4 OX-FLAGS
+00:00:03.697	WriteStatus:(MSG4 OX-FLAGS)
+00:00:03.697	Main:Token:MSG4 OX-TCGINV
+00:00:03.697	WriteStatus:(MSG4 OX-TCGINV)
+00:00:03.698	Main:Token:MSG4 BENTH-FLAG
+00:00:03.698	WriteStatus:(MSG4 BENTH-FLAG)
+00:00:03.698	Main:Token:MSG4 SCOUR-PARMS
+00:00:03.698	WriteStatus:(MSG4 SCOUR-PARMS)
+00:00:03.698	Main:Token:MSG4 OX-BENPARM
+00:00:03.698	WriteStatus:(MSG4 OX-BENPARM)
+00:00:03.698	Main:Token:MSG4 OX-GENPARM
+00:00:03.699	WriteStatus:(MSG4 OX-GENPARM)
+00:00:03.699	Main:Token:MSG4 OX-INIT
+00:00:03.699	WriteStatus:(MSG4 OX-INIT)
+00:00:03.699	Main:Token:MSG4 NUT-FLAGS
+00:00:03.699	WriteStatus:(MSG4 NUT-FLAGS)
+00:00:03.699	Main:Token:MSG4 NUT-AD-FLAGS
+00:00:03.699	WriteStatus:(MSG4 NUT-AD-FLAGS)
+00:00:03.699	Main:Token:MSG4 CONV-VAL1
+00:00:03.700	WriteStatus:(MSG4 CONV-VAL1)
+00:00:03.700	Main:Token:MSG4 NUT-BENPARM
+00:00:03.700	WriteStatus:(MSG4 NUT-BENPARM)
+00:00:03.700	Main:Token:MSG4 NUT-NITDENIT
+00:00:03.700	WriteStatus:(MSG4 NUT-NITDENIT)
+00:00:03.700	Main:Token:MSG4 NUT-NH3VOLAT
+00:00:03.700	WriteStatus:(MSG4 NUT-NH3VOLAT)
+00:00:03.701	Main:Token:MSG4 NUT-DINIT
+00:00:03.701	WriteStatus:(MSG4 NUT-DINIT)
+00:00:03.701	Main:Token:MSG4 PLNK-FLAGS
+00:00:03.701	WriteStatus:(MSG4 PLNK-FLAGS)
+00:00:03.701	Main:Token:MSG4 PLNK-AD-FLAG
+00:00:03.701	WriteStatus:(MSG4 PLNK-AD-FLAG)
+00:00:03.701	Main:Token:MSG4 PLNK-PARM1
+00:00:03.701	WriteStatus:(MSG4 PLNK-PARM1)
+00:00:03.701	Main:Token:MSG4 PLNK-PARM2
+00:00:03.702	WriteStatus:(MSG4 PLNK-PARM2)
+00:00:03.702	Main:Token:MSG4 PLNK-PARM3
+00:00:03.702	WriteStatus:(MSG4 PLNK-PARM3)
+00:00:03.702	Main:Token:MSG4 PLNK-PARM4
+00:00:03.702	WriteStatus:(MSG4 PLNK-PARM4)
+00:00:03.702	Main:Token:MSG4 PHYTO-PARM
+00:00:03.702	WriteStatus:(MSG4 PHYTO-PARM)
+00:00:03.702	Main:Token:MSG4 ZOO-PARM1
+00:00:03.702	WriteStatus:(MSG4 ZOO-PARM1)
+00:00:03.702	Main:Token:MSG4 ZOO-PARM2
+00:00:03.703	WriteStatus:(MSG4 ZOO-PARM2)
+00:00:03.703	Main:Token:MSG4 BENAL-PARM
+00:00:03.703	WriteStatus:(MSG4 BENAL-PARM)
+00:00:03.703	Main:Token:MSG4 BENAL-RIFF1
+00:00:03.703	WriteStatus:(MSG4 BENAL-RIFF1)
+00:00:03.703	Main:Token:MSG4 BENAL-RIFF2
+00:00:03.703	WriteStatus:(MSG4 BENAL-RIFF2)
+00:00:03.703	Main:Token:MSG4 PLNK-INIT
+00:00:03.703	WriteStatus:(MSG4 PLNK-INIT)
+00:00:03.704	Main:Token:MSG4 PH-PARM1
+00:00:03.704	WriteStatus:(MSG4 PH-PARM1)
+00:00:03.704	Main:Token:MSG4 PH-PARM2
+00:00:03.704	WriteStatus:(MSG4 PH-PARM2)
+00:00:03.704	Main:Token:MSG4 PH-INIT
+00:00:03.704	WriteStatus:(MSG4 PH-INIT)
+00:00:03.704	Main:Token:MSG3 
+00:00:03.704	WriteStatus:(MSG3 )
+00:00:03.704	Main:Token:MSG4 
+00:00:03.705	WriteStatus:(MSG4 )
+00:00:03.705	Main:Token:MSG2 DISPLY
+00:00:03.705	WriteStatus:(MSG2 DISPLY)
+00:00:03.705	Main:Token:MSG3      5
+00:00:03.705	WriteStatus:(MSG3      5)
+00:00:03.705	Main:Token:MSG4 DISPLY-INFO1
+00:00:03.705	WriteStatus:(MSG4 DISPLY-INFO1)
+00:00:03.705	Main:Token:MSG4 DISPLY-INFO2
+00:00:03.705	WriteStatus:(MSG4 DISPLY-INFO2)
+00:00:03.705	Main:Token:MSG3      1
+00:00:03.706	WriteStatus:(MSG3      1)
+00:00:03.706	Main:Token:MSG4 DISPLY-INFO1
+00:00:03.706	WriteStatus:(MSG4 DISPLY-INFO1)
+00:00:03.706	Main:Token:MSG4 DISPLY-INFO2
+00:00:03.706	WriteStatus:(MSG4 DISPLY-INFO2)
+00:00:03.706	Main:Token:MSG3      2
+00:00:03.706	WriteStatus:(MSG3      2)
+00:00:03.706	Main:Token:MSG4 DISPLY-INFO1
+00:00:03.706	WriteStatus:(MSG4 DISPLY-INFO1)
+00:00:03.707	Main:Token:MSG4 DISPLY-INFO2
+00:00:03.707	WriteStatus:(MSG4 DISPLY-INFO2)
+00:00:03.707	Main:Token:MSG3      3
+00:00:03.707	WriteStatus:(MSG3      3)
+00:00:03.707	Main:Token:MSG4 DISPLY-INFO1
+00:00:03.707	WriteStatus:(MSG4 DISPLY-INFO1)
+00:00:03.707	Main:Token:MSG4 DISPLY-INFO2
+00:00:03.707	WriteStatus:(MSG4 DISPLY-INFO2)
+00:00:03.707	Main:Token:MSG3      4
+00:00:03.707	WriteStatus:(MSG3      4)
+00:00:03.708	Main:Token:MSG4 DISPLY-INFO1
+00:00:03.708	WriteStatus:(MSG4 DISPLY-INFO1)
+00:00:03.708	Main:Token:MSG4 DISPLY-INFO2
+00:00:03.708	WriteStatus:(MSG4 DISPLY-INFO2)
+00:00:03.708	Main:Token:MSG3 
+00:00:03.708	WriteStatus:(MSG3 )
+00:00:03.708	Main:Token:MSG4 
+00:00:03.708	WriteStatus:(MSG4 )
+00:00:03.708	Main:Token:MSG2 GENER
+00:00:03.709	WriteStatus:(MSG2 GENER)
+00:00:03.709	Main:Token:MSG3      1
+00:00:03.709	WriteStatus:(MSG3      1)
+00:00:03.709	Main:Token:MSG4 OPCODE
+00:00:03.709	WriteStatus:(MSG4 OPCODE)
+00:00:03.709	Main:Token:MSG3      2
+00:00:03.709	WriteStatus:(MSG3      2)
+00:00:03.709	Main:Token:MSG4 OPCODE
+00:00:03.709	WriteStatus:(MSG4 OPCODE)
+00:00:03.710	Main:Token:MSG3 
+00:00:03.710	WriteStatus:(MSG3 )
+00:00:03.710	Main:Token:MSG4 
+00:00:03.710	WriteStatus:(MSG4 )
+00:00:03.711	Main:Token:MSG2 PLTGEN
+00:00:03.711	WriteStatus:(MSG2 PLTGEN)
+00:00:03.711	Main:Token:MSG3      2
+00:00:03.711	WriteStatus:(MSG3      2)
+00:00:03.711	Main:Token:MSG4 PLOTINFO
+00:00:03.711	WriteStatus:(MSG4 PLOTINFO)
+00:00:03.711	Main:Token:MSG4 GEN-LABELS
+00:00:03.712	WriteStatus:(MSG4 GEN-LABELS)
+00:00:03.712	Main:Token:MSG4 SCALING
+00:00:03.712	WriteStatus:(MSG4 SCALING)
+00:00:03.712	Main:Token:MSG4 CURV-DATA
+00:00:03.712	WriteStatus:(MSG4 CURV-DATA)
+00:00:03.712	Main:Token:MSG4 CURV-DATA
+00:00:03.712	WriteStatus:(MSG4 CURV-DATA)
+00:00:03.713	Main:Token:MSG4 CURV-DATA
+00:00:03.713	WriteStatus:(MSG4 CURV-DATA)
+00:00:03.713	Main:Token:MSG4 CURV-DATA
+00:00:03.713	WriteStatus:(MSG4 CURV-DATA)
+00:00:03.713	Main:Token:MSG3      1
+00:00:03.713	WriteStatus:(MSG3      1)
+00:00:03.713	Main:Token:MSG4 PLOTINFO
+00:00:03.713	WriteStatus:(MSG4 PLOTINFO)
+00:00:03.714	Main:Token:MSG4 GEN-LABELS
+00:00:03.714	WriteStatus:(MSG4 GEN-LABELS)
+00:00:03.714	Main:Token:MSG4 SCALING
+00:00:03.714	WriteStatus:(MSG4 SCALING)
+00:00:03.714	Main:Token:MSG4 CURV-DATA
+00:00:03.714	WriteStatus:(MSG4 CURV-DATA)
+00:00:03.714	Main:Token:MSG4 CURV-DATA
+00:00:03.714	WriteStatus:(MSG4 CURV-DATA)
+00:00:03.714	Main:Token:MSG3 
+00:00:03.715	WriteStatus:(MSG3 )
+00:00:03.715	Main:Token:MSG4 
+00:00:03.715	WriteStatus:(MSG4 )
+00:00:03.715	Main:Token:MSG3 
+00:00:03.715	WriteStatus:(MSG3 )
+00:00:03.715	Main:Token:MSG3 
+00:00:03.715	WriteStatus:(MSG3 )
+00:00:03.715	Main:Token:MSG4 
+00:00:03.716	WriteStatus:(MSG4 )
+00:00:03.716	Main:Token:MSG2 EXT SOURCES
+00:00:03.716	WriteStatus:(MSG2 EXT SOURCES)
+00:00:03.716	Main:Token:MSG2 SCHEMATIC
+00:00:03.716	WriteStatus:(MSG2 SCHEMATIC)
+00:00:03.716	Main:Token:MSG2 NETWORK
+00:00:03.716	WriteStatus:(MSG2 NETWORK)
+00:00:03.830	Main:Token:MSG1  Operations supervisor calling operating modules.
+00:00:03.830	WriteStatus:(MSG1  Operations supervisor calling operating modules.)
+00:00:03.935	Main:Token:MSG1 Executing
+00:00:03.935	WriteStatus:(MSG1 Executing)
+00:00:03.935	Main:Token:MSG2   Now
+00:00:03.935	WriteStatus:(MSG2   Now)
+00:00:03.936	Main:Token:MSG4 Complete
+00:00:03.936	WriteStatus:(MSG4 Complete)
+00:00:03.936	Main:Token:PROGRESS  3
+00:00:03.936	WriteStatus:(PROGRESS  3)
+00:00:03.936	Main:Token:MSG3 3%
+00:00:03.936	WriteStatus:(MSG3 3%)
+00:00:04.040	Main:Token:PROGRESS  6
+00:00:04.040	WriteStatus:(PROGRESS  6)
+00:00:04.040	Main:Token:MSG3 6%
+00:00:04.040	WriteStatus:(MSG3 6%)
+00:00:04.040	Main:Token:PROGRESS  9
+00:00:04.041	WriteStatus:(PROGRESS  9)
+00:00:04.041	Main:Token:MSG3 9%
+00:00:04.041	WriteStatus:(MSG3 9%)
+00:00:04.041	Main:Token:PROGRESS 12
+00:00:04.041	WriteStatus:(PROGRESS 12)
+00:00:04.041	Main:Token:MSG3 12%
+00:00:04.041	WriteStatus:(MSG3 12%)
+00:00:04.041	Main:Token:PROGRESS 15
+00:00:04.041	WriteStatus:(PROGRESS 15)
+00:00:04.042	Main:Token:MSG3 15%
+00:00:04.042	WriteStatus:(MSG3 15%)
+00:00:04.042	Main:Token:PROGRESS 18
+00:00:04.042	WriteStatus:(PROGRESS 18)
+00:00:04.042	Main:Token:MSG3 18%
+00:00:04.042	WriteStatus:(MSG3 18%)
+00:00:04.145	Main:Token:MSG6  ERROR/WARNING ID:   344  21
+00:00:04.145	WriteStatus:(MSG6  ERROR/WARNING ID:   344  21)
+00:00:04.146	Main:Token:PROGRESS 21
+00:00:04.146	WriteStatus:(PROGRESS 21)
+00:00:04.146	Main:Token:MSG3 21%
+00:00:04.146	WriteStatus:(MSG3 21%)
+00:00:04.146	Main:Token:MSG6  ERROR/WARNING ID:   344  21
+00:00:04.146	WriteStatus:(MSG6  ERROR/WARNING ID:   344  21)
+00:00:04.146	Main:Token:MSG6  ERROR/WARNING ID:   344  21
+00:00:04.147	WriteStatus:(MSG6  ERROR/WARNING ID:   344  21)
+00:00:04.147	Main:Token:MSG6  ERROR/WARNING ID:   344  21
+00:00:04.147	WriteStatus:(MSG6  ERROR/WARNING ID:   344  21)
+00:00:04.147	Main:Token:PROGRESS 25
+00:00:04.147	WriteStatus:(PROGRESS 25)
+00:00:04.147	Main:Token:MSG3 25%
+00:00:04.147	WriteStatus:(MSG3 25%)
+00:00:04.250	Main:Token:MSG6  ERROR/WARNING ID:   344  21
+00:00:04.250	WriteStatus:(MSG6  ERROR/WARNING ID:   344  21)
+00:00:04.250	Main:Token:PROGRESS 28
+00:00:04.250	WriteStatus:(PROGRESS 28)
+00:00:04.251	Main:Token:MSG3 28%
+00:00:04.251	WriteStatus:(MSG3 28%)
+00:00:04.251	Main:Token:PROGRESS 31
+00:00:04.251	WriteStatus:(PROGRESS 31)
+00:00:04.251	Main:Token:MSG3 31%
+00:00:04.251	WriteStatus:(MSG3 31%)
+00:00:04.252	Main:Token:PROGRESS 34
+00:00:04.252	WriteStatus:(PROGRESS 34)
+00:00:04.252	Main:Token:MSG3 34%
+00:00:04.252	WriteStatus:(MSG3 34%)
+00:00:04.355	Main:Token:MSG6  ERROR/WARNING ID:   344  21
+00:00:04.355	WriteStatus:(MSG6  ERROR/WARNING ID:   344  21)
+00:00:04.355	Main:Token:PROGRESS 37
+00:00:04.355	WriteStatus:(PROGRESS 37)
+00:00:04.355	Main:Token:MSG3 37%
+00:00:04.355	WriteStatus:(MSG3 37%)
+00:00:04.356	Main:Token:PROGRESS 40
+00:00:04.356	WriteStatus:(PROGRESS 40)
+00:00:04.356	Main:Token:MSG3 40%
+00:00:04.356	WriteStatus:(MSG3 40%)
+00:00:04.356	Main:Token:PROGRESS 43
+00:00:04.356	WriteStatus:(PROGRESS 43)
+00:00:04.356	Main:Token:MSG3 43%
+00:00:04.356	WriteStatus:(MSG3 43%)
+00:00:04.356	Main:Token:PROGRESS 46
+00:00:04.357	WriteStatus:(PROGRESS 46)
+00:00:04.357	Main:Token:MSG3 46%
+00:00:04.357	WriteStatus:(MSG3 46%)
+00:00:04.357	Main:Token:PROGRESS 50
+00:00:04.357	WriteStatus:(PROGRESS 50)
+00:00:04.357	Main:Token:MSG3 50%
+00:00:04.357	WriteStatus:(MSG3 50%)
+00:00:04.358	Main:Token:PROGRESS 53
+00:00:04.358	WriteStatus:(PROGRESS 53)
+00:00:04.358	Main:Token:MSG3 53%
+00:00:04.358	WriteStatus:(MSG3 53%)
+00:00:04.358	Main:Token:PROGRESS 56
+00:00:04.358	WriteStatus:(PROGRESS 56)
+00:00:04.358	Main:Token:MSG3 56%
+00:00:04.359	WriteStatus:(MSG3 56%)
+00:00:04.359	Main:Token:PROGRESS 59
+00:00:04.359	WriteStatus:(PROGRESS 59)
+00:00:04.359	Main:Token:MSG3 59%
+00:00:04.359	WriteStatus:(MSG3 59%)
+00:00:04.359	Main:Token:PROGRESS 62
+00:00:04.359	WriteStatus:(PROGRESS 62)
+00:00:04.359	Main:Token:MSG3 62%
+00:00:04.360	WriteStatus:(MSG3 62%)
+00:00:04.360	Main:Token:PROGRESS 65
+00:00:04.360	WriteStatus:(PROGRESS 65)
+00:00:04.360	Main:Token:MSG3 65%
+00:00:04.360	WriteStatus:(MSG3 65%)
+00:00:04.360	Main:Token:PROGRESS 68
+00:00:04.360	WriteStatus:(PROGRESS 68)
+00:00:04.360	Main:Token:MSG3 68%
+00:00:04.360	WriteStatus:(MSG3 68%)
+00:00:04.361	Main:Token:PROGRESS 71
+00:00:04.361	WriteStatus:(PROGRESS 71)
+00:00:04.361	Main:Token:MSG3 71%
+00:00:04.361	WriteStatus:(MSG3 71%)
+00:00:04.361	Main:Token:PROGRESS 75
+00:00:04.361	WriteStatus:(PROGRESS 75)
+00:00:04.361	Main:Token:MSG3 75%
+00:00:04.361	WriteStatus:(MSG3 75%)
+00:00:04.361	Main:Token:PROGRESS 78
+00:00:04.361	WriteStatus:(PROGRESS 78)
+00:00:04.362	Main:Token:MSG3 78%
+00:00:04.362	WriteStatus:(MSG3 78%)
+00:00:04.362	Main:Token:PROGRESS 81
+00:00:04.362	WriteStatus:(PROGRESS 81)
+00:00:04.362	Main:Token:MSG3 81%
+00:00:04.363	WriteStatus:(MSG3 81%)
+00:00:04.363	Main:Token:PROGRESS 84
+00:00:04.363	WriteStatus:(PROGRESS 84)
+00:00:04.363	Main:Token:MSG3 84%
+00:00:04.363	WriteStatus:(MSG3 84%)
+00:00:04.363	Main:Token:PROGRESS 87
+00:00:04.363	WriteStatus:(PROGRESS 87)
+00:00:04.364	Main:Token:MSG3 87%
+00:00:04.364	WriteStatus:(MSG3 87%)
+00:00:04.364	Main:Token:PROGRESS 90
+00:00:04.364	WriteStatus:(PROGRESS 90)
+00:00:04.364	Main:Token:MSG3 90%
+00:00:04.364	WriteStatus:(MSG3 90%)
+00:00:04.364	Main:Token:PROGRESS 93
+00:00:04.364	WriteStatus:(PROGRESS 93)
+00:00:04.365	Main:Token:MSG3 93%
+00:00:04.365	WriteStatus:(MSG3 93%)
+00:00:04.365	Main:Token:PROGRESS 96
+00:00:04.365	WriteStatus:(PROGRESS 96)
+00:00:04.365	Main:Token:MSG3 96%
+00:00:04.365	WriteStatus:(MSG3 96%)
+00:00:04.777	ProcessInput:Simulate complete 0
+00:00:04.778	ProcessInput:InputProcessed
+00:00:04.792	Main:Token:MSG10 HSPF Done
+00:00:04.792	WriteStatus:(MSG10 HSPF Done)
+00:00:04.792	Main:Token:MSG99 HSPF D
+00:00:04.793	WriteStatus:(MSG99 HSPF D)
+00:00:04.793	Main:Token:MSG7 File Status at before WDM closing in M_SIMSCN
+00:00:04.793	WriteStatus:(MSG7 File Status at before WDM closing in M_SIMSCN)
+00:00:04.793	Main:Token:MSG7   unit   4 file hspf04.dat is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:04.793	WriteStatus:(MSG7   unit   4 file hspf04.dat is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:04.793	Main:Token:MSG7   unit  21 file test.wdm is open, access:DIRECT form:UNFORMATTED r/w:YES recl: 2048
+00:00:04.793	WriteStatus:(MSG7   unit  21 file test.wdm is open, access:DIRECT form:UNFORMATTED r/w:YES recl: 2048)
+00:00:04.793	Main:Token:MSG7   unit  99 file ERROR.FIL is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:04.793	WriteStatus:(MSG7   unit  99 file ERROR.FIL is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:04.794	Main:Token:MSG7   unit 100 file c:\basins45\models\winhspf31\bin\hspfmsg.wdm is open, access:DIRECT form:UNFORMATTED r/w:NO recl: 2048
+00:00:04.794	WriteStatus:(MSG7   unit 100 file c:\basins45\models\winhspf31\bin\hspfmsg.wdm is open, access:DIRECT form:UNFORMATTED r/w:NO recl: 2048)
+00:00:04.794	Main:Token:MSG7 File Status at about to close           21
+00:00:04.794	WriteStatus:(MSG7 File Status at about to close           21)
+00:00:04.794	Main:Token:MSG7   unit   4 file hspf04.dat is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:04.794	WriteStatus:(MSG7   unit   4 file hspf04.dat is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:04.794	Main:Token:MSG7   unit  21 file test.wdm is open, access:DIRECT form:UNFORMATTED r/w:YES recl: 2048
+00:00:04.794	WriteStatus:(MSG7   unit  21 file test.wdm is open, access:DIRECT form:UNFORMATTED r/w:YES recl: 2048)
+00:00:04.795	Main:Token:MSG7   unit  99 file ERROR.FIL is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:04.795	WriteStatus:(MSG7   unit  99 file ERROR.FIL is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:04.795	Main:Token:MSG7   unit 100 file c:\basins45\models\winhspf31\bin\hspfmsg.wdm is open, access:DIRECT form:UNFORMATTED r/w:NO recl: 2048
+00:00:04.795	WriteStatus:(MSG7   unit 100 file c:\basins45\models\winhspf31\bin\hspfmsg.wdm is open, access:DIRECT form:UNFORMATTED r/w:NO recl: 2048)
+00:00:04.795	Main:Token:MSG7 File Status at after one WDM closing in M_SIMSCN
+00:00:04.795	WriteStatus:(MSG7 File Status at after one WDM closing in M_SIMSCN)
+00:00:04.795	Main:Token:MSG7   unit   4 file hspf04.dat is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:04.795	WriteStatus:(MSG7   unit   4 file hspf04.dat is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:04.795	Main:Token:MSG7   unit  99 file ERROR.FIL is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:04.796	WriteStatus:(MSG7   unit  99 file ERROR.FIL is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:04.796	Main:Token:MSG7   unit 100 file c:\basins45\models\winhspf31\bin\hspfmsg.wdm is open, access:DIRECT form:UNFORMATTED r/w:NO recl: 2048
+00:00:04.796	WriteStatus:(MSG7   unit 100 file c:\basins45\models\winhspf31\bin\hspfmsg.wdm is open, access:DIRECT form:UNFORMATTED r/w:NO recl: 2048)
+00:00:04.796	Main:Token:MSG7 M_SIMSCN:back from HSPF with           0
+00:00:04.796	WriteStatus:(MSG7 M_SIMSCN:back from HSPF with           0)
+00:00:04.796	Main:Token:MSG7 File Status at at end of File Closing in M_SIMSCN
+00:00:04.797	WriteStatus:(MSG7 File Status at at end of File Closing in M_SIMSCN)
+00:00:04.797	Main:Token:MSG7   unit   4 file hspf04.dat is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:04.797	WriteStatus:(MSG7   unit   4 file hspf04.dat is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:04.797	Main:Token:MSG7   unit  99 file ERROR.FIL is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80
+00:00:04.797	WriteStatus:(MSG7   unit  99 file ERROR.FIL is open, access:SEQUENTIAL form:FORMATTED r/w:YES recl:   80)
+00:00:04.797	Main:Token:MSG7   unit 100 file c:\basins45\models\winhspf31\bin\hspfmsg.wdm is open, access:DIRECT form:UNFORMATTED r/w:NO recl: 2048
+00:00:04.797	WriteStatus:(MSG7   unit 100 file c:\basins45\models\winhspf31\bin\hspfmsg.wdm is open, access:DIRECT form:UNFORMATTED r/w:NO recl: 2048)
+00:00:06.785	InputCallback:Process 6 bytes
+00:00:06.785	ProcessInput:EXIT
+00:00:06.786	WriteStatus:(EXIT)
+00:00:06.787	ProcessInput:InputProcessed

@@ -1,0 +1,9 @@
+00:00:00.082	Main:StartToFile 2020-11-04 08:50:10
+00:00:00.082	Main:Begin Logging
+00:00:00.083	WriteStatus:(LOGTOFILE test10.log)
+00:00:00.083	Main:Pre:  F90_ACTSCN (-1, 0, 100, 0, test10, 6)
+00:00:00.550	Main:Post: F90_ACTSCN (-1, 0, 100, 0, test10, 6)
+00:00:00.551	Main:Pre:  F90_SIMSCN (0)
+00:00:00.551	WriteStatus:(Progress Percent Off)
+00:00:01.914	Main:Post: F90_SIMSCN (0)
+00:00:01.915	WriteStatus:(EXIT)
