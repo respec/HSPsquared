@@ -184,20 +184,22 @@ def readUCI(uciname, hdfname):
                 df['FZGL'] = 0.1
                 df.to_hdf(store, path, data_columns=True)
 
-        dfinfo = read_hdf(store, 'RCHRES/GENERAL/INFO')
-        path = '/RCHRES/HYDR/PARAMETERS'
+        path = '/RCHRES/GENERAL/INFO'
         if path in keys:
-            df = read_hdf(store, path)
-            df['NEXITS'] = dfinfo['NEXITS']
-            df['LKFG']   = dfinfo['LKFG']
-            if 'IREXIT' not in df.columns:   # didn't read HYDR-IRRIG table
-                df['IREXIT'] = 0
-                df['IRMINV'] = 0.0
-            df['FTBUCI'] = df['FTBUCI'].map(lambda x: f'FT{int(x):03d}')
-            df.to_hdf(store, path, data_columns=True)
-        del dfinfo['NEXITS']
-        del dfinfo['LKFG']
-        dfinfo.to_hdf(store, 'RCHRES/GENERAL/INFO', data_columns=True)
+            dfinfo = read_hdf(store, path)
+            path = '/RCHRES/HYDR/PARAMETERS'
+            if path in keys:
+                df = read_hdf(store, path)
+                df['NEXITS'] = dfinfo['NEXITS']
+                df['LKFG']   = dfinfo['LKFG']
+                if 'IREXIT' not in df.columns:   # didn't read HYDR-IRRIG table
+                    df['IREXIT'] = 0
+                    df['IRMINV'] = 0.0
+                df['FTBUCI'] = df['FTBUCI'].map(lambda x: f'FT{int(x):03d}')
+                df.to_hdf(store, path, data_columns=True)
+            del dfinfo['NEXITS']
+            del dfinfo['LKFG']
+            dfinfo.to_hdf(store, 'RCHRES/GENERAL/INFO', data_columns=True)
     return
 
 
