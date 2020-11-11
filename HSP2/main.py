@@ -61,6 +61,9 @@ def main(hdfname, saveall=False):
                 if operation == 'PERLND' and activity == 'SEDMNT':
                     # special exception here to make CSNOFG available
                     ui['PARAMETERS']['CSNOFG'] = uci[(operation, 'PWATER', segment)]['PARAMETERS']['CSNOFG']
+                if operation == 'PERLND' and activity == 'PSTEMP':
+                    # special exception here to make AIRTFG available
+                    ui['PARAMETERS']['AIRTFG'] = flags['ATEMP']
 
                 ############ calls activity function like snow() ##############
                 errors, errmessages = function(store, siminfo, ui, ts)
