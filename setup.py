@@ -62,5 +62,5 @@ setup(name='HSPsquared',
               ['hsp2=HSP2.main:main']
       },
       test_suite='tests',
-      python_requires='>=3.6,
+      python_requires='>=3.6',
       )
