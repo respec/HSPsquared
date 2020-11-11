@@ -6,9 +6,9 @@ Conversion of HSPF HPERTMP.FOR module into Python'''
 
 ''' NOTE: needs lots of Celcius temp conversions, in and out'''
 
-from numpy import zeros, where
-from numba import jit
-from HSP2  import initm
+from numpy import zeros, where, ones, float64
+from numba import njit
+from HSP2.utilities  import hoursval, initm, make_numba_dict
 
 
 ERRMSG = ['SLTMP temperature less than 100C',   # MSG0
@@ -21,15 +21,18 @@ ERRMSG = ['SLTMP temperature less than 100C',   # MSG0
 MINTMP = -100
 MAXTMP = 100
 
-def pstemp(store, general, ui, ts):
+def pstemp(store, siminfo, uci, ts):
 	'''Estimate soil temperatures in a pervious land segment'''
 	errorsV = zeros(len(ERRMSG), dtype=int)
 	
-	simlen = general['sim_len']
-	tindex = general['tindex']
-	
-	TSOPFG = ui['TSOPFG']
+	simlen = siminfo['steps']
+	tindex = siminfo['tindex']
 
+	ui = make_numba_dict(uci)
+	TSOPFG = ui['TSOPFG']
+	AIRTFG = int(ui['AIRTFG'])
+
+	# initial conditions
 	# may need to convert to C from F
 	airtc  = ui['AIRTC']
 	sltmp  = ui['SLTMP']
@@ -43,41 +46,43 @@ def pstemp(store, general, ui, ts):
 	LGTMP = ts['LGTMP'] = zeros(simlen)
 	
 	AIRTMP = ts['AIRTMP']
-	
-	initm(general, ui, ts, 'SLTVFG', 'ASLTM', 'ASLT')
-	initm(general, ui, ts, 'SLTVFG', 'BSLTM', 'BSLT')
-	initm(general, ui, ts, 'ULTVFG', 'ULTP1M', 'ULTP1')
-	initm(general, ui, ts, 'ULTVFG', 'ULTP2M', 'ULTP2')
-	initm(general, ui, ts, 'LGTVFG', 'LGTP1M', 'LGTP1')
-	initm(general, ui, ts, 'LGTVFG', 'LGTP2M', 'LGTP2')
+
+	u = uci['PARAMETERS']
+	ts['ASLT'] = initm(siminfo, uci, u['SLTVFG'], 'MONTHLY_ASLT', u['ASLT'])
+	ts['BSLT'] = initm(siminfo, uci, u['SLTVFG'], 'MONTHLY_BSLT', u['BSLT'])
+	ts['ULTP1'] = initm(siminfo, uci, u['ULTVFG'], 'MONTHLY_ULTP1', u['ULTP1'])
+	ts['ULTP2'] = initm(siminfo, uci, u['ULTVFG'], 'MONTHLY_ULTP2', u['ULTP2'])
+	ts['LGTP1'] = initm(siminfo, uci, u['LGTVFG'], 'MONTHLY_LGTP1', u['LGTP1'])
+	ts['LGTP2'] = initm(siminfo, uci, u['LGTVFG'], 'MONTHLY_LGTP2', u['LGTP2'])
 	ASLT  = ts['ASLT']
 	BSLT  = ts['BSLT']
 	ULTP1 = ts['ULTP1']
 	ULTP2 = ts['ULTP2']
 	LGTP1 = ts['LGTP1']
 	LGTP2 = ts['LGTP2']
-	
-	HRFG = where(tindex.minute==1, True, False)   # ??? need to check if minute == 0	
-	
-	arts = AIRTMP[0]  # arts not used ???
+
+	ts['HRFG'] = hoursval(siminfo, ones(24), dofirst=True).astype(float64)  # numba Dict limitation
+	HRFG = ts['HRFG']
+
+	airts = AIRTMP[0]
 
 	for loop in range(simlen):
 		hrfg = HRFG[loop]
 		airtmp = AIRTMP[loop]
 
-		# convert to centigrade  
-		airtcs = (airts - 32.0)  * 0.555   # airts not defined ???
+		# convert to centigrade
+		airtcs = (airts - 32.0) * 0.555
 		airtc  = (airtmp - 32.0) * 0.555
 
 		# determine soil temperatures - units are deg c temperature of surface layer is always estimated using a linear regression with air temperature
 		if hrfg:    # it is time to update surface layer temperature
-			aslt = ASLT[loop]
+			aslt = (ASLT[loop]- 32.0) * 0.555
 			bslt = BSLT[loop]
 			sltmp = aslt + bslt * airtc
 
 		if TSOPFG == 1: # compute subsurface temperature using regression and monthly values
 			if hrfg:   # it is time to update subsurface temperatures temperature of upper layer is computed by regression with air temperature
-				ault  = ULTP1[loop]
+				ault  = (ULTP1[loop]- 32.0) * 0.555
 				bult  = ULTP2[loop]
 				ultmp = ault + bult * airtc
 
@@ -124,13 +129,13 @@ def pstemp(store, general, ui, ts):
 			errorsV[5] += 1
 
 		# update airts for next interval if section atemp not active
-		if AIRTFG == 0:     # AIRTFG not defined  ???
-			airts = airtmp   # airts not used   ???
+		if AIRTFG == 0:
+			airts = airtmp
 
-	# Need to convert back to English units here
-	AIRTC[loop] = airtc
-	SLTMP[loop] = sltmp
-	ULTMP[loop] = ultmp
-	LGTMP[loop] = lgtmp
+		# Need to convert back to English units here
+		AIRTC[loop] = (airtc * 9.0 / 5.0) + 32.0
+		SLTMP[loop] = (sltmp * 9.0 / 5.0) + 32.0
+		ULTMP[loop] = (ultmp* 9.0 / 5.0) + 32.0
+		LGTMP[loop] = lgtmp
 
 	return errorsV, ERRMSG
