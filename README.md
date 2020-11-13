@@ -60,7 +60,7 @@ conda env create --file path/environment.yml
 ```
 
 NOTE: We recommend using [JupyterLab](https://jupyterlab.readthedocs.io/en/stable/) to run our tutorial [Juptyer](https://jupyter.org/index.html) Notebooks in the [HSP2notebooks](HSP2notebooks/) folder. The following JupyterLab [extensions](https://jupyterlab.readthedocs.io/en/stable/user/extensions.html) are useful (but not required):
-+ jupyter-matplotlib
++ [jupyter-matplotlib](https://github.com/matplotlib/ipympl#readme), , requires `nodejs`.
 + [`jupyterlab/toc`](https://github.com/jupyterlab/jupyterlab-toc), requires `nodejs`.
 + qgrid2
 
