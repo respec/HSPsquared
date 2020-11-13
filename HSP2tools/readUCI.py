@@ -176,6 +176,42 @@ def readUCI(uciname, hdfname):
                 df['PETMAX'] = 40.0
                 df.to_hdf(store, path, data_columns=True)
 
+        path = '/IMPLND/IWTGAS/PARAMETERS'
+        if path in keys:
+            df = read_hdf(store, path)
+            if 'SDLFAC' not in df.columns:   # didn't read LAT-FACTOR table
+                df['SDLFAC'] = 0.0
+                df['SLIFAC'] = 0.0
+                df.to_hdf(store, path, data_columns=True)
+            if 'SOTMP' not in df.columns:  # didn't read IWT-INIT table
+                df['SOTMP'] = 60.0
+                df['SODOX'] = 0.0
+                df['SOCO2'] = 0.0
+                df.to_hdf(store, path, data_columns=True)
+
+        path = '/PERLND/PWTGAS/PARAMETERS'
+        if path in keys:
+            df = read_hdf(store, path)
+            if 'SDLFAC' not in df.columns:  # didn't read LAT-FACTOR table
+                df['SDLFAC'] = 0.0
+                df['SLIFAC'] = 0.0
+                df['ILIFAC'] = 0.0
+                df['ALIFAC'] = 0.0
+                df.to_hdf(store, path, data_columns=True)
+            if 'SOTMP' not in df.columns:  # didn't read PWT-TEMPS table
+                df['SOTMP'] = 60.0
+                df['IOTMP'] = 60.0
+                df['AOTMP'] = 60.0
+                df.to_hdf(store, path, data_columns=True)
+            if 'SODOX' not in df.columns:  # didn't read PWT-GASES table
+                df['SODOX'] = 0.0
+                df['SOCO2'] = 0.0
+                df['IODOX'] = 0.0
+                df['IOCO2'] = 0.0
+                df['AODOX'] = 0.0
+                df['AOCO2'] = 0.0
+                df.to_hdf(store, path, data_columns=True)
+
         path = '/PERLND/PWATER/PARAMETERS'
         if path in keys:
             df = read_hdf(store, path)
