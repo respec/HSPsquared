@@ -58,11 +58,23 @@ We have provided an [`environment.yml`](environment.yml) file, which lists all p
 ```console
 conda env create --file path/environment.yml
 ```
+To update your environment, either use Anaconda Navigator, or run the following command:
+
+```console
+conda env update --file path/environment.yml --prune
+```
+
+or
+
+```console
+conda env create --file path/environment.yml --force
+```
+
 
 NOTE: We recommend using [JupyterLab](https://jupyterlab.readthedocs.io/en/stable/) to run our tutorial [Juptyer](https://jupyter.org/index.html) Notebooks in the [HSP2notebooks](HSP2notebooks/) folder. The following JupyterLab [extensions](https://jupyterlab.readthedocs.io/en/stable/user/extensions.html) are useful (but not required):
-+ [jupyter-matplotlib](https://github.com/matplotlib/ipympl#readme), , requires `nodejs`.
-+ [`jupyterlab/toc`](https://github.com/jupyterlab/jupyterlab-toc), requires `nodejs`.
-+ qgrid2
++ [jupyter-matplotlib](https://github.com/matplotlib/ipympl), an interactive widget.
++ [`jupyterlab/toc`](https://github.com/jupyterlab/jupyterlab-toc), Table of Contents.
++ [qgrid2](https://github.com/quantopian/qgrid), for interactive sorting, filtering, and editing DataFrames
 
 
 
