@@ -1,0 +1,9 @@
+00:00:00.143	Main:StartToFile 2020-10-14 04:41:10
+00:00:00.144	Main:Begin Logging
+00:00:00.144	WriteStatus:(LOGTOFILE calleg.log)
+00:00:00.144	Main:Pre:  F90_ACTSCN (-1, 0, 100, 0, calleg, 6)
+00:00:00.457	Main:Post: F90_ACTSCN (-1, 0, 100, 0, calleg, 6)
+00:00:00.458	Main:Pre:  F90_SIMSCN (0)
+00:00:00.459	WriteStatus:(Progress Percent Off)
+00:00:29.020	Main:Post: F90_SIMSCN (0)
+00:00:29.020	WriteStatus:(EXIT)

@@ -1,0 +1,24 @@
+22:12:56.383 : LOG_MSG:ERROR.FIL OPENED
+22:12:56.390 : HASS_ENT:F90_WDBOPNR:entr:WDMSFL,RWFLG:         100           1 c:\basins45\models\hspf\bin\hspfmsg.wdm
+22:12:56.391 : HASS_ENT:F90_WDBOPNR:exit:WDMSFL,RETCOD         100           0
+FILBLK RETCOD           0
+wdmfl           0           0           0           0
+FILBLK RETCOD           0
+22:13:13.270 : LOG_MSG:ERROR.FIL OPENED
+22:13:13.272 : HASS_ENT:F90_WDBOPNR:entr:WDMSFL,RWFLG:         100           1 c:\basins45\models\hspf\bin\hspfmsg.wdm
+22:13:13.273 : HASS_ENT:F90_WDBOPNR:exit:WDMSFL,RETCOD         100           0
+FILBLK RETCOD           0
+wdmfl           0           0           0           0
+FILBLK RETCOD           0
+22:14:22.638 : LOG_MSG:ERROR.FIL OPENED
+22:14:22.641 : HASS_ENT:F90_WDBOPNR:entr:WDMSFL,RWFLG:         100           1 c:\basins45\models\hspf\bin\hspfmsg.wdm
+22:14:22.642 : HASS_ENT:F90_WDBOPNR:exit:WDMSFL,RETCOD         100           0
+FILBLK RETCOD           0
+wdmfl           0           0           0           0
+FILBLK RETCOD           0
+22:14:56.519 : LOG_MSG:ERROR.FIL OPENED
+22:14:56.522 : HASS_ENT:F90_WDBOPNR:entr:WDMSFL,RWFLG:         100           1 c:\basins45\models\hspf\bin\hspfmsg.wdm
+22:14:56.523 : HASS_ENT:F90_WDBOPNR:exit:WDMSFL,RETCOD         100           0
+FILBLK RETCOD           0
+wdmfl           0           0           0           0
+FILBLK RETCOD           0

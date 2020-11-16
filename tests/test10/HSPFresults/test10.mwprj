@@ -1,0 +1,67 @@
+<Mapwin name="BASINS+4++-+Template*" type="projectfile" version="4.8.1" ProjectProjection="" MapUnits="" StatusBarAlternateCoordsNumDecimals="3" StatusBarCoordsNumDecimals="3" StatusBarAlternateCoordsUseCommas="True" StatusBarCoordsUseCommas="True" ShowFloatingScaleBar="False" FloatingScaleBarPosition="LowerRight" FloatingScaleBarUnit="" FloatingScaleBarForecolor="-16777216" FloatingScaleBarBackcolor="-1" MapResizeBehavior="0" ShowStatusBarCoords_Projected="True" ShowStatusBarCoords_Alternate="(None)" SaveShapeSettings="False" ViewBackColor_UseDefault="True" ViewBackColor="16777215">
+  <Plugins>
+    <Plugin SettingsString="" Key="ArchiveTool_mwArchiveTool" />
+    <Plugin SettingsString="" Key="atcDataTree_atcDataTreePlugin" />
+    <Plugin SettingsString="" Key="atcList_atcListPlugin" />
+    <Plugin SettingsString="" Key="atcHspfBinOut_atcTimeseriesFileHspfBinOut" />
+    <Plugin SettingsString="&lt;BASINS&gt;&lt;DataManager&gt;&lt;SelectionAttribute&gt;Scenario&lt;/SelectionAttribute&gt;&lt;SelectionAttribute&gt;Location&lt;/SelectionAttribute&gt;&lt;SelectionAttribute&gt;Constituent&lt;/SelectionAttribute&gt;&lt;SelectionAttribute&gt;Data Source&lt;/SelectionAttribute&gt;&lt;DisplayAttribute&gt;History 1&lt;/DisplayAttribute&gt;&lt;DisplayAttribute&gt;Constituent&lt;/DisplayAttribute&gt;&lt;DisplayAttribute&gt;Id&lt;/DisplayAttribute&gt;&lt;DisplayAttribute&gt;Min&lt;/DisplayAttribute&gt;&lt;DisplayAttribute&gt;Max&lt;/DisplayAttribute&gt;&lt;DisplayAttribute&gt;Mean&lt;/DisplayAttribute&gt;&lt;DataSource Specification='C:\Users\sskripnik\Documents\GitHub\HSPsquared\tests\test10\HSPFresults\test.wdm'&gt;Timeseries::WDM&lt;/DataSource&gt;&lt;/DataManager&gt;&lt;/BASINS&gt;" Key="BASINS_atcBasinsPlugIn" />
+    <Plugin SettingsString="" Key="atcTimeseriesStatistics_atcTimeseriesStatistics" />
+    <Plugin SettingsString="" Key="D4EMDataDownload_DownloadDataPlugin" />
+    <Plugin SettingsString="" Key="atcModelSetup_PlugIn" />
+    <Plugin SettingsString="" Key="atcTimeseriesNOAA_atcDataSourceNOAA" />
+    <Plugin SettingsString="" Key="mwTaudemBasinsWrap_mwTaudemBASINSWrapper_v2" />
+    <Plugin SettingsString="" Key="atcWDM_atcDataSourceWDM" />
+    <Plugin SettingsString="" Key="atcBasinsObsWQ_atcDataSourceBasinsObsWQ" />
+    <Plugin SettingsString="" Key="atcTimeseriesNdayHighLow_atcTimeseriesNdayHighLow" />
+    <Plugin SettingsString="" Key="atcEvents_atcEventPlugin" />
+    <Plugin SettingsString="" Key="ShapefileEditor_ShapefileEditorClass" />
+    <Plugin SettingsString="" Key="atcPollutantLoading_PlugIn" />
+    <Plugin SettingsString="" Key="atcReport_PlugIn" />
+    <Plugin SettingsString="" Key="atcSeasonalAttributes_atcSeasonalAttributesPlugin" />
+    <Plugin SettingsString="" Key="atcGraph_atcGraphPlugin" />
+    <Plugin SettingsString="" Key="atcMetCmp_atcMetCmpPlugin" />
+    <Plugin SettingsString="" Key="atcSeasons_atcSeasonPlugin" />
+    <Plugin SettingsString="" Key="atcLandUse_PlugIn" />
+    <Plugin SettingsString="" Key="atcTimeseriesMath_atcTimeseriesMath" />
+    <Plugin SettingsString="" Key="atcBasinsObsWQ_atcDataSourceSWATDBF" />
+    <Plugin SettingsString="" Key="atcLookup_PlugIn" />
+    <Plugin SettingsString="" Key="GISTools_mwGISTools" />
+    <Plugin SettingsString="" Key="D4EMBasinsDataExtension_BasinsData" />
+    <Plugin SettingsString="" Key="atcClimateAssessmentTool_atcClimateAssessmentToolPlugin" />
+    <Plugin SettingsString="" Key="D4EMNHDPlusDataExtension_NHDPlusDataExtension" />
+    <Plugin SettingsString="" Key="D4EMNLCD2001DataExtension_NLCD2001Data" />
+    <Plugin SettingsString="" Key="atcModelSegmentation_PlugIn" />
+    <Plugin SettingsString="" Key="D4EMNWISDataExtension_NWISDataExtension" />
+    <Plugin SettingsString="" Key="atcTimeseriesRDB_atcTimeseriesRDB" />
+    <Plugin SettingsString="" Key="D4EMSTORETDataExtension_STORETDataExtension" />
+    <Plugin SettingsString="" Key="atcTimeseriesDbf_atcDataSourceTimeseriesDbf" />
+    <Plugin SettingsString="" Key="atcCligen_atcCligen" />
+    <Plugin SettingsString="" Key="DFLOWAnalysis_DFLOWAnalysisPlugin" />
+    <Plugin SettingsString="" Key="atcSynopticAnalysis_atcSynopticAnalysisPlugin" />
+    <Plugin SettingsString="" Key="mwCSVtoShapefile_clsMWCSVtoShapefile" />
+    <Plugin SettingsString="" Key="atcSWMMPlugIN_PlugIn" />
+    <Plugin SettingsString="" Key="atcWASPPlugIN_PlugIn" />
+    <Plugin SettingsString="" Key="atcCligen_atcDataSourceCligen" />
+    <Plugin SettingsString="" Key="atcTimeseriesExcel_atcDataSourceTimeseriesExcel" />
+    <Plugin SettingsString="" Key="atcNOAAHPD_atcDataSourceNOAAHPD" />
+    <Plugin SettingsString="" Key="atcNOAAISH_atcDataSourceNOAAISH" />
+    <Plugin SettingsString="" Key="atcTimeseriesSTORET_atcTimeseriesSTORET" />
+    <Plugin SettingsString="" Key="atcSynopInput_atcDataSourceSynopInput" />
+    <Plugin SettingsString="" Key="atcTimeseriesSWAT_atcTimeseriesSWAT" />
+    <Plugin SettingsString="&lt;OpenSWAT&gt;&lt;OpenSWAT ProjectName=&quot;&quot; ProjectPath=&quot;&quot; SWAT2005DatabasePath=&quot;&quot; DEMPath=&quot;&quot; prjConStr=&quot;PROVIDER=Microsoft.Jet.OLEDB.4.0;Data Source=\&quot; US_SoilsDatabasePath=&quot;&quot; NewProjectDefinitionKey=&quot;False&quot; WeatershedDeliniationKey=&quot;False&quot; LU_Soil_SlopeDefinition=&quot;False&quot; HRUDefinition=&quot;False&quot; WeatherDataDef=&quot;False&quot; /&gt;&lt;/OpenSWAT&gt;" Key="OpenSWAT_MWPlugin" />
+    <Plugin SettingsString="" Key="atcWCS_PlugIn" />
+    <Plugin SettingsString="" Key="atcManDelin_ManDelinPlugIn" />
+    <Plugin SettingsString="" Key="NLDASDataExtension_NLDASDataExtension" />
+    <Plugin SettingsString="" Key="atcTimeseriesGDS_atcTimeseriesGDS" />
+    <Plugin SettingsString="" Key="atcDurationCompare_clsDurationComparePlugin" />
+    <Plugin SettingsString="" Key="atcSWSTAT_clsSWSTATPlugin" />
+    <Plugin SettingsString="" Key="atcTimeseriesScript_atcTimeseriesScriptPlugin" />
+  </Plugins>
+  <Extents xMax="0.802066933547875" yMax="0.99960158142409" xMin="-1.46562169856351" yMin="-0.881621804933098" />
+  <Groups />
+  <Bookmarks />
+  <PreviewMap dx="0" dy="0" xllcenter="0" yllcenter="0">
+    <Image Type="">
+    </Image>
+  </PreviewMap>
+</Mapwin>
