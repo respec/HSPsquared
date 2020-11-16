@@ -12,6 +12,7 @@ dist/*
 downloads
 *.egg
 *.EGG
+*.egg-info
 eggs
 fake-eggs
 .hg
@@ -30,5 +31,3 @@ __pycache__/*
 .tox/*
 stats.dat
 .ropeproject
-*.ipynb
-*.h5
