@@ -12,6 +12,7 @@ dist/*
 downloads
 *.egg
 *.EGG
+*.egg-info
 eggs
 fake-eggs
 .hg

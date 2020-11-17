@@ -1,0 +1,684 @@
+ FOUND RUN 
+ FOUND END RUN 
+ ************************************************************
+ *                                                          *
+ *        Hydrological Simulation Program - FORTRAN         *
+ *                                                          *
+ ************************************************************
+ 
+   Developed for:                Modified and Maintained by
+ 
+     U.S. Environmental            RESPEC, Inc.
+       Protection Agency           (605)394-6512
+     Office of Research            email: hspf@respec.com
+       and Development
+     Center for Exposure
+       Assessment Modeling
+     Athens, Georgia
+     (706)355-8400
+     email: ceam@epamail.epa.gov
+ 
+   In cooperation with:
+ 
+     U.S. Geological Survey                Release 12.5
+     Water Resources Discipline            September 2018
+     Office of Surface Water
+     Reston, Virginia
+     email: h2osoft@usgs.gov
+ 
+ 
+ Start of Job
+ 
+ PREPROCESSING USERS CONTROL INPUT.
+ 
+ SEARCHING FOR BOUNDARIES OF NEXT DATA SET IN USERS CONTROL INPUT.
+ 
+ FOUND RUN 
+ FOUND END RUN 
+ 
+ INTERPRETING RUN DATA SET IN USERS CONTROL INPUT
+ 
+ FOUND GLOBAL      
+ FOUND END GLOBAL      
+ FOUND FILES       
+ FOUND END FILES       
+ FOUND OPN SEQUENCE
+ FOUND END OPN SEQUENCE
+ FOUND PERLND      
+ FOUND END PERLND      
+ FOUND DISPLY      
+ FOUND END DISPLY      
+ FOUND COPY        
+ FOUND END COPY        
+ FOUND PLTGEN      
+ FOUND END PLTGEN      
+ FOUND EXT SOURCES 
+ FOUND END EXT SOURCES 
+ FOUND NETWORK     
+ FOUND END NETWORK     
+ 
+ 
+ ====================================================================================================================================
+ PROCESSING GLOBAL BLOCK
+
+ GENERAL RUN INFORMATION:    Version 11 test run:  PERLND w/ SNOW, PWATER, COPY, DISPLY, PLTGEN
+
+   START       1976/01/01 00:00  END    1976/12/31 24:00
+
+ START AND END DATE/TIMES TRANSLATE TO THE FOLLOWING, IN INTERNAL FORMAT:  1975/12/31 24:60    1976/12/31 24:60
+
+ RUN INTERPRETER OUTPUT LEVEL HAS BEEN SET TO:  3
+ RUNTIME SPECIAL ACTION OUTPUT LEVEL HAS BEEN SET TO:  2
+ 
+ SYSTEM HAS BEEN ASKED TO INTERPRET AND EXECUTE THE RUN.  RUNFG =    1
+ THE UNIT SYSTEM OF THE RUN WILL BE ENGLISH.  EMFG =     1
+ 
+ FINISHED PROCESSING GLOBAL BLOCK
+ ====================================================================================================================================
+ 
+ ====================================================================================================================================
+ CATEGORY BLOCK NOT FOUND
+ 
+ FINISHED PROCESSING CATEGORY BLOCK
+ ====================================================================================================================================
+ 
+ ====================================================================================================================================
+ PROCESSING OPN SEQUENCE BLOCK
+ 
+ 
+ USERS CONTROL INPUT IS:
+     OPN SEQUENCE                                                                    
+         INGRP              INDELT 00:30                                             
+           PERLND       1                                                            
+           PERLND       2                                                            
+           PERLND       3                                                            
+           COPY         1                                                            
+           COPY         2                                                            
+           COPY         3                                                            
+           DISPLY       1                                                            
+           PLTGEN       1                                                            
+         END INGRP                                                                   
+     END OPN SEQUENCE                                                                
+
+ FINISHED PROCESSING OPN SEQUENCE BLOCK
+ ====================================================================================================================================
+
+ ====================================================================================================================================
+ PROCESSING PERLND   BLOCK
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ PROCESSING PERVIOUS LAND-SEGMENT NO:   1     TIME STEP(DELT):   30  MINS
+
+ PROCESSING GENERAL INPUT
+ 
+     AIRTFG    SNOWFG    PWATFG     SEDFG     PSTFG     PWGFG    PQALFG    MSTLFG    PESTFG    NITRFG    PHOSFG    TRACFG
+          0         1         1         0         0         0         0         0         0         0         0         0
+ 
+                 Printout level flags                         Print-ivl Print-yrend
+ ATEMP SNOW PWAT SED PSTMP PWTG RQAL MSTL PEST NITR PHOS TRAC      PIVL      PYREND
+     4    4    4    4    4    4    4    4    4    4    4    4         1          12
+ 
+            Binary Output level flags                         Print-ivl Print-yrend
+ ATEMP SNOW PWAT SED PSTMP PWTG RQAL MSTL PEST NITR PHOS TRAC      PIVL      PYREND
+     4    4    4    4    4    4    4    4    4    4    4    4         1          12
+ 
+ Perv Land-segment id      Unit systems       Print-file nos     BinaryOutfileNos
+                         IUNITS    OUNITS   English    Metric   English    Metric
+ BEANS                        1         1         1         0        93         0
+
+ FINISHED PROCESSING GENERAL INPUT
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION SNOW
+ 
+      ICEFG
+          1
+ 
+     SNOPFG     VMKFG
+          0         0
+ 
+        LAT     MELEV     SHADE    SNOWCF    COVIND     KMELT     TBASE
+    degrees      (ft)                          (in)  (in/d.F)       (F)
+        43.     1225.       0.0      1.45       0.5      0.00      32.0
+ 
+      RDCSN     TSNOW    SNOEVP    CCFACT    MWATER    MGMELT
+              (deg F)                                (in/day)
+       0.12       32.      0.05       0.5      0.08    0.0001
+ 
+  Pack-snow  Pack-ice Pack-watr    RDENPF      DULL    PAKTMP
+       (in)      (in)      (in)                       (deg F)
+        1.4       0.2       0.1       0.2      375.      27.5
+ 
+     COVINX    XLNMLT    SKYCLR
+       (in)      (in)
+       0.50       0.0       1.0
+
+ FINISHED PROCESSING INPUT FOR SECTION SNOW
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION PWATER
+ 
+   CSNOFG  RTOPFG    UZFG   VCSFG   VUZFG   VNNFG  VIFWFG  VIRCFG   VLEFG  IFFCFG   HWTFG  IRRGFG  IFRDFG  NCANPY
+        1       0       0       1       1       1       0       0       1       1       0       0       0       0
+ 
+     FOREST      LZSN    INFILT      LSUR     SLSUR     KVARY     AGWRC
+             (inches)   (in/hr)    (feet)          (1/inches)   (1/day)
+      0.000       8.0     0.100      350.     0.010       0.5      0.98
+ 
+     PETMAX    PETMIN    INFEXP    INFILD    DEEPFR    BASETP    AGWETP
+     (degF)    (degF)
+        40.       35.       2.0       2.0      0.10       0.0      0.08
+ 
+      CEPSC      UZSN      NSUR     INTFW       IRC     LZETP
+   (inches)  (inches)(nManning)             (1/day)
+       0.00      0.01       0.1       1.0      0.60      0.00
+ 
+        FZG      FZGL
+      (/in)
+       1.00     0.100
+ 
+ Values of Interception Storage at start of each calendar month (inches):
+        JAN       FEB       MAR       APR       MAY       JUN       JUL       AUG       SEP       OCT       NOV       DEC
+       0.04      0.04      0.03      0.03      0.03      0.03      0.10      0.17      0.19      0.14      0.05      0.04
+ 
+ Values of Upper Zone Storage at start of each calendar month (inches):
+        JAN       FEB       MAR       APR       MAY       JUN       JUL       AUG       SEP       OCT       NOV       DEC
+        0.4       0.4       0.4       0.4       1.6       1.1       1.1       1.3       1.3       1.3       1.1       0.9
+ 
+ Values of Manning's N at start of each calendar month:
+        JAN       FEB       MAR       APR       MAY       JUN       JUL       AUG       SEP       OCT       NOV       DEC
+       0.30      0.30      0.30      0.30      0.27      0.25      0.25      0.25      0.25      0.25      0.35      0.33
+ 
+ Values of Lower Zone ET at start of each calendar month:
+        JAN       FEB       MAR       APR       MAY       JUN       JUL       AUG       SEP       OCT       NOV       DEC
+       0.20      0.20      0.20      0.23      0.23      0.25      0.60      0.80      0.75      0.50      0.30      0.20
+ 
+ Segment-wide storages (inches):
+       CEPS      SURS       UZS      IFWS       LZS      AGWS      GWVS
+       0.05       0.0      0.15       0.0       4.0      0.05      0.05
+
+ FINISHED PROCESSING INPUT FOR SECTION PWATER
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ FINISHED PROCESSING PERVIOUS LAND-SEGMENT NO.    1
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ PROCESSING PERVIOUS LAND-SEGMENT NO:   2     TIME STEP(DELT):   30  MINS
+
+ PROCESSING GENERAL INPUT
+ 
+     AIRTFG    SNOWFG    PWATFG     SEDFG     PSTFG     PWGFG    PQALFG    MSTLFG    PESTFG    NITRFG    PHOSFG    TRACFG
+          0         1         1         0         0         0         0         0         0         0         0         0
+ 
+                 Printout level flags                         Print-ivl Print-yrend
+ ATEMP SNOW PWAT SED PSTMP PWTG RQAL MSTL PEST NITR PHOS TRAC      PIVL      PYREND
+     4    4    4    4    4    4    4    4    4    4    4    4         1          12
+ 
+            Binary Output level flags                         Print-ivl Print-yrend
+ ATEMP SNOW PWAT SED PSTMP PWTG RQAL MSTL PEST NITR PHOS TRAC      PIVL      PYREND
+     4    4    4    4    4    4    4    4    4    4    4    4         1          12
+ 
+ Perv Land-segment id      Unit systems       Print-file nos     BinaryOutfileNos
+                         IUNITS    OUNITS   English    Metric   English    Metric
+ CORN                         1         1         1         0        93         0
+
+ FINISHED PROCESSING GENERAL INPUT
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION SNOW
+ 
+      ICEFG
+          1
+ 
+     SNOPFG     VMKFG
+          0         0
+ 
+        LAT     MELEV     SHADE    SNOWCF    COVIND     KMELT     TBASE
+    degrees      (ft)                          (in)  (in/d.F)       (F)
+        43.     1225.       0.0      1.45       0.5      0.00      32.0
+ 
+      RDCSN     TSNOW    SNOEVP    CCFACT    MWATER    MGMELT
+              (deg F)                                (in/day)
+       0.12       32.      0.05       0.5      0.08    0.0001
+ 
+  Pack-snow  Pack-ice Pack-watr    RDENPF      DULL    PAKTMP
+       (in)      (in)      (in)                       (deg F)
+        1.4       0.2       0.1       0.2      375.      27.5
+ 
+     COVINX    XLNMLT    SKYCLR
+       (in)      (in)
+       0.50       0.0       1.0
+
+ FINISHED PROCESSING INPUT FOR SECTION SNOW
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION PWATER
+ 
+   CSNOFG  RTOPFG    UZFG   VCSFG   VUZFG   VNNFG  VIFWFG  VIRCFG   VLEFG  IFFCFG   HWTFG  IRRGFG  IFRDFG  NCANPY
+        1       0       0       1       1       1       0       0       1       1       0       0       0       0
+ 
+     FOREST      LZSN    INFILT      LSUR     SLSUR     KVARY     AGWRC
+             (inches)   (in/hr)    (feet)          (1/inches)   (1/day)
+      0.000       8.0     0.100      350.     0.010       0.5      0.98
+ 
+     PETMAX    PETMIN    INFEXP    INFILD    DEEPFR    BASETP    AGWETP
+     (degF)    (degF)
+        40.       35.       2.0       2.0      0.10       0.0      0.08
+ 
+      CEPSC      UZSN      NSUR     INTFW       IRC     LZETP
+   (inches)  (inches)(nManning)             (1/day)
+       0.00      0.01       0.1       1.0      0.60      0.00
+ 
+        FZG      FZGL
+      (/in)
+       1.00     0.100
+ 
+ Values of Interception Storage at start of each calendar month (inches):
+        JAN       FEB       MAR       APR       MAY       JUN       JUL       AUG       SEP       OCT       NOV       DEC
+       0.12      0.12      0.12      0.12      0.05      0.08      0.14      0.19      0.20      0.15      0.13      0.13
+ 
+ Values of Upper Zone Storage at start of each calendar month (inches):
+        JAN       FEB       MAR       APR       MAY       JUN       JUL       AUG       SEP       OCT       NOV       DEC
+        0.4       0.4       0.4       0.4       1.4       1.0       1.0       1.2       1.2       1.2       1.0       0.9
+ 
+ Values of Manning's N at start of each calendar month:
+        JAN       FEB       MAR       APR       MAY       JUN       JUL       AUG       SEP       OCT       NOV       DEC
+       0.30      0.30      0.30      0.30      0.27      0.25      0.25      0.25      0.25      0.25      0.35      0.33
+ 
+ Values of Lower Zone ET at start of each calendar month:
+        JAN       FEB       MAR       APR       MAY       JUN       JUL       AUG       SEP       OCT       NOV       DEC
+       0.20      0.20      0.20      0.23      0.23      0.25      0.60      0.80      0.75      0.50      0.30      0.20
+ 
+ Segment-wide storages (inches):
+       CEPS      SURS       UZS      IFWS       LZS      AGWS      GWVS
+       0.10       0.0      0.10       0.0       4.0      0.05      0.05
+
+ FINISHED PROCESSING INPUT FOR SECTION PWATER
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ FINISHED PROCESSING PERVIOUS LAND-SEGMENT NO.    2
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ PROCESSING PERVIOUS LAND-SEGMENT NO:   3     TIME STEP(DELT):   30  MINS
+
+ PROCESSING GENERAL INPUT
+ 
+     AIRTFG    SNOWFG    PWATFG     SEDFG     PSTFG     PWGFG    PQALFG    MSTLFG    PESTFG    NITRFG    PHOSFG    TRACFG
+          0         1         1         0         0         0         0         0         0         0         0         0
+ 
+                 Printout level flags                         Print-ivl Print-yrend
+ ATEMP SNOW PWAT SED PSTMP PWTG RQAL MSTL PEST NITR PHOS TRAC      PIVL      PYREND
+     4    4    4    4    4    4    4    4    4    4    4    4         1          12
+ 
+            Binary Output level flags                         Print-ivl Print-yrend
+ ATEMP SNOW PWAT SED PSTMP PWTG RQAL MSTL PEST NITR PHOS TRAC      PIVL      PYREND
+     4    4    4    4    4    4    4    4    4    4    4    4         1          12
+ 
+ Perv Land-segment id      Unit systems       Print-file nos     BinaryOutfileNos
+                         IUNITS    OUNITS   English    Metric   English    Metric
+ OTHER                        1         1         1         0        93         0
+
+ FINISHED PROCESSING GENERAL INPUT
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION SNOW
+ 
+      ICEFG
+          1
+ 
+     SNOPFG     VMKFG
+          0         0
+ 
+        LAT     MELEV     SHADE    SNOWCF    COVIND     KMELT     TBASE
+    degrees      (ft)                          (in)  (in/d.F)       (F)
+        43.     1225.       0.0      1.45       0.5      0.00      32.0
+ 
+      RDCSN     TSNOW    SNOEVP    CCFACT    MWATER    MGMELT
+              (deg F)                                (in/day)
+       0.12       32.      0.05       0.5      0.08    0.0001
+ 
+  Pack-snow  Pack-ice Pack-watr    RDENPF      DULL    PAKTMP
+       (in)      (in)      (in)                       (deg F)
+        1.4       0.2       0.1       0.2      375.      27.5
+ 
+     COVINX    XLNMLT    SKYCLR
+       (in)      (in)
+       0.50       0.0       1.0
+
+ FINISHED PROCESSING INPUT FOR SECTION SNOW
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION PWATER
+ 
+   CSNOFG  RTOPFG    UZFG   VCSFG   VUZFG   VNNFG  VIFWFG  VIRCFG   VLEFG  IFFCFG   HWTFG  IRRGFG  IFRDFG  NCANPY
+        1       0       0       1       1       1       0       0       1       1       0       0       0       0
+ 
+     FOREST      LZSN    INFILT      LSUR     SLSUR     KVARY     AGWRC
+             (inches)   (in/hr)    (feet)          (1/inches)   (1/day)
+      0.010       9.0     0.150      350.     0.010       0.5      0.98
+ 
+     PETMAX    PETMIN    INFEXP    INFILD    DEEPFR    BASETP    AGWETP
+     (degF)    (degF)
+        40.       35.       2.0       2.0      0.10       0.0      0.08
+ 
+      CEPSC      UZSN      NSUR     INTFW       IRC     LZETP
+   (inches)  (inches)(nManning)             (1/day)
+       0.00      0.01       0.1       1.2      0.80      0.00
+ 
+        FZG      FZGL
+      (/in)
+       1.00     0.100
+ 
+ Values of Interception Storage at start of each calendar month (inches):
+        JAN       FEB       MAR       APR       MAY       JUN       JUL       AUG       SEP       OCT       NOV       DEC
+       0.06      0.06      0.06      0.07      0.07      0.08      0.10      0.10      0.10      0.10      0.07      0.06
+ 
+ Values of Upper Zone Storage at start of each calendar month (inches):
+        JAN       FEB       MAR       APR       MAY       JUN       JUL       AUG       SEP       OCT       NOV       DEC
+        0.8       0.8       0.8       0.8       1.4       1.6       1.6       1.6       1.6       1.6       1.3       1.1
+ 
+ Values of Manning's N at start of each calendar month:
+        JAN       FEB       MAR       APR       MAY       JUN       JUL       AUG       SEP       OCT       NOV       DEC
+       0.30      0.30      0.30      0.30      0.30      0.30      0.30      0.30      0.30      0.30      0.30      0.30
+ 
+ Values of Lower Zone ET at start of each calendar month:
+        JAN       FEB       MAR       APR       MAY       JUN       JUL       AUG       SEP       OCT       NOV       DEC
+       0.25      0.25      0.25      0.25      0.30      0.35      0.40      0.40      0.45      0.35      0.30      0.25
+ 
+ Segment-wide storages (inches):
+       CEPS      SURS       UZS      IFWS       LZS      AGWS      GWVS
+       0.05       0.0      0.30       0.0       6.5      0.15      0.10
+
+ FINISHED PROCESSING INPUT FOR SECTION PWATER
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ FINISHED PROCESSING PERVIOUS LAND-SEGMENT NO.    3
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ FINISHED PROCESSING PERLND   BLOCK
+ ====================================================================================================================================
+
+ ====================================================================================================================================
+ PROCESSING DISPLY   BLOCK
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ PROCESSING DISPLY OPERATION NO.    1  TIME INTERVAL   30 MINS
+ 
+ Title of display               Transform   Data for short-span display              Data for long-span display
+                                     code      PIVL    Digits  File-no.          PYRFG    Digits  File-no.    PYREND
+ SIMULATED FLOW (CFS)                AVER         0                   4              1         2        62        12
+ 
+    Convert DegC to F    Display negative data
+          A         B    THRSH1    THRSH2
+       1.00      0.00      0.00      0.00
+
+ FINISHED PROCESSING DISPLAY OPERATION NO.    1
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ FINISHED PROCESSING DISPLY   BLOCK
+ ====================================================================================================================================
+
+ ====================================================================================================================================
+ PROCESSING COPY     BLOCK
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ PROCESSING COPY OPERATION NO.    1
+ 
+        NPT       NMN
+          0         1
+
+ FINISHED PROCESSING COPY OPERATION NO.    1
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ PROCESSING COPY OPERATION NO.    2
+ 
+        NPT       NMN
+          0         1
+
+ FINISHED PROCESSING COPY OPERATION NO.    2
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ PROCESSING COPY OPERATION NO.    3
+ 
+        NPT       NMN
+          0         1
+
+ FINISHED PROCESSING COPY OPERATION NO.    3
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ FINISHED PROCESSING COPY     BLOCK
+ ====================================================================================================================================
+
+ ====================================================================================================================================
+ PROCESSING PLTGEN   BLOCK
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ PROCESSING PLTGEN OPERATION NO.    1
+ 
+     PLOTFL       NPT       NMN    LABLFG    PYREND      PIVL    TYPEFG
+         92         0         4         0         9        24         1
+ 
+ General plot title:                                         Y-axis label:
+ SIMULATED FLOW                                              CFS                 
+ 
+       YMIN      YMAX     IVLIN    THRESH
+                       (ivl/in)
+         0.     1500.       20.-1.000E+30
+ 
+ Curve label:            LINTYP     INTEQ    COLCOD      TRAN
+                              0         0         0          
+ 
+ Curve label:            LINTYP     INTEQ    COLCOD      TRAN
+                              0         0         0          
+ 
+ Curve label:            LINTYP     INTEQ    COLCOD      TRAN
+                              0         0         0          
+ 
+ Curve label:            LINTYP     INTEQ    COLCOD      TRAN
+                              0         0         0          
+
+ FINISHED PROCESSING PLTGEN OPERATION NO.    1
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ FINISHED PROCESSING PLTGEN   BLOCK
+ ====================================================================================================================================
+
+ ====================================================================================================================================
+ SPEC-ACTIONS BLOCK NOT FOUND
+
+ FINISHED PROCESSING SPEC-ACTIONS BLOCK
+ ====================================================================================================================================
+
+ ====================================================================================================================================
+ PROCESSING BLOCKS CONTAINING TIME SERIES LINKAGES
+
+ INGROUP NO.  1    OSVSZ= 2500    INPAD WIDTH= 42957 INTERVALS    MAXROW=   12  RUNWID=    0
+
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ TIMESERIES USED BY OPERATION   PERLND    1
+
+   INPUT TIMESERIES
+
+     FROM EXTERNAL SOURCES
+     TYPE      #  INTERVAL   TRN STR         MFACT    GROUP   MEMBER  S1  S2   
+
+     WDM1     39        60      DIV      1.000E+00    EXTNL   PREC     1   1
+     WDM1    123       120      SAME     1.000E+00    ATEMP   AIRTMP   1   1
+     WDM1     41      1440      DIV      7.000E-01    EXTNL   PETINP   1   1
+     WDM1     42      1440      DIV      1.000E+00    EXTNL   WINMOV   1   1
+     WDM1     46       120      DIV      1.000E+00    EXTNL   SOLRAD   1   1
+     WDM1    126      1440      SAME     1.000E+00    EXTNL   DTMPG    1   1
+
+   OUTPUT TIMESERIES
+
+     TO OTHER OPERATIONS(NETWORK)
+     GROUP   MEMBER  S1  S2        MFACT  TYPE      # GROUP   MEMBER  S1  S2   
+
+     PWATER  AGWO     1   1    1.220E+05  COPY      1 INPUT   MEAN     1   1
+     PWATER  IFWO     1   1    1.220E+05  COPY      2 INPUT   MEAN     1   1
+     PWATER  PERO     1   1    1.220E+05  COPY      3 INPUT   MEAN     1   1
+
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ TIMESERIES USED BY OPERATION   PERLND    2
+
+   INPUT TIMESERIES
+
+     FROM EXTERNAL SOURCES
+     TYPE      #  INTERVAL   TRN STR         MFACT    GROUP   MEMBER  S1  S2   
+
+     WDM1     39        60      DIV      1.000E+00    EXTNL   PREC     1   1
+     WDM1    123       120      SAME     1.000E+00    ATEMP   AIRTMP   1   1
+     WDM1     41      1440      DIV      7.000E-01    EXTNL   PETINP   1   1
+     WDM1     42      1440      DIV      1.000E+00    EXTNL   WINMOV   1   1
+     WDM1     46       120      DIV      1.000E+00    EXTNL   SOLRAD   1   1
+     WDM1    126      1440      SAME     1.000E+00    EXTNL   DTMPG    1   1
+
+   OUTPUT TIMESERIES
+
+     TO OTHER OPERATIONS(NETWORK)
+     GROUP   MEMBER  S1  S2        MFACT  TYPE      # GROUP   MEMBER  S1  S2   
+
+     PWATER  AGWO     1   1    1.762E+05  COPY      1 INPUT   MEAN     1   1
+     PWATER  IFWO     1   1    1.762E+05  COPY      2 INPUT   MEAN     1   1
+     PWATER  PERO     1   1    1.762E+05  COPY      3 INPUT   MEAN     1   1
+
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ TIMESERIES USED BY OPERATION   PERLND    3
+
+   INPUT TIMESERIES
+
+     FROM EXTERNAL SOURCES
+     TYPE      #  INTERVAL   TRN STR         MFACT    GROUP   MEMBER  S1  S2   
+
+     WDM1    131        60      DIV      1.000E+00    EXTNL   PREC     1   1
+     WDM1    122       120      SAME     1.000E+00    ATEMP   AIRTMP   1   1
+     WDM1     41      1440      DIV      7.000E-01    EXTNL   PETINP   1   1
+     WDM1     42      1440      DIV      1.000E+00    EXTNL   WINMOV   1   1
+     WDM1     46       120      DIV      1.000E+00    EXTNL   SOLRAD   1   1
+     WDM1    125      1440      SAME     1.000E+00    EXTNL   DTMPG    1   1
+
+   OUTPUT TIMESERIES
+
+     TO OTHER OPERATIONS(NETWORK)
+     GROUP   MEMBER  S1  S2        MFACT  TYPE      # GROUP   MEMBER  S1  S2   
+
+     PWATER  AGWO     1   1    7.550E+04  COPY      1 INPUT   MEAN     1   1
+     PWATER  IFWO     1   1    7.550E+04  COPY      2 INPUT   MEAN     1   1
+     PWATER  PERO     1   1    7.550E+04  COPY      3 INPUT   MEAN     1   1
+
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ TIMESERIES USED BY OPERATION   COPY      1
+
+   INPUT TIMESERIES
+
+     FROM OTHER OPERATIONS(NETWORK)
+     TYPE      # GROUP   MEMBER  S1  S2      MFACT    GROUP   MEMBER  S1  S2   
+
+     PERLND    1 PWATER  AGWO     1   1  1.220E+05    INPUT   MEAN     1   1
+     PERLND    2 PWATER  AGWO     1   1  1.762E+05    INPUT   MEAN     1   1
+     PERLND    3 PWATER  AGWO     1   1  7.550E+04    INPUT   MEAN     1   1
+
+   OUTPUT TIMESERIES
+
+     TO OTHER OPERATIONS(NETWORK)
+     GROUP   MEMBER  S1  S2        MFACT  TYPE      # GROUP   MEMBER  S1  S2   
+
+     OUTPUT  MEAN     1   1    1.000E+00  COPY      2 INPUT   MEAN     1   1
+     OUTPUT  MEAN     1   1    1.000E+00  PLTGEN    1 INPUT   MEAN     1   1
+
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ TIMESERIES USED BY OPERATION   COPY      2
+
+   INPUT TIMESERIES
+
+     FROM OTHER OPERATIONS(NETWORK)
+     TYPE      # GROUP   MEMBER  S1  S2      MFACT    GROUP   MEMBER  S1  S2   
+
+     PERLND    1 PWATER  IFWO     1   1  1.220E+05    INPUT   MEAN     1   1
+     PERLND    2 PWATER  IFWO     1   1  1.762E+05    INPUT   MEAN     1   1
+     PERLND    3 PWATER  IFWO     1   1  7.550E+04    INPUT   MEAN     1   1
+     COPY      1 OUTPUT  MEAN     1   1  1.000E+00    INPUT   MEAN     1   1
+
+   OUTPUT TIMESERIES
+
+     TO OTHER OPERATIONS(NETWORK)
+     GROUP   MEMBER  S1  S2        MFACT  TYPE      # GROUP   MEMBER  S1  S2   
+
+     OUTPUT  MEAN     1   1    1.000E+00  PLTGEN    1 INPUT   MEAN     2   1
+
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ TIMESERIES USED BY OPERATION   COPY      3
+
+   INPUT TIMESERIES
+
+     FROM OTHER OPERATIONS(NETWORK)
+     TYPE      # GROUP   MEMBER  S1  S2      MFACT    GROUP   MEMBER  S1  S2   
+
+     PERLND    1 PWATER  PERO     1   1  1.220E+05    INPUT   MEAN     1   1
+     PERLND    2 PWATER  PERO     1   1  1.762E+05    INPUT   MEAN     1   1
+     PERLND    3 PWATER  PERO     1   1  7.550E+04    INPUT   MEAN     1   1
+
+   OUTPUT TIMESERIES
+
+     TO OTHER OPERATIONS(NETWORK)
+     GROUP   MEMBER  S1  S2        MFACT  TYPE      # GROUP   MEMBER  S1  S2   
+
+     OUTPUT  MEAN     1   1    1.000E+00  DISPLY    1 INPUT   TIMSER   1   1
+     OUTPUT  MEAN     1   1    1.000E+00  PLTGEN    1 INPUT   MEAN     3   1
+
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ TIMESERIES USED BY OPERATION   DISPLY    1
+
+   INPUT TIMESERIES
+
+     FROM OTHER OPERATIONS(NETWORK)
+     TYPE      # GROUP   MEMBER  S1  S2      MFACT    GROUP   MEMBER  S1  S2   
+
+     COPY      3 OUTPUT  MEAN     1   1  1.000E+00    INPUT   TIMSER   1   1
+
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ TIMESERIES USED BY OPERATION   PLTGEN    1
+
+   INPUT TIMESERIES
+
+     FROM EXTERNAL SOURCES
+     TYPE      #  INTERVAL   TRN STR         MFACT    GROUP   MEMBER  S1  S2   
+
+     WDM1    136      1440      SAME     1.000E+00    INPUT   MEAN     4   1
+
+     FROM OTHER OPERATIONS(NETWORK)
+     TYPE      # GROUP   MEMBER  S1  S2      MFACT    GROUP   MEMBER  S1  S2   
+
+     COPY      1 OUTPUT  MEAN     1   1  1.000E+00    INPUT   MEAN     1   1
+     COPY      2 OUTPUT  MEAN     1   1  1.000E+00    INPUT   MEAN     2   1
+     COPY      3 OUTPUT  MEAN     1   1  1.000E+00    INPUT   MEAN     3   1
+
+ FINISHED PROCESSING BLOCKS CONTAINING TIME SERIES LINKAGES
+ ====================================================================================================================================
+ 
+ INTERPRETATION OF RUN DATA SET COMPLETE
+ 
+
+ COMMENCING EXECUTION
+ 
+ End of Job

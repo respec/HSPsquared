@@ -1,14 +1,22 @@
-name: hsp2_py37
+name: hsp2_py38
 channels:
-  - conda-forge
-  - https://conda.anaconda.org/conda-forge
   - defaults
+  # - conda-forge
+  # - https://conda.anaconda.org/conda-forge
 dependencies:
-  - jupyterlab
+  # Running HSP2
+  - python>=3.8.0
   - numba
   - numpy
   - pandas>=1.0.0
+  - pytables
+  - networkx
+  # Interacting with HSP2
+  - jupyterlab
+  - matplotlib
+  # package management
+  - conda
+  - conda-build
   - pip
-  - python>=3.7.0
-  - pip:
-    - tables
+  # optional
+  # - nodejs  # required for `jupyter-matplotlib` & `jupyterlab/toc` extensions
