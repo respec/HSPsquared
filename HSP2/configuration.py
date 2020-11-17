@@ -17,6 +17,7 @@ from HSP2.PWTGAS import pwtgas
 from HSP2.IWATER import iwater
 from HSP2.SOLIDS import solids
 from HSP2.IWTGAS import iwtgas
+from HSP2.IQUAL  import iqual
 
 from HSP2.HYDR   import hydr
 
@@ -31,7 +32,7 @@ activities = {
      'PSTEMP':pstemp, 'PWTGAS':pwtgas, 'PQUAL':noop, 'MSTLAY':noop, 'PEST':noop,
      'NITR':noop, 'PHOS':noop, 'TRACER':noop},
   'IMPLND': {'ATEMP':atemp, 'SNOW':snow, 'IWATER':iwater, 'SOLIDS':solids,
-     'IWTGAS':iwtgas, 'IQUAL':noop},
+     'IWTGAS':iwtgas, 'IQUAL':iqual},
   'RCHRES': {'HYDR':hydr, 'ADCALC':noop, 'CONS':noop, 'HTRCH':noop,
      'SEDTRN':noop, 'GQUAL':noop, 'OXRX':noop, 'NUTRX':noop, 'PLANK':noop,
      'PHCARB':noop}}
