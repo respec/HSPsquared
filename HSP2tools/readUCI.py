@@ -339,6 +339,7 @@ def ftables(info, llines):
 def ext(info, lines):
     store, parse, path, *_ = info
     lst = []
+    lst_cols = {}
     for line in lines:
         d = parseD(line, parse['EXT SOURCES','na'])
         if d['TVOL'] in ops:
@@ -350,9 +351,10 @@ def ext(info, lines):
             for i in range(int(d['TOPFST']), toplst + 1):
                 d['TVOLNO'] = f"{d['TVOL'][0]}{i:03d}"
                 lst.append(d.copy())
+                lst_cols = d
 
     if lst:
-        dfext = DataFrame(lst, columns = d).replace('na','')
+        dfext = DataFrame(lst, columns = lst_cols).replace('na','')
         dfext['COMMENT'] = ''
         del dfext['TOPFST']
         del dfext['TOPLST']
@@ -381,98 +383,99 @@ def operation(info, llines, op):
             df = DataFrame.from_dict(rows, orient='index')
             history[dpath[op,table],dcat[op,table]].append((table,df))
 
-    (_,df) = history['GENERAL','INFO'][0]
-    valid = set(df.index)
-    for path,cat in history:
-        counter.add(path)
-        if cat == 'SKIP':
-            continue
-        if cat in {'PARAMETERS', 'STATES', 'FLAGS', 'ACTIVITY','INFO'}:
-            df = concat([temp[1] for temp in history[path,cat]], axis='columns')
-            df = fix_df(df, op, path, ddfaults, valid)
-            if cat == 'ACTIVITY' and op == 'PERLND':
-                df = df.rename(columns = {'AIRTFG':'ATEMP', 'SNOWFG':'SNOW',
-                  'PWATFG':'PWATER', 'SEDFG':'SEDMNT', 'PSTFG':'PSTEMP',
-                  'PWGFG':'PWTGAS', 'PQALFG':'PQUAL','MSTLFG':'MSTLAY',
-                  'PESTFG':'PEST', 'NITRFG':'NITR', 'PHOSFG':'PHOS',
-                  'TRACFG':'TRACER'})
-            if cat ==  'ACTIVITY' and op == 'IMPLND':
-                df = df.rename(columns = {'ATMPFG':'ATEMP', 'SNOWFG':'SNOW',
-                  'IWATFG':'IWATER', 'SLDFG':'SOLIDS', 'IWGFG':'IWTGAS',
-                  'IQALFG':'IQUAL'})
-            if cat == 'ACTIVITY' and op == 'RCHRES':
-                df = df.rename(columns  = {'HYDRFG':'HYDR', 'ADFG':'ADCALC',
-                  'CONSFG':'CONS', 'HTFG':'HTRCH', 'SEDFG':'SEDTRN',
-                  'GQALFG':'GQUAL', 'OXFG':'OXRX', 'NUTFG':'NUTRX',
-                  'PLKFG':'PLANK', 'PHFG':'PHCARB'})
-            df.to_hdf(store, f'{op}/{path}/{cat}', data_columns=True)
-        elif cat == 'MONTHLYS':
-            for (table,df) in history[path,cat]:
+    if len(history['GENERAL','INFO']) > 0:
+        (_,df) = history['GENERAL','INFO'][0]
+        valid = set(df.index)
+        for path,cat in history:
+            counter.add(path)
+            if cat == 'SKIP':
+                continue
+            if cat in {'PARAMETERS', 'STATES', 'FLAGS', 'ACTIVITY','INFO'}:
+                df = concat([temp[1] for temp in history[path,cat]], axis='columns')
                 df = fix_df(df, op, path, ddfaults, valid)
-                df.columns = Months
-                name = rename[(op, table)]
-                df.to_hdf(store, f'{op}/{path}/MONTHLY/{name}', data_columns=True)
-        elif cat == 'EXTENDED':
-            temp = defaultdict(list)
-            for table,df in history[path,cat]:
-                temp[table].append(df)
-            for table,lst in temp.items():
-                df = concat(lst, axis='columns')
-                length = extendlen[op,table]
-                name = rename[op,table]
-                df.columns = [name+str(i) for i in range(len(df.columns))]
-                df = df[df.columns[0:length]]
-                df = fix_df(df, op, path, ddfaults, valid)
-                df.to_hdf(store, f'{op}/{path}/EXTENDEDS/{name}', data_columns=True)
-        elif cat == 'SILTCLAY':
-            table,df = history[path,cat][0]
-            df = fix_df(df, op, path, ddfaults, valid)
-            df.to_hdf(store, f'{op}/{path}/SILT', data_columns=True)
-            table,df = history[path,cat][1]
-            df = fix_df(df, op, path, ddfaults, valid)
-            df.to_hdf(store, f'{op}/{path}/CLAY', data_columns=True)
-        elif cat == 'CONS':
-            count = 0
-            for table,df in history[path,cat]:
-                if table == 'CONSDATA':
-                    count += 1
-                    df = fix_df(df, op, path, ddfaults, valid)
-                df.to_hdf(store, f'{op}/{path}/{cat}{count}', data_columns=True)
-        elif cat == 'PQUAL' or cat == 'IQUAL':
-            for table,df in history[path,cat]:
-                if table == 'NQUALS':
-                    count = 0
-                    if cat == 'IQUAL':
-                        temp_path = '/IMPLND/IQUAL/PARAMETERS'
-                    else:
-                        temp_path = '/PERLND/PQUAL/PARAMETERS'
-                    df = fix_df(df, op, path, ddfaults, valid)
-                    df.to_hdf(store, temp_path, data_columns=True)
-                elif table.startswith('MON'):
-                    name = rename[(op, table)]
+                if cat == 'ACTIVITY' and op == 'PERLND':
+                    df = df.rename(columns = {'AIRTFG':'ATEMP', 'SNOWFG':'SNOW',
+                      'PWATFG':'PWATER', 'SEDFG':'SEDMNT', 'PSTFG':'PSTEMP',
+                      'PWGFG':'PWTGAS', 'PQALFG':'PQUAL','MSTLFG':'MSTLAY',
+                      'PESTFG':'PEST', 'NITRFG':'NITR', 'PHOSFG':'PHOS',
+                      'TRACFG':'TRACER'})
+                if cat ==  'ACTIVITY' and op == 'IMPLND':
+                    df = df.rename(columns = {'ATMPFG':'ATEMP', 'SNOWFG':'SNOW',
+                      'IWATFG':'IWATER', 'SLDFG':'SOLIDS', 'IWGFG':'IWTGAS',
+                      'IQALFG':'IQUAL'})
+                if cat == 'ACTIVITY' and op == 'RCHRES':
+                    df = df.rename(columns  = {'HYDRFG':'HYDR', 'ADFG':'ADCALC',
+                      'CONSFG':'CONS', 'HTFG':'HTRCH', 'SEDFG':'SEDTRN',
+                      'GQALFG':'GQUAL', 'OXFG':'OXRX', 'NUTFG':'NUTRX',
+                      'PLKFG':'PLANK', 'PHFG':'PHCARB'})
+                df.to_hdf(store, f'{op}/{path}/{cat}', data_columns=True)
+            elif cat == 'MONTHLYS':
+                for (table,df) in history[path,cat]:
                     df = fix_df(df, op, path, ddfaults, valid)
                     df.columns = Months
-                    df.to_hdf(store, f'{op}/{path}/{cat}{count}/MONTHLY/{name}', data_columns=True)
-                else:
-                    if table == 'QUAL-PROPS':
-                        count += 1
-                        tag = 'FLAGS'
-                    else:
-                        tag = 'PARAMETERS'
-                    df = fix_df(df, op, path, ddfaults, valid)
-                    df.to_hdf(store, f'{op}/{path}/{cat}{count}/{tag}', data_columns=True)
-        elif cat == 'GQUAL':
-            for table,df in history[path,cat]:
-                if table.startswith('MON'):
                     name = rename[(op, table)]
-                    df = fix_df(df, op, path, ddfaults, valid)
-                    df.columns = Months
                     df.to_hdf(store, f'{op}/{path}/MONTHLY/{name}', data_columns=True)
-                else:
+            elif cat == 'EXTENDED':
+                temp = defaultdict(list)
+                for table,df in history[path,cat]:
+                    temp[table].append(df)
+                for table,lst in temp.items():
+                    df = concat(lst, axis='columns')
+                    length = extendlen[op,table]
+                    name = rename[op,table]
+                    df.columns = [name+str(i) for i in range(len(df.columns))]
+                    df = df[df.columns[0:length]]
                     df = fix_df(df, op, path, ddfaults, valid)
-                    df.to_hdf(store, f'{op}/{path}', data_columns=True)
-        else:
-            print('UCI TABLE is not understood (yet) by readUCI', op, cat)
+                    df.to_hdf(store, f'{op}/{path}/EXTENDEDS/{name}', data_columns=True)
+            elif cat == 'SILTCLAY':
+                table,df = history[path,cat][0]
+                df = fix_df(df, op, path, ddfaults, valid)
+                df.to_hdf(store, f'{op}/{path}/SILT', data_columns=True)
+                table,df = history[path,cat][1]
+                df = fix_df(df, op, path, ddfaults, valid)
+                df.to_hdf(store, f'{op}/{path}/CLAY', data_columns=True)
+            elif cat == 'CONS':
+                count = 0
+                for table,df in history[path,cat]:
+                    if table == 'CONSDATA':
+                        count += 1
+                        df = fix_df(df, op, path, ddfaults, valid)
+                    df.to_hdf(store, f'{op}/{path}/{cat}{count}', data_columns=True)
+            elif cat == 'PQUAL' or cat == 'IQUAL':
+                for table,df in history[path,cat]:
+                    if table == 'NQUALS':
+                        count = 0
+                        if cat == 'IQUAL':
+                            temp_path = '/IMPLND/IQUAL/PARAMETERS'
+                        else:
+                            temp_path = '/PERLND/PQUAL/PARAMETERS'
+                        df = fix_df(df, op, path, ddfaults, valid)
+                        df.to_hdf(store, temp_path, data_columns=True)
+                    elif table.startswith('MON'):
+                        name = rename[(op, table)]
+                        df = fix_df(df, op, path, ddfaults, valid)
+                        df.columns = Months
+                        df.to_hdf(store, f'{op}/{path}/{cat}{count}/MONTHLY/{name}', data_columns=True)
+                    else:
+                        if table == 'QUAL-PROPS':
+                            count += 1
+                            tag = 'FLAGS'
+                        else:
+                            tag = 'PARAMETERS'
+                        df = fix_df(df, op, path, ddfaults, valid)
+                        df.to_hdf(store, f'{op}/{path}/{cat}{count}/{tag}', data_columns=True)
+            elif cat == 'GQUAL':
+                for table,df in history[path,cat]:
+                    if table.startswith('MON'):
+                        name = rename[(op, table)]
+                        df = fix_df(df, op, path, ddfaults, valid)
+                        df.columns = Months
+                        df.to_hdf(store, f'{op}/{path}/MONTHLY/{name}', data_columns=True)
+                    else:
+                        df = fix_df(df, op, path, ddfaults, valid)
+                        df.to_hdf(store, f'{op}/{path}', data_columns=True)
+            else:
+                print('UCI TABLE is not understood (yet) by readUCI', op, cat)
 
     savetable = defaultdict(dict)
     datapath = os.path.join(HSP2tools.__path__[0], 'data', 'SaveTable.csv')
