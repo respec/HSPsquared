@@ -1,0 +1,20 @@
+21:38:06.117 : LOG_MSG:ERROR.FIL OPENED
+21:38:06.129 : HASS_ENT:F90_INQNAM:           0 F C:\Users\sskripnik\Documents\GitHub\HSPsquared\tests\test05\HSPFresults\test.wdm
+21:38:06.129 : HASS_ENT:INQUIRE_NAME:BEG:           0         101           0         101 C:\Users\sskripnik\Documents\GitHub\HSPsquared\tests\test05\HSPFresults\test.wdm
+21:38:06.129 : HASS_ENT:INQUIRE_NAME:INX:           0         101           0 F
+21:38:06.129 : HASS_ENT:INQUIRE_NAME:INF:           0         101           0 F
+21:38:06.129 : HASS_ENT:INQUIRE_NAME:DON:           0         101           0 F
+21:38:06.129 : HASS_ENT:INQUIRE_NAME:ASN:           0         101         101 F
+21:38:06.129 : HASS_ENT:F90_WDBOPNR:entr:WDMSFL,RWFLG:         101           0 C:\Users\sskripnik\Documents\GitHub\HSPsquared\tests\test05\HSPFresults\test.wdm
+21:38:06.129 : HASS_ENT:F90_WDBOPNR:exit:WDMSFL,RETCOD         101           0
+21:38:06.130 : atcWdmHandle:New:101:0:C:\Users\sskripnik\Documents\GitHub\HSPsquared\tests\test05\HSPFresults\test.wdm
+21:38:06.155 : HASS_ENT:F90_WDFLCL:entry:WDMSFL:         101
+21:38:06.155 : HASS_ENT:F90_WDFLCL:close:WDMSFL:RETCOD:         101           0
+21:38:06.155 : HASS_ENT:F90_WDFLCL:opned:WDMSFL:         101 F
+21:38:06.155 : HASS_ENT:F90_WDFLCL:final:WDMSFL:           0 F C:\Users\sskripnik\Documents\GitHub\HSPsquared\tests\test05\HSPFresults\test.wdm
+21:40:49.857 : LOG_MSG:ERROR.FIL OPENED
+21:40:49.861 : HASS_ENT:F90_WDBOPNR:entr:WDMSFL,RWFLG:         100           1 c:\basins45\models\hspf\bin\hspfmsg.wdm
+21:40:49.861 : HASS_ENT:F90_WDBOPNR:exit:WDMSFL,RETCOD         100           0
+FILBLK RETCOD           0
+wdmfl           0           0           0           0
+FILBLK RETCOD           0

@@ -1,0 +1,3477 @@
+ FOUND RUN 
+ FOUND END RUN 
+ ************************************************************
+ *                                                          *
+ *        Hydrological Simulation Program - FORTRAN         *
+ *                                                          *
+ ************************************************************
+ 
+   Developed for:                Modified and Maintained by
+ 
+     U.S. Environmental            RESPEC, Inc.
+       Protection Agency           (605)394-6512
+     Office of Research            email: hspf@respec.com
+       and Development
+     Center for Exposure
+       Assessment Modeling
+     Athens, Georgia
+     (706)355-8400
+     email: ceam@epamail.epa.gov
+ 
+   In cooperation with:
+ 
+     U.S. Geological Survey                Release 12.5
+     Water Resources Discipline            September 2018
+     Office of Surface Water
+     Reston, Virginia
+     email: h2osoft@usgs.gov
+ 
+ 
+ Start of Job
+ 
+ PREPROCESSING USERS CONTROL INPUT.
+ 
+ SEARCHING FOR BOUNDARIES OF NEXT DATA SET IN USERS CONTROL INPUT.
+ 
+ FOUND RUN 
+ FOUND END RUN 
+ 
+ INTERPRETING RUN DATA SET IN USERS CONTROL INPUT
+ 
+ FOUND GLOBAL      
+ FOUND END GLOBAL      
+ FOUND FILES       
+ FOUND END FILES       
+ FOUND OPN SEQUENCE
+ FOUND END OPN SEQUENCE
+ FOUND PERLND      
+ FOUND END PERLND      
+ FOUND IMPLND      
+ FOUND END IMPLND      
+ FOUND RCHRES      
+ FOUND END RCHRES      
+ FOUND FTABLES     
+ FOUND END FTABLES     
+ FOUND DISPLY      
+ FOUND END DISPLY      
+ FOUND GENER       
+ FOUND END GENER       
+ FOUND PLTGEN      
+ FOUND END PLTGEN      
+ FOUND EXT SOURCES 
+ FOUND END EXT SOURCES 
+ FOUND SCHEMATIC   
+ FOUND END SCHEMATIC   
+ FOUND MASS-LINK   
+ FOUND END MASS-LINK   
+ FOUND NETWORK     
+ FOUND END NETWORK     
+ 
+ 
+ ====================================================================================================================================
+ PROCESSING GLOBAL BLOCK
+
+ GENERAL RUN INFORMATION:    Version 11 test run: PERLND and IMPLND w/ RCHRES (sediment, water quality)
+
+   START       1976              END    1976
+
+ START AND END DATE/TIMES TRANSLATE TO THE FOLLOWING, IN INTERNAL FORMAT:  1975/12/31 24:60    1976/12/31 24:60
+
+ RUN INTERPRETER OUTPUT LEVEL HAS BEEN SET TO:  3
+ RUNTIME SPECIAL ACTION OUTPUT LEVEL HAS BEEN SET TO:  2
+ 
+ SYSTEM HAS BEEN ASKED TO INTERPRET AND EXECUTE THE RUN.  RUNFG =    1
+ THE UNIT SYSTEM OF THE RUN WILL BE ENGLISH.  EMFG =     1
+ 
+ FINISHED PROCESSING GLOBAL BLOCK
+ ====================================================================================================================================
+ 
+ ====================================================================================================================================
+ CATEGORY BLOCK NOT FOUND
+ 
+ FINISHED PROCESSING CATEGORY BLOCK
+ ====================================================================================================================================
+ 
+ ====================================================================================================================================
+ PROCESSING OPN SEQUENCE BLOCK
+ 
+ 
+ USERS CONTROL INPUT IS:
+     OPN SEQUENCE                                                                    
+         INGRP              INDELT 01:00                                             
+           PERLND       1                                                            
+           RCHRES       1                                                            
+           DISPLY       5                                                            
+           DISPLY       1                                                            
+           GENER        1                                                            
+           DISPLY       2                                                            
+           RCHRES       2                                                            
+           RCHRES       3                                                            
+           RCHRES       4                                                            
+           PLTGEN       2                                                            
+           IMPLND       1                                                            
+           RCHRES       5                                                            
+           DISPLY       3                                                            
+           GENER        2                                                            
+           DISPLY       4                                                            
+           PLTGEN       1                                                            
+         END INGRP                                                                   
+     END OPN SEQUENCE                                                                
+
+ FINISHED PROCESSING OPN SEQUENCE BLOCK
+ ====================================================================================================================================
+
+ ====================================================================================================================================
+ PROCESSING FTABLES BLOCK
+ 
+ USERS CONTROL INPUT IS:
+     FTABLES                                                                         
+       FTABLE      1                                                                 
+      ROWS COLS ***                                                                  
+        14    6                                                                      
+                                       WINTER    SUMMER    SPLWAY ***                
+          DEPTH      AREA    VOLUME    OUTLET    OUTLET     DISCH ***                
+           (FT)   (ACRES)   (AC-FT)     DISCH     DISCH     (CFS) ***                
+                                        (CFS)     (CFS)           ***                
+           .000      .000     .0000     .0000     .0000     .0000                    
+          2.000     1.212    1.2120    0.0000     .0000     .0000                    
+          4.000     2.424    4.8480    0.0000     .0000     .0000                    
+          6.000     3.636   10.9080    0.0000     .0000     .0000                    
+          8.000     4.848   19.3920    0.0000     .0000     .0000                    
+         10.000     6.061   30.3050    0.0000     .0000     .0000                    
+         12.000     7.273   43.6380    5.0000    3.5000     .0000                    
+         14.000     8.485   59.3950    6.2500    4.3750     .0000                    
+         16.000     9.697   77.5760    7.5000    5.2500     .0000                    
+         18.000    10.909   98.1810    8.7500    6.1250     .0000                    
+         20.000    12.121  121.2100   10.0000    7.0000     .0000                    
+         21.000    12.727  133.6360   10.6250    7.4375   50.0000                    
+         22.000    13.333  146.6630   11.2500    7.8750  100.0000                    
+         23.000    13.939  160.3030   11.8750    8.3125  500.0000                    
+       END FTABLE  1                                                                 
+                                                                                     
+       FTABLE      2                                                                 
+      ROWS COLS ***                                                                  
+        13    4                                                                      
+          DEPTH      AREA    VOLUME     DISCH  FLO-THRU ***                          
+           (FT)   (ACRES)   (AC-FT)     (CFS)     (MIN) ***                          
+           .000      .000     .0000      .000       0.0                              
+           .167      .071     .0109    1.2241       6.5                              
+           .333      .081     .0236    3.9148       4.4                              
+           .500      .091     .0379    7.8193       3.5                              
+           .667      .101     .0539   12.9032       3.0                              
+           .833      .111     .0715   19.1853       2.7                              
+          1.000      .121     .0909   26.7046       2.5                              
+          1.333      .141     .1347   45.6529       2.1                              
+          1.667      .162     .1852   70.1757       1.9                              
+          2.000      .182     .2424  100.7192       1.7                              
+          2.667      .586     .4983  201.9005       1.8                              
+          3.333      .990    1.0236  344.6344       2.2                              
+          4.000     1.394    1.8182  537.0775       2.5                              
+       END FTABLE  2                                                                 
+                                                                                     
+       FTABLE      3                                                                 
+      ROWS COLS ***                                                                  
+        13    4                                                                      
+          DEPTH      AREA    VOLUME     DISCH  FLO-THRU ***                          
+           (FT)   (ACRES)   (AC-FT)     (CFS)     (MIN) ***                          
+           .000      .000     .0000      .000       0.0                              
+           .167      .071     .0109    1.4992       5.3                              
+           .333      .081     .0236    4.7947       3.6                              
+           .500      .091     .0379    9.5766       2.9                              
+           .667      .101     .0539   15.8032       2.5                              
+           .833      .111     .0715   23.4971       2.2                              
+          1.000      .121     .0909   32.7063       2.0                              
+          1.333      .141     .1347   55.9132       1.7                              
+          1.667      .162     .1852   85.9474       1.6                              
+          2.000      .182     .2424  123.3553       1.4                              
+          2.667      .586     .4983  247.2766       1.5                              
+          3.333      .990    1.0236  422.0892       1.8                              
+          4.000     1.394    1.8182  657.7828       2.0                              
+       END FTABLE  3                                                                 
+                                                                                     
+       FTABLE      4                                                                 
+      ROWS COLS ***                                                                  
+        13    4                                                                      
+          DEPTH      AREA    VOLUME     DISCH  FLO-THRU ***                          
+           (FT)   (ACRES)   (AC-FT)     (CFS)     (MIN) ***                          
+           .000      .000     .0000      .000       0.0                              
+           .250      .848     .1970     .9024     158.5                              
+           .500      .970     .4242    2.8860     106.7                              
+           .750     1.091     .6818    5.7642      85.9                              
+          1.000     1.212     .9697    9.5120      74.0                              
+          1.250     1.333    1.2879   14.1431      66.1                              
+          1.500     1.455    1.6364   19.6862      60.3                              
+          2.000     1.697    2.4242   33.6545      52.3                              
+          2.500     1.939    3.3333   51.7323      46.8                              
+          3.000     2.182    4.3636   74.2486      42.7                              
+          4.000    11.879   11.3939  155.5774      53.2                              
+          5.000    21.576   28.1212  296.8633      68.8                              
+          6.000    31.273   54.5454  522.1440      75.8                              
+       END FTABLE  4                                                                 
+                                                                                     
+       FTABLE      5                                                                 
+      ROWS COLS ***                                                                  
+        13    4                                                                      
+          DEPTH      AREA    VOLUME     DISCH  FLO-THRU ***                          
+           (FT)   (ACRES)   (AC-FT)     (CFS)     (MIN) ***                          
+           .000      .000     .0000      .000       0.0                              
+           .333     1.697     .5253    1.5869     240.3                              
+           .667     1.939    1.1313    5.0752     161.8                              
+          1.000     2.182    1.8182   10.1370     130.2                              
+          1.333     2.424    2.5859   16.7279     112.2                              
+          1.667     2.667    3.4343   24.8719     100.2                              
+          2.000     2.909    4.3636   34.6200      91.5                              
+          2.667     3.394    6.4646   59.1848      79.3                              
+          3.333     3.879    8.8889   90.9763      70.9                              
+          4.000     4.364   11.6364  130.5731      64.7                              
+          5.333    36.687   39.0034  284.8886      99.4                              
+          6.667    69.010  109.4680  593.7734     133.8                              
+          8.000   101.333  223.0302 1129.6948     143.3                              
+       END FTABLE  5                                                                 
+     END FTABLES                                                                     
+
+ FINISHED PROCESSING FTABLES BLOCK
+ ====================================================================================================================================
+ 
+ ====================================================================================================================================
+ PROCESSING MASS LINK BLOCK
+ 
+ 
+ USERS CONTROL INPUT IS:
+     MASS-LINK                                                                       
+                                                                                     
+       MASS-LINK        1                                                            
+     <Srce>     <-Grp> <-Member-><--Mult-->     <Targ>         <-Grp> <-Member-> *** 
+     <Name>     <Name> <Name> # #<-factor->     <Name>         <Name> <Name> # # *** 
+     PERLND     PWATER PERO       0.0833333     RCHRES         INFLOW IVOL           
+     PERLND     PWTGAS POHT                     RCHRES         INFLOW IHEAT          
+     PERLND     PWTGAS PODOXM                   RCHRES         INFLOW OXIF   1       
+     PERLND     PWTGAS POCO2M                   RCHRES         INFLOW PHIF   2       
+       END MASS-LINK    1                                                            
+                                                                                     
+       MASS-LINK        2                                                            
+     <Srce>     <-Grp> <-Member-><--Mult-->     <Targ>         <-Grp> <-Member-> *** 
+     <Name>     <Name> <Name> # #<-factor->     <Name>         <Name> <Name> # # *** 
+     IMPLND     IWATER SURO       0.0833333     RCHRES         INFLOW IVOL           
+     IMPLND     SOLIDS SOSLD         0.10       RCHRES         INFLOW ISED   1       
+     IMPLND     SOLIDS SOSLD         0.46       RCHRES         INFLOW ISED   2       
+     IMPLND     SOLIDS SOSLD         0.44       RCHRES         INFLOW ISED   3       
+     IMPLND     IWTGAS SOHT                     RCHRES         INFLOW IHEAT          
+     IMPLND     IWTGAS SODOXM                   RCHRES         INFLOW OXIF   1       
+     IMPLND     IWTGAS SOCO2M                   RCHRES         INFLOW PHIF   2       
+     IMPLND     IQUAL  SOQUAL                   RCHRES         INFLOW OXIF   2       
+       END MASS-LINK    2                                                            
+                                                                                     
+       MASS-LINK        3                                                            
+     <Srce>     <-Grp> <-Member-><--Mult-->     <Targ>         <-Grp> <-Member-> *** 
+     <Name>     <Name> <Name> # #<-factor->     <Name>         <Name> <Name> # # *** 
+     RCHRES     OFLOW         1                 RCHRES         INFLOW                
+       END MASS-LINK    3                                                            
+                                                                                     
+       MASS-LINK        4                                                            
+     <Srce>     <-Grp> <-Member-><--Mult-->     <Targ>         <-Grp> <-Member-> *** 
+     <Name>     <Name> <Name> # #<-factor->     <Name>         <Name> <Name> # # *** 
+     RCHRES     OFLOW         2                 RCHRES         INFLOW                
+       END MASS-LINK    4                                                            
+                                                                                     
+       MASS-LINK        5                                                            
+     <Srce>     <-Grp> <-Member-><--Mult-->     <Targ>         <-Grp> <-Member-> *** 
+     <Name>     <Name> <Name> # #<-factor->     <Name>         <Name> <Name> # # *** 
+     RCHRES     ROFLOW                          RCHRES         INFLOW                
+       END MASS-LINK    5                                                            
+                                                                                     
+     END MASS-LINK                                                                   
+ 
+ FINISHED PROCESSING MASS LINK BLOCK
+ ====================================================================================================================================
+
+ ====================================================================================================================================
+ PROCESSING PERLND   BLOCK
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ PROCESSING PERVIOUS LAND-SEGMENT NO:   1     TIME STEP(DELT):   60  MINS
+
+ PROCESSING GENERAL INPUT
+ 
+     AIRTFG    SNOWFG    PWATFG     SEDFG     PSTFG     PWGFG    PQALFG    MSTLFG    PESTFG    NITRFG    PHOSFG    TRACFG
+          0         1         1         0         1         1         0         0         0         0         0         0
+ 
+                 Printout level flags                         Print-ivl Print-yrend
+ ATEMP SNOW PWAT SED PSTMP PWTG RQAL MSTL PEST NITR PHOS TRAC      PIVL      PYREND
+     4    4    4    4    4    4    4    4    4    4    4    4         1          12
+ 
+            Binary Output level flags                         Print-ivl Print-yrend
+ ATEMP SNOW PWAT SED PSTMP PWTG RQAL MSTL PEST NITR PHOS TRAC      PIVL      PYREND
+     4    4    4    4    4    4    4    4    4    4    4    4         1           9
+ 
+ Perv Land-segment id      Unit systems       Print-file nos     BinaryOutfileNos
+                         IUNITS    OUNITS   English    Metric   English    Metric
+  BICKNELL FARM               1         1         1         0         0         0
+
+ FINISHED PROCESSING GENERAL INPUT
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION SNOW
+ 
+      ICEFG
+          1
+ 
+     SNOPFG     VMKFG
+          0         0
+ 
+        LAT     MELEV     SHADE    SNOWCF    COVIND     KMELT     TBASE
+    degrees      (ft)                          (in)  (in/d.F)       (F)
+        42.      520.       0.0      1.45       0.5      0.00      32.0
+ 
+      RDCSN     TSNOW    SNOEVP    CCFACT    MWATER    MGMELT
+              (deg F)                                (in/day)
+       0.12       32.      0.05       0.5      0.08    0.0001
+ 
+  Pack-snow  Pack-ice Pack-watr    RDENPF      DULL    PAKTMP
+       (in)      (in)      (in)                       (deg F)
+        1.4       0.2       0.1       0.2      375.      27.5
+ 
+     COVINX    XLNMLT    SKYCLR
+       (in)      (in)
+       0.50       0.0       1.0
+
+ FINISHED PROCESSING INPUT FOR SECTION SNOW
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION PWATER
+ 
+   CSNOFG  RTOPFG    UZFG   VCSFG   VUZFG   VNNFG  VIFWFG  VIRCFG   VLEFG  IFFCFG   HWTFG  IRRGFG  IFRDFG  NCANPY
+        1       0       0       1       1       1       0       0       1       1       0       0       0       0
+ 
+     FOREST      LZSN    INFILT      LSUR     SLSUR     KVARY     AGWRC
+             (inches)   (in/hr)    (feet)          (1/inches)   (1/day)
+      0.010       8.0     0.150      250.     0.050       0.5      0.98
+ 
+     PETMAX    PETMIN    INFEXP    INFILD    DEEPFR    BASETP    AGWETP
+     (degF)    (degF)
+        40.       35.       2.0       2.0      0.10       0.0      0.08
+ 
+      CEPSC      UZSN      NSUR     INTFW       IRC     LZETP
+   (inches)  (inches)(nManning)             (1/day)
+       0.00      0.01       0.1       1.0      0.60      0.00
+ 
+        FZG      FZGL
+      (/in)
+       1.00     0.100
+ 
+ Values of Interception Storage at start of each calendar month (inches):
+        JAN       FEB       MAR       APR       MAY       JUN       JUL       AUG       SEP       OCT       NOV       DEC
+       0.04      0.04      0.03      0.03      0.03      0.03      0.10      0.17      0.19      0.14      0.05      0.04
+ 
+ Values of Upper Zone Storage at start of each calendar month (inches):
+        JAN       FEB       MAR       APR       MAY       JUN       JUL       AUG       SEP       OCT       NOV       DEC
+        0.4       0.4       0.4       0.4       1.6       1.1       1.1       1.3       1.3       1.3       1.1       0.9
+ 
+ Values of Manning's N at start of each calendar month:
+        JAN       FEB       MAR       APR       MAY       JUN       JUL       AUG       SEP       OCT       NOV       DEC
+       0.30      0.30      0.30      0.30      0.27      0.25      0.25      0.25      0.25      0.25      0.35      0.33
+ 
+ Values of Lower Zone ET at start of each calendar month:
+        JAN       FEB       MAR       APR       MAY       JUN       JUL       AUG       SEP       OCT       NOV       DEC
+       0.20      0.20      0.20      0.23      0.23      0.25      0.60      0.80      0.75      0.50      0.30      0.20
+ 
+ Segment-wide storages (inches):
+       CEPS      SURS       UZS      IFWS       LZS      AGWS      GWVS
+       0.05       0.0      0.15       0.0       4.0      0.05      0.05
+
+ FINISHED PROCESSING INPUT FOR SECTION PWATER
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION PSTEMP
+ 
+        Flags for section PSTEMP
+     SLTVFG    ULTVFG    LGTVFG    TSOPFG
+          0         0         0         0
+ 
+       ASLT      BSLT     ULTP1     ULTP2     LGTP1     LGTP2
+    (deg F) (deg F/F)
+       14.5      .365       1.2       4.0       1.2       6.0
+ 
+   Initial temperatures
+      AIRTC     SLTMP     ULTMP     LGTMP
+    (deg F)   (deg F)   (deg F)   (deg F)
+       60.0      60.0      60.0      60.0
+
+ FINISHED PROCESSING INPUT FOR SECTION PSTEMP
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION PWTGAS
+ 
+        Flags for section PWTGAS
+      IDVFG     ICVFG     GDVFG     GVCFG
+          0         0         0         0
+ 
+   Second group of PWTGAS parms
+       ELEV     IDOXP     ICO2P     ADOXP     ACO2P
+       (ft)    (mg/l)   (mgC/l)    (mg/l)   (mgC/l)
+       500.        6.       .05        5.       .05
+ 
+  Lateral inflow weighting factors for PWGTAS and PQUAL
+     SDLFAC    SLIFAC    ILIFAC    ALIFAC
+       0.00      0.00      0.00      0.00
+ 
+     Initial water temperatures
+      SOTMP     IOTMP     AOTMP
+    (deg F)   (deg F)   (deg F)
+       60.0      60.0      60.0
+ 
+             Initial DO and CO2 concentrations
+      SODOX     SOCO2     IODOX     IOCO2     AODOX     AOCO2
+     (mg/l)   (mgC/l)    (mg/l)   (mgC/l)    (mg/l)   (mgC/l)
+       0.00      0.00      0.00      0.00      0.00      0.00
+
+ FINISHED PROCESSING INPUT FOR SECTION PWTGAS
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ FINISHED PROCESSING PERVIOUS LAND-SEGMENT NO.    1
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ FINISHED PROCESSING PERLND   BLOCK
+ ====================================================================================================================================
+
+ ====================================================================================================================================
+ PROCESSING IMPLND   BLOCK
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ PROCESSING IMPERVIOUS LAND-SEGMENT NO:   1     TIME STEP(DELT):   60  MINS
+
+ PROCESSING GENERAL INPUT
+ 
+     AIRTFG    SNOWFG    IWATFG     SLDFG     IWGFG    IQALFG
+          0         1         1         1         1         1
+ 
+      Printout level flags       Print-ivl Print-yrend
+ ATEMP SNOW IWAT  SLD IWTG IQAL      PIVL      PYREND
+     4    4    4    4    4    4         1          12
+ 
+   Binary Output level flags     Print-ivl Print-yrend
+ ATEMP SNOW IWAT  SLD IWTG IQAL      PIVL      PYREND
+     4    4    4    4    4    4         1           9
+ 
+ Imperv Land-segment id    Unit systems      Print-file nos      BinaryOutfileNos
+                         IUNITS    OUNITS   English    Metric   English    Metric
+  DONIGIAN INDUSTRY           1         1         1         0         0         0
+
+ FINISHED PROCESSING GENERAL INPUT
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION SNOW
+ 
+       Ice-
+       flag
+          1
+ 
+     SNOPFG     VMKFG
+          0         0
+ 
+        LAT     MELEV     SHADE    SNOWCF    COVIND     KMELT     TBASE
+    degrees      (ft)                          (in)  (in/d.F)       (F)
+        42.      450.       0.0      1.45       0.5      0.00      32.0
+ 
+      RDCSN     TSNOW    SNOEVP    CCFACT    MWATER    MGMELT
+              (deg F)                                (in/day)
+       0.12       32.      0.05       0.5      0.08    0.0001
+ 
+  Pack-snow  Pack-ice Pack-watr    RDENPF      DULL    PAKTMP
+       (in)      (in)      (in)                       (deg F)
+        1.4       0.2       0.1       0.2      375.      27.5
+ 
+     COVINX    XLNMLT    SKYCLR
+       (in)      (in)
+       0.50       0.0       1.0
+
+ FINISHED PROCESSING INPUT FOR SECTION SNOW
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION IWATER
+ 
+     CSNOFG    RTOPFG     VRSFG     VNNFG    RTLIFG
+          1         0         0         0         1
+ 
+       LSUR     SLSUR      NSUR     RETSC
+       (ft)          (nManning)      (in)
+       200.      .010      .010       .01
+ 
+     PETMAX    PETMIN
+    (deg F)   (deg F)
+        40.       35.
+ 
+ Storages (inches):
+       RETS      SURS
+        .01       .01
+
+ FINISHED PROCESSING INPUT FOR SECTION IWATER
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION SOLIDS
+ 
+     VASDFG    VRSDFG    SDOPFG
+          0         0         0
+ 
+       KEIM      JEIM    ACCSDP    REMSDP
+                     (tns/ac.d)    (/day)
+        .08       1.9       .01        .5
+ 
+ Initial solids storage (tons/acre)
+        0.2
+
+ FINISHED PROCESSING INPUT FOR SECTION SOLIDS
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION IWTGAS
+ 
+    Flags for section IWTGAS
+     WTFVFG    CSNOFG
+          0         0
+ 
+   Second group of IWTGAS parms
+       ELEV      AWTF      BWTF
+       (ft)   (deg F) (deg F/F)
+       410.       40.       0.8
+ 
+     SDLFAC    SLIFAC
+       0.00      0.00
+ 
+      SOTMP     SODOX     SOCO2
+    (deg F)    (mg/l)   (mgC/l)
+       60.0      0.00      0.00
+
+ FINISHED PROCESSING INPUT FOR SECTION IWTGAS
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION IQUAL
+ 
+      NQUAL
+          1
+ 
+                            Atmospheric Deposition Flags
+      QUAL1     QUAL2     QUAL3     QUAL4     QUAL5     QUAL6     QUAL7     QUAL8     QUAL9    QUAL10
+    FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON
+      0   0     0   0     0   0     0   0     0   0     0   0     0   0     0   0     0   0     0   0
+ 
+   CON NAME     QTYID     QSDFP    VPFWFG     QSOFP     VQOFG
+ COD               LB         1         0         1         0
+ 
+   Storage on surface and nonseasonal parameters
+        SQO     POTFW     ACQOP    SQOLIM     WSQOP
+   (qty/ac) (qty/ton)     (qty/  (qty/ac)   (in/hr)
+                        ac.day)
+       1.20      .175       .02       2.0       1.7
+
+ FINISHED PROCESSING INPUT FOR SECTION IQUAL
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ FINISHED PROCESSING IMPERVIOUS LAND-SEGMENT NO.    1
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ FINISHED PROCESSING IMPLND   BLOCK
+ ====================================================================================================================================
+
+ ====================================================================================================================================
+ PROCESSING RCHRES   BLOCK
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ PROCESSING RCHRES NO:   1     TIME STEP(DELT):   60  MINS
+
+ PROCESSING GENERAL INPUT
+ 
+     HYDRFG      ADFG    CONSFG      HTFG     SEDFG   GQUALFG      OXFG     NUTFG     PLKFG      PHFG
+          1         1         1         1         1         1         1         1         1         1
+ 
+                 Printout level flags                    Print-ivl Print-yrend
+  HYDR ADCA CONS HEAT  SED  GQL OXRX NUTR PLNK PHCB           PIVL    PYREND
+     5    5    5    5    5    5    5    5    5    5              1        12
+ 
+            Binary Output level flags                    Print-ivl Print-yrend
+  HYDR ADCA CONS HEAT  SED  GQL OXRX NUTR PLNK PHCB           PIVL    PYREND
+     4    4    4    4    4    4    4    4    4    4              1         9
+ 
+ Reach/reservoir-id      NEXITS     Unit systems        Print-file nos      Lake-    BinaryOutfileNos
+                                  IUNITS    OUNITS    English    Metric      flag   English    Metric
+ MEIER POND                   2         1         1         1         0         1         0         0
+
+ FINISHED PROCESSING GENERAL INPUT
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION HYDR
+ 
+     VCONFG    AUX1FG    AUX2FG    AUX3FG     ODFV-flags for      ODGT-flags for      FUNCT-flags for
+                                              each poss. exit          poss. exit     each poss. exit
+          0         1         1         1      -1  6  0  0  0       0  0  0  0  0       1  1  1  1  1
+ 
+                          MILES        FT        FT                  IN
+        DSN      FTBN       LEN     DELTH     STCOR        KS      DB50
+         00         1       0.5        1.      0.00        .5 1.000E-02
+ 
+ Values of irrigation withdrawal parameters
+     IREXIT    IRMINV (ac.ft)
+       0.00      0.00
+ 
+  (acre-ft)       CAT Init value of COLIND for each poss exit           Init value of OUTDGT for each poss exit (ft3/s)
+        VOL
+                              1         2         3         4         5         1         2         3         4         5
+        30.                 4.0       5.0      4.00      4.00      4.00      0.00      0.00      0.00      0.00      0.00
+
+ INITIAL TOTAL OUTFLOW RATE:    0.000E+00
+
+ INITIAL OUTFLOWS THROUGH INDIVIDUAL EXITS:
+ EXIT                      1         2
+ FLOW              0.000E+00 0.000E+00
+
+ AUXILIARY STATE VARIABLES - GROUP 1
+        DEP     STAGE     SAREA     AVDEP      TWID      HRAD
+         FT        FT     ACRES        FT        FT        FT
+  9.950E+00 9.950E+00 6.030E+00 4.975E+00 9.950E+01 4.523E+00
+
+ AUXILIARY STATE VARIABLES - GROUP 2
+      AVVEL    AVSECT
+     FT/SEC       FT2
+  0.000E+00 4.950E+02
+
+ AUXILIARY STATE VARIABLES - GROUP 3
+      USTAR       TAU
+     FT/SEC    LB/FT2
+  0.000E+00 0.000E+00
+
+ FINISHED PROCESSING INPUT FOR SECTION HYDR
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION ADCALC
+ 
+      CRRAT       VOL
+            (acre-ft)
+       1.50      0.00
+
+ FINISHED PROCESSING INPUT FOR SECTION ADCALC
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION CONS
+ 
+      NCONS
+          1
+ 
+                            Atmospheric Deposition Flags
+      CONS1     CONS2     CONS3     CONS4     CONS5     CONS6     CONS7     CONS8     CONS9    CONS10
+    FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON
+      0   0     0   0     0   0     0   0     0   0     0   0     0   0     0   0     0   0     0   0
+ 
+    Substance id         Concentration         Conv      Qty-
+                       Init-val     Units      fact        id
+      ALKALINITY          1000.      MG/L     35.31        KG
+
+ FINISHED PROCESSING INPUT FOR SECTION CONS
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION HTRCH
+ 
+     BEDFLG     TGFLG     TSTOP
+          0         2        55
+ 
+       ELEV     ELDAT    CFSAEX    KATRAD     KCOND     KEVAP
+       (ft)      (ft)
+       450.      100.       .95      9.37      6.12      2.24
+ 
+     SHADFG     TOPFL     VEGFL      NSSP    LATDEG    LONDEG    LONSTD
+                                              (deg)     (deg)     (deg)
+       0.00      41.0      42.0      0.00      40.0     -90.0     -90.0
+ 
+         TW    AIRTMP
+    (deg F)   (deg F)
+        60.       40.
+
+ FINISHED PROCESSING INPUT FOR SECTION HTRCH
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION SEDTRN
+ 
+      SNDFG
+          3
+ 
+     BEDWID    BEDWRN       POR
+       (ft)      (ft)
+       200.        4.     0.500
+
+ SAND PARAMETERS
+ 
+          D         W       RHO     KSAND    EXPSND
+       (in)  (in/sec)
+       .014       2.5      2.65       1.5       1.2
+
+ SILT PARAMETERS
+ 
+          D         W       RHO     TAUCD     TAUCS         M
+       (in)  (in/sec)  (gm/cm3)  (lb/ft2)  (lb/ft2)(lb/ft2.d)
+     .00063     .0066       2.2        .2        .4        .5
+
+ CLAY PARAMETERS
+ 
+          D         W       RHO     TAUCD     TAUCS         M
+       (in)  (in/sec)  (gm/cm3)  (lb/ft2)  (lb/ft2)(lb/ft2.d)
+    .000055   .000034       2.0       .15        .3       .75
+ 
+      Suspended sed concs (mg/l)
+    SSED(1)   SSED(2)   SSED(3)
+     (mg/l)    (mg/l)    (mg/l)
+         5.       20.       30.
+ 
+ Init bed  Initial fraction of each size
+ thickness        of sediment in the bed
+       (ft)      Sand      Silt      Clay
+         2.        .8        .1        .1
+
+ FINISHED PROCESSING INPUT FOR SECTION SEDTRN
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION GQUAL
+ 
+    NGQUAL    <----Flags indicating sources of input data------------>  Latitude
+               TEMPFG    PHFLAG     ROXFG     CLDFG      SDFG    PHYTFG (Degrees)
+          1         1         1         2         1         1         1        42
+ 
+ Atmospheric Deposition Flags
+    GQUAL1   GQUAL2   GQUAL3   GQUAL4   GQUAL5   GQUAL6   GQUAL7
+   FLX CON  FLX CON  FLX CON  FLX CON  FLX CON  FLX CON  FLX CON
+     0   0    0   0    0   0    0   0    0   0    0   0    0   0
+ 
+         Substance id   Concentration          Conv      Qty-
+                       Init-val Units(/l)      fact        id
+         PESTICIDE B4       10.        UG      1.E6         G
+ 
+     <-----------Degradation process flags ----------------->  Sediment
+     Hydrol      Oxid    Photol   Volatil    Biodeg   General     assoc
+          1         1         1         1         1         1         1
+ 
+     <-Flags indicating whether qual is a daughter through-->      Source of
+     Hydrol      Oxid    Photol   Volatil    Biodeg   General   biomass data
+          0         0         0         0         0         0              2
+ 
+         KA        KB        KN     THHYD
+   (/M-sec)  (/M-sec)    (/sec)
+       .001       .01      .001      1.03
+ 
+        KOX      THOX
+   (/M.sec)
+         .1      1.03
+ 
+ Items 1 thru 18 below are molar absorption coefficients, for each of the 18 wavelengths (l/mole.cm).
+ Item 19 is the quantum yield (mole/Einstein).
+ Item 20 is the temperature correction parameter (theta).
+       848.      544.      330.      195.      120.       68.       41.       23.       13.        7.        4.        1.        .1
+       0.00      0.00      0.00      0.00      0.00        .3       1.1
+ 
+      CFGAS
+       .001
+ 
+     BIOCON     THBIO       BIO
+ (1/mg/day)              (mg/l)
+        .01      1.07       10.
+ 
+     FSTDEC     THFST
+     (/day)
+         .2      1.07
+ 
+ Decay rate (/day) & temp correction coeff. for qual on sediment:
+ <----Suspended-----><-----Bed---------->
+       Rate     Theta      Rate     Theta
+       0.00      1.07      .002      1.07
+ 
+ Partition coefficients (l/mg) for:
+ <--------Suspended-----------><-------------Bed------------>
+       Sand      Silt      Clay      Sand      Silt      Clay
+      .0001      .001      .001     .0001      .001      .001
+ 
+ Adsorption/desorption rate parameters (/day) for:
+ <--------Suspended-----------><------------Bed------------>
+       Sand      Silt      Clay      Sand      Silt      Clay
+       150.      150.      150.       .25       .25       .25
+ 
+ Adsorption/desorption temp correction parameters for:
+ <--------Suspended-----------><------------Bed------------>
+       Sand      Silt      Clay      Sand      Silt      Clay
+       1.07      1.07      1.07      1.07      1.07      1.07
+ 
+ Initial concentrations on sediment (concu/mg):
+ <---------Suspended-----------><-------------Bed----------->
+       Sand      Silt      Clay      Sand      Silt      Clay
+       .001       .01       .01      .001       .01       .01
+ 
+       TWAT     PHVAL       ROC       CLD     SDCNC       PHY
+    (deg F)            (mole/l)  (tenths)    (mg/l)    (mg/l)
+       60.0      7.00     1.E-5      0.00      0.00      0.00
+ 
+ Values of base absorbance coeff (/cm) for each of the 18 light wavelengths:
+       .008      .009      .010      .011      .011      .011      .012      .013      .015      .016      .017      .018      .019
+       .020      .021      .022      .024      .024
+ 
+ Values of sediment absorbance coefficient (l/mg.cm) for each of the 18 light wavelengths:
+       .001      .001      .001      .001      .001      .001      .001      .001      .002      .002      .002      .002      .002
+       .002      .002      .002      .002      .002
+ 
+ Values of the phytoplankton absorbance coefficient (l/mg.cm), for each of the 18 light wavelengths:
+      .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007
+      .0007     .0007     .0007     .0007     .0007
+ 
+ Values of light extinction efficiency of cloud cover, for each of the 18 light wavelengths:
+        .10       .10       .10       .15       .15       .15       .15       .17       .17       .17       .17       .18       .19
+        .20       .21       .21       .21       .21
+ 
+     REAMFG,     DOPFG
+          2         0
+ 
+     CFOREA
+         5.
+
+ FINISHED PROCESSING INPUT FOR SECTION GQUAL
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTIONS OXRX, NUTRX, PLANK, AND PHCARB
+ 
+       BENF
+          1
+ 
+     SCRVEL    SCRMUL
+   (ft/sec)
+         3.      2.00
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION OXRX
+ 
+      BENOD     TCBEN     EXPOD  BRBOD(1)  BRBOD(2)    EXPREL
+ (mg/m2.hr)                    (mg/m2.hr)(mg/m2.hr)
+        10.       1.1       1.2       20.       25.       1.3
+ 
+     KBOD20     TCBOD    KODSET    SUPSAT
+     ( /hr)             (ft/hr)
+         .1      1.08        8.      1.15
+ 
+        DOX       BOD     SATDO
+     (mg/l)    (mg/l)    (mg/l)
+         8.      100.      10.0
+
+ FINISHED PROCESSING INPUT FOR SECTION OXRX
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION NUTRX
+ 
+      TAMFG     NO2FG     PO4FG     AMVFG     DENFG    ADNHFG    ADPOFG    PHFLAG
+          1         1         1         1         1         0         0         2
+ 
+ Atmospheric Deposition Flags
+     NO3      NH3      PO4
+   FLX CON  FLX CON  FLX CON
+     0   0    0   0    0   0
+ 
+       CVBO     CVBPC     CVBPN    BPCNTC
+    (mg/mg)(mols/mol)(mols/mol) (percent)
+       1.98      106.      16.0      49.0
+ 
+   BRTAM(1)  BRTAM(2)  BRPO4(1)  BRPO4(2)     ANAER
+ (mg/m2.hr)(mg/m2.hr)(mg/m2.hr)(mg/m2.hr)    (mg/l)
+       11.0      33.0       1.1       2.2    0.0005
+ 
+     KTAM20    KNO220     TCNIT    KNO320     TCDEN    DENOXT
+      (/hr)     (/hr)               (/hr)              (mg/l)
+       .002      .004      1.07      .001      1.04       0.2
+ 
+     EXPNVG    EXPNVL
+        .50    0.6667
+ 
+        NO3       TAM       NO2       PO4     PHVAL
+     (mg/l)    (mg/l)    (mg/l)    (mg/l)      (ph)
+        40.       10.        1.       50.       7.0
+
+ FINISHED PROCESSING INPUT FOR SECTION NUTRX
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION PLANK
+ 
+      PHYFG     ZOOFG     BALFG    SDLTFG     AMRFG     DECFG      NSFG     ZFOOD     BNPFG
+          1         1         1         1         1         0         1         2         0
+ 
+ Atmospheric Deposition Flags
+     ORN      ORP      ORC
+   FLX CON  FLX CON  FLX CON
+     0   0    0   0    0   0
+ 
+     RATCLP    NONREF    LITSED     ALNPR      EXTB     MALGR    PARADF
+                                              (/ft)     (/hr)
+      0.600     0.500      0.00      1.00       4.5     0.300      1.00
+ 
+      CMMLT      CMMN     CMMNP      CMMP    TALGRH    TALGRL    TALGRM
+   (ly/min)    (mg/l)    (mg/l)    (mg/l)   (deg F)   (deg F)   (deg F)
+  3.300E-02 4.500E-02 2.840E-02 1.500E-02      95.0      43.0      77.0
+ 
+      ALR20      ALDH      ALDL     OXALD     NALDH     PALDH
+      (/hr)     (/hr)     (/hr)     (/hr)    (mg/l)    (mg/l)
+  4.000E-03 1.000E-02 1.000E-03 3.000E-02      0.00      0.00
+ 
+     NMINGR    PMINGR    CMINGR    LMINGR     NMINC
+       mg/l      mg/l      mg/l    ly/min      mg/l
+  1.000E-03 1.000E-03 1.000E-03 1.000E-03 1.000E-03
+ 
+       SEED    MXSTAY      OREF    CLALDH    PHYSET    REFSET
+     (mg/l)    (mg/l)   (ft3/s)    (ug/l)   (ft/hr)   (ft/hr)
+         .1        .1 1.000E-04      50.0        .5        .5
+ 
+     MZOEAT    ZFIL20    ZRES20        ZD      OXZD
+ (mg/mg.hr) (l/mg.hr)     (/hr)     (/hr)     (/hr)
+  5.500E-02        .2 1.500E-03 1.000E-04 3.000E-02
+ 
+     TCZFIL    TCZRES    ZEXDEL    ZOMASS
+                                 (mg/org)
+       1.17      1.07     0.700 3.000E-04
+ 
+       MBAL    CFBALR    CFBALG    MINBAL     CAMPR     FRAVL    NMAXFX
+    (mg/m2)                       (mg/m2)    (mg/l)              (mg/l)
+       600.      1.00      1.00 1.000E-04 1.000E-03      0.00      10.0
+ 
+      FRRIF      CMMV    RIFCQ1    RIFCQ2    RIFCQ3
+               (ft/s)     (cfs)     (cfs)     (cfs)
+       1.00      1.00      0.00      0.00      0.00
+ 
+    RIFVEL1   RIFVEL2   RIFVEL3   RIFVEL4   RIFDEP1   RIFDEP2   RIFDEP3   RIFDEP4
+ 
+       1.00      1.00      1.00      1.00      1.00      1.00      1.00      1.00
+ 
+      PHYTO       ZOO     BENAL       ORN       ORP       ORC
+     (mg/l)   (org/l)   (mg/m2)    (mg/l)    (mg/l)    (mg/l)
+        40.      200.        5.       20.       20.       20.
+
+ FINISHED PROCESSING INPUT FOR SECTION PLANK
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION PHCARB
+ 
+      PHCNT    ALKCON
+         50         1
+ 
+     CFCINV  BRCO2(1)  BRCO2(2)
+           (mg/m2.hr)(mg/m2.hr)
+      0.913      62.0      62.0
+ 
+        TIC       CO2        PH
+     (mg/l)    (mg/l)
+        20.        5.       8.5
+
+ FINISHED PROCESSING INPUT FOR SECTION PHCARB
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ FINISHED PROCESSING INPUT FOR SECTIONS OXRX, NUTRX, PLANK, AND PHCARB
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ FINISHED PROCESSING RCHRES NO.    1
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ PROCESSING RCHRES NO:   2     TIME STEP(DELT):   60  MINS
+
+ PROCESSING GENERAL INPUT
+ 
+     HYDRFG      ADFG    CONSFG      HTFG     SEDFG   GQUALFG      OXFG     NUTFG     PLKFG      PHFG
+          1         1         1         1         1         1         1         1         1         1
+ 
+                 Printout level flags                    Print-ivl Print-yrend
+  HYDR ADCA CONS HEAT  SED  GQL OXRX NUTR PLNK PHCB           PIVL    PYREND
+     5    5    5    5    5    5    5    5    5    5              1        12
+ 
+            Binary Output level flags                    Print-ivl Print-yrend
+  HYDR ADCA CONS HEAT  SED  GQL OXRX NUTR PLNK PHCB           PIVL    PYREND
+     4    4    4    4    4    4    4    4    4    4              1         9
+ 
+ Reach/reservoir-id      NEXITS     Unit systems        Print-file nos      Lake-    BinaryOutfileNos
+                                  IUNITS    OUNITS    English    Metric      flag   English    Metric
+ OUTLET                       1         1         1         1         0         0         0         0
+
+ FINISHED PROCESSING GENERAL INPUT
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION HYDR
+ 
+     VCONFG    AUX1FG    AUX2FG    AUX3FG     ODFV-flags for      ODGT-flags for      FUNCT-flags for
+                                              each poss. exit          poss. exit     each poss. exit
+          0         1         1         1       4  0  0  0  0       0  0  0  0  0       1  1  1  1  1
+ 
+                          MILES        FT        FT                  IN
+        DSN      FTBN       LEN     DELTH     STCOR        KS      DB50
+         00         2      0.25       20.      0.00        .5 1.000E-02
+ 
+ Values of irrigation withdrawal parameters
+     IREXIT    IRMINV (ac.ft)
+       0.00      0.00
+ 
+  (acre-ft)       CAT Init value of COLIND for each poss exit           Init value of OUTDGT for each poss exit (ft3/s)
+        VOL
+                              1         2         3         4         5         1         2         3         4         5
+        0.0                 4.0      4.00      4.00      4.00      4.00      0.00      0.00      0.00      0.00      0.00
+
+ INITIAL TOTAL OUTFLOW RATE:    0.000E+00
+
+ AUXILIARY STATE VARIABLES - GROUP 1
+        DEP     STAGE     SAREA     AVDEP      TWID      HRAD
+         FT        FT     ACRES        FT        FT        FT
+  0.000E+00 0.000E+00 0.000E+00 0.000E+00 0.000E+00 0.000E+00
+
+ AUXILIARY STATE VARIABLES - GROUP 2
+      AVVEL    AVSECT
+     FT/SEC       FT2
+  0.000E+00 0.000E+00
+
+ AUXILIARY STATE VARIABLES - GROUP 3
+      USTAR       TAU
+     FT/SEC    LB/FT2
+  0.000E+00 0.000E+00
+
+ FINISHED PROCESSING INPUT FOR SECTION HYDR
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION ADCALC
+ 
+      CRRAT       VOL
+            (acre-ft)
+       1.50      0.00
+
+ FINISHED PROCESSING INPUT FOR SECTION ADCALC
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION CONS
+ 
+      NCONS
+          1
+ 
+                            Atmospheric Deposition Flags
+      CONS1     CONS2     CONS3     CONS4     CONS5     CONS6     CONS7     CONS8     CONS9    CONS10
+    FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON
+      0   0     0   0     0   0     0   0     0   0     0   0     0   0     0   0     0   0     0   0
+ 
+    Substance id         Concentration         Conv      Qty-
+                       Init-val     Units      fact        id
+      ALKALINITY          1000.      MG/L     35.31        KG
+
+ FINISHED PROCESSING INPUT FOR SECTION CONS
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION HTRCH
+ 
+     BEDFLG     TGFLG     TSTOP
+          0         2        55
+ 
+       ELEV     ELDAT    CFSAEX    KATRAD     KCOND     KEVAP
+       (ft)      (ft)
+       450.      100.       .95      9.37      6.12      2.24
+ 
+     SHADFG     TOPFL     VEGFL      NSSP    LATDEG    LONDEG    LONSTD
+                                              (deg)     (deg)     (deg)
+       0.00      41.0      42.0      0.00      40.0     -90.0     -90.0
+ 
+         TW    AIRTMP
+    (deg F)   (deg F)
+        60.       40.
+
+ FINISHED PROCESSING INPUT FOR SECTION HTRCH
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION SEDTRN
+ 
+      SNDFG
+          3
+ 
+     BEDWID    BEDWRN       POR
+       (ft)      (ft)
+       1.33        3.     0.500
+
+ SAND PARAMETERS
+ 
+          D         W       RHO     KSAND    EXPSND
+       (in)  (in/sec)
+       .014       2.5      2.65       1.5       1.2
+
+ SILT PARAMETERS
+ 
+          D         W       RHO     TAUCD     TAUCS         M
+       (in)  (in/sec)  (gm/cm3)  (lb/ft2)  (lb/ft2)(lb/ft2.d)
+     .00063     .0066       2.2    1.E-10      500.        .5
+
+ CLAY PARAMETERS
+ 
+          D         W       RHO     TAUCD     TAUCS         M
+       (in)  (in/sec)  (gm/cm3)  (lb/ft2)  (lb/ft2)(lb/ft2.d)
+    .000055   .000034       2.0    1.E-10      500.       .75
+ 
+      Suspended sed concs (mg/l)
+    SSED(1)   SSED(2)   SSED(3)
+     (mg/l)    (mg/l)    (mg/l)
+         5.       20.       30.
+ 
+ Init bed  Initial fraction of each size
+ thickness        of sediment in the bed
+       (ft)      Sand      Silt      Clay
+         2.        .8        .1        .1
+
+ FINISHED PROCESSING INPUT FOR SECTION SEDTRN
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION GQUAL
+ 
+    NGQUAL    <----Flags indicating sources of input data------------>  Latitude
+               TEMPFG    PHFLAG     ROXFG     CLDFG      SDFG    PHYTFG (Degrees)
+          1         1         1         2         1         1         1        42
+ 
+ Atmospheric Deposition Flags
+    GQUAL1   GQUAL2   GQUAL3   GQUAL4   GQUAL5   GQUAL6   GQUAL7
+   FLX CON  FLX CON  FLX CON  FLX CON  FLX CON  FLX CON  FLX CON
+     0   0    0   0    0   0    0   0    0   0    0   0    0   0
+ 
+         Substance id   Concentration          Conv      Qty-
+                       Init-val Units(/l)      fact        id
+         PESTICIDE B4       10.        UG      1.E6         G
+ 
+     <-----------Degradation process flags ----------------->  Sediment
+     Hydrol      Oxid    Photol   Volatil    Biodeg   General     assoc
+          1         1         1         1         1         1         1
+ 
+     <-Flags indicating whether qual is a daughter through-->      Source of
+     Hydrol      Oxid    Photol   Volatil    Biodeg   General   biomass data
+          0         0         0         0         0         0              2
+ 
+         KA        KB        KN     THHYD
+   (/M-sec)  (/M-sec)    (/sec)
+       .001       .01      .001      1.03
+ 
+        KOX      THOX
+   (/M.sec)
+         .1      1.03
+ 
+ Items 1 thru 18 below are molar absorption coefficients, for each of the 18 wavelengths (l/mole.cm).
+ Item 19 is the quantum yield (mole/Einstein).
+ Item 20 is the temperature correction parameter (theta).
+       848.      544.      330.      195.      120.       68.       41.       23.       13.        7.        4.        1.        .1
+       0.00      0.00      0.00      0.00      0.00        .3       1.1
+ 
+      CFGAS
+       .001
+ 
+     BIOCON     THBIO       BIO
+ (1/mg/day)              (mg/l)
+        .01      1.07       10.
+ 
+     FSTDEC     THFST
+     (/day)
+         .2      1.07
+ 
+ Decay rate (/day) & temp correction coeff. for qual on sediment:
+ <----Suspended-----><-----Bed---------->
+       Rate     Theta      Rate     Theta
+       0.00      1.07      .002      1.07
+ 
+ Partition coefficients (l/mg) for:
+ <--------Suspended-----------><-------------Bed------------>
+       Sand      Silt      Clay      Sand      Silt      Clay
+      .0001      .001      .001    1.E-10    1.E-10    1.E-10
+ 
+ Adsorption/desorption rate parameters (/day) for:
+ <--------Suspended-----------><------------Bed------------>
+       Sand      Silt      Clay      Sand      Silt      Clay
+       150.      150.      150.     1000.     1000.     1000.
+ 
+ Adsorption/desorption temp correction parameters for:
+ <--------Suspended-----------><------------Bed------------>
+       Sand      Silt      Clay      Sand      Silt      Clay
+       1.07      1.07      1.07      1.07      1.07      1.07
+ 
+ Initial concentrations on sediment (concu/mg):
+ <---------Suspended-----------><-------------Bed----------->
+       Sand      Silt      Clay      Sand      Silt      Clay
+       .001       .01       .01        0.        0.        0.
+ 
+       TWAT     PHVAL       ROC       CLD     SDCNC       PHY
+    (deg F)            (mole/l)  (tenths)    (mg/l)    (mg/l)
+       60.0      7.00     1.E-5      0.00      0.00      0.00
+ 
+ Values of base absorbance coeff (/cm) for each of the 18 light wavelengths:
+       .008      .009      .010      .011      .011      .011      .012      .013      .015      .016      .017      .018      .019
+       .020      .021      .022      .024      .024
+ 
+ Values of sediment absorbance coefficient (l/mg.cm) for each of the 18 light wavelengths:
+       .001      .001      .001      .001      .001      .001      .001      .001      .002      .002      .002      .002      .002
+       .002      .002      .002      .002      .002
+ 
+ Values of the phytoplankton absorbance coefficient (l/mg.cm), for each of the 18 light wavelengths:
+      .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007
+      .0007     .0007     .0007     .0007     .0007
+ 
+ Values of light extinction efficiency of cloud cover, for each of the 18 light wavelengths:
+        .10       .10       .10       .15       .15       .15       .15       .17       .17       .17       .17       .18       .19
+        .20       .21       .21       .21       .21
+ 
+     REAMFG,     DOPFG
+          1         0
+ 
+      REAKT    TCGINV
+      (/ft)
+  8.000E-02      1.05
+
+ FINISHED PROCESSING INPUT FOR SECTION GQUAL
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTIONS OXRX, NUTRX, PLANK, AND PHCARB
+ 
+       BENF
+          0
+ 
+     SCRVEL    SCRMUL
+   (ft/sec)
+         3.      2.00
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION OXRX
+ 
+     KBOD20     TCBOD    KODSET    SUPSAT
+     ( /hr)             (ft/hr)
+         .1      1.08        8.      1.15
+ 
+        DOX       BOD     SATDO
+     (mg/l)    (mg/l)    (mg/l)
+         8.      100.      10.0
+
+ FINISHED PROCESSING INPUT FOR SECTION OXRX
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION NUTRX
+ 
+      TAMFG     NO2FG     PO4FG     AMVFG     DENFG    ADNHFG    ADPOFG    PHFLAG
+          1         1         1         1         1         0         0         2
+ 
+ Atmospheric Deposition Flags
+     NO3      NH3      PO4
+   FLX CON  FLX CON  FLX CON
+     0   0    0   0    0   0
+ 
+       CVBO     CVBPC     CVBPN    BPCNTC
+    (mg/mg)(mols/mol)(mols/mol) (percent)
+       1.98      106.      16.0      49.0
+ 
+   BRTAM(1)  BRTAM(2)  BRPO4(1)  BRPO4(2)     ANAER
+ (mg/m2.hr)(mg/m2.hr)(mg/m2.hr)(mg/m2.hr)    (mg/l)
+       11.0      33.0       1.1       2.2    0.0005
+ 
+     KTAM20    KNO220     TCNIT    KNO320     TCDEN    DENOXT
+      (/hr)     (/hr)               (/hr)              (mg/l)
+       .002      .004      1.07      .001      1.04       0.2
+ 
+     EXPNVG    EXPNVL
+        .50    0.6667
+ 
+        NO3       TAM       NO2       PO4     PHVAL
+     (mg/l)    (mg/l)    (mg/l)    (mg/l)      (ph)
+        40.       10.        1.       50.       7.0
+
+ FINISHED PROCESSING INPUT FOR SECTION NUTRX
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION PLANK
+ 
+      PHYFG     ZOOFG     BALFG    SDLTFG     AMRFG     DECFG      NSFG     ZFOOD     BNPFG
+          1         1         1         1         1         0         1         2         0
+ 
+ Atmospheric Deposition Flags
+     ORN      ORP      ORC
+   FLX CON  FLX CON  FLX CON
+     0   0    0   0    0   0
+ 
+     RATCLP    NONREF    LITSED     ALNPR      EXTB     MALGR    PARADF
+                                              (/ft)     (/hr)
+      0.600     0.500      0.00      1.00       4.5     0.300      1.00
+ 
+      CMMLT      CMMN     CMMNP      CMMP    TALGRH    TALGRL    TALGRM
+   (ly/min)    (mg/l)    (mg/l)    (mg/l)   (deg F)   (deg F)   (deg F)
+  3.300E-02 4.500E-02 2.840E-02 1.500E-02      95.0      43.0      77.0
+ 
+      ALR20      ALDH      ALDL     OXALD     NALDH     PALDH
+      (/hr)     (/hr)     (/hr)     (/hr)    (mg/l)    (mg/l)
+  4.000E-03 1.000E-02 1.000E-03 3.000E-02      0.00      0.00
+ 
+     NMINGR    PMINGR    CMINGR    LMINGR     NMINC
+       mg/l      mg/l      mg/l    ly/min      mg/l
+  1.000E-03 1.000E-03 1.000E-03 1.000E-03 1.000E-03
+ 
+       SEED    MXSTAY      OREF    CLALDH    PHYSET    REFSET
+     (mg/l)    (mg/l)   (ft3/s)    (ug/l)   (ft/hr)   (ft/hr)
+         .1        .1 1.000E-04      50.0        .5        .5
+ 
+     MZOEAT    ZFIL20    ZRES20        ZD      OXZD
+ (mg/mg.hr) (l/mg.hr)     (/hr)     (/hr)     (/hr)
+  5.500E-02        .2 1.500E-03 1.000E-04 3.000E-02
+ 
+     TCZFIL    TCZRES    ZEXDEL    ZOMASS
+                                 (mg/org)
+       1.17      1.07     0.700 3.000E-04
+ 
+       MBAL    CFBALR    CFBALG    MINBAL     CAMPR     FRAVL    NMAXFX
+    (mg/m2)                       (mg/m2)    (mg/l)              (mg/l)
+       600.      1.00      1.00 1.000E-04 1.000E-03      0.00      10.0
+ 
+      FRRIF      CMMV    RIFCQ1    RIFCQ2    RIFCQ3
+               (ft/s)     (cfs)     (cfs)     (cfs)
+       1.00      1.00      0.00      0.00      0.00
+ 
+    RIFVEL1   RIFVEL2   RIFVEL3   RIFVEL4   RIFDEP1   RIFDEP2   RIFDEP3   RIFDEP4
+ 
+       1.00      1.00      1.00      1.00      1.00      1.00      1.00      1.00
+ 
+      PHYTO       ZOO     BENAL       ORN       ORP       ORC
+     (mg/l)   (org/l)   (mg/m2)    (mg/l)    (mg/l)    (mg/l)
+        40.      200.        5.       20.       20.       20.
+
+ FINISHED PROCESSING INPUT FOR SECTION PLANK
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION PHCARB
+ 
+      PHCNT    ALKCON
+         50         1
+ 
+     CFCINV  BRCO2(1)  BRCO2(2)
+           (mg/m2.hr)(mg/m2.hr)
+      0.913      62.0      62.0
+ 
+        TIC       CO2        PH
+     (mg/l)    (mg/l)
+        20.        5.       8.5
+
+ FINISHED PROCESSING INPUT FOR SECTION PHCARB
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ FINISHED PROCESSING INPUT FOR SECTIONS OXRX, NUTRX, PLANK, AND PHCARB
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ FINISHED PROCESSING RCHRES NO.    2
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ PROCESSING RCHRES NO:   3     TIME STEP(DELT):   60  MINS
+
+ PROCESSING GENERAL INPUT
+ 
+     HYDRFG      ADFG    CONSFG      HTFG     SEDFG   GQUALFG      OXFG     NUTFG     PLKFG      PHFG
+          1         1         1         1         1         1         1         1         1         1
+ 
+                 Printout level flags                    Print-ivl Print-yrend
+  HYDR ADCA CONS HEAT  SED  GQL OXRX NUTR PLNK PHCB           PIVL    PYREND
+     5    5    5    5    5    5    5    5    5    5              1        12
+ 
+            Binary Output level flags                    Print-ivl Print-yrend
+  HYDR ADCA CONS HEAT  SED  GQL OXRX NUTR PLNK PHCB           PIVL    PYREND
+     4    4    4    4    4    4    4    4    4    4              1         9
+ 
+ Reach/reservoir-id      NEXITS     Unit systems        Print-file nos      Lake-    BinaryOutfileNos
+                                  IUNITS    OUNITS    English    Metric      flag   English    Metric
+ SPILLWAY                     1         1         1         1         0         0         0         0
+
+ FINISHED PROCESSING GENERAL INPUT
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION HYDR
+ 
+     VCONFG    AUX1FG    AUX2FG    AUX3FG     ODFV-flags for      ODGT-flags for      FUNCT-flags for
+                                              each poss. exit          poss. exit     each poss. exit
+          0         1         1         1       4  0  0  0  0       0  0  0  0  0       1  1  1  1  1
+ 
+                          MILES        FT        FT                  IN
+        DSN      FTBN       LEN     DELTH     STCOR        KS      DB50
+         00         3      0.25       30.      0.00        .5 1.000E-02
+ 
+ Values of irrigation withdrawal parameters
+     IREXIT    IRMINV (ac.ft)
+       0.00      0.00
+ 
+  (acre-ft)       CAT Init value of COLIND for each poss exit           Init value of OUTDGT for each poss exit (ft3/s)
+        VOL
+                              1         2         3         4         5         1         2         3         4         5
+        0.0                 4.0      4.00      4.00      4.00      4.00      0.00      0.00      0.00      0.00      0.00
+
+ INITIAL TOTAL OUTFLOW RATE:    0.000E+00
+
+ AUXILIARY STATE VARIABLES - GROUP 1
+        DEP     STAGE     SAREA     AVDEP      TWID      HRAD
+         FT        FT     ACRES        FT        FT        FT
+  0.000E+00 0.000E+00 0.000E+00 0.000E+00 0.000E+00 0.000E+00
+
+ AUXILIARY STATE VARIABLES - GROUP 2
+      AVVEL    AVSECT
+     FT/SEC       FT2
+  0.000E+00 0.000E+00
+
+ AUXILIARY STATE VARIABLES - GROUP 3
+      USTAR       TAU
+     FT/SEC    LB/FT2
+  0.000E+00 0.000E+00
+
+ FINISHED PROCESSING INPUT FOR SECTION HYDR
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION ADCALC
+ 
+      CRRAT       VOL
+            (acre-ft)
+       1.50      0.00
+
+ FINISHED PROCESSING INPUT FOR SECTION ADCALC
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION CONS
+ 
+      NCONS
+          1
+ 
+                            Atmospheric Deposition Flags
+      CONS1     CONS2     CONS3     CONS4     CONS5     CONS6     CONS7     CONS8     CONS9    CONS10
+    FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON
+      0   0     0   0     0   0     0   0     0   0     0   0     0   0     0   0     0   0     0   0
+ 
+    Substance id         Concentration         Conv      Qty-
+                       Init-val     Units      fact        id
+      ALKALINITY          1000.      MG/L     35.31        KG
+
+ FINISHED PROCESSING INPUT FOR SECTION CONS
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION HTRCH
+ 
+     BEDFLG     TGFLG     TSTOP
+          0         2        55
+ 
+       ELEV     ELDAT    CFSAEX    KATRAD     KCOND     KEVAP
+       (ft)      (ft)
+       450.      100.       .95      9.37      6.12      2.24
+ 
+     SHADFG     TOPFL     VEGFL      NSSP    LATDEG    LONDEG    LONSTD
+                                              (deg)     (deg)     (deg)
+       0.00      41.0      42.0      0.00      40.0     -90.0     -90.0
+ 
+         TW    AIRTMP
+    (deg F)   (deg F)
+        60.       40.
+
+ FINISHED PROCESSING INPUT FOR SECTION HTRCH
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION SEDTRN
+ 
+      SNDFG
+          3
+ 
+     BEDWID    BEDWRN       POR
+       (ft)      (ft)
+       1.33        3.     0.500
+
+ SAND PARAMETERS
+ 
+          D         W       RHO     KSAND    EXPSND
+       (in)  (in/sec)
+       .014       2.5      2.65       1.5       1.2
+
+ SILT PARAMETERS
+ 
+          D         W       RHO     TAUCD     TAUCS         M
+       (in)  (in/sec)  (gm/cm3)  (lb/ft2)  (lb/ft2)(lb/ft2.d)
+     .00063     .0066       2.2    1.E-10      500.        .5
+
+ CLAY PARAMETERS
+ 
+          D         W       RHO     TAUCD     TAUCS         M
+       (in)  (in/sec)  (gm/cm3)  (lb/ft2)  (lb/ft2)(lb/ft2.d)
+    .000055   .000034       2.0    1.E-10      500.       .75
+ 
+      Suspended sed concs (mg/l)
+    SSED(1)   SSED(2)   SSED(3)
+     (mg/l)    (mg/l)    (mg/l)
+         5.       20.       30.
+ 
+ Init bed  Initial fraction of each size
+ thickness        of sediment in the bed
+       (ft)      Sand      Silt      Clay
+         2.        .8        .1        .1
+
+ FINISHED PROCESSING INPUT FOR SECTION SEDTRN
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION GQUAL
+ 
+    NGQUAL    <----Flags indicating sources of input data------------>  Latitude
+               TEMPFG    PHFLAG     ROXFG     CLDFG      SDFG    PHYTFG (Degrees)
+          1         1         1         2         1         1         1        42
+ 
+ Atmospheric Deposition Flags
+    GQUAL1   GQUAL2   GQUAL3   GQUAL4   GQUAL5   GQUAL6   GQUAL7
+   FLX CON  FLX CON  FLX CON  FLX CON  FLX CON  FLX CON  FLX CON
+     0   0    0   0    0   0    0   0    0   0    0   0    0   0
+ 
+         Substance id   Concentration          Conv      Qty-
+                       Init-val Units(/l)      fact        id
+         PESTICIDE B4       10.        UG      1.E6         G
+ 
+     <-----------Degradation process flags ----------------->  Sediment
+     Hydrol      Oxid    Photol   Volatil    Biodeg   General     assoc
+          1         1         1         1         1         1         1
+ 
+     <-Flags indicating whether qual is a daughter through-->      Source of
+     Hydrol      Oxid    Photol   Volatil    Biodeg   General   biomass data
+          0         0         0         0         0         0              2
+ 
+         KA        KB        KN     THHYD
+   (/M-sec)  (/M-sec)    (/sec)
+       .001       .01      .001      1.03
+ 
+        KOX      THOX
+   (/M.sec)
+         .1      1.03
+ 
+ Items 1 thru 18 below are molar absorption coefficients, for each of the 18 wavelengths (l/mole.cm).
+ Item 19 is the quantum yield (mole/Einstein).
+ Item 20 is the temperature correction parameter (theta).
+       848.      544.      330.      195.      120.       68.       41.       23.       13.        7.        4.        1.        .1
+       0.00      0.00      0.00      0.00      0.00        .3       1.1
+ 
+      CFGAS
+       .001
+ 
+     BIOCON     THBIO       BIO
+ (1/mg/day)              (mg/l)
+        .01      1.07       10.
+ 
+     FSTDEC     THFST
+     (/day)
+         .2      1.07
+ 
+ Decay rate (/day) & temp correction coeff. for qual on sediment:
+ <----Suspended-----><-----Bed---------->
+       Rate     Theta      Rate     Theta
+       0.00      1.07      .002      1.07
+ 
+ Partition coefficients (l/mg) for:
+ <--------Suspended-----------><-------------Bed------------>
+       Sand      Silt      Clay      Sand      Silt      Clay
+      .0001      .001      .001    1.E-10    1.E-10    1.E-10
+ 
+ Adsorption/desorption rate parameters (/day) for:
+ <--------Suspended-----------><------------Bed------------>
+       Sand      Silt      Clay      Sand      Silt      Clay
+       150.      150.      150.     1000.     1000.     1000.
+ 
+ Adsorption/desorption temp correction parameters for:
+ <--------Suspended-----------><------------Bed------------>
+       Sand      Silt      Clay      Sand      Silt      Clay
+       1.07      1.07      1.07      1.07      1.07      1.07
+ 
+ Initial concentrations on sediment (concu/mg):
+ <---------Suspended-----------><-------------Bed----------->
+       Sand      Silt      Clay      Sand      Silt      Clay
+       .001       .01       .01        0.        0.        0.
+ 
+       TWAT     PHVAL       ROC       CLD     SDCNC       PHY
+    (deg F)            (mole/l)  (tenths)    (mg/l)    (mg/l)
+       60.0      7.00     1.E-5      0.00      0.00      0.00
+ 
+ Values of base absorbance coeff (/cm) for each of the 18 light wavelengths:
+       .008      .009      .010      .011      .011      .011      .012      .013      .015      .016      .017      .018      .019
+       .020      .021      .022      .024      .024
+ 
+ Values of sediment absorbance coefficient (l/mg.cm) for each of the 18 light wavelengths:
+       .001      .001      .001      .001      .001      .001      .001      .001      .002      .002      .002      .002      .002
+       .002      .002      .002      .002      .002
+ 
+ Values of the phytoplankton absorbance coefficient (l/mg.cm), for each of the 18 light wavelengths:
+      .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007
+      .0007     .0007     .0007     .0007     .0007
+ 
+ Values of light extinction efficiency of cloud cover, for each of the 18 light wavelengths:
+        .10       .10       .10       .15       .15       .15       .15       .17       .17       .17       .17       .18       .19
+        .20       .21       .21       .21       .21
+ 
+     REAMFG,     DOPFG
+          1         0
+ 
+      REAKT    TCGINV
+      (/ft)
+  8.000E-02      1.05
+
+ FINISHED PROCESSING INPUT FOR SECTION GQUAL
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTIONS OXRX, NUTRX, PLANK, AND PHCARB
+ 
+       BENF
+          0
+ 
+     SCRVEL    SCRMUL
+   (ft/sec)
+         3.      2.00
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION OXRX
+ 
+     KBOD20     TCBOD    KODSET    SUPSAT
+     ( /hr)             (ft/hr)
+         .1      1.08        8.      1.15
+ 
+        DOX       BOD     SATDO
+     (mg/l)    (mg/l)    (mg/l)
+         8.      100.      10.0
+
+ FINISHED PROCESSING INPUT FOR SECTION OXRX
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION NUTRX
+ 
+      TAMFG     NO2FG     PO4FG     AMVFG     DENFG    ADNHFG    ADPOFG    PHFLAG
+          1         1         1         1         1         0         0         2
+ 
+ Atmospheric Deposition Flags
+     NO3      NH3      PO4
+   FLX CON  FLX CON  FLX CON
+     0   0    0   0    0   0
+ 
+       CVBO     CVBPC     CVBPN    BPCNTC
+    (mg/mg)(mols/mol)(mols/mol) (percent)
+       1.98      106.      16.0      49.0
+ 
+   BRTAM(1)  BRTAM(2)  BRPO4(1)  BRPO4(2)     ANAER
+ (mg/m2.hr)(mg/m2.hr)(mg/m2.hr)(mg/m2.hr)    (mg/l)
+       11.0      33.0       1.1       2.2    0.0005
+ 
+     KTAM20    KNO220     TCNIT    KNO320     TCDEN    DENOXT
+      (/hr)     (/hr)               (/hr)              (mg/l)
+       .002      .004      1.07      .001      1.04       0.2
+ 
+     EXPNVG    EXPNVL
+        .50    0.6667
+ 
+        NO3       TAM       NO2       PO4     PHVAL
+     (mg/l)    (mg/l)    (mg/l)    (mg/l)      (ph)
+        40.       10.        1.       50.       7.0
+
+ FINISHED PROCESSING INPUT FOR SECTION NUTRX
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION PLANK
+ 
+      PHYFG     ZOOFG     BALFG    SDLTFG     AMRFG     DECFG      NSFG     ZFOOD     BNPFG
+          1         1         1         1         1         0         1         2         0
+ 
+ Atmospheric Deposition Flags
+     ORN      ORP      ORC
+   FLX CON  FLX CON  FLX CON
+     0   0    0   0    0   0
+ 
+     RATCLP    NONREF    LITSED     ALNPR      EXTB     MALGR    PARADF
+                                              (/ft)     (/hr)
+      0.600     0.500      0.00      1.00       4.5     0.300      1.00
+ 
+      CMMLT      CMMN     CMMNP      CMMP    TALGRH    TALGRL    TALGRM
+   (ly/min)    (mg/l)    (mg/l)    (mg/l)   (deg F)   (deg F)   (deg F)
+  3.300E-02 4.500E-02 2.840E-02 1.500E-02      95.0      43.0      77.0
+ 
+      ALR20      ALDH      ALDL     OXALD     NALDH     PALDH
+      (/hr)     (/hr)     (/hr)     (/hr)    (mg/l)    (mg/l)
+  4.000E-03 1.000E-02 1.000E-03 3.000E-02      0.00      0.00
+ 
+     NMINGR    PMINGR    CMINGR    LMINGR     NMINC
+       mg/l      mg/l      mg/l    ly/min      mg/l
+  1.000E-03 1.000E-03 1.000E-03 1.000E-03 1.000E-03
+ 
+       SEED    MXSTAY      OREF    CLALDH    PHYSET    REFSET
+     (mg/l)    (mg/l)   (ft3/s)    (ug/l)   (ft/hr)   (ft/hr)
+         .1        .1 1.000E-04      50.0        .5        .5
+ 
+     MZOEAT    ZFIL20    ZRES20        ZD      OXZD
+ (mg/mg.hr) (l/mg.hr)     (/hr)     (/hr)     (/hr)
+  5.500E-02        .2 1.500E-03 1.000E-04 3.000E-02
+ 
+     TCZFIL    TCZRES    ZEXDEL    ZOMASS
+                                 (mg/org)
+       1.17      1.07     0.700 3.000E-04
+ 
+       MBAL    CFBALR    CFBALG    MINBAL     CAMPR     FRAVL    NMAXFX
+    (mg/m2)                       (mg/m2)    (mg/l)              (mg/l)
+       600.      1.00      1.00 1.000E-04 1.000E-03      0.00      10.0
+ 
+      FRRIF      CMMV    RIFCQ1    RIFCQ2    RIFCQ3
+               (ft/s)     (cfs)     (cfs)     (cfs)
+       1.00      1.00      0.00      0.00      0.00
+ 
+    RIFVEL1   RIFVEL2   RIFVEL3   RIFVEL4   RIFDEP1   RIFDEP2   RIFDEP3   RIFDEP4
+ 
+       1.00      1.00      1.00      1.00      1.00      1.00      1.00      1.00
+ 
+      PHYTO       ZOO     BENAL       ORN       ORP       ORC
+     (mg/l)   (org/l)   (mg/m2)    (mg/l)    (mg/l)    (mg/l)
+        40.      200.        5.       20.       20.       20.
+
+ FINISHED PROCESSING INPUT FOR SECTION PLANK
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION PHCARB
+ 
+      PHCNT    ALKCON
+         50         1
+ 
+     CFCINV  BRCO2(1)  BRCO2(2)
+           (mg/m2.hr)(mg/m2.hr)
+      0.913      62.0      62.0
+ 
+        TIC       CO2        PH
+     (mg/l)    (mg/l)
+        20.        5.       8.5
+
+ FINISHED PROCESSING INPUT FOR SECTION PHCARB
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ FINISHED PROCESSING INPUT FOR SECTIONS OXRX, NUTRX, PLANK, AND PHCARB
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ FINISHED PROCESSING RCHRES NO.    3
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ PROCESSING RCHRES NO:   4     TIME STEP(DELT):   60  MINS
+
+ PROCESSING GENERAL INPUT
+ 
+     HYDRFG      ADFG    CONSFG      HTFG     SEDFG   GQUALFG      OXFG     NUTFG     PLKFG      PHFG
+          1         1         1         1         1         1         1         1         1         1
+ 
+                 Printout level flags                    Print-ivl Print-yrend
+  HYDR ADCA CONS HEAT  SED  GQL OXRX NUTR PLNK PHCB           PIVL    PYREND
+     5    5    5    5    5    5    5    5    5    5              1        12
+ 
+            Binary Output level flags                    Print-ivl Print-yrend
+  HYDR ADCA CONS HEAT  SED  GQL OXRX NUTR PLNK PHCB           PIVL    PYREND
+     4    4    4    4    4    4    4    4    4    4              1         9
+ 
+ Reach/reservoir-id      NEXITS     Unit systems        Print-file nos      Lake-    BinaryOutfileNos
+                                  IUNITS    OUNITS    English    Metric      flag   English    Metric
+ UPPER KITTLE CREEK           1         1         1         1         0         0         0         0
+
+ FINISHED PROCESSING GENERAL INPUT
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION HYDR
+ 
+     VCONFG    AUX1FG    AUX2FG    AUX3FG     ODFV-flags for      ODGT-flags for      FUNCT-flags for
+                                              each poss. exit          poss. exit     each poss. exit
+          0         1         1         1       4  0  0  0  0       0  0  0  0  0       1  1  1  1  1
+ 
+                          MILES        FT        FT                  IN
+        DSN      FTBN       LEN     DELTH     STCOR        KS      DB50
+         00         4       2.0       40.      0.00        .5 1.000E-02
+ 
+ Values of irrigation withdrawal parameters
+     IREXIT    IRMINV (ac.ft)
+       0.00      0.00
+ 
+  (acre-ft)       CAT Init value of COLIND for each poss exit           Init value of OUTDGT for each poss exit (ft3/s)
+        VOL
+                              1         2         3         4         5         1         2         3         4         5
+        0.0                 4.0      4.00      4.00      4.00      4.00      0.00      0.00      0.00      0.00      0.00
+
+ INITIAL TOTAL OUTFLOW RATE:    0.000E+00
+
+ AUXILIARY STATE VARIABLES - GROUP 1
+        DEP     STAGE     SAREA     AVDEP      TWID      HRAD
+         FT        FT     ACRES        FT        FT        FT
+  0.000E+00 0.000E+00 0.000E+00 0.000E+00 0.000E+00 0.000E+00
+
+ AUXILIARY STATE VARIABLES - GROUP 2
+      AVVEL    AVSECT
+     FT/SEC       FT2
+  0.000E+00 0.000E+00
+
+ AUXILIARY STATE VARIABLES - GROUP 3
+      USTAR       TAU
+     FT/SEC    LB/FT2
+  0.000E+00 0.000E+00
+
+ FINISHED PROCESSING INPUT FOR SECTION HYDR
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION ADCALC
+ 
+      CRRAT       VOL
+            (acre-ft)
+       1.50      0.00
+
+ FINISHED PROCESSING INPUT FOR SECTION ADCALC
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION CONS
+ 
+      NCONS
+          1
+ 
+                            Atmospheric Deposition Flags
+      CONS1     CONS2     CONS3     CONS4     CONS5     CONS6     CONS7     CONS8     CONS9    CONS10
+    FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON
+      0   0     0   0     0   0     0   0     0   0     0   0     0   0     0   0     0   0     0   0
+ 
+    Substance id         Concentration         Conv      Qty-
+                       Init-val     Units      fact        id
+      ALKALINITY          1000.      MG/L     35.31        KG
+
+ FINISHED PROCESSING INPUT FOR SECTION CONS
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION HTRCH
+ 
+     BEDFLG     TGFLG     TSTOP
+          0         2        55
+ 
+       ELEV     ELDAT    CFSAEX    KATRAD     KCOND     KEVAP
+       (ft)      (ft)
+       450.      100.       .95      9.37      6.12      2.24
+ 
+     SHADFG     TOPFL     VEGFL      NSSP    LATDEG    LONDEG    LONSTD
+                                              (deg)     (deg)     (deg)
+       0.00      41.0      42.0      0.00      40.0     -90.0     -90.0
+ 
+         TW    AIRTMP
+    (deg F)   (deg F)
+        60.       40.
+
+ FINISHED PROCESSING INPUT FOR SECTION HTRCH
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION SEDTRN
+ 
+      SNDFG
+          3
+ 
+     BEDWID    BEDWRN       POR
+       (ft)      (ft)
+        2.0        2.     0.500
+
+ SAND PARAMETERS
+ 
+          D         W       RHO     KSAND    EXPSND
+       (in)  (in/sec)
+       .014       2.5      2.65       1.5       1.2
+
+ SILT PARAMETERS
+ 
+          D         W       RHO     TAUCD     TAUCS         M
+       (in)  (in/sec)  (gm/cm3)  (lb/ft2)  (lb/ft2)(lb/ft2.d)
+     .00063     .0066       2.2        .2        .4        .5
+
+ CLAY PARAMETERS
+ 
+          D         W       RHO     TAUCD     TAUCS         M
+       (in)  (in/sec)  (gm/cm3)  (lb/ft2)  (lb/ft2)(lb/ft2.d)
+    .000055   .000034       2.0       .15        .3       .75
+ 
+      Suspended sed concs (mg/l)
+    SSED(1)   SSED(2)   SSED(3)
+     (mg/l)    (mg/l)    (mg/l)
+         5.       20.       30.
+ 
+ Init bed  Initial fraction of each size
+ thickness        of sediment in the bed
+       (ft)      Sand      Silt      Clay
+         1.        .8        .1        .1
+
+ FINISHED PROCESSING INPUT FOR SECTION SEDTRN
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION GQUAL
+ 
+    NGQUAL    <----Flags indicating sources of input data------------>  Latitude
+               TEMPFG    PHFLAG     ROXFG     CLDFG      SDFG    PHYTFG (Degrees)
+          1         1         1         2         1         1         1        42
+ 
+ Atmospheric Deposition Flags
+    GQUAL1   GQUAL2   GQUAL3   GQUAL4   GQUAL5   GQUAL6   GQUAL7
+   FLX CON  FLX CON  FLX CON  FLX CON  FLX CON  FLX CON  FLX CON
+     0   0    0   0    0   0    0   0    0   0    0   0    0   0
+ 
+         Substance id   Concentration          Conv      Qty-
+                       Init-val Units(/l)      fact        id
+         PESTICIDE B4       10.        UG      1.E6         G
+ 
+     <-----------Degradation process flags ----------------->  Sediment
+     Hydrol      Oxid    Photol   Volatil    Biodeg   General     assoc
+          1         1         1         1         1         1         1
+ 
+     <-Flags indicating whether qual is a daughter through-->      Source of
+     Hydrol      Oxid    Photol   Volatil    Biodeg   General   biomass data
+          0         0         0         0         0         0              2
+ 
+         KA        KB        KN     THHYD
+   (/M-sec)  (/M-sec)    (/sec)
+       .001       .01      .001      1.03
+ 
+        KOX      THOX
+   (/M.sec)
+         .1      1.03
+ 
+ Items 1 thru 18 below are molar absorption coefficients, for each of the 18 wavelengths (l/mole.cm).
+ Item 19 is the quantum yield (mole/Einstein).
+ Item 20 is the temperature correction parameter (theta).
+       848.      544.      330.      195.      120.       68.       41.       23.       13.        7.        4.        1.        .1
+       0.00      0.00      0.00      0.00      0.00        .3       1.1
+ 
+      CFGAS
+       .001
+ 
+     BIOCON     THBIO       BIO
+ (1/mg/day)              (mg/l)
+        .01      1.07       10.
+ 
+     FSTDEC     THFST
+     (/day)
+         .2      1.07
+ 
+ Decay rate (/day) & temp correction coeff. for qual on sediment:
+ <----Suspended-----><-----Bed---------->
+       Rate     Theta      Rate     Theta
+       0.00      1.07      .002      1.07
+ 
+ Partition coefficients (l/mg) for:
+ <--------Suspended-----------><-------------Bed------------>
+       Sand      Silt      Clay      Sand      Silt      Clay
+      .0001      .001      .001     .0001      .001      .001
+ 
+ Adsorption/desorption rate parameters (/day) for:
+ <--------Suspended-----------><------------Bed------------>
+       Sand      Silt      Clay      Sand      Silt      Clay
+       150.      150.      150.       .25       .25       .25
+ 
+ Adsorption/desorption temp correction parameters for:
+ <--------Suspended-----------><------------Bed------------>
+       Sand      Silt      Clay      Sand      Silt      Clay
+       1.07      1.07      1.07      1.07      1.07      1.07
+ 
+ Initial concentrations on sediment (concu/mg):
+ <---------Suspended-----------><-------------Bed----------->
+       Sand      Silt      Clay      Sand      Silt      Clay
+       .001       .01       .01      .001       .01       .01
+ 
+       TWAT     PHVAL       ROC       CLD     SDCNC       PHY
+    (deg F)            (mole/l)  (tenths)    (mg/l)    (mg/l)
+       60.0      7.00     1.E-5      0.00      0.00      0.00
+ 
+ Values of base absorbance coeff (/cm) for each of the 18 light wavelengths:
+       .008      .009      .010      .011      .011      .011      .012      .013      .015      .016      .017      .018      .019
+       .020      .021      .022      .024      .024
+ 
+ Values of sediment absorbance coefficient (l/mg.cm) for each of the 18 light wavelengths:
+       .001      .001      .001      .001      .001      .001      .001      .001      .002      .002      .002      .002      .002
+       .002      .002      .002      .002      .002
+ 
+ Values of the phytoplankton absorbance coefficient (l/mg.cm), for each of the 18 light wavelengths:
+      .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007
+      .0007     .0007     .0007     .0007     .0007
+ 
+ Values of light extinction efficiency of cloud cover, for each of the 18 light wavelengths:
+        .10       .10       .10       .15       .15       .15       .15       .17       .17       .17       .17       .18       .19
+        .20       .21       .21       .21       .21
+ 
+     REAMFG,     DOPFG
+          3         0
+ 
+     TCGINV      REAK    EXPRED    EXPREV
+                (/hr)
+       1.05       2.0      -1.1       1.1
+
+ FINISHED PROCESSING INPUT FOR SECTION GQUAL
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTIONS OXRX, NUTRX, PLANK, AND PHCARB
+ 
+       BENF
+          1
+ 
+     SCRVEL    SCRMUL
+   (ft/sec)
+         3.      2.00
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION OXRX
+ 
+      BENOD     TCBEN     EXPOD  BRBOD(1)  BRBOD(2)    EXPREL
+ (mg/m2.hr)                    (mg/m2.hr)(mg/m2.hr)
+        10.       1.1       1.2       20.       25.       1.3
+ 
+     KBOD20     TCBOD    KODSET    SUPSAT
+     ( /hr)             (ft/hr)
+         .1      1.08        8.      1.15
+ 
+        DOX       BOD     SATDO
+     (mg/l)    (mg/l)    (mg/l)
+         8.      100.      10.0
+
+ FINISHED PROCESSING INPUT FOR SECTION OXRX
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION NUTRX
+ 
+      TAMFG     NO2FG     PO4FG     AMVFG     DENFG    ADNHFG    ADPOFG    PHFLAG
+          1         1         1         1         1         0         0         2
+ 
+ Atmospheric Deposition Flags
+     NO3      NH3      PO4
+   FLX CON  FLX CON  FLX CON
+     0   0    0   0    0   0
+ 
+       CVBO     CVBPC     CVBPN    BPCNTC
+    (mg/mg)(mols/mol)(mols/mol) (percent)
+       1.98      106.      16.0      49.0
+ 
+   BRTAM(1)  BRTAM(2)  BRPO4(1)  BRPO4(2)     ANAER
+ (mg/m2.hr)(mg/m2.hr)(mg/m2.hr)(mg/m2.hr)    (mg/l)
+       11.0      33.0       1.1       2.2    0.0005
+ 
+     KTAM20    KNO220     TCNIT    KNO320     TCDEN    DENOXT
+      (/hr)     (/hr)               (/hr)              (mg/l)
+       .002      .004      1.07      .001      1.04       0.2
+ 
+     EXPNVG    EXPNVL
+        .50    0.6667
+ 
+        NO3       TAM       NO2       PO4     PHVAL
+     (mg/l)    (mg/l)    (mg/l)    (mg/l)      (ph)
+        40.       10.        1.       50.       7.0
+
+ FINISHED PROCESSING INPUT FOR SECTION NUTRX
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION PLANK
+ 
+      PHYFG     ZOOFG     BALFG    SDLTFG     AMRFG     DECFG      NSFG     ZFOOD     BNPFG
+          1         1         1         1         1         0         1         2         0
+ 
+ Atmospheric Deposition Flags
+     ORN      ORP      ORC
+   FLX CON  FLX CON  FLX CON
+     0   0    0   0    0   0
+ 
+     RATCLP    NONREF    LITSED     ALNPR      EXTB     MALGR    PARADF
+                                              (/ft)     (/hr)
+      0.600     0.500      0.00      1.00       4.5     0.300      1.00
+ 
+      CMMLT      CMMN     CMMNP      CMMP    TALGRH    TALGRL    TALGRM
+   (ly/min)    (mg/l)    (mg/l)    (mg/l)   (deg F)   (deg F)   (deg F)
+  3.300E-02 4.500E-02 2.840E-02 1.500E-02      95.0      43.0      77.0
+ 
+      ALR20      ALDH      ALDL     OXALD     NALDH     PALDH
+      (/hr)     (/hr)     (/hr)     (/hr)    (mg/l)    (mg/l)
+  4.000E-03 1.000E-02 1.000E-03 3.000E-02      0.00      0.00
+ 
+     NMINGR    PMINGR    CMINGR    LMINGR     NMINC
+       mg/l      mg/l      mg/l    ly/min      mg/l
+  1.000E-03 1.000E-03 1.000E-03 1.000E-03 1.000E-03
+ 
+       SEED    MXSTAY      OREF    CLALDH    PHYSET    REFSET
+     (mg/l)    (mg/l)   (ft3/s)    (ug/l)   (ft/hr)   (ft/hr)
+         .1        .1 1.000E-04      50.0        .5        .5
+ 
+     MZOEAT    ZFIL20    ZRES20        ZD      OXZD
+ (mg/mg.hr) (l/mg.hr)     (/hr)     (/hr)     (/hr)
+  5.500E-02        .2 1.500E-03 1.000E-04 3.000E-02
+ 
+     TCZFIL    TCZRES    ZEXDEL    ZOMASS
+                                 (mg/org)
+       1.17      1.07     0.700 3.000E-04
+ 
+       MBAL    CFBALR    CFBALG    MINBAL     CAMPR     FRAVL    NMAXFX
+    (mg/m2)                       (mg/m2)    (mg/l)              (mg/l)
+       600.      1.00      1.00 1.000E-04 1.000E-03      0.00      10.0
+ 
+      FRRIF      CMMV    RIFCQ1    RIFCQ2    RIFCQ3
+               (ft/s)     (cfs)     (cfs)     (cfs)
+       1.00      1.00      0.00      0.00      0.00
+ 
+    RIFVEL1   RIFVEL2   RIFVEL3   RIFVEL4   RIFDEP1   RIFDEP2   RIFDEP3   RIFDEP4
+ 
+       1.00      1.00      1.00      1.00      1.00      1.00      1.00      1.00
+ 
+      PHYTO       ZOO     BENAL       ORN       ORP       ORC
+     (mg/l)   (org/l)   (mg/m2)    (mg/l)    (mg/l)    (mg/l)
+        40.      200.        5.       20.       20.       20.
+
+ FINISHED PROCESSING INPUT FOR SECTION PLANK
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION PHCARB
+ 
+      PHCNT    ALKCON
+         50         1
+ 
+     CFCINV  BRCO2(1)  BRCO2(2)
+           (mg/m2.hr)(mg/m2.hr)
+      0.913      62.0      62.0
+ 
+        TIC       CO2        PH
+     (mg/l)    (mg/l)
+        20.        5.       8.5
+
+ FINISHED PROCESSING INPUT FOR SECTION PHCARB
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ FINISHED PROCESSING INPUT FOR SECTIONS OXRX, NUTRX, PLANK, AND PHCARB
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ FINISHED PROCESSING RCHRES NO.    4
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ PROCESSING RCHRES NO:   5     TIME STEP(DELT):   60  MINS
+
+ PROCESSING GENERAL INPUT
+ 
+     HYDRFG      ADFG    CONSFG      HTFG     SEDFG   GQUALFG      OXFG     NUTFG     PLKFG      PHFG
+          1         1         1         1         1         1         1         1         1         1
+ 
+                 Printout level flags                    Print-ivl Print-yrend
+  HYDR ADCA CONS HEAT  SED  GQL OXRX NUTR PLNK PHCB           PIVL    PYREND
+     4    4    4    4    4    4    4    4    4    4              1        12
+ 
+            Binary Output level flags                    Print-ivl Print-yrend
+  HYDR ADCA CONS HEAT  SED  GQL OXRX NUTR PLNK PHCB           PIVL    PYREND
+     4    4    4    4    4    4    4    4    4    4              1         9
+ 
+ Reach/reservoir-id      NEXITS     Unit systems        Print-file nos      Lake-    BinaryOutfileNos
+                                  IUNITS    OUNITS    English    Metric      flag   English    Metric
+ LOWER KITTLE CREEK           1         1         1         1         0         0         0         0
+
+ FINISHED PROCESSING GENERAL INPUT
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION HYDR
+ 
+     VCONFG    AUX1FG    AUX2FG    AUX3FG     ODFV-flags for      ODGT-flags for      FUNCT-flags for
+                                              each poss. exit          poss. exit     each poss. exit
+          0         1         1         1       4  0  0  0  0       0  0  0  0  0       1  1  1  1  1
+ 
+                          MILES        FT        FT                  IN
+        DSN      FTBN       LEN     DELTH     STCOR        KS      DB50
+         00         5       3.0       40.      0.00        .5 1.000E-02
+ 
+ Values of irrigation withdrawal parameters
+     IREXIT    IRMINV (ac.ft)
+       0.00      0.00
+ 
+  (acre-ft)       CAT Init value of COLIND for each poss exit           Init value of OUTDGT for each poss exit (ft3/s)
+        VOL
+                              1         2         3         4         5         1         2         3         4         5
+        0.0                 4.0      4.00      4.00      4.00      4.00      0.00      0.00      0.00      0.00      0.00
+
+ INITIAL TOTAL OUTFLOW RATE:    0.000E+00
+
+ AUXILIARY STATE VARIABLES - GROUP 1
+        DEP     STAGE     SAREA     AVDEP      TWID      HRAD
+         FT        FT     ACRES        FT        FT        FT
+  0.000E+00 0.000E+00 0.000E+00 0.000E+00 0.000E+00 0.000E+00
+
+ AUXILIARY STATE VARIABLES - GROUP 2
+      AVVEL    AVSECT
+     FT/SEC       FT2
+  0.000E+00 0.000E+00
+
+ AUXILIARY STATE VARIABLES - GROUP 3
+      USTAR       TAU
+     FT/SEC    LB/FT2
+  0.000E+00 0.000E+00
+
+ FINISHED PROCESSING INPUT FOR SECTION HYDR
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION ADCALC
+ 
+      CRRAT       VOL
+            (acre-ft)
+       1.50      0.00
+
+ FINISHED PROCESSING INPUT FOR SECTION ADCALC
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION CONS
+ 
+      NCONS
+          1
+ 
+                            Atmospheric Deposition Flags
+      CONS1     CONS2     CONS3     CONS4     CONS5     CONS6     CONS7     CONS8     CONS9    CONS10
+    FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON   FLX CON
+      0   0     0   0     0   0     0   0     0   0     0   0     0   0     0   0     0   0     0   0
+ 
+    Substance id         Concentration         Conv      Qty-
+                       Init-val     Units      fact        id
+      ALKALINITY          1000.      MG/L     35.31        KG
+
+ FINISHED PROCESSING INPUT FOR SECTION CONS
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION HTRCH
+ 
+     BEDFLG     TGFLG     TSTOP
+          0         2        55
+ 
+       ELEV     ELDAT    CFSAEX    KATRAD     KCOND     KEVAP
+       (ft)      (ft)
+       450.      100.       .95      9.37      6.12      2.24
+ 
+     SHADFG     TOPFL     VEGFL      NSSP    LATDEG    LONDEG    LONSTD
+                                              (deg)     (deg)     (deg)
+       0.00      41.0      42.0      0.00      40.0     -90.0     -90.0
+ 
+         TW    AIRTMP
+    (deg F)   (deg F)
+        60.       40.
+
+ FINISHED PROCESSING INPUT FOR SECTION HTRCH
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION SEDTRN
+ 
+      SNDFG
+          3
+ 
+     BEDWID    BEDWRN       POR
+       (ft)      (ft)
+       2.66        2.     0.500
+
+ SAND PARAMETERS
+ 
+          D         W       RHO     KSAND    EXPSND
+       (in)  (in/sec)
+       .014       2.5      2.65       1.5       1.2
+
+ SILT PARAMETERS
+ 
+          D         W       RHO     TAUCD     TAUCS         M
+       (in)  (in/sec)  (gm/cm3)  (lb/ft2)  (lb/ft2)(lb/ft2.d)
+     .00063     .0066       2.2        .2        .4        .5
+
+ CLAY PARAMETERS
+ 
+          D         W       RHO     TAUCD     TAUCS         M
+       (in)  (in/sec)  (gm/cm3)  (lb/ft2)  (lb/ft2)(lb/ft2.d)
+    .000055   .000034       2.0       .15        .3       .75
+ 
+      Suspended sed concs (mg/l)
+    SSED(1)   SSED(2)   SSED(3)
+     (mg/l)    (mg/l)    (mg/l)
+         5.       20.       30.
+ 
+ Init bed  Initial fraction of each size
+ thickness        of sediment in the bed
+       (ft)      Sand      Silt      Clay
+         1.        .8        .1        .1
+
+ FINISHED PROCESSING INPUT FOR SECTION SEDTRN
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION GQUAL
+ 
+    NGQUAL    <----Flags indicating sources of input data------------>  Latitude
+               TEMPFG    PHFLAG     ROXFG     CLDFG      SDFG    PHYTFG (Degrees)
+          1         1         1         2         1         1         1        42
+ 
+ Atmospheric Deposition Flags
+    GQUAL1   GQUAL2   GQUAL3   GQUAL4   GQUAL5   GQUAL6   GQUAL7
+   FLX CON  FLX CON  FLX CON  FLX CON  FLX CON  FLX CON  FLX CON
+     0   0    0   0    0   0    0   0    0   0    0   0    0   0
+ 
+         Substance id   Concentration          Conv      Qty-
+                       Init-val Units(/l)      fact        id
+         PESTICIDE B4       10.        UG      1.E6         G
+ 
+     <-----------Degradation process flags ----------------->  Sediment
+     Hydrol      Oxid    Photol   Volatil    Biodeg   General     assoc
+          1         1         1         1         1         1         1
+ 
+     <-Flags indicating whether qual is a daughter through-->      Source of
+     Hydrol      Oxid    Photol   Volatil    Biodeg   General   biomass data
+          0         0         0         0         0         0              2
+ 
+         KA        KB        KN     THHYD
+   (/M-sec)  (/M-sec)    (/sec)
+       .001       .01      .001      1.03
+ 
+        KOX      THOX
+   (/M.sec)
+         .1      1.03
+ 
+ Items 1 thru 18 below are molar absorption coefficients, for each of the 18 wavelengths (l/mole.cm).
+ Item 19 is the quantum yield (mole/Einstein).
+ Item 20 is the temperature correction parameter (theta).
+       848.      544.      330.      195.      120.       68.       41.       23.       13.        7.        4.        1.        .1
+       0.00      0.00      0.00      0.00      0.00        .3       1.1
+ 
+      CFGAS
+       .001
+ 
+     BIOCON     THBIO       BIO
+ (1/mg/day)              (mg/l)
+        .01      1.07       10.
+ 
+     FSTDEC     THFST
+     (/day)
+         .2      1.07
+ 
+ Decay rate (/day) & temp correction coeff. for qual on sediment:
+ <----Suspended-----><-----Bed---------->
+       Rate     Theta      Rate     Theta
+       0.00      1.07      .002      1.07
+ 
+ Partition coefficients (l/mg) for:
+ <--------Suspended-----------><-------------Bed------------>
+       Sand      Silt      Clay      Sand      Silt      Clay
+      .0001      .001      .001     .0001      .001      .001
+ 
+ Adsorption/desorption rate parameters (/day) for:
+ <--------Suspended-----------><------------Bed------------>
+       Sand      Silt      Clay      Sand      Silt      Clay
+       150.      150.      150.       .25       .25       .25
+ 
+ Adsorption/desorption temp correction parameters for:
+ <--------Suspended-----------><------------Bed------------>
+       Sand      Silt      Clay      Sand      Silt      Clay
+       1.07      1.07      1.07      1.07      1.07      1.07
+ 
+ Initial concentrations on sediment (concu/mg):
+ <---------Suspended-----------><-------------Bed----------->
+       Sand      Silt      Clay      Sand      Silt      Clay
+       .001       .01       .01      .001       .01       .01
+ 
+       TWAT     PHVAL       ROC       CLD     SDCNC       PHY
+    (deg F)            (mole/l)  (tenths)    (mg/l)    (mg/l)
+       60.0      7.00     1.E-5      0.00      0.00      0.00
+ 
+ Values of base absorbance coeff (/cm) for each of the 18 light wavelengths:
+       .008      .009      .010      .011      .011      .011      .012      .013      .015      .016      .017      .018      .019
+       .020      .021      .022      .024      .024
+ 
+ Values of sediment absorbance coefficient (l/mg.cm) for each of the 18 light wavelengths:
+       .001      .001      .001      .001      .001      .001      .001      .001      .002      .002      .002      .002      .002
+       .002      .002      .002      .002      .002
+ 
+ Values of the phytoplankton absorbance coefficient (l/mg.cm), for each of the 18 light wavelengths:
+      .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007     .0007
+      .0007     .0007     .0007     .0007     .0007
+ 
+ Values of light extinction efficiency of cloud cover, for each of the 18 light wavelengths:
+        .10       .10       .10       .15       .15       .15       .15       .17       .17       .17       .17       .18       .19
+        .20       .21       .21       .21       .21
+ 
+     REAMFG,     DOPFG
+          2         0
+ 
+     TCGINV
+       1.05
+
+ FINISHED PROCESSING INPUT FOR SECTION GQUAL
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTIONS OXRX, NUTRX, PLANK, AND PHCARB
+ 
+       BENF
+          1
+ 
+     SCRVEL    SCRMUL
+   (ft/sec)
+         3.      2.00
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION OXRX
+ 
+      BENOD     TCBEN     EXPOD  BRBOD(1)  BRBOD(2)    EXPREL
+ (mg/m2.hr)                    (mg/m2.hr)(mg/m2.hr)
+        10.       1.1       1.2       20.       25.       1.3
+ 
+     KBOD20     TCBOD    KODSET    SUPSAT
+     ( /hr)             (ft/hr)
+         .1      1.08        8.      1.15
+ 
+        DOX       BOD     SATDO
+     (mg/l)    (mg/l)    (mg/l)
+         8.      100.      10.0
+
+ FINISHED PROCESSING INPUT FOR SECTION OXRX
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION NUTRX
+ 
+      TAMFG     NO2FG     PO4FG     AMVFG     DENFG    ADNHFG    ADPOFG    PHFLAG
+          1         1         1         1         1         0         0         2
+ 
+ Atmospheric Deposition Flags
+     NO3      NH3      PO4
+   FLX CON  FLX CON  FLX CON
+     0   0    0   0    0   0
+ 
+       CVBO     CVBPC     CVBPN    BPCNTC
+    (mg/mg)(mols/mol)(mols/mol) (percent)
+       1.98      106.      16.0      49.0
+ 
+   BRTAM(1)  BRTAM(2)  BRPO4(1)  BRPO4(2)     ANAER
+ (mg/m2.hr)(mg/m2.hr)(mg/m2.hr)(mg/m2.hr)    (mg/l)
+       11.0      33.0       1.1       2.2    0.0005
+ 
+     KTAM20    KNO220     TCNIT    KNO320     TCDEN    DENOXT
+      (/hr)     (/hr)               (/hr)              (mg/l)
+       .002      .004      1.07      .001      1.04       0.2
+ 
+     EXPNVG    EXPNVL
+        .50    0.6667
+ 
+        NO3       TAM       NO2       PO4     PHVAL
+     (mg/l)    (mg/l)    (mg/l)    (mg/l)      (ph)
+        40.       10.        1.       50.       7.0
+
+ FINISHED PROCESSING INPUT FOR SECTION NUTRX
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION PLANK
+ 
+      PHYFG     ZOOFG     BALFG    SDLTFG     AMRFG     DECFG      NSFG     ZFOOD     BNPFG
+          1         1         1         1         1         0         1         2         0
+ 
+ Atmospheric Deposition Flags
+     ORN      ORP      ORC
+   FLX CON  FLX CON  FLX CON
+     0   0    0   0    0   0
+ 
+     RATCLP    NONREF    LITSED     ALNPR      EXTB     MALGR    PARADF
+                                              (/ft)     (/hr)
+      0.600     0.500      0.00      1.00       4.5     0.300      1.00
+ 
+      CMMLT      CMMN     CMMNP      CMMP    TALGRH    TALGRL    TALGRM
+   (ly/min)    (mg/l)    (mg/l)    (mg/l)   (deg F)   (deg F)   (deg F)
+  3.300E-02 4.500E-02 2.840E-02 1.500E-02      95.0      43.0      77.0
+ 
+      ALR20      ALDH      ALDL     OXALD     NALDH     PALDH
+      (/hr)     (/hr)     (/hr)     (/hr)    (mg/l)    (mg/l)
+  4.000E-03 1.000E-02 1.000E-03 3.000E-02      0.00      0.00
+ 
+     NMINGR    PMINGR    CMINGR    LMINGR     NMINC
+       mg/l      mg/l      mg/l    ly/min      mg/l
+  1.000E-03 1.000E-03 1.000E-03 1.000E-03 1.000E-03
+ 
+       SEED    MXSTAY      OREF    CLALDH    PHYSET    REFSET
+     (mg/l)    (mg/l)   (ft3/s)    (ug/l)   (ft/hr)   (ft/hr)
+         .1        .1 1.000E-04      50.0        .5        .5
+ 
+     MZOEAT    ZFIL20    ZRES20        ZD      OXZD
+ (mg/mg.hr) (l/mg.hr)     (/hr)     (/hr)     (/hr)
+  5.500E-02        .2 1.500E-03 1.000E-04 3.000E-02
+ 
+     TCZFIL    TCZRES    ZEXDEL    ZOMASS
+                                 (mg/org)
+       1.17      1.07     0.700 3.000E-04
+ 
+       MBAL    CFBALR    CFBALG    MINBAL     CAMPR     FRAVL    NMAXFX
+    (mg/m2)                       (mg/m2)    (mg/l)              (mg/l)
+       600.      1.00      1.00 1.000E-04 1.000E-03      0.00      10.0
+ 
+      FRRIF      CMMV    RIFCQ1    RIFCQ2    RIFCQ3
+               (ft/s)     (cfs)     (cfs)     (cfs)
+       1.00      1.00      0.00      0.00      0.00
+ 
+    RIFVEL1   RIFVEL2   RIFVEL3   RIFVEL4   RIFDEP1   RIFDEP2   RIFDEP3   RIFDEP4
+ 
+       1.00      1.00      1.00      1.00      1.00      1.00      1.00      1.00
+ 
+      PHYTO       ZOO     BENAL       ORN       ORP       ORC
+     (mg/l)   (org/l)   (mg/m2)    (mg/l)    (mg/l)    (mg/l)
+        40.      200.        5.       20.       20.       20.
+
+ FINISHED PROCESSING INPUT FOR SECTION PLANK
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ PROCESSING INPUT FOR SECTION PHCARB
+ 
+      PHCNT    ALKCON
+         50         1
+ 
+     CFCINV  BRCO2(1)  BRCO2(2)
+           (mg/m2.hr)(mg/m2.hr)
+      0.913      62.0      62.0
+ 
+        TIC       CO2        PH
+     (mg/l)    (mg/l)
+        20.        5.       8.5
+
+ FINISHED PROCESSING INPUT FOR SECTION PHCARB
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ FINISHED PROCESSING INPUT FOR SECTIONS OXRX, NUTRX, PLANK, AND PHCARB
+ ------------------------------------------------------------------------------------------------------------------------------------
+
+ FINISHED PROCESSING RCHRES NO.    5
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ FINISHED PROCESSING RCHRES   BLOCK
+ ====================================================================================================================================
+
+ ====================================================================================================================================
+ PROCESSING DISPLY   BLOCK
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ PROCESSING DISPLY OPERATION NO.    5  TIME INTERVAL   60 MINS
+ 
+ Title of display               Transform   Data for short-span display              Data for long-span display
+                                     code      PIVL    Digits  File-no.          PYRFG    Digits  File-no.    PYREND
+ WATER TEMP,MEIER POND (DEGF)        AVER         0                   4              1         2        66        12
+ 
+    Convert DegC to F    Display negative data
+          A         B    THRSH1    THRSH2
+       1.00      0.00      0.00      0.00
+
+ FINISHED PROCESSING DISPLAY OPERATION NO.    5
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ PROCESSING DISPLY OPERATION NO.    1  TIME INTERVAL   60 MINS
+ 
+ Title of display               Transform   Data for short-span display              Data for long-span display
+                                     code      PIVL    Digits  File-no.          PYRFG    Digits  File-no.    PYREND
+ O2 CONC, MEIER POND (mg/l)          AVER         0                   4              1         2        66        12
+ 
+    Convert DegC to F    Display negative data
+          A         B    THRSH1    THRSH2
+       1.00      0.00      0.00      0.00
+
+ FINISHED PROCESSING DISPLAY OPERATION NO.    1
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ PROCESSING DISPLY OPERATION NO.    2  TIME INTERVAL   60 MINS
+ 
+ Title of display               Transform   Data for short-span display              Data for long-span display
+                                     code      PIVL    Digits  File-no.          PYRFG    Digits  File-no.    PYREND
+ PEST SED CONC, POND (mg/kg)         AVER         0                   4              1         2        66        12
+ 
+    Convert DegC to F    Display negative data
+          A         B    THRSH1    THRSH2
+       1.00      0.00      0.00      0.00
+
+ FINISHED PROCESSING DISPLAY OPERATION NO.    2
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ PROCESSING DISPLY OPERATION NO.    3  TIME INTERVAL   60 MINS
+ 
+ Title of display               Transform   Data for short-span display              Data for long-span display
+                                     code      PIVL    Digits  File-no.          PYRFG    Digits  File-no.    PYREND
+ O2 CONC,LOWER KITTLE C(mg/l)        AVER         0                   4              1         2        66        12
+ 
+    Convert DegC to F    Display negative data
+          A         B    THRSH1    THRSH2
+       1.00      0.00      0.00      0.00
+
+ FINISHED PROCESSING DISPLAY OPERATION NO.    3
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ PROCESSING DISPLY OPERATION NO.    4  TIME INTERVAL   60 MINS
+ 
+ Title of display               Transform   Data for short-span display              Data for long-span display
+                                     code      PIVL    Digits  File-no.          PYRFG    Digits  File-no.    PYREND
+ PEST SED CONC,L KTL C(mg/kg)        AVER         0                   4              1         2        66        12
+ 
+    Convert DegC to F    Display negative data
+          A         B    THRSH1    THRSH2
+       1.00      0.00      0.00      0.00
+
+ FINISHED PROCESSING DISPLAY OPERATION NO.    4
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ FINISHED PROCESSING DISPLY   BLOCK
+ ====================================================================================================================================
+
+ ====================================================================================================================================
+ PROCESSING GENER    BLOCK
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ PROCESSING INPUT FOR TRANSGENERATION OPERATION NO.    1  TIME INTERVAL=   60 MINS
+ 
+     OPCODE       NTS
+         19         1
+
+ FINISHED PROCESSING TRANSGENERATION OPERATION NO.    1
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ PROCESSING INPUT FOR TRANSGENERATION OPERATION NO.    2  TIME INTERVAL=   60 MINS
+ 
+     OPCODE       NTS
+         19         1
+
+ FINISHED PROCESSING TRANSGENERATION OPERATION NO.    2
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ FINISHED PROCESSING GENER    BLOCK
+ ====================================================================================================================================
+
+ ====================================================================================================================================
+ PROCESSING PLTGEN   BLOCK
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ PROCESSING PLTGEN OPERATION NO.    2
+ 
+     PLOTFL       NPT       NMN    LABLFG    PYREND      PIVL    TYPEFG
+         95         3         1         0         9         6         1
+ 
+ General plot title:                                         Y-axis label:
+ SIMULATED VALS RELATED TO TEMP&PH,RCH 4                                         
+ 
+       YMIN      YMAX     IVLIN    THRESH
+                       (ivl/in)
+         0.      150.       20.-1.000E+30
+ 
+ Curve label:            LINTYP     INTEQ    COLCOD      TRAN
+ AVDEP FOR RCH 4              0         7         1      LAST
+ 
+ Curve label:            LINTYP     INTEQ    COLCOD      TRAN
+ TW FOR RCH 4                 0         8         2      LAST
+ 
+ Curve label:            LINTYP     INTEQ    COLCOD      TRAN
+ PH FOR RCH 4                 0         9         2      LAST
+ 
+ Curve label:            LINTYP     INTEQ    COLCOD      TRAN
+ HTEXCH FOR RCH 4             0        10         2          
+
+ FINISHED PROCESSING PLTGEN OPERATION NO.    2
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ PROCESSING PLTGEN OPERATION NO.    1
+ 
+     PLOTFL       NPT       NMN    LABLFG    PYREND      PIVL    TYPEFG
+         94         0         2         0         9        24         1
+ 
+ General plot title:                                         Y-axis label:
+ SIMULATED FLOWS (CFS)                                       CFS                 
+ 
+       YMIN      YMAX     IVLIN    THRESH
+                       (ivl/in)
+         0.      150.       20.-1.000E+30
+ 
+ Curve label:            LINTYP     INTEQ    COLCOD      TRAN
+ TOTAL POND OUTFL             0         7         1      AVER
+ 
+ Curve label:            LINTYP     INTEQ    COLCOD      TRAN
+ LOWER KITTLE CR              0         8         2      AVER
+
+ FINISHED PROCESSING PLTGEN OPERATION NO.    1
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ FINISHED PROCESSING PLTGEN   BLOCK
+ ====================================================================================================================================
+
+ ====================================================================================================================================
+ SPEC-ACTIONS BLOCK NOT FOUND
+
+ FINISHED PROCESSING SPEC-ACTIONS BLOCK
+ ====================================================================================================================================
+
+ ====================================================================================================================================
+ PROCESSING BLOCKS CONTAINING TIME SERIES LINKAGES
+
+ INGROUP NO.  1    OSVSZ=22500    INPAD WIDTH=  6786 INTERVALS    MAXROW=   73  RUNWID=    0
+
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ TIMESERIES USED BY OPERATION   PERLND    1
+
+   INPUT TIMESERIES
+
+     FROM EXTERNAL SOURCES
+     TYPE      #  INTERVAL   TRN STR         MFACT    GROUP   MEMBER  S1  S2   
+
+     WDM1     39        60      SAME     1.000E+00    EXTNL   PREC     1   1
+     WDM1    123       120      SAME     1.000E+00    ATEMP   AIRTMP   1   1
+     WDM1     41      1440      DIV      7.000E-01    EXTNL   PETINP   1   1
+     WDM1     42      1440      DIV      1.000E+00    EXTNL   WINMOV   1   1
+     WDM1     46       120      DIV      1.000E+00    EXTNL   SOLRAD   1   1
+     WDM1    126      1440      SAME     1.000E+00    EXTNL   DTMPG    1   1
+     WDM1    135      1440      SAME     1.000E+00    EXTNL   CLOUD    1   1
+
+   OUTPUT TIMESERIES
+
+     TO OTHER OPERATIONS(NETWORK)
+     GROUP   MEMBER  S1  S2        MFACT  TYPE      # GROUP   MEMBER  S1  S2   
+
+     PWATER  PERO     1   1    5.000E+02  RCHRES    1 INFLOW  IVOL     1   1
+     PWTGAS  POHT     1   1    6.000E+03  RCHRES    1 INFLOW  IHEAT    1   1
+     PWTGAS  PODOXM   1   1    6.000E+03  RCHRES    1 INFLOW  OXIF     1   1
+     PWTGAS  POCO2M   1   1    6.000E+03  RCHRES    1 INFLOW  PHIF     2   1
+
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ TIMESERIES USED BY OPERATION   RCHRES    1
+
+   INPUT TIMESERIES
+
+     FROM EXTERNAL SOURCES
+     TYPE      #  INTERVAL   TRN STR         MFACT    GROUP   MEMBER  S1  S2   
+
+     WDM1     39        60      SAME     1.000E+00    EXTNL   PREC     1   1
+     WDM1    123       120      SAME     1.000E+00    EXTNL   GATMP    1   1
+     WDM1     41      1440      DIV      7.000E-01    EXTNL   POTEV    1   1
+     WDM1     42      1440      DIV      1.000E+00    EXTNL   WIND     1   1
+     WDM1     46       120      DIV      1.000E+00    EXTNL   SOLRAD   1   1
+     WDM1    126      1440      SAME     1.000E+00    EXTNL   DEWTMP   1   1
+     WDM1    140      1440      SAME     1.000E+00    EXTNL   COLIND   1   1
+     WDM1    135      1440      SAME     1.000E+00    EXTNL   CLOUD    1   1
+
+     FROM OTHER OPERATIONS(NETWORK)
+     TYPE      # GROUP   MEMBER  S1  S2      MFACT    GROUP   MEMBER  S1  S2   
+
+     PERLND    1 PWATER  PERO     1   1  5.000E+02    INFLOW  IVOL     1   1
+     PERLND    1 PWTGAS  POHT     1   1  6.000E+03    INFLOW  IHEAT    1   1
+     PERLND    1 PWTGAS  PODOXM   1   1  6.000E+03    INFLOW  OXIF     1   1
+     PERLND    1 PWTGAS  POCO2M   1   1  6.000E+03    INFLOW  PHIF     2   1
+
+   OUTPUT TIMESERIES
+
+     TO OTHER OPERATIONS(NETWORK)
+     GROUP   MEMBER  S1  S2        MFACT  TYPE      # GROUP   MEMBER  S1  S2   
+
+     OFLOW   OVOL     1   1    1.000E+00  RCHRES    2 INFLOW  IVOL     1   1
+     OFLOW   OCON     1   1    1.000E+00  RCHRES    2 INFLOW  ICON     1   1
+     OFLOW   OHEAT    1   1    1.000E+00  RCHRES    2 INFLOW  IHEAT    1   1
+     OFLOW   OSED     1   1    1.000E+00  RCHRES    2 INFLOW  ISED     1   1
+     OFLOW   OSED     1   2    1.000E+00  RCHRES    2 INFLOW  ISED     2   1
+     OFLOW   OSED     1   3    1.000E+00  RCHRES    2 INFLOW  ISED     3   1
+     OFLOW   ODQAL    1   1    1.000E+00  RCHRES    2 INFLOW  IDQAL    1   1
+     OFLOW   OSQAL    1   1    1.000E+00  RCHRES    2 INFLOW  ISQAL    1   1
+     OFLOW   OSQAL    1   2    1.000E+00  RCHRES    2 INFLOW  ISQAL    2   1
+     OFLOW   OSQAL    1   3    1.000E+00  RCHRES    2 INFLOW  ISQAL    3   1
+     OFLOW   OXCF2    1   1    1.000E+00  RCHRES    2 INFLOW  OXIF     1   1
+     OFLOW   OXCF2    1   2    1.000E+00  RCHRES    2 INFLOW  OXIF     2   1
+     OFLOW   NUCF9    1   1    1.000E+00  RCHRES    2 INFLOW  NUIF1    1   1
+     OFLOW   NUCF9    1   2    1.000E+00  RCHRES    2 INFLOW  NUIF1    2   1
+     OFLOW   NUCF9    1   3    1.000E+00  RCHRES    2 INFLOW  NUIF1    3   1
+     OFLOW   NUCF9    1   4    1.000E+00  RCHRES    2 INFLOW  NUIF1    4   1
+     OFLOW   OSNH4    1   1    1.000E+00  RCHRES    2 INFLOW  NUIF2    1   1
+     OFLOW   OSNH4    1   2    1.000E+00  RCHRES    2 INFLOW  NUIF2    2   1
+     OFLOW   OSNH4    1   3    1.000E+00  RCHRES    2 INFLOW  NUIF2    3   1
+     OFLOW   OSPO4    1   1    1.000E+00  RCHRES    2 INFLOW  NUIF2    1   2
+     OFLOW   OSPO4    1   2    1.000E+00  RCHRES    2 INFLOW  NUIF2    2   2
+     OFLOW   OSPO4    1   3    1.000E+00  RCHRES    2 INFLOW  NUIF2    3   2
+     OFLOW   PKCF2    1   1    1.000E+00  RCHRES    2 INFLOW  PKIF     1   1
+     OFLOW   PKCF2    1   2    1.000E+00  RCHRES    2 INFLOW  PKIF     2   1
+     OFLOW   PKCF2    1   3    1.000E+00  RCHRES    2 INFLOW  PKIF     3   1
+     OFLOW   PKCF2    1   4    1.000E+00  RCHRES    2 INFLOW  PKIF     4   1
+     OFLOW   PKCF2    1   5    1.000E+00  RCHRES    2 INFLOW  PKIF     5   1
+     OFLOW   PHCF2    1   1    1.000E+00  RCHRES    2 INFLOW  PHIF     1   1
+     OFLOW   PHCF2    1   2    1.000E+00  RCHRES    2 INFLOW  PHIF     2   1
+     OFLOW   OVOL     2   1    1.000E+00  RCHRES    3 INFLOW  IVOL     1   1
+     OFLOW   OCON     2   1    1.000E+00  RCHRES    3 INFLOW  ICON     1   1
+     OFLOW   OHEAT    2   1    1.000E+00  RCHRES    3 INFLOW  IHEAT    1   1
+     OFLOW   OSED     2   1    1.000E+00  RCHRES    3 INFLOW  ISED     1   1
+     OFLOW   OSED     2   2    1.000E+00  RCHRES    3 INFLOW  ISED     2   1
+     OFLOW   OSED     2   3    1.000E+00  RCHRES    3 INFLOW  ISED     3   1
+     OFLOW   ODQAL    2   1    1.000E+00  RCHRES    3 INFLOW  IDQAL    1   1
+     OFLOW   OSQAL    2   1    1.000E+00  RCHRES    3 INFLOW  ISQAL    1   1
+     OFLOW   OSQAL    2   2    1.000E+00  RCHRES    3 INFLOW  ISQAL    2   1
+     OFLOW   OSQAL    2   3    1.000E+00  RCHRES    3 INFLOW  ISQAL    3   1
+     OFLOW   OXCF2    2   1    1.000E+00  RCHRES    3 INFLOW  OXIF     1   1
+     OFLOW   OXCF2    2   2    1.000E+00  RCHRES    3 INFLOW  OXIF     2   1
+     OFLOW   NUCF9    2   1    1.000E+00  RCHRES    3 INFLOW  NUIF1    1   1
+     OFLOW   NUCF9    2   2    1.000E+00  RCHRES    3 INFLOW  NUIF1    2   1
+     OFLOW   NUCF9    2   3    1.000E+00  RCHRES    3 INFLOW  NUIF1    3   1
+     OFLOW   NUCF9    2   4    1.000E+00  RCHRES    3 INFLOW  NUIF1    4   1
+     OFLOW   OSNH4    2   1    1.000E+00  RCHRES    3 INFLOW  NUIF2    1   1
+     OFLOW   OSNH4    2   2    1.000E+00  RCHRES    3 INFLOW  NUIF2    2   1
+     OFLOW   OSNH4    2   3    1.000E+00  RCHRES    3 INFLOW  NUIF2    3   1
+     OFLOW   OSPO4    2   1    1.000E+00  RCHRES    3 INFLOW  NUIF2    1   2
+     OFLOW   OSPO4    2   2    1.000E+00  RCHRES    3 INFLOW  NUIF2    2   2
+     OFLOW   OSPO4    2   3    1.000E+00  RCHRES    3 INFLOW  NUIF2    3   2
+     OFLOW   PKCF2    2   1    1.000E+00  RCHRES    3 INFLOW  PKIF     1   1
+     OFLOW   PKCF2    2   2    1.000E+00  RCHRES    3 INFLOW  PKIF     2   1
+     OFLOW   PKCF2    2   3    1.000E+00  RCHRES    3 INFLOW  PKIF     3   1
+     OFLOW   PKCF2    2   4    1.000E+00  RCHRES    3 INFLOW  PKIF     4   1
+     OFLOW   PKCF2    2   5    1.000E+00  RCHRES    3 INFLOW  PKIF     5   1
+     OFLOW   PHCF2    2   1    1.000E+00  RCHRES    3 INFLOW  PHIF     1   1
+     OFLOW   PHCF2    2   2    1.000E+00  RCHRES    3 INFLOW  PHIF     2   1
+     HTRCH   TW       1   1    1.000E+00  DISPLY    5 INPUT   TIMSER   1   1
+     OXRX    DOX      1   1    1.000E+00  DISPLY    1 INPUT   TIMSER   1   1
+     GQUAL   RSQAL   12   1    1.000E+00  GENER     1 INPUT   ONE      1   1
+     SEDTRN  RSED    10   1    1.000E+00  GENER     1 INPUT   TWO      1   1
+     HYDR    ROVOL    1   1    1.210E+01  PLTGEN    1 INPUT   MEAN     1   1
+
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ TIMESERIES USED BY OPERATION   DISPLY    5
+
+   INPUT TIMESERIES
+
+     FROM OTHER OPERATIONS(NETWORK)
+     TYPE      # GROUP   MEMBER  S1  S2      MFACT    GROUP   MEMBER  S1  S2   
+
+     RCHRES    1 HTRCH   TW       1   1  1.000E+00    INPUT   TIMSER   1   1
+
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ TIMESERIES USED BY OPERATION   DISPLY    1
+
+   INPUT TIMESERIES
+
+     FROM OTHER OPERATIONS(NETWORK)
+     TYPE      # GROUP   MEMBER  S1  S2      MFACT    GROUP   MEMBER  S1  S2   
+
+     RCHRES    1 OXRX    DOX      1   1  1.000E+00    INPUT   TIMSER   1   1
+
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ TIMESERIES USED BY OPERATION   GENER     1
+
+   INPUT TIMESERIES
+
+     FROM OTHER OPERATIONS(NETWORK)
+     TYPE      # GROUP   MEMBER  S1  S2      MFACT    GROUP   MEMBER  S1  S2   
+
+     RCHRES    1 GQUAL   RSQAL   12   1  1.000E+00    INPUT   ONE      1   1
+     RCHRES    1 SEDTRN  RSED    10   1  1.000E+00    INPUT   TWO      1   1
+
+   OUTPUT TIMESERIES
+
+     TO OTHER OPERATIONS(NETWORK)
+     GROUP   MEMBER  S1  S2        MFACT  TYPE      # GROUP   MEMBER  S1  S2   
+
+     OUTPUT  TIMSER   1   1    1.100E+00  DISPLY    2 INPUT   TIMSER   1   1
+
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ TIMESERIES USED BY OPERATION   DISPLY    2
+
+   INPUT TIMESERIES
+
+     FROM OTHER OPERATIONS(NETWORK)
+     TYPE      # GROUP   MEMBER  S1  S2      MFACT    GROUP   MEMBER  S1  S2   
+
+     GENER     1 OUTPUT  TIMSER   1   1  1.100E+00    INPUT   TIMSER   1   1
+
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ TIMESERIES USED BY OPERATION   RCHRES    2
+
+   INPUT TIMESERIES
+
+     FROM EXTERNAL SOURCES
+     TYPE      #  INTERVAL   TRN STR         MFACT    GROUP   MEMBER  S1  S2   
+
+     WDM1     39        60      SAME     1.000E+00    EXTNL   PREC     1   1
+     WDM1    123       120      SAME     1.000E+00    EXTNL   GATMP    1   1
+     WDM1     41      1440      DIV      7.000E-01    EXTNL   POTEV    1   1
+     WDM1     42      1440      DIV      1.000E+00    EXTNL   WIND     1   1
+     WDM1     46       120      DIV      1.000E+00    EXTNL   SOLRAD   1   1
+     WDM1    126      1440      SAME     1.000E+00    EXTNL   DEWTMP   1   1
+     WDM1    135      1440      SAME     1.000E+00    EXTNL   CLOUD    1   1
+
+     FROM OTHER OPERATIONS(NETWORK)
+     TYPE      # GROUP   MEMBER  S1  S2      MFACT    GROUP   MEMBER  S1  S2   
+
+     RCHRES    1 OFLOW   OVOL     1   1  1.000E+00    INFLOW  IVOL     1   1
+     RCHRES    1 OFLOW   OCON     1   1  1.000E+00    INFLOW  ICON     1   1
+     RCHRES    1 OFLOW   OHEAT    1   1  1.000E+00    INFLOW  IHEAT    1   1
+     RCHRES    1 OFLOW   OSED     1   1  1.000E+00    INFLOW  ISED     1   1
+     RCHRES    1 OFLOW   OSED     1   2  1.000E+00    INFLOW  ISED     2   1
+     RCHRES    1 OFLOW   OSED     1   3  1.000E+00    INFLOW  ISED     3   1
+     RCHRES    1 OFLOW   ODQAL    1   1  1.000E+00    INFLOW  IDQAL    1   1
+     RCHRES    1 OFLOW   OSQAL    1   1  1.000E+00    INFLOW  ISQAL    1   1
+     RCHRES    1 OFLOW   OSQAL    1   2  1.000E+00    INFLOW  ISQAL    2   1
+     RCHRES    1 OFLOW   OSQAL    1   3  1.000E+00    INFLOW  ISQAL    3   1
+     RCHRES    1 OFLOW   OXCF2    1   1  1.000E+00    INFLOW  OXIF     1   1
+     RCHRES    1 OFLOW   OXCF2    1   2  1.000E+00    INFLOW  OXIF     2   1
+     RCHRES    1 OFLOW   NUCF9    1   1  1.000E+00    INFLOW  NUIF1    1   1
+     RCHRES    1 OFLOW   NUCF9    1   2  1.000E+00    INFLOW  NUIF1    2   1
+     RCHRES    1 OFLOW   NUCF9    1   3  1.000E+00    INFLOW  NUIF1    3   1
+     RCHRES    1 OFLOW   NUCF9    1   4  1.000E+00    INFLOW  NUIF1    4   1
+     RCHRES    1 OFLOW   OSNH4    1   1  1.000E+00    INFLOW  NUIF2    1   1
+     RCHRES    1 OFLOW   OSNH4    1   2  1.000E+00    INFLOW  NUIF2    2   1
+     RCHRES    1 OFLOW   OSNH4    1   3  1.000E+00    INFLOW  NUIF2    3   1
+     RCHRES    1 OFLOW   OSPO4    1   1  1.000E+00    INFLOW  NUIF2    1   2
+     RCHRES    1 OFLOW   OSPO4    1   2  1.000E+00    INFLOW  NUIF2    2   2
+     RCHRES    1 OFLOW   OSPO4    1   3  1.000E+00    INFLOW  NUIF2    3   2
+     RCHRES    1 OFLOW   PKCF2    1   1  1.000E+00    INFLOW  PKIF     1   1
+     RCHRES    1 OFLOW   PKCF2    1   2  1.000E+00    INFLOW  PKIF     2   1
+     RCHRES    1 OFLOW   PKCF2    1   3  1.000E+00    INFLOW  PKIF     3   1
+     RCHRES    1 OFLOW   PKCF2    1   4  1.000E+00    INFLOW  PKIF     4   1
+     RCHRES    1 OFLOW   PKCF2    1   5  1.000E+00    INFLOW  PKIF     5   1
+     RCHRES    1 OFLOW   PHCF2    1   1  1.000E+00    INFLOW  PHIF     1   1
+     RCHRES    1 OFLOW   PHCF2    1   2  1.000E+00    INFLOW  PHIF     2   1
+
+   OUTPUT TIMESERIES
+
+     TO OTHER OPERATIONS(NETWORK)
+     GROUP   MEMBER  S1  S2        MFACT  TYPE      # GROUP   MEMBER  S1  S2   
+
+     ROFLOW  ROVOL    1   1    1.000E+00  RCHRES    4 INFLOW  IVOL     1   1
+     ROFLOW  ROCON    1   1    1.000E+00  RCHRES    4 INFLOW  ICON     1   1
+     ROFLOW  ROHEAT   1   1    1.000E+00  RCHRES    4 INFLOW  IHEAT    1   1
+     ROFLOW  ROSED    1   1    1.000E+00  RCHRES    4 INFLOW  ISED     1   1
+     ROFLOW  ROSED    2   1    1.000E+00  RCHRES    4 INFLOW  ISED     2   1
+     ROFLOW  ROSED    3   1    1.000E+00  RCHRES    4 INFLOW  ISED     3   1
+     ROFLOW  RODQAL   1   1    1.000E+00  RCHRES    4 INFLOW  IDQAL    1   1
+     ROFLOW  ROSQAL   1   1    1.000E+00  RCHRES    4 INFLOW  ISQAL    1   1
+     ROFLOW  ROSQAL   2   1    1.000E+00  RCHRES    4 INFLOW  ISQAL    2   1
+     ROFLOW  ROSQAL   3   1    1.000E+00  RCHRES    4 INFLOW  ISQAL    3   1
+     ROFLOW  OXCF1    1   1    1.000E+00  RCHRES    4 INFLOW  OXIF     1   1
+     ROFLOW  OXCF1    2   1    1.000E+00  RCHRES    4 INFLOW  OXIF     2   1
+     ROFLOW  NUCF1    1   1    1.000E+00  RCHRES    4 INFLOW  NUIF1    1   1
+     ROFLOW  NUCF1    2   1    1.000E+00  RCHRES    4 INFLOW  NUIF1    2   1
+     ROFLOW  NUCF1    3   1    1.000E+00  RCHRES    4 INFLOW  NUIF1    3   1
+     ROFLOW  NUCF1    4   1    1.000E+00  RCHRES    4 INFLOW  NUIF1    4   1
+     ROFLOW  NUCF2    1   1    1.000E+00  RCHRES    4 INFLOW  NUIF2    1   1
+     ROFLOW  NUCF2    2   1    1.000E+00  RCHRES    4 INFLOW  NUIF2    2   1
+     ROFLOW  NUCF2    3   1    1.000E+00  RCHRES    4 INFLOW  NUIF2    3   1
+     ROFLOW  NUCF2    1   2    1.000E+00  RCHRES    4 INFLOW  NUIF2    1   2
+     ROFLOW  NUCF2    2   2    1.000E+00  RCHRES    4 INFLOW  NUIF2    2   2
+     ROFLOW  NUCF2    3   2    1.000E+00  RCHRES    4 INFLOW  NUIF2    3   2
+     ROFLOW  PKCF1    1   1    1.000E+00  RCHRES    4 INFLOW  PKIF     1   1
+     ROFLOW  PKCF1    2   1    1.000E+00  RCHRES    4 INFLOW  PKIF     2   1
+     ROFLOW  PKCF1    3   1    1.000E+00  RCHRES    4 INFLOW  PKIF     3   1
+     ROFLOW  PKCF1    4   1    1.000E+00  RCHRES    4 INFLOW  PKIF     4   1
+     ROFLOW  PKCF1    5   1    1.000E+00  RCHRES    4 INFLOW  PKIF     5   1
+     ROFLOW  PHCF1    1   1    1.000E+00  RCHRES    4 INFLOW  PHIF     1   1
+     ROFLOW  PHCF1    2   1    1.000E+00  RCHRES    4 INFLOW  PHIF     2   1
+
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ TIMESERIES USED BY OPERATION   RCHRES    3
+
+   INPUT TIMESERIES
+
+     FROM EXTERNAL SOURCES
+     TYPE      #  INTERVAL   TRN STR         MFACT    GROUP   MEMBER  S1  S2   
+
+     WDM1     39        60      SAME     1.000E+00    EXTNL   PREC     1   1
+     WDM1    123       120      SAME     1.000E+00    EXTNL   GATMP    1   1
+     WDM1     41      1440      DIV      7.000E-01    EXTNL   POTEV    1   1
+     WDM1     42      1440      DIV      1.000E+00    EXTNL   WIND     1   1
+     WDM1     46       120      DIV      1.000E+00    EXTNL   SOLRAD   1   1
+     WDM1    126      1440      SAME     1.000E+00    EXTNL   DEWTMP   1   1
+     WDM1    135      1440      SAME     1.000E+00    EXTNL   CLOUD    1   1
+
+     FROM OTHER OPERATIONS(NETWORK)
+     TYPE      # GROUP   MEMBER  S1  S2      MFACT    GROUP   MEMBER  S1  S2   
+
+     RCHRES    1 OFLOW   OVOL     2   1  1.000E+00    INFLOW  IVOL     1   1
+     RCHRES    1 OFLOW   OCON     2   1  1.000E+00    INFLOW  ICON     1   1
+     RCHRES    1 OFLOW   OHEAT    2   1  1.000E+00    INFLOW  IHEAT    1   1
+     RCHRES    1 OFLOW   OSED     2   1  1.000E+00    INFLOW  ISED     1   1
+     RCHRES    1 OFLOW   OSED     2   2  1.000E+00    INFLOW  ISED     2   1
+     RCHRES    1 OFLOW   OSED     2   3  1.000E+00    INFLOW  ISED     3   1
+     RCHRES    1 OFLOW   ODQAL    2   1  1.000E+00    INFLOW  IDQAL    1   1
+     RCHRES    1 OFLOW   OSQAL    2   1  1.000E+00    INFLOW  ISQAL    1   1
+     RCHRES    1 OFLOW   OSQAL    2   2  1.000E+00    INFLOW  ISQAL    2   1
+     RCHRES    1 OFLOW   OSQAL    2   3  1.000E+00    INFLOW  ISQAL    3   1
+     RCHRES    1 OFLOW   OXCF2    2   1  1.000E+00    INFLOW  OXIF     1   1
+     RCHRES    1 OFLOW   OXCF2    2   2  1.000E+00    INFLOW  OXIF     2   1
+     RCHRES    1 OFLOW   NUCF9    2   1  1.000E+00    INFLOW  NUIF1    1   1
+     RCHRES    1 OFLOW   NUCF9    2   2  1.000E+00    INFLOW  NUIF1    2   1
+     RCHRES    1 OFLOW   NUCF9    2   3  1.000E+00    INFLOW  NUIF1    3   1
+     RCHRES    1 OFLOW   NUCF9    2   4  1.000E+00    INFLOW  NUIF1    4   1
+     RCHRES    1 OFLOW   OSNH4    2   1  1.000E+00    INFLOW  NUIF2    1   1
+     RCHRES    1 OFLOW   OSNH4    2   2  1.000E+00    INFLOW  NUIF2    2   1
+     RCHRES    1 OFLOW   OSNH4    2   3  1.000E+00    INFLOW  NUIF2    3   1
+     RCHRES    1 OFLOW   OSPO4    2   1  1.000E+00    INFLOW  NUIF2    1   2
+     RCHRES    1 OFLOW   OSPO4    2   2  1.000E+00    INFLOW  NUIF2    2   2
+     RCHRES    1 OFLOW   OSPO4    2   3  1.000E+00    INFLOW  NUIF2    3   2
+     RCHRES    1 OFLOW   PKCF2    2   1  1.000E+00    INFLOW  PKIF     1   1
+     RCHRES    1 OFLOW   PKCF2    2   2  1.000E+00    INFLOW  PKIF     2   1
+     RCHRES    1 OFLOW   PKCF2    2   3  1.000E+00    INFLOW  PKIF     3   1
+     RCHRES    1 OFLOW   PKCF2    2   4  1.000E+00    INFLOW  PKIF     4   1
+     RCHRES    1 OFLOW   PKCF2    2   5  1.000E+00    INFLOW  PKIF     5   1
+     RCHRES    1 OFLOW   PHCF2    2   1  1.000E+00    INFLOW  PHIF     1   1
+     RCHRES    1 OFLOW   PHCF2    2   2  1.000E+00    INFLOW  PHIF     2   1
+
+   OUTPUT TIMESERIES
+
+     TO OTHER OPERATIONS(NETWORK)
+     GROUP   MEMBER  S1  S2        MFACT  TYPE      # GROUP   MEMBER  S1  S2   
+
+     ROFLOW  ROVOL    1   1    1.000E+00  RCHRES    4 INFLOW  IVOL     1   1
+     ROFLOW  ROCON    1   1    1.000E+00  RCHRES    4 INFLOW  ICON     1   1
+     ROFLOW  ROHEAT   1   1    1.000E+00  RCHRES    4 INFLOW  IHEAT    1   1
+     ROFLOW  ROSED    1   1    1.000E+00  RCHRES    4 INFLOW  ISED     1   1
+     ROFLOW  ROSED    2   1    1.000E+00  RCHRES    4 INFLOW  ISED     2   1
+     ROFLOW  ROSED    3   1    1.000E+00  RCHRES    4 INFLOW  ISED     3   1
+     ROFLOW  RODQAL   1   1    1.000E+00  RCHRES    4 INFLOW  IDQAL    1   1
+     ROFLOW  ROSQAL   1   1    1.000E+00  RCHRES    4 INFLOW  ISQAL    1   1
+     ROFLOW  ROSQAL   2   1    1.000E+00  RCHRES    4 INFLOW  ISQAL    2   1
+     ROFLOW  ROSQAL   3   1    1.000E+00  RCHRES    4 INFLOW  ISQAL    3   1
+     ROFLOW  OXCF1    1   1    1.000E+00  RCHRES    4 INFLOW  OXIF     1   1
+     ROFLOW  OXCF1    2   1    1.000E+00  RCHRES    4 INFLOW  OXIF     2   1
+     ROFLOW  NUCF1    1   1    1.000E+00  RCHRES    4 INFLOW  NUIF1    1   1
+     ROFLOW  NUCF1    2   1    1.000E+00  RCHRES    4 INFLOW  NUIF1    2   1
+     ROFLOW  NUCF1    3   1    1.000E+00  RCHRES    4 INFLOW  NUIF1    3   1
+     ROFLOW  NUCF1    4   1    1.000E+00  RCHRES    4 INFLOW  NUIF1    4   1
+     ROFLOW  NUCF2    1   1    1.000E+00  RCHRES    4 INFLOW  NUIF2    1   1
+     ROFLOW  NUCF2    2   1    1.000E+00  RCHRES    4 INFLOW  NUIF2    2   1
+     ROFLOW  NUCF2    3   1    1.000E+00  RCHRES    4 INFLOW  NUIF2    3   1
+     ROFLOW  NUCF2    1   2    1.000E+00  RCHRES    4 INFLOW  NUIF2    1   2
+     ROFLOW  NUCF2    2   2    1.000E+00  RCHRES    4 INFLOW  NUIF2    2   2
+     ROFLOW  NUCF2    3   2    1.000E+00  RCHRES    4 INFLOW  NUIF2    3   2
+     ROFLOW  PKCF1    1   1    1.000E+00  RCHRES    4 INFLOW  PKIF     1   1
+     ROFLOW  PKCF1    2   1    1.000E+00  RCHRES    4 INFLOW  PKIF     2   1
+     ROFLOW  PKCF1    3   1    1.000E+00  RCHRES    4 INFLOW  PKIF     3   1
+     ROFLOW  PKCF1    4   1    1.000E+00  RCHRES    4 INFLOW  PKIF     4   1
+     ROFLOW  PKCF1    5   1    1.000E+00  RCHRES    4 INFLOW  PKIF     5   1
+     ROFLOW  PHCF1    1   1    1.000E+00  RCHRES    4 INFLOW  PHIF     1   1
+     ROFLOW  PHCF1    2   1    1.000E+00  RCHRES    4 INFLOW  PHIF     2   1
+
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ TIMESERIES USED BY OPERATION   RCHRES    4
+
+   INPUT TIMESERIES
+
+     FROM EXTERNAL SOURCES
+     TYPE      #  INTERVAL   TRN STR         MFACT    GROUP   MEMBER  S1  S2   
+
+     WDM1    131        60      SAME     1.000E+00    EXTNL   PREC     1   1
+     WDM1    122       120      SAME     1.000E+00    EXTNL   GATMP    1   1
+     WDM1     41      1440      DIV      7.000E-01    EXTNL   POTEV    1   1
+     WDM1     42      1440      DIV      1.000E+00    EXTNL   WIND     1   1
+     WDM1     46       120      DIV      1.000E+00    EXTNL   SOLRAD   1   1
+     WDM1    125      1440      SAME     1.000E+00    EXTNL   DEWTMP   1   1
+     WDM1    135      1440      SAME     1.000E+00    EXTNL   CLOUD    1   1
+
+     FROM OTHER OPERATIONS(NETWORK)
+     TYPE      # GROUP   MEMBER  S1  S2      MFACT    GROUP   MEMBER  S1  S2   
+
+     RCHRES    2 ROFLOW  ROVOL    1   1  1.000E+00    INFLOW  IVOL     1   1
+     RCHRES    2 ROFLOW  ROCON    1   1  1.000E+00    INFLOW  ICON     1   1
+     RCHRES    2 ROFLOW  ROHEAT   1   1  1.000E+00    INFLOW  IHEAT    1   1
+     RCHRES    2 ROFLOW  ROSED    1   1  1.000E+00    INFLOW  ISED     1   1
+     RCHRES    2 ROFLOW  ROSED    2   1  1.000E+00    INFLOW  ISED     2   1
+     RCHRES    2 ROFLOW  ROSED    3   1  1.000E+00    INFLOW  ISED     3   1
+     RCHRES    2 ROFLOW  RODQAL   1   1  1.000E+00    INFLOW  IDQAL    1   1
+     RCHRES    2 ROFLOW  ROSQAL   1   1  1.000E+00    INFLOW  ISQAL    1   1
+     RCHRES    2 ROFLOW  ROSQAL   2   1  1.000E+00    INFLOW  ISQAL    2   1
+     RCHRES    2 ROFLOW  ROSQAL   3   1  1.000E+00    INFLOW  ISQAL    3   1
+     RCHRES    2 ROFLOW  OXCF1    1   1  1.000E+00    INFLOW  OXIF     1   1
+     RCHRES    2 ROFLOW  OXCF1    2   1  1.000E+00    INFLOW  OXIF     2   1
+     RCHRES    2 ROFLOW  NUCF1    1   1  1.000E+00    INFLOW  NUIF1    1   1
+     RCHRES    2 ROFLOW  NUCF1    2   1  1.000E+00    INFLOW  NUIF1    2   1
+     RCHRES    2 ROFLOW  NUCF1    3   1  1.000E+00    INFLOW  NUIF1    3   1
+     RCHRES    2 ROFLOW  NUCF1    4   1  1.000E+00    INFLOW  NUIF1    4   1
+     RCHRES    2 ROFLOW  NUCF2    1   1  1.000E+00    INFLOW  NUIF2    1   1
+     RCHRES    2 ROFLOW  NUCF2    2   1  1.000E+00    INFLOW  NUIF2    2   1
+     RCHRES    2 ROFLOW  NUCF2    3   1  1.000E+00    INFLOW  NUIF2    3   1
+     RCHRES    2 ROFLOW  NUCF2    1   2  1.000E+00    INFLOW  NUIF2    1   2
+     RCHRES    2 ROFLOW  NUCF2    2   2  1.000E+00    INFLOW  NUIF2    2   2
+     RCHRES    2 ROFLOW  NUCF2    3   2  1.000E+00    INFLOW  NUIF2    3   2
+     RCHRES    2 ROFLOW  PKCF1    1   1  1.000E+00    INFLOW  PKIF     1   1
+     RCHRES    2 ROFLOW  PKCF1    2   1  1.000E+00    INFLOW  PKIF     2   1
+     RCHRES    2 ROFLOW  PKCF1    3   1  1.000E+00    INFLOW  PKIF     3   1
+     RCHRES    2 ROFLOW  PKCF1    4   1  1.000E+00    INFLOW  PKIF     4   1
+     RCHRES    2 ROFLOW  PKCF1    5   1  1.000E+00    INFLOW  PKIF     5   1
+     RCHRES    2 ROFLOW  PHCF1    1   1  1.000E+00    INFLOW  PHIF     1   1
+     RCHRES    2 ROFLOW  PHCF1    2   1  1.000E+00    INFLOW  PHIF     2   1
+     RCHRES    3 ROFLOW  ROVOL    1   1  1.000E+00    INFLOW  IVOL     1   1
+     RCHRES    3 ROFLOW  ROCON    1   1  1.000E+00    INFLOW  ICON     1   1
+     RCHRES    3 ROFLOW  ROHEAT   1   1  1.000E+00    INFLOW  IHEAT    1   1
+     RCHRES    3 ROFLOW  ROSED    1   1  1.000E+00    INFLOW  ISED     1   1
+     RCHRES    3 ROFLOW  ROSED    2   1  1.000E+00    INFLOW  ISED     2   1
+     RCHRES    3 ROFLOW  ROSED    3   1  1.000E+00    INFLOW  ISED     3   1
+     RCHRES    3 ROFLOW  RODQAL   1   1  1.000E+00    INFLOW  IDQAL    1   1
+     RCHRES    3 ROFLOW  ROSQAL   1   1  1.000E+00    INFLOW  ISQAL    1   1
+     RCHRES    3 ROFLOW  ROSQAL   2   1  1.000E+00    INFLOW  ISQAL    2   1
+     RCHRES    3 ROFLOW  ROSQAL   3   1  1.000E+00    INFLOW  ISQAL    3   1
+     RCHRES    3 ROFLOW  OXCF1    1   1  1.000E+00    INFLOW  OXIF     1   1
+     RCHRES    3 ROFLOW  OXCF1    2   1  1.000E+00    INFLOW  OXIF     2   1
+     RCHRES    3 ROFLOW  NUCF1    1   1  1.000E+00    INFLOW  NUIF1    1   1
+     RCHRES    3 ROFLOW  NUCF1    2   1  1.000E+00    INFLOW  NUIF1    2   1
+     RCHRES    3 ROFLOW  NUCF1    3   1  1.000E+00    INFLOW  NUIF1    3   1
+     RCHRES    3 ROFLOW  NUCF1    4   1  1.000E+00    INFLOW  NUIF1    4   1
+     RCHRES    3 ROFLOW  NUCF2    1   1  1.000E+00    INFLOW  NUIF2    1   1
+     RCHRES    3 ROFLOW  NUCF2    2   1  1.000E+00    INFLOW  NUIF2    2   1
+     RCHRES    3 ROFLOW  NUCF2    3   1  1.000E+00    INFLOW  NUIF2    3   1
+     RCHRES    3 ROFLOW  NUCF2    1   2  1.000E+00    INFLOW  NUIF2    1   2
+     RCHRES    3 ROFLOW  NUCF2    2   2  1.000E+00    INFLOW  NUIF2    2   2
+     RCHRES    3 ROFLOW  NUCF2    3   2  1.000E+00    INFLOW  NUIF2    3   2
+     RCHRES    3 ROFLOW  PKCF1    1   1  1.000E+00    INFLOW  PKIF     1   1
+     RCHRES    3 ROFLOW  PKCF1    2   1  1.000E+00    INFLOW  PKIF     2   1
+     RCHRES    3 ROFLOW  PKCF1    3   1  1.000E+00    INFLOW  PKIF     3   1
+     RCHRES    3 ROFLOW  PKCF1    4   1  1.000E+00    INFLOW  PKIF     4   1
+     RCHRES    3 ROFLOW  PKCF1    5   1  1.000E+00    INFLOW  PKIF     5   1
+     RCHRES    3 ROFLOW  PHCF1    1   1  1.000E+00    INFLOW  PHIF     1   1
+     RCHRES    3 ROFLOW  PHCF1    2   1  1.000E+00    INFLOW  PHIF     2   1
+
+   OUTPUT TIMESERIES
+
+     TO OTHER OPERATIONS(NETWORK)
+     GROUP   MEMBER  S1  S2        MFACT  TYPE      # GROUP   MEMBER  S1  S2   
+
+     ROFLOW  ROVOL    1   1    1.000E+00  RCHRES    5 INFLOW  IVOL     1   1
+     ROFLOW  ROCON    1   1    1.000E+00  RCHRES    5 INFLOW  ICON     1   1
+     ROFLOW  ROHEAT   1   1    1.000E+00  RCHRES    5 INFLOW  IHEAT    1   1
+     ROFLOW  ROSED    1   1    1.000E+00  RCHRES    5 INFLOW  ISED     1   1
+     ROFLOW  ROSED    2   1    1.000E+00  RCHRES    5 INFLOW  ISED     2   1
+     ROFLOW  ROSED    3   1    1.000E+00  RCHRES    5 INFLOW  ISED     3   1
+     ROFLOW  RODQAL   1   1    1.000E+00  RCHRES    5 INFLOW  IDQAL    1   1
+     ROFLOW  ROSQAL   1   1    1.000E+00  RCHRES    5 INFLOW  ISQAL    1   1
+     ROFLOW  ROSQAL   2   1    1.000E+00  RCHRES    5 INFLOW  ISQAL    2   1
+     ROFLOW  ROSQAL   3   1    1.000E+00  RCHRES    5 INFLOW  ISQAL    3   1
+     ROFLOW  OXCF1    1   1    1.000E+00  RCHRES    5 INFLOW  OXIF     1   1
+     ROFLOW  OXCF1    2   1    1.000E+00  RCHRES    5 INFLOW  OXIF     2   1
+     ROFLOW  NUCF1    1   1    1.000E+00  RCHRES    5 INFLOW  NUIF1    1   1
+     ROFLOW  NUCF1    2   1    1.000E+00  RCHRES    5 INFLOW  NUIF1    2   1
+     ROFLOW  NUCF1    3   1    1.000E+00  RCHRES    5 INFLOW  NUIF1    3   1
+     ROFLOW  NUCF1    4   1    1.000E+00  RCHRES    5 INFLOW  NUIF1    4   1
+     ROFLOW  NUCF2    1   1    1.000E+00  RCHRES    5 INFLOW  NUIF2    1   1
+     ROFLOW  NUCF2    2   1    1.000E+00  RCHRES    5 INFLOW  NUIF2    2   1
+     ROFLOW  NUCF2    3   1    1.000E+00  RCHRES    5 INFLOW  NUIF2    3   1
+     ROFLOW  NUCF2    1   2    1.000E+00  RCHRES    5 INFLOW  NUIF2    1   2
+     ROFLOW  NUCF2    2   2    1.000E+00  RCHRES    5 INFLOW  NUIF2    2   2
+     ROFLOW  NUCF2    3   2    1.000E+00  RCHRES    5 INFLOW  NUIF2    3   2
+     ROFLOW  PKCF1    1   1    1.000E+00  RCHRES    5 INFLOW  PKIF     1   1
+     ROFLOW  PKCF1    2   1    1.000E+00  RCHRES    5 INFLOW  PKIF     2   1
+     ROFLOW  PKCF1    3   1    1.000E+00  RCHRES    5 INFLOW  PKIF     3   1
+     ROFLOW  PKCF1    4   1    1.000E+00  RCHRES    5 INFLOW  PKIF     4   1
+     ROFLOW  PKCF1    5   1    1.000E+00  RCHRES    5 INFLOW  PKIF     5   1
+     ROFLOW  PHCF1    1   1    1.000E+00  RCHRES    5 INFLOW  PHIF     1   1
+     ROFLOW  PHCF1    2   1    1.000E+00  RCHRES    5 INFLOW  PHIF     2   1
+     HYDR    AVDEP    1   1    1.000E+00  PLTGEN    2 INPUT   POINT    1   1
+     HTRCH   TW       1   1    1.000E+00  PLTGEN    2 INPUT   POINT    2   1
+     PHCARB  PHST     3   1    1.000E+00  PLTGEN    2 INPUT   POINT    3   1
+     HTRCH   HTEXCH   1   1    1.000E+00  PLTGEN    2 INPUT   MEAN     1   1
+
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ TIMESERIES USED BY OPERATION   PLTGEN    2
+
+   INPUT TIMESERIES
+
+     FROM OTHER OPERATIONS(NETWORK)
+     TYPE      # GROUP   MEMBER  S1  S2      MFACT    GROUP   MEMBER  S1  S2   
+
+     RCHRES    4 HYDR    AVDEP    1   1  1.000E+00    INPUT   POINT    1   1
+     RCHRES    4 HTRCH   TW       1   1  1.000E+00    INPUT   POINT    2   1
+     RCHRES    4 PHCARB  PHST     3   1  1.000E+00    INPUT   POINT    3   1
+     RCHRES    4 HTRCH   HTEXCH   1   1  1.000E+00    INPUT   MEAN     1   1
+
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ TIMESERIES USED BY OPERATION   IMPLND    1
+
+   INPUT TIMESERIES
+
+     FROM EXTERNAL SOURCES
+     TYPE      #  INTERVAL   TRN STR         MFACT    GROUP   MEMBER  S1  S2   
+
+     WDM1    131        60      SAME     1.000E+00    EXTNL   PREC     1   1
+     WDM1    122       120      SAME     1.000E+00    ATEMP   AIRTMP   1   1
+     WDM1     41      1440      DIV      7.000E-01    EXTNL   PETINP   1   1
+     WDM1     42      1440      DIV      1.000E+00    EXTNL   WINMOV   1   1
+     WDM1     46       120      DIV      1.000E+00    EXTNL   SOLRAD   1   1
+     WDM1    125      1440      SAME     1.000E+00    EXTNL   DTMPG    1   1
+     WDM1    135      1440      SAME     1.000E+00    EXTNL   CLOUD    1   1
+
+   OUTPUT TIMESERIES
+
+     TO OTHER OPERATIONS(NETWORK)
+     GROUP   MEMBER  S1  S2        MFACT  TYPE      # GROUP   MEMBER  S1  S2   
+
+     IWATER  SURO     1   1    2.500E+02  RCHRES    5 INFLOW  IVOL     1   1
+     SOLIDS  SOSLD    1   1    3.000E+02  RCHRES    5 INFLOW  ISED     1   1
+     SOLIDS  SOSLD    1   1    1.380E+03  RCHRES    5 INFLOW  ISED     2   1
+     SOLIDS  SOSLD    1   1    1.320E+03  RCHRES    5 INFLOW  ISED     3   1
+     IWTGAS  SOHT     1   1    3.000E+03  RCHRES    5 INFLOW  IHEAT    1   1
+     IWTGAS  SODOXM   1   1    3.000E+03  RCHRES    5 INFLOW  OXIF     1   1
+     IWTGAS  SOCO2M   1   1    3.000E+03  RCHRES    5 INFLOW  PHIF     2   1
+     IQUAL   SOQUAL   1   1    3.000E+03  RCHRES    5 INFLOW  OXIF     2   1
+
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ TIMESERIES USED BY OPERATION   RCHRES    5
+
+   INPUT TIMESERIES
+
+     FROM EXTERNAL SOURCES
+     TYPE      #  INTERVAL   TRN STR         MFACT    GROUP   MEMBER  S1  S2   
+
+     WDM1    131        60      SAME     1.000E+00    EXTNL   PREC     1   1
+     WDM1    122       120      SAME     1.000E+00    EXTNL   GATMP    1   1
+     WDM1     41      1440      DIV      7.000E-01    EXTNL   POTEV    1   1
+     WDM1     42      1440      DIV      1.000E+00    EXTNL   WIND     1   1
+     WDM1     46       120      DIV      1.000E+00    EXTNL   SOLRAD   1   1
+     WDM1    125      1440      SAME     1.000E+00    EXTNL   DEWTMP   1   1
+     WDM1    135      1440      SAME     1.000E+00    EXTNL   CLOUD    1   1
+
+     FROM OTHER OPERATIONS(NETWORK)
+     TYPE      # GROUP   MEMBER  S1  S2      MFACT    GROUP   MEMBER  S1  S2   
+
+     IMPLND    1 IWATER  SURO     1   1  2.500E+02    INFLOW  IVOL     1   1
+     IMPLND    1 SOLIDS  SOSLD    1   1  3.000E+02    INFLOW  ISED     1   1
+     IMPLND    1 SOLIDS  SOSLD    1   1  1.380E+03    INFLOW  ISED     2   1
+     IMPLND    1 SOLIDS  SOSLD    1   1  1.320E+03    INFLOW  ISED     3   1
+     IMPLND    1 IWTGAS  SOHT     1   1  3.000E+03    INFLOW  IHEAT    1   1
+     IMPLND    1 IWTGAS  SODOXM   1   1  3.000E+03    INFLOW  OXIF     1   1
+     IMPLND    1 IWTGAS  SOCO2M   1   1  3.000E+03    INFLOW  PHIF     2   1
+     IMPLND    1 IQUAL   SOQUAL   1   1  3.000E+03    INFLOW  OXIF     2   1
+     RCHRES    4 ROFLOW  ROVOL    1   1  1.000E+00    INFLOW  IVOL     1   1
+     RCHRES    4 ROFLOW  ROCON    1   1  1.000E+00    INFLOW  ICON     1   1
+     RCHRES    4 ROFLOW  ROHEAT   1   1  1.000E+00    INFLOW  IHEAT    1   1
+     RCHRES    4 ROFLOW  ROSED    1   1  1.000E+00    INFLOW  ISED     1   1
+     RCHRES    4 ROFLOW  ROSED    2   1  1.000E+00    INFLOW  ISED     2   1
+     RCHRES    4 ROFLOW  ROSED    3   1  1.000E+00    INFLOW  ISED     3   1
+     RCHRES    4 ROFLOW  RODQAL   1   1  1.000E+00    INFLOW  IDQAL    1   1
+     RCHRES    4 ROFLOW  ROSQAL   1   1  1.000E+00    INFLOW  ISQAL    1   1
+     RCHRES    4 ROFLOW  ROSQAL   2   1  1.000E+00    INFLOW  ISQAL    2   1
+     RCHRES    4 ROFLOW  ROSQAL   3   1  1.000E+00    INFLOW  ISQAL    3   1
+     RCHRES    4 ROFLOW  OXCF1    1   1  1.000E+00    INFLOW  OXIF     1   1
+     RCHRES    4 ROFLOW  OXCF1    2   1  1.000E+00    INFLOW  OXIF     2   1
+     RCHRES    4 ROFLOW  NUCF1    1   1  1.000E+00    INFLOW  NUIF1    1   1
+     RCHRES    4 ROFLOW  NUCF1    2   1  1.000E+00    INFLOW  NUIF1    2   1
+     RCHRES    4 ROFLOW  NUCF1    3   1  1.000E+00    INFLOW  NUIF1    3   1
+     RCHRES    4 ROFLOW  NUCF1    4   1  1.000E+00    INFLOW  NUIF1    4   1
+     RCHRES    4 ROFLOW  NUCF2    1   1  1.000E+00    INFLOW  NUIF2    1   1
+     RCHRES    4 ROFLOW  NUCF2    2   1  1.000E+00    INFLOW  NUIF2    2   1
+     RCHRES    4 ROFLOW  NUCF2    3   1  1.000E+00    INFLOW  NUIF2    3   1
+     RCHRES    4 ROFLOW  NUCF2    1   2  1.000E+00    INFLOW  NUIF2    1   2
+     RCHRES    4 ROFLOW  NUCF2    2   2  1.000E+00    INFLOW  NUIF2    2   2
+     RCHRES    4 ROFLOW  NUCF2    3   2  1.000E+00    INFLOW  NUIF2    3   2
+     RCHRES    4 ROFLOW  PKCF1    1   1  1.000E+00    INFLOW  PKIF     1   1
+     RCHRES    4 ROFLOW  PKCF1    2   1  1.000E+00    INFLOW  PKIF     2   1
+     RCHRES    4 ROFLOW  PKCF1    3   1  1.000E+00    INFLOW  PKIF     3   1
+     RCHRES    4 ROFLOW  PKCF1    4   1  1.000E+00    INFLOW  PKIF     4   1
+     RCHRES    4 ROFLOW  PKCF1    5   1  1.000E+00    INFLOW  PKIF     5   1
+     RCHRES    4 ROFLOW  PHCF1    1   1  1.000E+00    INFLOW  PHIF     1   1
+     RCHRES    4 ROFLOW  PHCF1    2   1  1.000E+00    INFLOW  PHIF     2   1
+
+   OUTPUT TIMESERIES
+
+     TO OTHER OPERATIONS(NETWORK)
+     GROUP   MEMBER  S1  S2        MFACT  TYPE      # GROUP   MEMBER  S1  S2   
+
+     OXRX    DOX      1   1    1.000E+00  DISPLY    3 INPUT   TIMSER   1   1
+     GQUAL   RSQAL   12   1    1.000E+00  GENER     2 INPUT   ONE      1   1
+     SEDTRN  RSED    10   1    1.000E+00  GENER     2 INPUT   TWO      1   1
+     HYDR    ROVOL    1   1    1.210E+01  PLTGEN    1 INPUT   MEAN     2   1
+
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ TIMESERIES USED BY OPERATION   DISPLY    3
+
+   INPUT TIMESERIES
+
+     FROM OTHER OPERATIONS(NETWORK)
+     TYPE      # GROUP   MEMBER  S1  S2      MFACT    GROUP   MEMBER  S1  S2   
+
+     RCHRES    5 OXRX    DOX      1   1  1.000E+00    INPUT   TIMSER   1   1
+
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ TIMESERIES USED BY OPERATION   GENER     2
+
+   INPUT TIMESERIES
+
+     FROM OTHER OPERATIONS(NETWORK)
+     TYPE      # GROUP   MEMBER  S1  S2      MFACT    GROUP   MEMBER  S1  S2   
+
+     RCHRES    5 GQUAL   RSQAL   12   1  1.000E+00    INPUT   ONE      1   1
+     RCHRES    5 SEDTRN  RSED    10   1  1.000E+00    INPUT   TWO      1   1
+
+   OUTPUT TIMESERIES
+
+     TO OTHER OPERATIONS(NETWORK)
+     GROUP   MEMBER  S1  S2        MFACT  TYPE      # GROUP   MEMBER  S1  S2   
+
+     OUTPUT  TIMSER   1   1    1.100E+00  DISPLY    4 INPUT   TIMSER   1   1
+
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ TIMESERIES USED BY OPERATION   DISPLY    4
+
+   INPUT TIMESERIES
+
+     FROM OTHER OPERATIONS(NETWORK)
+     TYPE      # GROUP   MEMBER  S1  S2      MFACT    GROUP   MEMBER  S1  S2   
+
+     GENER     2 OUTPUT  TIMSER   1   1  1.100E+00    INPUT   TIMSER   1   1
+
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ TIMESERIES USED BY OPERATION   PLTGEN    1
+
+   INPUT TIMESERIES
+
+     FROM OTHER OPERATIONS(NETWORK)
+     TYPE      # GROUP   MEMBER  S1  S2      MFACT    GROUP   MEMBER  S1  S2   
+
+     RCHRES    1 HYDR    ROVOL    1   1  1.210E+01    INPUT   MEAN     1   1
+     RCHRES    5 HYDR    ROVOL    1   1  1.210E+01    INPUT   MEAN     2   1
+
+ FINISHED PROCESSING BLOCKS CONTAINING TIME SERIES LINKAGES
+ ====================================================================================================================================
+ 
+ INTERPRETATION OF RUN DATA SET COMPLETE
+ 
+
+ COMMENCING EXECUTION
+ 
+ 
+ ************************************************************************************
+ *                                                                                  *
+ *  ERROR/WARNING ID:   344  21                                                     *
+ *                                                                                  *
+ *  DATE/TIME: 1976/ 8/13  5: 0                                                     *
+ *                                                                                  *
+ *  RCHRES:     2                                                                   *
+ *                                                                                  *
+ *  Water temperature is above 66 C (150 F).  In most cases, this indicates         *
+ *  an instability in advection.  Try adding more definition in the FTABLE          *
+ *  for this reach.  Or try changing the ADCALC activity flag (ADFG) to 2;          *
+ *  this will cause the advection to use the same weighting factors as are          *
+ *  used in the flow routing.                                                       *
+ *                                                                                  *
+ *  Relevant values are :                                                           *
+ *                                                                                  *
+ *           TW                                                                     *
+ *  7.3767E+02                                                                      *
+ *                                                                                  *
+ ************************************************************************************
+ 
+ 
+ 
+ ************************************************************************************
+ *                                                                                  *
+ *  ERROR/WARNING ID:   344  21                                                     *
+ *                                                                                  *
+ *  DATE/TIME: 1976/ 5/ 9 18: 0                                                     *
+ *                                                                                  *
+ *  RCHRES:     3                                                                   *
+ *                                                                                  *
+ *  Water temperature is above 66 C (150 F).  In most cases, this indicates         *
+ *  an instability in advection.  Try adding more definition in the FTABLE          *
+ *  for this reach.  Or try changing the ADCALC activity flag (ADFG) to 2;          *
+ *  this will cause the advection to use the same weighting factors as are          *
+ *  used in the flow routing.                                                       *
+ *                                                                                  *
+ *  Relevant values are :                                                           *
+ *                                                                                  *
+ *           TW                                                                     *
+ *  2.2736E+02                                                                      *
+ *                                                                                  *
+ ************************************************************************************
+ 
+ 
+ 
+ ************************************************************************************
+ *                                                                                  *
+ *  ERROR/WARNING ID:   344  21                                                     *
+ *                                                                                  *
+ *  DATE/TIME: 1976/ 5/28  3: 0                                                     *
+ *                                                                                  *
+ *  RCHRES:     3                                                                   *
+ *                                                                                  *
+ *  Water temperature is above 66 C (150 F).  In most cases, this indicates         *
+ *  an instability in advection.  Try adding more definition in the FTABLE          *
+ *  for this reach.  Or try changing the ADCALC activity flag (ADFG) to 2;          *
+ *  this will cause the advection to use the same weighting factors as are          *
+ *  used in the flow routing.                                                       *
+ *                                                                                  *
+ *  Relevant values are :                                                           *
+ *                                                                                  *
+ *           TW                                                                     *
+ *  7.6714E+01                                                                      *
+ *                                                                                  *
+ ************************************************************************************
+ 
+ 
+ 
+ ************************************************************************************
+ *                                                                                  *
+ *  ERROR/WARNING ID:   344  21                                                     *
+ *                                                                                  *
+ *  DATE/TIME: 1976/ 6/ 4  3: 0                                                     *
+ *                                                                                  *
+ *  RCHRES:     3                                                                   *
+ *                                                                                  *
+ *  Water temperature is above 66 C (150 F).  In most cases, this indicates         *
+ *  an instability in advection.  Try adding more definition in the FTABLE          *
+ *  for this reach.  Or try changing the ADCALC activity flag (ADFG) to 2;          *
+ *  this will cause the advection to use the same weighting factors as are          *
+ *  used in the flow routing.                                                       *
+ *                                                                                  *
+ *  Relevant values are :                                                           *
+ *                                                                                  *
+ *           TW                                                                     *
+ *  7.0752E+01                                                                      *
+ *                                                                                  *
+ ************************************************************************************
+ 
+ 
+ 
+ ************************************************************************************
+ *                                                                                  *
+ *  ERROR/WARNING ID:   344  21                                                     *
+ *                                                                                  *
+ *  DATE/TIME: 1976/ 8/13 15: 0                                                     *
+ *                                                                                  *
+ *  RCHRES:     4                                                                   *
+ *                                                                                  *
+ *  Water temperature is above 66 C (150 F).  In most cases, this indicates         *
+ *  an instability in advection.  Try adding more definition in the FTABLE          *
+ *  for this reach.  Or try changing the ADCALC activity flag (ADFG) to 2;          *
+ *  this will cause the advection to use the same weighting factors as are          *
+ *  used in the flow routing.                                                       *
+ *                                                                                  *
+ *  Relevant values are :                                                           *
+ *                                                                                  *
+ *           TW                                                                     *
+ *  9.4452E+01                                                                      *
+ *                                                                                  *
+ ************************************************************************************
+ 
+ 
+ 
+ ************************************************************************************
+ *                                                                                  *
+ *  ERROR/WARNING ID:   344  21                                                     *
+ *                                                                                  *
+ *  DATE/TIME: 1976/ 8/18 23: 0                                                     *
+ *                                                                                  *
+ *  RCHRES:     5                                                                   *
+ *                                                                                  *
+ *  Water temperature is above 66 C (150 F).  In most cases, this indicates         *
+ *  an instability in advection.  Try adding more definition in the FTABLE          *
+ *  for this reach.  Or try changing the ADCALC activity flag (ADFG) to 2;          *
+ *  this will cause the advection to use the same weighting factors as are          *
+ *  used in the flow routing.                                                       *
+ *                                                                                  *
+ *  Relevant values are :                                                           *
+ *                                                                                  *
+ *           TW                                                                     *
+ *  1.3503E+02                                                                      *
+ *                                                                                  *
+ ************************************************************************************
+ 
+ 
+ End of Job
