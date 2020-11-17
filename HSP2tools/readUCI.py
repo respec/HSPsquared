@@ -156,14 +156,14 @@ def readUCI(uciname, hdfname):
         path = '/PERLND/SNOW/FLAGS'
         if path in keys:
             df = read_hdf(store, path)
-            if 'SNOPFG' not in df.columns:   # didn't read IWAT-PARM2 table
+            if 'SNOPFG' not in df.columns:   # didn't read SNOW-FLAGS table
                 df['SNOPFG']  = 0
                 df.to_hdf(store, path, data_columns=True)
 
         path = '/IMPLND/SNOW/FLAGS'
         if path in keys:
             df = read_hdf(store, path)
-            if 'SNOPFG' not in df.columns:   # didn't read IWAT-PARM2 table
+            if 'SNOPFG' not in df.columns:   # didn't read SNOW-FLAGS table
                 df['SNOPFG']  = 0
                 df.to_hdf(store, path, data_columns=True)
 
@@ -187,6 +187,14 @@ def readUCI(uciname, hdfname):
                 df['SOTMP'] = 60.0
                 df['SODOX'] = 0.0
                 df['SOCO2'] = 0.0
+                df.to_hdf(store, path, data_columns=True)
+
+        path = '/IMPLND/IQUAL/PARAMETERS'
+        if path in keys:
+            df = read_hdf(store, path)
+            if 'SDLFAC' not in df.columns:   # didn't read LAT-FACTOR table
+                df['SDLFAC'] = 0.0
+                df['SLIFAC'] = 0.0
                 df.to_hdf(store, path, data_columns=True)
 
         path = '/PERLND/PWTGAS/PARAMETERS'
@@ -434,6 +442,12 @@ def operation(info, llines, op):
             for table,df in history[path,cat]:
                 if table == 'NQUALS':
                     count = 0
+                    if cat == 'IQUAL':
+                        temp_path = '/IMPLND/IQUAL/PARAMETERS'
+                    else:
+                        temp_path = '/PERLND/PQUAL/PARAMETERS'
+                    df = fix_df(df, op, path, ddfaults, valid)
+                    df.to_hdf(store, temp_path, data_columns=True)
                 elif table.startswith('MON'):
                     name = rename[(op, table)]
                     df = fix_df(df, op, path, ddfaults, valid)
@@ -441,9 +455,12 @@ def operation(info, llines, op):
                     df.to_hdf(store, f'{op}/{path}/{cat}{count}/MONTHLY/{name}', data_columns=True)
                 else:
                     if table == 'QUAL-PROPS':
-                        count += 0
+                        count += 1
+                        tag = 'FLAGS'
+                    else:
+                        tag = 'PARAMETERS'
                     df = fix_df(df, op, path, ddfaults, valid)
-                    df.to_hdf(store, f'{op}/{path}/{cat}{count}', data_columns=True)
+                    df.to_hdf(store, f'{op}/{path}/{cat}{count}/{tag}', data_columns=True)
         elif cat == 'GQUAL':
             for table,df in history[path,cat]:
                 if table.startswith('MON'):
