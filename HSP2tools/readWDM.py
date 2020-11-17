@@ -43,6 +43,34 @@ def readWDM(wdmfile, hdffile):
     with pd.HDFStore(hdffile) as store:
         summary = []
         summaryindx = []
+
+        # check to see which extra attributes are on each dsn
+        columns_to_add = []
+        search = ['STAID', 'STNAM', 'SCENARIO', 'CONSTITUENT', 'LOCATION']
+        for att in search:
+            found_in_all = True
+            for index in dsnlist:
+                dattr = {}
+                psa = iarray[index + 9]
+                if psa > 0:
+                    sacnt = iarray[index + psa - 1]
+                for i in range(psa + 1, psa + 1 + 2 * sacnt, 2):
+                    id = iarray[index + i]
+                    ptr = iarray[index + i + 1] - 1 + index
+                    if id not in attrinfo:
+                        continue
+                    name, atype, length = attrinfo[id]
+                    if atype == 'I':
+                        dattr[name] = iarray[ptr]
+                    elif atype == 'R':
+                        dattr[name] = farray[ptr]
+                    else:
+                        dattr[name] = ''.join([itostr(iarray[k]) for k in range(ptr, ptr + length // 4)]).strip()
+                if att not in dattr:
+                    found_in_all = False
+            if found_in_all:
+                columns_to_add.append(att)
+
         for index in dsnlist:
             # get layout information for TimeSeries Dataset frame
             dsn   = iarray[index+4]
@@ -59,7 +87,7 @@ def readWDM(wdmfile, hdffile):
                 id = iarray[index + i]
                 ptr = iarray[index + i + 1] - 1 + index
                 if id not in attrinfo:
-                    print('PROGRAM ERROR: ATTRIBUTE INDEX not found', id, 'Attribute pointer', iarray[index + i+1])
+                    # print('PROGRAM ERROR: ATTRIBUTE INDEX not found', id, 'Attribute pointer', iarray[index + i+1])
                     continue
 
                 name, atype, length = attrinfo[id]
@@ -107,8 +135,8 @@ def readWDM(wdmfile, hdffile):
             data = [str(tindex[0]), str(tindex[-1]), str(tstep) + freq[tcode],
              len(series),  dattr['TSTYPE'], dattr['TFILL']]
             columns = ['Start', 'Stop', 'Freq','Length', 'TSTYPE', 'TFILL']
-            search = ['STAID', 'STNAM', 'SCENARIO', 'CONSTITUENT','LOCATION']
-            for x in search:
+            # search = ['STAID', 'STNAM', 'SCENARIO', 'CONSTITUENT','LOCATION']
+            for x in columns_to_add:
                 if x in dattr:
                     data.append(dattr[x])
                     columns.append(x)
