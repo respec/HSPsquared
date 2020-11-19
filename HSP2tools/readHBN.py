@@ -66,7 +66,10 @@ def readHBN(hbnfile, hdfname):
                 slen += 4+ln
         else:
             print('UNKNOW RECTYPE', rectype)
-        index += reclen + 30                        # found by trial and error
+        if reclen < 36:
+            index += reclen + 29                        # found by trial and error
+        else:
+            index += reclen + 30
 
 
     summary = []
