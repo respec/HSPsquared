@@ -57,7 +57,17 @@ def main(hdfname, saveall=False):
                 msg(3, f'{activity}')
                 if operation == 'RCHRES':
                     get_flows(store,ts,activity,segment,ddlinks,ddmasslinks,siminfo['steps'], msg)
+
                 ui = uci[(operation, activity, segment)]   # ui is a dictionary
+                if operation == 'PERLND' and activity == 'SEDMNT':
+                    # special exception here to make CSNOFG available
+                    ui['PARAMETERS']['CSNOFG'] = uci[(operation, 'PWATER', segment)]['PARAMETERS']['CSNOFG']
+                if operation == 'PERLND' and activity == 'PSTEMP':
+                    # special exception here to make AIRTFG available
+                    ui['PARAMETERS']['AIRTFG'] = flags['ATEMP']
+                if operation == 'PERLND' and activity == 'PWTGAS':
+                    # special exception here to make CSNOFG available
+                    ui['PARAMETERS']['CSNOFG'] = uci[(operation, 'PWATER', segment)]['PARAMETERS']['CSNOFG']
 
                 ############ calls activity function like snow() ##############
                 errors, errmessages = function(store, siminfo, ui, ts)
@@ -158,9 +168,18 @@ def save_timeseries(store, ts, savedict, siminfo, saveall, operation, segment, a
     # save computed timeseries (at computation DELT)
     save = {k for k,v in savedict.items() if v or saveall}
     df = DataFrame(index=siminfo['tindex'])
-    for y in (save & set(ts.keys())):
-        df[y] = ts[y]
-    df = df.astype(float32).sort_index(axis='columns')
+    if (operation == 'IMPLND' and activity == 'IQUAL') or (operation == 'PERLND' and activity == 'PQUAL'):
+        for y in save:
+            for z in set(ts.keys()):
+                if '/' + y in z:
+                    zrep = z.replace('/','_')
+                    zrep2 = zrep.replace(' ', '')
+                    df[zrep2] = ts[z]
+        df = df.astype(float32).sort_index(axis='columns')
+    else:
+        for y in (save & set(ts.keys())):
+            df[y] = ts[y]
+        df = df.astype(float32).sort_index(axis='columns')
     path = f'RESULTS/{operation}_{segment}/{activity}'
     if not df.empty:
         df.to_hdf(store, path, complib='blosc', complevel=9)
