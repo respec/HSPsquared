@@ -81,6 +81,7 @@ def readWDM(wdmfile, hdffile):
             pdatv = iarray[index+11]
             frepos = iarray[index+pdat]
 
+            print(f'{dsn} reading from wdm')
             # get attributes
             dattr = {'TSBDY':1, 'TSBHR':1, 'TSBMO':1, 'TSBYR':1900, 'TFILL':-999.}   # preset defaults
             for i in range(psa+1, psa+1 + 2*sacnt, 2):
@@ -172,7 +173,7 @@ def splitposition(x):
 def itostr(i):
     return chr(i & 0xFF) + chr(i>>8 & 0xFF) + chr(i>>16 & 0xFF) + chr(i>>24 & 0xFF)
 
-@jit(nopython=True, cache=True)
+# @jit(nopython=True, cache=True)
 def getfloats(iarray, farray, floats, findex, rec, offset, count, finalindex):
     index = rec * 512 + offset + 1
     stop = (rec + 1) * 512
