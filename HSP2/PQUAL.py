@@ -183,7 +183,7 @@ def pqual(store, siminfo, uci, ts):
 
 				# calculate effective outflow potency factor
 				lsosed = wssd + scrsd
-				soqsp = soqs / lsosed  if lsosed > 0.0 else -1.0e30			# soqsp not used ???	
+				soqsp = soqs / lsosed  if lsosed > 0.0 else -1.0e30
 				# end of qualsd()
 
 			# simulate by association with overland flow
@@ -193,11 +193,11 @@ def pqual(store, siminfo, uci, ts):
 			if QSOFG:   #constituent n is simulated by association with overland flow;
 				# qualof()
 				''' Simulate accumulation of a quality constituent on the land surface and its removal by a constant unit rate and by overland flow'''	
-				if dayfg:
-					remqop = acqop / sqolim
+				# if dayfg:
+				remqop = acqop / sqolim
 
-					if QSOFG:    # update storage due to accumulation and removal which occurs independent of runoff - units are qty/acre
-						sqo = acqop + sqo * (1.0 - remqop)
+				# update storage due to accumulation and removal which occurs independent of runoff - units are qty/acre
+				sqo = acqop + sqo * (1.0 - remqop)
 
 				# handle atmospheric deposition
 				adfxfx = PQADFX[loop]  # dry deposition
@@ -240,14 +240,15 @@ def pqual(store, siminfo, uci, ts):
 			aoqual = 0.0
 
 			# compute the concentration - units are qty/acre-inch
-			soqc = soqual / suro  if suro > 0.0 else -1.0e30      # soqc not used
+			soqc = soqual / suro  if suro > 0.0 else -1.0e30
 
 			# simulate quality constituent in interflow
 			if QIFWFG != 0:
 				# qualif()
 				'''Simulate quality constituents by fixed concentration in interflow'''
-				if dayfg:      # it is the first interval of the day
-					ioqc = IOQCP[loop]
+				ioqc = IOQCP[loop] * 3630.0
+				if ui_flags['VIQCFG'] == 3 or ui_flags['VIQCFG'] == 4:
+					ioqc = ioqc * 6.238e-5
 
 				# simulate constituents carried by interflow - units are qty/acre-ivl
 				if ifwo > 0.0:      # there is interflow
@@ -261,11 +262,12 @@ def pqual(store, siminfo, uci, ts):
 				poqual = poqual + ioqual   # cumulate outflow
 				
 			# simulate quality constituent in active groundwater outflow
-			if QAGWFG:   #	constituent n is present in groundwater                    # QAGWFG not defined
+			if QAGWFG:   #	constituent n is present in groundwater
 				# qualgw()
 				''' Simulate quality constituents by fixed concentration in groundwater flow'''
-				if dayfg:        # it is the first interval of the day
-					aoqc = AOQCP[loop]
+				aoqc = AOQCP[loop] * 3630.0
+				if ui_flags['VAQCFG'] == 3 or ui_flags['VAQCFG'] == 4:
+					aoqc = aoqc * 6.238e-5
 					
 				# simulate constituents carried by groundwater flow - units are qty/acre-ivl
 				if agwo > 0.0:      # there is baseflow
@@ -295,7 +297,7 @@ def pqual(store, siminfo, uci, ts):
 			SOQC[loop]   = soqc
 			IOQC[loop]   = (ioqual / ifwo / 3630.0) if ifwo > 0.0 else -1.0e30
 			AOQC[loop]   = (aoqual / agwo / 3630.0) if agwo > 0.0 else -1.0e30
-			POQC[loop]   = poqc
+			POQC[loop]   = poqc / 3630.0 if pero > 0.0 else -1.0e30
 
 			WASHQS[loop] = washqs
 			SCRQS[loop]  = scrqs
