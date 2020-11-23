@@ -228,6 +228,16 @@ def readUCI(uciname, hdfname):
                 df['FZGL'] = 0.1
                 df.to_hdf(store, path, data_columns=True)
 
+        path = '/PERLND/PQUAL/PARAMETERS'
+        if path in keys:
+            df = read_hdf(store, path)
+            if 'SDLFAC' not in df.columns:  # didn't read LAT-FACTOR table
+                df['SDLFAC'] = 0.0
+                df['SLIFAC'] = 0.0
+                df['ILIFAC'] = 0.0
+                df['ALIFAC'] = 0.0
+                df.to_hdf(store, path, data_columns=True)
+
         path = '/RCHRES/GENERAL/INFO'
         if path in keys:
             dfinfo = read_hdf(store, path)
