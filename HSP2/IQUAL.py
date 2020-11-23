@@ -25,7 +25,10 @@ def iqual(store, siminfo, uci, ts):
 	''' Simulate washoff of quality constituents (other than solids, Heat, dox, and co2)
 	using simple relationships with solids And/or water yield'''
 
-	nquals = int((len(uci) - 2) / 2)
+	nquals = 1
+	if 'PARAMETERS' in uci:
+		if 'NQUAL' in uci['PARAMETERS']:
+			nquals = uci['PARAMETERS']['NQUAL']
 	constituents = []
 	for index in range(nquals):
 		iqual = str(index + 1)
@@ -96,11 +99,11 @@ def iqual(store, siminfo, uci, ts):
 		
 		# handle monthly tables
 		u = uci['FLAGS']
-		ts['POTFW'] = initm(siminfo, uci, ui_flags['VPFWFG'], 'MONTHLY_POTFW', ui_parms['POTFW'])
-		ts['ACQOP'] = initm(siminfo, uci, ui_flags['VQOFG'], 'MONTHLY_ACQOP', ui_parms['ACQOP'])
-		ts['SQOLIM'] = initm(siminfo, uci, ui_flags['VQOFG'], 'MONTHLY_SQOLIM', ui_parms['SQOLIM'])
-		ts['IQADFX'] = initm(siminfo, uci, u['IQADFG'+ str((index*2) -1)], 'MONTHLY_IQADFX', 0.0)
-		ts['IQADCN'] = initm(siminfo, uci, u['IQADFG'+ str(index*2)], 'MONTHLY_IQADCN', 0.0)
+		ts['POTFW'] = initm(siminfo, uci, ui_flags['VPFWFG'], 'IQUAL' + str(index) + '_MONTHLY/POTFW', ui_parms['POTFW'])
+		ts['ACQOP'] = initm(siminfo, uci, ui_flags['VQOFG'], 'IQUAL' + str(index) + '_MONTHLY/ACQOP', ui_parms['ACQOP'])
+		ts['SQOLIM'] = initm(siminfo, uci, ui_flags['VQOFG'], 'IQUAL' + str(index) + '_MONTHLY/SQOLIM', ui_parms['SQOLIM'])
+		ts['IQADFX'] = initm(siminfo, uci, u['IQADFG'+ str((index*2) -1)], 'IQUAL' + str(index) + '_MONTHLY/IQADFX', 0.0)
+		ts['IQADCN'] = initm(siminfo, uci, u['IQADFG'+ str(index*2)], 'IQUAL' + str(index) + '_MONTHLY/IQADCN', 0.0)
 		POTFW  = ts['POTFW']
 		ACQOP  = ts['ACQOP']
 		SQOLIM = ts['SQOLIM']
