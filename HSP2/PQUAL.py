@@ -124,8 +124,23 @@ def pqual(store, siminfo, uci, ts):
 		ts['SQOLIM'] = initm(siminfo, uci, ui_flags['VQOFG'], 'PQUAL' + str(index) + '_MONTHLY/SQOLIM', ui_parms['SQOLIM'])
 		ts['IOQCP']  = initm(siminfo, uci, ui_flags['VIQCFG'], 'PQUAL' + str(index) + '_MONTHLY/IOQC', ui_parms['IOQC'])
 		ts['AOQCP']  = initm(siminfo, uci, ui_flags['VAQCFG'], 'PQUAL' + str(index) + '_MONTHLY/AOQC', ui_parms['AOQC'])
-		ts['PQADFX'] = initm(siminfo, uci, u['PQADFG' + str((index * 2) - 1)], 'PQUAL' + str(index) + '_MONTHLY/PQADFX', 0.0)
-		ts['PQADCN'] = initm(siminfo, uci, u['PQADFG' + str(index * 2)], 'PQUAL' + str(index) + '_MONTHLY/PQADCN', 0.0)
+
+		# get atmos dep timeseries
+		pqadfgf = u['PQADFG' + str((index * 2) - 1)]
+		if pqadfgf > 0:
+			ts['PQADFX'] = initm(siminfo, uci, pqadfgf, 'PQUAL' + str(index) + '_MONTHLY/PQADFX', 0.0)
+		elif pqadfgf == -1:
+			ts['PQADFX'] = ts['PQADFX' + str(index) + ' 1']
+		pqadfgc = u['PQADFG' + str(index * 2)]
+		if pqadfgc > 0:
+			ts['PQADCN'] = initm(siminfo, uci, pqadfgc, 'PQUAL' + str(index) + '_MONTHLY/PQADCN', 0.0)
+		elif pqadfgc == -1:
+			ts['PQADCN'] = ts['PQADCN' + str(index) + ' 1']
+		if 'PQADFX' not in ts:
+			ts['PQADFX'] = zeros(simlen)
+		if 'PQADCN' not in ts:
+			ts['PQADCN'] = zeros(simlen)
+
 		POTFW  = ts['POTFW']
 		POTFS  = ts['POTFS']
 		ACQOP  = ts['ACQOP']
@@ -184,24 +199,28 @@ def pqual(store, siminfo, uci, ts):
 				# calculate effective outflow potency factor
 				lsosed = wssd + scrsd
 				soqsp = soqs / lsosed  if lsosed > 0.0 else -1.0e30
+
+				suroqs = soqs
 				# end of qualsd()
 
 			# simulate by association with overland flow
 			suroqo = 0.0
 			adtot  = 0.0
-			sqo    = 0.0
+			adfxfx = 0.0
+			adcnfx = 0.0
 			if QSOFG:   #constituent n is simulated by association with overland flow;
 				# qualof()
 				''' Simulate accumulation of a quality constituent on the land surface and its removal by a constant unit rate and by overland flow'''	
-				# if dayfg:
-				remqop = acqop / sqolim
+				if dayfg:
+					remqop = acqop / sqolim
 
-				# update storage due to accumulation and removal which occurs independent of runoff - units are qty/acre
-				sqo = acqop + sqo * (1.0 - remqop)
+					if QSOFG == 1:
+						# update storage due to accumulation and removal which occurs independent of runoff - units are qty/acre
+						sqo = acqop + sqo * (1.0 - remqop)
 
 				# handle atmospheric deposition
 				adfxfx = PQADFX[loop]  # dry deposition
-				adcnfx = PQADCN[loop] * PREC[loop]  # wet deposition
+				adcnfx = PQADCN[loop] * PREC[loop] * 3630.0 # wet deposition
 
 				adtot = adfxfx + adcnfx  # total atmospheric deposition
 				intot = adtot + sliqo             	# add lateral inflow
@@ -294,7 +313,7 @@ def pqual(store, siminfo, uci, ts):
 				SOQOC[loop] = soqoc / 3630.0  # 3630 converts from ft3 to ac-in
 			else:
 				SOQOC[loop] = soqoc
-			SOQC[loop]   = soqc
+			SOQC[loop]   = soqc / 3630.0
 			IOQC[loop]   = (ioqual / ifwo / 3630.0) if ifwo > 0.0 else -1.0e30
 			AOQC[loop]   = (aoqual / agwo / 3630.0) if agwo > 0.0 else -1.0e30
 			POQC[loop]   = poqc / 3630.0 if pero > 0.0 else -1.0e30
@@ -304,17 +323,9 @@ def pqual(store, siminfo, uci, ts):
 			SOQS[loop]   = soqs
 			SOQO [loop]  = soqo
 
+			PQADWT[loop] = adcnfx
+			PQADDR[loop] = adfxfx
 			PQADEP[loop] = adtot
 	
 	return errorsV, ERRMSG
 
-	
-'''
-C       english units - conversion from mg/l to lb/ft3
-        CVT= 6.238E-5
-
-IF (UUNITS .EQ. 1) THEN
-C           convert from qty/ft3 to qty/ac.in
-            DO 30 I= 1, 12
-              PQACNM(I,J)= PQACNM(I,J)*3630.0
-'''
