@@ -102,8 +102,23 @@ def iqual(store, siminfo, uci, ts):
 		ts['POTFW'] = initm(siminfo, uci, ui_flags['VPFWFG'], 'IQUAL' + str(index) + '_MONTHLY/POTFW', ui_parms['POTFW'])
 		ts['ACQOP'] = initm(siminfo, uci, ui_flags['VQOFG'], 'IQUAL' + str(index) + '_MONTHLY/ACQOP', ui_parms['ACQOP'])
 		ts['SQOLIM'] = initm(siminfo, uci, ui_flags['VQOFG'], 'IQUAL' + str(index) + '_MONTHLY/SQOLIM', ui_parms['SQOLIM'])
-		ts['IQADFX'] = initm(siminfo, uci, u['IQADFG'+ str((index*2) -1)], 'IQUAL' + str(index) + '_MONTHLY/IQADFX', 0.0)
-		ts['IQADCN'] = initm(siminfo, uci, u['IQADFG'+ str(index*2)], 'IQUAL' + str(index) + '_MONTHLY/IQADCN', 0.0)
+
+		# get atmos dep timeseries
+		iqadfgf = u['IQADFG' + str((index * 2) - 1)]
+		if iqadfgf > 0:
+			ts['IQADFX'] = initm(siminfo, uci, iqadfgf, 'IQUAL' + str(index) + '_MONTHLY/IQADFX', 0.0)
+		elif iqadfgf == -1:
+			ts['IQADFX'] = ts['IQADFX' + str(index) + ' 1']
+		iqadfgc = u['IQADFG' + str(index * 2)]
+		if iqadfgc > 0:
+			ts['IQADCN'] = initm(siminfo, uci, iqadfgc, 'IQUAL' + str(index) + '_MONTHLY/IQADCN', 0.0)
+		elif iqadfgc == -1:
+			ts['IQADCN'] = ts['IQADCN' + str(index) + ' 1']
+		if 'IQADFX' not in ts:
+			ts['IQADFX'] = zeros(simlen)
+		if 'IQADCN' not in ts:
+			ts['IQADCN'] = zeros(simlen)
+
 		POTFW  = ts['POTFW']
 		ACQOP  = ts['ACQOP']
 		SQOLIM = ts['SQOLIM']
@@ -149,6 +164,8 @@ def iqual(store, siminfo, uci, ts):
 			# simulate by association with overland flow
 			suroqo = 0.0
 			adtot  = 0.0
+			adfxfx = 0.0
+			adcnfx = 0.0
 			if QSOFG != 0:  #  constituent n is simulated by association with overland flow; the value of qofp refers to the set of overland flow associated parameters to use
 				if QSOFG >= 1:   # standard qualof simulation
 					# washof ()
@@ -159,8 +176,8 @@ def iqual(store, siminfo, uci, ts):
 							sqo = acqop + sqo * (1.0 - remqop)
 
 					# handle atmospheric deposition
-					adfxfx = IQADFX[loop]  		            # dry deposition
-					adcnfx = IQADCN[loop] * PREC[loop]  	# wet deposition
+					adfxfx = IQADFX[loop]  		                    # dry deposition
+					adcnfx = IQADCN[loop] * PREC[loop] * 3630.0 	# wet deposition
 
 					adtot = adfxfx + adcnfx  # total atmospheric deposition
 
@@ -203,54 +220,10 @@ def iqual(store, siminfo, uci, ts):
 
 			SOQO[loop]   = soqo
 			SOQSP[loop]  = soqsp
+
+			IQADWT[loop] = adcnfx
+			IQADDR[loop] = adfxfx
 			IQADEP[loop] = adtot
 			
 	return errorsV, ERRMSG
 
-
-	
-'''
-C
-          IF (SLIQOX(QOFP) .GE. 1) THEN
-C           lateral inflow of qualof
-            SLIQO(QOFP)= SLIQO(QOFP)+ PAD(SLIQOX(QOFP)+IVL1)
-C          ELSE
-C           no lateral inflow
-C            SLIQO(QOFP)= 0.0
-          END IF
-C
-
-'''
-'''
-      DO 90 N= 1,NQUAL
-          J= 2*(N- 1)+ 1
-          IF ( (IQADFG(J) .NE. 0) .OR. (IQADFG(J+1) .NE. 0) ) THEN
-C           error - non-qualof cannot have atmospheric deposition
-            WRITE (CSTR,2010) (QUALID(I,N),I=1,3)
-            I= 12
-            CALL OMSTC (I,CSTR1)
-            SGRP= 3
-            CALL OMSG (MESSU,MSGFL,SCLU,SGRP,
-     M                 ECOUNT)
-            IQADFG(J)= 0
-            IQADFG(J+1)= 0
-          END IF
-        END IF
-C
-
-        IF (QSOFG(N).GE.1) THEN
-          SQO(NQOF)   = RVAL(1)
-          ACQOP(NQOF) = RVAL(3)
-          SQOLIM      = RVAL(4)
-C         compute removal rate
-          REMQOP(NQOF)= ACQOP(NQOF)/SQOLIM
-          WSFAC(NQOF) = 2.30/RVAL(5)
-        ELSE IF (QSOFG(N) .EQ. -1) THEN
-C         special case for ches bay - allow constant conc qualof
-C         this converts units from mg/l to lb/ac/in
-          ACQOP(NQOF) = RVAL(3)*0.2266
-          SQO(NQOF)   = 0.0
-        END IF
-C
-************************* END PIQUAL
-'''
