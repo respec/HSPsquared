@@ -53,10 +53,25 @@ def pwtgas(store, siminfo, uci, ts):
     alifac = ui['ALIFAC']
 
     u = uci['PARAMETERS']
-    ts['IDOXP'] = initm(siminfo, uci, u['IDVFG'], 'MONTHLY_IDOXP', u['IDOXP'])
-    ts['ICO2P'] = initm(siminfo, uci, u['ICVFG'], 'MONTHLY_ICO2P', u['ICO2P'])
-    ts['ADOXP'] = initm(siminfo, uci, u['GDVFG'], 'MONTHLY_ADOXP', u['ADOXP'])
-    ts['ACO2P'] = initm(siminfo, uci, u['GCVFG'], 'MONTHLY_ACO2P', u['ACO2P'])
+    if 'IDVFG' in u:
+        ts['IDOXP'] = initm(siminfo, uci, u['IDVFG'], 'MONTHLY_IDOXP', u['IDOXP'])
+    else:
+        ts['IDOXP'] = full(simlen, u['IDOXP'])
+    if 'ICVFG' in u:
+        ts['ICO2P'] = initm(siminfo, uci, u['ICVFG'], 'MONTHLY_ICO2P', u['ICO2P'])
+    else:
+        ts['ICO2P'] = full(simlen, u['ICO2P'])
+    if 'GDVFG' in u:
+        gdvfg = u['GDVFG']
+        ts['ADOXP'] = initm(siminfo, uci, u['GDVFG'], 'MONTHLY_ADOXP', u['ADOXP'])
+    else:
+        gdvfg = 0
+        ts['ADOXP'] = full(simlen, u['ADOXP'])
+    if 'GCVFG' in u:
+        ts['ACO2P'] = initm(siminfo, uci, u['GCVFG'], 'MONTHLY_ACO2P', u['ACO2P'])
+    else:
+        ts['ACO2P'] = full(simlen, u['ACO2P'])
+
     IDOXP = ts['IDOXP']
     ICO2P = ts['ICO2P']
     ADOXP = ts['ADOXP']
@@ -216,7 +231,7 @@ def pwtgas(store, siminfo, uci, ts):
 
 
         if dayfg:    #it is the first interval of the day
-            if u['GDVFG']:
+            if gdvfg:
                 adoxp = ADOXP[loop]
                 aco2p = ACO2P[loop]
 
