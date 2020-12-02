@@ -28,8 +28,14 @@ def sedmnt(store, siminfo, uci, ts):
 	tindex = siminfo['tindex']
 
 	ui = make_numba_dict(uci)  # Note: all values converted to float automatically
-	VSIVFG = ui['VSIVFG']
-	SDOPFG = ui['SDOPFG']
+	if 'VSIVFG' in ui:
+		VSIVFG = ui['VSIVFG']
+	else:
+		VSIVFG = 0
+	if 'SDOPFG' in ui:
+		SDOPFG = ui['SDOPFG']
+	else:
+		SDOPFG = 0
 	CSNOFG = int(ui['CSNOFG'])
 	smpf   = ui['SMPF']
 	krer   = ui['KRER']

@@ -65,8 +65,12 @@ def iwtgas(store, siminfo, uci, ts):
 	SLICO2 = ts['SLICO2']
 
 	u = uci['PARAMETERS']
-	ts['AWTF'] = initm(siminfo, uci, u['WTFVFG'], 'MONTHLY_AWTF', u['AWTF'])
-	ts['BWTF'] = initm(siminfo, uci, u['WTFVFG'], 'MONTHLY_BWTF', u['BWTF'])
+	if 'WTFVFG' in u:
+		ts['AWTF'] = initm(siminfo, uci, u['WTFVFG'], 'MONTHLY_AWTF', u['AWTF'])
+		ts['BWTF'] = initm(siminfo, uci, u['WTFVFG'], 'MONTHLY_BWTF', u['BWTF'])
+	else:
+		ts['AWTF'] = full(simlen, u['AWTF'])
+		ts['BWTF'] = full(simlen, u['BWTF'])
 	AWTF = ts['AWTF']
 	BWTF = ts['BWTF']
 	
