@@ -34,11 +34,19 @@ def pstemp(store, siminfo, uci, ts):
 
 	# initial conditions
 	# may need to convert to C from F
-	airtc  = ui['AIRTC']
-	sltmp  = ui['SLTMP']
-	ultmp  = ui['ULTMP']
-	lgtmp  = ui['LGTMP']
-	
+	airtc  = 60.0
+	sltmp  = 60.0
+	ultmp  = 60.0
+	lgtmp  = 60.0
+	if 'AIRTC' in ui:
+		airtc = ui['AIRTC']
+	if 'SLTMP' in ui:
+		sltmp = ui['SLTMP']
+	if 'ULTMP' in ui:
+		ultmp = ui['ULTMP']
+	if 'LGTMP' in ui:
+		lgtmp = ui['LGTMP']
+
 	# preallocate storage
 	AIRTC = ts['AIRTC'] = zeros(simlen)
 	SLTMP = ts['SLTMP'] = zeros(simlen)

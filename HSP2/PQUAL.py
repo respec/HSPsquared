@@ -117,25 +117,33 @@ def pqual(store, siminfo, uci, ts):
 		ILIQC  = ts['ILIQC']
 		ALIQC  = ts['ALIQC']
 
-		u = uci['FLAGS']
-		ts['POTFW']  = initm(siminfo, uci, ui_flags['VPFWFG'], 'PQUAL' + str(index) + '_MONTHLY/POTFW', ui_parms['POTFW'])
-		ts['POTFS']  = initm(siminfo, uci, ui_flags['VPFSFG'], 'PQUAL' + str(index) + '_MONTHLY/POTFS', ui_parms['POTFS'])
-		ts['ACQOP']  = initm(siminfo, uci, ui_flags['VQOFG'], 'PQUAL' + str(index) + '_MONTHLY/ACQOP', ui_parms['ACQOP'])
-		ts['SQOLIM'] = initm(siminfo, uci, ui_flags['VQOFG'], 'PQUAL' + str(index) + '_MONTHLY/SQOLIM', ui_parms['SQOLIM'])
-		ts['IOQCP']  = initm(siminfo, uci, ui_flags['VIQCFG'], 'PQUAL' + str(index) + '_MONTHLY/IOQC', ui_parms['IOQC'])
-		ts['AOQCP']  = initm(siminfo, uci, ui_flags['VAQCFG'], 'PQUAL' + str(index) + '_MONTHLY/AOQC', ui_parms['AOQC'])
+		if 'FLAGS' in uci:
+			u = uci['FLAGS']
+			ts['POTFW']  = initm(siminfo, uci, ui_flags['VPFWFG'], 'PQUAL' + str(index) + '_MONTHLY/POTFW', ui_parms['POTFW'])
+			ts['POTFS']  = initm(siminfo, uci, ui_flags['VPFSFG'], 'PQUAL' + str(index) + '_MONTHLY/POTFS', ui_parms['POTFS'])
+			ts['ACQOP']  = initm(siminfo, uci, ui_flags['VQOFG'], 'PQUAL' + str(index) + '_MONTHLY/ACQOP', ui_parms['ACQOP'])
+			ts['SQOLIM'] = initm(siminfo, uci, ui_flags['VQOFG'], 'PQUAL' + str(index) + '_MONTHLY/SQOLIM', ui_parms['SQOLIM'])
+			ts['IOQCP']  = initm(siminfo, uci, ui_flags['VIQCFG'], 'PQUAL' + str(index) + '_MONTHLY/IOQC', ui_parms['IOQC'])
+			ts['AOQCP']  = initm(siminfo, uci, ui_flags['VAQCFG'], 'PQUAL' + str(index) + '_MONTHLY/AOQC', ui_parms['AOQC'])
+			# get atmos dep timeseries
+			pqadfgf = u['PQADFG' + str((index * 2) - 1)]
+			if pqadfgf > 0:
+				ts['PQADFX'] = initm(siminfo, uci, pqadfgf, 'PQUAL' + str(index) + '_MONTHLY/PQADFX', 0.0)
+			elif pqadfgf == -1:
+				ts['PQADFX'] = ts['PQADFX' + str(index) + ' 1']
+			pqadfgc = u['PQADFG' + str(index * 2)]
+			if pqadfgc > 0:
+				ts['PQADCN'] = initm(siminfo, uci, pqadfgc, 'PQUAL' + str(index) + '_MONTHLY/PQADCN', 0.0)
+			elif pqadfgc == -1:
+				ts['PQADCN'] = ts['PQADCN' + str(index) + ' 1']
+		else:
+			ts['POTFW'] = full(simlen, ui_parms['POTFW'])
+			ts['POTFS'] = full(simlen, ui_parms['POTFS'])
+			ts['ACQOP'] = full(simlen, ui_parms['ACQOP'])
+			ts['SQOLIM'] = full(simlen, ui_parms['SQOLIM'])
+			ts['IOQCP'] = full(simlen, ui_parms['IOQC'])
+			ts['AOQCP'] = full(simlen, ui_parms['AOQC'])
 
-		# get atmos dep timeseries
-		pqadfgf = u['PQADFG' + str((index * 2) - 1)]
-		if pqadfgf > 0:
-			ts['PQADFX'] = initm(siminfo, uci, pqadfgf, 'PQUAL' + str(index) + '_MONTHLY/PQADFX', 0.0)
-		elif pqadfgf == -1:
-			ts['PQADFX'] = ts['PQADFX' + str(index) + ' 1']
-		pqadfgc = u['PQADFG' + str(index * 2)]
-		if pqadfgc > 0:
-			ts['PQADCN'] = initm(siminfo, uci, pqadfgc, 'PQUAL' + str(index) + '_MONTHLY/PQADCN', 0.0)
-		elif pqadfgc == -1:
-			ts['PQADCN'] = ts['PQADCN' + str(index) + ' 1']
 		if 'PQADFX' not in ts:
 			ts['PQADFX'] = zeros(simlen)
 		if 'PQADCN' not in ts:
