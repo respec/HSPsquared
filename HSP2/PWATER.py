@@ -54,14 +54,22 @@ def pwater(store, siminfo, uci, ts):
 
     # process optional monthly arrays to return interpolated data or constant array
     u = uci['PARAMETERS']
-    flag = (u['VLEFG'] == 1) or (u['VLEFG'] == 3)
+    if 'VLEFG' in u:
+        flag = (u['VLEFG'] == 1) or (u['VLEFG'] == 3)
 
-    ts['LZETP'] = initm(siminfo, uci, flag,        'MONTHLY_LZETP', u['LZETP'])
-    ts['CEPSC'] = initm(siminfo, uci, u['VCSFG'],  'MONTHLY_CEPSC', u['CEPSC'])
-    ts['INTFW'] = initm(siminfo, uci, u['VIFWFG'], 'MONTHLY_INTFW', u['INTFW'])
-    ts['IRC']   = initm(siminfo, uci, u['VIRCFG'], 'MONTHLY_IRC',   u['IRC'])
-    ts['NSUR']  = initm(siminfo, uci, u['VNNFG'],  'MONTHLY_NSUR',  u['NSUR'])
-    ts['UZSN']  = initm(siminfo, uci, u['VUZFG'],  'MONTHLY_UZSN',  u['UZSN'])
+        ts['LZETP'] = initm(siminfo, uci, flag,        'MONTHLY_LZETP', u['LZETP'])
+        ts['CEPSC'] = initm(siminfo, uci, u['VCSFG'],  'MONTHLY_CEPSC', u['CEPSC'])
+        ts['INTFW'] = initm(siminfo, uci, u['VIFWFG'], 'MONTHLY_INTFW', u['INTFW'])
+        ts['IRC']   = initm(siminfo, uci, u['VIRCFG'], 'MONTHLY_IRC',   u['IRC'])
+        ts['NSUR']  = initm(siminfo, uci, u['VNNFG'],  'MONTHLY_NSUR',  u['NSUR'])
+        ts['UZSN']  = initm(siminfo, uci, u['VUZFG'],  'MONTHLY_UZSN',  u['UZSN'])
+    else:
+        ts['LZETP'] = full(steps, u['LZETP'])
+        ts['CEPSC'] = full(steps, u['CEPSC'])
+        ts['INTFW'] = full(steps, u['INTFW'])
+        ts['IRC'] = full(steps, u['IRC'])
+        ts['NSUR'] = full(steps, u['NSUR'])
+        ts['UZSN'] = full(steps, u['UZSN'])
 
     # true the first time and at start of every day of simulation
     ts['DAYFG'] = hourflag(siminfo, 0, dofirst=True).astype(float)
@@ -77,6 +85,12 @@ def pwater(store, siminfo, uci, ts):
     # kludge to make ICEFG available from SNOW to PWATER
     ui['ICEFG']  = siminfo['ICEFG'] if 'ICEFG' in siminfo else 0.0
 
+    CSNOFG = 0
+    if 'CSNOFG' in ui:
+        CSNOFG = int(ui['CSNOFG'])
+    # make CSNOFG available to other sections
+    u['CSNOFG'] = CSNOFG
+
     ############################################################################
     errors = _pwater_(ui, ts)      # traditional HSPF HPERWAT
     ############################################################################
@@ -89,9 +103,10 @@ def _pwater_(ui, ts):
     ''' simulate the water budget for a pervious land segment'''
     errors = zeros(int(ui['errlen'])).astype(int64)
 
-    if int(ui['HWTFG']):
-        errors[9] += 1
-        return
+    if 'HWTFG' in ui:
+        if int(ui['HWTFG']):
+            errors[9] += 1
+            return
 
     delt60 = ui['delt'] / 60.0      # simulation interval in hours
     steps  = int(ui['steps'])
@@ -139,13 +154,25 @@ def _pwater_(ui, ts):
     irrcep = 0.0   # ????
     #irdraw = zeros(3)
 
-    CSNOFG = int(ui['CSNOFG'])
-    ICEFG  = int(ui['ICEFG'])
-    IFFCFG = int(ui['IFFCFG'])
-    IFRDFG = int(ui['IFRDFG'])
-    RTOPFG = int(ui['RTOPFG'])
-    UZFG   = int(ui['UZFG'])
-    VLEFG  = int(ui['VLEFG'])
+    CSNOFG = 0
+    ICEFG = 0
+    IFFCFG = 1
+    IFRDFG = 0
+    RTOPFG = 0
+    UZFG = 0
+    VLEFG = 0
+
+    if 'ICEFG' in ui:
+        ICEFG = int(ui['ICEFG'])
+
+    if 'CSNOFG' in ui:
+        CSNOFG = int(ui['CSNOFG'])
+        IFFCFG = int(ui['IFFCFG'])
+        IFRDFG = int(ui['IFRDFG'])
+        RTOPFG = int(ui['RTOPFG'])
+        UZFG   = int(ui['UZFG'])
+        VLEFG  = int(ui['VLEFG'])
+
     agwetp = ui['AGWETP']
     agws   = ui['AGWS']
     basetp = ui['BASETP']

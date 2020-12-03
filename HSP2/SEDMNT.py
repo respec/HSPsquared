@@ -4,7 +4,7 @@ License: LGPL2
 
 Conversion of HSPF HPERSED.FOR module into Python''' 
 
-from numpy import zeros, where, int64
+from numpy import zeros, where, int64, full
 from numba import njit
 from HSP2.utilities  import initm, make_numba_dict, hourflag
 
@@ -48,10 +48,17 @@ def sedmnt(store, siminfo, uci, ts):
 	jger   = ui['JGER']
 
 	u = uci['PARAMETERS']
-	ts['COVERI'] = initm(siminfo, uci, u['CRVFG'], 'MONTHLY_COVER', u['COVER'])
+	if 'CRVFG' in u:
+		ts['COVERI'] = initm(siminfo, uci, u['CRVFG'], 'MONTHLY_COVER', u['COVER'])
+	else:
+		ts['COVERI'] = full(simlen, u['COVER'])
 	COVERI = ts['COVERI']
 	cover = COVERI[0]   # for numba
-	ts['NVSI'] = initm(siminfo, uci, u['VSIVFG'], 'MONTHLY_NVSI', u['NVSI'])
+
+	if 'VSIVFG' in u:
+		ts['NVSI'] = initm(siminfo, uci, u['VSIVFG'], 'MONTHLY_NVSI', u['NVSI'])
+	else:
+		ts['NVSI'] = full(simlen, u['NVSI'])
 	NVSI = ts['NVSI'] * delt / 1440.
 
 	if 'RAINF' in ts:

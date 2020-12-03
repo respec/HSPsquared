@@ -54,7 +54,10 @@ def snow(store, siminfo, uci, ts):
     ts['HRFG'] = hoursval(siminfo, ones(24), dofirst=True).astype(float)
 
     # make ICEFG available to PWATER later.
-    siminfo['ICEFG'] = uci['FLAGS']['ICEFG'] if 'ICEFG' in uci['FLAGS'] else 0
+    siminfo['ICEFG'] = 0
+    if 'FLAGS' in uci:
+        if 'ICEFG' in uci['FLAGS']:
+            siminfo['ICEFG'] = uci['FLAGS']['ICEFG']
 
     ui = make_numba_dict(uci)  # Note: all values coverted to float automatically
     ui['steps']   = steps
@@ -63,10 +66,12 @@ def snow(store, siminfo, uci, ts):
     ui['cloudfg'] = cloudfg
 
     u = uci['PARAMETERS']
-    uf = uci['FLAGS']
+
     vkmfg = 0
-    if 'VKMFG' in uf:
-        vkmfg = uf['VKMFG']
+    if 'FLAGS' in uci:
+        uf = uci['FLAGS']
+        if 'VKMFG' in uf:
+            vkmfg = uf['VKMFG']
     ts['KMELT'] = initm(siminfo, uci, vkmfg, 'MONTHLY_KMELT', u['KMELT'])
 
     ############################################################################
@@ -91,7 +96,11 @@ def _snow_(ui, ts):
     cloudfg = int(ui['cloudfg'])
     covinx = ui['COVINX']
     dull   = ui['DULL']
-    icefg  = int(ui['ICEFG'])
+
+    icefg = 0
+    if 'ICEFG' in ui:
+        icefg  = int(ui['ICEFG'])
+
     melev  = ui['MELEV']
     packf  = ui['PACKF']     # inital df.PKSNOW += df.PKICE fixed in uciReader
     packi  = ui['PACKI']
@@ -100,7 +109,11 @@ def _snow_(ui, ts):
     rdcsn  = ui['RDCSN']
     rdenpf = ui['RDENPF']
     skyclr = ui['SKYCLR']
-    snopfg = int(ui['SNOPFG'])
+
+    snopfg = 0
+    if 'SNOPFG' in ui:
+        snopfg = int(ui['SNOPFG'])
+
     tbase  = ui['TBASE']
     tsnow  = ui['TSNOW']
     xlnmlt = ui['XLNMLT']
