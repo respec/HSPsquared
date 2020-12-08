@@ -4,6 +4,7 @@ License: LGPL2
 '''
 
 from numpy import zeros
+from HSP2.utilities import make_numba_dict
 
 # The clean way to get calculated data from adcalc() into advert() is to use a closure. 
 # This is not currently supported by Numba.
@@ -14,52 +15,88 @@ let omat be passed in advect to avoid recreating it each time
 ADFLAG == 2  loop simplification as elif
 
 '''
+ERRMSG = []
 
-def adcalc(general, ui, ts):
+def adcalc(store, siminfo, uci, ts):
 	'''Prepare to simulate advection of fully entrained constituents'''
 
-	simlen = general['SIMLEN']
-	delts  = general['DELT'] * 60.0     # delts is the simulation interval in seconds
-	nexits = ui['NEXITS']               # table type GEN-INFO
+	errorsV = zeros(len(ERRMSG), dtype=int)
+
+	simlen = siminfo['steps']
+	delts  = siminfo['delt'] * 60.0     # delts is the simulation interval in seconds
+
+	ui = make_numba_dict(uci)
+	nexits = int(ui['NEXITS'])          # table type GEN-INFO
 	ADFG   = ui['ADFG']                 # table type ACTIVITY
 
 	# table ADCALC-DATA
-	crrat  = ui['CRRAT']
-	vol    = ui['VOL']
+	if 'CRRAT' in ui:
+		crrat = ui['CRRAT']
+	else:
+		crrat = 1.5
+	if 'VOL' in ui:
+		vol   = ui['VOL']
+	else:
+		vol   = 0.0
 	
 	# external time series
-	O   = ts['O']  	 # total rate of outflow per exit: O[simlen, nexits]
-	VOL = ts['VOL']
-	
+	O = []
+	for timeindex in range(simlen):
+		tarray = []
+		if nexits > 1:
+			for index in range(nexits):
+				tarray.append(ts['O' + str(index+1)][timeindex])
+		else:
+			tarray.append(ts['RO'][timeindex])
+		O.append(tarray)  	 # total rate of outflow per exit: O[simlen, nexits]
+
 	# calculated timeseries for advect()
-	SROVOL = ts['SROVOL'] = zeros(simlen)
-	EROVOL = ts['ERVOL']  = zeros(simlen)
-	SOVOL  = ts['SOVOL']  = zeros((simlen, nexits))
-	EOVOL  = ts['EVOL']   = zeros((simlen, nexits))
-	
+	if 'SROVOL' not in ts:
+		ts['SROVOL'] = zeros(simlen)
+	if 'EROVOL' not in ts:
+		ts['EROVOL'] = zeros(simlen)
+	SROVOL = ts['SROVOL']
+	EROVOL = ts['EROVOL']
+	if 'SOVOL' in ts:
+		SOVOL = ts['SOVOL']
+	else:
+		SOVOL = zeros((simlen, nexits))
+		# for index in range(nexits):
+		# 	ts['SOVOL' + str(index+1)] = SOVOL[:,index]
+	if 'EOVOL' in ts:
+		EOVOL = ts['EOVOL']
+	else:
+		EOVOL = zeros((simlen, nexits))
+		# for index in range(nexits):
+		# 	ts['EOVOL' + str(index + 1)] = EOVOL[:, index]
+
+	ks = 0.0
 	if ADFG == 2:
-		ks = ui['KS']  if ADFG == 2 else 0.0     # need to get from HYDR section
-	
-	o  = zeros(nexits)
-	os = zeros(nexits)
-	
-	adcalc_(simlen, delts, nexits, crrat, ks, vol, ADFG, O, VOL, SROVOL, EROVOL, SOVOL, EOVOL, o, os)
-	ui['adcalcData'] = (nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL)
-	return
+		ks = ui['KS']   # need to get from HYDR section
+
+	VOL = ts['VOL']
+
+	adcalc_(simlen, delts, nexits, crrat, ks, vol, ADFG, O, VOL, SROVOL, EROVOL, SOVOL, EOVOL)
+	uci['adcalcData'] = (nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL)
+
+	return errorsV, ERRMSG
 
 
 #@jit(nopython=True)	
-def adcalc_(simlen, delts, nexits, crrat, ks, vol, ADFG, O, VOL, SROVOL, EROVOL, SOVOL, EOVOL, o, os):	
+def adcalc_(simlen, delts, nexits, crrat, ks, vol, ADFG, O, VOL, SROVOL, EROVOL, SOVOL, EOVOL):
 	''' Internal adcalc() loop for Numba'''
 	
 	for loop in range(simlen):
 		vols = VOL[loop-1]  if loop > 0 else vol
-		o    = O[loop,:]
-		os   = O[loop-1,:] if loop > 0 else O[loop,:]
-		if nexits > 1:
-			ro  = o.sum()
-			ros = os.sum()
-		
+
+		o  = O[loop]
+		os = O[loop-1] if loop > 0 else O[loop]
+		ro = 0.0
+		ros= 0.0
+		for index in range(nexits):
+			ro  += o[index]
+			ros += os[index]
+
 		# weighting factors to calculate mean outflow rate over ivl: constituents outflow rate at start (js) and end (cojs) of interval;
 		if ADFG >= 1:         # first use standard method of computing advective weighting
 			if ros > 0.0:     # calculate ratio of volume to outflow volume; 
@@ -83,9 +120,10 @@ def adcalc_(simlen, delts, nexits, crrat, ks, vol, ADFG, O, VOL, SROVOL, EROVOL,
 		# calculate weighted volumes of outflow at start of ivl (srovol) and end of ivl (erovol)
 		SROVOL[loop] = js   * ros * delts
 		EROVOL[loop] = cojs * ro  * delts
-		if nexits > 1:  # determine weighted volume of outflow at start and end of ivl per exit
-			SOVOL[loop,:] = js   * os * delts
-			EOVOL[loop,:] = cojs * o  * delts
+		# if nexits > 1:  # determine weighted volume of outflow at start and end of ivl per exit
+		for index in range(nexits):
+			SOVOL[loop][index] = js * os[index] * delts
+			EOVOL[loop][index] = cojs * o[index] * delts
 	return
 
 
