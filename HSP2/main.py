@@ -68,6 +68,13 @@ def main(hdfname, saveall=False):
                 if operation == 'PERLND' and activity == 'PWTGAS':
                     # special exception here to make CSNOFG available
                     ui['PARAMETERS']['CSNOFG'] = uci[(operation, 'PWATER', segment)]['PARAMETERS']['CSNOFG']
+                if operation == 'RCHRES':
+                    if not 'PARAMETERS' in ui:
+                        ui['PARAMETERS'] = {}
+                    ui['PARAMETERS']['NEXITS'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['NEXITS']
+                    if activity == 'ADCALC':
+                        ui['PARAMETERS']['ADFG'] = flags['ADCALC']
+                        ui['PARAMETERS']['KS']   = uci[(operation, 'HYDR', segment)]['PARAMETERS']['KS']
 
                 ############ calls activity function like snow() ##############
                 errors, errmessages = function(store, siminfo, ui, ts)
@@ -76,7 +83,8 @@ def main(hdfname, saveall=False):
                 for errorcnt, errormsg in zip(errors, errmessages):
                     if errorcnt > 0:
                         msg(4, f'Error count {errorcnt}: {errormsg}')
-                save_timeseries(store,ts,ui['SAVE'],siminfo,saveall,operation,segment,activity)
+                if 'SAVE' in ui:
+                    save_timeseries(store,ts,ui['SAVE'],siminfo,saveall,operation,segment,activity)
         msglist = msg(1, 'Done', final=True)
 
         df = DataFrame(msglist, columns=['logfile'])

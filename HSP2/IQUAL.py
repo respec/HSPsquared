@@ -98,22 +98,25 @@ def iqual(store, siminfo, uci, ts):
 
 		
 		# handle monthly tables
-		u = uci['FLAGS']
+
 		ts['POTFW'] = initm(siminfo, uci, ui_flags['VPFWFG'], 'IQUAL' + str(index) + '_MONTHLY/POTFW', ui_parms['POTFW'])
 		ts['ACQOP'] = initm(siminfo, uci, ui_flags['VQOFG'], 'IQUAL' + str(index) + '_MONTHLY/ACQOP', ui_parms['ACQOP'])
 		ts['SQOLIM'] = initm(siminfo, uci, ui_flags['VQOFG'], 'IQUAL' + str(index) + '_MONTHLY/SQOLIM', ui_parms['SQOLIM'])
 
-		# get atmos dep timeseries
-		iqadfgf = u['IQADFG' + str((index * 2) - 1)]
-		if iqadfgf > 0:
-			ts['IQADFX'] = initm(siminfo, uci, iqadfgf, 'IQUAL' + str(index) + '_MONTHLY/IQADFX', 0.0)
-		elif iqadfgf == -1:
-			ts['IQADFX'] = ts['IQADFX' + str(index) + ' 1']
-		iqadfgc = u['IQADFG' + str(index * 2)]
-		if iqadfgc > 0:
-			ts['IQADCN'] = initm(siminfo, uci, iqadfgc, 'IQUAL' + str(index) + '_MONTHLY/IQADCN', 0.0)
-		elif iqadfgc == -1:
-			ts['IQADCN'] = ts['IQADCN' + str(index) + ' 1']
+		if 'FLAGS' in uci:
+			u = uci['FLAGS']
+			# get atmos dep timeseries
+			iqadfgf = u['IQADFG' + str((index * 2) - 1)]
+			if iqadfgf > 0:
+				ts['IQADFX'] = initm(siminfo, uci, iqadfgf, 'IQUAL' + str(index) + '_MONTHLY/IQADFX', 0.0)
+			elif iqadfgf == -1:
+				ts['IQADFX'] = ts['IQADFX' + str(index) + ' 1']
+			iqadfgc = u['IQADFG' + str(index * 2)]
+			if iqadfgc > 0:
+				ts['IQADCN'] = initm(siminfo, uci, iqadfgc, 'IQUAL' + str(index) + '_MONTHLY/IQADCN', 0.0)
+			elif iqadfgc == -1:
+				ts['IQADCN'] = ts['IQADCN' + str(index) + ' 1']
+
 		if 'IQADFX' not in ts:
 			ts['IQADFX'] = zeros(simlen)
 		if 'IQADCN' not in ts:
