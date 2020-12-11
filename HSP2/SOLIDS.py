@@ -4,7 +4,7 @@ License: LGPL2
 
 Conversion of HSPF HIMPSLD.FOR module into Python''' 
 
-from numpy import zeros, where
+from numpy import zeros, where, full
 from numba import njit
 from HSP2.utilities  import initm, make_numba_dict, hourflag
 
@@ -23,7 +23,10 @@ def solids(store, siminfo, uci, ts):
 	tindex = siminfo['tindex']
 
 	ui = make_numba_dict(uci)  # Note: all values converted to float automatically
-	SDOPFG = ui['SDOPFG']
+	if 'SDOPFG' in ui:
+		SDOPFG = ui['SDOPFG']
+	else:
+	    SDOPFG = 0
 	keim   = ui['KEIM']
 	jeim   = ui['JEIM']
 	slds   = ui['SLDS']
@@ -45,8 +48,14 @@ def solids(store, siminfo, uci, ts):
 
 	u = uci['PARAMETERS']
 	# process optional monthly arrays to return interpolated data or constant array
-	ts['ACCSDP'] = initm(siminfo, uci, u['VASDFG'], 'ACCSDM', u['ACCSDP'])
-	ts['REMSDP'] = initm(siminfo, uci, u['VRSDFG'], 'REMSDM', u['REMSDP'])
+	if 'VASDFG' in u:
+		ts['ACCSDP'] = initm(siminfo, uci, u['VASDFG'], 'ACCSDM', u['ACCSDP'])
+	else:
+		ts['ACCSDP'] = full(simlen, u['ACCSDP'])
+	if 'VRSDFG' in u:
+		ts['REMSDP'] = initm(siminfo, uci, u['VRSDFG'], 'REMSDM', u['REMSDP'])
+	else:
+		ts['REMSDP'] = full(simlen, u['REMSDP'])
 	ACCSDP = ts['ACCSDP']
 	REMSDP = ts['REMSDP']
 

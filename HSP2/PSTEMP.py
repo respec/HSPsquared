@@ -6,7 +6,7 @@ Conversion of HSPF HPERTMP.FOR module into Python'''
 
 ''' NOTE: needs lots of Celcius temp conversions, in and out'''
 
-from numpy import zeros, where, ones, float64
+from numpy import zeros, where, ones, float64, full
 from numba import njit
 from HSP2.utilities  import hoursval, initm, make_numba_dict
 
@@ -29,16 +29,27 @@ def pstemp(store, siminfo, uci, ts):
 	tindex = siminfo['tindex']
 
 	ui = make_numba_dict(uci)
-	TSOPFG = ui['TSOPFG']
+	if 'TSOPFG' in ui:
+		TSOPFG = ui['TSOPFG']
+	else:
+		TSOPFG = 0
 	AIRTFG = int(ui['AIRTFG'])
 
 	# initial conditions
 	# may need to convert to C from F
-	airtc  = ui['AIRTC']
-	sltmp  = ui['SLTMP']
-	ultmp  = ui['ULTMP']
-	lgtmp  = ui['LGTMP']
-	
+	airtc  = 60.0
+	sltmp  = 60.0
+	ultmp  = 60.0
+	lgtmp  = 60.0
+	if 'AIRTC' in ui:
+		airtc = ui['AIRTC']
+	if 'SLTMP' in ui:
+		sltmp = ui['SLTMP']
+	if 'ULTMP' in ui:
+		ultmp = ui['ULTMP']
+	if 'LGTMP' in ui:
+		lgtmp = ui['LGTMP']
+
 	# preallocate storage
 	AIRTC = ts['AIRTC'] = zeros(simlen)
 	SLTMP = ts['SLTMP'] = zeros(simlen)
@@ -48,12 +59,25 @@ def pstemp(store, siminfo, uci, ts):
 	AIRTMP = ts['AIRTMP']
 
 	u = uci['PARAMETERS']
-	ts['ASLT'] = initm(siminfo, uci, u['SLTVFG'], 'MONTHLY_ASLT', u['ASLT'])
-	ts['BSLT'] = initm(siminfo, uci, u['SLTVFG'], 'MONTHLY_BSLT', u['BSLT'])
-	ts['ULTP1'] = initm(siminfo, uci, u['ULTVFG'], 'MONTHLY_ULTP1', u['ULTP1'])
-	ts['ULTP2'] = initm(siminfo, uci, u['ULTVFG'], 'MONTHLY_ULTP2', u['ULTP2'])
-	ts['LGTP1'] = initm(siminfo, uci, u['LGTVFG'], 'MONTHLY_LGTP1', u['LGTP1'])
-	ts['LGTP2'] = initm(siminfo, uci, u['LGTVFG'], 'MONTHLY_LGTP2', u['LGTP2'])
+	if 'SLTVFG' in u:
+		ts['ASLT'] = initm(siminfo, uci, u['SLTVFG'], 'MONTHLY_ASLT', u['ASLT'])
+		ts['BSLT'] = initm(siminfo, uci, u['SLTVFG'], 'MONTHLY_BSLT', u['BSLT'])
+	else:
+		ts['ASLT'] = full(simlen, u['ASLT'])
+		ts['BSLT'] = full(simlen, u['BSLT'])
+	if 'ULTVFG' in u:
+		ts['ULTP1'] = initm(siminfo, uci, u['ULTVFG'], 'MONTHLY_ULTP1', u['ULTP1'])
+		ts['ULTP2'] = initm(siminfo, uci, u['ULTVFG'], 'MONTHLY_ULTP2', u['ULTP2'])
+	else:
+		ts['ULTP1'] = full(simlen, u['ULTP1'])
+		ts['ULTP2'] = full(simlen, u['ULTP2'])
+	if 'LGTVFG' in u:
+		ts['LGTP1'] = initm(siminfo, uci, u['LGTVFG'], 'MONTHLY_LGTP1', u['LGTP1'])
+		ts['LGTP2'] = initm(siminfo, uci, u['LGTVFG'], 'MONTHLY_LGTP2', u['LGTP2'])
+	else:
+		ts['LGTP1'] = full(simlen, u['LGTP1'])
+		ts['LGTP2'] = full(simlen, u['LGTP2'])
+
 	ASLT  = ts['ASLT']
 	BSLT  = ts['BSLT']
 	ULTP1 = ts['ULTP1']
