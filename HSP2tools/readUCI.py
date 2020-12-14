@@ -254,6 +254,44 @@ def readUCI(uciname, hdfname):
             del dfinfo['NEXITS']
             del dfinfo['LKFG']
             dfinfo.to_hdf(store, 'RCHRES/GENERAL/INFO', data_columns=True)
+
+        path = '/RCHRES/HTRCH/FLAGS'
+        if path in keys:
+            df = read_hdf(store, path)
+            if 'BEDFLG' not in df.columns:  # didn't read HT-BED-FLAGS table
+                df['BEDFLG'] = 0
+                df['TGFLG']  = 2
+                df['TSTOP']  = 55
+                df.to_hdf(store, path, data_columns=True)
+
+        path = '/RCHRES/HTRCH/PARAMETERS'
+        if path in keys:
+            df = read_hdf(store, path)
+            if 'ELEV' not in df.columns:  # didn't read HEAT-PARM table
+                df['ELEV']  = 0.0
+                df['ELDAT'] = 0.0
+                df['CFSAEX']= 1.0
+                df['KATRAD']= 9.37
+                df['KCOND'] = 6.12
+                df['KEVAP'] = 2.24
+                df.to_hdf(store, path, data_columns=True)
+
+        path = '/RCHRES/HTRCH/PARAMETERS'
+        if path in keys:
+            df = read_hdf(store, path)
+            if 'ELEV' not in df.columns:  # didn't read HT-BED-PARM table
+                df['MUDDEP']= 0.33
+                df['TGRND'] = 59.0
+                df['KMUD']  = 50.0
+                df['KGRND'] = 1.4
+                df.to_hdf(store, path, data_columns=True)
+
+        path = '/RCHRES/HTRCH/STATES'
+        if path in keys:
+            df = read_hdf(store, path)
+            if 'ELEV' not in df.columns:  # didn't read HEAT-INIT table
+                df['TW']    = 60.0
+                df['AIRTMP']= 60.0
     return
 
 
