@@ -22,6 +22,7 @@ from HSP2.IQUAL  import iqual
 
 from HSP2.HYDR   import hydr
 from HSP2.ADCALC import adcalc
+from HSP2.HTRCH import htrch
 
 def noop (store, siminfo, ui, ts):
     ERRMSGS = []
@@ -35,7 +36,7 @@ activities = {
      'NITR':noop, 'PHOS':noop, 'TRACER':noop},
   'IMPLND': {'ATEMP':atemp, 'SNOW':snow, 'IWATER':iwater, 'SOLIDS':solids,
      'IWTGAS':iwtgas, 'IQUAL':iqual},
-  'RCHRES': {'HYDR':hydr, 'ADCALC':adcalc, 'CONS':noop, 'HTRCH':noop,
+  'RCHRES': {'HYDR':hydr, 'ADCALC':adcalc, 'CONS':noop, 'HTRCH':htrch,
      'SEDTRN':noop, 'GQUAL':noop, 'OXRX':noop, 'NUTRX':noop, 'PLANK':noop,
      'PHCARB':noop}}
 

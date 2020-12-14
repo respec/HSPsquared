@@ -75,6 +75,9 @@ def main(hdfname, saveall=False):
                     if activity == 'ADCALC':
                         ui['PARAMETERS']['ADFG'] = flags['ADCALC']
                         ui['PARAMETERS']['KS']   = uci[(operation, 'HYDR', segment)]['PARAMETERS']['KS']
+                    if activity == 'HTRCH':
+                        ui['PARAMETERS']['ADFG'] = flags['ADCALC']
+                        ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
 
                 ############ calls activity function like snow() ##############
                 errors, errmessages = function(store, siminfo, ui, ts)
@@ -219,7 +222,7 @@ def get_flows(store, ts, activity, segment, ddlinks, ddmasslinks, steps, msg):
             factor = afactr * mfactor
 
             # KLUDGE until remaining HSP2 modules are available.
-            if tmemn not in {'IVOL', ''}:
+            if tmemn not in {'IVOL', 'IHEAT'}:
                 continue
             if sgrpn == 'OFLOW' and dat.SVOL == 'RCHRES':
                 tmemn = 'IVOL'

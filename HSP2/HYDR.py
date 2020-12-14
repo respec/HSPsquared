@@ -191,6 +191,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
         ts['SAREA'] = SAREA = zeros(steps)
         ts['USTAR'] = USTAR = zeros(steps)
         ts['TAU']   = TAU   = zeros(steps)
+        ts['AVDEP'] = AVDEP = zeros(steps)
 
     zeroindex = fndrow(0.0, volumeFT)                                           #$1126-1127
     topvolume = volumeFT[-1]
@@ -449,6 +450,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
                     hrad  = 0.0
                 USTAR[step] = ustar * LFACTA
                 TAU[step]   = tau   * TFACTA
+                AVDEP[step] = avdep
     # END MAIN LOOP
 
     # NUMBA limitation for ts, and saving to HDF5 file is in individual columns
