@@ -128,17 +128,19 @@ def adcalc_(simlen, delts, nexits, crrat, ks, vol, ADFG, O, VOL, SROVOL, EROVOL,
 
 
 #@jit(nopython=True)
-def advect(loop, imat, conc, omat, nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL):
+def advect(imat, conc, nexits, vols, vol, srovol, erovol, sovol, eovol):
 	''' Simulate advection of constituent totally entrained in water.
-	called as: advect(loop, imat, conc, omat, *ui['adcalcData']) '''
+	Originally designed to be called as: advect(loop, imat, conc, omat, *ui['adcalcData'])
+	but unit conversions in the calling routine make this impractical'''
 	
-	vols   = VOL[loop-1]  if loop > 0 else vol
-	vol    = VOL[loop]
-	srovol = SROVOL[loop]
-	erovol = EROVOL[loop]
-	sovol  = SOVOL[loop,:]
-	eovol  = EOVOL[loop,:]
-	
+	# vols   = VOL[loop-1]  if loop > 0 else vol
+	# vol    = VOL[loop]
+	# srovol = SROVOL[loop]
+	# erovol = EROVOL[loop]
+	# sovol  = SOVOL[loop,:]
+	# eovol  = EOVOL[loop,:]
+
+	omat = 0.0
 	if vol > 0.0:    # reach/res contains water
 		concs = conc
 		conc = (imat + concs * (vols - srovol)) / (vol + erovol)  # material entering during interval, weighted volume of outflow based on conditions at start of ivl (srovol), and weighted volume of outflow based on conditions at end of ivl (erovol)
