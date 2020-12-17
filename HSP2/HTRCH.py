@@ -105,8 +105,11 @@ def htrch(store, siminfo, uci, ts):
 	cfpres= ((288.0 - 0.001981 * elev) / 288.0)**5.256
 
 	tw     = ui['TW']
+	tw     = (tw - 32.0) * 0.555
 	airtmp = ui['AIRTMP']
-	rheat  = tw * vol     # compute initial value of heat storage
+	airtmp = (airtmp - 32.0) * 0.555
+	svol = ui['VOL']
+	rheat  = tw * svol     # compute initial value of heat storage
 
 	# if bedflg == 2:  # compute initial tmud and tmuddt for brock/caupp model
 	tmud   = tw        # assume tmud = tw and
@@ -138,28 +141,41 @@ def htrch(store, siminfo, uci, ts):
 	GATMP  = ts['GATMP']  # get gage air temperature
 	DEWTMP = ts['DEWTMP']
 	WIND   = ts['WIND']  # get wind movement expressed in m/ivl
-	ts['LAPSE'] = hoursval(siminfo, store['TIMESERIES/LAPSE_Table'], lapselike=True)
+	ts['LAPSE'] = hoursval(siminfo, mlapse, lapselike=True)
 	LAPSE  = ts['LAPSE']
 
 	qsolar = 0.0
 	deltt = []
 
+	if nexits > 1:
+		u = uci['SAVE']
+		key = 'OHEAT'
+		for i in range(nexits):
+			u[f'{key}{i + 1}'] = u[key]
+		del u[key]
+
 	for loop in range(simlen):
 
 		tws = tw
-		dtw = tw
-		iheat  = IHEAT[loop]
+		iheat  = IHEAT[loop] * 0.0089   # conv factor from rchrests.seq     vol * 43560. also needed
 		solrad = SOLRAD[loop]
 		oheat  = 0.0
-		tw, roheat, oheat = advect(loop, iheat, tw, oheat, nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) # watertemp treated as a concentration
-		#                   advect(loop, imat, conc, omat, nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL)
-		if dtw > 66.0:
+
+		vol = VOL[loop]
+		srovol = SROVOL[loop]
+		erovol = EROVOL[loop]
+		sovol  = SOVOL[loop,:]
+		eovol  = EOVOL[loop,:]
+		tw, roheat, oheat = advect(iheat, tw, nexits, svol * 43560, vol * 43560, srovol, erovol, sovol, eovol) # watertemp treated as a concentration
+		#                   advect(imat, conc, nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL)
+		svol = vol
+
+		if tw > 66.0:
 			if adfg < 2:
 				# errormsg:  'advect:tw problem ',dtw, airtmp
-				rtw = dtw
+				rtw = tw
 			else:
-				dtw = tws
-		tw = dtw
+				tw = tws
 
 		# simulate heat exchange with the atmosphere
 
@@ -194,8 +210,10 @@ def htrch(store, siminfo, uci, ts):
 		cldfac = 1.0 + (0.0017 * (cloud**2))
 
 		gatmp  = GATMP[loop]     # get gage air temperature
+		gatmp  = (gatmp - 32.0) * 0.555
 		dewtmp = DEWTMP[loop]
-		wind   = WIND[loop]      # get wind movement expressed in m/ivl
+		dewtmp = (dewtmp - 32.0) * 0.555
+		wind   = WIND[loop] * 5280.0 / 3.28     # get wind movement expressed in m/ivl
 		lapse  = LAPSE[loop]
 		# ratemp -- correct air temperature for elevation differences
 		#   find precipitation rate during the interval; prrat is expressed in m/min
@@ -341,11 +359,16 @@ def htrch(store, siminfo, uci, ts):
 
 		rheat = tw * vol     # calculate storage of thermal energy in rchres
 
-		TW[loop]    = tw
-		AIRTMP[loop]= airtmp
-		HTEXCH[loop]= htexch
-		ROHEAT[loop]= roheat
-		OHEAT[loop] = oheat
+		TW[loop]    = (tw * 9.0 / 5.0) + 32.0
+		AIRTMP[loop]= (airtmp * 9.0 / 5.0) + 32.0
+		HTEXCH[loop]= htexch * 407960. * 12.
+		ROHEAT[loop]= roheat / 0.0089
+		OHEAT[loop] = oheat / 0.0089
+
+	if nexits > 1:
+		for i in range(nexits):
+			ts['OHEAT' + str(i+1)] = OHEAT[:, i]
+
 	return errorsV, ERRMSG
 
 def vapor(tmp):

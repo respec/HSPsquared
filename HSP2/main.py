@@ -49,14 +49,15 @@ def main(hdfname, saveall=False):
 
             # now conditionally execute all activity modules for the op, segment
             ts = get_timeseries(store,ddext_sources[(operation,segment)],siminfo)
+            if operation == 'RCHRES':
+                get_flows(store, ts, activity, segment, ddlinks, ddmasslinks, siminfo['steps'], msg)
+
             flags = uci[(operation, 'GENERAL', segment)]['ACTIVITY']
             for activity, function in activities[operation].items():
                 if function == noop or not flags[activity]:
                     continue
 
                 msg(3, f'{activity}')
-                if operation == 'RCHRES':
-                    get_flows(store,ts,activity,segment,ddlinks,ddmasslinks,siminfo['steps'], msg)
 
                 ui = uci[(operation, activity, segment)]   # ui is a dictionary
                 if operation == 'PERLND' and activity == 'SEDMNT':
@@ -78,6 +79,7 @@ def main(hdfname, saveall=False):
                     if activity == 'HTRCH':
                         ui['PARAMETERS']['ADFG'] = flags['ADCALC']
                         ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
+                        ui['STATES']['VOL'] = uci[(operation, 'HYDR', segment)]['STATES']['VOL']
 
                 ############ calls activity function like snow() ##############
                 errors, errmessages = function(store, siminfo, ui, ts)
