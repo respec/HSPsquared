@@ -43,7 +43,7 @@ if file_ext.upper() == "WDM":
 
 if file_ext.upper() == ".H5":
     from HSP2.main import main
-    main(filename, saveall=True)
+    main(filename, saveall=True, jupyterlab=False)
     # main('test.h5', saveall=True)
 
 
