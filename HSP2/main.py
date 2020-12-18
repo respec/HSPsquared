@@ -15,7 +15,7 @@ from HSP2.utilities import transform, versions
 from HSP2.configuration import activities, noop
 
 
-def main(hdfname, saveall=False):
+def main(hdfname, saveall=False, jupyterlab=True):
     '''Runs main HSP2 program.
 
     Parameters
@@ -89,15 +89,16 @@ def main(hdfname, saveall=False):
                     if errorcnt > 0:
                         msg(4, f'Error count {errorcnt}: {errormsg}')
                 if 'SAVE' in ui:
-                    save_timeseries(store,ts,ui['SAVE'],siminfo,saveall,operation,segment,activity)
+                    save_timeseries(store,ts,ui['SAVE'],siminfo,saveall,operation,segment,activity,jupyterlab)
         msglist = msg(1, 'Done', final=True)
 
         df = DataFrame(msglist, columns=['logfile'])
         df.to_hdf(store, 'RUN_INFO/LOGFILE', data_columns=True, format='t')
 
-        df = versions(['jupyterlab', 'notebook'])
-        df.to_hdf(store, 'RUN_INFO/VERSIONS', data_columns=True, format='t')
-        print('\n\n', df)
+        if jupyterlab:
+            df = versions(['jupyterlab', 'notebook'])
+            df.to_hdf(store, 'RUN_INFO/VERSIONS', data_columns=True, format='t')
+            print('\n\n', df)
     return
 
 
@@ -177,7 +178,7 @@ def get_timeseries(store, ext_sourcesdd, siminfo):
     return ts
 
 
-def save_timeseries(store, ts, savedict, siminfo, saveall, operation, segment, activity):
+def save_timeseries(store, ts, savedict, siminfo, saveall, operation, segment, activity, jupyterlab=True):
     # save computed timeseries (at computation DELT)
     save = {k for k,v in savedict.items() if v or saveall}
     df = DataFrame(index=siminfo['tindex'])
@@ -195,7 +196,10 @@ def save_timeseries(store, ts, savedict, siminfo, saveall, operation, segment, a
         df = df.astype(float32).sort_index(axis='columns')
     path = f'RESULTS/{operation}_{segment}/{activity}'
     if not df.empty:
-        df.to_hdf(store, path, complib='blosc', complevel=9)
+        if jupyterlab:
+            df.to_hdf(store, path, complib='blosc', complevel=9) # This is the official version
+        else:
+            df.to_hdf(store, path, format='t', data_columns=True)  # show the columns in HDFView
     else:
         print('Save DataFrame Empty for', path)
     return
