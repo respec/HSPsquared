@@ -80,6 +80,15 @@ def main(hdfname, saveall=False, jupyterlab=True):
                         ui['PARAMETERS']['ADFG'] = flags['ADCALC']
                         ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
                         ui['STATES']['VOL'] = uci[(operation, 'HYDR', segment)]['STATES']['VOL']
+                    if activity == 'SEDTRN':
+                        ui['PARAMETERS']['ADFG'] = flags['ADCALC']
+                        ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
+                        ui['STATES']['VOL'] = uci[(operation, 'HYDR', segment)]['STATES']['VOL']
+                        ui['PARAMETERS']['HTFG'] = flags['HTRCH']
+                        if flags['HYDR']:
+                            ui['PARAMETERS']['LEN'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LEN']
+                            ui['PARAMETERS']['DELTH'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['DELTH']
+                            ui['PARAMETERS']['DB50'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['DB50']
 
                 ############ calls activity function like snow() ##############
                 errors, errmessages = function(store, siminfo, ui, ts)

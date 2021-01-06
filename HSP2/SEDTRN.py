@@ -34,13 +34,17 @@ def sedtrn(store, siminfo, uci, ts):
 	bedwid = ui['BEDWID']
 	bedwrn = ui['BEDWRN']
 	por    = ui['POR']
-	
-	# table SED-HYDPARM
-	len_   = ui['LEN']
-	delth  = ui['DELTH']
-	db50   = ui['DB50']
 
 	UUNITS = 1  # assume english units for now
+	# table SED-HYDPARM
+	if UUNITS == 1:
+		len_ = ui['LEN'] * 5280
+		db50 = ui['DB50'] * 0.0833
+	else:
+		len_ = ui['LEN'] * 1000
+		db50 = ui['DB50'] * 0.001
+	delth  = ui['DELTH']
+
 	# evaluate some quantities used in colby and/or toffaleti sand transport simulation methods
 	if UUNITS == 1:
 		db50e = db50
@@ -51,29 +55,41 @@ def sedtrn(store, siminfo, uci, ts):
 	slope = delth / len_
 	
 	# SAND PARAMETERS; table SAND-PM
-	sand_d      = ui['D']
-	sand_w      = ui['W'] * delts   # convert settling velocity from m/sec to m/ivl
+	if UUNITS == 1:
+		sand_d = ui['D'] * 0.0833
+		sand_w = ui['W'] * delts * 0.0254 # convert settling velocity from m/sec to m/ivl
+	else:
+		sand_d = ui['D'] * 0.001
+		sand_w = ui['W'] * delts * 0.001 # convert settling velocity from m/sec to m/ivl
 	sand_rho    = ui['RHO']
 	sand_ksand  = ui['KSAND']
 	sand_expsnd = ui['EXPSND']
 
 	# SILT PARAMETERS; table SILT-CLAY-PM --- note: first occurance is silt
 	ui_silt = uci['SILT']
-	silt_d     = ui_silt['D']
-	silt_w     = ui_silt['W'] * delts        # convert settling velocity from m/sec to m/ivl
+	if UUNITS == 1:
+		silt_d = ui_silt['D'] * 0.0833
+		silt_w = ui_silt['W'] * delts * 0.0254 # convert settling velocity from m/sec to m/ivl
+	else:
+		silt_d = ui_silt['D'] * 0.001
+		silt_w = ui_silt['W'] * delts *  0.001  # convert settling velocity from m/sec to m/ivl
 	silt_rho   = ui_silt['RHO']
 	silt_taucd = ui_silt['TAUCD']
 	silt_taucs = ui_silt['TAUCS']
-	silt_m     = ui_silt['M'] * delt60 / 24.0  # convert erodibility coeff from /day to /ivl
+	silt_m     = ui_silt['M'] * delt60 / 24.0 * 4.880 # convert erodibility coeff from /day to /ivl
 	
 	# CLAY PARAMETERS; table SILT-CLAY-PM --- note: second occurance is clay
 	ui_clay = uci['CLAY']
-	clay_d     = ui_clay['D']
-	clay_w     = ui_clay['W'] * delts   # convert settling velocity from m/sec to m/ivl
+	if UUNITS == 1:
+		clay_d = ui_clay['D'] * 0.0833
+		clay_w = ui_clay['W'] * delts * 0.0254 # convert settling velocity from m/sec to m/ivl
+	else:
+		clay_d = ui_clay['D'] * 0.001
+		clay_w = ui_clay['W'] * delts * 0.001  # convert settling velocity from m/sec to m/ivl
 	clay_rho   = ui_clay['RHO']
 	clay_taucd = ui_clay['TAUCD']
 	clay_taucs = ui_clay['TAUCS']
-	clay_m     = ui_clay['M']	* delt60 / 24.0  # convert erodibility coeff from /day to /ivl
+	clay_m     = ui_clay['M']	* delt60 / 24.0 * 4.880 # convert erodibility coeff from /day to /ivl
 	
 	# bed sediment conditions; table BED-INIT
 	beddep      = ui['BEDDEP']
@@ -94,17 +110,25 @@ def sedtrn(store, siminfo, uci, ts):
 	TAU   = ts['TAU']
 	AVDEP = ts['AVDEP']
 	AVVEL = ts['AVVEL']
+	RO    = ts['RO']
+	HRAD =  ts['HRAD']
+	TWID =  ts['TWID']
+
+	if not 'ISED1' in ts:
+		ts['ISED1'] = zeros(simlen)
+	if not 'ISED2' in ts:
+		ts['ISED2'] = zeros(simlen)
+	if not 'ISED3' in ts:
+		ts['ISED3'] = zeros(simlen)
+
 	ISED1 = ts['ISED1']   # if present, else ISED is identically zero;  sand
 	ISED2 = ts['ISED2']   # if present, else ISED is identically zero;  silt
 	ISED3 = ts['ISED3']   # if present, else ISED is identically zero;  clay
 	ISED4 = ISED1 + ISED2 + ISED3
-	
-	if sandfg != 3:
-		RO   = ts['RO']
-		HRAD = ts['HRAD']
-		TWID = ts['TWID']
 
 	htfg = int(ui['HTFG'])
+	if htfg == 1:
+		TW = ts['TW']
 	if htfg == 0 and sandfg != 3:
 		TW = ts['TW']
 		TW = where(TW < -100.0, 20.0, TW)
@@ -150,6 +174,21 @@ def sedtrn(store, siminfo, uci, ts):
 	OSED2 = zeros((simlen, nexits))
 	OSED3 = zeros((simlen, nexits))
 	OSED4 = zeros((simlen, nexits))
+	if nexits > 1:
+		u = uci['SAVE']
+		key1 = 'OSED1'
+		key2 = 'OSED2'
+		key3 = 'OSED3'
+		key4 = 'OSED4'
+		for i in range(nexits):
+			u[f'{key1}{i + 1}'] = u[key1]
+			u[f'{key2}{i + 1}'] = u[key2]
+			u[f'{key3}{i + 1}'] = u[key3]
+			u[f'{key4}{i + 1}'] = u[key4]
+		del u[key1]
+		del u[key2]
+		del u[key3]
+		del u[key4]
 
 	fact = 1.0 / total_bedfr  # normalize fractions to sum to one
 	sand_bedfr *= fact
@@ -162,9 +201,9 @@ def sedtrn(store, siminfo, uci, ts):
 	rwtsed = rwtsed * 1.0E06  # converts from kg/l to mg/l
 
 	# find the weight of each fraction- units are (mg/l)*ft3 or (mg/l)*m3
-	sand_wt_rsed4 = sand_ssed1 * rwtsed
-	silt_wt_rsed5 = silt_ssed2 * rwtsed
-	clay_wt_rsed6 = clay_ssed3 * rwtsed
+	sand_wt_rsed4 = sand_bedfr * rwtsed
+	silt_wt_rsed5 = silt_bedfr * rwtsed
+	clay_wt_rsed6 = clay_bedfr * rwtsed
 
 	# find the total quantity (bed and suspended) of each sediment size fraction
 	sand_rsed1 = sand_ssed1 * vol
@@ -224,14 +263,14 @@ def sedtrn(store, siminfo, uci, ts):
 		# vols = svol
 	
 		# consider deposition and scour
-		depscr2 = bdexch(avdepm, silt_w, tau, silt_taucd, silt_taucs, silt_m, vol, frcsed1, silt_rsed2, silt_wt_rsed5) if avdepe > 0.17 else 0.0
+		depscr2 = bdexch(avdepm, silt_w, tau, silt_taucd, silt_taucs, silt_m, vol * 43560, frcsed1, silt_rsed2 * 43560, silt_wt_rsed5) if avdepe > 0.17 else 0.0
 		silt_ssed2 = silt_rsed2 / vol  if vol > 0.0 else -1.0e30
 
 		clay_ssed3, rosed3, osed3 = advect(ised3, clay_ssed3, nexits, svol * 43560, vol * 43560, srovol, erovol, sovol, eovol)
 		clay_rsed3 = clay_ssed3 * vol  	# calculate exchange between bed and suspended sediment
 
 		# consider deposition and scour
-		depscr3 = bdexch(avdepm, clay_w, tau, clay_taucd, clay_taucs, clay_m, vol, frcsed2, clay_rsed3, clay_wt_rsed6) if avdepe > 0.17 else 0.0
+		depscr3 = bdexch(avdepm, clay_w, tau, clay_taucd, clay_taucs, clay_m, vol * 43560, frcsed2, clay_rsed3 * 43560, clay_wt_rsed6) if avdepe > 0.17 else 0.0
 		clay_ssed3 = clay_rsed3 / vol  if vol > 0.0 else -1.0e30
 		# end COHESV()
 	
@@ -299,7 +338,7 @@ def sedtrn(store, siminfo, uci, ts):
 				rosed1 += sand_rsed1
 				depscr1 = 0.0
 				if nexits > 1:
-					for n in range(1,nexits+1):
+					for n in range(0,nexits):
 						if osed1[n] > 0.0:
 							osed1[n] += sand_rsed1
 							break
@@ -314,7 +353,7 @@ def sedtrn(store, siminfo, uci, ts):
 				rosed2 += silt_rsed2
 				depscr2 = 0.0
 				if nexits > 1:
-					for n in range(1, nexits+1):
+					for n in range(0, nexits):
 						if osed2[n] > 0.0:
 							osed2[n] += silt_rsed2
 							break
@@ -329,7 +368,7 @@ def sedtrn(store, siminfo, uci, ts):
 				rosed3 += clay_rsed3
 				depscr3 = 0.0
 				if nexits > 1:
-					for n in range(1, nexits+1):
+					for n in range(0, nexits):
 						if osed3[n] > 0.0:
 							osed3[n] += clay_rsed3
 							break
@@ -664,7 +703,7 @@ def colby(v, db50, fhrad, fsl, tempr):
 	return gtuc * (cfd * tcf + 1.0), ferror, d50err, hrerr, velerr
 
 
-def toffaleti(v, fdiam, fhrad, slope, tempr, vset, gsi):
+def toffaleti(v, fdiam, fhrad, slope, tempr, vset):
 	''' Toffaleti's method to calculate the capacity of the flow to transport sand.'''
 
 	tmpr = tempr * 1.80 + 32.0   # degrees c to degrees f
