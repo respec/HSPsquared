@@ -237,7 +237,7 @@ def get_flows(store, ts, activity, segment, ddlinks, ddmasslinks, steps, msg):
             factor = afactr * mfactor
 
             # KLUDGE until remaining HSP2 modules are available.
-            if tmemn not in {'IVOL', 'IHEAT'}:
+            if tmemn not in {'IVOL', 'IHEAT', 'ISED'}:
                 continue
             if sgrpn == 'OFLOW' and dat.SVOL == 'RCHRES':
                 tmemn = 'IVOL'
@@ -247,6 +247,9 @@ def get_flows(store, ts, activity, segment, ddlinks, ddmasslinks, steps, msg):
                 tmemn = 'IVOL'
                 smemn = 'ROVOL'
                 sgrpn = 'HYDR'
+
+            if tmemn == 'ISED':
+                tmemn = tmemn + tmemsb
 
             path = f'RESULTS/{x.SVOL}_{x.SVOLNO}/{sgrpn}'
             MFname = f'{x.SVOL}{x.SVOLNO}_MFACTOR'

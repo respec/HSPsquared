@@ -22,9 +22,10 @@ def sedtrn(store, siminfo, uci, ts):
 
 	advectData = uci['advectData']
 	(nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = advectData
+	vol = vol * 43560
 
 	ui = make_numba_dict(uci)
-	svol = ui['VOL']
+	svol = ui['VOL'] * 43560
 	nexits = int(ui['NEXITS'])
 
 	# table SANDFG
@@ -225,10 +226,6 @@ def sedtrn(store, siminfo, uci, ts):
 
 	for loop in range(simlen):
 
-		ised1 = ISED1[loop]
-		ised2 =	ISED2[loop]
-		ised3 = ISED3[loop]
-
 		# perform any necessary unit conversions
 		if UUNITS == 2:  # uci is in metric units
 			avvele = AVVEL[loop] * 3.28
@@ -237,6 +234,9 @@ def sedtrn(store, siminfo, uci, ts):
 			rom    = RO[loop]
 			hrade  = HRAD[loop]  * 3.28
 			twide  = TWID[loop]  * 3.28
+			ised1 = ISED1[loop] / 2.83E-08
+			ised2 = ISED2[loop] / 2.83E-08
+			ised3 = ISED3[loop] / 2.83E-08
 		else:         # uci is in english units
 			avvele = AVVEL[loop]
 			avdepm = AVDEP[loop] * 0.3048
@@ -244,8 +244,12 @@ def sedtrn(store, siminfo, uci, ts):
 			rom    = RO[loop] * 0.0283
 			hrade  = HRAD[loop]
 			twide  = TWID[loop]
+			ised1 = ISED1[loop] / 3.121E-08
+			ised2 = ISED2[loop] / 3.121E-08
+			ised3 = ISED3[loop] / 3.121E-08
 		tau = TAU[loop]
 		tw  = TW[loop]
+		tw = (tw - 32.0) * 0.555
 
 		# Following is routine #&COHESV() to simulate behavior of cohesive sediments (silt and clay)
 		# compute bed fractions based on relative storages
@@ -253,25 +257,31 @@ def sedtrn(store, siminfo, uci, ts):
 		frcsed1 = silt_wt_rsed5 / totbed  	if totbed > 0.0 else 0.5
 		frcsed2 = clay_wt_rsed6 / totbed  	if totbed > 0.0 else 0.5
 
-		vol = VOL[loop]
+		vol = VOL[loop] * 43560
 		srovol = SROVOL[loop]
 		erovol = EROVOL[loop]
 		sovol = SOVOL[loop, :]
 		eovol = EOVOL[loop, :]
-		silt_ssed2, rosed2, osed2 = advect(ised2, silt_ssed2, nexits, svol * 43560, vol * 43560, srovol, erovol, sovol, eovol)
+		silt_ssed2, rosed2, osed2 = advect(ised2, silt_ssed2, nexits, svol, vol, srovol, erovol, sovol, eovol)
 		silt_rsed2 = silt_ssed2 * vol  	# calculate exchange between bed and suspended sediment
 		# vols = svol
 	
 		# consider deposition and scour
-		depscr2 = bdexch(avdepm, silt_w, tau, silt_taucd, silt_taucs, silt_m, vol * 43560, frcsed1, silt_rsed2 * 43560, silt_wt_rsed5) if avdepe > 0.17 else 0.0
-		silt_ssed2 = silt_rsed2 / vol  if vol > 0.0 else -1.0e30
+		if avdepe > 0.17:
+			depscr2, silt_rsed2, silt_wt_rsed5 = bdexch(avdepm, silt_w, tau, silt_taucd, silt_taucs, silt_m, vol, frcsed1, silt_rsed2, silt_wt_rsed5)
+		else:
+			depscr2 = 0.0
+		silt_ssed2 = silt_rsed2 / vol if vol > 0.0 else -1.0e30
 
-		clay_ssed3, rosed3, osed3 = advect(ised3, clay_ssed3, nexits, svol * 43560, vol * 43560, srovol, erovol, sovol, eovol)
+		clay_ssed3, rosed3, osed3 = advect(ised3, clay_ssed3, nexits, svol, vol, srovol, erovol, sovol, eovol)
 		clay_rsed3 = clay_ssed3 * vol  	# calculate exchange between bed and suspended sediment
 
 		# consider deposition and scour
-		depscr3 = bdexch(avdepm, clay_w, tau, clay_taucd, clay_taucs, clay_m, vol * 43560, frcsed2, clay_rsed3 * 43560, clay_wt_rsed6) if avdepe > 0.17 else 0.0
-		clay_ssed3 = clay_rsed3 / vol  if vol > 0.0 else -1.0e30
+		if avdepe > 0.17:
+			depscr3, clay_rsed3, clay_wt_rsed6 = bdexch(avdepm, clay_w, tau, clay_taucd, clay_taucs, clay_m, vol, frcsed2, clay_rsed3, clay_wt_rsed6)
+		else:
+			depscr3 = 0.0
+		clay_ssed3 = clay_rsed3 / vol if vol > 0.0 else -1.0e30
 		# end COHESV()
 	
 		# compute fine sediment load
@@ -310,7 +320,7 @@ def sedtrn(store, siminfo, uci, ts):
 					sand_wt_rsed4 = 0.0
 					sand_ssed1    = (ised1 + scour + sands * (svol - srovol)) / (vol + erovol)  # calculate new conc. of suspended sandload
 					sand_rsed1    = sand_ssed1 * vol   # calculate new storage of suspended sandload
-				rosed1 = srovol * sands + erovol * sand_ssed1  # calculate total amount of sand leaving rchres during ivl
+				rosed1 = (srovol * sands) + (erovol * sand_ssed1)  # calculate total amount of sand leaving rchres during ivl
 				osed1  = sovol * sands + eovol * sand_ssed1  # calculate amount of sand leaving through each exit gate in qty.vol/l.ivl
 			else:             # no outflow (still water) or water depth less than two inches
 				sand_ssed1  = 0.0
@@ -416,32 +426,59 @@ def sedtrn(store, siminfo, uci, ts):
 		SSED2[loop] = silt_ssed2
 		SSED3[loop] = clay_ssed3
 		SSED4[loop] = total_ssed4
-		RSED1[loop] = sand_rsed1
-		RSED2[loop] = silt_rsed2
-		RSED3[loop] = clay_rsed3
-		RSED4[loop] = sand_wt_rsed4
-		RSED5[loop] = silt_wt_rsed5
-		RSED6[loop] = clay_wt_rsed6
-		RSED7[loop] = sand_t_rsed7
-		RSED8[loop] = silt_t_rsed8
-		RSED9[loop] = clay_t_rsed9
-		RSED10[loop]= total_rsed10
-		TSED1[loop] = tsed1
-		TSED2[loop] = tsed2
-		TSED3[loop] = tsed3
 		BEDDEP[loop]= beddep
-		DEPSCR1[loop] = depscr1
-		DEPSCR2[loop] = depscr2
-		DEPSCR3[loop] = depscr3
-		DEPSCR4[loop] = depscr4
-		ROSED1[loop] = rosed1
-		ROSED2[loop] = rosed2
-		ROSED3[loop] = rosed3
-		ROSED4[loop] = rosed4
-		OSED1[loop] = osed1
-		OSED2[loop] = osed2
-		OSED3[loop] = osed3
-		OSED4[loop] = osed4
+		if UUNITS == 1:
+			RSED1[loop] = sand_rsed1 * 3.121E-08
+			RSED2[loop] = silt_rsed2 * 3.121E-08
+			RSED3[loop] = clay_rsed3 * 3.121E-08
+			RSED4[loop] = sand_wt_rsed4 * 3.121E-08
+			RSED5[loop] = silt_wt_rsed5 * 3.121E-08
+			RSED6[loop] = clay_wt_rsed6 * 3.121E-08
+			RSED7[loop] = sand_t_rsed7 * 3.121E-08
+			RSED8[loop] = silt_t_rsed8 * 3.121E-08
+			RSED9[loop] = clay_t_rsed9 * 3.121E-08
+			RSED10[loop] = total_rsed10 * 3.121E-08
+			TSED1[loop] = tsed1 * 3.121E-08
+			TSED2[loop] = tsed2 * 3.121E-08
+			TSED3[loop] = tsed3 * 3.121E-08
+			DEPSCR1[loop] = depscr1 * 3.121E-08
+			DEPSCR2[loop] = depscr2 * 3.121E-08
+			DEPSCR3[loop] = depscr3 * 3.121E-08
+			DEPSCR4[loop] = depscr4 * 3.121E-08
+			ROSED1[loop] = rosed1 * 3.121E-08
+			ROSED2[loop] = rosed2 * 3.121E-08
+			ROSED3[loop] = rosed3 * 3.121E-08
+			ROSED4[loop] = rosed4 * 3.121E-08
+			OSED1[loop] = osed1 * 3.121E-08
+			OSED2[loop] = osed2 * 3.121E-08
+			OSED3[loop] = osed3 * 3.121E-08
+			OSED4[loop] = osed4 * 3.121E-08
+		else:
+			RSED1[loop] = sand_rsed1 * 2.83E-08
+			RSED2[loop] = silt_rsed2 * 2.83E-08
+			RSED3[loop] = clay_rsed3 * 2.83E-08
+			RSED4[loop] = sand_wt_rsed4 * 2.83E-08
+			RSED5[loop] = silt_wt_rsed5 * 2.83E-08
+			RSED6[loop] = clay_wt_rsed6 * 2.83E-08
+			RSED7[loop] = sand_t_rsed7 * 2.83E-08
+			RSED8[loop] = silt_t_rsed8 * 2.83E-08
+			RSED9[loop] = clay_t_rsed9 * 2.83E-08
+			RSED10[loop] = total_rsed10 * 2.83E-08
+			TSED1[loop] = tsed1 * 2.83E-08
+			TSED2[loop] = tsed2 * 2.83E-08
+			TSED3[loop] = tsed3 * 2.83E-08
+			DEPSCR1[loop] = depscr1 * 2.83E-08
+			DEPSCR2[loop] = depscr2 * 2.83E-08
+			DEPSCR3[loop] = depscr3 * 2.83E-08
+			DEPSCR4[loop] = depscr4 * 2.83E-08
+			ROSED1[loop] = rosed1 * 2.83E-08
+			ROSED2[loop] = rosed2 * 2.83E-08
+			ROSED3[loop] = rosed3 * 2.83E-08
+			ROSED4[loop] = rosed4 * 2.83E-08
+			OSED1[loop] = osed1 * 2.83E-08
+			OSED2[loop] = osed2 * 2.83E-08
+			OSED3[loop] = osed3 * 2.83E-08
+			OSED4[loop] = osed4 * 2.83E-08
 
 	if nexits > 1:
 		for i in range(nexits):
@@ -472,7 +509,7 @@ def bdexch (avdepm, w, tau, taucd, taucs, m, vol, frcsed, susp, bed):
 		bed  -= scrmas
 	else:                      # no scour
 		scrmas = 0.0
-	return depmas - scrmas  # net deposition or scour
+	return depmas - scrmas, susp, bed  # net deposition or scour, susp, bed
 
 
 ''' Sediment Transport in Alluvial Channels, 1963-65 by Bruce Colby.
