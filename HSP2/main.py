@@ -49,10 +49,10 @@ def main(hdfname, saveall=False, jupyterlab=True):
 
             # now conditionally execute all activity modules for the op, segment
             ts = get_timeseries(store,ddext_sources[(operation,segment)],siminfo)
-            if operation == 'RCHRES':
-                get_flows(store, ts, activity, segment, ddlinks, ddmasslinks, siminfo['steps'], msg)
-
             flags = uci[(operation, 'GENERAL', segment)]['ACTIVITY']
+            if operation == 'RCHRES':
+                get_flows(store, ts, flags, segment, ddlinks, ddmasslinks, siminfo['steps'], msg)
+
             for activity, function in activities[operation].items():
                 if function == noop or not flags[activity]:
                     continue
@@ -214,70 +214,163 @@ def save_timeseries(store, ts, savedict, siminfo, saveall, operation, segment, a
     return
 
 
-def get_flows(store, ts, activity, segment, ddlinks, ddmasslinks, steps, msg):
+def get_flows(store, ts, flags, segment, ddlinks, ddmasslinks, steps, msg):
+    # get inflows to this operation
     for x in ddlinks[segment]:
         mldata = ddmasslinks[x.MLNO]
         for dat in mldata:
+            recs = []
             if x.MLNO == '':  # Data from NETWORK part of Links table
-                mfactor = x.MFACTOR
-                sgrpn   = x.SGRPN
-                smemn   = x.SMEMN
-                smemsb  = x.SMEMSB
-                tmemn   = x.TMEMN
-                tmemsb  = x.TMEMSB
-            else:   # Data from SCHEMATIC part of Links table
-                mfactor = dat.MFACTOR
-                sgrpn   = dat.SGRPN
-                smemn   = dat.SMEMN
-                smemsb  = dat.SMEMSB
-                tmemn   = dat.TMEMN
-                tmemsb  = dat.TMEMSB
-
-            afactr = x.AFACTR
-            factor = afactr * mfactor
-
-            # KLUDGE until remaining HSP2 modules are available.
-            if tmemn not in {'IVOL', 'IHEAT', 'ISED'}:
-                continue
-            if sgrpn == 'OFLOW' and dat.SVOL == 'RCHRES':
-                tmemn = 'IVOL'
-                smemn = 'OVOL'
-                sgrpn = 'HYDR'
-            if sgrpn == 'ROFLOW' and dat.SVOL == 'RCHRES':
-                tmemn = 'IVOL'
-                smemn = 'ROVOL'
-                sgrpn = 'HYDR'
-
-            if tmemn == 'ISED':
-                tmemn = tmemn + tmemsb
-
-            path = f'RESULTS/{x.SVOL}_{x.SVOLNO}/{sgrpn}'
-            MFname = f'{x.SVOL}{x.SVOLNO}_MFACTOR'
-            AFname = f'{x.SVOL}{x.SVOLNO}_AFACTR'
-            data = f'{smemn}{smemsb}'
-
-            if path in store:
-                t = store[path][data].astype(float64).to_numpy()[0:steps]
-                if MFname in ts and AFname in ts:
-                    t *= ts[MFname][:steps] * ts[AFname][0:steps]
-                    msg(4, f'MFACTOR modified by timeseries {MFname}')
-                    msg(4, f'AFACTR modified by timeseries {AFname}')
-                elif MFname in ts:
-                    t *= afactr * ts[MFname][0:steps]
-                    msg(4, f'MFACTOR modified by timeseries {MFname}')
-                elif AFname in ts:
-                    t *= mfactor * ts[AFname][0:steps]
-                    msg(4, f'AFACTR modified by timeseries {AFname}')
+                rec = {}
+                rec['MFACTOR'] = x.MFACTOR
+                rec['SGRPN'] = x.SGRPN
+                rec['SMEMN'] = x.SMEMN
+                rec['SMEMSB'] = x.SMEMSB
+                rec['TMEMN'] = x.TMEMN
+                rec['TMEMSB'] = x.TMEMSB
+                rec['SVOL'] = x.SVOL
+                recs.append(rec)
+            else:  # Data from SCHEMATIC part of Links table
+                if dat.SMEMN != '':
+                    rec = {}
+                    rec['MFACTOR'] = dat.MFACTOR
+                    rec['SGRPN'] = dat.SGRPN
+                    rec['SMEMN'] = dat.SMEMN
+                    rec['SMEMSB'] = dat.SMEMSB
+                    rec['TMEMN'] = dat.TMEMN
+                    rec['TMEMSB'] = dat.TMEMSB
+                    rec['SVOL'] = dat.SVOL
+                    recs.append(rec)
                 else:
-                    t *= factor
+                    # this is the kind that needs to be expanded
+                    if dat.SGRPN == "ROFLOW" or dat.SGRPN == "OFLOW":
+                        if flags['HYDR']:
+                            # IVOL
+                            rec = {}
+                            rec['MFACTOR'] = dat.MFACTOR
+                            rec['SGRPN'] = 'HYDR'
+                            if dat.SGRPN == "ROFLOW":
+                                rec['SMEMN'] = 'ROVOL'
+                            else:
+                                rec['SMEMN'] = 'OVOL'
+                            rec['SMEMSB'] = dat.SMEMSB
+                            rec['TMEMN'] = 'IVOL'
+                            rec['TMEMSB'] = dat.TMEMSB
+                            rec['SVOL'] = dat.SVOL
+                            recs.append(rec)
+                        if flags['HTRCH']:
+                            # IHEAT
+                            rec = {}
+                            rec['MFACTOR'] = dat.MFACTOR
+                            rec['SGRPN'] = 'HTRCH'
+                            if dat.SGRPN == "ROFLOW":
+                                rec['SMEMN'] = 'ROHEAT'
+                            else:
+                                rec['SMEMN'] = 'OHEAT'
+                            rec['SMEMSB'] = dat.SMEMSB
+                            rec['TMEMN'] = 'IHEAT'
+                            rec['TMEMSB'] = dat.TMEMSB
+                            rec['SVOL'] = dat.SVOL
+                            recs.append(rec)
+                        if flags['SEDTRN']:
+                            # ISED1
+                            rec = {}
+                            rec['MFACTOR'] = dat.MFACTOR
+                            rec['SGRPN'] = 'SEDTRN'
+                            if dat.SGRPN == "ROFLOW":
+                                rec['SMEMN'] = 'ROSED'
+                                rec['SMEMSB'] = '1'
+                            else:
+                                rec['SMEMN'] = 'OSED'
+                                rec['SMEMSB'] = '1' + dat.SMEMSB
+                            rec['TMEMN'] = 'ISED1'
+                            rec['TMEMSB'] = dat.TMEMSB
+                            rec['SVOL'] = dat.SVOL
+                            recs.append(rec)
+                            # ISED2
+                            rec = {}
+                            rec['MFACTOR'] = dat.MFACTOR
+                            rec['SGRPN'] = 'SEDTRN'
+                            if dat.SGRPN == "ROFLOW":
+                                rec['SMEMN'] = 'ROSED'
+                                rec['SMEMSB'] = '2'
+                            else:
+                                rec['SMEMN'] = 'OSED'
+                                rec['SMEMSB'] = '2' + dat.SMEMSB
+                            rec['TMEMN'] = 'ISED2'
+                            rec['TMEMSB'] = dat.TMEMSB
+                            rec['SVOL'] = dat.SVOL
+                            recs.append(rec)
+                            # ISED3
+                            rec = {}
+                            rec['MFACTOR'] = dat.MFACTOR
+                            rec['SGRPN'] = 'SEDTRN'
+                            if dat.SGRPN == "ROFLOW":
+                                rec['SMEMN'] = 'ROSED'
+                                rec['SMEMSB'] = '3'
+                            else:
+                                rec['SMEMN'] = 'OSED'
+                                rec['SMEMSB'] = '3' + dat.SMEMSB
+                            rec['TMEMN'] = 'ISED3'
+                            rec['TMEMSB'] = dat.TMEMSB
+                            rec['SVOL'] = dat.SVOL
+                            recs.append(rec)
 
-                # ??? ISSUE: can fetched data be at different frequency - don't know how to transform.
-                if tmemn in ts:
-                    ts[tmemn] += t
+            for rec in recs:
+                mfactor = rec['MFACTOR']
+                sgrpn   = rec['SGRPN']
+                smemn   = rec['SMEMN']
+                smemsb  = rec['SMEMSB']
+                tmemn   = rec['TMEMN']
+                tmemsb  = rec['TMEMSB']
+
+                afactr = x.AFACTR
+                factor = afactr * mfactor
+
+                # KLUDGE until remaining HSP2 modules are available.
+                if tmemn not in {'IVOL', 'IHEAT', 'ISED', 'ISED1', 'ISED2', 'ISED3'}:
+                    continue
+                if (sgrpn == 'OFLOW' and smemn == 'OVOL') or (sgrpn == 'ROFLOW' and smemn == 'ROVOL'):
+                     sgrpn = 'HYDR'
+                if (sgrpn == 'OFLOW' and smemn == 'OHEAT') or (sgrpn == 'ROFLOW' and smemn == 'ROHEAT'):
+                     sgrpn = 'HTRCH'
+                if (sgrpn == 'OFLOW' and smemn == 'OSED') or (sgrpn == 'ROFLOW' and smemn == 'ROSED'):
+                     sgrpn = 'SEDTRN'
+                if tmemn == 'ISED':
+                    tmemn = tmemn + tmemsb
+
+                path = f'RESULTS/{x.SVOL}_{x.SVOLNO}/{sgrpn}'
+                MFname = f'{x.SVOL}{x.SVOLNO}_MFACTOR'
+                AFname = f'{x.SVOL}{x.SVOLNO}_AFACTR'
+                data = f'{smemn}{smemsb}'
+
+                if path in store:
+                    if data in store[path]:
+                        t = store[path][data].astype(float64).to_numpy()[0:steps]
+                    else:
+                        data = f'{smemn}'
+                        if data in store[path]:
+                            t = store[path][data].astype(float64).to_numpy()[0:steps]
+                    if MFname in ts and AFname in ts:
+                        t *= ts[MFname][:steps] * ts[AFname][0:steps]
+                        msg(4, f'MFACTOR modified by timeseries {MFname}')
+                        msg(4, f'AFACTR modified by timeseries {AFname}')
+                    elif MFname in ts:
+                        t *= afactr * ts[MFname][0:steps]
+                        msg(4, f'MFACTOR modified by timeseries {MFname}')
+                    elif AFname in ts:
+                        t *= mfactor * ts[AFname][0:steps]
+                        msg(4, f'AFACTR modified by timeseries {AFname}')
+                    else:
+                        t *= factor
+
+                    # ??? ISSUE: can fetched data be at different frequency - don't know how to transform.
+                    if tmemn in ts:
+                        ts[tmemn] += t
+                    else:
+                        ts[tmemn] = t
                 else:
-                    ts[tmemn] = t
-            else:
-                print('ERROR in FLOWS for', path)
+                    print('ERROR in FLOWS for', path)
     return
 
 
