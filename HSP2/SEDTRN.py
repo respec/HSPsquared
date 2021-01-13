@@ -628,8 +628,9 @@ def colby(v, db50, fhrad, fsl, tempr):
 		hrerr  = 1
 		return
 	for id1,dgx in enumerate(DG):
-		if dgx > DG:
+		if fhrad > dgx:
 			break
+	id1 = id1 + 1
 	id2 = id1 + 1		
 	xx1 = log10(DG[id1])
 	xx2 = log10(DG[id2])
@@ -678,7 +679,8 @@ def colby(v, db50, fhrad, fsl, tempr):
 		for it1, tempx in enumerate(TEMP):
 			if tempx > tmpr:
 				break
-		it2 = it1 + 1
+		it2 = it1
+		it1 -= 1
 
 		xt11 = log10(T[it1,id1])
 		xt21 = log10(T[it2,id1])
