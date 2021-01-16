@@ -25,7 +25,7 @@ def sedtrn(store, siminfo, uci, ts):
 	vol = vol * 43560
 
 	ui = make_numba_dict(uci)
-	svol = ui['VOL'] * 43560
+	svol = vol
 	nexits = int(ui['NEXITS'])
 
 	# table SANDFG

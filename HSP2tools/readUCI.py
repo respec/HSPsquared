@@ -485,14 +485,18 @@ def operation(info, llines, op):
             elif cat == 'CONS':
                 count = 0
                 for table,df in history[path,cat]:
-                    if table == 'CONSDATA':
+                    if table == 'NCONS':
+                        temp_path = '/RCHRES/CONS/PARAMETERS'
+                        df = fix_df(df, op, path, ddfaults, valid)
+                        df.to_hdf(store, temp_path, data_columns=True)
+                    elif table == 'CONS-DATA':
                         count += 1
                         df = fix_df(df, op, path, ddfaults, valid)
                     df.to_hdf(store, f'{op}/{path}/{cat}{count}', data_columns=True)
             elif cat == 'PQUAL' or cat == 'IQUAL':
+                count = 0
                 for table,df in history[path,cat]:
                     if table == 'NQUALS':
-                        count = 0
                         if cat == 'IQUAL':
                             temp_path = '/IMPLND/IQUAL/PARAMETERS'
                         else:
