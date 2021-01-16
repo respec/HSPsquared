@@ -108,7 +108,7 @@ def htrch(store, siminfo, uci, ts):
 	tw     = (tw - 32.0) * 0.555
 	airtmp = ui['AIRTMP']
 	airtmp = (airtmp - 32.0) * 0.555
-	svol = ui['VOL']
+	svol = vol
 	rheat  = tw * svol     # compute initial value of heat storage
 
 	# if bedflg == 2:  # compute initial tmud and tmuddt for brock/caupp model

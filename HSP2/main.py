@@ -76,14 +76,17 @@ def main(hdfname, saveall=False, jupyterlab=True):
                     if activity == 'ADCALC':
                         ui['PARAMETERS']['ADFG'] = flags['ADCALC']
                         ui['PARAMETERS']['KS']   = uci[(operation, 'HYDR', segment)]['PARAMETERS']['KS']
+                        ui['PARAMETERS']['VOL']  = uci[(operation, 'HYDR', segment)]['STATES']['VOL']
                     if activity == 'HTRCH':
                         ui['PARAMETERS']['ADFG'] = flags['ADCALC']
                         ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
-                        ui['STATES']['VOL'] = uci[(operation, 'HYDR', segment)]['STATES']['VOL']
+                        # ui['STATES']['VOL'] = uci[(operation, 'HYDR', segment)]['STATES']['VOL']
+                    if activity == 'CONS':
+                        ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
                     if activity == 'SEDTRN':
                         ui['PARAMETERS']['ADFG'] = flags['ADCALC']
                         ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
-                        ui['STATES']['VOL'] = uci[(operation, 'HYDR', segment)]['STATES']['VOL']
+                        # ui['STATES']['VOL'] = uci[(operation, 'HYDR', segment)]['STATES']['VOL']
                         ui['PARAMETERS']['HTFG'] = flags['HTRCH']
                         if flags['HYDR']:
                             ui['PARAMETERS']['LEN'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LEN']
@@ -199,6 +202,14 @@ def save_timeseries(store, ts, savedict, siminfo, saveall, operation, segment, a
                     zrep2 = zrep.replace(' ', '')
                     df[zrep2] = ts[z]
         df = df.astype(float32).sort_index(axis='columns')
+    elif (operation == 'RCHRES' and activity == 'CONS'):
+        for y in save:
+            for z in set(ts.keys()):
+                if '_' + y in z:
+                    df[z] = ts[z]
+        for y in (save & set(ts.keys())):
+            df[y] = ts[y]
+        df = df.astype(float32).sort_index(axis='columns')
     else:
         for y in (save & set(ts.keys())):
             df[y] = ts[y]
@@ -255,6 +266,20 @@ def get_flows(store, ts, flags, segment, ddlinks, ddmasslinks, steps, msg):
                                 rec['SMEMN'] = 'OVOL'
                             rec['SMEMSB'] = dat.SMEMSB
                             rec['TMEMN'] = 'IVOL'
+                            rec['TMEMSB'] = dat.TMEMSB
+                            rec['SVOL'] = dat.SVOL
+                            recs.append(rec)
+                        if flags['CONS']:
+                            # ICONS
+                            rec = {}
+                            rec['MFACTOR'] = dat.MFACTOR
+                            rec['SGRPN'] = 'CONS'
+                            if dat.SGRPN == "ROFLOW":
+                                rec['SMEMN'] = 'ROCON'
+                            else:
+                                rec['SMEMN'] = 'OCON'
+                            rec['SMEMSB'] = dat.SMEMSB
+                            rec['TMEMN'] = 'ICON'
                             rec['TMEMSB'] = dat.TMEMSB
                             rec['SVOL'] = dat.SVOL
                             recs.append(rec)
@@ -328,7 +353,7 @@ def get_flows(store, ts, flags, segment, ddlinks, ddmasslinks, steps, msg):
                 factor = afactr * mfactor
 
                 # KLUDGE until remaining HSP2 modules are available.
-                if tmemn not in {'IVOL', 'IHEAT', 'ISED', 'ISED1', 'ISED2', 'ISED3'}:
+                if tmemn not in {'IVOL', 'ICON', 'IHEAT', 'ISED', 'ISED1', 'ISED2', 'ISED3'}:
                     continue
                 if (sgrpn == 'OFLOW' and smemn == 'OVOL') or (sgrpn == 'ROFLOW' and smemn == 'ROVOL'):
                      sgrpn = 'HYDR'
@@ -338,6 +363,11 @@ def get_flows(store, ts, flags, segment, ddlinks, ddmasslinks, steps, msg):
                      sgrpn = 'SEDTRN'
                 if tmemn == 'ISED':
                     tmemn = tmemn + tmemsb
+                if tmemn == 'ICON':
+                    if tmemsb == '':
+                        tmemn = 'CONS1_ICON'
+                    else:
+                        tmemn = 'CONS' + tmemsb + '_ICON'
 
                 path = f'RESULTS/{x.SVOL}_{x.SVOLNO}/{sgrpn}'
                 MFname = f'{x.SVOL}{x.SVOLNO}_MFACTOR'
