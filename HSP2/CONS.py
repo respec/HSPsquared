@@ -137,11 +137,15 @@ def loopsub(SAREA, PREC ,VOL, COADFX, COADCN, ICON, simlen, conid, CON, ROCON, O
 	for loop in range(simlen):
 		sarea  = SAREA[loop]
 		prec   = PREC[loop]
+		vol    = VOL[loop] * 43560
 
 		coadfx = COADFX[loop]
 		coadcn = COADCN[loop]
-		icon   = ICON[loop]
-		
+		if vol > 0.0:
+			icon = ICON[loop] / vol
+		else:
+			icon = ICON[loop]
+
 		coaddr = sarea * conv   * coadfx    # dry deposition; 
 		coadwt = prec  * sarea  * coadcn    # wet deposition;
 
@@ -149,7 +153,6 @@ def loopsub(SAREA, PREC ,VOL, COADFX, COADCN, ICON, simlen, conid, CON, ROCON, O
 
 		incon  = icon  + coaddr + coadwt
 
-		vol = VOL[loop] * 43560
 		srovol = SROVOL[loop]
 		erovol = EROVOL[loop]
 		sovol = SOVOL[loop, :]
