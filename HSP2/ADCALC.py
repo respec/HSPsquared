@@ -87,7 +87,7 @@ def adcalc_(simlen, delts, nexits, crrat, ks, vol, ADFG, O, VOL, SROVOL, EROVOL,
 	''' Internal adcalc() loop for Numba'''
 	
 	for loop in range(simlen):
-		vols = VOL[loop-1]  if loop > 0 else vol
+		vols = VOL[loop-1] * 43560  if loop > 0 else vol
 
 		o  = O[loop]
 		os = O[loop-1] if loop > 0 else O[loop]

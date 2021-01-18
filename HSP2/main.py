@@ -278,7 +278,7 @@ def get_flows(store, ts, flags, segment, ddlinks, ddmasslinks, steps, msg):
                                 rec['SMEMN'] = 'ROCON'
                             else:
                                 rec['SMEMN'] = 'OCON'
-                            rec['SMEMSB'] = dat.SMEMSB
+                            rec['SMEMSB'] = dat.SMEMSB  # first sub is exit number
                             rec['TMEMN'] = 'ICON'
                             rec['TMEMSB'] = dat.TMEMSB
                             rec['SVOL'] = dat.SVOL
@@ -368,6 +368,16 @@ def get_flows(store, ts, flags, segment, ddlinks, ddmasslinks, steps, msg):
                         tmemn = 'CONS1_ICON'
                     else:
                         tmemn = 'CONS' + tmemsb + '_ICON'
+                if smemn == 'OCON':
+                    if smemsb == '':
+                        smemn = 'CONS1_OCON1'
+                    else:
+                        smemn = 'CONS1' + '_OCON' + smemsb
+                if smemn == 'ROCON':
+                    if smemsb == '':
+                        smemn = 'CONS1_ROCON'
+                    else:
+                        smemn = 'CONS' + smemsb + '_ROCON'
 
                 path = f'RESULTS/{x.SVOL}_{x.SVOLNO}/{sgrpn}'
                 MFname = f'{x.SVOL}{x.SVOLNO}_MFACTOR'
@@ -381,6 +391,8 @@ def get_flows(store, ts, flags, segment, ddlinks, ddmasslinks, steps, msg):
                         data = f'{smemn}'
                         if data in store[path]:
                             t = store[path][data].astype(float64).to_numpy()[0:steps]
+                        else:
+                            print('ERROR in FLOWS, cant resolve ', path)
                     if MFname in ts and AFname in ts:
                         t *= ts[MFname][:steps] * ts[AFname][0:steps]
                         msg(4, f'MFACTOR modified by timeseries {MFname}')
