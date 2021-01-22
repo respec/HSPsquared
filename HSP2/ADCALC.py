@@ -156,7 +156,7 @@ def advect(imat, conc, nexits, vols, vol, srovol, erovol, sovol, eovol):
 	
 
 #@jit(nopython=True)
-def oxrea(LKFG,wind,cforea,avvele,avdepe,tcginv, REAMFG,reak,reakt,expred,exprev,len, delth,tw,delts,delt60,uunits, korea):
+def oxrea(LKFG,wind,cforea,avvele,avdepe,tcginv,reamfg,reak,reakt,expred,exprev,len, delth,tw,delts,delt60,uunits):
 	''' Calculate oxygen reaeration coefficient'''
 	# DELTS  - ???
 	# DELT60 - simulation time interval in hours
@@ -170,7 +170,7 @@ def oxrea(LKFG,wind,cforea,avvele,avdepe,tcginv, REAMFG,reak,reakt,expred,exprev
 		korea = (0.032808 * windf * cforea / avdepe) * delt60
 	
 	# calculate reaeration coefficient for free-flowing reach
-	elif REAMFG == 1:
+	elif reamfg == 1:
 		# calculate reaeration coefficient based on energy dissipation principles (tsivoglou method)
 		# convert length and drop in energy line along length of rchres to english units, if necessary
 		lene   = len
@@ -181,7 +181,7 @@ def oxrea(LKFG,wind,cforea,avvele,avdepe,tcginv, REAMFG,reak,reakt,expred,exprev
 			korea  = reakt * (delthe / flotim) * (tcginv**(tw - 20.)) * delts
 		else:
 			korea = 0.0
-	elif REAMFG == 2:
+	elif reamfg == 2:
 		# calculate reaeration coefficient as a power function of average hydraulic
 		# depth and velocity; determine exponents to depth and velocity terms and assign value to reak
 		if avdepe <= 2.0:  # use owen's formulation for reaeration
