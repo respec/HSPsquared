@@ -37,7 +37,7 @@ if file_ext.upper() == "UCI":
 if file_ext.upper() == "WDM":
     h5_name = filename[:-3] + "h5"
     from HSP2tools.readWDM import readWDM
-    readWDM(filename, h5_name)
+    readWDM(filename, h5_name, jupyterlab=False)
     # readWDM('GRICM.wdm', 'test.h5')
     # readWDM('ZUMBROSCEN.WDM', 'test.h5')
 
