@@ -49,6 +49,26 @@ def parseD(line, parse):
         d[name] = convert[type_](field) if field else convert[type_](default)
     return d
 
+def parseD2(line, parse, d):
+    icnt = 0
+    for name, type_, start, end, default in parse:
+        field = line[start:end].strip()
+        icnt += 1
+        # don't do anything with the first 7 values
+        if icnt > 8:
+            d[name] = convert[type_](field) if field else convert[type_](default)
+    return d
+
+def parseD3(line, parse, d):
+    icnt = 0
+    for name, type_, start, end, default in parse:
+        field = line[start:end].strip()
+        icnt += 1
+        # don't do anything with the first 14 values
+        if icnt > 15:
+            d[name] = convert[type_](field) if field else convert[type_](default)
+    return d
+
 
 def get_opnid(opnidstr, operation):
     first, *last = opnidstr.split()
@@ -84,7 +104,7 @@ skip = {
 
 
 ops = {'PERLND','IMPLND','RCHRES'}
-conlike = {'CONS':'NCONS', 'PQUAL':'NQUAL', 'IQUAL':'NQUAL'}
+conlike = {'CONS':'NCONS', 'PQUAL':'NQUAL', 'IQUAL':'NQUAL', 'GQUAL':'NQUAL'}
 def readUCI(uciname, hdfname):
     # create lookup dictionaries from 'ParseTable.csv' and 'rename.csv'
     parse = defaultdict(list)
@@ -421,13 +441,29 @@ def operation(info, llines, op):
         tokens = line.split()
         if len(tokens) == 1:
             table = tokens[0]
-            rows = {}
-            for line in lines:
-                if (op,table) not in parse or line[2:5] == 'END':
-                    break
-                d = parseD(line, parse[op,table])
-                for opnid in get_opnid(d.pop('OPNID'), op):
-                    rows[opnid] = d
+            if dcat[op,table] == 'EXTENDED':
+                rows = {}
+                extended_line = 0
+                for line in lines:
+                    extended_line += 1
+                    if (op, table) not in parse or line[2:5] == 'END':
+                        break
+                    if extended_line == 1:
+                        d = parseD(line, parse[op, table])
+                    elif extended_line == 2:
+                        d = parseD2(line, parse[op, table], d)
+                    elif extended_line == 3:
+                        d = parseD3(line, parse[op, table], d)
+                        for opnid in get_opnid(d.pop('OPNID'), op):
+                            rows[opnid] = d
+            else:
+                rows = {}
+                for line in lines:
+                    if (op,table) not in parse or line[2:5] == 'END':
+                        break
+                    d = parseD(line, parse[op,table])
+                    for opnid in get_opnid(d.pop('OPNID'), op):
+                        rows[opnid] = d
             df = DataFrame.from_dict(rows, orient='index')
             history[dpath[op,table],dcat[op,table]].append((table,df))
 
@@ -492,7 +528,7 @@ def operation(info, llines, op):
                     elif table == 'CONS-DATA':
                         count += 1
                         df = fix_df(df, op, path, ddfaults, valid)
-                    df.to_hdf(store, f'{op}/{path}/{cat}{count}', data_columns=True)
+                        df.to_hdf(store, f'{op}/{path}/{cat}{count}', data_columns=True)
             elif cat == 'PQUAL' or cat == 'IQUAL':
                 count = 0
                 for table,df in history[path,cat]:
@@ -517,15 +553,19 @@ def operation(info, llines, op):
                         df = fix_df(df, op, path, ddfaults, valid)
                         df.to_hdf(store, f'{op}/{path}/{cat}{count}/{tag}', data_columns=True)
             elif cat == 'GQUAL':
+                count = 0
                 for table,df in history[path,cat]:
                     if table.startswith('MON'):
                         name = rename[(op, table)]
                         df = fix_df(df, op, path, ddfaults, valid)
                         df.columns = Months
-                        df.to_hdf(store, f'{op}/{path}/MONTHLY/{name}', data_columns=True)
+                        df.to_hdf(store, f'{op}/{path}/{cat}{count}/MONTHLY/{name}', data_columns=True)
                     else:
+                        if table == 'GQ-QALDATA':
+                            count += 1
+                        df = concat([temp[1] for temp in history[path, cat]], axis='columns')
                         df = fix_df(df, op, path, ddfaults, valid)
-                        df.to_hdf(store, f'{op}/{path}', data_columns=True)
+                        df.to_hdf(store, f'{op}/{path}/{cat}{count}', data_columns=True)
             else:
                 print('UCI TABLE is not understood (yet) by readUCI', op, cat)
 
