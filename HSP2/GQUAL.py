@@ -49,32 +49,32 @@ def gqual(store, siminfo, uci, ts):
 	lkfg = 0
 
 	# NGQ3 = NGQUAL * 3
-	ddqal = array(7, ngqual)
+	ddqal = zeros((7, ngqual))
 
-	for index in range(ngqual):
+	for index in range(1, ngqual+1):
 
 		# update UI values for this constituent here!
-		ui_flags = uci['GQUAL' + str(index) + '_FLAGS']
-		ui_parms = uci['GQUAL' + str(index) + '_PARAMETERS']
+		ui_parms = uci['GQUAL' + str(index)]
 
-		# get atmos dep timeseries
-		gqadfgf = ui_flags['GQADFG' + str((index * 2) - 1)]
-		if gqadfgf > 0:
-			ts['GQADFX'] = initm(siminfo, uci, gqadfgf, 'GQUAL' + str(index) + '_MONTHLY/GQADFX', 0.0)
-		elif gqadfgf == -1:
-			ts['GQADFX'] = ts['GQADFX' + str(index) + ' 1']
-		gqadfgc = ui_flags['GQADFG' + str(index * 2)]
-		if gqadfgc > 0:
-			ts['GQADCN'] = initm(siminfo, uci, gqadfgc, 'IQUAL' + str(index) + '_MONTHLY/GQADCN', 0.0)
-		elif gqadfgc == -1:
-			ts['GQADCN'] = ts['GQADCN' + str(index) + ' 1']
+		if 'GQADFG' + str((index * 2) - 1) in ui_parms:
+			# get atmos dep timeseries
+			gqadfgf = ui_parms['GQADFG' + str((index * 2) - 1)]
+			if gqadfgf > 0:
+				ts['GQADFX'] = initm(siminfo, uci, gqadfgf, 'GQUAL' + str(index) + '_MONTHLY/GQADFX', 0.0)
+			elif gqadfgf == -1:
+				ts['GQADFX'] = ts['GQADFX' + str(index) + ' 1']
+			gqadfgc = ui_parms['GQADFG' + str(index * 2)]
+			if gqadfgc > 0:
+				ts['GQADCN'] = initm(siminfo, uci, gqadfgc, 'IQUAL' + str(index) + '_MONTHLY/GQADCN', 0.0)
+			elif gqadfgc == -1:
+				ts['GQADCN'] = ts['GQADCN' + str(index) + ' 1']
 
-		if UUNITS == 1:
-			if 'GQADFX' in ts:
-				ts['GQADFX'] *= delt60 / (24.0 * 43560.0)
-		else:
-			if 'GQADFX' in ts:
-				ts['GQADFX'] *= delt60 / (24.0 * 10000.0)
+			if UUNITS == 1:
+				if 'GQADFX' in ts:
+					ts['GQADFX'] *= delt60 / (24.0 * 43560.0)
+			else:
+				if 'GQADFX' in ts:
+					ts['GQADFX'] *= delt60 / (24.0 * 10000.0)
 
 		if 'GQADFX' not in ts:
 			ts['GQADFX'] = zeros(simlen)
@@ -99,23 +99,25 @@ def gqual(store, siminfo, uci, ts):
 		# process flags for this constituent
 
 		# table-type gq-qalfg
-		qalfg1 = ui_flags['QALFG1']
-		qalfg2 = ui_flags['QALFG2']
-		qalfg3 = ui_flags['QALFG3']
-		qalfg4 = ui_flags['QALFG4']
-		qalfg5 = ui_flags['QALFG5']
-		qalfg6 = ui_flags['QALFG6']
-		qalfg7 = ui_flags['QALFG7']
+		qalfg1 = ui_parms['QALFG1']
+		qalfg2 = ui_parms['QALFG2']
+		qalfg3 = ui_parms['QALFG3']
+		qalfg4 = ui_parms['QALFG4']
+		qalfg5 = ui_parms['QALFG5']
+		qalfg6 = ui_parms['QALFG6']
+		qalfg7 = ui_parms['QALFG7']
 
 		# table-type gq-flg2
-		gqpm2 = array(7)
-		gqpm2[1] = ui_flags['GQPM21']
-		gqpm2[2] = ui_flags['GQPM22']
-		gqpm2[3] = ui_flags['GQPM23']
-		gqpm2[4] = ui_flags['GQPM24']
-		gqpm2[5] = ui_flags['GQPM25']
-		gqpm2[6] = ui_flags['GQPM26']
-		gqpm2[7] = ui_flags['GQPM27']
+		gqpm2 = zeros(8)
+		gqpm2[7] = 2
+		if 'GQPM21' in ui_parms:
+			gqpm2[1] = ui_parms['GQPM21']
+			gqpm2[2] = ui_parms['GQPM22']
+			gqpm2[3] = ui_parms['GQPM23']
+			gqpm2[4] = ui_parms['GQPM24']
+			gqpm2[5] = ui_parms['GQPM25']
+			gqpm2[6] = ui_parms['GQPM26']
+			gqpm2[7] = ui_parms['GQPM27']
 
 		# process parameters for this constituent
 		ka = 0.0
@@ -136,29 +138,31 @@ def gqual(store, siminfo, uci, ts):
 			kox  = ui_parms['KOX'] * delts  # convert rates from /sec to /ivl
 			thox = ui_parms['THOX']
 
-		photpm = array(20)
+		photpm = zeros(21)
 		if qalfg3 == 1:   # qual undergoes photolysis
 			# PHOTPM(1,I) # table-type gq-photpm
-			photpm[1] = ui_parms['K1']
-			photpm[2] = ui_parms['K2']
-			photpm[3] = ui_parms['K3']
-			photpm[4] = ui_parms['K4']
-			photpm[5] = ui_parms['K5']
-			photpm[6] = ui_parms['K6']
-			photpm[7] = ui_parms['K7']
-			photpm[8] = ui_parms['K8']
-			photpm[9] = ui_parms['K9']
-			photpm[10] = ui_parms['K10']
-			photpm[11] = ui_parms['K11']
-			photpm[12] = ui_parms['K12']
-			photpm[13] = ui_parms['K13']
-			photpm[14] = ui_parms['K14']
-			photpm[15] = ui_parms['K15']
-			photpm[16] = ui_parms['K16']
-			photpm[17] = ui_parms['K17']
-			photpm[18] = ui_parms['K18']
-			photpm[19] = ui_parms['PHI']
-			photpm[20] = ui_parms['THETA']
+			if 'EXTENDEDS_PHOTPM' in uci:
+				ttable = uci['EXTENDEDS_PHOTPM']
+				photpm[1] = ttable['PHOTPM0']
+				photpm[2] = ttable['PHOTPM1']
+				photpm[3] = ttable['PHOTPM2']
+				photpm[4] = ttable['PHOTPM3']
+				photpm[5] = ttable['PHOTPM4']
+				photpm[6] = ttable['PHOTPM5']
+				photpm[7] = ttable['PHOTPM6']
+				photpm[8] = ttable['PHOTPM7']
+				photpm[9] = ttable['PHOTPM8']
+				photpm[10] = ttable['PHOTPM9']
+				photpm[11] = ttable['PHOTPM10']
+				photpm[12] = ttable['PHOTPM11']
+				photpm[13] = ttable['PHOTPM12']
+				photpm[14] = ttable['PHOTPM13']
+				photpm[15] = ttable['PHOTPM14']
+				photpm[16] = ttable['PHOTPM15']
+				photpm[17] = ttable['PHOTPM16']
+				photpm[18] = ttable['PHOTPM17']
+				photpm[19] = ttable['PHOTPM18']
+				photpm[20] = ttable['PHOTPM19']
 
 		cfgas = 0.0
 		if qalfg4 == 1:   # qual undergoes volatilization
@@ -175,7 +179,7 @@ def gqual(store, siminfo, uci, ts):
 			# specifies source of biomass data using GQPM2(7,I)
 			if gqpm2[7] == 1 or gqpm2[7] == 3:
 				# BIOM = # from ts, monthly, constant
-				ts['BIO'] = initm(siminfo, uci, ui_flags['GQPM27'], 'GQUAL' + str(index) + '_MONTHLY/BIO',
+				ts['BIO'] = initm(siminfo, uci, ui_parms['GQPM27'], 'GQUAL' + str(index) + '_MONTHLY/BIO',
 								ui_parms['BIO'])
 
 		fstdec = 0.0
@@ -185,17 +189,17 @@ def gqual(store, siminfo, uci, ts):
 			fstdec = ui_parms['FSTDEC'] * delt60 / 24.0 # convert rate from /day to /ivl
 			thfst  = ui_parms['THFST']
 
-		adpm1 = array(6)
-		adpm2 = array(6)
-		adpm3 = array(6)
+		adpm1 = zeros(7)
+		adpm2 = zeros(7)
+		adpm3 = zeros(7)
 		if qalfg7 == 1:   # constituent is sediment-associated
 			# get all required additional input
 			# ADDCPM      # table-type gq-seddecay
 			# convert rates from /day to /ivl
-			addcpm1 = ui_parms['ADDCPM1'] * delt60 / 24.0 # convert rate from /day to /ivl
-			addcpm2 = ui_parms['ADDCPM2']
-			addcpm3 = ui_parms['ADDCPM3'] * delt60 / 24.0 # convert rate from /day to /ivl
-			addcpm4 = ui_parms['ADDCPM4']
+			addcpm1 = ui_parms['ADDCP1'] * delt60 / 24.0 # convert rate from /day to /ivl
+			addcpm2 = ui_parms['ADDCP2']
+			addcpm3 = ui_parms['ADDCP3'] * delt60 / 24.0 # convert rate from /day to /ivl
+			addcpm4 = ui_parms['ADDCP4']
 
 			# table-type gq-kd
 			adpm1[1] = ui_parms['ADPM11']
@@ -214,12 +218,20 @@ def gqual(store, siminfo, uci, ts):
 			adpm2[6] = ui_parms['ADPM62'] * delt60 / 24.0 # convert rate from /day to /ivl
 
 			# table-type gq-adtheta
-			adpm3[1] = ui_parms['ADPM13']
-			adpm3[2] = ui_parms['ADPM23']
-			adpm3[3] = ui_parms['ADPM33']
-			adpm3[4] = ui_parms['ADPM43']
-			adpm3[5] = ui_parms['ADPM53']
-			adpm3[6] = ui_parms['ADPM63']
+			if 'ADPM13' in ui_parms:
+				adpm3[1] = ui_parms['ADPM13']
+				adpm3[2] = ui_parms['ADPM23']
+				adpm3[3] = ui_parms['ADPM33']
+				adpm3[4] = ui_parms['ADPM43']
+				adpm3[5] = ui_parms['ADPM53']
+				adpm3[6] = ui_parms['ADPM63']
+			else:
+				adpm3[1] = 1.07
+				adpm3[2] = 1.07
+				adpm3[3] = 1.07
+				adpm3[4] = 1.07
+				adpm3[5] = 1.07
+				adpm3[6] = 1.07
 
 			# table-type gq-sedconc
 			sqal1 = ui_parms['SQAL1']
@@ -294,99 +306,125 @@ def gqual(store, siminfo, uci, ts):
 		# monthly values or time series
 
 		# table-type gq-values
-		twat  = ui_parms("TWAT")
-		phval = ui_parms("PHVAL")
-		roc   = ui_parms("ROC")
-		cld   = ui_parms("CLD")
-		sdcnc = ui_parms("SDCNC")
-		phy   = ui_parms("PHY")
+		if tempfg == 2 and "TWAT" in ui_parms:
+			twat  = ui_parms("TWAT")
+		else:
+			twat  = 60.0
+		if phflag == 2 and "PHVAL" in ui_parms:
+			phval = ui_parms("PHVAL")
+		else:
+			phval = 7.0
+		if roxfg == 2 and "ROC" in ui_parms:
+			roc   = ui_parms("ROC")
+		else:
+			roc   = 0.0
+		if cldfg == 2 and "CLD" in ui_parms:
+			cld   = ui_parms("CLD")
+		else:
+			cld   = 0.0
+		if sdfg == 2 and "SDCNC" in ui_parms:
+			sdcnc = ui_parms("SDCNC")
+		else:
+			sdcnc = 0.0
+		if phytfg == 2 and "PHY" in ui_parms:
+			phy   = ui_parms("PHY")
+		else:
+			phy   = 0.0
 
 		ts['TEMP']  = initm(siminfo, uci, tempfg, 'GQUAL' + str(index) + '_MONTHLY/WATEMP', twat)
 		ts['PHVAL'] = initm(siminfo, uci, phflag, 'GQUAL' + str(index) + '_MONTHLY/PHVAL', phval)
 		ts['ROC']   = initm(siminfo, uci, roxfg, 'GQUAL' + str(index) + '_MONTHLY/ROXYGEN', roc)
 
-		alph = array(18)
-		gamm = array(18)
-		delta = array(18)
-		kcld = array(18)
+		alph = zeros(19)
+		gamm = zeros(19)
+		delta = zeros(19)
+		kcld = zeros(19)
 		fact1 = 0.0
 		if gqalfg3 == 1:
 			#  table-type gq-alpha
-			alph[1] = ui_parms['AK1']
-			alph[2] = ui_parms['AK2']
-			alph[3] = ui_parms['AK3']
-			alph[4] = ui_parms['AK4']
-			alph[5] = ui_parms['AK5']
-			alph[6] = ui_parms['AK6']
-			alph[7] = ui_parms['AK7']
-			alph[8] = ui_parms['AK8']
-			alph[9] = ui_parms['AK9']
-			alph[10] = ui_parms['AK10']
-			alph[11] = ui_parms['AK11']
-			alph[12] = ui_parms['AK12']
-			alph[13] = ui_parms['AK13']
-			alph[14] = ui_parms['AK14']
-			alph[15] = ui_parms['AK15']
-			alph[16] = ui_parms['AK16']
-			alph[17] = ui_parms['AK17']
-			alph[18] = ui_parms['AK18']
+			if 'EXTENDEDS_ALPH' in uci:
+				ttable = uci['EXTENDEDS_ALPH']
+				alph[1] = ttable['ALPH0']
+				alph[2] = ttable['ALPH1']
+				alph[3] = ttable['ALPH2']
+				alph[4] = ttable['ALPH3']
+				alph[5] = ttable['ALPH4']
+				alph[6] = ttable['ALPH5']
+				alph[7] = ttable['ALPH6']
+				alph[8] = ttable['ALPH7']
+				alph[9] = ttable['ALPH8']
+				alph[10] = ttable['ALPH9']
+				alph[11] = ttable['ALPH10']
+				alph[12] = ttable['ALPH11']
+				alph[13] = ttable['ALPH12']
+				alph[14] = ttable['ALPH13']
+				alph[15] = ttable['ALPH14']
+				alph[16] = ttable['ALPH15']
+				alph[17] = ttable['ALPH16']
+				alph[18] = ttable['ALPH17']
 			#  table-type gq-gamma
-			gamm[1] = ui_parms['GK1']
-			gamm[2] = ui_parms['GK2']
-			gamm[3] = ui_parms['GK3']
-			gamm[4] = ui_parms['GK4']
-			gamm[5] = ui_parms['GK5']
-			gamm[6] = ui_parms['GK6']
-			gamm[7] = ui_parms['GK7']
-			gamm[8] = ui_parms['GK8']
-			gamm[9] = ui_parms['GK9']
-			gamm[10] = ui_parms['GK10']
-			gamm[11] = ui_parms['GK11']
-			gamm[12] = ui_parms['GK12']
-			gamm[13] = ui_parms['GK13']
-			gamm[14] = ui_parms['GK14']
-			gamm[15] = ui_parms['GK15']
-			gamm[16] = ui_parms['GK16']
-			gamm[17] = ui_parms['GK17']
-			gamm[18] = ui_parms['GK18']
+			if 'EXTENDEDS_GAMM' in uci:
+				ttable = uci['EXTENDEDS_GAMM']
+				gamm[1] = ttable['GAMM0']
+				gamm[2] = ttable['GAMM1']
+				gamm[3] = ttable['GAMM2']
+				gamm[4] = ttable['GAMM3']
+				gamm[5] = ttable['GAMM4']
+				gamm[6] = ttable['GAMM5']
+				gamm[7] = ttable['GAMM6']
+				gamm[8] = ttable['GAMM7']
+				gamm[9] = ttable['GAMM8']
+				gamm[10] = ttable['GAMM9']
+				gamm[11] = ttable['GAMM10']
+				gamm[12] = ttable['GAMM11']
+				gamm[13] = ttable['GAMM12']
+				gamm[14] = ttable['GAMM13']
+				gamm[15] = ttable['GAMM14']
+				gamm[16] = ttable['GAMM15']
+				gamm[17] = ttable['GAMM16']
+				gamm[18] = ttable['GAMM17']
 			#  table-type gq-delta
-			delta[1] = ui_parms['DK1']
-			delta[2] = ui_parms['DK2']
-			delta[3] = ui_parms['DK3']
-			delta[4] = ui_parms['DK4']
-			delta[5] = ui_parms['DK5']
-			delta[6] = ui_parms['DK6']
-			delta[7] = ui_parms['DK7']
-			delta[8] = ui_parms['DK8']
-			delta[9] = ui_parms['DK9']
-			delta[10] = ui_parms['DK10']
-			delta[11] = ui_parms['DK11']
-			delta[12] = ui_parms['DK12']
-			delta[13] = ui_parms['DK13']
-			delta[14] = ui_parms['DK14']
-			delta[15] = ui_parms['DK15']
-			delta[16] = ui_parms['DK16']
-			delta[17] = ui_parms['DK17']
-			delta[18] = ui_parms['DK18']
+			if 'EXTENDEDS_DEL' in uci:
+				ttable = uci['EXTENDEDS_DEL']
+				delta[1] = ttable['DEL0']
+				delta[2] = ttable['DEL1']
+				delta[3] = ttable['DEL2']
+				delta[4] = ttable['DEL3']
+				delta[5] = ttable['DEL4']
+				delta[6] = ttable['DEL5']
+				delta[7] = ttable['DEL6']
+				delta[8] = ttable['DEL7']
+				delta[9] = ttable['DEL8']
+				delta[10] = ttable['DEL9']
+				delta[11] = ttable['DEL10']
+				delta[12] = ttable['DEL11']
+				delta[13] = ttable['DEL12']
+				delta[14] = ttable['DEL13']
+				delta[15] = ttable['DEL14']
+				delta[16] = ttable['DEL15']
+				delta[17] = ttable['DEL16']
+				delta[18] = ttable['DEL17']
 			#  table-type gq-cldfact
-			kcld[1] = ui_parms['CK1']
-			kcld[2] = ui_parms['CK2']
-			kcld[3] = ui_parms['CK3']
-			kcld[4] = ui_parms['CK4']
-			kcld[5] = ui_parms['CK5']
-			kcld[6] = ui_parms['CK6']
-			kcld[7] = ui_parms['CK7']
-			kcld[8] = ui_parms['CK8']
-			kcld[9] = ui_parms['CK9']
-			kcld[10] = ui_parms['CK10']
-			kcld[11] = ui_parms['CK11']
-			kcld[12] = ui_parms['CK12']
-			kcld[13] = ui_parms['CK13']
-			kcld[14] = ui_parms['CK14']
-			kcld[15] = ui_parms['CK15']
-			kcld[16] = ui_parms['CK16']
-			kcld[17] = ui_parms['CK17']
-			kcld[18] = ui_parms['CK18']
+			if 'EXTENDEDS_KCLD' in uci:
+				ttable = uci['EXTENDEDS_KCLD']
+				kcld[1] = ttable['KCLD0']
+				kcld[2] = ttable['KCLD1']
+				kcld[3] = ttable['KCLD2']
+				kcld[4] = ttable['KCLD3']
+				kcld[5] = ttable['KCLD4']
+				kcld[6] = ttable['KCLD5']
+				kcld[7] = ttable['KCLD6']
+				kcld[8] = ttable['KCLD7']
+				kcld[9] = ttable['KCLD8']
+				kcld[10] = ttable['KCLD9']
+				kcld[11] = ttable['KCLD10']
+				kcld[12] = ttable['KCLD11']
+				kcld[13] = ttable['KCLD12']
+				kcld[14] = ttable['KCLD13']
+				kcld[15] = ttable['KCLD14']
+				kcld[16] = ttable['KCLD15']
+				kcld[17] = ttable['KCLD16']
+				kcld[18] = ttable['KCLD17']
 
 			ts['CLD'] = initm(siminfo, uci, cldfg, 'GQUAL' + str(index) + '_MONTHLY/CLOUD', cld)
 			ts['SDCNC'] = initm(siminfo, uci, sdfg, 'GQUAL' + str(index) + '_MONTHLY/SEDCONC', sdcnc)
@@ -454,8 +492,12 @@ def gqual(store, siminfo, uci, ts):
 			# one or more constituents undergoes volatilization process- input required to compute reaeration coefficient
 
 			# flags - table-type ox-flags
-			reamfg = ui_flags("REAMFG")
-			dopfg  = ui_flags("DOPFG")
+			reamfg = 2
+			if 'REAMFG' in ui_parms:
+				reamfg = ui_parms("REAMFG")
+			dopfg = 0
+			if 'DOPFG' in ui_parms:
+				dopfg  = ui_parms("DOPFG")
 
 			htfg = int(ui['HTFG'])
 			if htfg == 0:
@@ -465,7 +507,9 @@ def gqual(store, siminfo, uci, ts):
 			lkfg = int(ui['LKFG'])
 			if lkfg == 1:
 				# table-type ox-cforea
-				cforea = ui_parms("CFOREA")
+				cforea = 1.0
+				if 'CFOREA' in ui_parms:
+					cforea = ui_parms("CFOREA")
 			else:
 				if reamfg == 1:
 					# tsivoglou method - table-type ox-tsivoglou
@@ -485,28 +529,29 @@ def gqual(store, siminfo, uci, ts):
 
 		# process tables specifying relationship between "parent" and "daughter" compounds
 		# table-type gq-daughter
-		c = array(7,6)
-		c[2,1] = ui_parms("C21")
-		c[3,1] = ui_parms("C31")
-		c[4,1] = ui_parms("C41")
-		c[5,1] = ui_parms("C51")
-		c[6,1] = ui_parms("C61")
-		c[7,1] = ui_parms("C71")
-		c[3,2] = ui_parms("C32")
-		c[4,2] = ui_parms("C42")
-		c[5,2] = ui_parms("C52")
-		c[6,2] = ui_parms("C62")
-		c[7,2] = ui_parms("C72")
-		c[4,3] = ui_parms("C43")
-		c[5,3] = ui_parms("C53")
-		c[6,3] = ui_parms("C63")
-		c[7,3] = ui_parms("C73")
-		c[5,4] = ui_parms("C54")
-		c[6,4] = ui_parms("C64")
-		c[7,4] = ui_parms("C74")
-		c[6,5] = ui_parms("C65")
-		c[7,5] = ui_parms("C75")
-		c[7,6] = ui_parms("C76")
+		c = zeros((8,7))
+		if 'C21' in ui_parms:
+			c[2,1] = ui_parms("C21")
+			c[3,1] = ui_parms("C31")
+			c[4,1] = ui_parms("C41")
+			c[5,1] = ui_parms("C51")
+			c[6,1] = ui_parms("C61")
+			c[7,1] = ui_parms("C71")
+			c[3,2] = ui_parms("C32")
+			c[4,2] = ui_parms("C42")
+			c[5,2] = ui_parms("C52")
+			c[6,2] = ui_parms("C62")
+			c[7,2] = ui_parms("C72")
+			c[4,3] = ui_parms("C43")
+			c[5,3] = ui_parms("C53")
+			c[6,3] = ui_parms("C63")
+			c[7,3] = ui_parms("C73")
+			c[5,4] = ui_parms("C54")
+			c[6,4] = ui_parms("C64")
+			c[7,4] = ui_parms("C74")
+			c[6,5] = ui_parms("C65")
+			c[7,5] = ui_parms("C75")
+			c[7,6] = ui_parms("C76")
 
 		if gqalfg7 == 1: #  one or more quals are sediment-associated
 			sedfg = int(ui['SEDFG'])
@@ -540,7 +585,7 @@ def gqual(store, siminfo, uci, ts):
 		TW    = ts['TW']
 		ROC   = ts['ROC']
 		SDCNC = ts['SDCNC']    # constant, monthly, ts; SDFG, note: interpolate to daily value only
-		PHYTO = ts['PHYTO']    # constant, monthly, ts; PHYTFG, note: interpolate to daily value only
+		PHYTO = ts['PHY']      # constant, monthly, ts; PHYTFG, note: interpolate to daily value only
 		CLD   = ts['CLD']      # constant, monthly, ts['CLOUD']
 		WIND  = ts['WIND']
 		AVVEL = ts['AVVEL']
@@ -548,9 +593,17 @@ def gqual(store, siminfo, uci, ts):
 		SAREA = ts['SAREA']
 		GQADFX = ts['GQADFX']
 		GQADCN = ts['GQADCN']
+		if 'BIO' not in ts:
+			ts['BIO'] = zeros(simlen)
 		BIO    = ts['BIO']
+		if 'ISQAL1' not in ts:
+			ts['ISQAL1'] = zeros(simlen)
 		ISQAL1 = ts['ISQAL1']
+		if 'ISQAL2' not in ts:
+			ts['ISQAL2'] = zeros(simlen)
 		ISQAL2 = ts['ISQAL2']
+		if 'ISQAL3' not in ts:
+			ts['ISQAL3'] = zeros(simlen)
 		ISQAL3 = ts['ISQAL3']
 		DEPSCR1 = ts['DEPSCR1']
 		DEPSCR2 = ts['DEPSCR2']
@@ -558,9 +611,10 @@ def gqual(store, siminfo, uci, ts):
 		ROSED1 = ts['ROSED1']
 		ROSED2 = ts['ROSED2']
 		ROSED3 = ts['ROSED3']
-		OSED1 = ts['OSED1']
-		OSED2 = ts['OSED2']
-		OSED3 = ts['OSED3']
+		if 'OSED1' in ts:
+			OSED1 = ts['OSED1']
+			OSED2 = ts['OSED2']
+			OSED3 = ts['OSED3']
 
 		# this number is used to adjust reaction rates for temperature
 		TW20 = TW - 20.0
