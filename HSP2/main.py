@@ -92,6 +92,16 @@ def main(hdfname, saveall=False, jupyterlab=True):
                             ui['PARAMETERS']['LEN'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LEN']
                             ui['PARAMETERS']['DELTH'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['DELTH']
                             ui['PARAMETERS']['DB50'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['DB50']
+                    if activity == 'GQUAL':
+                        ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
+                        ui['PARAMETERS']['HTFG'] = flags['HTRCH']
+                        ui['PARAMETERS']['SEDFG'] = flags['SEDTRN']
+                        # ui['PARAMETERS']['REAMFG'] = uci[(operation, 'OXRX', segment)]['PARAMETERS']['REAMFG']
+                        ui['PARAMETERS']['HYDRFG'] = flags['HYDR']
+                        if flags['HYDR']:
+                            ui['PARAMETERS']['LKFG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LKFG']
+                            ui['PARAMETERS']['AUX1FG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['AUX1FG']
+                            ui['PARAMETERS']['AUX2FG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['AUX2FG']
 
                 ############ calls activity function like snow() ##############
                 errors, errmessages = function(store, siminfo, ui, ts)
@@ -202,7 +212,7 @@ def save_timeseries(store, ts, savedict, siminfo, saveall, operation, segment, a
                     zrep2 = zrep.replace(' ', '')
                     df[zrep2] = ts[z]
         df = df.astype(float32).sort_index(axis='columns')
-    elif (operation == 'RCHRES' and activity == 'CONS'):
+    elif (operation == 'RCHRES' and (activity == 'CONS' or activity == 'GQUAL')):
         for y in save:
             for z in set(ts.keys()):
                 if '_' + y in z:

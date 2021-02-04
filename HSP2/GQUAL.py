@@ -47,9 +47,10 @@ def gqual(store, siminfo, uci, ts):
 			phytfg = ui['PHYTFG']
 			lat    = ui['LAT']
 	lkfg = 0
+	ecnt = 0
 
 	# NGQ3 = NGQUAL * 3
-	ddqal = zeros((7, ngqual))
+	ddqal = zeros((8, ngqual+1))
 
 	for index in range(1, ngqual+1):
 
@@ -99,13 +100,14 @@ def gqual(store, siminfo, uci, ts):
 		# process flags for this constituent
 
 		# table-type gq-qalfg
-		qalfg1 = ui_parms['QALFG1']
-		qalfg2 = ui_parms['QALFG2']
-		qalfg3 = ui_parms['QALFG3']
-		qalfg4 = ui_parms['QALFG4']
-		qalfg5 = ui_parms['QALFG5']
-		qalfg6 = ui_parms['QALFG6']
-		qalfg7 = ui_parms['QALFG7']
+		qalfg = zeros(8)
+		qalfg[1] = ui_parms['QALFG1']
+		qalfg[2] = ui_parms['QALFG2']
+		qalfg[3] = ui_parms['QALFG3']
+		qalfg[4] = ui_parms['QALFG4']
+		qalfg[5] = ui_parms['QALFG5']
+		qalfg[6] = ui_parms['QALFG6']
+		qalfg[7] = ui_parms['QALFG7']
 
 		# table-type gq-flg2
 		gqpm2 = zeros(8)
@@ -126,20 +128,20 @@ def gqual(store, siminfo, uci, ts):
 		thhyd = 0.0
 		kox = 0.0
 		thox = 0.0
-		if qalfg1 == 1:   # qual undergoes hydrolysis
+		if qalfg[1] == 1:   # qual undergoes hydrolysis
 			# HYDPM(1,I)  # table-type gq-hydpm
 			ka = ui_parms['KA'] * delts   # convert rates from /sec to /ivl
 			kb = ui_parms['KB'] * delts
 			kn = ui_parms['KN'] * delts
 			thhyd = ui_parms['THHYD']
 
-		if qalfg2 == 1:   # qual undergoes oxidation by free radical processes
+		if qalfg[2] == 1:   # qual undergoes oxidation by free radical processes
 			# ROXPM(1,I)  # table-type gq-roxpm
 			kox  = ui_parms['KOX'] * delts  # convert rates from /sec to /ivl
 			thox = ui_parms['THOX']
 
 		photpm = zeros(21)
-		if qalfg3 == 1:   # qual undergoes photolysis
+		if qalfg[3] == 1:   # qual undergoes photolysis
 			# PHOTPM(1,I) # table-type gq-photpm
 			if 'EXTENDEDS_PHOTPM' in uci:
 				ttable = uci['EXTENDEDS_PHOTPM']
@@ -165,13 +167,13 @@ def gqual(store, siminfo, uci, ts):
 				photpm[20] = ttable['PHOTPM19']
 
 		cfgas = 0.0
-		if qalfg4 == 1:   # qual undergoes volatilization
+		if qalfg[4] == 1:   # qual undergoes volatilization
 			cfgas = ui_parms['CFGAS']     # table-type gq-cfgas
 
 		biocon = 0.0
 		thbio  = 0.0
 		biop   = 0.0
-		if qalfg5 == 1:   # qual undergoes biodegradation
+		if qalfg[5] == 1:   # qual undergoes biodegradation
 			# BIOPM(1,I)  # table-type gq-biopm
 			biocon = ui_parms['BIOCON'] * delt60 / 24.0  # convert rate from /day to /ivl
 			thbio  = ui_parms['THBIO']
@@ -184,7 +186,7 @@ def gqual(store, siminfo, uci, ts):
 
 		fstdec = 0.0
 		thfst  = 0.0
-		if qalfg6 == 1:   #  qual undergoes "general" decay
+		if qalfg[6] == 1:   #  qual undergoes "general" decay
 			# GENPM(1,I)) # table-type gq-gendecay
 			fstdec = ui_parms['FSTDEC'] * delt60 / 24.0 # convert rate from /day to /ivl
 			thfst  = ui_parms['THFST']
@@ -192,7 +194,9 @@ def gqual(store, siminfo, uci, ts):
 		adpm1 = zeros(7)
 		adpm2 = zeros(7)
 		adpm3 = zeros(7)
-		if qalfg7 == 1:   # constituent is sediment-associated
+		rsed  = zeros(7)
+		sqal  = zeros(7)
+		if qalfg[7] == 1:   # constituent is sediment-associated
 			# get all required additional input
 			# ADDCPM      # table-type gq-seddecay
 			# convert rates from /day to /ivl
@@ -234,12 +238,12 @@ def gqual(store, siminfo, uci, ts):
 				adpm3[6] = 1.07
 
 			# table-type gq-sedconc
-			sqal1 = ui_parms['SQAL1']
-			sqal2 = ui_parms['SQAL2']
-			sqal3 = ui_parms['SQAL3']
-			sqal4 = ui_parms['SQAL4']
-			sqal5 = ui_parms['SQAL5']
-			sqal6 = ui_parms['SQAL6']
+			sqal[1] = ui_parms['SQAL1']
+			sqal[2] = ui_parms['SQAL2']
+			sqal[3] = ui_parms['SQAL3']
+			sqal[4] = ui_parms['SQAL4']
+			sqal[5] = ui_parms['SQAL5']
+			sqal[6] = ui_parms['SQAL6']
 
 			# find the total quantity of material on various forms of sediment
 			RSED1 = ts['RSED1']   # sediment storages - suspended sand
@@ -248,20 +252,20 @@ def gqual(store, siminfo, uci, ts):
 			RSED4 = ts['RSED4']   # sediment storages - bed sand
 			RSED5 = ts['RSED5']   # sediment storages - bed silt
 			RSED6 = ts['RSED6']   # sediment storages - bed clay
-			rsed1 = RSED1[0]
-			rsed2 = RSED2[0]
-			rsed3 = RSED3[0]
-			rsed4 = RSED4[0]
-			rsed5 = RSED5[0]
-			rsed6 = RSED6[0]
+			rsed[1] = RSED1[0]
+			rsed[2] = RSED2[0]
+			rsed[3] = RSED3[0]
+			rsed[4] = RSED4[0]
+			rsed[5] = RSED5[0]
+			rsed[6] = RSED6[0]
 
-			rsqal1 = sqal1 * rsed1
-			rsqal2 = sqal2 * rsed2
-			rsqal3 = sqal3 * rsed3
+			rsqal1 = sqal[1] * rsed[1]
+			rsqal2 = sqal[2] * rsed[2]
+			rsqal3 = sqal[3] * rsed[3]
 			rsqal4 = rsqal1 + rsqal2 + rsqal3
-			rsqal5 = sqal4 * rsed4
-			rsqal6 = sqal5 * rsed5
-			rsqal7 = sqal6 * rsed6
+			rsqal5 = sqal[4] * rsed[4]
+			rsqal6 = sqal[5] * rsed[5]
+			rsqal7 = sqal[6] * rsed[6]
 			rsqal8 = rsqal5 + rsqal6 + rsqal7
 			rsqal9 = rsqal1 + rsqal5
 			rsqal10 = rsqal2 + rsqal6
@@ -278,17 +282,10 @@ def gqual(store, siminfo, uci, ts):
 		# find values for global flags
 
 		# gqalfg indicates whether any qual undergoes each of the decay processes or is sediment-associated
-		gqalfg1 = qalfg1
-		gqalfg2 = qalfg2
-		gqalfg3 = qalfg3
-		gqalfg4 = qalfg4
-		gqalfg5 = qalfg5
-		gqalfg6 = qalfg6
-		gqalfg7 = qalfg7
 
 		# qalgfg indicates whether a qual undergoes any of the 6 decay processes
 		qalgfg = 0
-		if qalfg1 > 0 or qalfg2 > 0 or qalfg3 > 0 or qalfg4 > 0 or qalfg5 > 0 or qalfg6 > 0:
+		if qalfg[1] > 0 or qalfg[2] > 0 or qalfg[3] > 0 or qalfg[4] > 0 or qalfg[5] > 0 or qalfg[6] > 0:
 			qalgfg = 1
 
 		# gdaufg indicates whether any constituent is a "daughter" compound through each of the 6 possible decay processes
@@ -307,27 +304,27 @@ def gqual(store, siminfo, uci, ts):
 
 		# table-type gq-values
 		if tempfg == 2 and "TWAT" in ui_parms:
-			twat  = ui_parms("TWAT")
+			twat  = ui_parms["TWAT"]
 		else:
 			twat  = 60.0
 		if phflag == 2 and "PHVAL" in ui_parms:
-			phval = ui_parms("PHVAL")
+			phval = ui_parms["PHVAL"]
 		else:
 			phval = 7.0
 		if roxfg == 2 and "ROC" in ui_parms:
-			roc   = ui_parms("ROC")
+			roc   = ui_parms["ROC"]
 		else:
 			roc   = 0.0
 		if cldfg == 2 and "CLD" in ui_parms:
-			cld   = ui_parms("CLD")
+			cld   = ui_parms["CLD"]
 		else:
 			cld   = 0.0
 		if sdfg == 2 and "SDCNC" in ui_parms:
-			sdcnc = ui_parms("SDCNC")
+			sdcnc = ui_parms["SDCNC"]
 		else:
 			sdcnc = 0.0
 		if phytfg == 2 and "PHY" in ui_parms:
-			phy   = ui_parms("PHY")
+			phy   = ui_parms["PHY"]
 		else:
 			phy   = 0.0
 
@@ -340,7 +337,7 @@ def gqual(store, siminfo, uci, ts):
 		delta = zeros(19)
 		kcld = zeros(19)
 		fact1 = 0.0
-		if gqalfg3 == 1:
+		if qalfg[3] == 1:
 			#  table-type gq-alpha
 			if 'EXTENDEDS_ALPH' in uci:
 				ttable = uci['EXTENDEDS_ALPH']
@@ -488,20 +485,20 @@ def gqual(store, siminfo, uci, ts):
 		reakt  = 0.0
 		expred = 0.0
 		exprev = 0.0
-		if gqalfg4 == 1:
+		if qalfg[4] == 1:
 			# one or more constituents undergoes volatilization process- input required to compute reaeration coefficient
 
 			# flags - table-type ox-flags
 			reamfg = 2
 			if 'REAMFG' in ui_parms:
-				reamfg = ui_parms("REAMFG")
+				reamfg = ui_parms["REAMFG"]
 			dopfg = 0
 			if 'DOPFG' in ui_parms:
-				dopfg  = ui_parms("DOPFG")
+				dopfg  = ui_parms["DOPFG"]
 
 			htfg = int(ui['HTFG'])
 			if htfg == 0:
-				elev = ui_parms("ELEV")
+				elev = ui_parms["ELEV"]
 				cfpres = ((288.0 - 0.001981 * elev) / 288.0) ** 5.256
 
 			lkfg = int(ui['LKFG'])
@@ -509,23 +506,25 @@ def gqual(store, siminfo, uci, ts):
 				# table-type ox-cforea
 				cforea = 1.0
 				if 'CFOREA' in ui_parms:
-					cforea = ui_parms("CFOREA")
+					cforea = ui_parms["CFOREA"]
 			else:
 				if reamfg == 1:
 					# tsivoglou method - table-type ox-tsivoglou
-					reakt  = ui_parms("REAKT")
-					tcginv = ui_parms("TCGINV")
-					len_ = ui_parms("LEN")
-					delth = ui_parms("DELTH")
+					reakt  = ui_parms["REAKT"]
+					tcginv = ui_parms["TCGINV"]
+					len_ = ui_parms["LEN"]
+					delth = ui_parms["DELTH"]
 				elif reamfg == 2:
 					# owen/churchill/o'connor-dobbins  # table-type ox-tcginv
-					tcginv = ui_parms("TCGINV")
+					tcginv = 1.047
+					if "TCGINV" in ui_parms:
+						tcginv = ui_parms["TCGINV"]
 				elif reamfg == 3:
 					# user formula - table-type ox-reaparm
-					tcginv = ui_parms("TCGINV")
-					reak   = ui_parms("REAK")
-					expred = ui_parms("EXPRED")
-					exprev = ui_parms("EXPREV")
+					tcginv = ui_parms["TCGINV"]
+					reak   = ui_parms["REAK"]
+					expred = ui_parms["EXPRED"]
+					exprev = ui_parms["EXPREV"]
 
 		# process tables specifying relationship between "parent" and "daughter" compounds
 		# table-type gq-daughter
@@ -553,7 +552,7 @@ def gqual(store, siminfo, uci, ts):
 			c[7,5] = ui_parms("C75")
 			c[7,6] = ui_parms("C76")
 
-		if gqalfg7 == 1: #  one or more quals are sediment-associated
+		if qalfg[7] == 1: #  one or more quals are sediment-associated
 			sedfg = int(ui['SEDFG'])
 			if sedfg == 0: # section sedtrn not active
 				#ERRMSG
@@ -563,10 +562,10 @@ def gqual(store, siminfo, uci, ts):
 		aux1fg = int(ui['AUX1FG'])
 		aux2fg = int(ui['AUX2FG'])
 		if hydrfg == 1:  # check that required options in section hydr have been selected
-			if gqalfg3 == 1 and aux1fg == 0:
+			if qalfg[3] == 1 and aux1fg == 0:
 				# ERRMSG: error-simulation of photolysis requires aux1fg to be on to calculate average depth
 				pass
-			if gqalfg4 == 1:
+			if qalfg[4] == 1:
 				lkfg = int(ui['LKFG'])
 				if lkfg == 0:
 					if aux2fg == 0:
@@ -611,17 +610,19 @@ def gqual(store, siminfo, uci, ts):
 		ROSED1 = ts['ROSED1']
 		ROSED2 = ts['ROSED2']
 		ROSED3 = ts['ROSED3']
-		if 'OSED1' in ts:
-			OSED1 = ts['OSED1']
-			OSED2 = ts['OSED2']
-			OSED3 = ts['OSED3']
+
+		OSED1 = zeros((simlen, nexits))
+		OSED2 = zeros((simlen, nexits))
+		OSED3 = zeros((simlen, nexits))
 
 		# this number is used to adjust reaction rates for temperature
 		TW20 = TW - 20.0
 
-		TOQAL = zeros((simlen, nexits))
+		name = 'GQUAL' + str(index)  # arbitrary identification
+		# preallocate output arrays (always needed)
+		TROQAL = ts[name + '_TROQAL'] = zeros(simlen)
+		TOQAL  = zeros((simlen, nexits))
 		TOSQAL = zeros((simlen, nexits))
-
 
 		for loop in range(simlen):
 			# within time loop
@@ -661,8 +662,8 @@ def gqual(store, siminfo, uci, ts):
 				avdepe = AVDEP[loop]
 				avvele = AVVEL[loop]
 
-			fact2 = array(18)
-			if gqalfg3 > 0:
+			fact2 = zeros(19)
+			if qalfg[3] > 0:
 				# one or more constituents undergoes photolysis decay
 				if avdepe > 0.17:
 					# depth of water in rchres is greater than two inches -
@@ -686,7 +687,7 @@ def gqual(store, siminfo, uci, ts):
 					pass
 
 			korea = 0.0
-			if gqalfg4 > 0:
+			if qalfg[4] > 0:
 				# prepare to simulate volatilization by finding the oxygen reaeration coefficient
 				wind = 0.0
 				if lkfg == 1:
@@ -720,13 +721,13 @@ def gqual(store, siminfo, uci, ts):
 			svol = vol  # svol is volume at start of time step, update for next time thru
 
 			bio = biop
-			if qalfg5 > 0:
+			if qalfg[5] > 0:
 				# get biomass input, if required (for degradation)
 				bio = BIO[loop]
 
 			if avdepe > 0.17:   #  simulate decay of dissolved material
 				hr = 1  # will need to find a way to get the hour value
-				ddqal[:,index] = ddecay(qalfg1, tw20, ka, kb, kn, thhyd, phval,kox,thox, roc, fact2, fact1, photpm, korea, cfgas,
+				ddqal[:,index] = ddecay(qalfg, tw20, ka, kb, kn, thhyd, phval,kox,thox, roc, fact2, fact1, photpm, korea, cfgas,
 					 			biocon, thbio, bio, fstdec, thfst, svol, dqal, hr, delt60)
 				# ddqal[1,index] = DDECAY(QALFG(1,I),TW20,HYDPM(1,I),PHVAL,ROXPM(1,I),ROC,FACT2(1),FACT1,PHOTPM(1,I),KOREA,CFGAS(I),
 				# 						BIOPM(1,I),BIO(I),GENPM(1,I),VOLSP,DQAL(I),HR,DELT60,DDQAL(1,I))
@@ -748,7 +749,7 @@ def gqual(store, siminfo, uci, ts):
 				# 320      CONTINUE
 				pdqal = 0.0
 
-			if qalfg7 == 1:   # this constituent is associated with sediment
+			if qalfg[7] == 1:   # this constituent is associated with sediment
 				# zero the accumulators
 				isqal4  = 0.0
 				dsqal4  = 0.0
@@ -763,7 +764,7 @@ def gqual(store, siminfo, uci, ts):
 
 				# sand
 				# advect this material, including calculation of deposition and scour
-				ecnt, sqal1, sqal4, dsqal1, rosqal1, osqal1 = advqal(isqal1, rsed1, rsed4, depscr1, rosed1, osed1,
+				ecnt, sqal[1], sqal[4], dsqal1, rosqal1, osqal1 = advqal(isqal1, rsed[1], rsed[4], depscr1, rosed1, osed1,
 																	 nexits, rsqal1, rsqal4, ecnt)
 				# GQECNT(1),SQAL(J,I),SQAL(J + 3,I),DSQAL(J,I), ROSQAL(J,I),OSQAL(1,J,I)) = ADVQAL (ISQAL(J,I),RSED(J),RSED(J + 3),\
 				# DEPSCR(J),ROSED(J),OSED(1,J),NEXITS,RCHNO, MESSU,MSGFL,DATIM, GQID(1,I),J,RSQAL(J,I),RSQAL(J + 4,I),GQECNT(1),
@@ -778,7 +779,7 @@ def gqual(store, siminfo, uci, ts):
 
 				# silt
 				# advect this material, including calculation of deposition and scour
-				ecnt, sqal2, sqal5, dsqal2, rosqal2, osqal2 = advqal(isqal2, rsed2, rsed5, depscr2, rosed2, osed2,
+				ecnt, sqal[2], sqal[5], dsqal2, rosqal2, osqal2 = advqal(isqal2, rsed[2], rsed[5], depscr2, rosed2, osed2,
 																	 nexits, rsqal2, rsqal5, ecnt)
 				# GQECNT(1), SQAL(J, I), SQAL(J + 3, I), DSQAL(J, I), ROSQAL(J, I), OSQAL(1, J, I)) = ADVQAL(
 				# 	ISQAL(J, I), RSED(J), RSED(J + 3), \
@@ -795,7 +796,7 @@ def gqual(store, siminfo, uci, ts):
 
 				# clay
 				# advect this material, including calculation of deposition and scour
-				ecnt, sqal3, sqal6, dsqal3, rosqal3, osqal3 = advqal(isqal3, rsed3, rsed6, depscr3, rosed3, osed3,
+				ecnt, sqal[3], sqal[6], dsqal3, rosqal3, osqal3 = advqal(isqal3, rsed[3], rsed[6], depscr3, rosed3, osed3,
 																	 nexits, rsqal3, rsqal6, ecnt)
 				# GQECNT(1), SQAL(J, I), SQAL(J + 3, I), DSQAL(J, I), ROSQAL(J, I), OSQAL(1, J, I)) = ADVQAL(
 				# 	ISQAL(J, I), RSED(J), RSED(J + 3), \
@@ -816,9 +817,8 @@ def gqual(store, siminfo, uci, ts):
 					for n in range(1, nexits):
 						toqal[n] = odqal[n] + tosqal[n]
 
-				sqdec = array(3)
 				if avdepe > 0.17:     # simulate decay on suspended sediment
-					sqal1, sqdec = adecay(addcpm1, addcpm2, tw20, rsed1, sqal1)
+					sqal[1], sqal[2], sqal[3], sqdec1, sqdec2, sqdec3 = adecay(addcpm1, addcpm2, tw20, rsed[1], rsed[2], rsed[3], sqal[1], sqal[2], sqal[3])
 					# SQAL((1),I), SQDEC((1),I)) =  ADECAY(ADDCPM(1,I),TW20,RSED(1),SQAL((1),I),SQDEC((1),I))
 				else:
 					# rchres depth is less than two inches - decay of qual
@@ -828,15 +828,14 @@ def gqual(store, siminfo, uci, ts):
 					sqdec3 = 0.0
 
 				# simulate decay on bed sediment
-				sqdec4 = array(3)
-				sqal4, sqdec4 = adecay(addcpm3, addcpm4, tw20, rsed4, sqal4)
+				sqal[4], sqal[5], sqal[6], sqdec4, sqdec5, sqdec6 = adecay(addcpm3, addcpm4, tw20, rsed[4], rsed[5], rsed[6], sqal[4], sqal[5], sqal[6])
 				# SQAL((4),I), SQDEC((4),I)) = ADECAY(ADDCPM(3,I),TW20,RSED(4),SQAL((4),I),SQDEC((4),I))
 
 				# get total decay
-				sqdec7 = sqdec1 + sqdec2 + sqdec3 + sqdec4[1] + sqdec4[2] + sqdec4[3]
+				sqdec7 = sqdec1 + sqdec2 + sqdec3 + sqdec4 + sqdec4 + sqdec4
 
 				if avdepe > 0.17:  # simulate exchange due to adsorption and desorption
-					dqal, sqal1, adqal1 = adsdes(svol, rsed1, adpm1, adpm2, adpm3, tw20, dqal, sqal1)
+					dqal, sqal, adqal1 = adsdes(svol, rsed, adpm1, adpm2, adpm3, tw20, dqal, sqal)
 					# DQAL(I), SQAL(1,I), ADQAL(1,I) = ADSDES(VOLSP,RSED(1),ADPM(1,1,I),TW20,DQAL(I),SQAL(1,I),ADQAL(1,I))
 				else:
 					# rchres depth is less than two inches - adsorption and
@@ -853,13 +852,13 @@ def gqual(store, siminfo, uci, ts):
 				rsqal4 = 0.0
 				rsqal8 = 0.0
 				rsqal12 = 0.0
-				rsqal1 = sqal1 * rsed1
-				rsqal2 = sqal2 * rsed2
-				rsqal3 = sqal3 * rsed3
+				rsqal1 = sqal[1] * rsed[1]
+				rsqal2 = sqal[2] * rsed[2]
+				rsqal3 = sqal[3] * rsed[3]
 				rsqal4 = rsqal1 + rsqal2 + rsqal3
-				rsqal5 = sqal4 * rsed4
-				rsqal6 = sqal5 * rsed5
-				rsqal7 = sqal6 * rsed6
+				rsqal5 = sqal[4] * rsed[4]
+				rsqal6 = sqal[5] * rsed[5]
+				rsqal7 = sqal[6] * rsed[6]
 				rsqal8 = rsqal5 + rsqal6 + rsqal7
 				rsqal9 = rsqal1 + rsqal5
 				rsqal10 = rsqal2 + rsqal6
@@ -876,35 +875,64 @@ def gqual(store, siminfo, uci, ts):
 
 			# find total quantity of qual in rchres
 			rdqal = dqal * svol
-			if qalfg7 == 1:
+			if qalfg[7] == 1:
 				rrqal = rdqal + rsqal12
 			else:
 				rrqal = rdqal
 
 			svol = vol  # svol is volume at start of time step, update for next time thru
 
-			# SSED1[loop] = sand_ssed1   # put values for this time step back into TS
+			# ADQAL[loop] = adqal # put values for this time step back into TS
+			# DDQAL[loop] = ddqal
+			# DQAL[loop] = dqal
+			# DSQAL[loop] = dsqal
+			# GQADDR[loop] = gqaddr
+			# GQADEP[loop] = gqadep
+			# GQADWT[loop] = gqadwt
+			# IDQAL[loop] = idqal
+			# ISQAL[loop] = isqal
+			# ODQAL[loop] = odqal
+			# OSQAL[loop] = osqal
+			# PDQAL[loop] = pdqal
+			# RDQAL[loop] = rdqal
+			# RODQAL[loop] = rodqal
+			# ROSQAL[loop] = rosqal
+			# RRQAL[loop] = rrqal
+			# RSQAL[loop] = rsqal
+			# SQAL[loop] = sqal
+			# SQDEC[loop] = sqdec
+			# TIQAL[loop] = tiqal
+			TOSQAL[loop] = tosqal
+			TROQAL[loop] = troqal
 
 	return errorsV, ERRMSG
 
 
-def adecay(addcpm1, addcpm2, tw20, rsed, sqal):
+def adecay(addcpm1, addcpm2, tw20, rsed_sand, rsed_silt, rsed_clay, sqal_sand, sqal_silt, sqal_clay):
 	# real  addcpm(2),rsed(3),sqal(3),sqdec(3),tw20
 	''' simulate decay of material in adsorbed state'''
 
-	sqdec = array([0.0, 0.0, 0.0])
+	sqdec_sand = 0.0
+	sqdec_silt = 0.0
+	sqdec_clay = 0.0
 	if addcpm1 > 0.0:     # calculate temp-adjusted decay rate
 		dk  = addcpm1 * addcpm2**tw20
 		fact = 1.0 - exp(-dk)
-		for i in range(1, 3):    # particle size loop
-			if sqal[i] > 1.0e-30:
-				dconc    = sqal[i] * fact
-				sqal[i]  = sqal[i] - dconc
-				sqdec[i] = dconc * rsed[i]
-			else:
-				sqdec[i] = 0.0
 
-	return  sqal, sqdec
+		if sqal_sand > 1.0e-30:
+			dconc    = sqal_sand * fact
+			sqal_sand  = sqal_sand - dconc
+			sqdec_sand = dconc * rsed_sand
+		if sqal_silt > 1.0e-30:
+			dconc    = sqal_silt * fact
+			sqal_silt  = sqal_silt - dconc
+			sqdec_silt = dconc * rsed_silt
+		if sqal_clay > 1.0e-30:
+			dconc    = sqal_clay * fact
+			sqal_clay  = sqal_clay - dconc
+			sqdec_clay = dconc * rsed_clay
+
+	return  sqal_sand, sqal_silt, sqal_clay, sqdec_sand, sqdec_silt, sqdec_clay
 
 
 def adsdes(vol,rsed,adpm1,adpm2,adpm3,tw20,dqal,sqal):
@@ -915,9 +943,9 @@ def adsdes(vol,rsed,adpm1,adpm2,adpm3,tw20,dqal,sqal):
 	considered: 1- suspended sand  2- susp. silt  3- susp. clay
 	4- bed sand  5- bed silt  6- bed clay'''
 
-	ainv  = zeros(6)
-	cainv = zeros(6)
-	adqal = zeros(7)
+	ainv  = zeros(7)
+	cainv = zeros(7)
+	adqal = zeros(8)
 	if vol > 0.0:     # adsorption/desorption can take place
 		# first find the new dissolved conc.
 		num   = vol	* dqal
@@ -978,7 +1006,10 @@ def advqal(isqal,rsed,bsed,depscr,rosed,osed,nexits,rsqals,rbqals,ecnt):
 
 		# calculate concentration in suspension-under these conditions,
 		# denominator should never be zero
-		sqal   = (isqal + rsqals - dsqal) / (rsed + rosed)
+		if rsed + rosed > 0.0:
+			sqal   = (isqal + rsqals - dsqal) / (rsed + rosed)
+		else:
+			sqal   = 0.0
 		rosqal = rosed * sqal
 	else:           # there was deposition or no scour/deposition during the interval
 		denom = rsed + depscr + rosed
@@ -1009,7 +1040,7 @@ def advqal(isqal,rsed,bsed,depscr,rosed,osed,nexits,rsqals,rbqals,ecnt):
 			rbqal= dsqal + rbqals
 			bqal = rbqal / bsed
 
-	osqal = array(nexits)
+	osqal = zeros(nexits+1)
 	# osqal = array([0.0, 0.0, 0.0, 0.0, 0.0])
 	if nexits > 1:   # we need to compute outflow through each individual exit
 		if rosed <= 0.0:    # all zero
@@ -1028,27 +1059,27 @@ def ddecay (qalfg,tw20,ka,kb,kn,thhyd,phval,kox,thox,roc,fact2,fact1,photpm,kore
 
 	# bio,biopm(2),cfgas,ddqal(7),delt60,dqal,fact1,fact2(18),genpm(2),hydpm(4),korea,photpm(20),phval, roc,roxpm(2),tw20,volsp
 
-	ddqal = array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+	ddqal = array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 	if dqal > 1.0e-25:     # simulate decay
-		k = array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+		k = array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 
 		k[1] = 0.0
-		if qalfg(1) == 1:  # simulate hydrolysis
+		if qalfg[1] == 1:  # simulate hydrolysis
 			khyd = ka * 10.0**(-phval) + kb * 10.0**(phval - 14.0) + kn
 			k[1] = khyd * thhyd**tw20  # adjust for temperature
 
 		k[2] = 0.0
-		if qalfg(2) == 1:   # simulate oxidation by free radical processes
+		if qalfg[2] == 1:   # simulate oxidation by free radical processes
 			krox = kox * roc
 			k[2] = krox * thox**tw20  # adjust for temperature
 
 		k[3] = 0.0
-		if qalfg(3) == 1:     # simulate photolysis
+		if qalfg[3] == 1:     # simulate photolysis
 			# go through summation over 18 wave-length intervals
 			fact3 = 0.0
 			for l in range(1, 18):
-				fact3 = fact3 + fact2(l) * photpm(l)
-			k[3] = fact1 * photpm(19) * fact3 * photpm(20)**tw20
+				fact3 = fact3 + fact2[l] * photpm[l]
+			k[3] = fact1 * photpm[19] * fact3 * photpm[20]**tw20
 		if delt60 < 24.0:
 			if 18 > hr >= 6:  # it is a daylight hour; photolysis rate is doubled for this interval
 				k[3] = 2.0 * k[3]
@@ -1060,13 +1091,13 @@ def ddecay (qalfg,tw20,ka,kb,kn,thhyd,phval,kox,thox,roc,fact2,fact1,photpm,kore
 			# represent diurnal fluctuation
 
 		# simulate volatilization
-		k[4] = korea * cfgas  if qalfg(4) == 1 else 0.0
+		k[4] = korea * cfgas  if qalfg[4] == 1 else 0.0
 
 		# simulate biodegradation
-		k[5] = biocon * bio * thbio**tw20  if qalfg(5) == 1 else 0.0
+		k[5] = biocon * bio * thbio**tw20  if qalfg[5] == 1 else 0.0
 
 		# simulate simple first-order decay
-		k[6] = fstdec * thfst**tw20  if qalfg(6) == 1 else 0.0
+		k[6] = fstdec * thfst**tw20  if qalfg[6] == 1 else 0.0
 
 		# get total decay rate
 		k7 = k[1] + k[2] + k[3] + k[4] + k[5] + k[6]
