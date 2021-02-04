@@ -4,31 +4,47 @@ License: LGPL2
 '''
 
 from numpy import array, zeros, where
-from math import log10
-import adcalc as ac
+from math import log10, exp
+from HSP2.ADCALC import advect
+from HSP2.utilities  import make_numba_dict
 
+ERRMSG = []
 
-
-def sedtrn(general, ui, ts):
+def sedtrn(store, siminfo, uci, ts):
 	''' Simulate behavior of inorganic sediment'''
-	
-	simlen = general['SIMLEN']
-	delt   = general['DELT']
-	
-	advectData = ui['advectData']
+
+	errorsV = zeros(len(ERRMSG), dtype=int)
+
+	simlen = siminfo['steps']
+	delt   = siminfo['delt']
+	delt60 = siminfo['delt'] / 60
+	delts  = siminfo['delt'] * 60
+
+	advectData = uci['advectData']
+	(nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = advectData
+	vol = vol * 43560
+
+	ui = make_numba_dict(uci)
+	svol = vol
+	nexits = int(ui['NEXITS'])
 
 	# table SANDFG
-	SANDFG = ui['SANDFG']   # 1: Toffaleti method, 2:Colby method, 3:old HSPF power function
+	sandfg = ui['SANDFG']   # 1: Toffaleti method, 2:Colby method, 3:old HSPF power function
 
 	# table SED-GENPARM
 	bedwid = ui['BEDWID']
 	bedwrn = ui['BEDWRN']
 	por    = ui['POR']
-	
+
+	UUNITS = 1  # assume english units for now
 	# table SED-HYDPARM
-	len_   = ui['LEN']
+	if UUNITS == 1:
+		len_ = ui['LEN'] * 5280
+		db50 = ui['DB50'] * 0.0833
+	else:
+		len_ = ui['LEN'] * 1000
+		db50 = ui['DB50'] * 0.001
 	delth  = ui['DELTH']
-	db50   = ui['DB50']
 
 	# evaluate some quantities used in colby and/or toffaleti sand transport simulation methods
 	if UUNITS == 1:
@@ -40,27 +56,41 @@ def sedtrn(general, ui, ts):
 	slope = delth / len_
 	
 	# SAND PARAMETERS; table SAND-PM
-	sand_d_sdpm11      = ui['D']
-	sand_w_sdpm21      = ui['W'] * DELTS   # convert settling velocity from m/sec to m/ivl
-	sand_rho_sdpm31    = ui['RHO'] 
-	sand_ksand_sdpm41  = ui['KSAND']
-	sand_expsnd_sdpm51 = ui['EXPSND']
+	if UUNITS == 1:
+		sand_d = ui['D'] * 0.0833
+		sand_w = ui['W'] * delts * 0.0254 # convert settling velocity from m/sec to m/ivl
+	else:
+		sand_d = ui['D'] * 0.001
+		sand_w = ui['W'] * delts * 0.001 # convert settling velocity from m/sec to m/ivl
+	sand_rho    = ui['RHO']
+	sand_ksand  = ui['KSAND']
+	sand_expsnd = ui['EXPSND']
 
 	# SILT PARAMETERS; table SILT-CLAY-PM --- note: first occurance is silt
-	silt_d_sdpm12     = ui['D']
-	silt_w_sdpm22     = ui['W'] * DELTS        # convert settling velocity from m/sec to m/ivl
-	silt_rho_sdpm32   = ui['RHO']
-	silt_taucd_sdpm42 = ui['TAUCD']
-	silt_taucs_sdpm52 = ui['TAUCS']
-	silt_m_sdpm62     = ui['M'] * DELT60 / 24.0  # convert erodibility coeff from /day to /ivl
+	ui_silt = uci['SILT']
+	if UUNITS == 1:
+		silt_d = ui_silt['D'] * 0.0833
+		silt_w = ui_silt['W'] * delts * 0.0254 # convert settling velocity from m/sec to m/ivl
+	else:
+		silt_d = ui_silt['D'] * 0.001
+		silt_w = ui_silt['W'] * delts *  0.001  # convert settling velocity from m/sec to m/ivl
+	silt_rho   = ui_silt['RHO']
+	silt_taucd = ui_silt['TAUCD']
+	silt_taucs = ui_silt['TAUCS']
+	silt_m     = ui_silt['M'] * delt60 / 24.0 * 4.880 # convert erodibility coeff from /day to /ivl
 	
-	# CLAY PARAMETERS; table SILT-CLAY-PM --- note: first occurance is clay
-	clay_d_sdpm13     = ui['D']
-	clay_w_sdpm23     = ui['W'] * DELTS   # convert settling velocity from m/sec to m/ivl
-	clay_rho_sdpm33   = ui['RHO']
-	clay_taucd_sdpm43 = ui['TAUCD']
-	clay_taucs_sdpm53 = ui['TAUCS']
-	clay_m_sdpm63     = ui['M']	* DELT60 / 24.0  # convert erodibility coeff from /day to /ivl
+	# CLAY PARAMETERS; table SILT-CLAY-PM --- note: second occurance is clay
+	ui_clay = uci['CLAY']
+	if UUNITS == 1:
+		clay_d = ui_clay['D'] * 0.0833
+		clay_w = ui_clay['W'] * delts * 0.0254 # convert settling velocity from m/sec to m/ivl
+	else:
+		clay_d = ui_clay['D'] * 0.001
+		clay_w = ui_clay['W'] * delts * 0.001  # convert settling velocity from m/sec to m/ivl
+	clay_rho   = ui_clay['RHO']
+	clay_taucd = ui_clay['TAUCD']
+	clay_taucs = ui_clay['TAUCS']
+	clay_m     = ui_clay['M']	* delt60 / 24.0 * 4.880 # convert erodibility coeff from /day to /ivl
 	
 	# bed sediment conditions; table BED-INIT
 	beddep      = ui['BEDDEP']
@@ -68,7 +98,7 @@ def sedtrn(general, ui, ts):
 	silt_bedfr  = ui['SILTFR']
 	clay_bedfr  = ui['CLAYFR']	
 	total_bedfr = sand_bedfr + silt_bedfr + clay_bedfr
-	if abs(total_bed - 1.0) > 0.01:
+	if abs(total_bedfr - 1.0) > 0.01:
 		pass # error message: sum of bed sediment fractions is not close enough to 1.0
 
 	# suspended sediment concentrations; table ssed-init
@@ -81,252 +111,383 @@ def sedtrn(general, ui, ts):
 	TAU   = ts['TAU']
 	AVDEP = ts['AVDEP']
 	AVVEL = ts['AVVEL']
+	RO    = ts['RO']
+	HRAD =  ts['HRAD']
+	TWID =  ts['TWID']
+
+	if not 'ISED1' in ts:
+		ts['ISED1'] = zeros(simlen)
+	if not 'ISED2' in ts:
+		ts['ISED2'] = zeros(simlen)
+	if not 'ISED3' in ts:
+		ts['ISED3'] = zeros(simlen)
+
 	ISED1 = ts['ISED1']   # if present, else ISED is identically zero;  sand
 	ISED2 = ts['ISED2']   # if present, else ISED is identically zero;  silt
 	ISED3 = ts['ISED3']   # if present, else ISED is identically zero;  clay
 	ISED4 = ISED1 + ISED2 + ISED3
-	
-	if SANDFG != 3:
-		RO   = ts['RO']
-		HRAD = ts['HRAD']
-		TWID = ts['TWID']
 
-	if HTFG == 0 and SANDFG != 3:
+	htfg = int(ui['HTFG'])
+	if htfg == 1:
 		TW = ts['TW']
-		TW = where(tw < -100.0, 20.0, tw)
+	if htfg == 0 and sandfg != 3:
+		TW = ts['TW']
+		TW = where(TW < -100.0, 20.0, TW)
 	
 	# preallocate storage for computed time series
-	WASH     = ts['WASH']    = zeros(simlen)    # washload concentration, state variable
-	SAND     = ts['SAND']    = zeros(simlen)    # sandload oncentration, state variable
-	BDSAND   = ts['BDSAND']  = zeros(simlen)    # bed storage of sand, state variable
-	SDCF1_11 = ts['WASH']    = zeros(simlen)    # deposition of washload on bed
-	SDCF1_21 = ts['WASH']    = zeros(simlen)    # total outflow of washload from RCHRES
-	SDCF1_12 = ts['WASH']    = zeros(simlen)    # exchange of sand between bed and suspended storage
-	SDCF1_22 = ts['WASH']    = zeros(simlen)    # total outflow of sandload from rchres
-	SDCF2_1  = ts['SDCF2_1'] = zeros((simlen, nexit))  # washload outflow by gate
-	SDCF2_2  = ts['SDCF2_2'] = zeros((simlen, nexit))  # sandload outflow by gate
+	# WASH     = ts['WASH']    = zeros(simlen)    # washload concentration, state variable
+	# SAND     = ts['SAND']    = zeros(simlen)    # sandload oncentration, state variable
+	# BDSAND   = ts['BDSAND']  = zeros(simlen)    # bed storage of sand, state variable
+	# SDCF1_11 = ts['WASH']    = zeros(simlen)    # deposition of washload on bed
+	# SDCF1_21 = ts['WASH']    = zeros(simlen)    # total outflow of washload from RCHRES
+	# SDCF1_12 = ts['WASH']    = zeros(simlen)    # exchange of sand between bed and suspended storage
+	# SDCF1_22 = ts['WASH']    = zeros(simlen)    # total outflow of sandload from rchres
+	# SDCF2_1  = ts['SDCF2_1'] = zeros((simlen, nexits))  # washload outflow by gate
+	# SDCF2_2  = ts['SDCF2_2'] = zeros((simlen, nexits))  # sandload outflow by gate
+	# ossand = zeros(nexits)
+	SSED1 = ts['SSED1'] = zeros(simlen)  # suspended sand concentration
+	SSED2 = ts['SSED2'] = zeros(simlen)  # suspended silt concentration
+	SSED3 = ts['SSED3'] = zeros(simlen)  # suspended clay concentration
+	SSED4 = ts['SSED4'] = zeros(simlen)  # suspended sediment concentration
+	RSED1 = ts['RSED1'] = zeros(simlen)  # sediment storages - suspended sand
+	RSED2 = ts['RSED2'] = zeros(simlen)  # sediment storages - suspended silt
+	RSED3 = ts['RSED3'] = zeros(simlen)  # sediment storages - suspended clay
+	RSED4 = ts['RSED4'] = zeros(simlen)  # sediment storages - bed sand
+	RSED5 = ts['RSED5'] = zeros(simlen)  # sediment storages - bed silt
+	RSED6 = ts['RSED6'] = zeros(simlen)  # sediment storages - bed clay
+	RSED7 = ts['RSED7'] = zeros(simlen)  # sediment storages - total sand
+	RSED8 = ts['RSED8'] = zeros(simlen)  # sediment storages - total silt
+	RSED9 = ts['RSED9'] = zeros(simlen)  # sediment storages - total clcay
+	RSED10 = ts['RSED10'] = zeros(simlen)  # sediment storages - total sand silt clay
+	TSED1 = ts['TSED1'] = zeros(simlen)  # Total sediment storages by fraction
+	TSED2 = ts['TSED2'] = zeros(simlen)  # Total sediment storages by fraction
+	TSED3 = ts['TSED3'] = zeros(simlen)  # Total sediment storages by fraction
+	BEDDEP= ts['BEDDEP']= zeros(simlen)  # Bed depth
+	DEPSCR1 = ts['DEPSCR1'] = zeros(simlen)  # Deposition (positive) or scour (negative) - sand
+	DEPSCR2 = ts['DEPSCR2'] = zeros(simlen)  # Deposition (positive) or scour (negative) - silt
+	DEPSCR3 = ts['DEPSCR3'] = zeros(simlen)  # Deposition (positive) or scour (negative) - clay
+	DEPSCR4 = ts['DEPSCR4'] = zeros(simlen)  # Deposition (positive) or scour (negative) - total
+	ROSED1 = ts['ROSED1'] = zeros(simlen)  # Total outflows of sediment from the rchres - sand
+	ROSED2 = ts['ROSED2'] = zeros(simlen)  # Total outflows of sediment from the rchres - silt
+	ROSED3 = ts['ROSED3'] = zeros(simlen)  # Total outflows of sediment from the rchres - clay
+	ROSED4 = ts['ROSED4'] = zeros(simlen)  # Total outflows of sediment from the rchres - total
+	OSED1 = zeros((simlen, nexits))
+	OSED2 = zeros((simlen, nexits))
+	OSED3 = zeros((simlen, nexits))
+	OSED4 = zeros((simlen, nexits))
+	if nexits > 1:
+		u = uci['SAVE']
+		key1 = 'OSED1'
+		key2 = 'OSED2'
+		key3 = 'OSED3'
+		key4 = 'OSED4'
+		for i in range(nexits):
+			u[f'{key1}{i + 1}'] = u[key1]
+			u[f'{key2}{i + 1}'] = u[key2]
+			u[f'{key3}{i + 1}'] = u[key3]
+			u[f'{key4}{i + 1}'] = u[key4]
+		del u[key1]
+		del u[key2]
+		del u[key3]
+		del u[key4]
 
-	ossand = zeros(nexits)	
-
-	# perform any necessary unit conversions
-	if UUNITS == 2:  # uci is in metric units
-		avvele = avvel * 3.28
-		avdepm = avdep
-		avdepe = avdep * 3.28
-		rom    = ro
-		hrade  = hrad  * 3.28
-		twide  = twid  * 3.28
-	else:         # uci is in english units
-		avvele = avvel
-		avdepm = avdep * 0.3048
-		avdepe = avdep
-		rom    = ro    * 0.0283
-		hrade  = hrad
-		twide  = twid
-
-	fact = 1.0 / total_bedfr      # normalize fractions to sum to one
+	fact = 1.0 / total_bedfr  # normalize fractions to sum to one
 	sand_bedfr *= fact
-	silt_bedfr *= fact	
+	silt_bedfr *= fact
 	clay_bedfr *= fact
-	rhomn  = sand_bedfr * sand_rho_sdpm31 + silt_bedfr * silt_rho_sdpm32 + clay_bedfr * clay_rho_sdpm33
-	
-	volsed = len * bedwid * beddep * (1.0 - por)  # total volume of sediment particles- ft3 or m3
-	rwtsed = volsed * rhomn                       # total weight relative to water- rhomn is in parts/part (same as  kg/l)
-	rwtsed = rwtsed * 1.0E06                      # converts from kg/l to mg/l
-	
+	rhomn = sand_bedfr * sand_rho + silt_bedfr * silt_rho + clay_bedfr * clay_rho
+
+	volsed = len_ * bedwid * beddep * (1.0 - por)  # total volume of sediment particles- ft3 or m3
+	rwtsed = volsed * rhomn  # total weight relative to water- rhomn is in parts/part (same as  kg/l)
+	rwtsed = rwtsed * 1.0E06  # converts from kg/l to mg/l
+
 	# find the weight of each fraction- units are (mg/l)*ft3 or (mg/l)*m3
-	sand_wt_rsed4 = sand_ssed1 * rwtsed
-	silt_wt_rsed5 = silt_ssed2 * rwtsed
-	clay_wt_rsed6 = clay_ssed3 + rwtsed
-	
+	sand_wt_rsed4 = sand_bedfr * rwtsed
+	silt_wt_rsed5 = silt_bedfr * rwtsed
+	clay_wt_rsed6 = clay_bedfr * rwtsed
+
 	# find the total quantity (bed and suspended) of each sediment size fraction
-	sand_rsed1  = sand_ssed1 * vol
-	sand_rssed1 = sand_t_rsed7      = sand_rsed1 + sand_wt_rsed4
-	
-	silt_rsed2  = silt_ssed2 * vol
-	silt_rssed2 = silt_t_rsed8      = silt_rsed2 + silt_wt_rsed5 
+	sand_rsed1 = sand_ssed1 * vol
+	sand_rssed1 = sand_t_rsed7 = sand_rsed1 + sand_wt_rsed4
 
-	clay_rsed3  = clay_ssed3 * vol
-	clay_rssed3 = clay_t_rsed9      = clay_rsed3 + clay_wt_rsed6
+	silt_rsed2 = silt_ssed2 * vol
+	silt_rssed2 = silt_t_rsed8 = silt_rsed2 + silt_wt_rsed5
 
-	tsed1 = sand_rsed1    + silt_rsed2    + clay_rsed3
+	clay_rsed3 = clay_ssed3 * vol
+	clay_rssed3 = clay_t_rsed9 = clay_rsed3 + clay_wt_rsed6
+
+	tsed1 = sand_rsed1 + silt_rsed2 + clay_rsed3
 	tsed2 = sand_wt_rsed4 + silt_wt_rsed5 + clay_wt_rsed6
 	tsed3 = total_rsed10 = sand_t_rsed7 + silt_t_rsed8 + clay_t_rsed9
 
-	wsande = sand_w_sdpm21 * 3.28 / delts  # convert fall velocity from m/ivl to ft/sec
+	wsande = sand_w * 3.28 / delts  # convert fall velocity from m/ivl to ft/sec
 
 	#################### END PSED
+
+	for loop in range(simlen):
+
+		# perform any necessary unit conversions
+		if UUNITS == 2:  # uci is in metric units
+			avvele = AVVEL[loop] * 3.28
+			avdepm = AVDEP[loop]
+			avdepe = AVDEP[loop] * 3.28
+			rom    = RO[loop]
+			hrade  = HRAD[loop]  * 3.28
+			twide  = TWID[loop]  * 3.28
+			ised1 = ISED1[loop] / 2.83E-08
+			ised2 = ISED2[loop] / 2.83E-08
+			ised3 = ISED3[loop] / 2.83E-08
+		else:         # uci is in english units
+			avvele = AVVEL[loop]
+			avdepm = AVDEP[loop] * 0.3048
+			avdepe = AVDEP[loop]
+			rom    = RO[loop] * 0.0283
+			hrade  = HRAD[loop]
+			twide  = TWID[loop]
+			ised1 = ISED1[loop] / 3.121E-08
+			ised2 = ISED2[loop] / 3.121E-08
+			ised3 = ISED3[loop] / 3.121E-08
+		tau = TAU[loop]
+		tw  = TW[loop]
+		tw = (tw - 32.0) * 0.555
+
+		# Following is routine #&COHESV() to simulate behavior of cohesive sediments (silt and clay)
+		# compute bed fractions based on relative storages
+		totbed  = silt_wt_rsed5 + clay_wt_rsed6
+		frcsed1 = silt_wt_rsed5 / totbed  	if totbed > 0.0 else 0.5
+		frcsed2 = clay_wt_rsed6 / totbed  	if totbed > 0.0 else 0.5
+
+		vol = VOL[loop] * 43560
+		srovol = SROVOL[loop]
+		erovol = EROVOL[loop]
+		sovol = SOVOL[loop, :]
+		eovol = EOVOL[loop, :]
+		silt_ssed2, rosed2, osed2 = advect(ised2, silt_ssed2, nexits, svol, vol, srovol, erovol, sovol, eovol)
+		silt_rsed2 = silt_ssed2 * vol  	# calculate exchange between bed and suspended sediment
+		# vols = svol
 	
-	# Following is routine #&COHESV() to simulate behavior of cohesive sediments (silt and clay)
-	# compute bed fractions based on relative storages
-	totbed  = silt_wt_rsed5 + clay_wt_rsed6
-	frcsed1 = silt_wt_rsed5 / totbed  	if totbed > 0.0 else 0.5
-	frcsed2 = clay_wt_rsed6 / totbed  	if totbed > 0.0 else 0.5
-
-	silt_ssed2, rosed2, osed12 = advect(ised2, silt_ssed2, loop, *ac.advectData)
-	silt_rsed2 = silt_ssed2 * vol  	# calculate exchange between bed and suspended sediment
-	
-	# consider deposition and scour
-	depscr2 = bdexch(avdepm, silt_w_sdpm22, tau, silt_taucd_sdpm42, silt_taucs_sdpm52, silt_m_sdpm62, vol, frcsed1, sand_rsed1, silt_wt_rsed5) if avdepe > 0.17 else 0.0
-	silt_ssed2 = silt_rsed2 / vol  if vol > 0.0 else -1.0e30    
-
-	clay_ssed3, rosed3, osed13 = advect(ised3, clay_ssed3, loop, *advectData)
-	clay_rsed3 = clay_ssed3 * vol  	# calculate exchange between bed and suspended sediment
-	
-	# consider deposition and scour
-	depscr3 = bdexch(avdepm, clay_w_sdpm23, tau, clay_taucd_sdpm43, clay_taucs_sdpm5, clay_m_sdpm63, vol, frcsed2, clay_rsed3, clay_wt_rsed6) if avdepe > 0.17 else 0.0
-	clay_ssed3 = clay_rsed3 / vol  if vol > 0.0 else -1.0e30  
-	# end COHESV()
-	
-	# compute fine sediment load
-	fsl    = silt_ssed2 + clay_ssed3
-	ksand  = sand_ksand_sdpm41
-	expsnd = sand_expsnd_sdpm51
-
-	# simulate sandload.  done after washload because washload affects sand transport if the colby method is used
-	# Following code is #$SANDLD()
-	sands = sand_ssed1  # save starting concentration value
-	if vol > 0.0:          # rchres contains water
-		if rom > 0.0 and avdepe > 0.17:   # there is outflow from the rchres- perform advection
-			# calculate potential value of sand
-			if SANDFG == 1:            	# case 1 toffaleti equation
-				gsi = toffaleti(avvele, db50e, hrade, slope, tw, wsande)
-				psand = (gsi * twide * 10.5) / rom   # convert potential sand transport rate to a concentration in mg/l
-			elif SANDFG == 2:    # case 2 colby equation
-				gsi, ferror, d50err, hrerr, velerr = colby(avvele, db50m, hrade, fsl, tw)
-				if ferror == 1:
-					pass # ERRMSG: fatal error ocurred in colby method- one or more  variables went outside valid range- warn and switch to toffaleti method
-					gsi = toffaleti(avvele, db50e, hrade, slope, tw, wsande) # switch to toffaleti method
-				psand = (gsi * twide * 10.5) / rom  # convert potential sand transport rate to conc in mg/l
-			elif SANDFG == 3:      # case 3 input power function
-				psand = ksand * avvele**expsnd
-
-			prosnd = (sands * srovol) + (psand * erovol)  # calculate potential outflow of sand during ivl
-			pscour = (vol * psand) - (vols * sands) + prosnd - ised1  # qty.vol/l.ivl  # calculate potential bed scour from, or to deposition
-			if pscour < sand_wt_rsed4:              # potential scour is satisfied by bed storage;
-				# new conc. of sandload is potential conc.
-				scour          = pscour
-				sand_ssed1     = psand
-				sand_rsed1     = sand_ssed1 * vol
-				sand_wt_rsed4 -= scour
-			else:            # potential scour cannot be satisfied;  all of the available bed storage is scoured
-				scour         = sand_wt_rsed4
-				sand_wt_rsed4 = 0.0
-				sand_ssed1    = (ised1 + scour + sands * (vols - srovol)) / (vol + erovol)  # calculate new conc. of suspended sandload
-				sand_rsed1    = sand_ssed1 * vol   # calculate new storage of suspended sandload
-			rosand = srovol * sands + erovol * sand_ssed1  # calculate total amount of sand leaving rchres during ivl
-			if nexits > 1:       # calculate amount of sand leaving through each exit gate
-				for n in range(nexits):
-					osand[n] = isovol1[n] * sands + eovol1[n] * sand_ssed1  # in qty.vol/l.ivl
-		else:             # no outflow (still water) or water depth less than two inches
-			sand_ssed1  = 0.0
-			sand_rsed1  = 0.0
-			scour       = -ised1 - (sands * vols)
-			sand_rsed4 -= scour
-			rosand = 0.0
-			for n in range(nexits):
-				osand[n] = 0.0
-	else:               # rchres is dry; set sand equal to an undefined number
-		sand_ssed1    = -1.0e30
-		sand_rsed1    = 0.0
-		scour         = -ised1 - (sands * vols)  # calculate total amount of sand settling out during interval; this is equal to sand inflow + sand initially present
-		sand_wt_rsed4 = bdsand - scour  # update bed storage
-		rosand = 0.0
-		for n in range(nexits):
-			osand[n] = 0.0
-	depscr = -scour   # calculate depth of bed scour or deposition; positive for deposition  
-	# end SANDLD()
-
-	# set small concentrations to zero
-	if abs(sand_ssed1) < 1.0e-15:   # small conc., set to zero
-		if depscr1 > 0.0:           # deposition has occurred, add small storage to deposition
-			depscr1 += sand_rsed1
-			sand_wt_rsed4 += sand_rsed1
-		else:      # add small storage to outflow
-			rosed1 += sand_rsed1
-			depscr1 = 0.0
-			if nexits > 1:
-				for n in range(1,nexits+1):
-					if osed(n,1) > 0.0:
-						osed(n,1) += sand_rsed1
-						break
-		sand_rsed1 = 0.0
-		sand_ssed1 = 0.0
-
-	if abs(silt_ssed2) < 1.0e-15:   # small conc., set to zero
-		if depscr2 > 0.0:           # deposition has occurred, add small storage to deposition
-			depscr2 += silt_rsed2
-			silt_wt_rsed5 += silt_rsed2
-		else:      # add small storage to outflow
-			rosed2 += silt_rsed2
+		# consider deposition and scour
+		if avdepe > 0.17:
+			depscr2, silt_rsed2, silt_wt_rsed5 = bdexch(avdepm, silt_w, tau, silt_taucd, silt_taucs, silt_m, vol, frcsed1, silt_rsed2, silt_wt_rsed5)
+		else:
 			depscr2 = 0.0
-			if nexits > 1:
-				for n in range(1, nexits+1):
-					if osed(n,2) > 0.0:
-						osed(n,2) += silt_rsed2
-						break
-		silt_rsed2 = 0.0
-		silt_ssed2 = 0.0
+		silt_ssed2 = silt_rsed2 / vol if vol > 0.0 else -1.0e30
 
-	if abs(clay_ssed3) < 1.0e-15:   # small conc., set to zero
-		if depscr3 > 0.0:           # deposition has occurred, add small storage to deposition
-			depscr3 += clay_rsed3
-			clay_wt_rsed6 += clay_rsed3
-		else:      # add small storage to outflow
-			rosed3 += clay_rsed3
+		clay_ssed3, rosed3, osed3 = advect(ised3, clay_ssed3, nexits, svol, vol, srovol, erovol, sovol, eovol)
+		clay_rsed3 = clay_ssed3 * vol  	# calculate exchange between bed and suspended sediment
+
+		# consider deposition and scour
+		if avdepe > 0.17:
+			depscr3, clay_rsed3, clay_wt_rsed6 = bdexch(avdepm, clay_w, tau, clay_taucd, clay_taucs, clay_m, vol, frcsed2, clay_rsed3, clay_wt_rsed6)
+		else:
 			depscr3 = 0.0
-			if nexits > 1:
-				for n in range(1, nexits+1):
-					if osed(n,3) > 0.0:
-						osed(n,3) += clay_rsed3
-						break
-		clay_rsed3 = 0.0
-		clay_ssed3 = 0.0
-
-	# calculate total quantity of material in suspension and in the bed; check bed conditions
-	if nexits > 1:
-		for n in range(1, nexits+1):
-			osed(n,4) = 0.0
-			
-	if nexits > 1:
-		for n in range(1, nexits+1):
-			osed(n,4) += osed(n,1)
-	sand_rssed1 = sand_t_rsed7 = sand_rsed1 + sand_wt_rsed4  # total storage in mg.vol/l
-	if sand_wt_rsed4 == 0.0:       # warn that bed is empty
-		pass # errmsg
+		clay_ssed3 = clay_rsed3 / vol if vol > 0.0 else -1.0e30
+		# end COHESV()
 	
-	if nexits > 1:
-		for n in range(1, nexits+1):
-			osed(n,4) += osed(n,2)
-	silt_rssed2 = silt_t_rsed8 = silt_rsed2 + silt_wt_rsed5    # total storage in mg.vol/l
-	if silt_wt_rsed5 == 0.0:         # warn that bed is empty
-		pass # errmsg
+		# compute fine sediment load
+		fsl    = silt_ssed2 + clay_ssed3
+		ksand  = sand_ksand
+		expsnd = sand_expsnd
+
+		# simulate sandload.  done after washload because washload affects sand transport if the colby method is used
+		# Following code is #$SANDLD()
+		sands = sand_ssed1  # save starting concentration value
+		if vol > 0.0:          # rchres contains water
+			if rom > 0.0 and avdepe > 0.17:   # there is outflow from the rchres- perform advection
+				# calculate potential value of sand
+				if sandfg == 1:            	# case 1 toffaleti equation
+					gsi = toffaleti(avvele, db50e, hrade, slope, tw, wsande)
+					psand = (gsi * twide * 10.5) / rom   # convert potential sand transport rate to a concentration in mg/l
+				elif sandfg == 2:    # case 2 colby equation
+					gsi, ferror, d50err, hrerr, velerr = colby(avvele, db50m, hrade, fsl, tw)
+					if ferror == 1:
+						pass # ERRMSG: fatal error ocurred in colby method- one or more  variables went outside valid range- warn and switch to toffaleti method
+						gsi = toffaleti(avvele, db50e, hrade, slope, tw, wsande) # switch to toffaleti method
+					psand = (gsi * twide * 10.5) / rom  # convert potential sand transport rate to conc in mg/l
+				elif sandfg == 3:      # case 3 input power function
+					psand = ksand * avvele**expsnd
+
+				prosnd = (sands * srovol) + (psand * erovol)  # calculate potential outflow of sand during ivl
+				pscour = (vol * psand) - (svol * sands) + prosnd - ised1  # qty.vol/l.ivl  # calculate potential bed scour from, or to deposition
+				if pscour < sand_wt_rsed4:              # potential scour is satisfied by bed storage;
+					# new conc. of sandload is potential conc.
+					scour          = pscour
+					sand_ssed1     = psand
+					sand_rsed1     = sand_ssed1 * vol
+					sand_wt_rsed4 -= scour
+				else:            # potential scour cannot be satisfied;  all of the available bed storage is scoured
+					scour         = sand_wt_rsed4
+					sand_wt_rsed4 = 0.0
+					sand_ssed1    = (ised1 + scour + sands * (svol - srovol)) / (vol + erovol)  # calculate new conc. of suspended sandload
+					sand_rsed1    = sand_ssed1 * vol   # calculate new storage of suspended sandload
+				rosed1 = (srovol * sands) + (erovol * sand_ssed1)  # calculate total amount of sand leaving rchres during ivl
+				osed1  = sovol * sands + eovol * sand_ssed1  # calculate amount of sand leaving through each exit gate in qty.vol/l.ivl
+			else:             # no outflow (still water) or water depth less than two inches
+				sand_ssed1  = 0.0
+				sand_rsed1  = 0.0
+				scour       = -ised1 - (sands * svol)
+				sand_wt_rsed4 -= scour
+				rosed1 = 0.0
+				osed1 = zeros(nexits)
+		else:               # rchres is dry; set sand equal to an undefined number
+			sand_ssed1    = -1.0e30
+			sand_rsed1    = 0.0
+			scour         = -ised1 - (sands * svol)  # calculate total amount of sand settling out during interval; this is equal to sand inflow + sand initially present
+			sand_wt_rsed4 -= scour  # update bed storage
+			rosed1 = 0.0
+			osed1 = zeros(nexits)
+		depscr1 = -scour   # calculate depth of bed scour or deposition; positive for deposition
+		# end SANDLD()
+
+		# set small concentrations to zero
+		if abs(sand_ssed1) < 1.0e-15:   # small conc., set to zero
+			if depscr1 > 0.0:           # deposition has occurred, add small storage to deposition
+				depscr1 += sand_rsed1
+				sand_wt_rsed4 += sand_rsed1
+			else:      # add small storage to outflow
+				rosed1 += sand_rsed1
+				depscr1 = 0.0
+				if nexits > 1:
+					for n in range(0,nexits):
+						if osed1[n] > 0.0:
+							osed1[n] += sand_rsed1
+							break
+			sand_rsed1 = 0.0
+			sand_ssed1 = 0.0
+
+		if abs(silt_ssed2) < 1.0e-15:   # small conc., set to zero
+			if depscr2 > 0.0:           # deposition has occurred, add small storage to deposition
+				depscr2 += silt_rsed2
+				silt_wt_rsed5 += silt_rsed2
+			else:      # add small storage to outflow
+				rosed2 += silt_rsed2
+				depscr2 = 0.0
+				if nexits > 1:
+					for n in range(0, nexits):
+						if osed2[n] > 0.0:
+							osed2[n] += silt_rsed2
+							break
+			silt_rsed2 = 0.0
+			silt_ssed2 = 0.0
+
+		if abs(clay_ssed3) < 1.0e-15:   # small conc., set to zero
+			if depscr3 > 0.0:           # deposition has occurred, add small storage to deposition
+				depscr3 += clay_rsed3
+				clay_wt_rsed6 += clay_rsed3
+			else:      # add small storage to outflow
+				rosed3 += clay_rsed3
+				depscr3 = 0.0
+				if nexits > 1:
+					for n in range(0, nexits):
+						if osed3[n] > 0.0:
+							osed3[n] += clay_rsed3
+							break
+			clay_rsed3 = 0.0
+			clay_ssed3 = 0.0
+
+		osed4 = zeros(nexits)
+		# calculate total quantity of material in suspension and in the bed; check bed conditions
+		osed4 += osed1
+		sand_rssed1 = sand_t_rsed7 = sand_rsed1 + sand_wt_rsed4  # total storage in mg.vol/l
+		if sand_wt_rsed4 == 0.0:       # warn that bed is empty
+			pass # errmsg
+
+		osed4 += osed2
+		silt_rssed2 = silt_t_rsed8 = silt_rsed2 + silt_wt_rsed5    # total storage in mg.vol/l
+		if silt_wt_rsed5 == 0.0:         # warn that bed is empty
+			pass # errmsg
+
+		osed4 += osed3
+		clay_rssed3 = clay_t_rsed9 = clay_rsed3 + clay_wt_rsed6  	# total storage in mg.vol/l
+		if clay_wt_rsed6 == 0.0:   # warn that bed is empty
+			pass # errmsg
+
+		# find the volume occupied by each fraction of bed sediment- ft3 or m3
+		volsed = (sand_wt_rsed4 / (sand_rho * 1.0e06)
+			   +  silt_wt_rsed5 / (silt_rho * 1.0e06)
+			   +  clay_wt_rsed6 / (clay_rho * 1.0e06))
+
+		total_ssed4  = sand_ssed1 + silt_ssed2 + clay_ssed3
+		tsed1  = sand_rsed1 + silt_rsed2 + clay_rsed3
+		tsed2  = sand_wt_rsed4 +  silt_wt_rsed5 +  clay_wt_rsed6
+		tsed3  = total_rsed10 = sand_t_rsed7 + silt_t_rsed8 + clay_t_rsed9
+		depscr4 = depscr1 + depscr2 + depscr3
+		rosed4  = rosed1 + rosed2 + rosed3
+	
+		# find total depth of sediment
+		volsed = volsed / (1.0 - por)        #  allow for porosit
+		beddep = volsed / (len_ * bedwid)     # calculate thickness of bed- ft or m
+		if beddep > bedwrn:
+			pass  # Errormsg:  warn that bed depth appears excessive
+
+		svol = vol  # svol is volume at start of time step, update for next time thru
+
+		SSED1[loop] = sand_ssed1
+		SSED2[loop] = silt_ssed2
+		SSED3[loop] = clay_ssed3
+		SSED4[loop] = total_ssed4
+		BEDDEP[loop]= beddep
+		if UUNITS == 1:
+			RSED1[loop] = sand_rsed1 * 3.121E-08
+			RSED2[loop] = silt_rsed2 * 3.121E-08
+			RSED3[loop] = clay_rsed3 * 3.121E-08
+			RSED4[loop] = sand_wt_rsed4 * 3.121E-08
+			RSED5[loop] = silt_wt_rsed5 * 3.121E-08
+			RSED6[loop] = clay_wt_rsed6 * 3.121E-08
+			RSED7[loop] = sand_t_rsed7 * 3.121E-08
+			RSED8[loop] = silt_t_rsed8 * 3.121E-08
+			RSED9[loop] = clay_t_rsed9 * 3.121E-08
+			RSED10[loop] = total_rsed10 * 3.121E-08
+			TSED1[loop] = tsed1 * 3.121E-08
+			TSED2[loop] = tsed2 * 3.121E-08
+			TSED3[loop] = tsed3 * 3.121E-08
+			DEPSCR1[loop] = depscr1 * 3.121E-08
+			DEPSCR2[loop] = depscr2 * 3.121E-08
+			DEPSCR3[loop] = depscr3 * 3.121E-08
+			DEPSCR4[loop] = depscr4 * 3.121E-08
+			ROSED1[loop] = rosed1 * 3.121E-08
+			ROSED2[loop] = rosed2 * 3.121E-08
+			ROSED3[loop] = rosed3 * 3.121E-08
+			ROSED4[loop] = rosed4 * 3.121E-08
+			OSED1[loop] = osed1 * 3.121E-08
+			OSED2[loop] = osed2 * 3.121E-08
+			OSED3[loop] = osed3 * 3.121E-08
+			OSED4[loop] = osed4 * 3.121E-08
+		else:
+			RSED1[loop] = sand_rsed1 * 2.83E-08
+			RSED2[loop] = silt_rsed2 * 2.83E-08
+			RSED3[loop] = clay_rsed3 * 2.83E-08
+			RSED4[loop] = sand_wt_rsed4 * 2.83E-08
+			RSED5[loop] = silt_wt_rsed5 * 2.83E-08
+			RSED6[loop] = clay_wt_rsed6 * 2.83E-08
+			RSED7[loop] = sand_t_rsed7 * 2.83E-08
+			RSED8[loop] = silt_t_rsed8 * 2.83E-08
+			RSED9[loop] = clay_t_rsed9 * 2.83E-08
+			RSED10[loop] = total_rsed10 * 2.83E-08
+			TSED1[loop] = tsed1 * 2.83E-08
+			TSED2[loop] = tsed2 * 2.83E-08
+			TSED3[loop] = tsed3 * 2.83E-08
+			DEPSCR1[loop] = depscr1 * 2.83E-08
+			DEPSCR2[loop] = depscr2 * 2.83E-08
+			DEPSCR3[loop] = depscr3 * 2.83E-08
+			DEPSCR4[loop] = depscr4 * 2.83E-08
+			ROSED1[loop] = rosed1 * 2.83E-08
+			ROSED2[loop] = rosed2 * 2.83E-08
+			ROSED3[loop] = rosed3 * 2.83E-08
+			ROSED4[loop] = rosed4 * 2.83E-08
+			OSED1[loop] = osed1 * 2.83E-08
+			OSED2[loop] = osed2 * 2.83E-08
+			OSED3[loop] = osed3 * 2.83E-08
+			OSED4[loop] = osed4 * 2.83E-08
 
 	if nexits > 1:
-		for n in range(1, nexits+1):
-			osed(n,4) += osed(n,3)
-	clay_rssed3 = clay_t_rsed9 = clay_rsed3 + clay_wt_rsed6  	# total storage in mg.vol/l
-	if clay_wt_rsed6 == 0.0:   # warn that bed is empty
-		pass # errmsg
+		for i in range(nexits):
+			ts['OSED1' + str(i+1)] = OSED1[:, i]
+			ts['OSED2' + str(i + 1)] = OSED2[:, i]
+			ts['OSED3' + str(i + 1)] = OSED3[:, i]
+			ts['OSED4' + str(i + 1)] = OSED4[:, i]
 
-	# find the volume occupied by each fraction of bed sediment- ft3 or m3
-	volsed = (sand_wt_rsed4 / (sand_rho_sdpm31 * 1.0e06)
-	       +  silt_wt_rsed5 / (silt_rho_sdpm32 * 1.0e06) 
-	       +  clay_wt_rsed6 / (clay_rho_sdpm33 * 1.0e06))
-	
-	total_ssed4  = sand_ssed1 + silt_ssed2 + clay_ssed3  
-	tsed1  = sand_rsed1 + silt_rsed2 + clay_rsed3
-	tsed2  = sand_wt_rsed4 +  silt_wt_rsed5 +  clay_wt_rsed6
-	tsed3  = total_rsed10                                    = sand_t_rsed7 + silt_t_rsed8 + clay_t_rsed9
-	depsc4 = depscr1 + depscr2 + depscr3
-	rose4  = rosed1 + rosed2 + rosed3
-	
-	# find total depth of sediment
-	volsed = volsed / (1.0 - por)        #  allow for porosit
-	beddep = volsed / (len * bedwid)     # calculate thickness of bed- ft or m
-	if beddep > bedwrn:
-		pass  # Errormsg:  warn that bed depth appears excessive
-	return
+	return errorsV, ERRMSG
 
 
 def bdexch (avdepm, w, tau, taucd, taucs, m, vol, frcsed, susp, bed):
@@ -348,24 +509,22 @@ def bdexch (avdepm, w, tau, taucd, taucs, m, vol, frcsed, susp, bed):
 		bed  -= scrmas
 	else:                      # no scour
 		scrmas = 0.0
-	return depmas - scrmas  # net deposition or scour
+	return depmas - scrmas, susp, bed  # net deposition or scour, susp, bed
 
 
 ''' Sediment Transport in Alluvial Channels, 1963-65 by Bruce Colby.
 This report explains the following empirical algorithm.'''
 
-def colby(v, db50, fhrad, fsl, tempr, gsi, ferror, d50err, hrerr, velerr):
-	''' Colby's method to calculate the capacity of the flow to transport sand.'''
-
-''' The colby method has the following units and applicable ranges of variables.
-        average velocity.............v.......fps.........1-10 fps
-        hydraulic radius.............fhrad...ft..........1-100 ft
-       median bed material size.....db50....mm..........0.1-0.8 mm
-        temperature..................tmpr....deg f.......32-100 deg.
-        fine sediment concentration..fsl.....mg/liter....0-200000 ppm
-        total sediment load..........gsi.....ton/day.ft..
-'''
-
+def colby(v, db50, fhrad, fsl, tempr):
+# 	Colby's method to calculate the capacity of the flow to transport sand.
+#
+#   The colby method has the following units and applicable ranges of variables.
+#         average velocity.............v.......fps.........1-10 fps
+#         hydraulic radius.............fhrad...ft..........1-100 ft
+#        median bed material size.....db50....mm..........0.1-0.8 mm
+#         temperature..................tmpr....deg f.......32-100 deg.
+#         fine sediment concentration..fsl.....mg/liter....0-200000 ppm
+#         total sediment load..........gsi.....ton/day.ft..
 	G = zeros((5,9,7))      # defined by Figure 26
 	G[1, 1, 1], G[2, 1, 1], G[3, 1, 1], G[4, 1, 1] = 1.0,   0.30,   0.06,    0.00
 	G[1, 2, 1], G[2, 2, 1], G[3, 2, 1], G[4, 2, 1] = 3.00,  3.30,   2.50,    2.00
@@ -417,16 +576,16 @@ def colby(v, db50, fhrad, fsl, tempr, gsi, ferror, d50err, hrerr, velerr):
 	G[1, 8, 6], G[2, 8, 6], G[3, 8, 6], G[4, 8, 6] = 135.0, 190.0,  290.0,  520.0
 	  
 	F = zeros((6,11))    # defined by Figure 24
-	F(1, 1),  F(2, 1),  F(3, 1),  F(4, 1),  F(5, 1)  = 1.0,  1.1,  1.6,   2.6,   4.2
-	F(1, 2),  F(2, 2),  F(3, 2),  F(4, 2),  F(5, 2)  = 1.0,  1.1,  1.65,  2.75,  4.9
-	F(1, 3),  F(2, 3),  F(3, 3),  F(4, 3),  F(5, 3)  = 1.0,  1.1,  1.7,   3.0,   5.5
-	F(1, 4),  F(2, 4),  F(3, 4),  F(4, 4),  F(5, 4)  = 1.0,  1.12, 1.9,   3.6,   7.0
-	F(1, 5),  F(2, 5),  F(3, 5),  F(4, 5),  F(5, 5)  = 1.0,  1.17, 2.05,  4.3,   8.7
-	F(1, 6),  F(2, 6),  F(3, 6),  F(4, 6),  F(5, 6)  = 1.0,  1.2,  2.3,   5.5,   11.2
-	F(1, 7),  F(2, 7),  F(3, 7),  F(4, 7),  F(5, 7)  = 1.0,  1.22, 2.75,  8.0,   22.0
-	F(1, 8),  F(2, 8),  F(3, 8),  F(4, 8),  F(5, 8)  = 1.0,  1.25, 3.0,   9.6,   29.0
-	F(1, 9),  F(2, 9),  F(3, 9),  F(4, 9),  F(5, 9)  = 1.0,  1.3,  3.5,   12.0,  43.0
-	F(1, 10), F(2, 10), F(3, 10), F(4, 10), F(5, 10) = 1.0,  1.4,  4.9,   22.0,  120.0
+	F[1, 1],  F[2, 1],  F[3, 1],  F[4, 1],  F[5, 1]  = 1.0,  1.1,  1.6,   2.6,   4.2
+	F[1, 2],  F[2, 2],  F[3, 2],  F[4, 2],  F[5, 2]  = 1.0,  1.1,  1.65,  2.75,  4.9
+	F[1, 3],  F[2, 3],  F[3, 3],  F[4, 3],  F[5, 3]  = 1.0,  1.1,  1.7,   3.0,   5.5
+	F[1, 4],  F[2, 4],  F[3, 4],  F[4, 4],  F[5, 4]  = 1.0,  1.12, 1.9,   3.6,   7.0
+	F[1, 5],  F[2, 5],  F[3, 5],  F[4, 5],  F[5, 5]  = 1.0,  1.17, 2.05,  4.3,   8.7
+	F[1, 6],  F[2, 6],  F[3, 6],  F[4, 6],  F[5, 6]  = 1.0,  1.2,  2.3,   5.5,   11.2
+	F[1, 7],  F[2, 7],  F[3, 7],  F[4, 7],  F[5, 7]  = 1.0,  1.22, 2.75,  8.0,   22.0
+	F[1, 8],  F[2, 8],  F[3, 8],  F[4, 8],  F[5, 8]  = 1.0,  1.25, 3.0,   9.6,   29.0
+	F[1, 9],  F[2, 9],  F[3, 9],  F[4, 9],  F[5, 9]  = 1.0,  1.3,  3.5,   12.0,  43.0
+	F[1, 10], F[2, 10], F[3, 10], F[4, 10], F[5, 10] = 1.0,  1.4,  4.9,   22.0,  120.0
 	  
 	T = array([[1.2,  1.15, 1.10, 0.96, 0.90, 0.85, 0.82], 
 			   [1.35, 1.25, 1.12, 0.92, 0.86, 0.80, 0.75],
@@ -447,16 +606,21 @@ def colby(v, db50, fhrad, fsl, tempr, gsi, ferror, d50err, hrerr, velerr):
 	hrerr  = 0
 	velerr = 0
 
+	id501 = 0
+	id502 = 0
+	id1   = 0
+	iv1   = 0
+	it1   = 0
 	if not 0.80 >= db50 >=  0.10:  # D50G limits
 		ferror = 1
 		d50err = 1
 		return
-	for id501, db50x in enumerate(DB50G):
+	for id501, db50x in enumerate(D50G):
 		if db50x > db50:
 			break
 	id502 = id501 + 1
-	zz1 = log10(D50G[id501]
-	zz2 = log10[D50G[id502])
+	zz1 = log10(D50G[id501])
+	zz2 = log10(D50G[id502])
 	zzratio = (log10(db50) - zz1) / (zz2 - zz1)
 
 	if not 100.0 >= fhrad >= 0.10:  # DG limits
@@ -464,12 +628,13 @@ def colby(v, db50, fhrad, fsl, tempr, gsi, ferror, d50err, hrerr, velerr):
 		hrerr  = 1
 		return
 	for id1,dgx in enumerate(DG):
-		if dgx > dg:
+		if fhrad > dgx:
 			break
+	id1 = id1 + 1
 	id2 = id1 + 1		
-	xx1 = log10(DG[id1]
+	xx1 = log10(DG[id1])
 	xx2 = log10(DG[id2])
-	xxratio = (log10(fhrad) - xx1) / (xx2 - xx1))		
+	xxratio = (log10(fhrad) - xx1) / ((xx2 - xx1))
 		
 	if not 10.0 >= v >= 1.0:  # VG limits
 		ferror = 1
@@ -484,7 +649,10 @@ def colby(v, db50, fhrad, fsl, tempr, gsi, ferror, d50err, hrerr, velerr):
 	yyratio = (log10(v) - yy1) / (yy2 - yy1)		
 		
 	tmpr = min(100.0, max(32.0, tempr * 1.8 + 32.0))
-	
+
+	x = zeros((3,3))
+	xa= zeros(3)
+	xg= zeros(3)
 	for i,i1 in [(1, id1), (2, id2)]:                # DO 200 I= 1,2;   I1    = II(I)
 		for j, j1 in [(1, iv1), (2, iv2)]:           # DO 190 J= 1,2;  J1    = JJ(J)
 			for k, k1 in [(1, id501), (2, id502)]:   # DO 180 K= 1,2; K1    = KK(K)
@@ -494,24 +662,25 @@ def colby(v, db50, fhrad, fsl, tempr, gsi, ferror, d50err, hrerr, velerr):
 					for j3 in range(j1,8):           # DO 140 J3= J1,7
 						if G[i1,j3,k1] > 0.0:
 							break
-					x[j,k] = log10(G[I1,J3,K1]) + (log10(VG[j1] / VG[j3])) * (log10(G[i1,j3+1,k1] / G[i1,j3,k1])) / (log10(VG[j3+1] / VG[j3]))
+					x[j,k] = log10(G[i1,j3,k1]) + (log10(VG[j1] / VG[j3])) * (log10(G[i1,j3+1,k1] / G[i1,j3,k1])) / (log10(VG[j3+1] / VG[j3]))
 				
-		XA(1) = X(1,1) + (X(1,2) - X(1,1)) * zzratio
-		XA(2) = X(2,1) + (X(2,2) - X(2,1)) * zzratio
-		XN3   = XA(2) - XA(1)
-		XG(I) = XA(1) + XN3 * yyratio
+		xa[1] = x[1,1] + (x[1,2] - x[1,1]) * zzratio
+		xa[2] = x[2,1] + (x[2,2] - x[2,1]) * zzratio
+		xn3   = xa[2] - xa[1]
+		xg[i] = xa[1] + xn3 * yyratio
 
-	xn4  = xg(2) - xg(1)
-	gtuc = 10.0**(xg(1) + xn4 * xxratio   # uncorrected gt in lb/sec/ft 
+	xn4  = xg[2] - xg[1]
+	gtuc = 10.0**(xg[1] + (xn4 * xxratio))   # uncorrected gt in lb/sec/ft
 
 	# Adjustment coefficient for temperature
 	if abs(tmpr - 60.0) <= 1.0e-5:
 		cft = 1.0
 	else:
-		for it1, tempx in enumerature(TEMP):
+		for it1, tempx in enumerate(TEMP):
 			if tempx > tmpr:
 				break
-		it2 = it1 + 1
+		it2 = it1
+		it1 -= 1
 
 		xt11 = log10(T[it1,id1])
 		xt21 = log10(T[it2,id1])
@@ -521,7 +690,7 @@ def colby(v, db50, fhrad, fsl, tempr, gsi, ferror, d50err, hrerr, velerr):
 		xnt   = log10(tmpr / TEMP[it1]) / log10(TEMP[it2] / TEMP[it1])
 		xct1  = xt11 + xnt * (xt21 - xt11)
 		xct2  = xt12 + xnt * (xt22 - xt12)
-		cft = 10.0**(xct1 + (xct2 - xct1) * xr / xdx)
+		cft = 10.0**(xct1 + (xct2 - xct1) * xxratio)
 
 	# fine sediment load correction; (i.e. cohesive sediment or wash) load  in mg/liter
 	if fsl <= 10.0:
@@ -531,11 +700,12 @@ def colby(v, db50, fhrad, fsl, tempr, gsi, ferror, d50err, hrerr, velerr):
 			if dfx > fhrad:
 				break
 		id2 = id1 + 1
-		
+
+		if1 = 0
 		if fsl > 1.0E+4:
 			if1 = 4
 			if2 = 5
-			ERRMSG(2000)
+			ERRMSG = '***** SUBROUTINE COLBY -- FSL WENT > 1.E+4'
 		else:	
 			for if1, cfx in enumerate(CF):
 				if cfx > fsl:
@@ -547,10 +717,10 @@ def colby(v, db50, fhrad, fsl, tempr, gsi, ferror, d50err, hrerr, velerr):
 		xf12 = log10(F[if1,id2])
 		xf21 = log10(F[if2,id1])
 			
-		xnt = (fsl - cf[if1]) / (cf[if2] - cf[if1])
+		xnt = (fsl - CF[if1]) / (CF[if2] - CF[if1])
 		xct1  = xf11 + xnt * (xf21 - xf11)
-		xct2  = xf12 + xnt * (xf22 - xf12))
-		xnt = log10(fhrad / df[id1]) / log10(df[id2] / df[id1])
+		xct2  = xf12 + xnt * (xf22 - xf12)
+		xnt = log10(fhrad / DF[id1]) / log10(DF[id2] / DF[id1])
 		cff = 10.0**(xct1 + xnt * (xct2 - xct1))
 	tcf = cft * cff - 1.0
 
@@ -568,10 +738,11 @@ def colby(v, db50, fhrad, fsl, tempr, gsi, ferror, d50err, hrerr, velerr):
 		xnt = log10(db50 / DP[ip1]) / log10(DP[ip2] / DP[ip1])
 		
 		cfd = 10.0**(p1 + xnt * (p2 -p1))
-	return gtuc * (cfd * tcf + 1.0)  	# total sed flow
+
+	return gtuc * (cfd * tcf + 1.0), ferror, d50err, hrerr, velerr
 
 
-def toffaleti(v, fdiam, fhrad, slope, tempr, vset, gsi):
+def toffaleti(v, fdiam, fhrad, slope, tempr, vset):
 	''' Toffaleti's method to calculate the capacity of the flow to transport sand.'''
 
 	tmpr = tempr * 1.80 + 32.0   # degrees c to degrees f
@@ -622,7 +793,7 @@ def toffaleti(v, fdiam, fhrad, slope, tempr, vset, gsi):
 	zq  = 0.5    * zi
 
 	# Cli has been multiplied by 1.0e30 to keep it from Exceeding the computer overflow limit
-	cli = (5.6e + 22 * oczl * (v**2.333) / fhrad**(zm) / ((tt * ac * k4 * fdiam)**1.667) 
+	cli = (5.6e+22 * oczl * (v**2.333) / fhrad**(zm) / ((tt * ac * k4 * fdiam)**1.667)
 	    / (1.0 + cnv) / ((fhrad / 11.24)**(zn) - (2.0 * fdiam)**oczl))
 	p1  = (2.0 * fdiam / fhrad)**(zo / 2.0)
 	c2d = cli * p1 * p1 / 1.0e+30

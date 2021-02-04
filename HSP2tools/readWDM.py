@@ -16,14 +16,14 @@ attrinfo = {1:('TSTYPE','S',4),     2:('STAID','S',16),    11:('DAREA','R',1),
            29:('TSBDY','I',1),     30:('TSBHR','I',1),     32:('TFILL', 'R',1),
            33:('TSSTEP','I',1),    34:('TGROUP','I',1),    45:('STNAM','S',48),
            83:('COMPFG','I',1),    84:('TSFORM','I',1),    85:('VBTIME','I',1),
-          444:('A444','S',12),    443:('A443','S',12),     22:('DCODE','I',1),
+          444:('DATMOD','S',12),  443:('DATCRE','S',12),   22:('DCODE','I',1),
            10:('DESCRP','S', 80),   7:('ELEV','R',1),       8:('LATDEG','R',1),
             9:('LNGDEG','R',1),   288:('SCENARIO','S',8), 289:('CONSTITUENT','S',8),
           290:('LOCATION','S',8)}
 
 freq = {7:'100YS', 6:'YS', 5:'MS', 4:'D', 3:'H', 2:'min', 1:'S'}   # pandas date_range() frequency by TCODE, TGROUP
 
-def readWDM(wdmfile, hdffile):
+def readWDM(wdmfile, hdffile, jupyterlab=True):
     iarray = np.fromfile(wdmfile, dtype=np.int32)
     farray = np.fromfile(wdmfile, dtype=np.float32)
 
@@ -35,7 +35,7 @@ def readWDM(wdmfile, hdffile):
 
     dsnlist = []
     for index in range(512, nrecords * 512, 512):
-        if not (iarray[index]==0 and iarray[index+1]==0 and iarray[index+2]==0 and iarray[index+3]) and iarray[index+5]==1:
+        if not (iarray[index]==0 and iarray[index+1]==0 and iarray[index+2]==0 and iarray[index+3]==0) and iarray[index+5]==1:
             dsnlist.append(index)
     if len(dsnlist) != ntimeseries:
         print('PROGRAM ERROR, wrong number of DSN records found')
@@ -126,12 +126,16 @@ def readWDM(wdmfile, hdffile):
             floats = np.zeros(sum(counts),  dtype=np.float32)
             findex = 0
             for (rec,offset),count in zip(records, counts):
-                findex = getfloats(iarray, farray, floats, findex, rec, offset, count, finalindex)
+                findex = getfloats(iarray, farray, floats, findex, rec, offset, count, finalindex, tcode, tstep)
 
             ## Write to HDF5 file
             series = pd.Series(floats[:findex], index=tindex[:findex])
             dsname = f'TIMESERIES/TS{dsn:03d}'
-            series.to_hdf(store, dsname, complib='blosc', complevel=9)
+            # series.to_hdf(store, dsname, complib='blosc', complevel=9)
+            if jupyterlab:
+                series.to_hdf(store, dsname, complib='blosc', complevel=9)  # This is the official version
+            else:
+                series.to_hdf(store, dsname, format='t', data_columns=True)  # show the columns in HDFView
 
             data = [str(tindex[0]), str(tindex[-1]), str(tstep) + freq[tcode],
              len(series),  dattr['TSTYPE'], dattr['TFILL']]
@@ -174,29 +178,59 @@ def itostr(i):
     return chr(i & 0xFF) + chr(i>>8 & 0xFF) + chr(i>>16 & 0xFF) + chr(i>>24 & 0xFF)
 
 # @jit(nopython=True, cache=True)
-def getfloats(iarray, farray, floats, findex, rec, offset, count, finalindex):
+def leap_year(y):
+    if y % 400 == 0:
+        return True
+    if y % 100 == 0:
+        return False
+    if y % 4 == 0:
+        return True
+    else:
+        return False
+
+def getfloats(iarray, farray, floats, findex, rec, offset, count, finalindex, tcode, tstep):
     index = rec * 512 + offset + 1
     stop = (rec + 1) * 512
     cntr = 0
     while cntr < count and findex < len(floats):
-        if index >= stop:
+        if index == stop -1 :
+            print ('Problem?',str(rec)) #perhaps not, block cannot start at word 512 of a record because not spot for values
+        if index >= stop-1:
             rec = iarray[rec * 512 + 3] - 1  # 3 is forward data pointer, -1 is python indexing
-            index = rec * 512 + 4            # 4 is index of start of new data
-            stop =  (rec+1) * 512
+            print ('Process record ',str(rec))
+            index = rec * 512 + 4  # 4 is index of start of new data
+            stop = (rec + 1) * 512
 
-        x = iarray[index]                    # control word, don't need most of it here
-        comp = x >> 5 & 0x3
+        x = iarray[index]  # block control word or maybe date word at start of group
         nval = x >> 16
-
+        ltstep = x >> 10 & 0x3f
+        ltcode = x >> 7 & 0x7
+        comp = x >> 5 & 0x3
+        qual  = x & 0x1f
+        ldate = todatetime() # dummy
+        if ltstep != tstep or ltcode != tcode:
+            nval = adjustNval(ldate, ltstep, tstep, ltcode, tcode, comp, nval)
+            if nval == -1:  #unable to convert block
+                try:
+                    ldate = splitdate(x)
+                    if isinstance(ldate,datetime.date):
+                       print('Problem resolved - date found ',ldate)
+                       nval = 1
+                    else:
+                        print('BlockConversionFailure at ', str(rec + 1), ' ', str(index % 512))
+                except:
+                  print ('BlockConversionFailure at ',str(rec+ 1),' ',str(index % 512))
+                # try next word
+                comp = -1
         index += 1
         if comp == 0:
             for k in range(nval):
                 if findex >= len(floats):
                     return findex
-                floats[findex] = farray[index+k]
+                floats[findex] = farray[index + k]
                 findex += 1
             index += nval
-        else:
+        elif comp > 0:
             for k in range(nval):
                 if findex >= len(floats):
                     return findex
@@ -205,3 +239,47 @@ def getfloats(iarray, farray, floats, findex, rec, offset, count, finalindex):
             index += 1
         cntr += nval
     return findex
+
+def adjustNval(ldate, ltstep, tstep, ltcode, tcode, comp, nval):
+    lnval = nval
+    if comp != 1:
+        nval = -1  # only can adjust compressed data
+    else:
+        if tcode == 2:  # minutes
+            if ltcode == 6:  # from years
+                if leap_year(ldate.year):
+                    ldays = 366
+                else:
+                    ldays = 365
+                nval = ldays * lnval * 60 /ltstep
+            elif ltcode == 5: # from months
+                from calendar import monthrange
+                ldateRange = monthrange(ldate.year, ldate.month)
+                print ('month block ', ldateRange)
+                nval = ldateRange[2] * lnval * 60/ ltstep
+            elif ltcode == 4:  # from days
+                nval = lnval * 60 / ltstep
+            elif ltcode == 3:  # from hours
+                nval = lnval * 1440 / ltstep
+            else:  # dont know how to convert
+                nval = -1
+        elif tcode == 3:  # hours
+            if ltcode == 6:  # from years
+                nval = -1
+            elif ltcode == 5: # from months
+                nval = -1
+            elif ltcode == 4:  # from days
+                nval = lnval * 24 / ltstep
+            else:  # dont know how to convert
+                nval = -1
+        else:
+            nval = -1  # dont know how to convert
+
+    nval = int(nval)
+    if nval == -1:  # conversion problem
+        print('Conversion problem (tcode ', str(tcode), ', ', str(ltcode), '), (tstep ', str(tstep), ',', str(ltstep), '), (comp ', str(comp), ')')
+    else:
+        print('Conversion complete (tcode ', str(tcode), ', ', str(ltcode), '), (tstep ', str(tstep), ',', str(ltstep), '), (nval ',
+              str(nval) + ',', str(lnval), ')')
+
+    return nval
