@@ -87,7 +87,7 @@ def adcalc_(simlen, delts, nexits, crrat, ks, vol, ADFG, O, VOL, SROVOL, EROVOL,
 	''' Internal adcalc() loop for Numba'''
 	
 	for loop in range(simlen):
-		vols = VOL[loop-1]  if loop > 0 else vol
+		vols = VOL[loop-1] * 43560  if loop > 0 else vol
 
 		o  = O[loop]
 		os = O[loop-1] if loop > 0 else O[loop]
@@ -128,17 +128,19 @@ def adcalc_(simlen, delts, nexits, crrat, ks, vol, ADFG, O, VOL, SROVOL, EROVOL,
 
 
 #@jit(nopython=True)
-def advect(loop, imat, conc, omat, nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL):
+def advect(imat, conc, nexits, vols, vol, srovol, erovol, sovol, eovol):
 	''' Simulate advection of constituent totally entrained in water.
-	called as: advect(loop, imat, conc, omat, *ui['adcalcData']) '''
+	Originally designed to be called as: advect(loop, imat, conc, omat, *ui['adcalcData'])
+	but unit conversions in the calling routine make this impractical'''
 	
-	vols   = VOL[loop-1]  if loop > 0 else vol
-	vol    = VOL[loop]
-	srovol = SROVOL[loop]
-	erovol = EROVOL[loop]
-	sovol  = SOVOL[loop,:]
-	eovol  = EOVOL[loop,:]
-	
+	# vols   = VOL[loop-1]  if loop > 0 else vol
+	# vol    = VOL[loop]
+	# srovol = SROVOL[loop]
+	# erovol = EROVOL[loop]
+	# sovol  = SOVOL[loop,:]
+	# eovol  = EOVOL[loop,:]
+
+	omat = 0.0
 	if vol > 0.0:    # reach/res contains water
 		concs = conc
 		conc = (imat + concs * (vols - srovol)) / (vol + erovol)  # material entering during interval, weighted volume of outflow based on conditions at start of ivl (srovol), and weighted volume of outflow based on conditions at end of ivl (erovol)
@@ -154,7 +156,7 @@ def advect(loop, imat, conc, omat, nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVO
 	
 
 #@jit(nopython=True)
-def oxrea(LKFG,wind,cforea,avvele,avdepe,tcginv, REAMFG,reak,reakt,expred,exprev,len, delth,tw,delts,delt60,uunits, korea):
+def oxrea(LKFG,wind,cforea,avvele,avdepe,tcginv,reamfg,reak,reakt,expred,exprev,len, delth,tw,delts,delt60,uunits):
 	''' Calculate oxygen reaeration coefficient'''
 	# DELTS  - ???
 	# DELT60 - simulation time interval in hours
@@ -168,7 +170,7 @@ def oxrea(LKFG,wind,cforea,avvele,avdepe,tcginv, REAMFG,reak,reakt,expred,exprev
 		korea = (0.032808 * windf * cforea / avdepe) * delt60
 	
 	# calculate reaeration coefficient for free-flowing reach
-	elif REAMFG == 1:
+	elif reamfg == 1:
 		# calculate reaeration coefficient based on energy dissipation principles (tsivoglou method)
 		# convert length and drop in energy line along length of rchres to english units, if necessary
 		lene   = len
@@ -179,7 +181,7 @@ def oxrea(LKFG,wind,cforea,avvele,avdepe,tcginv, REAMFG,reak,reakt,expred,exprev
 			korea  = reakt * (delthe / flotim) * (tcginv**(tw - 20.)) * delts
 		else:
 			korea = 0.0
-	elif REAMFG == 2:
+	elif reamfg == 2:
 		# calculate reaeration coefficient as a power function of average hydraulic
 		# depth and velocity; determine exponents to depth and velocity terms and assign value to reak
 		if avdepe <= 2.0:  # use owen's formulation for reaeration
