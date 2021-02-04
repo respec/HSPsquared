@@ -1,7 +1,7 @@
 name: hsp2_py38
 channels:
   - defaults
-  # - conda-forge
+  - conda-forge
   # - https://conda.anaconda.org/conda-forge
 dependencies:
   # Running HSP2
@@ -10,6 +10,7 @@ dependencies:
   - numpy
   - pandas>=1.0.0
   - pytables
+  - h5py
   - networkx
   # Interacting with HSP2
   - jupyterlab
@@ -17,6 +18,10 @@ dependencies:
   # package management
   - conda
   - conda-build
-  - pip
-  # optional
-  # - nodejs  # required for `jupyter-matplotlib` & `jupyterlab/toc` extensions
+  # Optional extension dependencies for JupyterLab
+  - nodejs  # required for many extensions
+  - ipympl  # jupyter-matplotlib, https://github.com/matplotlib/ipympl
+  - qgrid  # https://github.com/quantopian/qgrid
+  - pip  # first install as many requirements as possible with conda. https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#using-pip-in-an-environment
+  - pip:
+      - jupyterlab_hdf  # https://github.com/jupyterlab/jupyterlab-hdf5
