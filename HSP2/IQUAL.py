@@ -64,6 +64,7 @@ def iqual(store, siminfo, uci, ts):
 		# update UI values for this constituent here!
 		ui_flags = uci['IQUAL' + str(index) + '_FLAGS']
 		ui_parms = uci['IQUAL' + str(index) + '_PARAMETERS']
+		name = 'IQUAL' + str(index)  # arbitrary identification
 
 		qualid = ui_flags['QUALID']
 		qtyid  = ui_flags['QTYID']
@@ -76,25 +77,25 @@ def iqual(store, siminfo, uci, ts):
 		wsfac = 2.30 / wsqop
 
 		# preallocate output arrays (always needed)
-		SOQUAL = ts[constituent + '/SOQUAL'] = zeros(simlen)
-		SOQC   = ts[constituent + '/SOQC']   = zeros(simlen)
-		SOQO   = ts[constituent + '/SOQO'] = zeros(simlen)
+		SOQUAL = ts[name + '_SOQUAL'] = zeros(simlen)
+		SOQC   = ts[name + '_SOQC']   = zeros(simlen)
+		SOQO   = ts[name + '_SOQO'] = zeros(simlen)
 		
 		# preallocate output arrays (QUALOF)
-		SQO    = ts[constituent + '/SQO']    = zeros(simlen)
-		SOQOC  = ts[constituent + '/SOQOC']  = zeros(simlen)
+		SQO    = ts[name + '_SQO']    = zeros(simlen)
+		SOQOC  = ts[name + '_SOQOC']  = zeros(simlen)
 
 		# preallocate output arrays (QUALSD)
-		SOQS   = ts[constituent + '/SOQS']   = zeros(simlen)
-		SOQSP  = ts[constituent + '/SOQSP'] = zeros(simlen)
+		SOQS   = ts[name + '_SOQS']   = zeros(simlen)
+		SOQSP  = ts[name + '_SOQSP'] = zeros(simlen)
 
 		# preallocate output arrays for atmospheric deposition
-		IQADDR = ts[constituent + '/IQADDR']   = zeros(simlen)
-		IQADWT = ts[constituent + '/IQADWT'] = zeros(simlen)
-		IQADEP = ts[constituent + '/IQADEP'] = zeros(simlen)
+		IQADDR = ts[name + '_IQADDR']   = zeros(simlen)
+		IQADWT = ts[name + '_IQADWT'] = zeros(simlen)
+		IQADEP = ts[name + '_IQADEP'] = zeros(simlen)
 
-		SLIQO  = ts[constituent + '/SLIQO'] = zeros(simlen)   # lateral inflow
-		INFLOW = ts[constituent + '/INFLOW'] = zeros(simlen)  # total inflow
+		SLIQO  = ts[name + '_SLIQO'] = zeros(simlen)   # lateral inflow
+		INFLOW = ts[name + '_INFLOW'] = zeros(simlen)  # total inflow
 
 		
 		# handle monthly tables

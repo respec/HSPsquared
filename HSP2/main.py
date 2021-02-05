@@ -211,6 +211,8 @@ def save_timeseries(store, ts, savedict, siminfo, saveall, operation, segment, a
                     zrep = z.replace('/','_')
                     zrep2 = zrep.replace(' ', '')
                     df[zrep2] = ts[z]
+                if '_' + y in z:
+                    df[z] = ts[z]
         df = df.astype(float32).sort_index(axis='columns')
     elif (operation == 'RCHRES' and (activity == 'CONS' or activity == 'GQUAL')):
         for y in save:
@@ -280,7 +282,7 @@ def get_flows(store, ts, flags, segment, ddlinks, ddmasslinks, steps, msg):
                             rec['SVOL'] = dat.SVOL
                             recs.append(rec)
                         if flags['CONS']:
-                            # ICONS
+                            # ICONS                               # will need loop for each cons
                             rec = {}
                             rec['MFACTOR'] = dat.MFACTOR
                             rec['SGRPN'] = 'CONS'
@@ -350,6 +352,62 @@ def get_flows(store, ts, flags, segment, ddlinks, ddmasslinks, steps, msg):
                             rec['TMEMSB'] = dat.TMEMSB
                             rec['SVOL'] = dat.SVOL
                             recs.append(rec)
+                        if flags['GQUAL']:
+                            # IDQAL                            # will need loop for each gqual
+                            rec = {}
+                            rec['MFACTOR'] = dat.MFACTOR
+                            rec['SGRPN'] = 'GQUAL'
+                            if dat.SGRPN == "ROFLOW":
+                                rec['SMEMN'] = 'RODQAL'
+                            else:
+                                rec['SMEMN'] = 'ODQAL'
+                            rec['SMEMSB'] = dat.SMEMSB  # first sub is exit number
+                            rec['TMEMN'] = 'IDQAL'
+                            rec['TMEMSB'] = dat.TMEMSB
+                            rec['SVOL'] = dat.SVOL
+                            recs.append(rec)
+                            # ISQAL1
+                            rec = {}
+                            rec['MFACTOR'] = dat.MFACTOR
+                            rec['SGRPN'] = 'GQUAL'
+                            if dat.SGRPN == "ROFLOW":
+                                rec['SMEMN'] = 'ROSQAL'
+                                rec['SMEMSB'] = '1'   # for sand
+                            else:
+                                rec['SMEMN'] = 'OSQAL'
+                                rec['SMEMSB'] = '1' + dat.SMEMSB   # for sand from exit n
+                            rec['TMEMN'] = 'ISQAL1'
+                            rec['TMEMSB'] = dat.TMEMSB
+                            rec['SVOL'] = dat.SVOL
+                            recs.append(rec)
+                            # ISQAL2
+                            rec = {}
+                            rec['MFACTOR'] = dat.MFACTOR
+                            rec['SGRPN'] = 'GQUAL'
+                            if dat.SGRPN == "ROFLOW":
+                                rec['SMEMN'] = 'ROSQAL'
+                                rec['SMEMSB'] = '2'    # for silt
+                            else:
+                                rec['SMEMN'] = 'OSQAL'
+                                rec['SMEMSB'] = '2' + dat.SMEMSB  # for silt for exit dat.SMEMSB
+                            rec['TMEMN'] = 'ISQAL2'
+                            rec['TMEMSB'] = dat.TMEMSB
+                            rec['SVOL'] = dat.SVOL
+                            recs.append(rec)
+                            # ISQAL3
+                            rec = {}
+                            rec['MFACTOR'] = dat.MFACTOR
+                            rec['SGRPN'] = 'GQUAL'
+                            if dat.SGRPN == "ROFLOW":
+                                rec['SMEMN'] = 'ROSQAL'
+                                rec['SMEMSB'] = '3'   # for clay
+                            else:
+                                rec['SMEMN'] = 'OSQAL'
+                                rec['SMEMSB'] = '3' + dat.SMEMSB   # for clay for exit n
+                            rec['TMEMN'] = 'ISQAL3'
+                            rec['TMEMSB'] = dat.TMEMSB
+                            rec['SVOL'] = dat.SVOL
+                            recs.append(rec)
 
             for rec in recs:
                 mfactor = rec['MFACTOR']
@@ -363,7 +421,7 @@ def get_flows(store, ts, flags, segment, ddlinks, ddmasslinks, steps, msg):
                 factor = afactr * mfactor
 
                 # KLUDGE until remaining HSP2 modules are available.
-                if tmemn not in {'IVOL', 'ICON', 'IHEAT', 'ISED', 'ISED1', 'ISED2', 'ISED3'}:
+                if tmemn not in {'IVOL', 'ICON', 'IHEAT', 'ISED', 'ISED1', 'ISED2', 'ISED3', 'IDQAL', 'ISQAL1', 'ISQAL2', 'ISQAL3'}:
                     continue
                 if (sgrpn == 'OFLOW' and smemn == 'OVOL') or (sgrpn == 'ROFLOW' and smemn == 'ROVOL'):
                      sgrpn = 'HYDR'
@@ -371,8 +429,13 @@ def get_flows(store, ts, flags, segment, ddlinks, ddmasslinks, steps, msg):
                      sgrpn = 'HTRCH'
                 if (sgrpn == 'OFLOW' and smemn == 'OSED') or (sgrpn == 'ROFLOW' and smemn == 'ROSED'):
                      sgrpn = 'SEDTRN'
-                if tmemn == 'ISED':
-                    tmemn = tmemn + tmemsb
+                if (sgrpn == 'OFLOW' and smemn == 'ODQAL') or (sgrpn == 'ROFLOW' and smemn == 'RODQAL'):
+                     sgrpn = 'GQUAL'
+                if (sgrpn == 'OFLOW' and smemn == 'OSQAL') or (sgrpn == 'ROFLOW' and smemn == 'ROSQAL'):
+                     sgrpn = 'GQUAL'
+                if tmemn == 'ISED' or tmemn == 'ISQAL':
+                    tmemn = tmemn + tmemsb    # need to add sand, silt, clay subscript
+
                 if tmemn == 'ICON':
                     if tmemsb == '':
                         tmemn = 'CONS1_ICON'
@@ -382,12 +445,31 @@ def get_flows(store, ts, flags, segment, ddlinks, ddmasslinks, steps, msg):
                     if smemsb == '':
                         smemn = 'CONS1_OCON1'
                     else:
-                        smemn = 'CONS1' + '_OCON' + smemsb
+                        smemn = 'CONS1_OCON' + smemsb
                 if smemn == 'ROCON':
                     if smemsb == '':
                         smemn = 'CONS1_ROCON'
                     else:
                         smemn = 'CONS' + smemsb + '_ROCON'
+
+                if tmemn == 'IDQAL':
+                    if tmemsb == '':
+                        tmemn = 'GQUAL1_IDQAL'
+                    else:
+                        tmemn = 'GQUAL' + tmemsb + '_IDQAL'
+                if tmemn == 'ISQAL1' or tmemn == 'ISQAL2' or tmemn == 'ISQAL3':
+                    if tmemsb == '':
+                        tmemn = 'GQUAL1_' + tmemn
+                    else:
+                        tmemn = 'GQUAL' + tmemsb + '_' + tmemn
+                if smemn == 'ODQAL':
+                    smemn = 'GQUAL1' + '_ODQAL' + smemsb   # smemsb is exit number
+                if smemn == 'OSQAL':
+                    smemn = 'GQUAL1' + '_OSQAL' + smemsb   # smemsb is ssc plus exit number
+                if smemn == 'RODQAL':
+                    smemn = 'GQUAL1_RODQAL'
+                if smemn == 'ROSQAL':
+                    smemn = 'GQUAL1' + '_ROSQAL' + smemsb  # smemsb is ssc
 
                 path = f'RESULTS/{x.SVOL}_{x.SVOLNO}/{sgrpn}'
                 MFname = f'{x.SVOL}{x.SVOLNO}_MFACTOR'
@@ -402,7 +484,7 @@ def get_flows(store, ts, flags, segment, ddlinks, ddmasslinks, steps, msg):
                         if data in store[path]:
                             t = store[path][data].astype(float64).to_numpy()[0:steps]
                         else:
-                            print('ERROR in FLOWS, cant resolve ', path)
+                            print('ERROR in FLOWS, cant resolve ', path + ' ' + smemn)
                     if MFname in ts and AFname in ts:
                         t *= ts[MFname][:steps] * ts[AFname][0:steps]
                         msg(4, f'MFACTOR modified by timeseries {MFname}')
