@@ -813,3 +813,58 @@ def toffaleti(v, fdiam, fhrad, slope, tempr, vset):
 	gsb = (cmi * ((2.0 * fdiam)**(zn))) / 1.0e+30  	                            # bed layer transport capacity
 
 	return max(0.0, gsu + gsm + gsl + gsb)              # Total transport capacity of the rchres (tons/day/ft)
+
+def expand_SEDTRN_masslinks(flags, uci, dat, recs):
+	if flags['SEDTRN']:
+		# ISED1
+		rec = {}
+		rec['MFACTOR'] = dat.MFACTOR
+		rec['SGRPN'] = 'SEDTRN'
+		if dat.SGRPN == "ROFLOW":
+			rec['SMEMN'] = 'ROSED'
+			rec['SMEMSB1'] = '1'
+			rec['SMEMSB2'] = ''
+		else:
+			rec['SMEMN'] = 'OSED'
+			rec['SMEMSB1'] = '1'
+			rec['SMEMSB2'] = dat.SMEMSB1
+		rec['TMEMN'] = 'ISED1'
+		rec['TMEMSB1'] = dat.TMEMSB1
+		rec['TMEMSB2'] = dat.TMEMSB2
+		rec['SVOL'] = dat.SVOL
+		recs.append(rec)
+		# ISED2
+		rec = {}
+		rec['MFACTOR'] = dat.MFACTOR
+		rec['SGRPN'] = 'SEDTRN'
+		if dat.SGRPN == "ROFLOW":
+			rec['SMEMN'] = 'ROSED'
+			rec['SMEMSB1'] = '2'
+			rec['SMEMSB2'] = ''
+		else:
+			rec['SMEMN'] = 'OSED'
+			rec['SMEMSB1'] = '2'
+			rec['SMEMSB2'] = dat.SMEMSB1
+		rec['TMEMN'] = 'ISED2'
+		rec['TMEMSB1'] = dat.TMEMSB1
+		rec['TMEMSB2'] = dat.TMEMSB2
+		rec['SVOL'] = dat.SVOL
+		recs.append(rec)
+		# ISED3
+		rec = {}
+		rec['MFACTOR'] = dat.MFACTOR
+		rec['SGRPN'] = 'SEDTRN'
+		if dat.SGRPN == "ROFLOW":
+			rec['SMEMN'] = 'ROSED'
+			rec['SMEMSB1'] = '3'
+			rec['SMEMSB2'] = ''
+		else:
+			rec['SMEMN'] = 'OSED'
+			rec['SMEMSB1'] = '3'
+			rec['SMEMSB2'] = dat.SMEMSB1
+		rec['TMEMN'] = 'ISED3'
+		rec['TMEMSB1'] = dat.TMEMSB1
+		rec['TMEMSB2'] = dat.TMEMSB2
+		rec['SVOL'] = dat.SVOL
+		recs.append(rec)
+	return recs

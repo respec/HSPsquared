@@ -20,12 +20,12 @@ from HSP2.SOLIDS import solids
 from HSP2.IWTGAS import iwtgas
 from HSP2.IQUAL  import iqual
 
-from HSP2.HYDR   import hydr
+from HSP2.HYDR   import hydr, expand_HYDR_masslinks
 from HSP2.ADCALC import adcalc
-from HSP2.HTRCH import htrch
-from HSP2.SEDTRN import sedtrn
-from HSP2.CONS import cons
-from HSP2.GQUAL import gqual
+from HSP2.HTRCH import htrch, expand_HTRCH_masslinks
+from HSP2.SEDTRN import sedtrn, expand_SEDTRN_masslinks
+from HSP2.CONS import cons, expand_CONS_masslinks
+from HSP2.GQUAL import gqual, expand_GQUAL_masslinks
 
 def noop (store, siminfo, ui, ts):
     ERRMSGS = []
@@ -43,6 +43,13 @@ activities = {
      'SEDTRN':sedtrn, 'GQUAL':gqual, 'OXRX':noop, 'NUTRX':noop, 'PLANK':noop,
      'PHCARB':noop}}
 
+def expand_masslinks(flags, uci, dat, recs):
+    recs = expand_HYDR_masslinks(flags, uci, dat, recs)
+    recs = expand_HTRCH_masslinks(flags, uci, dat, recs)
+    recs = expand_CONS_masslinks(flags, uci, dat, recs)
+    recs = expand_SEDTRN_masslinks(flags, uci, dat, recs)
+    recs = expand_GQUAL_masslinks(flags, uci, dat, recs)
+    return recs
 
 # NOTE: the flowtype (Python set) at the top of utilities.py may need to be
 # updated for new types of flows in new or modified HSP2 modules.

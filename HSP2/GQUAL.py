@@ -1249,3 +1249,84 @@ def ddecay (qalfg,tw20,ka,kb,kn,thhyd,phval,kox,thox,roc,fact2,fact1,photpm,kore
 				ddqal[i] = 0.0
 
 	return ddqal
+
+def expand_GQUAL_masslinks(flags, uci, dat, recs):
+	if flags['GQUAL']:
+		ngqual = 1
+		if 'PARAMETERS' in uci:
+			ui = uci['PARAMETERS']
+			if 'NGQUAL' in ui:
+				ngqual = ui['NGQUAL']
+		for i in range(1, ngqual+1):
+			# IDQAL                            # loop for each gqual
+			rec = {}
+			rec['MFACTOR'] = dat.MFACTOR
+			rec['SGRPN'] = 'GQUAL'
+			if dat.SGRPN == "ROFLOW":
+				rec['SMEMN'] = 'RODQAL'
+				rec['SMEMSB1'] = str(i)   # first sub is qual index
+				rec['SMEMSB2'] = ''
+			else:
+				rec['SMEMN'] = 'ODQAL'
+				rec['SMEMSB1'] = str(i)       # qual index
+				rec['SMEMSB2'] = dat.SMEMSB1  # exit number
+			rec['TMEMN'] = 'IDQAL'
+			rec['TMEMSB1'] = dat.TMEMSB1
+			rec['TMEMSB2'] = dat.TMEMSB2
+			rec['SVOL'] = dat.SVOL
+			recs.append(rec)
+			# ISQAL1
+			rec = {}
+			rec['MFACTOR'] = dat.MFACTOR
+			rec['SGRPN'] = 'GQUAL'
+			if dat.SGRPN == "ROFLOW":
+				rec['SMEMN'] = 'ROSQAL'
+				rec['SMEMSB1'] = '1'     # for sand
+				rec['SMEMSB2'] = str(i)  # second sub is qual index
+			else:
+				rec['SMEMN'] = 'OSQAL'
+				rec['SMEMSB1'] = str(i)  # qual i
+				rec['SMEMSB2'] = '1' + dat.SMEMSB1 # for clay for exit number
+			rec['TMEMN'] = 'ISQAL1'
+			rec['TMEMSB1'] = dat.TMEMSB1
+			rec['TMEMSB2'] = dat.TMEMSB2
+			rec['SVOL'] = dat.SVOL
+			recs.append(rec)
+			# ISQAL2
+			rec = {}
+			rec['MFACTOR'] = dat.MFACTOR
+			rec['SGRPN'] = 'GQUAL'
+			if dat.SGRPN == "ROFLOW":
+				rec['SMEMN'] = 'ROSQAL'
+				rec['SMEMSB1'] = '2'     # for silt
+				rec['SMEMSB2'] = str(i)  # second sub is qual index
+			else:
+				rec['SMEMN'] = 'OSQAL'
+				rec['SMEMSB1'] = str(i)  # qual i
+				rec['SMEMSB2'] = '2' + dat.SMEMSB1 # for clay for exit number
+			rec['TMEMN'] = 'ISQAL2'
+			rec['TMEMSB1'] = dat.TMEMSB1
+			rec['TMEMSB2'] = dat.TMEMSB2
+			rec['SVOL'] = dat.SVOL
+			recs.append(rec)
+			# ISQAL3
+			rec = {}
+			rec['MFACTOR'] = dat.MFACTOR
+			rec['SGRPN'] = 'GQUAL'
+			if dat.SGRPN == "ROFLOW":
+				rec['SMEMN'] = 'ROSQAL'
+				rec['SMEMSB1'] = '3'     # for clay
+				rec['SMEMSB2'] = str(i)  # second sub is qual index
+			else:
+				rec['SMEMN'] = 'OSQAL'
+				rec['SMEMSB1'] = str(i)  # qual i
+				rec['SMEMSB2'] = '3' + dat.SMEMSB1 # for clay for exit number
+			rec['TMEMN'] = 'ISQAL3'
+			rec['TMEMSB1'] = dat.TMEMSB1
+			rec['TMEMSB2'] = dat.TMEMSB2
+			rec['SVOL'] = dat.SVOL
+			rec['INDEX'] = str(i)
+			recs.append(rec)
+	return recs
+
+
