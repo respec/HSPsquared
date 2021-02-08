@@ -12,7 +12,7 @@ from collections import defaultdict
 from datetime import datetime as dt
 import os
 from HSP2.utilities import transform, versions
-from HSP2.configuration import activities, noop
+from HSP2.configuration import activities, noop, expand_masslinks
 
 
 def main(hdfname, saveall=False, jupyterlab=True):
@@ -51,7 +51,7 @@ def main(hdfname, saveall=False, jupyterlab=True):
             ts = get_timeseries(store,ddext_sources[(operation,segment)],siminfo)
             flags = uci[(operation, 'GENERAL', segment)]['ACTIVITY']
             if operation == 'RCHRES':
-                get_flows(store, ts, flags, segment, ddlinks, ddmasslinks, siminfo['steps'], msg)
+                get_flows(store, ts, flags, uci, segment, ddlinks, ddmasslinks, siminfo['steps'], msg)
 
             for activity, function in activities[operation].items():
                 if function == noop or not flags[activity]:
@@ -237,7 +237,7 @@ def save_timeseries(store, ts, savedict, siminfo, saveall, operation, segment, a
     return
 
 
-def get_flows(store, ts, flags, segment, ddlinks, ddmasslinks, steps, msg):
+def get_flows(store, ts, flags, uci, segment, ddlinks, ddmasslinks, steps, msg):
     # get inflows to this operation
     for x in ddlinks[segment]:
         mldata = ddmasslinks[x.MLNO]
@@ -248,9 +248,11 @@ def get_flows(store, ts, flags, segment, ddlinks, ddmasslinks, steps, msg):
                 rec['MFACTOR'] = x.MFACTOR
                 rec['SGRPN'] = x.SGRPN
                 rec['SMEMN'] = x.SMEMN
-                rec['SMEMSB'] = x.SMEMSB
+                rec['SMEMSB1'] = x.SMEMSB1
+                rec['SMEMSB2'] = x.SMEMSB2
                 rec['TMEMN'] = x.TMEMN
-                rec['TMEMSB'] = x.TMEMSB
+                rec['TMEMSB1'] = x.TMEMSB1
+                rec['TMEMSB2'] = x.TMEMSB2
                 rec['SVOL'] = x.SVOL
                 recs.append(rec)
             else:  # Data from SCHEMATIC part of Links table
@@ -259,163 +261,27 @@ def get_flows(store, ts, flags, segment, ddlinks, ddmasslinks, steps, msg):
                     rec['MFACTOR'] = dat.MFACTOR
                     rec['SGRPN'] = dat.SGRPN
                     rec['SMEMN'] = dat.SMEMN
-                    rec['SMEMSB'] = dat.SMEMSB
+                    rec['SMEMSB1'] = dat.SMEMSB1
+                    rec['SMEMSB2'] = dat.SMEMSB2
                     rec['TMEMN'] = dat.TMEMN
-                    rec['TMEMSB'] = dat.TMEMSB
+                    rec['TMEMSB1'] = dat.TMEMSB1
+                    rec['TMEMSB2'] = dat.TMEMSB2
                     rec['SVOL'] = dat.SVOL
                     recs.append(rec)
                 else:
                     # this is the kind that needs to be expanded
                     if dat.SGRPN == "ROFLOW" or dat.SGRPN == "OFLOW":
-                        if flags['HYDR']:
-                            # IVOL
-                            rec = {}
-                            rec['MFACTOR'] = dat.MFACTOR
-                            rec['SGRPN'] = 'HYDR'
-                            if dat.SGRPN == "ROFLOW":
-                                rec['SMEMN'] = 'ROVOL'
-                            else:
-                                rec['SMEMN'] = 'OVOL'
-                            rec['SMEMSB'] = dat.SMEMSB
-                            rec['TMEMN'] = 'IVOL'
-                            rec['TMEMSB'] = dat.TMEMSB
-                            rec['SVOL'] = dat.SVOL
-                            recs.append(rec)
-                        if flags['CONS']:
-                            # ICONS                               # will need loop for each cons
-                            rec = {}
-                            rec['MFACTOR'] = dat.MFACTOR
-                            rec['SGRPN'] = 'CONS'
-                            if dat.SGRPN == "ROFLOW":
-                                rec['SMEMN'] = 'ROCON'
-                            else:
-                                rec['SMEMN'] = 'OCON'
-                            rec['SMEMSB'] = dat.SMEMSB  # first sub is exit number
-                            rec['TMEMN'] = 'ICON'
-                            rec['TMEMSB'] = dat.TMEMSB
-                            rec['SVOL'] = dat.SVOL
-                            recs.append(rec)
-                        if flags['HTRCH']:
-                            # IHEAT
-                            rec = {}
-                            rec['MFACTOR'] = dat.MFACTOR
-                            rec['SGRPN'] = 'HTRCH'
-                            if dat.SGRPN == "ROFLOW":
-                                rec['SMEMN'] = 'ROHEAT'
-                            else:
-                                rec['SMEMN'] = 'OHEAT'
-                            rec['SMEMSB'] = dat.SMEMSB
-                            rec['TMEMN'] = 'IHEAT'
-                            rec['TMEMSB'] = dat.TMEMSB
-                            rec['SVOL'] = dat.SVOL
-                            recs.append(rec)
-                        if flags['SEDTRN']:
-                            # ISED1
-                            rec = {}
-                            rec['MFACTOR'] = dat.MFACTOR
-                            rec['SGRPN'] = 'SEDTRN'
-                            if dat.SGRPN == "ROFLOW":
-                                rec['SMEMN'] = 'ROSED'
-                                rec['SMEMSB'] = '1'
-                            else:
-                                rec['SMEMN'] = 'OSED'
-                                rec['SMEMSB'] = '1' + dat.SMEMSB
-                            rec['TMEMN'] = 'ISED1'
-                            rec['TMEMSB'] = dat.TMEMSB
-                            rec['SVOL'] = dat.SVOL
-                            recs.append(rec)
-                            # ISED2
-                            rec = {}
-                            rec['MFACTOR'] = dat.MFACTOR
-                            rec['SGRPN'] = 'SEDTRN'
-                            if dat.SGRPN == "ROFLOW":
-                                rec['SMEMN'] = 'ROSED'
-                                rec['SMEMSB'] = '2'
-                            else:
-                                rec['SMEMN'] = 'OSED'
-                                rec['SMEMSB'] = '2' + dat.SMEMSB
-                            rec['TMEMN'] = 'ISED2'
-                            rec['TMEMSB'] = dat.TMEMSB
-                            rec['SVOL'] = dat.SVOL
-                            recs.append(rec)
-                            # ISED3
-                            rec = {}
-                            rec['MFACTOR'] = dat.MFACTOR
-                            rec['SGRPN'] = 'SEDTRN'
-                            if dat.SGRPN == "ROFLOW":
-                                rec['SMEMN'] = 'ROSED'
-                                rec['SMEMSB'] = '3'
-                            else:
-                                rec['SMEMN'] = 'OSED'
-                                rec['SMEMSB'] = '3' + dat.SMEMSB
-                            rec['TMEMN'] = 'ISED3'
-                            rec['TMEMSB'] = dat.TMEMSB
-                            rec['SVOL'] = dat.SVOL
-                            recs.append(rec)
-                        if flags['GQUAL']:
-                            # IDQAL                            # will need loop for each gqual
-                            rec = {}
-                            rec['MFACTOR'] = dat.MFACTOR
-                            rec['SGRPN'] = 'GQUAL'
-                            if dat.SGRPN == "ROFLOW":
-                                rec['SMEMN'] = 'RODQAL'
-                            else:
-                                rec['SMEMN'] = 'ODQAL'
-                            rec['SMEMSB'] = dat.SMEMSB  # first sub is exit number
-                            rec['TMEMN'] = 'IDQAL'
-                            rec['TMEMSB'] = dat.TMEMSB
-                            rec['SVOL'] = dat.SVOL
-                            recs.append(rec)
-                            # ISQAL1
-                            rec = {}
-                            rec['MFACTOR'] = dat.MFACTOR
-                            rec['SGRPN'] = 'GQUAL'
-                            if dat.SGRPN == "ROFLOW":
-                                rec['SMEMN'] = 'ROSQAL'
-                                rec['SMEMSB'] = '1'   # for sand
-                            else:
-                                rec['SMEMN'] = 'OSQAL'
-                                rec['SMEMSB'] = '1' + dat.SMEMSB   # for sand from exit n
-                            rec['TMEMN'] = 'ISQAL1'
-                            rec['TMEMSB'] = dat.TMEMSB
-                            rec['SVOL'] = dat.SVOL
-                            recs.append(rec)
-                            # ISQAL2
-                            rec = {}
-                            rec['MFACTOR'] = dat.MFACTOR
-                            rec['SGRPN'] = 'GQUAL'
-                            if dat.SGRPN == "ROFLOW":
-                                rec['SMEMN'] = 'ROSQAL'
-                                rec['SMEMSB'] = '2'    # for silt
-                            else:
-                                rec['SMEMN'] = 'OSQAL'
-                                rec['SMEMSB'] = '2' + dat.SMEMSB  # for silt for exit dat.SMEMSB
-                            rec['TMEMN'] = 'ISQAL2'
-                            rec['TMEMSB'] = dat.TMEMSB
-                            rec['SVOL'] = dat.SVOL
-                            recs.append(rec)
-                            # ISQAL3
-                            rec = {}
-                            rec['MFACTOR'] = dat.MFACTOR
-                            rec['SGRPN'] = 'GQUAL'
-                            if dat.SGRPN == "ROFLOW":
-                                rec['SMEMN'] = 'ROSQAL'
-                                rec['SMEMSB'] = '3'   # for clay
-                            else:
-                                rec['SMEMN'] = 'OSQAL'
-                                rec['SMEMSB'] = '3' + dat.SMEMSB   # for clay for exit n
-                            rec['TMEMN'] = 'ISQAL3'
-                            rec['TMEMSB'] = dat.TMEMSB
-                            rec['SVOL'] = dat.SVOL
-                            recs.append(rec)
+                        recs = expand_masslinks(flags,uci,dat,recs)
 
             for rec in recs:
                 mfactor = rec['MFACTOR']
                 sgrpn   = rec['SGRPN']
                 smemn   = rec['SMEMN']
-                smemsb  = rec['SMEMSB']
+                smemsb1 = rec['SMEMSB1']
+                smemsb2 = rec['SMEMSB2']
                 tmemn   = rec['TMEMN']
-                tmemsb  = rec['TMEMSB']
+                tmemsb1 = rec['TMEMSB1']
+                tmemsb2 = rec['TMEMSB2']
 
                 afactr = x.AFACTR
                 factor = afactr * mfactor
@@ -434,47 +300,14 @@ def get_flows(store, ts, flags, segment, ddlinks, ddmasslinks, steps, msg):
                 if (sgrpn == 'OFLOW' and smemn == 'OSQAL') or (sgrpn == 'ROFLOW' and smemn == 'ROSQAL'):
                      sgrpn = 'GQUAL'
                 if tmemn == 'ISED' or tmemn == 'ISQAL':
-                    tmemn = tmemn + tmemsb    # need to add sand, silt, clay subscript
+                    tmemn = tmemn + tmemsb1    # need to add sand, silt, clay subscript
 
-                if tmemn == 'ICON':
-                    if tmemsb == '':
-                        tmemn = 'CONS1_ICON'
-                    else:
-                        tmemn = 'CONS' + tmemsb + '_ICON'
-                if smemn == 'OCON':
-                    if smemsb == '':
-                        smemn = 'CONS1_OCON1'
-                    else:
-                        smemn = 'CONS1_OCON' + smemsb
-                if smemn == 'ROCON':
-                    if smemsb == '':
-                        smemn = 'CONS1_ROCON'
-                    else:
-                        smemn = 'CONS' + smemsb + '_ROCON'
-
-                if tmemn == 'IDQAL':
-                    if tmemsb == '':
-                        tmemn = 'GQUAL1_IDQAL'
-                    else:
-                        tmemn = 'GQUAL' + tmemsb + '_IDQAL'
-                if tmemn == 'ISQAL1' or tmemn == 'ISQAL2' or tmemn == 'ISQAL3':
-                    if tmemsb == '':
-                        tmemn = 'GQUAL1_' + tmemn
-                    else:
-                        tmemn = 'GQUAL' + tmemsb + '_' + tmemn
-                if smemn == 'ODQAL':
-                    smemn = 'GQUAL1' + '_ODQAL' + smemsb   # smemsb is exit number
-                if smemn == 'OSQAL':
-                    smemn = 'GQUAL1' + '_OSQAL' + smemsb   # smemsb is ssc plus exit number
-                if smemn == 'RODQAL':
-                    smemn = 'GQUAL1_RODQAL'
-                if smemn == 'ROSQAL':
-                    smemn = 'GQUAL1' + '_ROSQAL' + smemsb  # smemsb is ssc
+                smemn, tmemn = expand_timeseries_names(smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmemsb2)
 
                 path = f'RESULTS/{x.SVOL}_{x.SVOLNO}/{sgrpn}'
                 MFname = f'{x.SVOL}{x.SVOLNO}_MFACTOR'
                 AFname = f'{x.SVOL}{x.SVOLNO}_AFACTR'
-                data = f'{smemn}{smemsb}'
+                data = f'{smemn}{smemsb1}{smemsb2}'
 
                 if path in store:
                     if data in store[path]:
@@ -507,6 +340,44 @@ def get_flows(store, ts, flags, segment, ddlinks, ddmasslinks, steps, msg):
                     print('ERROR in FLOWS for', path)
     return
 
+def expand_timeseries_names(smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmemsb2):
+    #special cases to expand timeseries names to resolve with output names in hdf5 file
+    if tmemn == 'ICON':
+        if tmemsb1 == '':
+            tmemn = 'CONS1_ICON'
+        else:
+            tmemn = 'CONS' + tmemsb1 + '_ICON'
+    if smemn == 'OCON':
+        if smemsb2 == '':
+            smemn = 'CONS1_OCON' + smemsb1
+        else:
+            smemn = 'CONS' + smemsb2 + '_OCON' + smemsb1
+    if smemn == 'ROCON':
+        if smemsb1 == '':
+            smemn = 'CONS1_ROCON'
+        else:
+            smemn = 'CONS' + smemsb1 + '_ROCON'
+
+    if tmemn == 'IDQAL':
+        if tmemsb1 == '':
+            tmemn = 'GQUAL1_IDQAL'
+        else:
+            tmemn = 'GQUAL' + tmemsb1 + '_IDQAL'
+    if tmemn == 'ISQAL1' or tmemn == 'ISQAL2' or tmemn == 'ISQAL3':
+        if tmemsb2 == '':
+            tmemn = 'GQUAL1_' + tmemn
+        else:
+            tmemn = 'GQUAL' + tmemsb2 + '_' + tmemn
+    if smemn == 'ODQAL':
+        smemn = 'GQUAL' + smemsb1 + '_ODQAL' + smemsb2  # smemsb2 is exit number
+    if smemn == 'OSQAL':
+        smemn = 'GQUAL' + smemsb1 + '_OSQAL' + smemsb2  # smemsb2 is ssc plus exit number
+    if smemn == 'RODQAL':
+        smemn = 'GQUAL' + smemsb1 + '_RODQAL'
+    if smemn == 'ROSQAL':
+        smemn = 'GQUAL' + smemsb2 + '_ROSQAL' + smemsb1  # smemsb1 is ssc
+
+    return smemn, tmemn
 
 '''
 
