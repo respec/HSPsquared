@@ -5,7 +5,7 @@ License: LGPL2
 
 from numpy import array, zeros
 from math import exp
-from HSP2.utilities import initm, make_numba_dict
+from HSP2.utilities import initm, make_numba_dict, hoursval
 from HSP2.ADCALC import advect, oxrea
 
 ERRMSG = []
@@ -48,6 +48,14 @@ def gqual(store, siminfo, uci, ts):
 			lat    = ui['LAT']
 	lkfg = 0
 	ecnt = 0
+
+	len_ = 0.0
+	delth= 0.0
+	if 'LEN' in ui:
+		len_  = ui["LEN"] * 5280.0  # mi to feet
+		delth = ui["DELTH"]
+	ts['HRFG'] = hour24Flag(siminfo).astype(float)
+	HRFG = ts['HRFG']
 
 	# NGQ3 = NGQUAL * 3
 	ddqal = zeros((9, ngqual+1))
@@ -252,12 +260,12 @@ def gqual(store, siminfo, uci, ts):
 			RSED4 = ts['RSED4']   # sediment storages - bed sand
 			RSED5 = ts['RSED5']   # sediment storages - bed silt
 			RSED6 = ts['RSED6']   # sediment storages - bed clay
-			rsed[1] = RSED1[0]
-			rsed[2] = RSED2[0]
-			rsed[3] = RSED3[0]
-			rsed[4] = RSED4[0]
-			rsed[5] = RSED5[0]
-			rsed[6] = RSED6[0]
+			rsed[1] = RSED1[0] / 2.83E-08
+			rsed[2] = RSED2[0] / 2.83E-08
+			rsed[3] = RSED3[0] / 2.83E-08
+			rsed[4] = RSED4[0] / 2.83E-08
+			rsed[5] = RSED5[0] / 2.83E-08
+			rsed[6] = RSED6[0] / 2.83E-08
 
 			rsqal1 = sqal[1] * rsed[1]
 			rsqal2 = sqal[2] * rsed[2]
@@ -507,13 +515,13 @@ def gqual(store, siminfo, uci, ts):
 				cforea = 1.0
 				if 'CFOREA' in ui_parms:
 					cforea = ui_parms["CFOREA"]
+				if 'CFOREA' in ui:
+					cforea = ui["CFOREA"]
 			else:
 				if reamfg == 1:
 					# tsivoglou method - table-type ox-tsivoglou
 					reakt  = ui_parms["REAKT"]
 					tcginv = ui_parms["TCGINV"]
-					len_ = ui_parms["LEN"]
-					delth = ui_parms["DELTH"]
 				elif reamfg == 2:
 					# owen/churchill/o'connor-dobbins  # table-type ox-tcginv
 					tcginv = 1.047
@@ -586,7 +594,7 @@ def gqual(store, siminfo, uci, ts):
 		SDCNC = ts['SDCNC']    # constant, monthly, ts; SDFG, note: interpolate to daily value only
 		PHYTO = ts['PHY']      # constant, monthly, ts; PHYTFG, note: interpolate to daily value only
 		CLD   = ts['CLD']      # constant, monthly, ts['CLOUD']
-		WIND  = ts['WIND']
+		WIND  = ts['WIND'] * 1609.0 # miles to meters
 		AVVEL = ts['AVVEL']
 		PREC  = ts['PREC']
 		SAREA = ts['SAREA']
@@ -616,7 +624,7 @@ def gqual(store, siminfo, uci, ts):
 		OSED3 = zeros((simlen, nexits))
 
 		# this number is used to adjust reaction rates for temperature
-		TW20 = TW - 20.0
+		# TW20 = TW - 20.0
 
 		name = 'GQUAL' + str(index)  # arbitrary identification
 		# preallocate output arrays (always needed)
@@ -712,7 +720,8 @@ def gqual(store, siminfo, uci, ts):
 
 			# tw20 may be required for bed decay of qual even if tw is undefined (due to vol=0.0)
 			tw   = TW[loop]
-			tw20 = TW20[loop]
+			tw = (tw - 32.0) * 0.555
+			tw20 = tw - 20.0           # TW20[loop]
 			if tw <= -10.0:
 				tw20 = 0.0
 			# correct unrealistically high values of tw calculated in htrch
@@ -723,18 +732,29 @@ def gqual(store, siminfo, uci, ts):
 			vol  = VOL[loop] * 43560
 			toqal = TOQAL[loop]
 			tosqal = TOSQAL[loop]
-			depscr1 = DEPSCR1[loop]
-			depscr2 = DEPSCR2[loop]
-			depscr3 = DEPSCR3[loop]
-			rosed1 = ROSED1[loop]
-			rosed2 = ROSED2[loop]
-			rosed3 = ROSED3[loop]
+			if UUNITS == 1:
+				depscr1 = DEPSCR1[loop] / 3.121E-08
+				depscr2 = DEPSCR2[loop] / 3.121E-08
+				depscr3 = DEPSCR3[loop] / 3.121E-08
+				rosed1 = ROSED1[loop] / 3.121E-08
+				rosed2 = ROSED2[loop] / 3.121E-08
+				rosed3 = ROSED3[loop] / 3.121E-08
+				osed1 = OSED1[loop] / 3.121E-08
+				osed2 = OSED2[loop] / 3.121E-08
+				osed3 = OSED3[loop] / 3.121E-08
+			else:
+				depscr1 = DEPSCR1[loop] / 2.83E-08
+				depscr2 = DEPSCR2[loop] / 2.83E-08
+				depscr3 = DEPSCR3[loop] / 2.83E-08
+				rosed1 = ROSED1[loop] / 2.83E-08
+				rosed2 = ROSED2[loop] / 2.83E-08
+				rosed3 = ROSED3[loop] / 2.83E-08
+				osed1 = OSED1[loop] / 2.83E-08
+				osed2 = OSED2[loop] / 2.83E-08
+				osed3 = OSED3[loop] / 2.83E-08
 			isqal1 = ISQAL1[loop]
 			isqal2 = ISQAL2[loop]
 			isqal3 = ISQAL3[loop]
-			osed1 = OSED1[loop]
-			osed2 = OSED2[loop]
-			osed3 = OSED3[loop]
 
 			if UUNITS == 2:  # uci is in metric units
 				avdepm = AVDEP[loop]
@@ -801,17 +821,15 @@ def gqual(store, siminfo, uci, ts):
 			eovol = EOVOL[loop, :]
 			dqal, rodqal, odqal = advect(indqal, dqal, nexits, svol, vol, srovol, erovol, sovol, eovol)
 
-			svol = vol  # svol is volume at start of time step, update for next time thru
-
 			bio = biop
 			if qalfg[5] > 0:
 				# get biomass input, if required (for degradation)
 				bio = BIO[loop]
 
 			if avdepe > 0.17:   #  simulate decay of dissolved material
-				hr = 1  # will need to find a way to get the hour value
+				hr = HRFG[loop]
 				ddqal[:,index] = ddecay(qalfg, tw20, ka, kb, kn, thhyd, phval,kox,thox, roc, fact2, fact1, photpm, korea, cfgas,
-					 			biocon, thbio, bio, fstdec, thfst, svol, dqal, hr, delt60)
+					 			biocon, thbio, bio, fstdec, thfst, vol, dqal, hr, delt60)
 				# ddqal[1,index] = DDECAY(QALFG(1,I),TW20,HYDPM(1,I),PHVAL,ROXPM(1,I),ROC,FACT2(1),FACT1,PHOTPM(1,I),KOREA,CFGAS(I),
 				# 						BIOPM(1,I),BIO(I),GENPM(1,I),VOLSP,DQAL(I),HR,DELT60,DDQAL(1,I))
 
@@ -824,7 +842,8 @@ def gqual(store, siminfo, uci, ts):
 
 				# update the concentration to account for decay and for input
 				# from decay of "parents"- units are conc/l
-				dqal = dqal + (pdqal - ddqal[7,index])/svol
+				if vol > 0:
+					dqal = dqal + (pdqal - ddqal[7,index])/vol
 			else:
 				# rchres depth is less than two inches - dissolved decay is not considered
 				for l in range(1, 7):
@@ -919,7 +938,7 @@ def gqual(store, siminfo, uci, ts):
 
 				adqal = zeros(8)
 				if avdepe > 0.17:  # simulate exchange due to adsorption and desorption
-					dqal, sqal, adqal = adsdes(svol, rsed, adpm1, adpm2, adpm3, tw20, dqal, sqal)
+					dqal, sqal, adqal = adsdes(vol, rsed, adpm1, adpm2, adpm3, tw20, dqal, sqal)
 					# DQAL(I), SQAL(1,I), ADQAL(1,I) = ADSDES(VOLSP,RSED(1),ADPM(1,1,I),TW20,DQAL(I),SQAL(1,I),ADQAL(1,I))
 				else:
 					# rchres depth is less than two inches - adsorption and
@@ -958,7 +977,7 @@ def gqual(store, siminfo, uci, ts):
 						toqal[n] = odqal[n]
 
 			# find total quantity of qual in rchres
-			rdqal = dqal * svol
+			rdqal = dqal * vol
 			if qalfg[7] == 1:
 				rrqal = rdqal + rsqal12
 			else:
@@ -1329,4 +1348,9 @@ def expand_GQUAL_masslinks(flags, uci, dat, recs):
 			recs.append(rec)
 	return recs
 
-
+def hour24Flag(siminfo, dofirst=False):
+    '''timeseries with hour values'''
+    hours24 = zeros(24)
+    for i in range(0,24):
+        hours24[i] = i
+    return hoursval(siminfo, hours24, dofirst)

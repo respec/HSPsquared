@@ -102,6 +102,10 @@ def main(hdfname, saveall=False, jupyterlab=True):
                             ui['PARAMETERS']['LKFG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LKFG']
                             ui['PARAMETERS']['AUX1FG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['AUX1FG']
                             ui['PARAMETERS']['AUX2FG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['AUX2FG']
+                            ui['PARAMETERS']['LEN'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LEN']
+                            ui['PARAMETERS']['DELTH'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['DELTH']
+                        if flags['OXRX']:
+                            ui['PARAMETERS']['CFOREA'] = uci[(operation, 'OXRX', segment)]['PARAMETERS']['CFOREA']
 
                 ############ calls activity function like snow() ##############
                 errors, errmessages = function(store, siminfo, ui, ts)
