@@ -35,17 +35,17 @@ def gqual(store, siminfo, uci, ts):
 	sdfg   = 2
 	phytfg = 2
 	lat    = 0
-	if 'PARAMETERS' in uci:
-		ui = uci['PARAMETERS']
-		if 'NGQUAL' in ui:
-			ngqual = ui['NGQUAL']
-			tempfg = ui['TEMPFG']
-			phflag = ui['PHFLAG']
-			roxfg  = ui['ROXFG']
-			cldfg  = ui['CLDFG']
-			sdfg   = ui['SDFG']
-			phytfg = ui['PHYTFG']
-			lat    = ui['LAT']
+
+	ui = uci['PARAMETERS']
+	if 'NGQUAL' in ui:
+		ngqual = ui['NGQUAL']
+		tempfg = ui['TEMPFG']
+		phflag = ui['PHFLAG']
+		roxfg  = ui['ROXFG']
+		cldfg  = ui['CLDFG']
+		sdfg   = ui['SDFG']
+		phytfg = ui['PHYTFG']
+		lat    = ui['LAT']
 	lkfg = 0
 	ecnt = 0
 
@@ -267,6 +267,21 @@ def gqual(store, siminfo, uci, ts):
 			rsed[5] = RSED5[0] / 2.83E-08
 			rsed[6] = RSED6[0] / 2.83E-08
 
+			if UUNITS == 1:
+				rsed[1] = RSED1[0] / 3.121E-08
+				rsed[2] = RSED2[0] / 3.121E-08
+				rsed[3] = RSED3[0] / 3.121E-08
+				rsed[4] = RSED4[0] / 3.121E-08
+				rsed[5] = RSED5[0] / 3.121E-08
+				rsed[6] = RSED6[0] / 3.121E-08
+			else:
+				rsed[1] = RSED1[0] / 2.83E-08
+				rsed[2] = RSED2[0] / 2.83E-08
+				rsed[3] = RSED3[0] / 2.83E-08
+				rsed[4] = RSED4[0] / 2.83E-08
+				rsed[5] = RSED5[0] / 2.83E-08
+				rsed[6] = RSED6[0] / 2.83E-08
+
 			rsqal1 = sqal[1] * rsed[1]
 			rsqal2 = sqal[2] * rsed[2]
 			rsqal3 = sqal[3] * rsed[3]
@@ -485,8 +500,6 @@ def gqual(store, siminfo, uci, ts):
 			# END IF
 
 		reamfg = 0
-		len_   = 0.0
-		delth  = 0.0
 		cforea = 0.0
 		tcginv = 0.0
 		reak   = 0.0
@@ -591,9 +604,12 @@ def gqual(store, siminfo, uci, ts):
 		PHVAL = ts['PHVAL']
 		TW    = ts['TW']
 		ROC   = ts['ROC']
-		SDCNC = ts['SDCNC']    # constant, monthly, ts; SDFG, note: interpolate to daily value only
-		PHYTO = ts['PHY']      # constant, monthly, ts; PHYTFG, note: interpolate to daily value only
-		CLD   = ts['CLD']      # constant, monthly, ts['CLOUD']
+		if 'SDCNC' in ts:
+			SDCNC = ts['SDCNC']    # constant, monthly, ts; SDFG, note: interpolate to daily value only
+		if 'PHY' in ts:
+			PHYTO = ts['PHY']      # constant, monthly, ts; PHYTFG, note: interpolate to daily value only
+		if 'CLD' in ts:
+			CLD   = ts['CLD']      # constant, monthly, ts['CLOUD']
 		WIND  = ts['WIND'] * 1609.0 # miles to meters
 		AVVEL = ts['AVVEL']
 		PREC  = ts['PREC']
@@ -720,7 +736,7 @@ def gqual(store, siminfo, uci, ts):
 
 			# tw20 may be required for bed decay of qual even if tw is undefined (due to vol=0.0)
 			tw   = TW[loop]
-			tw = (tw - 32.0) * 0.555
+			tw = (tw - 32.0) * 5.0 / 9.0
 			tw20 = tw - 20.0           # TW20[loop]
 			if tw <= -10.0:
 				tw20 = 0.0
@@ -851,12 +867,42 @@ def gqual(store, siminfo, uci, ts):
 				# 320      CONTINUE
 				pdqal = 0.0
 
-			if qalfg[7] == 1:   # this constituent is associated with sediment
-				# zero the accumulators
-				isqal4  = 0.0
-				dsqal4  = 0.0
-				rosqal4 = 0.0
+			adqal = zeros(8)
+			dsqal1 = 0.0
+			dsqal2 = 0.0
+			dsqal3 = 0.0
+			dsqal4 = 0.0
+			osqal1 = 0.0
+			osqal2 = 0.0
+			osqal3 = 0.0
+			osqal4 = 0.0
+			rosqal1 = 0.0
+			rosqal2 = 0.0
+			rosqal3 = 0.0
+			rsqal1 = 0.0
+			rsqal2 = 0.0
+			rsqal3 = 0.0
+			rsqal4 = 0.0
+			rsqal5 = 0.0
+			rsqal6 = 0.0
+			rsqal7 = 0.0
+			rsqal8 = 0.0
+			rsqal9 = 0.0
+			rsqal10 = 0.0
+			rsqal11 = 0.0
+			sqdec1 = 0.0
+			sqdec2 = 0.0
+			sqdec3 = 0.0
+			sqdec4 = 0.0
+			sqdec5 = 0.0
+			sqdec6 = 0.0
+			sqdec7 = 0.0
+			# zero the accumulators
+			isqal4 = 0.0
+			dsqal4 = 0.0
+			rosqal4 = 0.0
 
+			if qalfg[7] == 1:   # this constituent is associated with sediment
 				if nexits > 1:
 					for n in range(1, nexits):
 						tosqal[n] = 0.0
@@ -867,7 +913,7 @@ def gqual(store, siminfo, uci, ts):
 				# sand
 				# advect this material, including calculation of deposition and scour
 				ecnt, sqal[1], sqal[4], dsqal1, rosqal1, osqal1 = advqal(isqal1, rsed[1], rsed[4], depscr1, rosed1, osed1,
-																	 nexits, rsqal1, rsqal4, ecnt)
+																	 nexits, rsqal1, rsqal5, ecnt)
 				# GQECNT(1),SQAL(J,I),SQAL(J + 3,I),DSQAL(J,I), ROSQAL(J,I),OSQAL(1,J,I)) = ADVQAL (ISQAL(J,I),RSED(J),RSED(J + 3),\
 				# DEPSCR(J),ROSED(J),OSED(1,J),NEXITS,RCHNO, MESSU,MSGFL,DATIM, GQID(1,I),J,RSQAL(J,I),RSQAL(J + 4,I),GQECNT(1),
 				# SQAL(J,I),SQAL(J + 3,I),DSQAL(J,I),ROSQAL(J,I),OSQAL(1,J,I))
@@ -882,7 +928,7 @@ def gqual(store, siminfo, uci, ts):
 				# silt
 				# advect this material, including calculation of deposition and scour
 				ecnt, sqal[2], sqal[5], dsqal2, rosqal2, osqal2 = advqal(isqal2, rsed[2], rsed[5], depscr2, rosed2, osed2,
-																	 nexits, rsqal2, rsqal5, ecnt)
+																	 nexits, rsqal2, rsqal6, ecnt)
 				# GQECNT(1), SQAL(J, I), SQAL(J + 3, I), DSQAL(J, I), ROSQAL(J, I), OSQAL(1, J, I)) = ADVQAL(
 				# 	ISQAL(J, I), RSED(J), RSED(J + 3), \
 				# 	DEPSCR(J), ROSED(J), OSED(1, J), NEXITS, RCHNO, MESSU, MSGFL, DATIM, GQID(1, I), J, RSQAL(J, I),
@@ -899,7 +945,7 @@ def gqual(store, siminfo, uci, ts):
 				# clay
 				# advect this material, including calculation of deposition and scour
 				ecnt, sqal[3], sqal[6], dsqal3, rosqal3, osqal3 = advqal(isqal3, rsed[3], rsed[6], depscr3, rosed3, osed3,
-																	 nexits, rsqal3, rsqal6, ecnt)
+																	 nexits, rsqal3, rsqal7, ecnt)
 				# GQECNT(1), SQAL(J, I), SQAL(J + 3, I), DSQAL(J, I), ROSQAL(J, I), OSQAL(1, J, I)) = ADVQAL(
 				# 	ISQAL(J, I), RSED(J), RSED(J + 3), \
 				# 	DEPSCR(J), ROSED(J), OSED(1, J), NEXITS, RCHNO, MESSU, MSGFL, DATIM, GQID(1, I), J, RSQAL(J, I),
@@ -936,7 +982,6 @@ def gqual(store, siminfo, uci, ts):
 				# get total decay
 				sqdec7 = sqdec1 + sqdec2 + sqdec3 + sqdec4 + sqdec4 + sqdec4
 
-				adqal = zeros(8)
 				if avdepe > 0.17:  # simulate exchange due to adsorption and desorption
 					dqal, sqal, adqal = adsdes(vol, rsed, adpm1, adpm2, adpm3, tw20, dqal, sqal)
 					# DQAL(I), SQAL(1,I), ADQAL(1,I) = ADSDES(VOLSP,RSED(1),ADPM(1,1,I),TW20,DQAL(I),SQAL(1,I),ADQAL(1,I))
@@ -992,14 +1037,14 @@ def gqual(store, siminfo, uci, ts):
 			ADQAL5[loop] = adqal[5]
 			ADQAL6[loop] = adqal[6]
 			ADQAL7[loop] = adqal[7]
-			DDQAL1[loop] = ddqal[1,index]
-			DDQAL2[loop] = ddqal[2, index]
-			DDQAL3[loop] = ddqal[3, index]
-			DDQAL4[loop] = ddqal[4, index]
-			DDQAL5[loop] = ddqal[5, index]
-			DDQAL6[loop] = ddqal[6, index]
-			DDQAL7[loop] = ddqal[7, index]
-			DDQAL8[loop] = ddqal[8, index]
+			DDQAL1[loop] = ddqal[1,index] / conv
+			DDQAL2[loop] = ddqal[2, index] / conv
+			DDQAL3[loop] = ddqal[3, index] / conv
+			DDQAL4[loop] = ddqal[4, index] / conv
+			DDQAL5[loop] = ddqal[5, index] / conv
+			DDQAL6[loop] = ddqal[6, index] / conv
+			DDQAL7[loop] = ddqal[7, index] / conv
+			DDQAL8[loop] = ddqal[8, index] / conv
 			DQAL[loop]   = dqal
 			DSQAL1[loop] = dsqal1
 			DSQAL2[loop] = dsqal2
@@ -1009,18 +1054,18 @@ def gqual(store, siminfo, uci, ts):
 			GQADEP[loop] = gqadep
 			GQADWT[loop] = gqadwt
 			ISQAL4[loop] = isqal4
-			ODQAL[loop]  = odqal
+			ODQAL[loop]  = odqal / conv
 			OSQAL1[loop] = osqal1
 			OSQAL2[loop] = osqal2
 			OSQAL3[loop] = osqal3
 			PDQAL[loop]  = pdqal
-			RDQAL[loop]  = rdqal
-			RODQAL[loop] = rodqal
+			RDQAL[loop]  = rdqal / conv
+			RODQAL[loop] = rodqal / conv
 			ROSQAL1[loop]= rosqal1
 			ROSQAL2[loop]= rosqal2
 			ROSQAL3[loop]= rosqal3
 			ROSQAL4[loop]= rosqal4
-			RRQAL[loop]  = rrqal
+			RRQAL[loop]  = rrqal / conv
 			RSQAL1[loop] = rsqal1
 			RSQAL2[loop] = rsqal2
 			RSQAL3[loop] = rsqal3
@@ -1048,11 +1093,11 @@ def gqual(store, siminfo, uci, ts):
 			SQDEC7[loop] = sqdec7
 			TIQAL[loop]  = tiqal
 			TOSQAL[loop] = tosqal
-			TROQAL[loop] = troqal
+			TROQAL[loop] = troqal / conv
 
 		if nexits > 1:
 			for i in range(nexits):
-				ts[name + '_ODQAL' + str(i + 1)] = ODQAL[:, i]
+				ts[name + '_ODQAL' + str(i + 1)] = ODQAL[:, i] / conv
 				ts[name + '_OSQAL1' + str(i + 1)] = OSQAL1[:, i]
 				ts[name + '_OSQAL2' + str(i + 1)] = OSQAL2[:, i]
 				ts[name + '_OSQAL3' + str(i + 1)] = OSQAL3[:, i]
