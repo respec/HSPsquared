@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 from numba import jit
 import datetime
+from dateutil.relativedelta import relativedelta
 
 # look up attributes NAME, data type (Integer; Real; String) and data length by attribute number
 attrinfo = {1:('TSTYPE','S',4),     2:('STAID','S',16),    11:('DAREA','R',1),
@@ -100,15 +101,15 @@ def readWDM(wdmfile, hdffile, jupyterlab=True):
                     dattr[name] = ''.join([itostr(iarray[k]) for k in range(ptr, ptr + length//4)]).strip()
 
             # Get timeseries timebase data
-            records = []
+            groups = [] #renaming to groups to be consistent with WDM documentation
             for i in range(pdat+1, pdatv-1):
                 a = iarray[index+i]
                 if a != 0:
-                    records.append(splitposition(a))
-            if len(records) == 0:
+                    groups.append(splitposition(a))
+            if len(groups) == 0:
                 continue   # WDM preallocation, but nothing saved here yet
 
-            srec, soffset = records[0]
+            srec, soffset = groups[0]
             start = splitdate(iarray[srec*512 + soffset])
 
             sprec, spoffset = splitposition(frepos)
@@ -118,18 +119,24 @@ def readWDM(wdmfile, hdffile, jupyterlab=True):
             tgroup = dattr['TGROUP']
             tstep  = dattr['TSSTEP']
             tcode  = dattr['TCODE']
-            cindex = pd.date_range(start=start, periods=len(records)+1, freq=freq[tgroup])
+
+            #PRT - this code was done to preallocate a numpy array, however WDM file can contain timeseries with irregular timesteps
+            #so calculating a single steps and preallocating a nparray will lead to issues. 
+            cindex = pd.date_range(start=start, periods=len(groups)+1, freq=freq[tgroup])
             tindex = pd.date_range(start=start, end=cindex[-1], freq=str(tstep) + freq[tcode])
             counts = np.diff(np.searchsorted(tindex, cindex))
 
             ## Get timeseries data
-            floats = np.zeros(sum(counts),  dtype=np.float32)
-            findex = 0
-            for (rec,offset),count in zip(records, counts):
-                findex = getfloats(iarray, farray, floats, findex, rec, offset, count, finalindex, tcode, tstep)
+            #floats = np.zeros(sum(counts),  dtype=np.float32)
+            #findex = 0
+            #for (rec,offset),count in zip(groups, counts):
+                #findex = getfloats(iarray, farray, floats, findex, rec, offset, count, finalindex, tcode, tstep)
+            
+            #replaced with group/block processing approach
+            dates, values = process_groups(iarray, farray, groups, finalindex, counts)
 
             ## Write to HDF5 file
-            series = pd.Series(floats[:findex], index=tindex[:findex])
+            series = pd.Series(values, index=dates)
             dsname = f'TIMESERIES/TS{dsn:03d}'
             # series.to_hdf(store, dsname, complib='blosc', complevel=9)
             if jupyterlab:
@@ -138,7 +145,7 @@ def readWDM(wdmfile, hdffile, jupyterlab=True):
                 series.to_hdf(store, dsname, format='t', data_columns=True)  # show the columns in HDFView
 
             data = [str(tindex[0]), str(tindex[-1]), str(tstep) + freq[tcode],
-             len(series),  dattr['TSTYPE'], dattr['TFILL']]
+            len(series),  dattr['TSTYPE'], dattr['TFILL']]
             columns = ['Start', 'Stop', 'Freq','Length', 'TSTYPE', 'TFILL']
             # search = ['STAID', 'STNAM', 'SCENARIO', 'CONSTITUENT','LOCATION']
             for x in columns_to_add:
@@ -187,6 +194,84 @@ def leap_year(y):
         return True
     else:
         return False
+
+def process_groups(iarray, farray, groups, finalindex, counts):
+    record, offset = groups[0]
+
+    group_indices = [r * 512 + o for r, o in groups]
+    pscbkr = iarray[record * 512 + 2] #should always be 0 for first record in timeseries
+    pscfwr = iarray[record * 512 + 3] #should be 0 for last record in timeseries    
+
+    #PRT - I like Bob's preallocation approach because it will be much much faster than appending and expanding a list each time
+    #but we'll overshot the array size with irregular timeseries so we need to track array index and drop the extra at the end
+    array_index = 0
+
+    #TODO - PRT - logic to determined count is off 
+    counts = counts * 2
+    date_array = np.zeros(sum(counts),  dtype='M8[us]')
+    value_array = np.zeros(sum(counts),  dtype=np.float32)
+
+    index = record * 512 + offset
+    while index < finalindex:
+        
+        #If end of record we need to move to next in chain. End of record is index 511 (512 in fortran)
+        if index % 512 == 0:
+            index = (pscfwr - 1) * 512 + 4
+            record = pscfwr
+            pscbkr = iarray[(record - 1) * 512 + 2] #should always be 0 for first record in timeseries
+            pscfwr = iarray[(record - 1) * 512 + 3] #should be 0 for last record in timeseries
+        #check if index is start of new group
+        elif index in group_indices:
+            current_date = splitdate(iarray[index])
+            index += 1
+        #process record
+        else:
+            #read block control word
+            x = iarray[index]  # block control word or maybe date word at start of group
+            nval = x >> 16
+            ltstep = int(x >> 10 & 0x3f) #relative_delta doesn't handle numpy.32bitInt correctly so convert to python
+            ltcode = int(x >> 7 & 0x7)
+            comp = x >> 5 & 0x3
+            qual  = x & 0x1f
+            
+            #compressed - only has single value which applies to full range
+            if comp == 1:
+                #TODO -  verfiy we do not need support for code 7 or 100YRS? this is in freq but not the programmers documentation
+                for i in range(0, nval, 1):
+                    current_date = current_date + relativedelta(
+                        years= ltstep if ltcode == 6 else 0, #if need to support 100yrs modify this line
+                        month= ltstep if ltcode == 5 else 0,
+                        days= ltstep if ltcode == 4 else 0,
+                        hours= ltstep if ltcode == 3 else 0,
+                        minutes= ltstep if ltcode == 2 else 0,
+                        seconds= ltstep if ltcode == 1 else 0
+                        )
+                    date_array[array_index + i] = current_date
+                    value_array[array_index + i] = farray[index + 1]
+                array_index += nval
+                index += 2
+            #not compressed - read nval from floats (number of values)
+            else:
+                for i in range(0, nval, 1):
+                    current_date = current_date + relativedelta(
+                        years= ltstep if ltcode == 6 else 0, #if need to support 100yrs modify this line
+                        month= ltstep if ltcode == 5 else 0,
+                        days= ltstep if ltcode == 4 else 0,
+                        hours= ltstep if ltcode == 3 else 0,
+                        minutes= ltstep if ltcode == 2 else 0,
+                        seconds= ltstep if ltcode == 1 else 0
+                        )
+                    date_array[array_index + i] = current_date
+                    value_array[array_index + i] = farray[index + 1 + i]
+                array_index += nval
+                index += 1 + nval
+    
+    date_array = date_array[0:array_index]
+    value_array = value_array[0:array_index]
+                
+    #df = pd.DataFrame({'date':date_array, 'values':value_array})
+    #df.to_csv(R'C:\users\ptomasula\desktop\debugging.csv')
+    return date_array, value_array
 
 def getfloats(iarray, farray, floats, findex, rec, offset, count, finalindex, tcode, tstep):
     index = rec * 512 + offset + 1
