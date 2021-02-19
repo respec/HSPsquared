@@ -58,7 +58,7 @@ def gqual(store, siminfo, uci, ts):
 	HRFG = ts['HRFG']
 
 	# NGQ3 = NGQUAL * 3
-	ddqal = zeros((9, ngqual+1))
+	ddqal = zeros((8, ngqual+1))
 
 	for index in range(1, ngqual+1):
 
@@ -103,7 +103,7 @@ def gqual(store, siminfo, uci, ts):
 		# get incoming flow of constituent or zeros;
 		if ('GQUAL' + str(index) + '_IDQAL') not in ts:
 			ts['GQUAL' + str(index) + '_IDQAL'] = zeros(simlen)
-		IDQAL = ts['GQUAL' + str(index) + '_IDQAL'] * conv * 43560 * VOL
+		IDQAL = ts['GQUAL' + str(index) + '_IDQAL'] 
 
 		# process flags for this constituent
 
@@ -186,6 +186,8 @@ def gqual(store, siminfo, uci, ts):
 			biocon = ui_parms['BIOCON'] * delt60 / 24.0  # convert rate from /day to /ivl
 			thbio  = ui_parms['THBIO']
 			biop   = ui_parms['BIO']
+			ts['BIO'] = zeros(simlen)
+			ts['BIO'].fill(biop)
 			# specifies source of biomass data using GQPM2(7,I)
 			if gqpm2[7] == 1 or gqpm2[7] == 3:
 				# BIOM = # from ts, monthly, constant
@@ -260,12 +262,14 @@ def gqual(store, siminfo, uci, ts):
 			RSED4 = ts['RSED4']   # sediment storages - bed sand
 			RSED5 = ts['RSED5']   # sediment storages - bed silt
 			RSED6 = ts['RSED6']   # sediment storages - bed clay
-			rsed[1] = RSED1[0] / 2.83E-08
-			rsed[2] = RSED2[0] / 2.83E-08
-			rsed[3] = RSED3[0] / 2.83E-08
-			rsed[4] = RSED4[0] / 2.83E-08
-			rsed[5] = RSED5[0] / 2.83E-08
-			rsed[6] = RSED6[0] / 2.83E-08
+
+			rsed1 = RSED1[0]
+			rsed2 = RSED2[0]
+			rsed3 = RSED3[0]
+			if 'SSED1' in ui:
+				rsed1 = ui['SSED1']
+				rsed2 = ui['SSED2']
+				rsed3 = ui['SSED3']
 
 			if UUNITS == 1:
 				rsed[1] = RSED1[0] / 3.121E-08
@@ -282,9 +286,9 @@ def gqual(store, siminfo, uci, ts):
 				rsed[5] = RSED5[0] / 2.83E-08
 				rsed[6] = RSED6[0] / 2.83E-08
 
-			rsqal1 = sqal[1] * rsed[1]
-			rsqal2 = sqal[2] * rsed[2]
-			rsqal3 = sqal[3] * rsed[3]
+			rsqal1 = sqal[1] * rsed1 * svol
+			rsqal2 = sqal[2] * rsed2 * svol
+			rsqal3 = sqal[3] * rsed3 * svol
 			rsqal4 = rsqal1 + rsqal2 + rsqal3
 			rsqal5 = sqal[4] * rsed[4]
 			rsqal6 = sqal[5] * rsed[5]
@@ -658,7 +662,6 @@ def gqual(store, siminfo, uci, ts):
 		DDQAL5 = ts[name + '_DDQAL5'] = zeros(simlen)
 		DDQAL6 = ts[name + '_DDQAL6'] = zeros(simlen)
 		DDQAL7 = ts[name + '_DDQAL7'] = zeros(simlen)
-		DDQAL8 = ts[name + '_DDQAL8'] = zeros(simlen)
 		DQAL   = ts[name + '_DQAL'] = zeros(simlen)
 		DSQAL1 = ts[name + '_DSQAL1'] = zeros(simlen)
 		DSQAL2 = ts[name + '_DSQAL2'] = zeros(simlen)
@@ -879,17 +882,6 @@ def gqual(store, siminfo, uci, ts):
 			rosqal1 = 0.0
 			rosqal2 = 0.0
 			rosqal3 = 0.0
-			rsqal1 = 0.0
-			rsqal2 = 0.0
-			rsqal3 = 0.0
-			rsqal4 = 0.0
-			rsqal5 = 0.0
-			rsqal6 = 0.0
-			rsqal7 = 0.0
-			rsqal8 = 0.0
-			rsqal9 = 0.0
-			rsqal10 = 0.0
-			rsqal11 = 0.0
 			sqdec1 = 0.0
 			sqdec2 = 0.0
 			sqdec3 = 0.0
@@ -1044,7 +1036,6 @@ def gqual(store, siminfo, uci, ts):
 			DDQAL5[loop] = ddqal[5, index] / conv
 			DDQAL6[loop] = ddqal[6, index] / conv
 			DDQAL7[loop] = ddqal[7, index] / conv
-			DDQAL8[loop] = ddqal[8, index] / conv
 			DQAL[loop]   = dqal
 			DSQAL1[loop] = dsqal1
 			DSQAL2[loop] = dsqal2
@@ -1097,7 +1088,7 @@ def gqual(store, siminfo, uci, ts):
 
 		if nexits > 1:
 			for i in range(nexits):
-				ts[name + '_ODQAL' + str(i + 1)] = ODQAL[:, i] / conv
+				ts[name + '_ODQAL' + str(i + 1)] = ODQAL[:, i]
 				ts[name + '_OSQAL1' + str(i + 1)] = OSQAL1[:, i]
 				ts[name + '_OSQAL2' + str(i + 1)] = OSQAL2[:, i]
 				ts[name + '_OSQAL3' + str(i + 1)] = OSQAL3[:, i]
@@ -1257,7 +1248,7 @@ def ddecay (qalfg,tw20,ka,kb,kn,thhyd,phval,kox,thox,roc,fact2,fact1,photpm,kore
 
 	# bio,biopm(2),cfgas,ddqal(7),delt60,dqal,fact1,fact2(18),genpm(2),hydpm(4),korea,photpm(20),phval, roc,roxpm(2),tw20,volsp
 
-	ddqal = array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+	ddqal = array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 	if dqal > 1.0e-25:     # simulate decay
 		k = array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 
@@ -1306,7 +1297,7 @@ def ddecay (qalfg,tw20,ka,kb,kn,thhyd,phval,kox,thox,roc,fact2,fact1,photpm,kore
 		# prorate among the individual decay processes- the method used
 		# for proration is linear, which is not strictly correct, but
 		# should be a good approximation under most conditions
-		for i in range(1, 6):
+		for i in range(1, 7):
 			if k7 > 0.0:
 				ddqal[i] = k[i] / k7  * ddqal[7]
 			else:
