@@ -103,7 +103,16 @@ def gqual(store, siminfo, uci, ts):
 		# get incoming flow of constituent or zeros;
 		if ('GQUAL' + str(index) + '_IDQAL') not in ts:
 			ts['GQUAL' + str(index) + '_IDQAL'] = zeros(simlen)
-		IDQAL = ts['GQUAL' + str(index) + '_IDQAL'] 
+		IDQAL = ts['GQUAL' + str(index) + '_IDQAL']
+		if ('GQUAL' + str(index) + '_ISQAL1') not in ts:
+			ts['GQUAL' + str(index) + '_ISQAL1'] = zeros(simlen)
+		ISQAL1 = ts['GQUAL' + str(index) + '_ISQAL1']
+		if ('GQUAL' + str(index) + '_ISQAL2') not in ts:
+			ts['GQUAL' + str(index) + '_ISQAL2'] = zeros(simlen)
+		ISQAL2 = ts['GQUAL' + str(index) + '_ISQAL2']
+		if ('GQUAL' + str(index) + '_ISQAL3') not in ts:
+			ts['GQUAL' + str(index) + '_ISQAL3'] = zeros(simlen)
+		ISQAL3 = ts['GQUAL' + str(index) + '_ISQAL3']
 
 		# process flags for this constituent
 
@@ -623,15 +632,7 @@ def gqual(store, siminfo, uci, ts):
 		if 'BIO' not in ts:
 			ts['BIO'] = zeros(simlen)
 		BIO    = ts['BIO']
-		if 'ISQAL1' not in ts:
-			ts['ISQAL1'] = zeros(simlen)
-		ISQAL1 = ts['ISQAL1']
-		if 'ISQAL2' not in ts:
-			ts['ISQAL2'] = zeros(simlen)
-		ISQAL2 = ts['ISQAL2']
-		if 'ISQAL3' not in ts:
-			ts['ISQAL3'] = zeros(simlen)
-		ISQAL3 = ts['ISQAL3']
+
 		DEPSCR1 = ts['DEPSCR1']
 		DEPSCR2 = ts['DEPSCR2']
 		DEPSCR3 = ts['DEPSCR3']
@@ -639,9 +640,28 @@ def gqual(store, siminfo, uci, ts):
 		ROSED2 = ts['ROSED2']
 		ROSED3 = ts['ROSED3']
 
-		OSED1 = zeros((simlen, nexits))
-		OSED2 = zeros((simlen, nexits))
-		OSED3 = zeros((simlen, nexits))
+		# OSED1 = zeros((simlen, nexits))
+		# OSED2 = zeros((simlen, nexits))
+		# OSED3 = zeros((simlen, nexits))
+		OSED1 = []
+		OSED2 = []
+		OSED3 = []
+		for timeindex in range(simlen):
+			tarray1 = []
+			tarray2 = []
+			tarray3 = []
+			if nexits > 1:
+				for index in range(nexits):
+					tarray1.append(ts['OSED1' + str(index + 1)][timeindex])
+					tarray2.append(ts['OSED2' + str(index + 1)][timeindex])
+					tarray3.append(ts['OSED3' + str(index + 1)][timeindex])
+			else:
+				tarray1.append(ts['ROSED1'][timeindex])
+				tarray2.append(ts['ROSED2'][timeindex])
+				tarray3.append(ts['ROSED3'][timeindex])
+			OSED1.append(tarray1)
+			OSED2.append(tarray2)
+			OSED3.append(tarray3)
 
 		# this number is used to adjust reaction rates for temperature
 		# TW20 = TW - 20.0
@@ -739,7 +759,7 @@ def gqual(store, siminfo, uci, ts):
 
 			# tw20 may be required for bed decay of qual even if tw is undefined (due to vol=0.0)
 			tw   = TW[loop]
-			tw = (tw - 32.0) * 5.0 / 9.0
+			tw = (tw - 32.0) * 0.5555   # 5.0 / 9.0
 			tw20 = tw - 20.0           # TW20[loop]
 			if tw <= -10.0:
 				tw20 = 0.0
@@ -758,9 +778,12 @@ def gqual(store, siminfo, uci, ts):
 				rosed1 = ROSED1[loop] / 3.121E-08
 				rosed2 = ROSED2[loop] / 3.121E-08
 				rosed3 = ROSED3[loop] / 3.121E-08
-				osed1 = OSED1[loop] / 3.121E-08
-				osed2 = OSED2[loop] / 3.121E-08
-				osed3 = OSED3[loop] / 3.121E-08
+				osed1 = OSED1[loop]
+				osed2 = OSED2[loop]
+				osed3 = OSED3[loop]
+				osed1 = [x / 3.121E-08 for x in osed1]
+				osed2 = [x / 3.121E-08 for x in osed2]
+				osed3 = [x / 3.121E-08 for x in osed3]
 			else:
 				depscr1 = DEPSCR1[loop] / 2.83E-08
 				depscr2 = DEPSCR2[loop] / 2.83E-08
@@ -768,9 +791,12 @@ def gqual(store, siminfo, uci, ts):
 				rosed1 = ROSED1[loop] / 2.83E-08
 				rosed2 = ROSED2[loop] / 2.83E-08
 				rosed3 = ROSED3[loop] / 2.83E-08
-				osed1 = OSED1[loop] / 2.83E-08
-				osed2 = OSED2[loop] / 2.83E-08
-				osed3 = OSED3[loop] / 2.83E-08
+				osed1 = OSED1[loop]
+				osed2 = OSED2[loop]
+				osed3 = OSED3[loop]
+				osed1 = [x / 2.83E-08 for x in osed1]
+				osed2 = [x / 2.83E-08 for x in osed2]
+				osed3 = [x / 2.83E-08 for x in osed3]
 			isqal1 = ISQAL1[loop]
 			isqal2 = ISQAL2[loop]
 			isqal3 = ISQAL3[loop]
@@ -910,7 +936,7 @@ def gqual(store, siminfo, uci, ts):
 				# DEPSCR(J),ROSED(J),OSED(1,J),NEXITS,RCHNO, MESSU,MSGFL,DATIM, GQID(1,I),J,RSQAL(J,I),RSQAL(J + 4,I),GQECNT(1),
 				# SQAL(J,I),SQAL(J + 3,I),DSQAL(J,I),ROSQAL(J,I),OSQAL(1,J,I))
 
-				iqal4   = isqal4 + isqal1
+				isqal4   = isqal4 + isqal1
 				dsqal4  = dsqal4 + dsqal1
 				rosqal4 = rosqal4 + rosqal1
 				if nexits > 1:
@@ -927,7 +953,7 @@ def gqual(store, siminfo, uci, ts):
 				# 	RSQAL(J + 4, I), GQECNT(1),
 				# 	SQAL(J, I), SQAL(J + 3, I), DSQAL(J, I), ROSQAL(J, I), OSQAL(1, J, I))
 
-				iqal4 = isqal4 + isqal2
+				isqal4 = isqal4 + isqal2
 				dsqal4 = dsqal4 + dsqal2
 				rosqal4 = rosqal4 + rosqal2
 				if nexits > 1:
@@ -944,7 +970,7 @@ def gqual(store, siminfo, uci, ts):
 				# 	RSQAL(J + 4, I), GQECNT(1),
 				# 	SQAL(J, I), SQAL(J + 3, I), DSQAL(J, I), ROSQAL(J, I), OSQAL(1, J, I))
 
-				iqal4 = isqal4 + isqal3
+				isqal4 = isqal4 + isqal3
 				dsqal4 = dsqal4 + dsqal3
 				rosqal4 = rosqal4 + rosqal3
 				if nexits > 1:
@@ -972,7 +998,7 @@ def gqual(store, siminfo, uci, ts):
 				# SQAL((4),I), SQDEC((4),I)) = ADECAY(ADDCPM(3,I),TW20,RSED(4),SQAL((4),I),SQDEC((4),I))
 
 				# get total decay
-				sqdec7 = sqdec1 + sqdec2 + sqdec3 + sqdec4 + sqdec4 + sqdec4
+				sqdec7 = sqdec1 + sqdec2 + sqdec3 + sqdec4 + sqdec5 + sqdec6
 
 				if avdepe > 0.17:  # simulate exchange due to adsorption and desorption
 					dqal, sqal, adqal = adsdes(vol, rsed, adpm1, adpm2, adpm3, tw20, dqal, sqal)
@@ -1022,13 +1048,13 @@ def gqual(store, siminfo, uci, ts):
 
 			svol = vol  # svol is volume at start of time step, update for next time thru
 
-			ADQAL1[loop] = adqal[1] 			# put values for this time step back into TS
-			ADQAL2[loop] = adqal[2]
-			ADQAL3[loop] = adqal[3]
-			ADQAL4[loop] = adqal[4]
-			ADQAL5[loop] = adqal[5]
-			ADQAL6[loop] = adqal[6]
-			ADQAL7[loop] = adqal[7]
+			ADQAL1[loop] = adqal[1] / conv		# put values for this time step back into TS
+			ADQAL2[loop] = adqal[2] / conv
+			ADQAL3[loop] = adqal[3] / conv
+			ADQAL4[loop] = adqal[4] / conv
+			ADQAL5[loop] = adqal[5] / conv
+			ADQAL6[loop] = adqal[6] / conv
+			ADQAL7[loop] = adqal[7] / conv
 			DDQAL1[loop] = ddqal[1,index] / conv
 			DDQAL2[loop] = ddqal[2, index] / conv
 			DDQAL3[loop] = ddqal[3, index] / conv
@@ -1037,10 +1063,10 @@ def gqual(store, siminfo, uci, ts):
 			DDQAL6[loop] = ddqal[6, index] / conv
 			DDQAL7[loop] = ddqal[7, index] / conv
 			DQAL[loop]   = dqal
-			DSQAL1[loop] = dsqal1
-			DSQAL2[loop] = dsqal2
-			DSQAL3[loop] = dsqal3
-			DSQAL4[loop] = dsqal4
+			DSQAL1[loop] = dsqal1 / conv
+			DSQAL2[loop] = dsqal2 / conv
+			DSQAL3[loop] = dsqal3 / conv
+			DSQAL4[loop] = dsqal4 / conv
 			GQADDR[loop] = gqaddr
 			GQADEP[loop] = gqadep
 			GQADWT[loop] = gqadwt
@@ -1057,31 +1083,31 @@ def gqual(store, siminfo, uci, ts):
 			ROSQAL3[loop]= rosqal3
 			ROSQAL4[loop]= rosqal4
 			RRQAL[loop]  = rrqal / conv
-			RSQAL1[loop] = rsqal1
-			RSQAL2[loop] = rsqal2
-			RSQAL3[loop] = rsqal3
-			RSQAL4[loop] = rsqal4
-			RSQAL5[loop] = rsqal5
-			RSQAL6[loop] = rsqal6
-			RSQAL7[loop] = rsqal7
-			RSQAL8[loop] = rsqal8
-			RSQAL9[loop] = rsqal9
-			RSQAL10[loop]= rsqal10
-			RSQAL11[loop]= rsqal11
-			RSQAL12[loop]= rsqal12
+			RSQAL1[loop] = rsqal1 / conv
+			RSQAL2[loop] = rsqal2 / conv
+			RSQAL3[loop] = rsqal3 / conv
+			RSQAL4[loop] = rsqal4 / conv
+			RSQAL5[loop] = rsqal5 / conv
+			RSQAL6[loop] = rsqal6 / conv
+			RSQAL7[loop] = rsqal7 / conv
+			RSQAL8[loop] = rsqal8 / conv
+			RSQAL9[loop] = rsqal9 / conv
+			RSQAL10[loop]= rsqal10 / conv
+			RSQAL11[loop]= rsqal11 / conv
+			RSQAL12[loop]= rsqal12 / conv
 			SQAL1[loop]  = sqal[1]
 			SQAL2[loop]  = sqal[2]
 			SQAL3[loop]  = sqal[3]
 			SQAL4[loop]  = sqal[4]
 			SQAL5[loop]  = sqal[5]
 			SQAL6[loop]  = sqal[6]
-			SQDEC1[loop] = sqdec1
-			SQDEC2[loop] = sqdec2
-			SQDEC3[loop] = sqdec3
-			SQDEC4[loop] = sqdec4
-			SQDEC5[loop] = sqdec5
-			SQDEC6[loop] = sqdec6
-			SQDEC7[loop] = sqdec7
+			SQDEC1[loop] = sqdec1 / conv
+			SQDEC2[loop] = sqdec2 / conv
+			SQDEC3[loop] = sqdec3 / conv
+			SQDEC4[loop] = sqdec4 / conv
+			SQDEC5[loop] = sqdec5 / conv
+			SQDEC6[loop] = sqdec6 / conv
+			SQDEC7[loop] = sqdec7 / conv
 			TIQAL[loop]  = tiqal
 			TOSQAL[loop] = tosqal
 			TROQAL[loop] = troqal / conv
@@ -1139,7 +1165,7 @@ def adsdes(vol,rsed,adpm1,adpm2,adpm3,tw20,dqal,sqal):
 		# first find the new dissolved conc.
 		num   = vol	* dqal
 		denom = vol
-		for j in range(1, 6):
+		for j in range(1, 7):
 			if rsed[j] > 0.0:  # this sediment class is present-evaluate terms due to it
 				# transfer rate, corrected for water temp
 				akj  = adpm2[j] * adpm3[j]**tw20
@@ -1158,7 +1184,7 @@ def adsdes(vol,rsed,adpm1,adpm2,adpm3,tw20,dqal,sqal):
 
 		# calculate new conc on each sed class and the corresponding adsorption/desorption flux
 		adqal[7] = 0.0
-		for j in range(1, 6):
+		for j in range(1, 7):
 			if rsed[j] > 0.0:	# this sediment class is present-calculate data pertaining to it
 				# new concentration
 				temp = cainv[j] + dqal * ainv[j]
