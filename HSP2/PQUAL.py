@@ -68,6 +68,7 @@ def pqual(store, siminfo, uci, ts):
 		# update UI values for this constituent here!
 		ui_flags = uci['PQUAL' + str(index) + '_FLAGS']
 		ui_parms = uci['PQUAL' + str(index) + '_PARAMETERS']
+		name = 'IQUAL' + str(index)  # arbitrary identification
 
 		qualid = ui_flags['QUALID']
 		qtyid  = ui_flags['QTYID']
@@ -80,35 +81,35 @@ def pqual(store, siminfo, uci, ts):
 		wsfac = 2.30 / wsqop
 
 		# preallocate output arrays (always needed)
-		SQO    = ts[constituent + '/SQO']    = zeros(simlen)
+		SQO    = ts[name + '_SQO']    = zeros(simlen)
 
 		# preallocate output arrays (QUALSD)
-		SOQSP = ts[constituent + '/SOQSP'] = zeros(simlen)
+		SOQSP = ts[name + '_SOQSP'] = zeros(simlen)
 
 		# preallocate output arrays (QUALOF)
-		SOQOC = ts[constituent + '/SOQOC'] = zeros(simlen)
-		SOQC = ts[constituent + '/SOQC'] = zeros(simlen)
-		IOQC = ts[constituent + '/IOQC'] = zeros(simlen)
-		AOQC = ts[constituent + '/AOQC'] = zeros(simlen)
-		POQC = ts[constituent + '/POQC'] = zeros(simlen)
+		SOQOC = ts[name + '_SOQOC'] = zeros(simlen)
+		SOQC = ts[name + '_SOQC'] = zeros(simlen)
+		IOQC = ts[name + '_IOQC'] = zeros(simlen)
+		AOQC = ts[name + '_AOQC'] = zeros(simlen)
+		POQC = ts[name + '_POQC'] = zeros(simlen)
 
-		WASHQS = ts[constituent + '/WASHQS'] = zeros(simlen)
-		SCRQS  = ts[constituent + '/SCRQS'] = zeros(simlen)
-		SOQS   = ts[constituent + '/SOQS'] = zeros(simlen)
-		SOQO   = ts[constituent + '/SOQO'] = zeros(simlen)
-		SOQS   = ts[constituent + '/SOQS']   = zeros(simlen)
-		SOQUAL = ts[constituent + '/SOQUAL'] = zeros(simlen)
-		IOQUAL = ts[constituent + '/IOQUAL'] = zeros(simlen)
-		AOQUAL = ts[constituent + '/AOQUAL'] = zeros(simlen)
-		POQUAL = ts[constituent + '/POQUAL'] = zeros(simlen)
+		WASHQS = ts[name + '_WASHQS'] = zeros(simlen)
+		SCRQS  = ts[name + '_SCRQS'] = zeros(simlen)
+		SOQS   = ts[name + '_SOQS'] = zeros(simlen)
+		SOQO   = ts[name + '_SOQO'] = zeros(simlen)
+		SOQS   = ts[name + '_SOQS']   = zeros(simlen)
+		SOQUAL = ts[name + '_SOQUAL'] = zeros(simlen)
+		IOQUAL = ts[name + '_IOQUAL'] = zeros(simlen)
+		AOQUAL = ts[name + '_AOQUAL'] = zeros(simlen)
+		POQUAL = ts[name + '_POQUAL'] = zeros(simlen)
 
 		# preallocate output arrays for atmospheric deposition
-		PQADDR = ts[constituent + '/PQADDR'] = zeros(simlen)
-		PQADWT = ts[constituent + '/PQADWT'] = zeros(simlen)
-		PQADEP = ts[constituent + '/PQADEP'] = zeros(simlen)
+		PQADDR = ts[name + '_PQADDR'] = zeros(simlen)
+		PQADWT = ts[name + '_PQADWT'] = zeros(simlen)
+		PQADEP = ts[name + '_PQADEP'] = zeros(simlen)
 
-		SLIQO = ts[constituent + '/SLIQO'] = zeros(simlen)  # lateral inflow
-		INFLOW = ts[constituent + '/INFLOW'] = zeros(simlen)  # total inflow
+		SLIQO = ts[name + '_SLIQO'] = zeros(simlen)  # lateral inflow
+		INFLOW = ts[name + '_INFLOW'] = zeros(simlen)  # total inflow
 
 		for name in ['SLIQSP', 'ILIQC', 'ALIQC']:
 			if name not in ts:

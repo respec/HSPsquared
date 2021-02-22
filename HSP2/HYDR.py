@@ -554,3 +554,22 @@ def auxil(volumeFT, depthFT, sareaFT, indx, vol, length, stcor, AUX1FG, errors):
     stage = dep + stcor    # stage calculation and output, manual eq (37)
 
     return dep, stage, sarea, avdep, twid, hrad
+
+def expand_HYDR_masslinks(flags, uci, dat, recs):
+    if flags['HYDR']:
+        # IVOL
+        rec = {}
+        rec['MFACTOR'] = dat.MFACTOR
+        rec['SGRPN'] = 'HYDR'
+        if dat.SGRPN == "ROFLOW":
+            rec['SMEMN'] = 'ROVOL'
+        else:
+            rec['SMEMN'] = 'OVOL'
+        rec['SMEMSB1'] = dat.SMEMSB1
+        rec['SMEMSB2'] = dat.SMEMSB2
+        rec['TMEMN'] = 'IVOL'
+        rec['TMEMSB1'] = dat.TMEMSB1
+        rec['TMEMSB2'] = dat.TMEMSB2
+        rec['SVOL'] = dat.SVOL
+        recs.append(rec)
+    return recs
