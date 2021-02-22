@@ -133,7 +133,7 @@ def readWDM(wdmfile, hdffile, jupyterlab=True):
                 #findex = getfloats(iarray, farray, floats, findex, rec, offset, count, finalindex, tcode, tstep)
             
             #replaced with group/block processing approach
-            dates, values = process_groups(iarray, farray, groups, finalindex, counts)
+            dates, values = process_groups(iarray, farray, groups, finalindex)
 
             ## Write to HDF5 file
             series = pd.Series(values, index=dates)
@@ -195,21 +195,23 @@ def leap_year(y):
     else:
         return False
 
-def process_groups(iarray, farray, groups, finalindex, counts):
+def process_groups(iarray, farray, groups, finalindex, array_chunk_size=100000000):
+        
     record, offset = groups[0]
 
     group_indices = [r * 512 + o for r, o in groups]
     pscbkr = iarray[record * 512 + 2] #should always be 0 for first record in timeseries
     pscfwr = iarray[record * 512 + 3] #should be 0 for last record in timeseries    
 
-    #PRT - I like Bob's preallocation approach because it will be much much faster than appending and expanding a list each time
-    #but we'll overshot the array size with irregular timeseries so we need to track array index and drop the extra at the end
-    array_index = 0
 
-    #TODO - PRT - logic to determined count is off 
-    counts = counts * 2
-    date_array = np.zeros(sum(counts),  dtype='M8[us]')
-    value_array = np.zeros(sum(counts),  dtype=np.float32)
+    #preallocating an array to write values to should have faster read times because it prevent extent the array
+    #each time we read a block, however with irregular timesteps there is no way to know exact how big the array 
+    #to hold the entire timeseries until you read the whole timeseries. So the solution I came up with was to 
+    #preallocate chuck and then check concatanate a new chunk if the array + new data will overflow the current array.
+    #default chunk size = 1MB
+    array_index = 0
+    date_array = np.zeros(array_chunk_size, dtype='M8[us]')
+    value_array = np.zeros(array_chunk_size, dtype=np.float32)
 
     index = record * 512 + offset
     while index < finalindex:
@@ -234,6 +236,11 @@ def process_groups(iarray, farray, groups, finalindex, counts):
             comp = x >> 5 & 0x3
             qual  = x & 0x1f
             
+            #check if next block will exceed array size and allocate additional chunk if needed 
+            if nval + array_index >= value_array.shape[0]:
+                date_array = np.concatenate((date_array, np.zeros(array_chunk_size, dtype='M8[us]')))
+                value_array = np.concatenate((value_array, np.zeros(array_chunk_size, dtype=np.float32)))
+
             #compressed - only has single value which applies to full range
             if comp == 1:
                 #TODO -  verfiy we do not need support for code 7 or 100YRS? this is in freq but not the programmers documentation
