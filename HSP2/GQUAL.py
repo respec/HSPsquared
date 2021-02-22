@@ -5,7 +5,7 @@ License: LGPL2
 
 from numpy import array, zeros
 from math import exp
-from HSP2.utilities import initm, make_numba_dict
+from HSP2.utilities import initm, make_numba_dict, hoursval
 from HSP2.ADCALC import advect, oxrea
 
 ERRMSG = []
@@ -35,19 +35,27 @@ def gqual(store, siminfo, uci, ts):
 	sdfg   = 2
 	phytfg = 2
 	lat    = 0
-	if 'PARAMETERS' in uci:
-		ui = uci['PARAMETERS']
-		if 'NGQUAL' in ui:
-			ngqual = ui['NGQUAL']
-			tempfg = ui['TEMPFG']
-			phflag = ui['PHFLAG']
-			roxfg  = ui['ROXFG']
-			cldfg  = ui['CLDFG']
-			sdfg   = ui['SDFG']
-			phytfg = ui['PHYTFG']
-			lat    = ui['LAT']
+
+	ui = uci['PARAMETERS']
+	if 'NGQUAL' in ui:
+		ngqual = ui['NGQUAL']
+		tempfg = ui['TEMPFG']
+		phflag = ui['PHFLAG']
+		roxfg  = ui['ROXFG']
+		cldfg  = ui['CLDFG']
+		sdfg   = ui['SDFG']
+		phytfg = ui['PHYTFG']
+		lat    = ui['LAT']
 	lkfg = 0
 	ecnt = 0
+
+	len_ = 0.0
+	delth= 0.0
+	if 'LEN' in ui:
+		len_  = ui["LEN"] * 5280.0  # mi to feet
+		delth = ui["DELTH"]
+	ts['HRFG'] = hour24Flag(siminfo).astype(float)
+	HRFG = ts['HRFG']
 
 	# NGQ3 = NGQUAL * 3
 	ddqal = zeros((8, ngqual+1))
@@ -95,7 +103,7 @@ def gqual(store, siminfo, uci, ts):
 		# get incoming flow of constituent or zeros;
 		if ('GQUAL' + str(index) + '_IDQAL') not in ts:
 			ts['GQUAL' + str(index) + '_IDQAL'] = zeros(simlen)
-		IDQAL = ts['GQUAL' + str(index) + '_IDQAL'] * conv * 43560 * VOL
+		IDQAL = ts['GQUAL' + str(index) + '_IDQAL'] 
 
 		# process flags for this constituent
 
@@ -178,6 +186,8 @@ def gqual(store, siminfo, uci, ts):
 			biocon = ui_parms['BIOCON'] * delt60 / 24.0  # convert rate from /day to /ivl
 			thbio  = ui_parms['THBIO']
 			biop   = ui_parms['BIO']
+			ts['BIO'] = zeros(simlen)
+			ts['BIO'].fill(biop)
 			# specifies source of biomass data using GQPM2(7,I)
 			if gqpm2[7] == 1 or gqpm2[7] == 3:
 				# BIOM = # from ts, monthly, constant
@@ -252,16 +262,33 @@ def gqual(store, siminfo, uci, ts):
 			RSED4 = ts['RSED4']   # sediment storages - bed sand
 			RSED5 = ts['RSED5']   # sediment storages - bed silt
 			RSED6 = ts['RSED6']   # sediment storages - bed clay
-			rsed[1] = RSED1[0]
-			rsed[2] = RSED2[0]
-			rsed[3] = RSED3[0]
-			rsed[4] = RSED4[0]
-			rsed[5] = RSED5[0]
-			rsed[6] = RSED6[0]
 
-			rsqal1 = sqal[1] * rsed[1]
-			rsqal2 = sqal[2] * rsed[2]
-			rsqal3 = sqal[3] * rsed[3]
+			rsed1 = RSED1[0]
+			rsed2 = RSED2[0]
+			rsed3 = RSED3[0]
+			if 'SSED1' in ui:
+				rsed1 = ui['SSED1']
+				rsed2 = ui['SSED2']
+				rsed3 = ui['SSED3']
+
+			if UUNITS == 1:
+				rsed[1] = RSED1[0] / 3.121E-08
+				rsed[2] = RSED2[0] / 3.121E-08
+				rsed[3] = RSED3[0] / 3.121E-08
+				rsed[4] = RSED4[0] / 3.121E-08
+				rsed[5] = RSED5[0] / 3.121E-08
+				rsed[6] = RSED6[0] / 3.121E-08
+			else:
+				rsed[1] = RSED1[0] / 2.83E-08
+				rsed[2] = RSED2[0] / 2.83E-08
+				rsed[3] = RSED3[0] / 2.83E-08
+				rsed[4] = RSED4[0] / 2.83E-08
+				rsed[5] = RSED5[0] / 2.83E-08
+				rsed[6] = RSED6[0] / 2.83E-08
+
+			rsqal1 = sqal[1] * rsed1 * svol
+			rsqal2 = sqal[2] * rsed2 * svol
+			rsqal3 = sqal[3] * rsed3 * svol
 			rsqal4 = rsqal1 + rsqal2 + rsqal3
 			rsqal5 = sqal[4] * rsed[4]
 			rsqal6 = sqal[5] * rsed[5]
@@ -477,8 +504,6 @@ def gqual(store, siminfo, uci, ts):
 			# END IF
 
 		reamfg = 0
-		len_   = 0.0
-		delth  = 0.0
 		cforea = 0.0
 		tcginv = 0.0
 		reak   = 0.0
@@ -507,13 +532,13 @@ def gqual(store, siminfo, uci, ts):
 				cforea = 1.0
 				if 'CFOREA' in ui_parms:
 					cforea = ui_parms["CFOREA"]
+				if 'CFOREA' in ui:
+					cforea = ui["CFOREA"]
 			else:
 				if reamfg == 1:
 					# tsivoglou method - table-type ox-tsivoglou
 					reakt  = ui_parms["REAKT"]
 					tcginv = ui_parms["TCGINV"]
-					len_ = ui_parms["LEN"]
-					delth = ui_parms["DELTH"]
 				elif reamfg == 2:
 					# owen/churchill/o'connor-dobbins  # table-type ox-tcginv
 					tcginv = 1.047
@@ -583,10 +608,13 @@ def gqual(store, siminfo, uci, ts):
 		PHVAL = ts['PHVAL']
 		TW    = ts['TW']
 		ROC   = ts['ROC']
-		SDCNC = ts['SDCNC']    # constant, monthly, ts; SDFG, note: interpolate to daily value only
-		PHYTO = ts['PHY']      # constant, monthly, ts; PHYTFG, note: interpolate to daily value only
-		CLD   = ts['CLD']      # constant, monthly, ts['CLOUD']
-		WIND  = ts['WIND']
+		if 'SDCNC' in ts:
+			SDCNC = ts['SDCNC']    # constant, monthly, ts; SDFG, note: interpolate to daily value only
+		if 'PHY' in ts:
+			PHYTO = ts['PHY']      # constant, monthly, ts; PHYTFG, note: interpolate to daily value only
+		if 'CLD' in ts:
+			CLD   = ts['CLD']      # constant, monthly, ts['CLOUD']
+		WIND  = ts['WIND'] * 1609.0 # miles to meters
 		AVVEL = ts['AVVEL']
 		PREC  = ts['PREC']
 		SAREA = ts['SAREA']
@@ -616,20 +644,103 @@ def gqual(store, siminfo, uci, ts):
 		OSED3 = zeros((simlen, nexits))
 
 		# this number is used to adjust reaction rates for temperature
-		TW20 = TW - 20.0
+		# TW20 = TW - 20.0
 
 		name = 'GQUAL' + str(index)  # arbitrary identification
 		# preallocate output arrays (always needed)
+		ADQAL1 = ts[name + '_ADQAL1'] = zeros(simlen)
+		ADQAL2 = ts[name + '_ADQAL2'] = zeros(simlen)
+		ADQAL3 = ts[name + '_ADQAL3'] = zeros(simlen)
+		ADQAL4 = ts[name + '_ADQAL4'] = zeros(simlen)
+		ADQAL5 = ts[name + '_ADQAL5'] = zeros(simlen)
+		ADQAL6 = ts[name + '_ADQAL6'] = zeros(simlen)
+		ADQAL7 = ts[name + '_ADQAL7'] = zeros(simlen)
+		DDQAL1 = ts[name + '_DDQAL1'] = zeros(simlen)
+		DDQAL2 = ts[name + '_DDQAL2'] = zeros(simlen)
+		DDQAL3 = ts[name + '_DDQAL3'] = zeros(simlen)
+		DDQAL4 = ts[name + '_DDQAL4'] = zeros(simlen)
+		DDQAL5 = ts[name + '_DDQAL5'] = zeros(simlen)
+		DDQAL6 = ts[name + '_DDQAL6'] = zeros(simlen)
+		DDQAL7 = ts[name + '_DDQAL7'] = zeros(simlen)
+		DQAL   = ts[name + '_DQAL'] = zeros(simlen)
+		DSQAL1 = ts[name + '_DSQAL1'] = zeros(simlen)
+		DSQAL2 = ts[name + '_DSQAL2'] = zeros(simlen)
+		DSQAL3 = ts[name + '_DSQAL3'] = zeros(simlen)
+		DSQAL4 = ts[name + '_DSQAL4'] = zeros(simlen)
+		GQADDR = ts[name + '_GQADDR'] = zeros(simlen)
+		GQADEP = ts[name + '_GQADEP'] = zeros(simlen)
+		GQADWT = ts[name + '_GQADWT'] = zeros(simlen)
+		ISQAL4 = ts[name + '_ISQAL4'] = zeros(simlen)
+		PDQAL  = ts[name + '_PDQAL'] = zeros(simlen)
+		RDQAL  = ts[name + '_RDQAL'] = zeros(simlen)
+		RODQAL = ts[name + '_RODQAL'] = zeros(simlen)
+		ROSQAL1= ts[name + '_ROSQAL1'] = zeros(simlen)
+		ROSQAL2= ts[name + '_ROSQAL2'] = zeros(simlen)
+		ROSQAL3= ts[name + '_ROSQAL3'] = zeros(simlen)
+		ROSQAL4= ts[name + '_ROSQAL4'] = zeros(simlen)
+		RRQAL  = ts[name + '_RRQAL'] = zeros(simlen)
+		RSQAL1 = ts[name + '_RSQAL1'] = zeros(simlen)
+		RSQAL2 = ts[name + '_RSQAL2'] = zeros(simlen)
+		RSQAL3 = ts[name + '_RSQAL3'] = zeros(simlen)
+		RSQAL4 = ts[name + '_RSQAL4'] = zeros(simlen)
+		RSQAL5 = ts[name + '_RSQAL5'] = zeros(simlen)
+		RSQAL6 = ts[name + '_RSQAL6'] = zeros(simlen)
+		RSQAL7 = ts[name + '_RSQAL7'] = zeros(simlen)
+		RSQAL8 = ts[name + '_RSQAL8'] = zeros(simlen)
+		RSQAL9 = ts[name + '_RSQAL9'] = zeros(simlen)
+		RSQAL10= ts[name + '_RSQAL10'] = zeros(simlen)
+		RSQAL11= ts[name + '_RSQAL11'] = zeros(simlen)
+		RSQAL12= ts[name + '_RSQAL12'] = zeros(simlen)
+		SQAL1  = ts[name + '_SQAL1'] = zeros(simlen)
+		SQAL2  = ts[name + '_SQAL2'] = zeros(simlen)
+		SQAL3  = ts[name + '_SQAL3'] = zeros(simlen)
+		SQAL4  = ts[name + '_SQAL4'] = zeros(simlen)
+		SQAL5  = ts[name + '_SQAL5'] = zeros(simlen)
+		SQAL6  = ts[name + '_SQAL6'] = zeros(simlen)
+		SQDEC1 = ts[name + '_SQDEC1'] = zeros(simlen)
+		SQDEC2 = ts[name + '_SQDEC2'] = zeros(simlen)
+		SQDEC3 = ts[name + '_SQDEC3'] = zeros(simlen)
+		SQDEC4 = ts[name + '_SQDEC4'] = zeros(simlen)
+		SQDEC5 = ts[name + '_SQDEC5'] = zeros(simlen)
+		SQDEC6 = ts[name + '_SQDEC6'] = zeros(simlen)
+		SQDEC7 = ts[name + '_SQDEC7'] = zeros(simlen)
+		TIQAL  = ts[name + '_TIQAL'] = zeros(simlen)
 		TROQAL = ts[name + '_TROQAL'] = zeros(simlen)
 		TOQAL  = zeros((simlen, nexits))
+		ODQAL  = zeros((simlen, nexits))
+		OSQAL1 = zeros((simlen, nexits))
+		OSQAL2 = zeros((simlen, nexits))
+		OSQAL3 = zeros((simlen, nexits))
 		TOSQAL = zeros((simlen, nexits))
+
+		if nexits > 1:
+			u = uci['SAVE']
+			key1 = name + '_ODQAL'
+			for i in range(nexits):
+				u[f'{key1}{i + 1}'] = u['ODQAL']
+			del u['ODQAL']
+			key1 = name + '_OSQAL1'
+			for i in range(nexits):
+				u[f'{key1}{i + 1}'] = u['OSQAL']
+			key1 = name + '_OSQAL2'
+			for i in range(nexits):
+				u[f'{key1}{i + 1}'] = u['OSQAL']
+			key1 = name + '_OSQAL3'
+			for i in range(nexits):
+				u[f'{key1}{i + 1}'] = u['OSQAL']
+			del u['OSQAL']
+			key1 = name + '_TOSQAL'
+			for i in range(nexits):
+				u[f'{key1}{i + 1}'] = u['TOSQAL']
+			del u['TOSQAL']
 
 		for loop in range(simlen):
 			# within time loop
 
 			# tw20 may be required for bed decay of qual even if tw is undefined (due to vol=0.0)
 			tw   = TW[loop]
-			tw20 = TW20[loop]
+			tw = (tw - 32.0) * 5.0 / 9.0
+			tw20 = tw - 20.0           # TW20[loop]
 			if tw <= -10.0:
 				tw20 = 0.0
 			# correct unrealistically high values of tw calculated in htrch
@@ -640,18 +751,29 @@ def gqual(store, siminfo, uci, ts):
 			vol  = VOL[loop] * 43560
 			toqal = TOQAL[loop]
 			tosqal = TOSQAL[loop]
-			depscr1 = DEPSCR1[loop]
-			depscr2 = DEPSCR2[loop]
-			depscr3 = DEPSCR3[loop]
-			rosed1 = ROSED1[loop]
-			rosed2 = ROSED2[loop]
-			rosed3 = ROSED3[loop]
+			if UUNITS == 1:
+				depscr1 = DEPSCR1[loop] / 3.121E-08
+				depscr2 = DEPSCR2[loop] / 3.121E-08
+				depscr3 = DEPSCR3[loop] / 3.121E-08
+				rosed1 = ROSED1[loop] / 3.121E-08
+				rosed2 = ROSED2[loop] / 3.121E-08
+				rosed3 = ROSED3[loop] / 3.121E-08
+				osed1 = OSED1[loop] / 3.121E-08
+				osed2 = OSED2[loop] / 3.121E-08
+				osed3 = OSED3[loop] / 3.121E-08
+			else:
+				depscr1 = DEPSCR1[loop] / 2.83E-08
+				depscr2 = DEPSCR2[loop] / 2.83E-08
+				depscr3 = DEPSCR3[loop] / 2.83E-08
+				rosed1 = ROSED1[loop] / 2.83E-08
+				rosed2 = ROSED2[loop] / 2.83E-08
+				rosed3 = ROSED3[loop] / 2.83E-08
+				osed1 = OSED1[loop] / 2.83E-08
+				osed2 = OSED2[loop] / 2.83E-08
+				osed3 = OSED3[loop] / 2.83E-08
 			isqal1 = ISQAL1[loop]
 			isqal2 = ISQAL2[loop]
 			isqal3 = ISQAL3[loop]
-			osed1 = OSED1[loop]
-			osed2 = OSED2[loop]
-			osed3 = OSED3[loop]
 
 			if UUNITS == 2:  # uci is in metric units
 				avdepm = AVDEP[loop]
@@ -718,17 +840,15 @@ def gqual(store, siminfo, uci, ts):
 			eovol = EOVOL[loop, :]
 			dqal, rodqal, odqal = advect(indqal, dqal, nexits, svol, vol, srovol, erovol, sovol, eovol)
 
-			svol = vol  # svol is volume at start of time step, update for next time thru
-
 			bio = biop
 			if qalfg[5] > 0:
 				# get biomass input, if required (for degradation)
 				bio = BIO[loop]
 
 			if avdepe > 0.17:   #  simulate decay of dissolved material
-				hr = 1  # will need to find a way to get the hour value
+				hr = HRFG[loop]
 				ddqal[:,index] = ddecay(qalfg, tw20, ka, kb, kn, thhyd, phval,kox,thox, roc, fact2, fact1, photpm, korea, cfgas,
-					 			biocon, thbio, bio, fstdec, thfst, svol, dqal, hr, delt60)
+					 			biocon, thbio, bio, fstdec, thfst, vol, dqal, hr, delt60)
 				# ddqal[1,index] = DDECAY(QALFG(1,I),TW20,HYDPM(1,I),PHVAL,ROXPM(1,I),ROC,FACT2(1),FACT1,PHOTPM(1,I),KOREA,CFGAS(I),
 				# 						BIOPM(1,I),BIO(I),GENPM(1,I),VOLSP,DQAL(I),HR,DELT60,DDQAL(1,I))
 
@@ -741,7 +861,8 @@ def gqual(store, siminfo, uci, ts):
 
 				# update the concentration to account for decay and for input
 				# from decay of "parents"- units are conc/l
-				dqal = dqal + (pdqal - ddqal[7,index])/svol
+				if vol > 0:
+					dqal = dqal + (pdqal - ddqal[7,index])/vol
 			else:
 				# rchres depth is less than two inches - dissolved decay is not considered
 				for l in range(1, 7):
@@ -749,12 +870,31 @@ def gqual(store, siminfo, uci, ts):
 				# 320      CONTINUE
 				pdqal = 0.0
 
-			if qalfg[7] == 1:   # this constituent is associated with sediment
-				# zero the accumulators
-				isqal4  = 0.0
-				dsqal4  = 0.0
-				rosqal4 = 0.0
+			adqal = zeros(8)
+			dsqal1 = 0.0
+			dsqal2 = 0.0
+			dsqal3 = 0.0
+			dsqal4 = 0.0
+			osqal1 = 0.0
+			osqal2 = 0.0
+			osqal3 = 0.0
+			osqal4 = 0.0
+			rosqal1 = 0.0
+			rosqal2 = 0.0
+			rosqal3 = 0.0
+			sqdec1 = 0.0
+			sqdec2 = 0.0
+			sqdec3 = 0.0
+			sqdec4 = 0.0
+			sqdec5 = 0.0
+			sqdec6 = 0.0
+			sqdec7 = 0.0
+			# zero the accumulators
+			isqal4 = 0.0
+			dsqal4 = 0.0
+			rosqal4 = 0.0
 
+			if qalfg[7] == 1:   # this constituent is associated with sediment
 				if nexits > 1:
 					for n in range(1, nexits):
 						tosqal[n] = 0.0
@@ -765,7 +905,7 @@ def gqual(store, siminfo, uci, ts):
 				# sand
 				# advect this material, including calculation of deposition and scour
 				ecnt, sqal[1], sqal[4], dsqal1, rosqal1, osqal1 = advqal(isqal1, rsed[1], rsed[4], depscr1, rosed1, osed1,
-																	 nexits, rsqal1, rsqal4, ecnt)
+																	 nexits, rsqal1, rsqal5, ecnt)
 				# GQECNT(1),SQAL(J,I),SQAL(J + 3,I),DSQAL(J,I), ROSQAL(J,I),OSQAL(1,J,I)) = ADVQAL (ISQAL(J,I),RSED(J),RSED(J + 3),\
 				# DEPSCR(J),ROSED(J),OSED(1,J),NEXITS,RCHNO, MESSU,MSGFL,DATIM, GQID(1,I),J,RSQAL(J,I),RSQAL(J + 4,I),GQECNT(1),
 				# SQAL(J,I),SQAL(J + 3,I),DSQAL(J,I),ROSQAL(J,I),OSQAL(1,J,I))
@@ -780,7 +920,7 @@ def gqual(store, siminfo, uci, ts):
 				# silt
 				# advect this material, including calculation of deposition and scour
 				ecnt, sqal[2], sqal[5], dsqal2, rosqal2, osqal2 = advqal(isqal2, rsed[2], rsed[5], depscr2, rosed2, osed2,
-																	 nexits, rsqal2, rsqal5, ecnt)
+																	 nexits, rsqal2, rsqal6, ecnt)
 				# GQECNT(1), SQAL(J, I), SQAL(J + 3, I), DSQAL(J, I), ROSQAL(J, I), OSQAL(1, J, I)) = ADVQAL(
 				# 	ISQAL(J, I), RSED(J), RSED(J + 3), \
 				# 	DEPSCR(J), ROSED(J), OSED(1, J), NEXITS, RCHNO, MESSU, MSGFL, DATIM, GQID(1, I), J, RSQAL(J, I),
@@ -797,7 +937,7 @@ def gqual(store, siminfo, uci, ts):
 				# clay
 				# advect this material, including calculation of deposition and scour
 				ecnt, sqal[3], sqal[6], dsqal3, rosqal3, osqal3 = advqal(isqal3, rsed[3], rsed[6], depscr3, rosed3, osed3,
-																	 nexits, rsqal3, rsqal6, ecnt)
+																	 nexits, rsqal3, rsqal7, ecnt)
 				# GQECNT(1), SQAL(J, I), SQAL(J + 3, I), DSQAL(J, I), ROSQAL(J, I), OSQAL(1, J, I)) = ADVQAL(
 				# 	ISQAL(J, I), RSED(J), RSED(J + 3), \
 				# 	DEPSCR(J), ROSED(J), OSED(1, J), NEXITS, RCHNO, MESSU, MSGFL, DATIM, GQID(1, I), J, RSQAL(J, I),
@@ -835,18 +975,18 @@ def gqual(store, siminfo, uci, ts):
 				sqdec7 = sqdec1 + sqdec2 + sqdec3 + sqdec4 + sqdec4 + sqdec4
 
 				if avdepe > 0.17:  # simulate exchange due to adsorption and desorption
-					dqal, sqal, adqal1 = adsdes(svol, rsed, adpm1, adpm2, adpm3, tw20, dqal, sqal)
+					dqal, sqal, adqal = adsdes(vol, rsed, adpm1, adpm2, adpm3, tw20, dqal, sqal)
 					# DQAL(I), SQAL(1,I), ADQAL(1,I) = ADSDES(VOLSP,RSED(1),ADPM(1,1,I),TW20,DQAL(I),SQAL(1,I),ADQAL(1,I))
 				else:
 					# rchres depth is less than two inches - adsorption and
 					# desorption of qual is not considered
-					adqal1 = 0.0
-					adqal2 = 0.0
-					adqal3 = 0.0
-					adqal4 = 0.0
-					adqal5 = 0.0
-					adqal6 = 0.0
-					adqal7 = 0.0
+					adqal[1] = 0.0
+					adqal[2] = 0.0
+					adqal[3] = 0.0
+					adqal[4] = 0.0
+					adqal[5] = 0.0
+					adqal[6] = 0.0
+					adqal[7] = 0.0
 
 				# find total quantity of material on various forms of sediment
 				rsqal4 = 0.0
@@ -874,7 +1014,7 @@ def gqual(store, siminfo, uci, ts):
 						toqal[n] = odqal[n]
 
 			# find total quantity of qual in rchres
-			rdqal = dqal * svol
+			rdqal = dqal * vol
 			if qalfg[7] == 1:
 				rrqal = rdqal + rsqal12
 			else:
@@ -882,28 +1022,77 @@ def gqual(store, siminfo, uci, ts):
 
 			svol = vol  # svol is volume at start of time step, update for next time thru
 
-			# ADQAL[loop] = adqal # put values for this time step back into TS
-			# DDQAL[loop] = ddqal
-			# DQAL[loop] = dqal
-			# DSQAL[loop] = dsqal
-			# GQADDR[loop] = gqaddr
-			# GQADEP[loop] = gqadep
-			# GQADWT[loop] = gqadwt
-			# IDQAL[loop] = idqal
-			# ISQAL[loop] = isqal
-			# ODQAL[loop] = odqal
-			# OSQAL[loop] = osqal
-			# PDQAL[loop] = pdqal
-			# RDQAL[loop] = rdqal
-			# RODQAL[loop] = rodqal
-			# ROSQAL[loop] = rosqal
-			# RRQAL[loop] = rrqal
-			# RSQAL[loop] = rsqal
-			# SQAL[loop] = sqal
-			# SQDEC[loop] = sqdec
-			# TIQAL[loop] = tiqal
+			ADQAL1[loop] = adqal[1] 			# put values for this time step back into TS
+			ADQAL2[loop] = adqal[2]
+			ADQAL3[loop] = adqal[3]
+			ADQAL4[loop] = adqal[4]
+			ADQAL5[loop] = adqal[5]
+			ADQAL6[loop] = adqal[6]
+			ADQAL7[loop] = adqal[7]
+			DDQAL1[loop] = ddqal[1,index] / conv
+			DDQAL2[loop] = ddqal[2, index] / conv
+			DDQAL3[loop] = ddqal[3, index] / conv
+			DDQAL4[loop] = ddqal[4, index] / conv
+			DDQAL5[loop] = ddqal[5, index] / conv
+			DDQAL6[loop] = ddqal[6, index] / conv
+			DDQAL7[loop] = ddqal[7, index] / conv
+			DQAL[loop]   = dqal
+			DSQAL1[loop] = dsqal1
+			DSQAL2[loop] = dsqal2
+			DSQAL3[loop] = dsqal3
+			DSQAL4[loop] = dsqal4
+			GQADDR[loop] = gqaddr
+			GQADEP[loop] = gqadep
+			GQADWT[loop] = gqadwt
+			ISQAL4[loop] = isqal4
+			ODQAL[loop]  = odqal / conv
+			OSQAL1[loop] = osqal1
+			OSQAL2[loop] = osqal2
+			OSQAL3[loop] = osqal3
+			PDQAL[loop]  = pdqal
+			RDQAL[loop]  = rdqal / conv
+			RODQAL[loop] = rodqal / conv
+			ROSQAL1[loop]= rosqal1
+			ROSQAL2[loop]= rosqal2
+			ROSQAL3[loop]= rosqal3
+			ROSQAL4[loop]= rosqal4
+			RRQAL[loop]  = rrqal / conv
+			RSQAL1[loop] = rsqal1
+			RSQAL2[loop] = rsqal2
+			RSQAL3[loop] = rsqal3
+			RSQAL4[loop] = rsqal4
+			RSQAL5[loop] = rsqal5
+			RSQAL6[loop] = rsqal6
+			RSQAL7[loop] = rsqal7
+			RSQAL8[loop] = rsqal8
+			RSQAL9[loop] = rsqal9
+			RSQAL10[loop]= rsqal10
+			RSQAL11[loop]= rsqal11
+			RSQAL12[loop]= rsqal12
+			SQAL1[loop]  = sqal[1]
+			SQAL2[loop]  = sqal[2]
+			SQAL3[loop]  = sqal[3]
+			SQAL4[loop]  = sqal[4]
+			SQAL5[loop]  = sqal[5]
+			SQAL6[loop]  = sqal[6]
+			SQDEC1[loop] = sqdec1
+			SQDEC2[loop] = sqdec2
+			SQDEC3[loop] = sqdec3
+			SQDEC4[loop] = sqdec4
+			SQDEC5[loop] = sqdec5
+			SQDEC6[loop] = sqdec6
+			SQDEC7[loop] = sqdec7
+			TIQAL[loop]  = tiqal
 			TOSQAL[loop] = tosqal
-			TROQAL[loop] = troqal
+			TROQAL[loop] = troqal / conv
+
+		if nexits > 1:
+			for i in range(nexits):
+				ts[name + '_ODQAL' + str(i + 1)] = ODQAL[:, i]
+				ts[name + '_OSQAL1' + str(i + 1)] = OSQAL1[:, i]
+				ts[name + '_OSQAL2' + str(i + 1)] = OSQAL2[:, i]
+				ts[name + '_OSQAL3' + str(i + 1)] = OSQAL3[:, i]
+				ts[name + '_TOSQAL' + str(i + 1)] = TOSQAL[:, i]
 
 	return errorsV, ERRMSG
 
@@ -1040,7 +1229,7 @@ def advqal(isqal,rsed,bsed,depscr,rosed,osed,nexits,rsqals,rbqals,ecnt):
 			rbqal= dsqal + rbqals
 			bqal = rbqal / bsed
 
-	osqal = zeros(nexits+1)
+	osqal = zeros(nexits)
 	# osqal = array([0.0, 0.0, 0.0, 0.0, 0.0])
 	if nexits > 1:   # we need to compute outflow through each individual exit
 		if rosed <= 0.0:    # all zero
@@ -1108,10 +1297,96 @@ def ddecay (qalfg,tw20,ka,kb,kn,thhyd,phval,kox,thox,roc,fact2,fact1,photpm,kore
 		# prorate among the individual decay processes- the method used
 		# for proration is linear, which is not strictly correct, but
 		# should be a good approximation under most conditions
-		for i in range(1, 6):
+		for i in range(1, 7):
 			if k7 > 0.0:
 				ddqal[i] = k[i] / k7  * ddqal[7]
 			else:
 				ddqal[i] = 0.0
 
 	return ddqal
+
+def expand_GQUAL_masslinks(flags, uci, dat, recs):
+	if flags['GQUAL']:
+		ngqual = 1
+		if 'PARAMETERS' in uci:
+			ui = uci['PARAMETERS']
+			if 'NGQUAL' in ui:
+				ngqual = ui['NGQUAL']
+		for i in range(1, ngqual+1):
+			# IDQAL                            # loop for each gqual
+			rec = {}
+			rec['MFACTOR'] = dat.MFACTOR
+			rec['SGRPN'] = 'GQUAL'
+			if dat.SGRPN == "ROFLOW":
+				rec['SMEMN'] = 'RODQAL'
+				rec['SMEMSB1'] = str(i)   # first sub is qual index
+				rec['SMEMSB2'] = ''
+			else:
+				rec['SMEMN'] = 'ODQAL'
+				rec['SMEMSB1'] = str(i)       # qual index
+				rec['SMEMSB2'] = dat.SMEMSB1  # exit number
+			rec['TMEMN'] = 'IDQAL'
+			rec['TMEMSB1'] = dat.TMEMSB1
+			rec['TMEMSB2'] = dat.TMEMSB2
+			rec['SVOL'] = dat.SVOL
+			recs.append(rec)
+			# ISQAL1
+			rec = {}
+			rec['MFACTOR'] = dat.MFACTOR
+			rec['SGRPN'] = 'GQUAL'
+			if dat.SGRPN == "ROFLOW":
+				rec['SMEMN'] = 'ROSQAL'
+				rec['SMEMSB1'] = '1'     # for sand
+				rec['SMEMSB2'] = str(i)  # second sub is qual index
+			else:
+				rec['SMEMN'] = 'OSQAL'
+				rec['SMEMSB1'] = str(i)  # qual i
+				rec['SMEMSB2'] = '1' + dat.SMEMSB1 # for clay for exit number
+			rec['TMEMN'] = 'ISQAL1'
+			rec['TMEMSB1'] = dat.TMEMSB1
+			rec['TMEMSB2'] = dat.TMEMSB2
+			rec['SVOL'] = dat.SVOL
+			recs.append(rec)
+			# ISQAL2
+			rec = {}
+			rec['MFACTOR'] = dat.MFACTOR
+			rec['SGRPN'] = 'GQUAL'
+			if dat.SGRPN == "ROFLOW":
+				rec['SMEMN'] = 'ROSQAL'
+				rec['SMEMSB1'] = '2'     # for silt
+				rec['SMEMSB2'] = str(i)  # second sub is qual index
+			else:
+				rec['SMEMN'] = 'OSQAL'
+				rec['SMEMSB1'] = str(i)  # qual i
+				rec['SMEMSB2'] = '2' + dat.SMEMSB1 # for clay for exit number
+			rec['TMEMN'] = 'ISQAL2'
+			rec['TMEMSB1'] = dat.TMEMSB1
+			rec['TMEMSB2'] = dat.TMEMSB2
+			rec['SVOL'] = dat.SVOL
+			recs.append(rec)
+			# ISQAL3
+			rec = {}
+			rec['MFACTOR'] = dat.MFACTOR
+			rec['SGRPN'] = 'GQUAL'
+			if dat.SGRPN == "ROFLOW":
+				rec['SMEMN'] = 'ROSQAL'
+				rec['SMEMSB1'] = '3'     # for clay
+				rec['SMEMSB2'] = str(i)  # second sub is qual index
+			else:
+				rec['SMEMN'] = 'OSQAL'
+				rec['SMEMSB1'] = str(i)  # qual i
+				rec['SMEMSB2'] = '3' + dat.SMEMSB1 # for clay for exit number
+			rec['TMEMN'] = 'ISQAL3'
+			rec['TMEMSB1'] = dat.TMEMSB1
+			rec['TMEMSB2'] = dat.TMEMSB2
+			rec['SVOL'] = dat.SVOL
+			rec['INDEX'] = str(i)
+			recs.append(rec)
+	return recs
+
+def hour24Flag(siminfo, dofirst=False):
+    '''timeseries with hour values'''
+    hours24 = zeros(24)
+    for i in range(0,24):
+        hours24[i] = i
+    return hoursval(siminfo, hours24, dofirst)
