@@ -374,3 +374,22 @@ def htrch(store, siminfo, uci, ts):
 def vapor(tmp):
 		'''	# define vapor function based on temperature (deg c); vapor pressure is expressed in millibars'''
 		return 33.8639 * ((0.00738 * tmp + 0.8072)**8 - 0.000019 * abs(1.8 * tmp + 48.0) + 0.001316)
+
+def expand_HTRCH_masslinks(flags, uci, dat, recs):
+	if flags['HTRCH']:
+		# IHEAT
+		rec = {}
+		rec['MFACTOR'] = dat.MFACTOR
+		rec['SGRPN'] = 'HTRCH'
+		if dat.SGRPN == "ROFLOW":
+			rec['SMEMN'] = 'ROHEAT'
+		else:
+			rec['SMEMN'] = 'OHEAT'
+		rec['SMEMSB1'] = dat.SMEMSB1
+		rec['SMEMSB2'] = dat.SMEMSB2
+		rec['TMEMN'] = 'IHEAT'
+		rec['TMEMSB1'] = dat.TMEMSB1
+		rec['TMEMSB2'] = dat.TMEMSB2
+		rec['SVOL'] = dat.SVOL
+		recs.append(rec)
+	return recs

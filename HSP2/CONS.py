@@ -171,4 +171,27 @@ def loopsub(SAREA, PREC ,VOL, COADFX, COADCN, ICON, simlen, conid, CON, ROCON, O
 		COADEP[loop] = adtot
 
 	return	
-	
+
+def expand_CONS_masslinks(flags, uci, dat, recs):
+	if flags['CONS']:
+		ncons = 1
+		if 'PARAMETERS' in uci:
+			if 'NCONS' in uci['PARAMETERS']:
+				ncons = uci['PARAMETERS']['NCONS']
+		for i in range(1, ncons + 1):
+			# ICONS                        loop for each cons
+			rec = {}
+			rec['MFACTOR'] = dat.MFACTOR
+			rec['SGRPN'] = 'CONS'
+			if dat.SGRPN == "ROFLOW":
+				rec['SMEMN'] = 'ROCON'
+			else:
+				rec['SMEMN'] = 'OCON'
+			rec['SMEMSB1'] = dat.SMEMSB1  # first sub is exit number
+			rec['SMEMSB2'] = dat.SMEMSB2
+			rec['TMEMN'] = 'ICON'
+			rec['TMEMSB1'] = dat.TMEMSB1
+			rec['TMEMSB2'] = dat.TMEMSB2
+			rec['SVOL'] = dat.SVOL
+			recs.append(rec)
+	return recs
