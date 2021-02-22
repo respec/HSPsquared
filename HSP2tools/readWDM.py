@@ -217,7 +217,10 @@ def process_groups(iarray, farray, groups, finalindex, array_chunk_size=10000000
     while index < finalindex:
         
         #If end of record we need to move to next in chain. End of record is index 511 (512 in fortran)
-        if index % 512 == 0:
+        #TODO - PRT need to confirm this with Jack but I notice at least one WDM file where the a compressed block at 510-511 
+        #was then followed by another 32bit value that was not a block control word at 512. 
+        ##Perhaps there is sometype of flag in indicate we cannot fit another block so go to the next one.
+        if index % 512 == 0 or (index + 1) % 512 == 0:
             index = (pscfwr - 1) * 512 + 4
             record = pscfwr
             pscbkr = iarray[(record - 1) * 512 + 2] #should always be 0 for first record in timeseries
