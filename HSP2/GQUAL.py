@@ -3,17 +3,22 @@ Author: Robert Heaphy, Ph.D.
 License: LGPL2
 '''
 
-from numpy import array, zeros
+from numpy import array, zeros, int64
 from math import exp
-from HSP2.utilities import initm, make_numba_dict, hoursval
+from HSP2.utilities import initm, make_numba_dict, hoursval, dayval
 from HSP2.ADCALC import advect, oxrea
 
-ERRMSG = []
+ERRMSGS =('GQUAL: one or more gquals are sediment-associated, but section sedtrn not active',             #ERRMSG0
+          'GQUAL: simulation of photolysis requires aux1fg to be on to calculate average depth',          #ERRMSG1
+          'GQUAL: simulation of volatilization in a free flowing stream requires aux3fg on',              #ERRMSG2
+          'GQUAL: simulation of volatilization in a lake requires aux1fg on to calculate average depth',  #ERRMSG3
+          'GQUAL: in advqal, the value of denom is zero, and ISQAL and RSQALS should also be zero',       #ERRMSG4
+          'GQUAL: in advqal, the value of bsed is zero, and DSQAL and RBQALS should also be zero')        #ERRMSG5
 
 def gqual(store, siminfo, uci, ts):
 	''' Simulate the behavior of a generalized quality constituent'''
 
-	errorsV = zeros(len(ERRMSG), dtype=int)
+	errors = zeros(len(ERRMSGS)).astype(int64)
 	delt60 = siminfo['delt'] / 60  # delt60 - simulation time interval in hours
 	simlen = siminfo['steps']
 	delts = siminfo['delt'] * 60
@@ -46,7 +51,7 @@ def gqual(store, siminfo, uci, ts):
 		sdfg   = ui['SDFG']
 		phytfg = ui['PHYTFG']
 		lat    = ui['LAT']
-	lkfg = 0
+	lkfg = int(ui['LKFG'])
 	ecnt = 0
 
 	len_ = 0.0
@@ -309,6 +314,17 @@ def gqual(store, siminfo, uci, ts):
 			rsqal12 = rsqal9 + rsqal10 + rsqal11
 		else:
 			# qual not sediment-associated
+			rsqal1 = 0.0
+			rsqal2 = 0.0
+			rsqal3 = 0.0
+			rsqal4 = 0.0
+			rsqal5 = 0.0
+			rsqal6 = 0.0
+			rsqal7 = 0.0
+			rsqal8 = 0.0
+			rsqal9 = 0.0
+			rsqal10 = 0.0
+			rsqal11 = 0.0
 			rsqal12 = 0.0
 
 		# find total quantity of qual in the rchres
@@ -373,6 +389,7 @@ def gqual(store, siminfo, uci, ts):
 		delta = zeros(19)
 		kcld = zeros(19)
 		fact1 = 0.0
+		light = 1
 		if qalfg[3] == 1:
 			#  table-type gq-alpha
 			if 'EXTENDEDS_ALPH' in uci:
@@ -459,13 +476,15 @@ def gqual(store, siminfo, uci, ts):
 				kcld[17] = ttable['KCLD16']
 				kcld[18] = ttable['KCLD17']
 
-			ts['CLD'] = initm(siminfo, uci, cldfg, 'GQUAL' + str(index) + '_MONTHLY/CLOUD', cld)
-			ts['SDCNC'] = initm(siminfo, uci, sdfg, 'GQUAL' + str(index) + '_MONTHLY/SEDCONC', sdcnc)
-			ts['PHY'] = initm(siminfo, uci, phytfg, 'GQUAL' + str(index) + '_MONTHLY/PHYTO', phy)
+			if cldfg == 2:
+				ts['CLOUD'] = initm(siminfo, uci, cldfg, 'GQUAL' + str(index) + '_MONTHLY/CLOUD', cld)
+			if sdfg == 2:
+				ts['SSED4'] = initm(siminfo, uci, sdfg, 'GQUAL' + str(index) + '_MONTHLY/SEDCONC', sdcnc)
+			if phytfg == 2:
+				ts['PHYTO'] = initm(siminfo, uci, phytfg, 'GQUAL' + str(index) + '_MONTHLY/PHYTO', phy)
 
-			htfg = int(ui['HTFG'])
 			cfsaex = 1.0
-			if htfg == 0:
+			if 'CFSAEX' in ui:
 				cfsaex = ui['CFSAEX']
 
 			# fact1 is a pre-calculated value used in photolysis simulation
@@ -475,42 +494,7 @@ def gqual(store, siminfo, uci, ts):
 			light = (abs(int(lat)) + 5) // 10
 			if light == 0:  # no table for equation, so use 10 deg table
 				light = 1
-
-			# # read the light data- 9 values to a line,
-			# SGRP  = 50 + LIGHT
-			# INITFG= 1
-			# DO 210 L=1,4
-			# 	LIT(K,L)  # FIRST 9; index K
-			# 	LIT(K,L)  # SECOND 9; index K
-			# # 210    CONTINUE
-			#
-			# # determine which season (set) of data to start with
-			# litfg = 0
-			#
-			# # look one time-step ahead to see which "month" to use,
-			# # because we might be on a month boundary, in which case
-			# # datim will contain the earlier month
-			# idelt = delt
-			# DO 220 I=1,5
-			# 	NEWDAT(I) =DATIM(I)
-			# # 220    CONTINUE
-			#
-			# CALL ADDTIM()
-			#
-			# NEWMO = NEWDAT(2)
-			# LSET = NEWMO/3
-			# IF (LSET.EQ.0) THEN
-			# 	LSET= 4
-			# END IF
-			#
-			# # southern hemisphere is 2 seasons out of phase
-			#
-			# IF (LAT.LT.0) THEN
-			# 	LSET= LSET + 2
-			# 	IF (LSET.GT.4) THEN
-			# 		LSET= LSET - 4
-			# 	END IF
-			# END IF
+			lset_month = dayval(siminfo, [4, 4, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4])
 
 		reamfg = 0
 		cforea = 0.0
@@ -590,25 +574,22 @@ def gqual(store, siminfo, uci, ts):
 			sedfg = int(ui['SEDFG'])
 			if sedfg == 0: # section sedtrn not active
 				#ERRMSG
-				pass
+				errors[0] += 1  # ERRMSG0: one or more gquals are sediment-associated, but section sedtrn not active
 
 		hydrfg = int(ui['HYDRFG'])
 		aux1fg = int(ui['AUX1FG'])
 		aux2fg = int(ui['AUX2FG'])
 		if hydrfg == 1:  # check that required options in section hydr have been selected
 			if qalfg[3] == 1 and aux1fg == 0:
-				# ERRMSG: error-simulation of photolysis requires aux1fg to be on to calculate average depth
-				pass
+				errors[1] += 1  # ERRMSG1: simulation of photolysis requires aux1fg to be on to calculate average depth
 			if qalfg[4] == 1:
 				lkfg = int(ui['LKFG'])
 				if lkfg == 0:
 					if aux2fg == 0:
-						# ERRMSG:  error-simulation of volatilization in a free flowing stream requires aux3fg on
-						pass
+						errors[2] += 1  # ERRMSG2: simulation of volatilization in a free flowing stream requires aux3fg on
 				else:
 					if aux1fg == 0:
-						# ERRMG: error-simulation of volatilization in a lake requires aux1fg on to calculate average depth
-						pass
+						errors[3] += 1  # ERRMSG3: simulation of volatilization in a lake requires aux1fg on to calculate average depth
 
 		#####################  end PGQUAL
 
@@ -816,7 +797,22 @@ def gqual(store, siminfo, uci, ts):
 				if avdepe > 0.17:
 					# depth of water in rchres is greater than two inches -
 					# consider photolysis; this criteria will also be applied to other decay processes
-					for l in range(1, 18):
+
+					lset = lset_month[loop]
+					# southern hemisphere is 2 seasons out of phase
+					if  lat < 0:
+						lset += 2
+						if lset > 4:
+							lset -= 4
+
+					if cldfg == 1 or cldfg == 3:
+						cld = ts['CLOUD'][loop]
+					if phytfg == 1 or phytfg == 3:
+						if 'PHYTO' in ts:
+							phy = ts['PHYTO'][loop]    # not available until section plank is done
+					if sdfg == 1 or sdfg == 3:
+						sdcnc = ts['SSED4'][loop]
+					for l in range(1, 19):
 						# evaluate the light extinction exponent- 2.76*klamda*d
 						kl   = alph[l] + gamm[l] * sdcnc + delta[l] * phy
 						expnt= 2.76 * kl * avdepm * 100.0
@@ -827,9 +823,9 @@ def gqual(store, siminfo, uci, ts):
 						if expnt >= 20.0:
 							expnt = 20.
 						# evaluate the precalculated factors fact2
-						# lit is data from the seq file, just make zero for now
-						#fact2[l] = cldl * lit[l,lset] * (1.0 - exp(-expnt)) / expnt
-						fact2[l] = 0.0
+						# lit is data from the seq file
+						# fact2[l] = cldl * lit[l,lset] * (1.0 - exp(-expnt)) / expnt
+						fact2[l] = cldl * light_factor(l,lset,light) * (1.0 - exp(-expnt)) / expnt
 				else:
 					# depth of water in rchres is less than two inches -photolysis is not considered
 					pass
@@ -930,8 +926,8 @@ def gqual(store, siminfo, uci, ts):
 
 				# sand
 				# advect this material, including calculation of deposition and scour
-				ecnt, sqal[1], sqal[4], dsqal1, rosqal1, osqal1 = advqal(isqal1, rsed[1], rsed[4], depscr1, rosed1, osed1,
-																	 nexits, rsqal1, rsqal5, ecnt)
+				errors, sqal[1], sqal[4], dsqal1, rosqal1, osqal1 = advqal(isqal1, rsed[1], rsed[4], depscr1, rosed1, osed1,
+																	 nexits, rsqal1, rsqal5, errors)
 				# GQECNT(1),SQAL(J,I),SQAL(J + 3,I),DSQAL(J,I), ROSQAL(J,I),OSQAL(1,J,I)) = ADVQAL (ISQAL(J,I),RSED(J),RSED(J + 3),\
 				# DEPSCR(J),ROSED(J),OSED(1,J),NEXITS,RCHNO, MESSU,MSGFL,DATIM, GQID(1,I),J,RSQAL(J,I),RSQAL(J + 4,I),GQECNT(1),
 				# SQAL(J,I),SQAL(J + 3,I),DSQAL(J,I),ROSQAL(J,I),OSQAL(1,J,I))
@@ -945,8 +941,8 @@ def gqual(store, siminfo, uci, ts):
 
 				# silt
 				# advect this material, including calculation of deposition and scour
-				ecnt, sqal[2], sqal[5], dsqal2, rosqal2, osqal2 = advqal(isqal2, rsed[2], rsed[5], depscr2, rosed2, osed2,
-																	 nexits, rsqal2, rsqal6, ecnt)
+				errors, sqal[2], sqal[5], dsqal2, rosqal2, osqal2 = advqal(isqal2, rsed[2], rsed[5], depscr2, rosed2, osed2,
+																	 nexits, rsqal2, rsqal6, errors)
 				# GQECNT(1), SQAL(J, I), SQAL(J + 3, I), DSQAL(J, I), ROSQAL(J, I), OSQAL(1, J, I)) = ADVQAL(
 				# 	ISQAL(J, I), RSED(J), RSED(J + 3), \
 				# 	DEPSCR(J), ROSED(J), OSED(1, J), NEXITS, RCHNO, MESSU, MSGFL, DATIM, GQID(1, I), J, RSQAL(J, I),
@@ -962,8 +958,8 @@ def gqual(store, siminfo, uci, ts):
 
 				# clay
 				# advect this material, including calculation of deposition and scour
-				ecnt, sqal[3], sqal[6], dsqal3, rosqal3, osqal3 = advqal(isqal3, rsed[3], rsed[6], depscr3, rosed3, osed3,
-																	 nexits, rsqal3, rsqal7, ecnt)
+				errors, sqal[3], sqal[6], dsqal3, rosqal3, osqal3 = advqal(isqal3, rsed[3], rsed[6], depscr3, rosed3, osed3,
+																	 nexits, rsqal3, rsqal7, errors)
 				# GQECNT(1), SQAL(J, I), SQAL(J + 3, I), DSQAL(J, I), ROSQAL(J, I), OSQAL(1, J, I)) = ADVQAL(
 				# 	ISQAL(J, I), RSED(J), RSED(J + 3), \
 				# 	DEPSCR(J), ROSED(J), OSED(1, J), NEXITS, RCHNO, MESSU, MSGFL, DATIM, GQID(1, I), J, RSQAL(J, I),
@@ -1120,7 +1116,7 @@ def gqual(store, siminfo, uci, ts):
 				ts[name + '_OSQAL3' + str(i + 1)] = OSQAL3[:, i]
 				ts[name + '_TOSQAL' + str(i + 1)] = TOSQAL[:, i]
 
-	return errorsV, ERRMSG
+	return errors, ERRMSGS
 
 
 def adecay(addcpm1, addcpm2, tw20, rsed_sand, rsed_silt, rsed_clay, sqal_sand, sqal_silt, sqal_clay):
@@ -1206,7 +1202,7 @@ def adsdes(vol,rsed,adpm1,adpm2,adpm3,tw20,dqal,sqal):
 	return dqal, sqal, adqal
 
 
-def advqal(isqal,rsed,bsed,depscr,rosed,osed,nexits,rsqals,rbqals,ecnt):
+def advqal(isqal,rsed,bsed,depscr,rosed,osed,nexits,rsqals,rbqals,errors):
 
 	''' simulate the advective processes, including deposition and
 	scour for the quality constituent attached to one sediment size fraction'''
@@ -1233,7 +1229,7 @@ def advqal(isqal,rsed,bsed,depscr,rosed,osed,nexits,rsqals,rbqals,ecnt):
 			rosqal = 0.0
 			dsqal  = 0.0
 			if abs(isqal) > 0.0 or abs(rsqals) > 0.0:
-				pass # errmsg: error-under these conditions these values should be zero
+			    errors[4] += 1  # ERRMSG4: error-under these conditions these values should be zero
 		else:   # there was some suspended sediment during the interval
 			# calculate conc on suspended sed
 			sqal   = (isqal + rsqals) / denom
@@ -1249,8 +1245,7 @@ def advqal(isqal,rsed,bsed,depscr,rosed,osed,nexits,rsqals,rbqals,ecnt):
 		if bsed <= 0.0:     # no bed sediments at end of interval
 			bqal = -1.0e30
 			if abs(dsqal) > 0.0 or abs(rbqals > 0.0):
-				# errmsg:  zrerror-under this condition these values should be zero
-				pass
+				errors[4] += 1  # ERRMSG4: error-under these conditions these values should be zero
 		else:     # there is bed sediment at the end of the interval
 			rbqal= dsqal + rbqals
 			bqal = rbqal / bsed
@@ -1265,7 +1260,7 @@ def advqal(isqal,rsed,bsed,depscr,rosed,osed,nexits,rsqals,rbqals,ecnt):
 			for i in range(nexits):
 				osqal[i]= rosqal * osed[i] / rosed
 
-	return ecnt, sqal, bqal, dsqal, rosqal, osqal
+	return errors, sqal, bqal, dsqal, rosqal, osqal
 
 
 def ddecay (qalfg,tw20,ka,kb,kn,thhyd,phval,kox,thox,roc,fact2,fact1,photpm,korea,cfgas,biocon,thbio,
@@ -1292,11 +1287,11 @@ def ddecay (qalfg,tw20,ka,kb,kn,thhyd,phval,kox,thox,roc,fact2,fact1,photpm,kore
 		if qalfg[3] == 1:     # simulate photolysis
 			# go through summation over 18 wave-length intervals
 			fact3 = 0.0
-			for l in range(1, 18):
+			for l in range(1, 19):
 				fact3 = fact3 + fact2[l] * photpm[l]
 			k[3] = fact1 * photpm[19] * fact3 * photpm[20]**tw20
 		if delt60 < 24.0:
-			if 18 > hr >= 6:  # it is a daylight hour; photolysis rate is doubled for this interval
+			if 17 > hr >= 5:  # it is a daylight hour; photolysis rate is doubled for this interval
 				k[3] = 2.0 * k[3]
 			else:     # it is not a daylight hour; photolysis does not occur
 				k[3] = 0.0
@@ -1330,6 +1325,56 @@ def ddecay (qalfg,tw20,ka,kb,kn,thhyd,phval,kox,thox,roc,fact2,fact1,photpm,kore
 				ddqal[i] = 0.0
 
 	return ddqal
+
+def light_factor(l, lset, light):
+	# light factors for photolysis, in hspf read from seq file
+	vals = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]
+	if light == 1:
+		if lset == 1:
+			vals = [.0102,.0178,.0285,.0327,.0418,.0370,.339,.433,.840,1.16,1.47,1.50,2.74,2.90,2.90,2.80,2.70,3.00]
+		elif lset == 2:
+			vals = [.000466,.00316,.00937,.0190,.0291,.0265,.329,.438,.837,1.17,1.47,1.50,2.69,2.79,2.80,2.80,2.70,2.50]
+		elif lset == 3:
+			vals = [.000419,.00287,.00851,.00173,.0266,.0291,.299,.385,.764,1.07,1.36,1.37,2.46,2.52,2.60,2.60,2.50,2.30]
+		else:
+			vals = [.000320,.00239,.00726,.0151,.0238,.0236,.0292,.344,.696,.980,1.23,1.27,2.26,2.35,2.43,2.30,2.40,2.10]
+	elif light == 2:
+		if lset == 1:
+			vals = [.000351,.00251,.00809,.0181,.0282,.0283,.329,.424,.841,1.17,1.47,1.50,2.68,2.80,2.80,2.80,2.76,2.50]
+		elif lset == 2:
+			vals = [.000444,.00315,.00961,.0197,.0302,.0303,.347,.447,.883,1.23,1.55,1.58,2.81,2.96,2.90,3.00,2.80,2.70]
+		elif lset == 3:
+			vals = [.000274,.00220,.00689,.0148,.0233,.0233,.268,.345,.696,.980,1.24,1.26,2.30,2.35,2.42,2.40,2.20,2.26]
+		else:
+			vals = [.000147,.00147,.00534,.0115,.0188,.0188,.221,.286,.597,.840,1.06,1.09,1.95,2.03,2.07,2.10,2.36,1.60]
+	elif light == 3:
+		if lset == 1:
+			vals = [.000230,.00213,.00726,.0165,.0264,.0269,.320,.414,.827,1.15,1.45,1.48,2.64,2.74,2.76,2.80,2.70,2.50]
+		elif lset == 2:
+			vals = [.000365,.00232,.00902,.0192,.0302,.0304,.374,.437,.907,1.34,1.59,1.62,2.89,3.03,3.00,3.00,2.90,2.80]
+		elif lset == 3:
+			vals = [.000135,.00144,.00484,.0116,.0189,.0230,.223,.284,.623,.850,1.09,1.11,2.00,2.07,2.09,2.10,2.10,1.90]
+		else:
+			vals = [.0000410,.000650,.00276,.00755,.0131,.0134,.170,.219,.475,.669,.850,.880,1.57,1.63,1.67,1.73,1.63,1.60]
+	elif light == 4:
+		if lset == 1:
+			vals = [.000109,.00137,.00296,.00799,.0138,.0142,.178,.230,.526,.676,.890,.923,1.69,1.73,1.78,1.50,1.70,1.60]
+		elif lset == 2:
+			vals = [.000249,.00232,.00793,.0181,.0291,.0297,.354,.458,.971,1.28,1.43,1.63,2.92,3.05,3.00,3.10,2.90,2.90]
+		elif lset == 3:
+			vals = [.000109,.00137,.00535,.0138,.02319,.0239,.108,.384,.791,1.11,1.39,1.42,2.52,2.62,2.60,4.70,2.60,2.50]
+		else:
+			vals = [.0000054,.000156,.00102,.00379,.00753,.00810,.0752,.147,.338,.480,.610,.620,1.12,1.16,1.19,1.39,1.20,1.16]
+	elif light == 5:
+		if lset == 1:
+			vals = [.0000371,.000710,.00355,.00730,.00184,.0196,.266,.348,.724,1.02,1.29,1.32,2.34,2.40,2.44,2.50,2.50,2.30]
+		elif lset == 2:
+			vals = [.0000079,.00175,.00653,.0163,.0267,.0277,.343,.444,.904,1.26,1.60,1.63,2.90,3.04,3.00,3.10,2.90,2.90]
+		elif lset == 3:
+			vals = [.000152,.000225,.00129,.00439,.00864,.00920,.124,.166,.365,.517,.660,.680,1.22,1.25,1.31,1.34,1.31,1.24]
+		else:
+			vals = [.0000004,.0000157,.000178,.00120,.00293,.00368,.0629,.0821,.196,.275,.351,.355,.630,.640,.690,.710,.710,.690]
+	return vals[l-1]
 
 def expand_GQUAL_masslinks(flags, uci, dat, recs):
 	if flags['GQUAL']:
