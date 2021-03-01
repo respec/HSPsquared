@@ -10,6 +10,8 @@ import pandas as pd
 from numba import jit
 import datetime
 from dateutil.relativedelta import relativedelta
+import timeit
+
 
 # look up attributes NAME, data type (Integer; Real; String) and data length by attribute number
 attrinfo = {1:('TSTYPE','S',4),     2:('STAID','S',16),    11:('DAREA','R',1),
@@ -23,6 +25,8 @@ attrinfo = {1:('TSTYPE','S',4),     2:('STAID','S',16),    11:('DAREA','R',1),
           290:('LOCATION','S',8)}
 
 freq = {7:'100YS', 6:'YS', 5:'MS', 4:'D', 3:'H', 2:'min', 1:'S'}   # pandas date_range() frequency by TCODE, TGROUP
+
+
 
 def readWDM(wdmfile, hdffile, jupyterlab=True):
     iarray = np.fromfile(wdmfile, dtype=np.int32)
@@ -133,7 +137,8 @@ def readWDM(wdmfile, hdffile, jupyterlab=True):
                 #findex = getfloats(iarray, farray, floats, findex, rec, offset, count, finalindex, tcode, tstep)
             
             #replaced with group/block processing approach
-            dates, values = process_groups(iarray, farray, groups, finalindex)
+            #dates, values = process_groups(iarray, farray, groups, finalindex)
+            dates, values = process_groups2(iarray, farray, groups, tgroup)
 
             ## Write to HDF5 file
             series = pd.Series(values, index=dates)
@@ -210,7 +215,7 @@ def process_groups(iarray, farray, groups, finalindex, array_chunk_size=10000000
     #preallocate chuck and then check concatanate a new chunk if the array + new data will overflow the current array.
     #default chunk size = 1MB
     array_index = 0
-    date_array = np.zeros(array_chunk_size, dtype='M8[us]')
+    date_array =  np.zeros(array_chunk_size, dtype='M8[us]')
     value_array = np.zeros(array_chunk_size, dtype=np.float32)
 
     index = record * 512 + offset
@@ -282,6 +287,77 @@ def process_groups(iarray, farray, groups, finalindex, array_chunk_size=10000000
     #df = pd.DataFrame({'date':date_array, 'values':value_array})
     #df.to_csv(R'C:\users\ptomasula\desktop\debugging.csv')
     return date_array, value_array
+
+def deltaTime(ltstep, ltcode):
+    deltaT = relativedelta(
+        years= ltstep if ltcode == 6 else 0, #if need to support 100yrs modify this line
+        months= ltstep if ltcode == 5 else 0,
+        days= ltstep if ltcode == 4 else 0,
+        hours= ltstep if ltcode == 3 else 0,
+        minutes= ltstep if ltcode == 2 else 0,
+        seconds= ltstep if ltcode == 1 else 0)
+    return deltaT
+
+# HTAO - an alternative implementation of process_group:
+# 1. used lists to replace numpy matrix;
+# 2. added a loop to iterate each group and used ending date as the ending condition
+def process_groups2(iarray, farray, groups, tgroup):
+
+    date_array = []
+    value_array = []
+
+    for record, offset in groups:
+        index = record * 512 + offset
+        pscfwr = iarray[record * 512 + 3] #should be 0 for last record in timeseries 
+        current_date = splitdate(iarray[index])
+        lGroupEndDate = current_date + deltaTime(1, tgroup)
+        offset +=1
+        index +=1
+
+        while current_date < lGroupEndDate:
+            #read block control word
+            x = iarray[index]  # block control word or maybe date word at start of group
+            nval = x >> 16
+            ltstep = int(x >> 10 & 0x3f) #relative_delta doesn't handle numpy.32bitInt correctly so convert to python
+            ltcode = int(x >> 7 & 0x7)
+            comp = x >> 5 & 0x3
+            qual  = x & 0x1f
+            deltaT = deltaTime(ltstep, ltcode)
+            #check if next block will exceed array size and allocate additional chunk if needed 
+            #if nval + array_index >= value_array.shape[0]:
+            #    date_array = np.concatenate((date_array, np.zeros(array_chunk_size, dtype='M8[us]')))
+            #    value_array = np.concatenate((value_array, np.zeros(array_chunk_size, dtype=np.float32)))
+
+            #compressed - only has single value which applies to full range
+            if comp == 1:
+                #TODO -  verfiy we do not need support for code 7 or 100YRS? this is in freq but not the programmers documentation
+                for i in range(0, nval, 1):
+                    current_date = current_date + deltaT
+                    date_array.append(current_date)
+                    value_array.append(farray[index + 1])
+                index += 2
+                offset +=2
+            #not compressed - read nval from floats (number of values)
+            else:
+                for i in range(0, nval, 1):
+                    current_date = current_date + deltaT
+                    date_array.append(current_date)
+                    value_array.append(farray[index + 1 + i])
+                index += 1 + nval
+                offset +=1 + nval
+            
+            if offset >= 512:
+                #print("offset:", str(offset))
+                offset = 4
+                index = (pscfwr - 1) * 512 + offset
+                record = pscfwr
+                #pscbkr = iarray[(record - 1) * 512 + 2] #should always be 0 for first record in timeseries
+                pscfwr = iarray[(record - 1) * 512 + 3] #should be 0 for last record in timeseries
+
+    #df = pd.DataFrame({'date':date_array, 'values':value_array})
+    #df.to_csv(R'C:\users\ptomasula\desktop\debugging.csv')
+    return date_array, value_array
+
 
 def getfloats(iarray, farray, floats, findex, rec, offset, count, finalindex, tcode, tstep):
     index = rec * 512 + offset + 1
