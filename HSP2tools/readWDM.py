@@ -70,7 +70,7 @@ def readWDM(wdmfile, hdffile, jupyterlab=True):
                     elif atype == 'R':
                         dattr[name] = farray[ptr]
                     else:
-                        dattr[name] = ''.join([itostr(iarray[k]) for k in range(ptr, ptr + length // 4)]).strip()
+                        dattr[name] = ''.join([_inttostr(iarray[k]) for k in range(ptr, ptr + length // 4)]).strip()
                 if att not in dattr:
                     found_in_all = False
             if found_in_all:
@@ -102,21 +102,21 @@ def readWDM(wdmfile, hdffile, jupyterlab=True):
                 elif atype == 'R':
                     dattr[name] = farray[ptr]
                 else:
-                    dattr[name] = ''.join([itostr(iarray[k]) for k in range(ptr, ptr + length//4)]).strip()
+                    dattr[name] = ''.join([_inttostr(iarray[k]) for k in range(ptr, ptr + length//4)]).strip()
 
             # Get timeseries timebase data
             groups = [] #renaming to groups to be consistent with WDM documentation
             for i in range(pdat+1, pdatv-1):
                 a = iarray[index+i]
                 if a != 0:
-                    groups.append(splitposition(a))
+                    groups.append(_splitposition(a))
             if len(groups) == 0:
                 continue   # WDM preallocation, but nothing saved here yet
 
             srec, soffset = groups[0]
-            start = splitdate(iarray[srec*512 + soffset])
+            start = _splitdate(iarray[srec*512 + soffset])
 
-            sprec, spoffset = splitposition(frepos)
+            sprec, spoffset = _splitposition(frepos)
             finalindex = sprec * 512 + spoffset
 
             # calculate number of data points in each group, tindex is final index for storage
@@ -137,7 +137,7 @@ def readWDM(wdmfile, hdffile, jupyterlab=True):
                 #findex = getfloats(iarray, farray, floats, findex, rec, offset, count, finalindex, tcode, tstep)
             
             #replaced with group/block processing approach
-            dates, values = process_groups(iarray, farray, groups, tgroup)
+            dates, values = _process_groups(iarray, farray, groups, tgroup)
 
             ## Write to HDF5 file
             series = pd.Series(values, index=dates)
@@ -166,30 +166,30 @@ def readWDM(wdmfile, hdffile, jupyterlab=True):
     return dfsummary
 
 
-def todatetime(yr=1900, mo=1, dy=1, hr=0):
+def _todatetime(yr=1900, mo=1, dy=1, hr=0):
     '''takes yr,mo,dy,hr information then returns its datetime64'''
     if hr == 24:
         return datetime.datetime(yr, mo, dy, 23) + pd.Timedelta(1,'h')
     else:
         return datetime.datetime(yr, mo, dy, hr)
 
-def splitdate(x):
+def _splitdate(x):
     '''splits WDM int32 DATWRD into year, month, day, hour -> then returns its datetime64'''
-    return todatetime(x >> 14, x >> 10 & 0xF, x >> 5 & 0x1F, x & 0x1F) # args: year, month, day, hour
+    return _todatetime(x >> 14, x >> 10 & 0xF, x >> 5 & 0x1F, x & 0x1F) # args: year, month, day, hour
 
-def splitcontrol(x):
+def _splitcontrol(x):
     ''' splits int32 into (qual, compcode, units, tstep, nvalues)'''
     return(x & 0x1F, x >> 5 & 0x3, x >> 7 & 0x7, x >> 10 & 0x3F, x >> 16)
 
-def splitposition(x):
+def _splitposition(x):
     ''' splits int32 into (record, offset), converting to Pyton zero based indexing'''
     return((x>>9) - 1, (x&0x1FF) - 1)
 
-def itostr(i):
+def _inttostr(i):
     return chr(i & 0xFF) + chr(i>>8 & 0xFF) + chr(i>>16 & 0xFF) + chr(i>>24 & 0xFF)
 
 # @jit(nopython=True, cache=True)
-def leap_year(y):
+def _leap_year(y):
     if y % 400 == 0:
         return True
     if y % 100 == 0:
@@ -199,20 +199,20 @@ def leap_year(y):
     else:
         return False
 
-def deltaTime(ltstep, ltcode):
-    deltaT = relativedelta(
+def _deltatime(ltstep, ltcode):
+    deltat = relativedelta(
         years= ltstep if ltcode == 6 else 0, #if need to support 100yrs modify this line
         months= ltstep if ltcode == 5 else 0,
         days= ltstep if ltcode == 4 else 0,
         hours= ltstep if ltcode == 3 else 0,
         minutes= ltstep if ltcode == 2 else 0,
         seconds= ltstep if ltcode == 1 else 0)
-    return deltaT
+    return deltat
 
 # HTAO - an alternative implementation of process_group:
 # 1. used lists to replace numpy matrix;
 # 2. added a loop to iterate each group and used ending date as the ending condition
-def process_groups(iarray, farray, groups, tgroup):
+def _process_groups(iarray, farray, groups, tgroup):
 
     date_array = []
     value_array = []
@@ -220,8 +220,8 @@ def process_groups(iarray, farray, groups, tgroup):
     for record, offset in groups:
         index = record * 512 + offset
         pscfwr = iarray[record * 512 + 3] #should be 0 for last record in timeseries 
-        current_date = splitdate(iarray[index])
-        lGroupEndDate = current_date + deltaTime(1, tgroup)
+        current_date = _splitdate(iarray[index])
+        lGroupEndDate = current_date + _deltatime(1, tgroup)
         offset +=1
         index +=1
 
@@ -233,7 +233,7 @@ def process_groups(iarray, farray, groups, tgroup):
             ltcode = int(x >> 7 & 0x7)
             comp = x >> 5 & 0x3
             qual  = x & 0x1f
-            deltaT = deltaTime(ltstep, ltcode)
+            deltat = _deltatime(ltstep, ltcode)
             #check if next block will exceed array size and allocate additional chunk if needed 
             #if nval + array_index >= value_array.shape[0]:
             #    date_array = np.concatenate((date_array, np.zeros(array_chunk_size, dtype='M8[us]')))
@@ -243,7 +243,7 @@ def process_groups(iarray, farray, groups, tgroup):
             if comp == 1:
                 #TODO -  verfiy we do not need support for code 7 or 100YRS? this is in freq but not the programmers documentation
                 for i in range(0, nval, 1):
-                    current_date = current_date + deltaT
+                    current_date = current_date + deltat
                     date_array.append(current_date)
                     value_array.append(farray[index + 1])
                 index += 2
@@ -251,7 +251,7 @@ def process_groups(iarray, farray, groups, tgroup):
             #not compressed - read nval from floats (number of values)
             else:
                 for i in range(0, nval, 1):
-                    current_date = current_date + deltaT
+                    current_date = current_date + deltat
                     date_array.append(current_date)
                     value_array.append(farray[index + 1 + i])
                 index += 1 + nval
