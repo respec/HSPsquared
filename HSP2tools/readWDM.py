@@ -7,11 +7,10 @@ License: LGPL2
 
 import numpy as np
 import pandas as pd
-from numba import jit
+from numba import jit, njit
 import datetime
 from dateutil.relativedelta import relativedelta
 import timeit
-
 
 # look up attributes NAME, data type (Integer; Real; String) and data length by attribute number
 attrinfo = {1:('TSTYPE','S',4),     2:('STAID','S',16),    11:('DAREA','R',1),
@@ -27,14 +26,12 @@ attrinfo = {1:('TSTYPE','S',4),     2:('STAID','S',16),    11:('DAREA','R',1),
 freq = {7:'100YS', 6:'YS', 5:'MS', 4:'D', 3:'H', 2:'min', 1:'S'}   # pandas date_range() frequency by TCODE, TGROUP
 
 
-
-def readWDM(wdmfile, hdffile, jupyterlab=True):
+def readWDM(wdmfile, hdffile, compress_output=True):
     iarray = np.fromfile(wdmfile, dtype=np.int32)
     farray = np.fromfile(wdmfile, dtype=np.float32)
 
     if iarray[0] != -998:
-        print('Not a WDM file, magic number is not -990. Stopping!')
-        return
+        raise ValueError ('Provided file does not match WDM format. First int32 should be -998.')
     nrecords    = iarray[28]    # first record is File Definition Record
     ntimeseries = iarray[31]
 
@@ -43,7 +40,7 @@ def readWDM(wdmfile, hdffile, jupyterlab=True):
         if not (iarray[index]==0 and iarray[index+1]==0 and iarray[index+2]==0 and iarray[index+3]==0) and iarray[index+5]==1:
             dsnlist.append(index)
     if len(dsnlist) != ntimeseries:
-        print('PROGRAM ERROR, wrong number of DSN records found')
+        raise RuntimeError (f'Wrong number of Time Series Records found expecting:{ntimeseries} found:{len(dsnlist)}')
 
     with pd.HDFStore(hdffile) as store:
         summary = []
@@ -105,13 +102,13 @@ def readWDM(wdmfile, hdffile, jupyterlab=True):
                     dattr[name] = ''.join([_inttostr(iarray[k]) for k in range(ptr, ptr + length//4)]).strip()
 
             # Get timeseries timebase data
-            groups = [] #renaming to groups to be consistent with WDM documentation
+            groups = [] 
             for i in range(pdat+1, pdatv-1):
                 a = iarray[index+i]
                 if a != 0:
                     groups.append(_splitposition(a))
             if len(groups) == 0:
-                continue   # WDM preallocation, but nothing saved here yet
+                continue   
 
             srec, soffset = groups[0]
             start = _splitdate(iarray[srec*512 + soffset])
@@ -130,28 +127,18 @@ def readWDM(wdmfile, hdffile, jupyterlab=True):
             tindex = pd.date_range(start=start, end=cindex[-1], freq=str(tstep) + freq[tcode])
             counts = np.diff(np.searchsorted(tindex, cindex))
 
-            ## Get timeseries data
-            #floats = np.zeros(sum(counts),  dtype=np.float32)
-            #findex = 0
-            #for (rec,offset),count in zip(groups, counts):
-                #findex = getfloats(iarray, farray, floats, findex, rec, offset, count, finalindex, tcode, tstep)
-            
-            #replaced with group/block processing approach
-            dates, values = _process_groups(iarray, farray, groups, tgroup)
-
             ## Write to HDF5 file
+            dates, values = _process_groups(iarray, farray, groups, tgroup)
             series = pd.Series(values, index=dates)
             dsname = f'TIMESERIES/TS{dsn:03d}'
-            # series.to_hdf(store, dsname, complib='blosc', complevel=9)
-            if jupyterlab:
-                series.to_hdf(store, dsname, complib='blosc', complevel=9)  # This is the official version
+            if compress_output:
+                series.to_hdf(store, dsname, complib='blosc', complevel=9)  
             else:
-                series.to_hdf(store, dsname, format='t', data_columns=True)  # show the columns in HDFView
+                series.to_hdf(store, dsname, format='t', data_columns=True)
 
             data = [str(tindex[0]), str(tindex[-1]), str(tstep) + freq[tcode],
             len(series),  dattr['TSTYPE'], dattr['TFILL']]
             columns = ['Start', 'Stop', 'Freq','Length', 'TSTYPE', 'TFILL']
-            # search = ['STAID', 'STNAM', 'SCENARIO', 'CONSTITUENT','LOCATION']
             for x in columns_to_add:
                 if x in dattr:
                     data.append(dattr[x])
@@ -160,30 +147,29 @@ def readWDM(wdmfile, hdffile, jupyterlab=True):
             summary.append(data)
             summaryindx.append(dsname[11:])
 
-
         dfsummary = pd.DataFrame(summary, index=summaryindx, columns=columns)
         store.put('TIMESERIES/SUMMARY',dfsummary, format='t', data_columns=True)
     return dfsummary
 
-
 def _todatetime(yr=1900, mo=1, dy=1, hr=0):
-    '''takes yr,mo,dy,hr information then returns its datetime64'''
-    if hr == 24:
+    if hr == 24: 
         return datetime.datetime(yr, mo, dy, 23) + pd.Timedelta(1,'h')
     else:
         return datetime.datetime(yr, mo, dy, hr)
 
 def _splitdate(x):
-    '''splits WDM int32 DATWRD into year, month, day, hour -> then returns its datetime64'''
     return _todatetime(x >> 14, x >> 10 & 0xF, x >> 5 & 0x1F, x & 0x1F) # args: year, month, day, hour
 
 def _splitcontrol(x):
-    ''' splits int32 into (qual, compcode, units, tstep, nvalues)'''
-    return(x & 0x1F, x >> 5 & 0x3, x >> 7 & 0x7, x >> 10 & 0x3F, x >> 16)
+    nval = x >> 16
+    ltstep = int(x >> 10 & 0x3f) #relative_delta doesn't handle numpy.32bitInt correctly so convert to python
+    ltcode = int(x >> 7 & 0x7)
+    comp = x >> 5 & 0x3
+    qual  = x & 0x1f
+    return nval, ltstep, ltcode, comp, qual
 
 def _splitposition(x):
-    ''' splits int32 into (record, offset), converting to Pyton zero based indexing'''
-    return((x>>9) - 1, (x&0x1FF) - 1)
+    return((x>>9) - 1, (x&0x1FF) - 1) #args: record, offset
 
 def _inttostr(i):
     return chr(i & 0xFF) + chr(i>>8 & 0xFF) + chr(i>>16 & 0xFF) + chr(i>>24 & 0xFF)
@@ -209,9 +195,6 @@ def _deltatime(ltstep, ltcode):
         seconds= ltstep if ltcode == 1 else 0)
     return deltat
 
-# HTAO - an alternative implementation of process_group:
-# 1. used lists to replace numpy matrix;
-# 2. added a loop to iterate each group and used ending date as the ending condition
 def _process_groups(iarray, farray, groups, tgroup):
 
     date_array = []
@@ -226,29 +209,16 @@ def _process_groups(iarray, farray, groups, tgroup):
         index +=1
 
         while current_date < lGroupEndDate:
-            #read block control word
-            x = iarray[index]  # block control word or maybe date word at start of group
-            nval = x >> 16
-            ltstep = int(x >> 10 & 0x3f) #relative_delta doesn't handle numpy.32bitInt correctly so convert to python
-            ltcode = int(x >> 7 & 0x7)
-            comp = x >> 5 & 0x3
-            qual  = x & 0x1f
+            nval, ltstep, ltcode, comp, qual = _splitcontrol(iarray[index])  
             deltat = _deltatime(ltstep, ltcode)
-            #check if next block will exceed array size and allocate additional chunk if needed 
-            #if nval + array_index >= value_array.shape[0]:
-            #    date_array = np.concatenate((date_array, np.zeros(array_chunk_size, dtype='M8[us]')))
-            #    value_array = np.concatenate((value_array, np.zeros(array_chunk_size, dtype=np.float32)))
-
             #compressed - only has single value which applies to full range
             if comp == 1:
-                #TODO -  verfiy we do not need support for code 7 or 100YRS? this is in freq but not the programmers documentation
                 for i in range(0, nval, 1):
                     current_date = current_date + deltat
                     date_array.append(current_date)
                     value_array.append(farray[index + 1])
                 index += 2
                 offset +=2
-            #not compressed - read nval from floats (number of values)
             else:
                 for i in range(0, nval, 1):
                     current_date = current_date + deltat
@@ -258,13 +228,9 @@ def _process_groups(iarray, farray, groups, tgroup):
                 offset +=1 + nval
             
             if offset >= 512:
-                #print("offset:", str(offset))
                 offset = 4
                 index = (pscfwr - 1) * 512 + offset
                 record = pscfwr
-                #pscbkr = iarray[(record - 1) * 512 + 2] #should always be 0 for first record in timeseries
                 pscfwr = iarray[(record - 1) * 512 + 3] #should be 0 for last record in timeseries
 
-    #df = pd.DataFrame({'date':date_array, 'values':value_array})
-    #df.to_csv(R'C:\users\ptomasula\desktop\debugging.csv')
     return date_array, value_array
