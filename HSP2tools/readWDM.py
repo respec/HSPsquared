@@ -102,42 +102,39 @@ def readWDM(wdmfile, hdffile, compress_output=True):
                     dattr[name] = ''.join([_inttostr(iarray[k]) for k in range(ptr, ptr + length//4)]).strip()
 
             # Get timeseries timebase data
-            groups = [] 
+            records = [] 
+            offsets = []
             for i in range(pdat+1, pdatv-1):
                 a = iarray[index+i]
                 if a != 0:
-                    groups.append(_splitposition(a))
-            if len(groups) == 0:
+                    record, offset = _splitposition(a)
+                    records.append(record)
+                    offsets.append(offset)
+            if len(records) == 0:
                 continue   
-
-            srec, soffset = groups[0]
-            start = _splitdate(iarray[srec*512 + soffset])
-
-            sprec, spoffset = _splitposition(frepos)
-            finalindex = sprec * 512 + spoffset
 
             # calculate number of data points in each group, tindex is final index for storage
             tgroup = dattr['TGROUP']
             tstep  = dattr['TSSTEP']
             tcode  = dattr['TCODE']
 
-            #PRT - this code was done to preallocate a numpy array, however WDM file can contain timeseries with irregular timesteps
-            #so calculating a single steps and preallocating a nparray will lead to issues. 
-            cindex = pd.date_range(start=start, periods=len(groups)+1, freq=freq[tgroup])
-            tindex = pd.date_range(start=start, end=cindex[-1], freq=str(tstep) + freq[tcode])
-            counts = np.diff(np.searchsorted(tindex, cindex))
-
-            ## Write to HDF5 file
-            dates, values = _process_groups(iarray, farray, groups, tgroup)
+            records = np.asarray(records)
+            offsets = np.asarray(offsets)
+            dates, values = _process_groups(iarray, farray, records, offsets, tgroup)
             series = pd.Series(values, index=dates)
+            index = series.index.to_series()
+            series.index = index.apply(lambda x: datetime.datetime(*bits_to_date(x)))
+
             dsname = f'TIMESERIES/TS{dsn:03d}'
             if compress_output:
                 series.to_hdf(store, dsname, complib='blosc', complevel=9)  
             else:
                 series.to_hdf(store, dsname, format='t', data_columns=True)
 
-            data = [str(tindex[0]), str(tindex[-1]), str(tstep) + freq[tcode],
-            len(series),  dattr['TSTYPE'], dattr['TFILL']]
+            data = [
+                str(series.index[0]), str(series.index[-1]), str(tstep) + freq[tcode],
+                len(series),  dattr['TSTYPE'], dattr['TFILL']
+                ]
             columns = ['Start', 'Stop', 'Freq','Length', 'TSTYPE', 'TFILL']
             for x in columns_to_add:
                 if x in dattr:
@@ -151,77 +148,130 @@ def readWDM(wdmfile, hdffile, compress_output=True):
         store.put('TIMESERIES/SUMMARY',dfsummary, format='t', data_columns=True)
     return dfsummary
 
-def _todatetime(yr=1900, mo=1, dy=1, hr=0):
-    if hr == 24: 
-        return datetime.datetime(yr, mo, dy, 23) + pd.Timedelta(1,'h')
-    else:
-        return datetime.datetime(yr, mo, dy, hr)
-
+@njit 
 def _splitdate(x):
-    return _todatetime(x >> 14, x >> 10 & 0xF, x >> 5 & 0x1F, x & 0x1F) # args: year, month, day, hour
+    year = int(x >> 14)
+    month = int(x >> 10 & 0xF)
+    day = int(x >> 5 & 0x1F)
+    hour = int(x & 0x1F)
+    return correct_date(year, month, day, hour, 0,0)
 
+@njit 
 def _splitcontrol(x):
     nval = x >> 16
-    ltstep = int(x >> 10 & 0x3f) #relative_delta doesn't handle numpy.32bitInt correctly so convert to python
-    ltcode = int(x >> 7 & 0x7)
+    ltstep = x >> 10 & 0x3f 
+    ltcode = x >> 7 & 0x7
     comp = x >> 5 & 0x3
     qual  = x & 0x1f
     return nval, ltstep, ltcode, comp, qual
 
+@njit 
 def _splitposition(x):
     return((x>>9) - 1, (x&0x1FF) - 1) #args: record, offset
 
+@njit 
 def _inttostr(i):
     return chr(i & 0xFF) + chr(i>>8 & 0xFF) + chr(i>>16 & 0xFF) + chr(i>>24 & 0xFF)
 
-# @jit(nopython=True, cache=True)
-def _leap_year(y):
-    if y % 400 == 0:
+@njit 
+def bits_to_date(x):
+    year = x >> 26
+    month = x >> 22 & 0xf
+    day = x >> 17 & 0x1f
+    hour = x >> 12 & 0x1f
+    minute = x >> 6 & 0x3f
+    second = x & 0x3f
+    return year, month, day, hour, minute, second
+
+@njit 
+def date_to_bits(year, month, day, hour, minute, second):
+    x = year << 26 | month << 22 | day << 17 | hour << 12 | minute << 6 | second 
+    return x
+
+@njit 
+def increment_date(date, timecode, timestep):
+    year, month, day, hour, minute, second = bits_to_date(date)
+    
+    if timecode == 7: year += 100 * timestep
+    elif timecode == 6 : year += timestep
+    elif timecode == 5 : month += timestep
+    elif timecode == 4 : day += timestep
+    elif timecode == 3 : hour += timestep
+    elif timecode == 2 : minute += timestep
+    elif timecode == 1 : second += timestep
+
+    return correct_date(year, month, day, hour, minute, second)
+
+@njit 
+def correct_date(year, month, day, hour, minute, second):
+    while second >= 60:
+        second -= 60
+        minute += 1
+    while minute >= 60:
+        minute -= 60
+        hour += 1
+    while hour >= 24:
+        hour -= 24
+        day += 1
+    while day > _days_in_month(year, month):
+        day -= _days_in_month(year, month)
+        month += 1
+    while month > 12:
+        month -= 12
+        year += 1
+    return date_to_bits(year, month, day, hour, minute, second)
+    
+@njit 
+def _days_in_month(year, month):
+    if month > 12: month %= 12
+    
+    if month in (1,3,5,7,8,10,12):
+        return 31
+    elif month in (4,6,9,11):
+        return 30
+    elif month == 2:
+        if _is_leapyear(year): return 29
+        else: return 28
+
+@njit 
+def _is_leapyear(year):
+    if year % 400 == 0:
         return True
-    if y % 100 == 0:
+    if year % 100 == 0:
         return False
-    if y % 4 == 0:
+    if year % 4 == 0:
         return True
     else:
         return False
 
-def _deltatime(ltstep, ltcode):
-    deltat = relativedelta(
-        years= ltstep if ltcode == 6 else 0, #if need to support 100yrs modify this line
-        months= ltstep if ltcode == 5 else 0,
-        days= ltstep if ltcode == 4 else 0,
-        hours= ltstep if ltcode == 3 else 0,
-        minutes= ltstep if ltcode == 2 else 0,
-        seconds= ltstep if ltcode == 1 else 0)
-    return deltat
+@njit
+def _process_groups(iarray, farray, records, offsets, tgroup):
+    date_array = [0] #need initialize with a type for numba
+    value_array = [0.0]
 
-def _process_groups(iarray, farray, groups, tgroup):
-
-    date_array = []
-    value_array = []
-
-    for record, offset in groups:
+    for i in range(0,len(records)):
+        record = records[i]
+        offset = offsets[i]
         index = record * 512 + offset
         pscfwr = iarray[record * 512 + 3] #should be 0 for last record in timeseries 
         current_date = _splitdate(iarray[index])
-        lGroupEndDate = current_date + _deltatime(1, tgroup)
+        group_enddate = increment_date(current_date, tgroup, 1)
         offset +=1
         index +=1
 
-        while current_date < lGroupEndDate:
+        while current_date < group_enddate:
             nval, ltstep, ltcode, comp, qual = _splitcontrol(iarray[index])  
-            deltat = _deltatime(ltstep, ltcode)
             #compressed - only has single value which applies to full range
             if comp == 1:
                 for i in range(0, nval, 1):
-                    current_date = current_date + deltat
+                    current_date = increment_date(current_date, ltcode, ltstep) 
                     date_array.append(current_date)
                     value_array.append(farray[index + 1])
                 index += 2
                 offset +=2
             else:
                 for i in range(0, nval, 1):
-                    current_date = current_date + deltat
+                    current_date = increment_date(current_date, ltcode, ltstep) 
                     date_array.append(current_date)
                     value_array.append(farray[index + 1 + i])
                 index += 1 + nval
@@ -232,5 +282,8 @@ def _process_groups(iarray, farray, groups, tgroup):
                 index = (pscfwr - 1) * 512 + offset
                 record = pscfwr
                 pscfwr = iarray[(record - 1) * 512 + 3] #should be 0 for last record in timeseries
+
+    date_array = date_array[1:]
+    value_array = value_array[1:]
 
     return date_array, value_array
