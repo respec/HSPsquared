@@ -437,6 +437,7 @@ def operation(info, llines, op):
 
     history = defaultdict(list)
     lines = iter(llines)
+    gcount = 0
     for line in lines:
         tokens = line.split()
         if len(tokens) == 1:
@@ -465,7 +466,12 @@ def operation(info, llines, op):
                     for opnid in get_opnid(d.pop('OPNID'), op):
                         rows[opnid] = d
             df = DataFrame.from_dict(rows, orient='index')
-            history[dpath[op,table],dcat[op,table]].append((table,df))
+            cat = dcat[op,table]
+            if cat.startswith('GQUAL'):
+                if table == 'GQ-QALDATA':
+                    gcount += 1
+                cat = cat + str(gcount)
+            history[dpath[op,table],cat].append((table,df))
 
     if len(history['GENERAL','INFO']) > 0:
         (_,df) = history['GENERAL','INFO'][0]
@@ -552,20 +558,20 @@ def operation(info, llines, op):
                             tag = 'PARAMETERS'
                         df = fix_df(df, op, path, ddfaults, valid)
                         df.to_hdf(store, f'{op}/{path}/{cat}{count}/{tag}', data_columns=True)
-            elif cat == 'GQUAL':
+            elif cat.startswith('GQUAL'):
                 count = 0
                 for table,df in history[path,cat]:
                     if table.startswith('MON'):
                         name = rename[(op, table)]
                         df = fix_df(df, op, path, ddfaults, valid)
                         df.columns = Months
-                        df.to_hdf(store, f'{op}/{path}/{cat}{count}/MONTHLY/{name}', data_columns=True)
+                        df.to_hdf(store, f'{op}/{path}/{cat}/MONTHLY/{name}', data_columns=True)
                     else:
                         if table == 'GQ-QALDATA':
                             count += 1
                         df = concat([temp[1] for temp in history[path, cat]], axis='columns')
                         df = fix_df(df, op, path, ddfaults, valid)
-                        df.to_hdf(store, f'{op}/{path}/{cat}{count}', data_columns=True)
+                        df.to_hdf(store, f'{op}/{path}/{cat}', data_columns=True)
             else:
                 print('UCI TABLE is not understood (yet) by readUCI', op, cat)
 
