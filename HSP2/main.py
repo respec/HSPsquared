@@ -110,6 +110,11 @@ def main(hdfname, saveall=False, jupyterlab=True):
                             ui['PARAMETERS']['SSED1'] = uci[(operation, 'SEDTRN', segment)]['STATES']['SSED1']
                             ui['PARAMETERS']['SSED2'] = uci[(operation, 'SEDTRN', segment)]['STATES']['SSED2']
                             ui['PARAMETERS']['SSED3'] = uci[(operation, 'SEDTRN', segment)]['STATES']['SSED3']
+                        if flags['HTRCH']:
+                            ui['PARAMETERS']['CFSAEX'] = uci[(operation, 'HTRCH', segment)]['PARAMETERS']['CFSAEX']
+                        elif flags['PLANK']:
+                            if 'CFSAEX' in uci[(operation, 'PLANK', segment)]['PARAMETERS']:
+                                ui['PARAMETERS']['CFSAEX'] = uci[(operation, 'PLANK', segment)]['PARAMETERS']['CFSAEX']
 
                 ############ calls activity function like snow() ##############
                 errors, errmessages = function(store, siminfo, ui, ts)
