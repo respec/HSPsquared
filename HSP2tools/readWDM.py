@@ -30,6 +30,14 @@ def readWDM(wdmfile, hdffile, compress_output=True):
     iarray = np.fromfile(wdmfile, dtype=np.int32)
     farray = np.fromfile(wdmfile, dtype=np.float32)
 
+    date_epoch = np.datetime64(0,'Y')
+    dt_year = np.timedelta64(1, 'Y')
+    dt_month = np.timedelta64(1, 'M')
+    dt_day = np.timedelta64(1, 'D')
+    dt_hour = np.timedelta64(1, 'h')
+    dt_minute = np.timedelta64(1, 'm')
+    dt_second = np.timedelta64(1, 's')
+
     if iarray[0] != -998:
         raise ValueError ('Provided file does not match WDM format. First int32 should be -998.')
     nrecords    = iarray[28]    # first record is File Definition Record
@@ -124,6 +132,9 @@ def readWDM(wdmfile, hdffile, compress_output=True):
             series = pd.Series(values, index=dates)
             index = series.index.to_series()
             series.index = index.apply(lambda x: datetime.datetime(*bits_to_date(x)))
+            dates = np.array(dates)
+            dates_converted = date_convert(dates, date_epoch, dt_year, dt_month, dt_day, dt_hour, dt_minute, dt_second)
+            series = pd.Series(values, index=dates_converted)
 
             dsname = f'TIMESERIES/TS{dsn:03d}'
             if compress_output:
@@ -243,6 +254,21 @@ def _is_leapyear(year):
         return True
     else:
         return False
+
+@njit
+def date_convert(dates, date_epoch, dt_year, dt_month, dt_day, dt_hour, dt_minute, dt_second):
+    converted_dates = []
+    for x in dates:
+        year, month, day, hour, minute, second = bits_to_date(x)
+        date = date_epoch
+        date += (year - 1970) * dt_year
+        date += (month - 1) * dt_month
+        date += (day - 1) * dt_day
+        date += hour * dt_hour
+        date += minute * dt_minute
+        date += second * dt_second
+        converted_dates.append(date)
+    return converted_dates
 
 @njit
 def _process_groups(iarray, farray, records, offsets, tgroup):
