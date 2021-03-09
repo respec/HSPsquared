@@ -150,10 +150,10 @@ def readWDM(wdmfile, hdffile, compress_output=True):
 
 @njit 
 def _splitdate(x):
-    year = int(x >> 14)
-    month = int(x >> 10 & 0xF)
-    day = int(x >> 5 & 0x1F)
-    hour = int(x & 0x1F)
+    year = np.int64(x >> 14)
+    month = np.int64(x >> 10 & 0xF)
+    day = np.int64(x >> 5 & 0x1F)
+    hour = np.int64(x & 0x1F)
     return correct_date(year, month, day, hour, 0,0)
 
 @njit 
