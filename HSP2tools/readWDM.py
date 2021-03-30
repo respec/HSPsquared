@@ -287,15 +287,15 @@ def _process_groups(iarray, farray, records, offsets, tgroup):
             #compressed - only has single value which applies to full range
             if comp == 1:
                 for i in range(0, nval, 1):
-                    current_date = increment_date(current_date, ltcode, ltstep) 
                     date_array.append(current_date)
+                    current_date = increment_date(current_date, ltcode, ltstep) 
                     value_array.append(farray[index + 1])
                 index += 2
                 offset +=2
             else:
                 for i in range(0, nval, 1):
-                    current_date = increment_date(current_date, ltcode, ltstep) 
                     date_array.append(current_date)
+                    current_date = increment_date(current_date, ltcode, ltstep) 
                     value_array.append(farray[index + 1 + i])
                 index += 1 + nval
                 offset +=1 + nval
