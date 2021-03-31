@@ -1,66 +1,66 @@
-         21104045 function calls (20491556 primitive calls) in 23.661 seconds
+         14718179 function calls (14467077 primitive calls) in 19.043 seconds
 
    Ordered by: internal time
-   List reduced from 4894 to 60 due to restriction <60>
+   List reduced from 1885 to 60 due to restriction <60>
 
    ncalls  tottime  percall  cumtime  percall filename:lineno(function)
-        5    2.806    0.561    6.918    1.384 GQUAL.py:18(gqual)
-31593/31588    1.649    0.000    2.134    0.000 ffi.py:149(__call__)
-    44946    1.174    0.000    1.174    0.000 {method '_g_getattr' of 'tables.hdf5extension.AttributeSet' objects}
-        5    1.049    0.210    1.714    0.343 SEDTRN.py:13(sedtrn)
-   258685    0.822    0.000    2.828    0.000 typeddict.py:147(__getitem__)
-    18655    0.586    0.000    0.586    0.000 {method '_g_get_objinfo' of 'tables.hdf5extension.Group' objects}
-     4700    0.471    0.000    0.547    0.000 {method '_open_array' of 'tables.hdf5extension.Array' objects}
-        5    0.450    0.090    0.575    0.115 HTRCH.py:39(htrch)
-    23258    0.436    0.000    0.476    0.000 GQUAL.py:1149(adsdes)
-    23258    0.411    0.000    0.490    0.000 GQUAL.py:1266(ddecay)
-     4869    0.359    0.000    0.359    0.000 {method '_g_get_lchild_attr' of 'tables.hdf5extension.Group' objects}
-   418644    0.348    0.000    0.348    0.000 GQUAL.py:1329(light_factor)
-   284255    0.339    0.000    1.134    0.000 dispatcher.py:677(typeof_pyval)
-2346600/2346597    0.334    0.000    0.527    0.000 {built-in method builtins.isinstance}
-   258685    0.298    0.000    0.368    0.000 typeddict.py:37(_getitem)
-   219600    0.272    0.000    0.272    0.000 ADCALC.py:131(advect)
-   386955    0.270    0.000    0.270    0.000 {built-in method numpy.zeros}
-     5496    0.236    0.000    0.353    0.000 SEDTRN.py:518(colby)
-    41217    0.218    0.000    0.218    0.000 {method 'reduce' of 'numpy.ufunc' objects}
-138990/138149    0.213    0.000    0.214    0.000 {built-in method numpy.array}
-    50040    0.196    0.000    2.076    0.000 attributeset.py:295(__getattr__)
-   285626    0.195    0.000    0.798    0.000 typeof.py:25(typeof)
-   131760    0.185    0.000    0.279    0.000 GQUAL.py:1205(advqal)
-        5    0.178    0.036    0.228    0.046 CONS.py:133(loopsub)
-285755/285626    0.156    0.000    0.486    0.000 functools.py:870(wrapper)
-208087/36893    0.152    0.000    0.227    0.000 ir.py:313(_rec_list_vars)
-        2    0.147    0.073    0.903    0.451 SNOW.py:88(_snow_)
-   285755    0.146    0.000    0.263    0.000 functools.py:814(dispatch)
-        5    0.133    0.027    0.133    0.027 ADCALC.py:86(adcalc_)
-752409/703049    0.127    0.000    4.819    0.000 {built-in method builtins.getattr}
-      276    0.116    0.000    0.116    0.000 {method '_read_records' of 'tables.tableextension.Table' objects}
-9821/4549    0.108    0.000    0.641    0.000 base.py:293(__new__)
-     8992    0.105    0.000    0.108    0.000 SEDTRN.py:745(toffaleti)
-     6887    0.096    0.000    2.384    0.000 attributeset.py:205(__init__)
-   296260    0.095    0.000    0.122    0.000 weakref.py:382(__getitem__)
-    67021    0.090    0.000    0.462    0.000 file.py:391(cache_node)
-     1175    0.087    0.000    0.087    0.000 {method '_g_read_slice' of 'tables.hdf5extension.Array' objects}
-   616270    0.087    0.000    0.087    0.000 typeddict.py:131(_numba_type_)
-   308147    0.085    0.000    0.085    0.000 serialize.py:140(_numba_unpickle)
-   898066    0.084    0.000    0.084    0.000 {method 'append' of 'list' objects}
-137875/73461    0.084    0.000    0.265    0.000 {method 'format' of 'str' objects}
-   145090    0.081    0.000    0.221    0.000 event.py:227(notify)
-     1750    0.080    0.000    0.080    0.000 {method '_g_get_gchild_attr' of 'tables.hdf5extension.Group' objects}
-   352943    0.080    0.000    0.112    0.000 generic.py:10(_check)
-    38175    0.079    0.000    0.332    0.000 fromnumeric.py:70(_wrapreduction)
-    67058    0.079    0.000    0.177    0.000 file.py:378(register_node)
-    23828    0.077    0.000    0.849    0.000 typeddict.py:175(__contains__)
-      241    0.075    0.000    0.075    0.000 {method '_g_flush' of 'tables.hdf5extension.Leaf' objects}
-    67178    0.073    0.000    0.080    0.000 GQUAL.py:1122(adecay)
-    82156    0.071    0.000    0.515    0.000 attributeset.py:61(issysattrname)
-   313587    0.070    0.000    0.070    0.000 {built-in method __new__ of type object at 0x10353d808}
-      380    0.066    0.000    0.067    0.000 {method '_create_carray' of 'tables.hdf5extension.Array' objects}
-8845/4681    0.063    0.000    0.064    0.000 packer.py:144(rec)
-60165/7218    0.061    0.000    5.043    0.001 file.py:404(get_node)
-    23828    0.061    0.000    0.242    0.000 typeddict.py:169(__len__)
-    94125    0.060    0.000    0.065    0.000 group.py:838(__setattr__)
-    46516    0.056    0.000    0.060    0.000 HTRCH.py:374(vapor)
-56876/53145    0.056    0.000    0.459    0.000 {built-in method numpy.core._multiarray_umath.implement_array_function}
-      430    0.056    0.000    0.057    0.000 models.py:103(traverse_types)
-     2783    0.056    0.000    0.056    0.000 {method '_g_close' of 'tables.hdf5extension.Leaf' objects}
+        5    2.339    0.468    6.400    1.280 GQUAL.py:18(gqual)
+    46083    1.198    0.000    1.198    0.000 {method '_g_getattr' of 'tables.hdf5extension.AttributeSet' objects}
+        5    0.950    0.190    1.580    0.316 SEDTRN.py:13(sedtrn)
+    18899    0.946    0.000    0.946    0.000 {method '_g_get_objinfo' of 'tables.hdf5extension.Group' objects}
+   258685    0.848    0.000    2.396    0.000 typeddict.py:147(__getitem__)
+     4700    0.538    0.000    0.716    0.000 {method '_open_array' of 'tables.hdf5extension.Array' objects}
+     4869    0.449    0.000    0.449    0.000 {method '_g_get_lchild_attr' of 'tables.hdf5extension.Group' objects}
+    23258    0.340    0.000    0.384    0.000 GQUAL.py:1149(adsdes)
+    23258    0.336    0.000    0.403    0.000 GQUAL.py:1266(ddecay)
+   418644    0.336    0.000    0.336    0.000 GQUAL.py:1329(light_factor)
+        5    0.328    0.066    0.435    0.087 HTRCH.py:39(htrch)
+   284191    0.314    0.000    1.174    0.000 dispatcher.py:677(typeof_pyval)
+   258685    0.301    0.000    0.376    0.000 typeddict.py:37(_getitem)
+   386958    0.287    0.000    0.287    0.000 {built-in method numpy.zeros}
+      241    0.263    0.001    0.263    0.001 {method '_g_flush' of 'tables.hdf5extension.Leaf' objects}
+     5496    0.246    0.000    0.346    0.000 SEDTRN.py:518(colby)
+   219600    0.244    0.000    0.244    0.000 ADCALC.py:131(advect)
+1112555/1112552    0.219    0.000    0.325    0.000 {built-in method builtins.isinstance}
+   284201    0.218    0.000    0.836    0.000 typeof.py:25(typeof)
+    42547    0.207    0.000    0.207    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+    51177    0.207    0.000    2.122    0.000 attributeset.py:295(__getattr__)
+139245/138269    0.187    0.000    0.189    0.000 {built-in method numpy.array}
+   131760    0.170    0.000    0.269    0.000 GQUAL.py:1205(advqal)
+   284201    0.168    0.000    0.489    0.000 functools.py:870(wrapper)
+      368    0.162    0.000    0.162    0.000 {method '_g_list_group' of 'tables.hdf5extension.Group' objects}
+   284201    0.157    0.000    0.272    0.000 functools.py:814(dispatch)
+        5    0.145    0.029    0.187    0.037 CONS.py:133(loopsub)
+      276    0.142    0.001    0.142    0.001 {method '_read_records' of 'tables.tableextension.Table' objects}
+        2    0.124    0.062    0.135    0.068 SNOW.py:88(_snow_)
+     1175    0.112    0.000    0.112    0.000 {method '_g_read_slice' of 'tables.hdf5extension.Array' objects}
+9821/4549    0.110    0.000    0.657    0.000 base.py:250(__new__)
+     6969    0.107    0.000    2.448    0.000 attributeset.py:205(__init__)
+591782/542710    0.103    0.000    5.481    0.000 {built-in method builtins.getattr}
+        5    0.102    0.020    0.102    0.020 ADCALC.py:86(adcalc_)
+    68485    0.100    0.000    0.526    0.000 file.py:391(cache_node)
+     1841    0.096    0.000    0.096    0.000 {method '_g_get_gchild_attr' of 'tables.hdf5extension.Group' objects}
+   616250    0.093    0.000    0.093    0.000 typeddict.py:131(_numba_type_)
+   308147    0.091    0.000    0.091    0.000 serialize.py:140(_numba_unpickle)
+   284201    0.087    0.000    0.087    0.000 weakref.py:382(__getitem__)
+     2783    0.083    0.000    0.083    0.000 {method '_g_close' of 'tables.hdf5extension.Leaf' objects}
+     8992    0.082    0.000    0.085    0.000 SEDTRN.py:745(toffaleti)
+    23828    0.081    0.000    0.348    0.000 typeddict.py:175(__contains__)
+    39543    0.080    0.000    0.326    0.000 fromnumeric.py:70(_wrapreduction)
+    68522    0.080    0.000    0.180    0.000 file.py:378(register_node)
+      380    0.080    0.000    0.081    0.000 {method '_create_carray' of 'tables.hdf5extension.Array' objects}
+   284201    0.079    0.000    0.129    0.000 <string>:1(__new__)
+     4700    0.075    0.000    0.099    0.000 __init__.py:266(__getattr__)
+    84016    0.074    0.000    0.519    0.000 attributeset.py:61(issysattrname)
+   328425    0.073    0.000    0.103    0.000 generic.py:30(_check)
+       36    0.070    0.002    0.070    0.002 {method '_g_delete' of 'tables.hdf5extension.Node' objects}
+   764746    0.069    0.000    0.069    0.000 {method 'append' of 'list' objects}
+    67178    0.068    0.000    0.074    0.000 GQUAL.py:1122(adecay)
+     2426    0.068    0.000    0.068    0.000 {method '_g_close' of 'tables.indexesextension.IndexArray' objects}
+61574/7490    0.066    0.000    5.845    0.001 file.py:404(get_node)
+    96358    0.065    0.000    0.071    0.000 group.py:838(__setattr__)
+    23828    0.065    0.000    0.104    0.000 typeddict.py:169(__len__)
+   504387    0.061    0.000    0.061    0.000 {built-in method math.exp}
+    76149    0.059    0.000    0.059    0.000 {method 'pop' of 'tables.lrucacheextension.NodeCache' objects}
+     1470    0.056    0.000    0.075    0.000 {method '_g_setattr' of 'tables.hdf5extension.AttributeSet' objects}
+    83861    0.056    0.000    0.056    0.000 weakref.py:147(__contains__)
