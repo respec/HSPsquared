@@ -1,0 +1,2980 @@
+File(filename=/Users/aaufdenkampe/Documents/Python/limno.HSPsquared/tests/HSP2_stash2/test10_hsp2_dev_input_ALL.h5, title='', mode='r', root_uep='/', filters=Filters(complevel=0, shuffle=False, bitshuffle=False, fletcher32=False, least_significant_digit=None))
+/ (RootGroup) ''
+/CONTROL (Group) ''
+/FTABLES (Group) ''
+/IMPLND (Group) ''
+/PERLND (Group) ''
+/RCHRES (Group) ''
+/TIMESERIES (Group) ''
+/TIMESERIES/LAPSE_Table (Group) ''
+/TIMESERIES/LAPSE_Table/table (Table(24,)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "values": Float64Col(shape=(), dflt=0.0, pos=1)}
+  byteorder := 'little'
+  chunkshape := (4096,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "values": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/TIMESERIES/SEASONS_Table (Group) ''
+/TIMESERIES/SEASONS_Table/table (Table(12,)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "values": BoolCol(shape=(), dflt=False, pos=1)}
+  byteorder := 'little'
+  chunkshape := (7281,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "values": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/TIMESERIES/SUMMARY (Group) ''
+/TIMESERIES/SUMMARY/table (Table(19,)) ''
+  description := {
+  "index": StringCol(itemsize=5, shape=(), dflt=b'', pos=0),
+  "Start": StringCol(itemsize=19, shape=(), dflt=b'', pos=1),
+  "Stop": StringCol(itemsize=19, shape=(), dflt=b'', pos=2),
+  "Freq": StringCol(itemsize=2, shape=(), dflt=b'', pos=3),
+  "Length": Int64Col(shape=(), dflt=0, pos=4),
+  "TSTYPE": StringCol(itemsize=4, shape=(), dflt=b'', pos=5),
+  "TFILL": Float64Col(shape=(), dflt=0.0, pos=6),
+  "STAID": StringCol(itemsize=15, shape=(), dflt=b'', pos=7),
+  "STNAM": StringCol(itemsize=48, shape=(), dflt=b'', pos=8)}
+  byteorder := 'little'
+  chunkshape := (512,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Start": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Stop": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Freq": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Length": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TSTYPE": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TFILL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "STAID": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "STNAM": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/TIMESERIES/Saturated_Vapor_Pressure_Table (Group) ''
+/TIMESERIES/Saturated_Vapor_Pressure_Table/table (Table(40,)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "values": Float64Col(shape=(), dflt=0.0, pos=1)}
+  byteorder := 'little'
+  chunkshape := (4096,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "values": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/TIMESERIES/TS039 (Group) ''
+/TIMESERIES/TS039/table (Table(8784,), shuffle, blosc(9)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "values": Float32Col(shape=(), dflt=0.0, pos=1)}
+  byteorder := 'little'
+  chunkshape := (5461,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "values": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/TIMESERIES/TS041 (Group) ''
+/TIMESERIES/TS041/table (Table(366,), shuffle, blosc(9)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "values": Float32Col(shape=(), dflt=0.0, pos=1)}
+  byteorder := 'little'
+  chunkshape := (5461,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "values": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/TIMESERIES/TS042 (Group) ''
+/TIMESERIES/TS042/table (Table(366,), shuffle, blosc(9)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "values": Float32Col(shape=(), dflt=0.0, pos=1)}
+  byteorder := 'little'
+  chunkshape := (5461,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "values": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/TIMESERIES/TS046 (Group) ''
+/TIMESERIES/TS046/table (Table(4392,), shuffle, blosc(9)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "values": Float32Col(shape=(), dflt=0.0, pos=1)}
+  byteorder := 'little'
+  chunkshape := (5461,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "values": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/TIMESERIES/TS113 (Group) ''
+/TIMESERIES/TS113/table (Table(366,), shuffle, blosc(9)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "values": Float32Col(shape=(), dflt=0.0, pos=1)}
+  byteorder := 'little'
+  chunkshape := (5461,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "values": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/TIMESERIES/TS119 (Group) ''
+/TIMESERIES/TS119/table (Table(366,), shuffle, blosc(9)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "values": Float32Col(shape=(), dflt=0.0, pos=1)}
+  byteorder := 'little'
+  chunkshape := (5461,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "values": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/TIMESERIES/TS121 (Group) ''
+/TIMESERIES/TS121/table (Table(4392,), shuffle, blosc(9)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "values": Float32Col(shape=(), dflt=0.0, pos=1)}
+  byteorder := 'little'
+  chunkshape := (5461,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "values": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/TIMESERIES/TS122 (Group) ''
+/TIMESERIES/TS122/table (Table(4392,), shuffle, blosc(9)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "values": Float32Col(shape=(), dflt=0.0, pos=1)}
+  byteorder := 'little'
+  chunkshape := (5461,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "values": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/TIMESERIES/TS123 (Group) ''
+/TIMESERIES/TS123/table (Table(4392,), shuffle, blosc(9)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "values": Float32Col(shape=(), dflt=0.0, pos=1)}
+  byteorder := 'little'
+  chunkshape := (5461,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "values": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/TIMESERIES/TS124 (Group) ''
+/TIMESERIES/TS124/table (Table(366,), shuffle, blosc(9)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "values": Float32Col(shape=(), dflt=0.0, pos=1)}
+  byteorder := 'little'
+  chunkshape := (5461,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "values": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/TIMESERIES/TS125 (Group) ''
+/TIMESERIES/TS125/table (Table(366,), shuffle, blosc(9)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "values": Float32Col(shape=(), dflt=0.0, pos=1)}
+  byteorder := 'little'
+  chunkshape := (5461,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "values": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/TIMESERIES/TS126 (Group) ''
+/TIMESERIES/TS126/table (Table(366,), shuffle, blosc(9)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "values": Float32Col(shape=(), dflt=0.0, pos=1)}
+  byteorder := 'little'
+  chunkshape := (5461,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "values": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/TIMESERIES/TS127 (Group) ''
+/TIMESERIES/TS127/table (Table(366,), shuffle, blosc(9)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "values": Float32Col(shape=(), dflt=0.0, pos=1)}
+  byteorder := 'little'
+  chunkshape := (5461,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "values": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/TIMESERIES/TS131 (Group) ''
+/TIMESERIES/TS131/table (Table(8784,), shuffle, blosc(9)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "values": Float32Col(shape=(), dflt=0.0, pos=1)}
+  byteorder := 'little'
+  chunkshape := (5461,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "values": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/TIMESERIES/TS132 (Group) ''
+/TIMESERIES/TS132/table (Table(8784,), shuffle, blosc(9)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "values": Float32Col(shape=(), dflt=0.0, pos=1)}
+  byteorder := 'little'
+  chunkshape := (5461,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "values": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/TIMESERIES/TS134 (Group) ''
+/TIMESERIES/TS134/table (Table(366,), shuffle, blosc(9)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "values": Float32Col(shape=(), dflt=0.0, pos=1)}
+  byteorder := 'little'
+  chunkshape := (5461,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "values": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/TIMESERIES/TS135 (Group) ''
+/TIMESERIES/TS135/table (Table(366,), shuffle, blosc(9)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "values": Float32Col(shape=(), dflt=0.0, pos=1)}
+  byteorder := 'little'
+  chunkshape := (5461,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "values": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/TIMESERIES/TS136 (Group) ''
+/TIMESERIES/TS136/table (Table(366,), shuffle, blosc(9)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "values": Float32Col(shape=(), dflt=0.0, pos=1)}
+  byteorder := 'little'
+  chunkshape := (5461,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "values": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/TIMESERIES/TS140 (Group) ''
+/TIMESERIES/TS140/table (Table(366,), shuffle, blosc(9)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "values": Float32Col(shape=(), dflt=0.0, pos=1)}
+  byteorder := 'little'
+  chunkshape := (5461,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "values": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/CONS (Group) ''
+/RCHRES/GENERAL (Group) ''
+/RCHRES/GQUAL (Group) ''
+/RCHRES/HTRCH (Group) ''
+/RCHRES/HYDR (Group) ''
+/RCHRES/NUTRX (Group) ''
+/RCHRES/OXRX (Group) ''
+/RCHRES/PHCARB (Group) ''
+/RCHRES/PLANK (Group) ''
+/RCHRES/RQUAL (Group) ''
+/RCHRES/SEDTRN (Group) ''
+/RCHRES/SEDTRN/CLAY (Group) ''
+/RCHRES/SEDTRN/CLAY/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "D": Float64Col(shape=(), dflt=0.0, pos=1),
+  "W": Float64Col(shape=(), dflt=0.0, pos=2),
+  "RHO": Float64Col(shape=(), dflt=0.0, pos=3),
+  "TAUCD": Float64Col(shape=(), dflt=0.0, pos=4),
+  "TAUCS": Float64Col(shape=(), dflt=0.0, pos=5),
+  "M": Float64Col(shape=(), dflt=0.0, pos=6)}
+  byteorder := 'little'
+  chunkshape := (1260,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "D": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "W": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RHO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TAUCD": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TAUCS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "M": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/SEDTRN/FLAGS (Group) ''
+/RCHRES/SEDTRN/FLAGS/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "SANDFG": Int64Col(shape=(), dflt=0, pos=1)}
+  byteorder := 'little'
+  chunkshape := (5461,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SANDFG": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/SEDTRN/PARAMETERS (Group) ''
+/RCHRES/SEDTRN/PARAMETERS/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "BEDWID": Float64Col(shape=(), dflt=0.0, pos=1),
+  "BEDWRN": Float64Col(shape=(), dflt=0.0, pos=2),
+  "POR": Float64Col(shape=(), dflt=0.0, pos=3),
+  "D": Float64Col(shape=(), dflt=0.0, pos=4),
+  "W": Float64Col(shape=(), dflt=0.0, pos=5),
+  "RHO": Float64Col(shape=(), dflt=0.0, pos=6),
+  "KSAND": Float64Col(shape=(), dflt=0.0, pos=7),
+  "EXPSND": Float64Col(shape=(), dflt=0.0, pos=8)}
+  byteorder := 'little'
+  chunkshape := (963,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BEDWID": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BEDWRN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "POR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "D": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "W": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RHO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KSAND": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "EXPSND": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/SEDTRN/SAVE (Group) ''
+/RCHRES/SEDTRN/SAVE/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "BEDDEP": Int64Col(shape=(), dflt=0, pos=1),
+  "DEPSCR1": Int64Col(shape=(), dflt=0, pos=2),
+  "DEPSCR2": Int64Col(shape=(), dflt=0, pos=3),
+  "DEPSCR3": Int64Col(shape=(), dflt=0, pos=4),
+  "DEPSCR4": Int64Col(shape=(), dflt=0, pos=5),
+  "ISED1": Int64Col(shape=(), dflt=0, pos=6),
+  "ISED2": Int64Col(shape=(), dflt=0, pos=7),
+  "ISED3": Int64Col(shape=(), dflt=0, pos=8),
+  "OSED1": Int64Col(shape=(), dflt=0, pos=9),
+  "OSED2": Int64Col(shape=(), dflt=0, pos=10),
+  "OSED3": Int64Col(shape=(), dflt=0, pos=11),
+  "OSED4": Int64Col(shape=(), dflt=0, pos=12),
+  "ROSED1": Int64Col(shape=(), dflt=0, pos=13),
+  "ROSED2": Int64Col(shape=(), dflt=0, pos=14),
+  "ROSED3": Int64Col(shape=(), dflt=0, pos=15),
+  "ROSED4": Int64Col(shape=(), dflt=0, pos=16),
+  "RSED1": Int64Col(shape=(), dflt=0, pos=17),
+  "RSED2": Int64Col(shape=(), dflt=0, pos=18),
+  "RSED3": Int64Col(shape=(), dflt=0, pos=19),
+  "RSED4": Int64Col(shape=(), dflt=0, pos=20),
+  "RSED5": Int64Col(shape=(), dflt=0, pos=21),
+  "RSED6": Int64Col(shape=(), dflt=0, pos=22),
+  "RSED7": Int64Col(shape=(), dflt=0, pos=23),
+  "RSED8": Int64Col(shape=(), dflt=0, pos=24),
+  "RSED9": Int64Col(shape=(), dflt=0, pos=25),
+  "RSED10": Int64Col(shape=(), dflt=0, pos=26),
+  "SSED1": Int64Col(shape=(), dflt=0, pos=27),
+  "SSED2": Int64Col(shape=(), dflt=0, pos=28),
+  "SSED3": Int64Col(shape=(), dflt=0, pos=29),
+  "SSED4": Int64Col(shape=(), dflt=0, pos=30),
+  "TSED1": Int64Col(shape=(), dflt=0, pos=31),
+  "TSED2": Int64Col(shape=(), dflt=0, pos=32),
+  "TSED3": Int64Col(shape=(), dflt=0, pos=33)}
+  byteorder := 'little'
+  chunkshape := (244,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BEDDEP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEPSCR1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEPSCR2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEPSCR3": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEPSCR4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ISED1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ISED2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ISED3": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OSED1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OSED2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OSED3": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OSED4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ROSED1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ROSED2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ROSED3": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ROSED4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RSED1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RSED2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RSED3": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RSED4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RSED5": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RSED6": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RSED7": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RSED8": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RSED9": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RSED10": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SSED1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SSED2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SSED3": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SSED4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TSED1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TSED2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TSED3": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/SEDTRN/SILT (Group) ''
+/RCHRES/SEDTRN/SILT/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "D": Float64Col(shape=(), dflt=0.0, pos=1),
+  "W": Float64Col(shape=(), dflt=0.0, pos=2),
+  "RHO": Float64Col(shape=(), dflt=0.0, pos=3),
+  "TAUCD": Float64Col(shape=(), dflt=0.0, pos=4),
+  "TAUCS": Float64Col(shape=(), dflt=0.0, pos=5),
+  "M": Float64Col(shape=(), dflt=0.0, pos=6)}
+  byteorder := 'little'
+  chunkshape := (1260,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "D": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "W": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RHO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TAUCD": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TAUCS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "M": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/SEDTRN/STATES (Group) ''
+/RCHRES/SEDTRN/STATES/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "SSED1": Float64Col(shape=(), dflt=0.0, pos=1),
+  "SSED2": Float64Col(shape=(), dflt=0.0, pos=2),
+  "SSED3": Float64Col(shape=(), dflt=0.0, pos=3),
+  "BEDDEP": Float64Col(shape=(), dflt=0.0, pos=4),
+  "SANDFR": Float64Col(shape=(), dflt=0.0, pos=5),
+  "SILTFR": Float64Col(shape=(), dflt=0.0, pos=6),
+  "CLAYFR": Float64Col(shape=(), dflt=0.0, pos=7)}
+  byteorder := 'little'
+  chunkshape := (1092,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SSED1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SSED2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SSED3": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BEDDEP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SANDFR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SILTFR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CLAYFR": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/RQUAL/FLAGS (Group) ''
+/RCHRES/RQUAL/FLAGS/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "BENRFG": Float64Col(shape=(), dflt=0.0, pos=1)}
+  byteorder := 'little'
+  chunkshape := (5461,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BENRFG": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/RQUAL/PARAMETERS (Group) ''
+/RCHRES/RQUAL/PARAMETERS/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "SCRVEL": Float64Col(shape=(), dflt=0.0, pos=1),
+  "SCRMUL": Float64Col(shape=(), dflt=0.0, pos=2)}
+  byteorder := 'little'
+  chunkshape := (3276,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SCRVEL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SCRMUL": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/PLANK/FLAGS (Group) ''
+/RCHRES/PLANK/FLAGS/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "PHYFG": Int64Col(shape=(), dflt=0, pos=1),
+  "ZOOFG": Int64Col(shape=(), dflt=0, pos=2),
+  "BALFG": Int64Col(shape=(), dflt=0, pos=3),
+  "SDLTFG": Int64Col(shape=(), dflt=0, pos=4),
+  "AMRFG": Int64Col(shape=(), dflt=0, pos=5),
+  "DECFG": Int64Col(shape=(), dflt=0, pos=6),
+  "NSFG": Int64Col(shape=(), dflt=0, pos=7),
+  "ZFOOD": Int64Col(shape=(), dflt=0, pos=8),
+  "BNPFG": Int64Col(shape=(), dflt=0, pos=9)}
+  byteorder := 'little'
+  chunkshape := (862,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHYFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ZOOFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BALFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SDLTFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AMRFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DECFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NSFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ZFOOD": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BNPFG": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/PLANK/PARAMETERS (Group) ''
+/RCHRES/PLANK/PARAMETERS/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "RATCLP": Float64Col(shape=(), dflt=0.0, pos=1),
+  "NONREF": Float64Col(shape=(), dflt=0.0, pos=2),
+  "LITSED": Float64Col(shape=(), dflt=0.0, pos=3),
+  "ALNPR": Float64Col(shape=(), dflt=0.0, pos=4),
+  "EXTB": Float64Col(shape=(), dflt=0.0, pos=5),
+  "MALGR": Float64Col(shape=(), dflt=0.0, pos=6),
+  "PARADF": Float64Col(shape=(), dflt=0.0, pos=7),
+  "SEED": Float64Col(shape=(), dflt=0.0, pos=8),
+  "MXSTAY": Float64Col(shape=(), dflt=0.0, pos=9),
+  "O": Float64Col(shape=(), dflt=0.0, pos=10),
+  "CLALDH": Float64Col(shape=(), dflt=0.0, pos=11),
+  "PHYSET": Float64Col(shape=(), dflt=0.0, pos=12),
+  "REFSET": Float64Col(shape=(), dflt=0.0, pos=13),
+  "MZOEAT": Float64Col(shape=(), dflt=0.0, pos=14),
+  "ZFIL20": Float64Col(shape=(), dflt=0.0, pos=15),
+  "ZRES20": Float64Col(shape=(), dflt=0.0, pos=16),
+  "ZD": Float64Col(shape=(), dflt=0.0, pos=17),
+  "OXZD": Float64Col(shape=(), dflt=0.0, pos=18)}
+  byteorder := 'little'
+  chunkshape := (442,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RATCLP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NONREF": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "LITSED": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ALNPR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "EXTB": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "MALGR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PARADF": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SEED": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "MXSTAY": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "O": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CLALDH": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHYSET": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "REFSET": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "MZOEAT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ZFIL20": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ZRES20": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ZD": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OXZD": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/PLANK/SAVE (Group) ''
+/RCHRES/PLANK/SAVE/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "PHYTO": Int64Col(shape=(), dflt=0, pos=1),
+  "ZOO": Int64Col(shape=(), dflt=0, pos=2),
+  "BENAL": Int64Col(shape=(), dflt=0, pos=3),
+  "TBENAL": Int64Col(shape=(), dflt=0, pos=4),
+  "PHYCLA": Int64Col(shape=(), dflt=0, pos=5),
+  "BALCLA": Int64Col(shape=(), dflt=0, pos=6),
+  "PKST3": Int64Col(shape=(), dflt=0, pos=7),
+  "PKST4": Int64Col(shape=(), dflt=0, pos=8),
+  "PKIF": Int64Col(shape=(), dflt=0, pos=9),
+  "TPKIF": Int64Col(shape=(), dflt=0, pos=10),
+  "PKCF1": Int64Col(shape=(), dflt=0, pos=11),
+  "TPKCF1": Int64Col(shape=(), dflt=0, pos=12),
+  "PKCF2": Int64Col(shape=(), dflt=0, pos=13),
+  "TPKCF2": Int64Col(shape=(), dflt=0, pos=14),
+  "PLADDR": Int64Col(shape=(), dflt=0, pos=15),
+  "PLADWT": Int64Col(shape=(), dflt=0, pos=16),
+  "PLADEP": Int64Col(shape=(), dflt=0, pos=17),
+  "PKCF5": Int64Col(shape=(), dflt=0, pos=18),
+  "PKCF6": Int64Col(shape=(), dflt=0, pos=19),
+  "PKCF7": Int64Col(shape=(), dflt=0, pos=20),
+  "TPKCF7": Int64Col(shape=(), dflt=0, pos=21),
+  "PKCF8": Int64Col(shape=(), dflt=0, pos=22),
+  "PKCF9": Int64Col(shape=(), dflt=0, pos=23),
+  "PKCF10": Int64Col(shape=(), dflt=0, pos=24)}
+  byteorder := 'little'
+  chunkshape := (334,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHYTO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ZOO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BENAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TBENAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHYCLA": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BALCLA": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PKST3": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PKST4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PKIF": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TPKIF": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PKCF1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TPKCF1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PKCF2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TPKCF2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PLADDR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PLADWT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PLADEP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PKCF5": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PKCF6": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PKCF7": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TPKCF7": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PKCF8": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PKCF9": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PKCF10": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/PLANK/STATES (Group) ''
+/RCHRES/PLANK/STATES/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "PHYTO": Float64Col(shape=(), dflt=0.0, pos=1),
+  "ZOO": Float64Col(shape=(), dflt=0.0, pos=2),
+  "BENAL": Float64Col(shape=(), dflt=0.0, pos=3),
+  "ORN": Float64Col(shape=(), dflt=0.0, pos=4),
+  "ORP": Float64Col(shape=(), dflt=0.0, pos=5),
+  "ORC": Float64Col(shape=(), dflt=0.0, pos=6)}
+  byteorder := 'little'
+  chunkshape := (1260,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHYTO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ZOO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BENAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ORN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ORP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ORC": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/PHCARB/PARAMETERS (Group) ''
+/RCHRES/PHCARB/PARAMETERS/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "PHCNT": Int64Col(shape=(), dflt=0, pos=1),
+  "ALKCON": Int64Col(shape=(), dflt=0, pos=2)}
+  byteorder := 'little'
+  chunkshape := (3276,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHCNT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ALKCON": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/PHCARB/SAVE (Group) ''
+/RCHRES/PHCARB/SAVE/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "PHCF1": Int64Col(shape=(), dflt=0, pos=1),
+  "PHCF2": Int64Col(shape=(), dflt=0, pos=2),
+  "PHCF3": Int64Col(shape=(), dflt=0, pos=3),
+  "PHIF": Int64Col(shape=(), dflt=0, pos=4),
+  "PHST": Int64Col(shape=(), dflt=0, pos=5),
+  "SATCO2": Int64Col(shape=(), dflt=0, pos=6)}
+  byteorder := 'little'
+  chunkshape := (1260,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHCF1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHCF2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHCF3": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHIF": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHST": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SATCO2": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/PHCARB/STATES (Group) ''
+/RCHRES/PHCARB/STATES/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "TIC": Float64Col(shape=(), dflt=0.0, pos=1),
+  "CO2": Float64Col(shape=(), dflt=0.0, pos=2),
+  "PH": Float64Col(shape=(), dflt=0.0, pos=3)}
+  byteorder := 'little'
+  chunkshape := (2340,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TIC": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CO2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PH": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/OXRX/FLAGS (Group) ''
+/RCHRES/OXRX/FLAGS/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "REAMFG": Float64Col(shape=(), dflt=0.0, pos=1)}
+  byteorder := 'little'
+  chunkshape := (5461,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "REAMFG": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/OXRX/PARAMETERS (Group) ''
+/RCHRES/OXRX/PARAMETERS/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "KBOD20": Float64Col(shape=(), dflt=0.0, pos=1),
+  "TCBOD": Float64Col(shape=(), dflt=0.0, pos=2),
+  "KODSET": Float64Col(shape=(), dflt=0.0, pos=3),
+  "SUPSAT": Float64Col(shape=(), dflt=0.0, pos=4),
+  "BENOD": Float64Col(shape=(), dflt=0.0, pos=5),
+  "TCBEN": Float64Col(shape=(), dflt=0.0, pos=6),
+  "EXPOD": Float64Col(shape=(), dflt=0.0, pos=7),
+  "BRBOD1": Float64Col(shape=(), dflt=0.0, pos=8),
+  "BRBOD2": Float64Col(shape=(), dflt=0.0, pos=9),
+  "EXPREL": Float64Col(shape=(), dflt=0.0, pos=10),
+  "CFOREA": Float64Col(shape=(), dflt=0.0, pos=11),
+  "TCGINV": Float64Col(shape=(), dflt=0.0, pos=12),
+  "REAK": Float64Col(shape=(), dflt=0.0, pos=13),
+  "EXPRED": Float64Col(shape=(), dflt=0.0, pos=14),
+  "EXPREV": Float64Col(shape=(), dflt=0.0, pos=15)}
+  byteorder := 'little'
+  chunkshape := (528,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KBOD20": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TCBOD": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KODSET": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SUPSAT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BENOD": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TCBEN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "EXPOD": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BRBOD1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BRBOD2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "EXPREL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CFOREA": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TCGINV": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "REAK": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "EXPRED": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "EXPREV": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/OXRX/SAVE (Group) ''
+/RCHRES/OXRX/SAVE/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "BOD": Int64Col(shape=(), dflt=0, pos=1),
+  "DOX": Int64Col(shape=(), dflt=0, pos=2),
+  "OXCF1": Int64Col(shape=(), dflt=0, pos=3),
+  "OXCF2": Int64Col(shape=(), dflt=0, pos=4),
+  "OXCF3": Int64Col(shape=(), dflt=0, pos=5),
+  "OXCF4": Int64Col(shape=(), dflt=0, pos=6),
+  "OXIF": Int64Col(shape=(), dflt=0, pos=7),
+  "SATDO": Int64Col(shape=(), dflt=0, pos=8)}
+  byteorder := 'little'
+  chunkshape := (963,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BOD": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DOX": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OXCF1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OXCF2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OXCF3": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OXCF4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OXIF": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SATDO": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/OXRX/STATES (Group) ''
+/RCHRES/OXRX/STATES/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "DOX": Float64Col(shape=(), dflt=0.0, pos=1),
+  "BOD": Float64Col(shape=(), dflt=0.0, pos=2),
+  "SATDO": Float64Col(shape=(), dflt=0.0, pos=3)}
+  byteorder := 'little'
+  chunkshape := (2340,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DOX": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BOD": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SATDO": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/NUTRX/FLAGS (Group) ''
+/RCHRES/NUTRX/FLAGS/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "NH3FG": Int64Col(shape=(), dflt=0, pos=1),
+  "NO2FG": Int64Col(shape=(), dflt=0, pos=2),
+  "PO4FG": Int64Col(shape=(), dflt=0, pos=3),
+  "AMVFG": Int64Col(shape=(), dflt=0, pos=4),
+  "DENFG": Int64Col(shape=(), dflt=0, pos=5),
+  "ADNHFG": Int64Col(shape=(), dflt=0, pos=6),
+  "ADPOFG": Int64Col(shape=(), dflt=0, pos=7),
+  "PHFLAG": Int64Col(shape=(), dflt=0, pos=8)}
+  byteorder := 'little'
+  chunkshape := (963,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NH3FG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NO2FG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PO4FG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AMVFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DENFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADNHFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADPOFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHFLAG": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/NUTRX/PARAMETERS (Group) ''
+/RCHRES/NUTRX/PARAMETERS/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "BRNIT1": Float64Col(shape=(), dflt=0.0, pos=1),
+  "BRNIT2": Float64Col(shape=(), dflt=0.0, pos=2),
+  "BRPO41": Float64Col(shape=(), dflt=0.0, pos=3),
+  "BRPO42": Float64Col(shape=(), dflt=0.0, pos=4),
+  "ANAER": Float64Col(shape=(), dflt=0.0, pos=5),
+  "KTAM20": Float64Col(shape=(), dflt=0.0, pos=6),
+  "KNO220": Float64Col(shape=(), dflt=0.0, pos=7),
+  "TCNIT": Float64Col(shape=(), dflt=0.0, pos=8),
+  "KNO320": Float64Col(shape=(), dflt=0.0, pos=9),
+  "TCDEN": Float64Col(shape=(), dflt=0.0, pos=10),
+  "DENOXT": Float64Col(shape=(), dflt=0.0, pos=11),
+  "EXPNVG": Float64Col(shape=(), dflt=0.0, pos=12),
+  "EXPNVL": Float64Col(shape=(), dflt=0.0, pos=13),
+  "BNH41": Float64Col(shape=(), dflt=0.0, pos=14),
+  "BNH42": Float64Col(shape=(), dflt=0.0, pos=15),
+  "BNH43": Float64Col(shape=(), dflt=0.0, pos=16),
+  "BPO41": Float64Col(shape=(), dflt=0.0, pos=17),
+  "BPO42": Float64Col(shape=(), dflt=0.0, pos=18),
+  "BPO43": Float64Col(shape=(), dflt=0.0, pos=19),
+  "ADNHPM1": Float64Col(shape=(), dflt=0.0, pos=20),
+  "ADNHPM2": Float64Col(shape=(), dflt=0.0, pos=21),
+  "ADNHPM3": Float64Col(shape=(), dflt=0.0, pos=22),
+  "ADPOPM1": Float64Col(shape=(), dflt=0.0, pos=23),
+  "ADPOPM2": Float64Col(shape=(), dflt=0.0, pos=24),
+  "ADPOPM3": Float64Col(shape=(), dflt=0.0, pos=25)}
+  byteorder := 'little'
+  chunkshape := (321,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BRNIT1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BRNIT2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BRPO41": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BRPO42": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ANAER": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KTAM20": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KNO220": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TCNIT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KNO320": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TCDEN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DENOXT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "EXPNVG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "EXPNVL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BNH41": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BNH42": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BNH43": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BPO41": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BPO42": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BPO43": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADNHPM1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADNHPM2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADNHPM3": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADPOPM1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADPOPM2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADPOPM3": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/NUTRX/SAVE (Group) ''
+/RCHRES/NUTRX/SAVE/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "DNUST": Int64Col(shape=(), dflt=0, pos=1),
+  "DNUST2": Int64Col(shape=(), dflt=0, pos=2),
+  "NUADDR": Int64Col(shape=(), dflt=0, pos=3),
+  "NUADEP": Int64Col(shape=(), dflt=0, pos=4),
+  "NUADWT": Int64Col(shape=(), dflt=0, pos=5),
+  "NUCF1": Int64Col(shape=(), dflt=0, pos=6),
+  "NUCF2": Int64Col(shape=(), dflt=0, pos=7),
+  "NUCF3": Int64Col(shape=(), dflt=0, pos=8),
+  "NUCF4": Int64Col(shape=(), dflt=0, pos=9),
+  "NUCF5": Int64Col(shape=(), dflt=0, pos=10),
+  "NUCF6": Int64Col(shape=(), dflt=0, pos=11),
+  "NUCF7": Int64Col(shape=(), dflt=0, pos=12),
+  "NUCF8": Int64Col(shape=(), dflt=0, pos=13),
+  "NUCF9": Int64Col(shape=(), dflt=0, pos=14),
+  "NUIF1": Int64Col(shape=(), dflt=0, pos=15),
+  "NUIF2": Int64Col(shape=(), dflt=0, pos=16),
+  "NUST": Int64Col(shape=(), dflt=0, pos=17),
+  "OSNH4": Int64Col(shape=(), dflt=0, pos=18),
+  "OSPO4": Int64Col(shape=(), dflt=0, pos=19),
+  "RSNH4": Int64Col(shape=(), dflt=0, pos=20),
+  "RSPO4": Int64Col(shape=(), dflt=0, pos=21),
+  "SNH4": Int64Col(shape=(), dflt=0, pos=22),
+  "SPO4": Int64Col(shape=(), dflt=0, pos=23),
+  "TNUCF1": Int64Col(shape=(), dflt=0, pos=24),
+  "TNUCF2": Int64Col(shape=(), dflt=0, pos=25),
+  "TNUIF": Int64Col(shape=(), dflt=0, pos=26)}
+  byteorder := 'little'
+  chunkshape := (309,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DNUST": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DNUST2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NUADDR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NUADEP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NUADWT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NUCF1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NUCF2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NUCF3": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NUCF4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NUCF5": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NUCF6": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NUCF7": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NUCF8": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NUCF9": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NUIF1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NUIF2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NUST": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OSNH4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OSPO4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RSNH4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RSPO4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SNH4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SPO4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TNUCF1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TNUCF2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TNUIF": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/NUTRX/STATES (Group) ''
+/RCHRES/NUTRX/STATES/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "NO3": Float64Col(shape=(), dflt=0.0, pos=1),
+  "TAM": Float64Col(shape=(), dflt=0.0, pos=2),
+  "NO2": Float64Col(shape=(), dflt=0.0, pos=3),
+  "PO4": Float64Col(shape=(), dflt=0.0, pos=4),
+  "PHVAL": Float64Col(shape=(), dflt=0.0, pos=5),
+  "SNH41": Float64Col(shape=(), dflt=0.0, pos=6),
+  "SNH42": Float64Col(shape=(), dflt=0.0, pos=7),
+  "SNH43": Float64Col(shape=(), dflt=0.0, pos=8),
+  "SPO41": Float64Col(shape=(), dflt=0.0, pos=9),
+  "SPO42": Float64Col(shape=(), dflt=0.0, pos=10),
+  "SPO43": Float64Col(shape=(), dflt=0.0, pos=11)}
+  byteorder := 'little'
+  chunkshape := (712,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NO3": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TAM": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NO2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PO4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHVAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SNH41": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SNH42": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SNH43": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SPO41": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SPO42": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SPO43": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/HYDR/PARAMETERS (Group) ''
+/RCHRES/HYDR/PARAMETERS/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "VCONFG": Int64Col(shape=(), dflt=0, pos=1),
+  "AUX1FG": Int64Col(shape=(), dflt=0, pos=2),
+  "AUX2FG": Int64Col(shape=(), dflt=0, pos=3),
+  "AUX3FG": Int64Col(shape=(), dflt=0, pos=4),
+  "ODFVF1": Int64Col(shape=(), dflt=0, pos=5),
+  "ODFVF2": Int64Col(shape=(), dflt=0, pos=6),
+  "ODFVF3": Int64Col(shape=(), dflt=0, pos=7),
+  "ODFVF4": Int64Col(shape=(), dflt=0, pos=8),
+  "ODFVF5": Int64Col(shape=(), dflt=0, pos=9),
+  "ODGTF1": Int64Col(shape=(), dflt=0, pos=10),
+  "ODGTF2": Int64Col(shape=(), dflt=0, pos=11),
+  "ODGTF3": Int64Col(shape=(), dflt=0, pos=12),
+  "ODGTF4": Int64Col(shape=(), dflt=0, pos=13),
+  "ODGTF5": Int64Col(shape=(), dflt=0, pos=14),
+  "FUNCT1": Int64Col(shape=(), dflt=0, pos=15),
+  "FUNCT2": Int64Col(shape=(), dflt=0, pos=16),
+  "FUNCT3": Int64Col(shape=(), dflt=0, pos=17),
+  "FUNCT4": Int64Col(shape=(), dflt=0, pos=18),
+  "FUNCT5": Int64Col(shape=(), dflt=0, pos=19),
+  "FTBW": Float64Col(shape=(), dflt=0.0, pos=20),
+  "FTBUCI": StringCol(itemsize=5, shape=(), dflt=b'', pos=21),
+  "LEN": Float64Col(shape=(), dflt=0.0, pos=22),
+  "DELTH": Float64Col(shape=(), dflt=0.0, pos=23),
+  "STCOR": Float64Col(shape=(), dflt=0.0, pos=24),
+  "KS": Float64Col(shape=(), dflt=0.0, pos=25),
+  "DB50": Float64Col(shape=(), dflt=0.0, pos=26),
+  "NEXITS": Int64Col(shape=(), dflt=0, pos=27),
+  "LKFG": Int64Col(shape=(), dflt=0, pos=28),
+  "IREXIT": Int64Col(shape=(), dflt=0, pos=29),
+  "IRMINV": Float64Col(shape=(), dflt=0.0, pos=30)}
+  byteorder := 'little'
+  chunkshape := (271,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "VCONFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AUX1FG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AUX2FG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AUX3FG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ODFVF1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ODFVF2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ODFVF3": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ODFVF4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ODFVF5": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ODGTF1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ODGTF2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ODGTF3": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ODGTF4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ODGTF5": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "FUNCT1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "FUNCT2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "FUNCT3": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "FUNCT4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "FUNCT5": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "FTBW": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "FTBUCI": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "LEN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DELTH": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "STCOR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DB50": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NEXITS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "LKFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IREXIT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IRMINV": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/HYDR/SAVE (Group) ''
+/RCHRES/HYDR/SAVE/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "CDFVOL": Int64Col(shape=(), dflt=0, pos=1),
+  "CIVOL": Int64Col(shape=(), dflt=0, pos=2),
+  "CO": Int64Col(shape=(), dflt=0, pos=3),
+  "COVOL": Int64Col(shape=(), dflt=0, pos=4),
+  "CRO": Int64Col(shape=(), dflt=0, pos=5),
+  "CROVOL": Int64Col(shape=(), dflt=0, pos=6),
+  "CVOL": Int64Col(shape=(), dflt=0, pos=7),
+  "DEP": Int64Col(shape=(), dflt=0, pos=8),
+  "IVOL": Int64Col(shape=(), dflt=0, pos=9),
+  "O": Int64Col(shape=(), dflt=0, pos=10),
+  "OVOL": Int64Col(shape=(), dflt=0, pos=11),
+  "PRSUPY": Int64Col(shape=(), dflt=0, pos=12),
+  "RIRDEM": Int64Col(shape=(), dflt=0, pos=13),
+  "RIRSHT": Int64Col(shape=(), dflt=0, pos=14),
+  "RO": Int64Col(shape=(), dflt=0, pos=15),
+  "ROVOL": Int64Col(shape=(), dflt=0, pos=16),
+  "SAREA": Int64Col(shape=(), dflt=0, pos=17),
+  "TAU": Int64Col(shape=(), dflt=0, pos=18),
+  "USTAR": Int64Col(shape=(), dflt=0, pos=19),
+  "VOL": Int64Col(shape=(), dflt=0, pos=20),
+  "VOLEV": Int64Col(shape=(), dflt=0, pos=21)}
+  byteorder := 'little'
+  chunkshape := (381,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CDFVOL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CIVOL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "COVOL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CRO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CROVOL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CVOL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IVOL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "O": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OVOL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PRSUPY": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RIRDEM": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RIRSHT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ROVOL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SAREA": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TAU": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "USTAR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "VOL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "VOLEV": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/HYDR/STATES (Group) ''
+/RCHRES/HYDR/STATES/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "VOL": Float64Col(shape=(), dflt=0.0, pos=1),
+  "ICAT": Float64Col(shape=(), dflt=0.0, pos=2),
+  "COLIN1": Float64Col(shape=(), dflt=0.0, pos=3),
+  "COLIN2": Float64Col(shape=(), dflt=0.0, pos=4),
+  "COLIN3": Float64Col(shape=(), dflt=0.0, pos=5),
+  "COLIN4": Float64Col(shape=(), dflt=0.0, pos=6),
+  "COLIN5": Float64Col(shape=(), dflt=0.0, pos=7),
+  "OUTDG1": Float64Col(shape=(), dflt=0.0, pos=8),
+  "OUTDG2": Float64Col(shape=(), dflt=0.0, pos=9),
+  "OUTDG3": Float64Col(shape=(), dflt=0.0, pos=10),
+  "OUTDG4": Float64Col(shape=(), dflt=0.0, pos=11),
+  "OUTDG5": Float64Col(shape=(), dflt=0.0, pos=12)}
+  byteorder := 'little'
+  chunkshape := (655,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "VOL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ICAT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "COLIN1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "COLIN2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "COLIN3": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "COLIN4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "COLIN5": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OUTDG1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OUTDG2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OUTDG3": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OUTDG4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OUTDG5": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/HTRCH/PARAMETERS (Group) ''
+/RCHRES/HTRCH/PARAMETERS/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "ELEV": Float64Col(shape=(), dflt=0.0, pos=1),
+  "ELDAT": Float64Col(shape=(), dflt=0.0, pos=2),
+  "CFSAEX": Float64Col(shape=(), dflt=0.0, pos=3),
+  "KATRAD": Float64Col(shape=(), dflt=0.0, pos=4),
+  "KCOND": Float64Col(shape=(), dflt=0.0, pos=5),
+  "KEVAP": Float64Col(shape=(), dflt=0.0, pos=6)}
+  byteorder := 'little'
+  chunkshape := (1260,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ELEV": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ELDAT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CFSAEX": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KATRAD": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KCOND": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KEVAP": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/HTRCH/SAVE (Group) ''
+/RCHRES/HTRCH/SAVE/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "AIRTMP": Int64Col(shape=(), dflt=0, pos=1),
+  "HTCF4": Int64Col(shape=(), dflt=0, pos=2),
+  "HTEXCH": Int64Col(shape=(), dflt=0, pos=3),
+  "IHEAT": Int64Col(shape=(), dflt=0, pos=4),
+  "OHEAT": Int64Col(shape=(), dflt=0, pos=5),
+  "ROHEAT": Int64Col(shape=(), dflt=0, pos=6),
+  "SHDFAC": Int64Col(shape=(), dflt=0, pos=7),
+  "TW": Int64Col(shape=(), dflt=0, pos=8)}
+  byteorder := 'little'
+  chunkshape := (963,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AIRTMP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "HTCF4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "HTEXCH": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IHEAT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OHEAT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ROHEAT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SHDFAC": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TW": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/HTRCH/STATES (Group) ''
+/RCHRES/HTRCH/STATES/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "TW": Float64Col(shape=(), dflt=0.0, pos=1),
+  "AIRTMP": Float64Col(shape=(), dflt=0.0, pos=2)}
+  byteorder := 'little'
+  chunkshape := (3276,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TW": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AIRTMP": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/GQUAL/EXTENDEDS (Group) ''
+/RCHRES/GQUAL/GQUAL1 (Group) ''
+/RCHRES/GQUAL/GQUAL1/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "GQID": StringCol(itemsize=12, shape=(), dflt=b'', pos=1),
+  "DQAL": Float64Col(shape=(), dflt=0.0, pos=2),
+  "CONCID": StringCol(itemsize=2, shape=(), dflt=b'', pos=3),
+  "CONV": Float64Col(shape=(), dflt=0.0, pos=4),
+  "QTYID": StringCol(itemsize=1, shape=(), dflt=b'', pos=5),
+  "QALFG1": Int64Col(shape=(), dflt=0, pos=6),
+  "QALFG2": Int64Col(shape=(), dflt=0, pos=7),
+  "QALFG3": Int64Col(shape=(), dflt=0, pos=8),
+  "QALFG4": Int64Col(shape=(), dflt=0, pos=9),
+  "QALFG5": Int64Col(shape=(), dflt=0, pos=10),
+  "QALFG6": Int64Col(shape=(), dflt=0, pos=11),
+  "QALFG7": Int64Col(shape=(), dflt=0, pos=12),
+  "KA": Float64Col(shape=(), dflt=0.0, pos=13),
+  "KB": Float64Col(shape=(), dflt=0.0, pos=14),
+  "KN": Float64Col(shape=(), dflt=0.0, pos=15),
+  "THHYD": Float64Col(shape=(), dflt=0.0, pos=16),
+  "KOX": Float64Col(shape=(), dflt=0.0, pos=17),
+  "THOX": Float64Col(shape=(), dflt=0.0, pos=18),
+  "CFGAS": Float64Col(shape=(), dflt=0.0, pos=19),
+  "BIOCON": Float64Col(shape=(), dflt=0.0, pos=20),
+  "THBIO": Float64Col(shape=(), dflt=0.0, pos=21),
+  "BIO": Float64Col(shape=(), dflt=0.0, pos=22),
+  "FSTDEC": Float64Col(shape=(), dflt=0.0, pos=23),
+  "THFST": Float64Col(shape=(), dflt=0.0, pos=24),
+  "ADDCP1": Float64Col(shape=(), dflt=0.0, pos=25),
+  "ADDCP2": Float64Col(shape=(), dflt=0.0, pos=26),
+  "ADDCP3": Float64Col(shape=(), dflt=0.0, pos=27),
+  "ADDCP4": Float64Col(shape=(), dflt=0.0, pos=28),
+  "ADPM11": Float64Col(shape=(), dflt=0.0, pos=29),
+  "ADPM21": Float64Col(shape=(), dflt=0.0, pos=30),
+  "ADPM31": Float64Col(shape=(), dflt=0.0, pos=31),
+  "ADPM41": Float64Col(shape=(), dflt=0.0, pos=32),
+  "ADPM51": Float64Col(shape=(), dflt=0.0, pos=33),
+  "ADPM61": Float64Col(shape=(), dflt=0.0, pos=34),
+  "ADPM12": Float64Col(shape=(), dflt=0.0, pos=35),
+  "ADPM22": Float64Col(shape=(), dflt=0.0, pos=36),
+  "ADPM32": Float64Col(shape=(), dflt=0.0, pos=37),
+  "ADPM42": Float64Col(shape=(), dflt=0.0, pos=38),
+  "ADPM52": Float64Col(shape=(), dflt=0.0, pos=39),
+  "ADPM62": Float64Col(shape=(), dflt=0.0, pos=40),
+  "SQAL1": Float64Col(shape=(), dflt=0.0, pos=41),
+  "SQAL2": Float64Col(shape=(), dflt=0.0, pos=42),
+  "SQAL3": Float64Col(shape=(), dflt=0.0, pos=43),
+  "SQAL4": Float64Col(shape=(), dflt=0.0, pos=44),
+  "SQAL5": Float64Col(shape=(), dflt=0.0, pos=45),
+  "SQAL6": Float64Col(shape=(), dflt=0.0, pos=46),
+  "TWAT": Float64Col(shape=(), dflt=0.0, pos=47),
+  "PHVAL": Float64Col(shape=(), dflt=0.0, pos=48),
+  "ROC": Float64Col(shape=(), dflt=0.0, pos=49),
+  "CLD": Float64Col(shape=(), dflt=0.0, pos=50),
+  "SDCNC": Float64Col(shape=(), dflt=0.0, pos=51),
+  "PHY": Float64Col(shape=(), dflt=0.0, pos=52)}
+  byteorder := 'little'
+  chunkshape := (159,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "GQID": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DQAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CONCID": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CONV": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "QTYID": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "QALFG1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "QALFG2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "QALFG3": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "QALFG4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "QALFG5": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "QALFG6": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "QALFG7": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KA": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KB": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "THHYD": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KOX": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "THOX": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CFGAS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BIOCON": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "THBIO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BIO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "FSTDEC": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "THFST": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADDCP1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADDCP2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADDCP3": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADDCP4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADPM11": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADPM21": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADPM31": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADPM41": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADPM51": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADPM61": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADPM12": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADPM22": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADPM32": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADPM42": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADPM52": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADPM62": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SQAL1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SQAL2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SQAL3": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SQAL4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SQAL5": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SQAL6": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TWAT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHVAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ROC": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CLD": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SDCNC": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHY": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/GQUAL/PARAMETERS (Group) ''
+/RCHRES/GQUAL/PARAMETERS/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "NGQUAL": Int64Col(shape=(), dflt=0, pos=1),
+  "TEMPFG": Int64Col(shape=(), dflt=0, pos=2),
+  "PHFLAG": Int64Col(shape=(), dflt=0, pos=3),
+  "ROXFG": Int64Col(shape=(), dflt=0, pos=4),
+  "CLDFG": Int64Col(shape=(), dflt=0, pos=5),
+  "SDFG": Int64Col(shape=(), dflt=0, pos=6),
+  "PHYTFG": Int64Col(shape=(), dflt=0, pos=7),
+  "LAT": Int64Col(shape=(), dflt=0, pos=8)}
+  byteorder := 'little'
+  chunkshape := (963,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NGQUAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TEMPFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHFLAG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ROXFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CLDFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SDFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHYTFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "LAT": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/GQUAL/SAVE (Group) ''
+/RCHRES/GQUAL/SAVE/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "ADQAL": Int64Col(shape=(), dflt=0, pos=1),
+  "DDQAL": Int64Col(shape=(), dflt=0, pos=2),
+  "DQAL": Int64Col(shape=(), dflt=0, pos=3),
+  "DSQAL": Int64Col(shape=(), dflt=0, pos=4),
+  "GQADDR": Int64Col(shape=(), dflt=0, pos=5),
+  "GQADEP": Int64Col(shape=(), dflt=0, pos=6),
+  "GQADWT": Int64Col(shape=(), dflt=0, pos=7),
+  "IDQAL": Int64Col(shape=(), dflt=0, pos=8),
+  "ISQAL": Int64Col(shape=(), dflt=0, pos=9),
+  "ODQAL": Int64Col(shape=(), dflt=0, pos=10),
+  "OSQAL": Int64Col(shape=(), dflt=0, pos=11),
+  "PDQAL": Int64Col(shape=(), dflt=0, pos=12),
+  "RDQAL": Int64Col(shape=(), dflt=0, pos=13),
+  "RODQAL": Int64Col(shape=(), dflt=0, pos=14),
+  "ROSQAL": Int64Col(shape=(), dflt=0, pos=15),
+  "RRQAL": Int64Col(shape=(), dflt=0, pos=16),
+  "RSQAL": Int64Col(shape=(), dflt=0, pos=17),
+  "SQAL": Int64Col(shape=(), dflt=0, pos=18),
+  "SQDEC": Int64Col(shape=(), dflt=0, pos=19),
+  "TIQAL": Int64Col(shape=(), dflt=0, pos=20),
+  "TOSQAL": Int64Col(shape=(), dflt=0, pos=21),
+  "TROQAL": Int64Col(shape=(), dflt=0, pos=22)}
+  byteorder := 'little'
+  chunkshape := (364,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADQAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DDQAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DQAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DSQAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "GQADDR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "GQADEP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "GQADWT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IDQAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ISQAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ODQAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OSQAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PDQAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RDQAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RODQAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ROSQAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RRQAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RSQAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SQAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SQDEC": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TIQAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TOSQAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TROQAL": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/GQUAL/EXTENDEDS/ALPH (Group) ''
+/RCHRES/GQUAL/EXTENDEDS/ALPH/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "ALPH0": Float64Col(shape=(), dflt=0.0, pos=1),
+  "ALPH1": Float64Col(shape=(), dflt=0.0, pos=2),
+  "ALPH2": Float64Col(shape=(), dflt=0.0, pos=3),
+  "ALPH3": Float64Col(shape=(), dflt=0.0, pos=4),
+  "ALPH4": Float64Col(shape=(), dflt=0.0, pos=5),
+  "ALPH5": Float64Col(shape=(), dflt=0.0, pos=6),
+  "ALPH6": Float64Col(shape=(), dflt=0.0, pos=7),
+  "ALPH7": Float64Col(shape=(), dflt=0.0, pos=8),
+  "ALPH8": Float64Col(shape=(), dflt=0.0, pos=9),
+  "ALPH9": Float64Col(shape=(), dflt=0.0, pos=10),
+  "ALPH10": Float64Col(shape=(), dflt=0.0, pos=11),
+  "ALPH11": Float64Col(shape=(), dflt=0.0, pos=12),
+  "ALPH12": Float64Col(shape=(), dflt=0.0, pos=13),
+  "ALPH13": Float64Col(shape=(), dflt=0.0, pos=14),
+  "ALPH14": Float64Col(shape=(), dflt=0.0, pos=15),
+  "ALPH15": Float64Col(shape=(), dflt=0.0, pos=16),
+  "ALPH16": Float64Col(shape=(), dflt=0.0, pos=17),
+  "ALPH17": Float64Col(shape=(), dflt=0.0, pos=18)}
+  byteorder := 'little'
+  chunkshape := (442,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ALPH0": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ALPH1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ALPH2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ALPH3": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ALPH4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ALPH5": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ALPH6": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ALPH7": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ALPH8": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ALPH9": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ALPH10": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ALPH11": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ALPH12": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ALPH13": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ALPH14": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ALPH15": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ALPH16": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ALPH17": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/GQUAL/EXTENDEDS/DEL (Group) ''
+/RCHRES/GQUAL/EXTENDEDS/DEL/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "DEL0": Float64Col(shape=(), dflt=0.0, pos=1),
+  "DEL1": Float64Col(shape=(), dflt=0.0, pos=2),
+  "DEL2": Float64Col(shape=(), dflt=0.0, pos=3),
+  "DEL3": Float64Col(shape=(), dflt=0.0, pos=4),
+  "DEL4": Float64Col(shape=(), dflt=0.0, pos=5),
+  "DEL5": Float64Col(shape=(), dflt=0.0, pos=6),
+  "DEL6": Float64Col(shape=(), dflt=0.0, pos=7),
+  "DEL7": Float64Col(shape=(), dflt=0.0, pos=8),
+  "DEL8": Float64Col(shape=(), dflt=0.0, pos=9),
+  "DEL9": Float64Col(shape=(), dflt=0.0, pos=10),
+  "DEL10": Float64Col(shape=(), dflt=0.0, pos=11),
+  "DEL11": Float64Col(shape=(), dflt=0.0, pos=12),
+  "DEL12": Float64Col(shape=(), dflt=0.0, pos=13),
+  "DEL13": Float64Col(shape=(), dflt=0.0, pos=14),
+  "DEL14": Float64Col(shape=(), dflt=0.0, pos=15),
+  "DEL15": Float64Col(shape=(), dflt=0.0, pos=16),
+  "DEL16": Float64Col(shape=(), dflt=0.0, pos=17),
+  "DEL17": Float64Col(shape=(), dflt=0.0, pos=18)}
+  byteorder := 'little'
+  chunkshape := (442,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEL0": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEL1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEL2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEL3": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEL4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEL5": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEL6": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEL7": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEL8": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEL9": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEL10": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEL11": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEL12": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEL13": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEL14": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEL15": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEL16": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEL17": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/GQUAL/EXTENDEDS/GAMM (Group) ''
+/RCHRES/GQUAL/EXTENDEDS/GAMM/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "GAMM0": Float64Col(shape=(), dflt=0.0, pos=1),
+  "GAMM1": Float64Col(shape=(), dflt=0.0, pos=2),
+  "GAMM2": Float64Col(shape=(), dflt=0.0, pos=3),
+  "GAMM3": Float64Col(shape=(), dflt=0.0, pos=4),
+  "GAMM4": Float64Col(shape=(), dflt=0.0, pos=5),
+  "GAMM5": Float64Col(shape=(), dflt=0.0, pos=6),
+  "GAMM6": Float64Col(shape=(), dflt=0.0, pos=7),
+  "GAMM7": Float64Col(shape=(), dflt=0.0, pos=8),
+  "GAMM8": Float64Col(shape=(), dflt=0.0, pos=9),
+  "GAMM9": Float64Col(shape=(), dflt=0.0, pos=10),
+  "GAMM10": Float64Col(shape=(), dflt=0.0, pos=11),
+  "GAMM11": Float64Col(shape=(), dflt=0.0, pos=12),
+  "GAMM12": Float64Col(shape=(), dflt=0.0, pos=13),
+  "GAMM13": Float64Col(shape=(), dflt=0.0, pos=14),
+  "GAMM14": Float64Col(shape=(), dflt=0.0, pos=15),
+  "GAMM15": Float64Col(shape=(), dflt=0.0, pos=16),
+  "GAMM16": Float64Col(shape=(), dflt=0.0, pos=17),
+  "GAMM17": Float64Col(shape=(), dflt=0.0, pos=18)}
+  byteorder := 'little'
+  chunkshape := (442,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "GAMM0": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "GAMM1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "GAMM2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "GAMM3": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "GAMM4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "GAMM5": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "GAMM6": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "GAMM7": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "GAMM8": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "GAMM9": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "GAMM10": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "GAMM11": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "GAMM12": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "GAMM13": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "GAMM14": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "GAMM15": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "GAMM16": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "GAMM17": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/GQUAL/EXTENDEDS/KCLD (Group) ''
+/RCHRES/GQUAL/EXTENDEDS/KCLD/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "KCLD0": Float64Col(shape=(), dflt=0.0, pos=1),
+  "KCLD1": Float64Col(shape=(), dflt=0.0, pos=2),
+  "KCLD2": Float64Col(shape=(), dflt=0.0, pos=3),
+  "KCLD3": Float64Col(shape=(), dflt=0.0, pos=4),
+  "KCLD4": Float64Col(shape=(), dflt=0.0, pos=5),
+  "KCLD5": Float64Col(shape=(), dflt=0.0, pos=6),
+  "KCLD6": Float64Col(shape=(), dflt=0.0, pos=7),
+  "KCLD7": Float64Col(shape=(), dflt=0.0, pos=8),
+  "KCLD8": Float64Col(shape=(), dflt=0.0, pos=9),
+  "KCLD9": Float64Col(shape=(), dflt=0.0, pos=10),
+  "KCLD10": Float64Col(shape=(), dflt=0.0, pos=11),
+  "KCLD11": Float64Col(shape=(), dflt=0.0, pos=12),
+  "KCLD12": Float64Col(shape=(), dflt=0.0, pos=13),
+  "KCLD13": Float64Col(shape=(), dflt=0.0, pos=14),
+  "KCLD14": Float64Col(shape=(), dflt=0.0, pos=15),
+  "KCLD15": Float64Col(shape=(), dflt=0.0, pos=16),
+  "KCLD16": Float64Col(shape=(), dflt=0.0, pos=17),
+  "KCLD17": Float64Col(shape=(), dflt=0.0, pos=18)}
+  byteorder := 'little'
+  chunkshape := (442,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KCLD0": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KCLD1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KCLD2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KCLD3": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KCLD4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KCLD5": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KCLD6": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KCLD7": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KCLD8": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KCLD9": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KCLD10": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KCLD11": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KCLD12": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KCLD13": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KCLD14": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KCLD15": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KCLD16": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KCLD17": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/GQUAL/EXTENDEDS/PHOTPM (Group) ''
+/RCHRES/GQUAL/EXTENDEDS/PHOTPM/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "PHOTPM0": Float64Col(shape=(), dflt=0.0, pos=1),
+  "PHOTPM1": Float64Col(shape=(), dflt=0.0, pos=2),
+  "PHOTPM2": Float64Col(shape=(), dflt=0.0, pos=3),
+  "PHOTPM3": Float64Col(shape=(), dflt=0.0, pos=4),
+  "PHOTPM4": Float64Col(shape=(), dflt=0.0, pos=5),
+  "PHOTPM5": Float64Col(shape=(), dflt=0.0, pos=6),
+  "PHOTPM6": Float64Col(shape=(), dflt=0.0, pos=7),
+  "PHOTPM7": Float64Col(shape=(), dflt=0.0, pos=8),
+  "PHOTPM8": Float64Col(shape=(), dflt=0.0, pos=9),
+  "PHOTPM9": Float64Col(shape=(), dflt=0.0, pos=10),
+  "PHOTPM10": Float64Col(shape=(), dflt=0.0, pos=11),
+  "PHOTPM11": Float64Col(shape=(), dflt=0.0, pos=12),
+  "PHOTPM12": Float64Col(shape=(), dflt=0.0, pos=13),
+  "PHOTPM13": Float64Col(shape=(), dflt=0.0, pos=14),
+  "PHOTPM14": Float64Col(shape=(), dflt=0.0, pos=15),
+  "PHOTPM15": Float64Col(shape=(), dflt=0.0, pos=16),
+  "PHOTPM16": Float64Col(shape=(), dflt=0.0, pos=17),
+  "PHOTPM17": Float64Col(shape=(), dflt=0.0, pos=18),
+  "PHOTPM18": Float64Col(shape=(), dflt=0.0, pos=19),
+  "PHOTPM19": Float64Col(shape=(), dflt=0.0, pos=20)}
+  byteorder := 'little'
+  chunkshape := (399,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHOTPM0": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHOTPM1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHOTPM2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHOTPM3": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHOTPM4": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHOTPM5": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHOTPM6": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHOTPM7": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHOTPM8": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHOTPM9": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHOTPM10": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHOTPM11": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHOTPM12": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHOTPM13": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHOTPM14": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHOTPM15": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHOTPM16": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHOTPM17": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHOTPM18": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHOTPM19": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/GENERAL/ACTIVITY (Group) ''
+/RCHRES/GENERAL/ACTIVITY/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "HYDR": Int64Col(shape=(), dflt=0, pos=1),
+  "ADCALC": Int64Col(shape=(), dflt=0, pos=2),
+  "CONS": Int64Col(shape=(), dflt=0, pos=3),
+  "HTRCH": Int64Col(shape=(), dflt=0, pos=4),
+  "SEDTRN": Int64Col(shape=(), dflt=0, pos=5),
+  "GQUAL": Int64Col(shape=(), dflt=0, pos=6),
+  "OXRX": Int64Col(shape=(), dflt=0, pos=7),
+  "NUTRX": Int64Col(shape=(), dflt=0, pos=8),
+  "PLANK": Int64Col(shape=(), dflt=0, pos=9),
+  "PHCARB": Int64Col(shape=(), dflt=0, pos=10)}
+  byteorder := 'little'
+  chunkshape := (780,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "HYDR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADCALC": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CONS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "HTRCH": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SEDTRN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "GQUAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OXRX": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NUTRX": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PLANK": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHCARB": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/GENERAL/INFO (Group) ''
+/RCHRES/GENERAL/INFO/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "RCHID": StringCol(itemsize=18, shape=(), dflt=b'', pos=1),
+  "IUNITS": Int64Col(shape=(), dflt=0, pos=2),
+  "OUNITS": Int64Col(shape=(), dflt=0, pos=3),
+  "PUNITE": Int64Col(shape=(), dflt=0, pos=4),
+  "PUNITM": Int64Col(shape=(), dflt=0, pos=5),
+  "BUNITE": Int64Col(shape=(), dflt=0, pos=6),
+  "BUNITM": Int64Col(shape=(), dflt=0, pos=7)}
+  byteorder := 'little'
+  chunkshape := (936,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RCHID": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IUNITS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OUNITS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PUNITE": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PUNITM": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BUNITE": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BUNITM": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/CONS/CONS1 (Group) ''
+/RCHRES/CONS/CONS1/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "CONID": StringCol(itemsize=10, shape=(), dflt=b'', pos=1),
+  "CON": Float64Col(shape=(), dflt=0.0, pos=2),
+  "CONCID": StringCol(itemsize=4, shape=(), dflt=b'', pos=3),
+  "CONV": Float64Col(shape=(), dflt=0.0, pos=4),
+  "QTYID": StringCol(itemsize=2, shape=(), dflt=b'', pos=5)}
+  byteorder := 'little'
+  chunkshape := (1820,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CONID": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CON": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CONCID": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CONV": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "QTYID": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/CONS/PARAMETERS (Group) ''
+/RCHRES/CONS/PARAMETERS/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "NCONS": Int64Col(shape=(), dflt=0, pos=1)}
+  byteorder := 'little'
+  chunkshape := (5461,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NCONS": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/RCHRES/CONS/SAVE (Group) ''
+/RCHRES/CONS/SAVE/table (Table(5,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "COADDR": Int64Col(shape=(), dflt=0, pos=1),
+  "COADEP": Int64Col(shape=(), dflt=0, pos=2),
+  "COADWT": Int64Col(shape=(), dflt=0, pos=3),
+  "CON": Int64Col(shape=(), dflt=0, pos=4),
+  "ICON": Int64Col(shape=(), dflt=0, pos=5),
+  "OCON": Int64Col(shape=(), dflt=0, pos=6),
+  "ROCON": Int64Col(shape=(), dflt=0, pos=7)}
+  byteorder := 'little'
+  chunkshape := (1092,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "COADDR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "COADEP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "COADWT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CON": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ICON": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OCON": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ROCON": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/PERLND/GENERAL (Group) ''
+/PERLND/PSTEMP (Group) ''
+/PERLND/PWATER (Group) ''
+/PERLND/PWTGAS (Group) ''
+/PERLND/SNOW (Group) ''
+/PERLND/SNOW/FLAGS (Group) ''
+/PERLND/SNOW/FLAGS/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "ICEFG": Int64Col(shape=(), dflt=0, pos=1),
+  "SNOPFG": Int64Col(shape=(), dflt=0, pos=2)}
+  byteorder := 'little'
+  chunkshape := (3276,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ICEFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SNOPFG": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/PERLND/SNOW/PARAMETERS (Group) ''
+/PERLND/SNOW/PARAMETERS/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "LAT": Float64Col(shape=(), dflt=0.0, pos=1),
+  "MELEV": Float64Col(shape=(), dflt=0.0, pos=2),
+  "SHADE": Float64Col(shape=(), dflt=0.0, pos=3),
+  "SNOWCF": Float64Col(shape=(), dflt=0.0, pos=4),
+  "COVIND": Float64Col(shape=(), dflt=0.0, pos=5),
+  "KMELT": Float64Col(shape=(), dflt=0.0, pos=6),
+  "TBASE": Float64Col(shape=(), dflt=0.0, pos=7),
+  "RDCSN": Float64Col(shape=(), dflt=0.0, pos=8),
+  "TSNOW": Float64Col(shape=(), dflt=0.0, pos=9),
+  "SNOEVP": Float64Col(shape=(), dflt=0.0, pos=10),
+  "CCFACT": Float64Col(shape=(), dflt=0.0, pos=11),
+  "MWATER": Float64Col(shape=(), dflt=0.0, pos=12),
+  "MGMELT": Float64Col(shape=(), dflt=0.0, pos=13)}
+  byteorder := 'little'
+  chunkshape := (606,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "LAT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "MELEV": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SHADE": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SNOWCF": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "COVIND": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KMELT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TBASE": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RDCSN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TSNOW": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SNOEVP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CCFACT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "MWATER": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "MGMELT": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/PERLND/SNOW/SAVE (Group) ''
+/PERLND/SNOW/SAVE/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "ALBEDO": Int64Col(shape=(), dflt=0, pos=1),
+  "COVINX": Int64Col(shape=(), dflt=0, pos=2),
+  "DEWTMP": Int64Col(shape=(), dflt=0, pos=3),
+  "DULL": Int64Col(shape=(), dflt=0, pos=4),
+  "MELT": Int64Col(shape=(), dflt=0, pos=5),
+  "NEGHTS": Int64Col(shape=(), dflt=0, pos=6),
+  "PACKF": Int64Col(shape=(), dflt=0, pos=7),
+  "PACKI": Int64Col(shape=(), dflt=0, pos=8),
+  "PACKW": Int64Col(shape=(), dflt=0, pos=9),
+  "PACK": Int64Col(shape=(), dflt=0, pos=10),
+  "PAKTMP": Int64Col(shape=(), dflt=0, pos=11),
+  "PDEPTH": Int64Col(shape=(), dflt=0, pos=12),
+  "PRAIN": Int64Col(shape=(), dflt=0, pos=13),
+  "RAINF": Int64Col(shape=(), dflt=0, pos=14),
+  "RDENPF": Int64Col(shape=(), dflt=0, pos=15),
+  "SKYCLR": Int64Col(shape=(), dflt=0, pos=16),
+  "SNOCOV": Int64Col(shape=(), dflt=0, pos=17),
+  "SNOTMP": Int64Col(shape=(), dflt=0, pos=18),
+  "SNOWE": Int64Col(shape=(), dflt=0, pos=19),
+  "SNOWF": Int64Col(shape=(), dflt=0, pos=20),
+  "WYIELD": Int64Col(shape=(), dflt=0, pos=21),
+  "XLNMLT": Int64Col(shape=(), dflt=0, pos=22)}
+  byteorder := 'little'
+  chunkshape := (364,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ALBEDO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "COVINX": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEWTMP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DULL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "MELT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NEGHTS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PACKF": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PACKI": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PACKW": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PACK": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PAKTMP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PDEPTH": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PRAIN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RAINF": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RDENPF": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SKYCLR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SNOCOV": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SNOTMP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SNOWE": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SNOWF": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "WYIELD": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "XLNMLT": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/PERLND/SNOW/STATES (Group) ''
+/PERLND/SNOW/STATES/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "PACKF": Float64Col(shape=(), dflt=0.0, pos=1),
+  "PACKI": Float64Col(shape=(), dflt=0.0, pos=2),
+  "PACKW": Float64Col(shape=(), dflt=0.0, pos=3),
+  "RDENPF": Float64Col(shape=(), dflt=0.0, pos=4),
+  "DULL": Float64Col(shape=(), dflt=0.0, pos=5),
+  "PAKTMP": Float64Col(shape=(), dflt=0.0, pos=6),
+  "COVINX": Float64Col(shape=(), dflt=0.0, pos=7),
+  "XLNMLT": Float64Col(shape=(), dflt=0.0, pos=8),
+  "SKYCLR": Float64Col(shape=(), dflt=0.0, pos=9)}
+  byteorder := 'little'
+  chunkshape := (862,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PACKF": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PACKI": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PACKW": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RDENPF": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DULL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PAKTMP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "COVINX": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "XLNMLT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SKYCLR": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/PERLND/PWTGAS/PARAMETERS (Group) ''
+/PERLND/PWTGAS/PARAMETERS/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "ELEV": Float64Col(shape=(), dflt=0.0, pos=1),
+  "IDOXP": Float64Col(shape=(), dflt=0.0, pos=2),
+  "ICO2P": Float64Col(shape=(), dflt=0.0, pos=3),
+  "ADOXP": Float64Col(shape=(), dflt=0.0, pos=4),
+  "ACO2P": Float64Col(shape=(), dflt=0.0, pos=5),
+  "SDLFAC": Float64Col(shape=(), dflt=0.0, pos=6),
+  "SLIFAC": Float64Col(shape=(), dflt=0.0, pos=7),
+  "ILIFAC": Float64Col(shape=(), dflt=0.0, pos=8),
+  "ALIFAC": Float64Col(shape=(), dflt=0.0, pos=9),
+  "SOTMP": Float64Col(shape=(), dflt=0.0, pos=10),
+  "IOTMP": Float64Col(shape=(), dflt=0.0, pos=11),
+  "AOTMP": Float64Col(shape=(), dflt=0.0, pos=12),
+  "SODOX": Float64Col(shape=(), dflt=0.0, pos=13),
+  "SOCO2": Float64Col(shape=(), dflt=0.0, pos=14),
+  "IODOX": Float64Col(shape=(), dflt=0.0, pos=15),
+  "IOCO2": Float64Col(shape=(), dflt=0.0, pos=16),
+  "AODOX": Float64Col(shape=(), dflt=0.0, pos=17),
+  "AOCO2": Float64Col(shape=(), dflt=0.0, pos=18)}
+  byteorder := 'little'
+  chunkshape := (442,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ELEV": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IDOXP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ICO2P": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ADOXP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ACO2P": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SDLFAC": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SLIFAC": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ILIFAC": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ALIFAC": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SOTMP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IOTMP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AOTMP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SODOX": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SOCO2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IODOX": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IOCO2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AODOX": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AOCO2": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/PERLND/PWTGAS/SAVE (Group) ''
+/PERLND/PWTGAS/SAVE/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "AOCO2": Int64Col(shape=(), dflt=0, pos=1),
+  "AOCO2M": Int64Col(shape=(), dflt=0, pos=2),
+  "AODOX": Int64Col(shape=(), dflt=0, pos=3),
+  "AODOXM": Int64Col(shape=(), dflt=0, pos=4),
+  "AOHT": Int64Col(shape=(), dflt=0, pos=5),
+  "AOTMP": Int64Col(shape=(), dflt=0, pos=6),
+  "IOCO2": Int64Col(shape=(), dflt=0, pos=7),
+  "IOCO2M": Int64Col(shape=(), dflt=0, pos=8),
+  "IODOX": Int64Col(shape=(), dflt=0, pos=9),
+  "IODOXM": Int64Col(shape=(), dflt=0, pos=10),
+  "IOHT": Int64Col(shape=(), dflt=0, pos=11),
+  "IOTMP": Int64Col(shape=(), dflt=0, pos=12),
+  "POCO2M": Int64Col(shape=(), dflt=0, pos=13),
+  "PODOXM": Int64Col(shape=(), dflt=0, pos=14),
+  "POHT": Int64Col(shape=(), dflt=0, pos=15),
+  "SOCO2": Int64Col(shape=(), dflt=0, pos=16),
+  "SOCO2M": Int64Col(shape=(), dflt=0, pos=17),
+  "SODOX": Int64Col(shape=(), dflt=0, pos=18),
+  "SODOXM": Int64Col(shape=(), dflt=0, pos=19),
+  "SOHT": Int64Col(shape=(), dflt=0, pos=20),
+  "SOTMP": Int64Col(shape=(), dflt=0, pos=21)}
+  byteorder := 'little'
+  chunkshape := (381,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AOCO2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AOCO2M": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AODOX": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AODOXM": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AOHT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AOTMP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IOCO2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IOCO2M": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IODOX": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IODOXM": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IOHT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IOTMP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "POCO2M": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PODOXM": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "POHT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SOCO2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SOCO2M": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SODOX": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SODOXM": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SOHT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SOTMP": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/PERLND/PWATER/MONTHLY (Group) ''
+/PERLND/PWATER/PARAMETERS (Group) ''
+/PERLND/PWATER/PARAMETERS/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "CSNOFG": Int64Col(shape=(), dflt=0, pos=1),
+  "RTOPFG": Int64Col(shape=(), dflt=0, pos=2),
+  "UZFG": Int64Col(shape=(), dflt=0, pos=3),
+  "VCSFG": Int64Col(shape=(), dflt=0, pos=4),
+  "VUZFG": Int64Col(shape=(), dflt=0, pos=5),
+  "VNNFG": Int64Col(shape=(), dflt=0, pos=6),
+  "VIFWFG": Int64Col(shape=(), dflt=0, pos=7),
+  "VIRCFG": Int64Col(shape=(), dflt=0, pos=8),
+  "VLEFG": Int64Col(shape=(), dflt=0, pos=9),
+  "IFFCFG": Int64Col(shape=(), dflt=0, pos=10),
+  "HWTFG": Int64Col(shape=(), dflt=0, pos=11),
+  "IRRGFG": Int64Col(shape=(), dflt=0, pos=12),
+  "IFRDFG": Int64Col(shape=(), dflt=0, pos=13),
+  "FOREST": Float64Col(shape=(), dflt=0.0, pos=14),
+  "LZSN": Float64Col(shape=(), dflt=0.0, pos=15),
+  "INFILT": Float64Col(shape=(), dflt=0.0, pos=16),
+  "LSUR": Float64Col(shape=(), dflt=0.0, pos=17),
+  "SLSUR": Float64Col(shape=(), dflt=0.0, pos=18),
+  "KVARY": Float64Col(shape=(), dflt=0.0, pos=19),
+  "AGWRC": Float64Col(shape=(), dflt=0.0, pos=20),
+  "PETMAX": Float64Col(shape=(), dflt=0.0, pos=21),
+  "PETMIN": Float64Col(shape=(), dflt=0.0, pos=22),
+  "INFEXP": Float64Col(shape=(), dflt=0.0, pos=23),
+  "INFILD": Float64Col(shape=(), dflt=0.0, pos=24),
+  "DEEPFR": Float64Col(shape=(), dflt=0.0, pos=25),
+  "BASETP": Float64Col(shape=(), dflt=0.0, pos=26),
+  "AGWETP": Float64Col(shape=(), dflt=0.0, pos=27),
+  "CEPSC": Float64Col(shape=(), dflt=0.0, pos=28),
+  "UZSN": Float64Col(shape=(), dflt=0.0, pos=29),
+  "NSUR": Float64Col(shape=(), dflt=0.0, pos=30),
+  "INTFW": Float64Col(shape=(), dflt=0.0, pos=31),
+  "IRC": Float64Col(shape=(), dflt=0.0, pos=32),
+  "LZETP": Float64Col(shape=(), dflt=0.0, pos=33),
+  "FZG": Float64Col(shape=(), dflt=0.0, pos=34),
+  "FZGL": Float64Col(shape=(), dflt=0.0, pos=35)}
+  byteorder := 'little'
+  chunkshape := (230,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CSNOFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RTOPFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "UZFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "VCSFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "VUZFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "VNNFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "VIFWFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "VIRCFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "VLEFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IFFCFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "HWTFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IRRGFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IFRDFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "FOREST": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "LZSN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "INFILT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "LSUR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SLSUR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KVARY": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AGWRC": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PETMAX": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PETMIN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "INFEXP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "INFILD": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEEPFR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BASETP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AGWETP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CEPSC": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "UZSN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NSUR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "INTFW": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IRC": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "LZETP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "FZG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "FZGL": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/PERLND/PWATER/SAVE (Group) ''
+/PERLND/PWATER/SAVE/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "AGWET": Int64Col(shape=(), dflt=0, pos=1),
+  "AGWLI": Int64Col(shape=(), dflt=0, pos=2),
+  "AGWI": Int64Col(shape=(), dflt=0, pos=3),
+  "AGWO": Int64Col(shape=(), dflt=0, pos=4),
+  "AGWS": Int64Col(shape=(), dflt=0, pos=5),
+  "BASET": Int64Col(shape=(), dflt=0, pos=6),
+  "CEPE": Int64Col(shape=(), dflt=0, pos=7),
+  "CEPS": Int64Col(shape=(), dflt=0, pos=8),
+  "GWVS": Int64Col(shape=(), dflt=0, pos=9),
+  "IFWI": Int64Col(shape=(), dflt=0, pos=10),
+  "IFWLI": Int64Col(shape=(), dflt=0, pos=11),
+  "IFWO": Int64Col(shape=(), dflt=0, pos=12),
+  "IFWS": Int64Col(shape=(), dflt=0, pos=13),
+  "IGWI": Int64Col(shape=(), dflt=0, pos=14),
+  "INFIL": Int64Col(shape=(), dflt=0, pos=15),
+  "IRDRAW": Int64Col(shape=(), dflt=0, pos=16),
+  "IRRAPP": Int64Col(shape=(), dflt=0, pos=17),
+  "IRRDEM": Int64Col(shape=(), dflt=0, pos=18),
+  "IRSHRT": Int64Col(shape=(), dflt=0, pos=19),
+  "LZET": Int64Col(shape=(), dflt=0, pos=20),
+  "LZI": Int64Col(shape=(), dflt=0, pos=21),
+  "LZLI": Int64Col(shape=(), dflt=0, pos=22),
+  "LZS": Int64Col(shape=(), dflt=0, pos=23),
+  "RPARM": Int64Col(shape=(), dflt=0, pos=24),
+  "PERC": Int64Col(shape=(), dflt=0, pos=25),
+  "PERO": Int64Col(shape=(), dflt=0, pos=26),
+  "PERS": Int64Col(shape=(), dflt=0, pos=27),
+  "PET": Int64Col(shape=(), dflt=0, pos=28),
+  "PETADJ": Int64Col(shape=(), dflt=0, pos=29),
+  "RZWS": Int64Col(shape=(), dflt=0, pos=30),
+  "SUPY": Int64Col(shape=(), dflt=0, pos=31),
+  "SURET": Int64Col(shape=(), dflt=0, pos=32),
+  "SURLI": Int64Col(shape=(), dflt=0, pos=33),
+  "SURI": Int64Col(shape=(), dflt=0, pos=34),
+  "SURO": Int64Col(shape=(), dflt=0, pos=35),
+  "SURS": Int64Col(shape=(), dflt=0, pos=36),
+  "TAET": Int64Col(shape=(), dflt=0, pos=37),
+  "TGWS": Int64Col(shape=(), dflt=0, pos=38),
+  "UZET": Int64Col(shape=(), dflt=0, pos=39),
+  "UZI": Int64Col(shape=(), dflt=0, pos=40),
+  "UZLI": Int64Col(shape=(), dflt=0, pos=41),
+  "UZS": Int64Col(shape=(), dflt=0, pos=42),
+  "INFFAC": Int64Col(shape=(), dflt=0, pos=43)}
+  byteorder := 'little'
+  chunkshape := (188,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AGWET": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AGWLI": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AGWI": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AGWO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AGWS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BASET": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CEPE": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CEPS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "GWVS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IFWI": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IFWLI": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IFWO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IFWS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IGWI": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "INFIL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IRDRAW": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IRRAPP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IRRDEM": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IRSHRT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "LZET": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "LZI": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "LZLI": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "LZS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RPARM": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PERC": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PERO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PERS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PET": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PETADJ": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RZWS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SUPY": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SURET": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SURLI": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SURI": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SURO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SURS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TAET": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TGWS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "UZET": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "UZI": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "UZLI": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "UZS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "INFFAC": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/PERLND/PWATER/STATES (Group) ''
+/PERLND/PWATER/STATES/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "CEPS": Float64Col(shape=(), dflt=0.0, pos=1),
+  "SURS": Float64Col(shape=(), dflt=0.0, pos=2),
+  "UZS": Float64Col(shape=(), dflt=0.0, pos=3),
+  "IFWS": Float64Col(shape=(), dflt=0.0, pos=4),
+  "LZS": Float64Col(shape=(), dflt=0.0, pos=5),
+  "AGWS": Float64Col(shape=(), dflt=0.0, pos=6),
+  "GWVS": Float64Col(shape=(), dflt=0.0, pos=7)}
+  byteorder := 'little'
+  chunkshape := (1092,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CEPS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SURS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "UZS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IFWS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "LZS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AGWS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "GWVS": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/PERLND/PWATER/MONTHLY/CEPSC (Group) ''
+/PERLND/PWATER/MONTHLY/CEPSC/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "JAN": Float64Col(shape=(), dflt=0.0, pos=1),
+  "FEB": Float64Col(shape=(), dflt=0.0, pos=2),
+  "MAR": Float64Col(shape=(), dflt=0.0, pos=3),
+  "APR": Float64Col(shape=(), dflt=0.0, pos=4),
+  "MAY": Float64Col(shape=(), dflt=0.0, pos=5),
+  "JUN": Float64Col(shape=(), dflt=0.0, pos=6),
+  "JUL": Float64Col(shape=(), dflt=0.0, pos=7),
+  "AUG": Float64Col(shape=(), dflt=0.0, pos=8),
+  "SEP": Float64Col(shape=(), dflt=0.0, pos=9),
+  "OCT": Float64Col(shape=(), dflt=0.0, pos=10),
+  "NOV": Float64Col(shape=(), dflt=0.0, pos=11),
+  "DEC": Float64Col(shape=(), dflt=0.0, pos=12)}
+  byteorder := 'little'
+  chunkshape := (655,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "JAN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "FEB": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "MAR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "APR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "MAY": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "JUN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "JUL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AUG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SEP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OCT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NOV": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEC": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/PERLND/PWATER/MONTHLY/LZETP (Group) ''
+/PERLND/PWATER/MONTHLY/LZETP/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "JAN": Float64Col(shape=(), dflt=0.0, pos=1),
+  "FEB": Float64Col(shape=(), dflt=0.0, pos=2),
+  "MAR": Float64Col(shape=(), dflt=0.0, pos=3),
+  "APR": Float64Col(shape=(), dflt=0.0, pos=4),
+  "MAY": Float64Col(shape=(), dflt=0.0, pos=5),
+  "JUN": Float64Col(shape=(), dflt=0.0, pos=6),
+  "JUL": Float64Col(shape=(), dflt=0.0, pos=7),
+  "AUG": Float64Col(shape=(), dflt=0.0, pos=8),
+  "SEP": Float64Col(shape=(), dflt=0.0, pos=9),
+  "OCT": Float64Col(shape=(), dflt=0.0, pos=10),
+  "NOV": Float64Col(shape=(), dflt=0.0, pos=11),
+  "DEC": Float64Col(shape=(), dflt=0.0, pos=12)}
+  byteorder := 'little'
+  chunkshape := (655,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "JAN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "FEB": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "MAR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "APR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "MAY": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "JUN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "JUL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AUG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SEP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OCT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NOV": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEC": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/PERLND/PWATER/MONTHLY/NSUR (Group) ''
+/PERLND/PWATER/MONTHLY/NSUR/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "JAN": Float64Col(shape=(), dflt=0.0, pos=1),
+  "FEB": Float64Col(shape=(), dflt=0.0, pos=2),
+  "MAR": Float64Col(shape=(), dflt=0.0, pos=3),
+  "APR": Float64Col(shape=(), dflt=0.0, pos=4),
+  "MAY": Float64Col(shape=(), dflt=0.0, pos=5),
+  "JUN": Float64Col(shape=(), dflt=0.0, pos=6),
+  "JUL": Float64Col(shape=(), dflt=0.0, pos=7),
+  "AUG": Float64Col(shape=(), dflt=0.0, pos=8),
+  "SEP": Float64Col(shape=(), dflt=0.0, pos=9),
+  "OCT": Float64Col(shape=(), dflt=0.0, pos=10),
+  "NOV": Float64Col(shape=(), dflt=0.0, pos=11),
+  "DEC": Float64Col(shape=(), dflt=0.0, pos=12)}
+  byteorder := 'little'
+  chunkshape := (655,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "JAN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "FEB": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "MAR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "APR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "MAY": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "JUN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "JUL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AUG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SEP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OCT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NOV": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEC": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/PERLND/PWATER/MONTHLY/UZSN (Group) ''
+/PERLND/PWATER/MONTHLY/UZSN/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "JAN": Float64Col(shape=(), dflt=0.0, pos=1),
+  "FEB": Float64Col(shape=(), dflt=0.0, pos=2),
+  "MAR": Float64Col(shape=(), dflt=0.0, pos=3),
+  "APR": Float64Col(shape=(), dflt=0.0, pos=4),
+  "MAY": Float64Col(shape=(), dflt=0.0, pos=5),
+  "JUN": Float64Col(shape=(), dflt=0.0, pos=6),
+  "JUL": Float64Col(shape=(), dflt=0.0, pos=7),
+  "AUG": Float64Col(shape=(), dflt=0.0, pos=8),
+  "SEP": Float64Col(shape=(), dflt=0.0, pos=9),
+  "OCT": Float64Col(shape=(), dflt=0.0, pos=10),
+  "NOV": Float64Col(shape=(), dflt=0.0, pos=11),
+  "DEC": Float64Col(shape=(), dflt=0.0, pos=12)}
+  byteorder := 'little'
+  chunkshape := (655,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "JAN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "FEB": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "MAR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "APR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "MAY": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "JUN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "JUL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AUG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SEP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OCT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NOV": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEC": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/PERLND/PSTEMP/PARAMETERS (Group) ''
+/PERLND/PSTEMP/PARAMETERS/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "ASLT": Float64Col(shape=(), dflt=0.0, pos=1),
+  "BSLT": Float64Col(shape=(), dflt=0.0, pos=2),
+  "ULTP1": Float64Col(shape=(), dflt=0.0, pos=3),
+  "ULTP2": Float64Col(shape=(), dflt=0.0, pos=4),
+  "LGTP1": Float64Col(shape=(), dflt=0.0, pos=5),
+  "LGTP2": Float64Col(shape=(), dflt=0.0, pos=6)}
+  byteorder := 'little'
+  chunkshape := (1260,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ASLT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BSLT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ULTP1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ULTP2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "LGTP1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "LGTP2": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/PERLND/PSTEMP/SAVE (Group) ''
+/PERLND/PSTEMP/SAVE/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "AIRTC": Int64Col(shape=(), dflt=0, pos=1),
+  "LGTMP": Int64Col(shape=(), dflt=0, pos=2),
+  "SLTMP": Int64Col(shape=(), dflt=0, pos=3),
+  "ULTMP": Int64Col(shape=(), dflt=0, pos=4)}
+  byteorder := 'little'
+  chunkshape := (1820,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AIRTC": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "LGTMP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SLTMP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ULTMP": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/PERLND/GENERAL/ACTIVITY (Group) ''
+/PERLND/GENERAL/ACTIVITY/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "ATEMP": Int64Col(shape=(), dflt=0, pos=1),
+  "SNOW": Int64Col(shape=(), dflt=0, pos=2),
+  "PWATER": Int64Col(shape=(), dflt=0, pos=3),
+  "SEDMNT": Int64Col(shape=(), dflt=0, pos=4),
+  "PSTEMP": Int64Col(shape=(), dflt=0, pos=5),
+  "PWTGAS": Int64Col(shape=(), dflt=0, pos=6),
+  "PQUAL": Int64Col(shape=(), dflt=0, pos=7),
+  "MSTLAY": Int64Col(shape=(), dflt=0, pos=8),
+  "PEST": Int64Col(shape=(), dflt=0, pos=9),
+  "NITR": Int64Col(shape=(), dflt=0, pos=10),
+  "PHOS": Int64Col(shape=(), dflt=0, pos=11),
+  "TRACER": Int64Col(shape=(), dflt=0, pos=12)}
+  byteorder := 'little'
+  chunkshape := (655,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ATEMP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SNOW": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PWATER": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SEDMNT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PSTEMP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PWTGAS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PQUAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "MSTLAY": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PEST": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NITR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PHOS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TRACER": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/PERLND/GENERAL/INFO (Group) ''
+/PERLND/GENERAL/INFO/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "LSID": StringCol(itemsize=13, shape=(), dflt=b'', pos=1),
+  "IUNITS": Int64Col(shape=(), dflt=0, pos=2),
+  "OUNITS": Int64Col(shape=(), dflt=0, pos=3),
+  "PUNIT1": Int64Col(shape=(), dflt=0, pos=4),
+  "PUNIT2": Int64Col(shape=(), dflt=0, pos=5),
+  "BUNIT1": Int64Col(shape=(), dflt=0, pos=6),
+  "BUNIT2": Int64Col(shape=(), dflt=0, pos=7)}
+  byteorder := 'little'
+  chunkshape := (1008,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "LSID": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IUNITS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OUNITS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PUNIT1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PUNIT2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BUNIT1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BUNIT2": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/IMPLND/GENERAL (Group) ''
+/IMPLND/IQUAL (Group) ''
+/IMPLND/IWATER (Group) ''
+/IMPLND/IWTGAS (Group) ''
+/IMPLND/SNOW (Group) ''
+/IMPLND/SOLIDS (Group) ''
+/IMPLND/SOLIDS/PARAMETERS (Group) ''
+/IMPLND/SOLIDS/PARAMETERS/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "KEIM": Float64Col(shape=(), dflt=0.0, pos=1),
+  "JEIM": Float64Col(shape=(), dflt=0.0, pos=2),
+  "ACCSDP": Float64Col(shape=(), dflt=0.0, pos=3),
+  "REMSDP": Float64Col(shape=(), dflt=0.0, pos=4),
+  "SLDS": Float64Col(shape=(), dflt=0.0, pos=5)}
+  byteorder := 'little'
+  chunkshape := (1489,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KEIM": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "JEIM": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ACCSDP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "REMSDP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SLDS": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/IMPLND/SOLIDS/SAVE (Group) ''
+/IMPLND/SOLIDS/SAVE/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "SLDS": Int64Col(shape=(), dflt=0, pos=1),
+  "SOSLD": Int64Col(shape=(), dflt=0, pos=2)}
+  byteorder := 'little'
+  chunkshape := (3276,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SLDS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SOSLD": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/IMPLND/SNOW/FLAGS (Group) ''
+/IMPLND/SNOW/FLAGS/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "ICEFG": Int64Col(shape=(), dflt=0, pos=1),
+  "SNOPFG": Int64Col(shape=(), dflt=0, pos=2)}
+  byteorder := 'little'
+  chunkshape := (3276,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ICEFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SNOPFG": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/IMPLND/SNOW/PARAMETERS (Group) ''
+/IMPLND/SNOW/PARAMETERS/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "LAT": Float64Col(shape=(), dflt=0.0, pos=1),
+  "MELEV": Float64Col(shape=(), dflt=0.0, pos=2),
+  "SHADE": Float64Col(shape=(), dflt=0.0, pos=3),
+  "SNOWCF": Float64Col(shape=(), dflt=0.0, pos=4),
+  "COVIND": Float64Col(shape=(), dflt=0.0, pos=5),
+  "KMELT": Float64Col(shape=(), dflt=0.0, pos=6),
+  "TBASE": Float64Col(shape=(), dflt=0.0, pos=7),
+  "RDCSN": Float64Col(shape=(), dflt=0.0, pos=8),
+  "TSNOW": Float64Col(shape=(), dflt=0.0, pos=9),
+  "SNOEVP": Float64Col(shape=(), dflt=0.0, pos=10),
+  "CCFACT": Float64Col(shape=(), dflt=0.0, pos=11),
+  "MWATER": Float64Col(shape=(), dflt=0.0, pos=12),
+  "MGMELT": Float64Col(shape=(), dflt=0.0, pos=13)}
+  byteorder := 'little'
+  chunkshape := (606,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "LAT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "MELEV": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SHADE": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SNOWCF": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "COVIND": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "KMELT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TBASE": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RDCSN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TSNOW": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SNOEVP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CCFACT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "MWATER": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "MGMELT": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/IMPLND/SNOW/SAVE (Group) ''
+/IMPLND/SNOW/SAVE/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "ALBEDO": Int64Col(shape=(), dflt=0, pos=1),
+  "COVINX": Int64Col(shape=(), dflt=0, pos=2),
+  "DEWTMP": Int64Col(shape=(), dflt=0, pos=3),
+  "DULL": Int64Col(shape=(), dflt=0, pos=4),
+  "MELT": Int64Col(shape=(), dflt=0, pos=5),
+  "NEGHTS": Int64Col(shape=(), dflt=0, pos=6),
+  "PACKF": Int64Col(shape=(), dflt=0, pos=7),
+  "PACKI": Int64Col(shape=(), dflt=0, pos=8),
+  "PACKW": Int64Col(shape=(), dflt=0, pos=9),
+  "PACK": Int64Col(shape=(), dflt=0, pos=10),
+  "PAKTMP": Int64Col(shape=(), dflt=0, pos=11),
+  "PDEPTH": Int64Col(shape=(), dflt=0, pos=12),
+  "PRAIN": Int64Col(shape=(), dflt=0, pos=13),
+  "RAINF": Int64Col(shape=(), dflt=0, pos=14),
+  "RDENPF": Int64Col(shape=(), dflt=0, pos=15),
+  "SKYCLR": Int64Col(shape=(), dflt=0, pos=16),
+  "SNOCOV": Int64Col(shape=(), dflt=0, pos=17),
+  "SNOTMP": Int64Col(shape=(), dflt=0, pos=18),
+  "SNOWE": Int64Col(shape=(), dflt=0, pos=19),
+  "SNOWF": Int64Col(shape=(), dflt=0, pos=20),
+  "WYIELD": Int64Col(shape=(), dflt=0, pos=21),
+  "XLNMLT": Int64Col(shape=(), dflt=0, pos=22)}
+  byteorder := 'little'
+  chunkshape := (364,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ALBEDO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "COVINX": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DEWTMP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DULL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "MELT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NEGHTS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PACKF": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PACKI": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PACKW": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PACK": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PAKTMP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PDEPTH": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PRAIN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RAINF": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RDENPF": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SKYCLR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SNOCOV": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SNOTMP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SNOWE": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SNOWF": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "WYIELD": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "XLNMLT": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/IMPLND/SNOW/STATES (Group) ''
+/IMPLND/SNOW/STATES/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "PACKF": Float64Col(shape=(), dflt=0.0, pos=1),
+  "PACKI": Float64Col(shape=(), dflt=0.0, pos=2),
+  "PACKW": Float64Col(shape=(), dflt=0.0, pos=3),
+  "RDENPF": Float64Col(shape=(), dflt=0.0, pos=4),
+  "DULL": Float64Col(shape=(), dflt=0.0, pos=5),
+  "PAKTMP": Float64Col(shape=(), dflt=0.0, pos=6),
+  "COVINX": Float64Col(shape=(), dflt=0.0, pos=7),
+  "XLNMLT": Float64Col(shape=(), dflt=0.0, pos=8),
+  "SKYCLR": Float64Col(shape=(), dflt=0.0, pos=9)}
+  byteorder := 'little'
+  chunkshape := (862,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PACKF": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PACKI": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PACKW": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RDENPF": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "DULL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PAKTMP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "COVINX": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "XLNMLT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SKYCLR": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/IMPLND/IWTGAS/PARAMETERS (Group) ''
+/IMPLND/IWTGAS/PARAMETERS/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "ELEV": Float64Col(shape=(), dflt=0.0, pos=1),
+  "AWTF": Float64Col(shape=(), dflt=0.0, pos=2),
+  "BWTF": Float64Col(shape=(), dflt=0.0, pos=3),
+  "SDLFAC": Float64Col(shape=(), dflt=0.0, pos=4),
+  "SLIFAC": Float64Col(shape=(), dflt=0.0, pos=5),
+  "SOTMP": Float64Col(shape=(), dflt=0.0, pos=6),
+  "SODOX": Float64Col(shape=(), dflt=0.0, pos=7),
+  "SOCO2": Float64Col(shape=(), dflt=0.0, pos=8)}
+  byteorder := 'little'
+  chunkshape := (963,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ELEV": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AWTF": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BWTF": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SDLFAC": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SLIFAC": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SOTMP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SODOX": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SOCO2": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/IMPLND/IWTGAS/SAVE (Group) ''
+/IMPLND/IWTGAS/SAVE/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "SOTMP": Int64Col(shape=(), dflt=0, pos=1),
+  "SODOX": Int64Col(shape=(), dflt=0, pos=2),
+  "SOCO2": Int64Col(shape=(), dflt=0, pos=3),
+  "SOHT": Int64Col(shape=(), dflt=0, pos=4),
+  "SODOXM": Int64Col(shape=(), dflt=0, pos=5),
+  "SOCO2M": Int64Col(shape=(), dflt=0, pos=6)}
+  byteorder := 'little'
+  chunkshape := (1260,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SOTMP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SODOX": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SOCO2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SOHT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SODOXM": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SOCO2M": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/IMPLND/IWATER/PARAMETERS (Group) ''
+/IMPLND/IWATER/PARAMETERS/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "CSNOFG": Int64Col(shape=(), dflt=0, pos=1),
+  "RTOPFG": Int64Col(shape=(), dflt=0, pos=2),
+  "VRSFG": Int64Col(shape=(), dflt=0, pos=3),
+  "VNNFG": Int64Col(shape=(), dflt=0, pos=4),
+  "RTLIFG": Int64Col(shape=(), dflt=0, pos=5),
+  "LSUR": Float64Col(shape=(), dflt=0.0, pos=6),
+  "SLSUR": Float64Col(shape=(), dflt=0.0, pos=7),
+  "NSUR": Float64Col(shape=(), dflt=0.0, pos=8),
+  "RETSC": Float64Col(shape=(), dflt=0.0, pos=9),
+  "PETMAX": Float64Col(shape=(), dflt=0.0, pos=10),
+  "PETMIN": Float64Col(shape=(), dflt=0.0, pos=11)}
+  byteorder := 'little'
+  chunkshape := (712,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "CSNOFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RTOPFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "VRSFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "VNNFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RTLIFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "LSUR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SLSUR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NSUR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RETSC": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PETMAX": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PETMIN": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/IMPLND/IWATER/SAVE (Group) ''
+/IMPLND/IWATER/SAVE/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "IMPEV": Int64Col(shape=(), dflt=0, pos=1),
+  "PET": Int64Col(shape=(), dflt=0, pos=2),
+  "PETADJ": Int64Col(shape=(), dflt=0, pos=3),
+  "RETS": Int64Col(shape=(), dflt=0, pos=4),
+  "SUPY": Int64Col(shape=(), dflt=0, pos=5),
+  "SURI": Int64Col(shape=(), dflt=0, pos=6),
+  "SURO": Int64Col(shape=(), dflt=0, pos=7),
+  "SURS": Int64Col(shape=(), dflt=0, pos=8)}
+  byteorder := 'little'
+  chunkshape := (963,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IMPEV": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PET": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PETADJ": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RETS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SUPY": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SURI": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SURO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SURS": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/IMPLND/IWATER/STATES (Group) ''
+/IMPLND/IWATER/STATES/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "RETS": Float64Col(shape=(), dflt=0.0, pos=1),
+  "SURS": Float64Col(shape=(), dflt=0.0, pos=2)}
+  byteorder := 'little'
+  chunkshape := (3276,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "RETS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SURS": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/IMPLND/IQUAL/IQUAL1 (Group) ''
+/IMPLND/IQUAL/PARAMETERS (Group) ''
+/IMPLND/IQUAL/PARAMETERS/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "NQUAL": Int64Col(shape=(), dflt=0, pos=1),
+  "SDLFAC": Float64Col(shape=(), dflt=0.0, pos=2),
+  "SLIFAC": Float64Col(shape=(), dflt=0.0, pos=3)}
+  byteorder := 'little'
+  chunkshape := (2340,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "NQUAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SDLFAC": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SLIFAC": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/IMPLND/IQUAL/SAVE (Group) ''
+/IMPLND/IQUAL/SAVE/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "SQO": Int64Col(shape=(), dflt=0, pos=1),
+  "SOQSP": Int64Col(shape=(), dflt=0, pos=2),
+  "SOQS": Int64Col(shape=(), dflt=0, pos=3),
+  "SOQO": Int64Col(shape=(), dflt=0, pos=4),
+  "SOQOC": Int64Col(shape=(), dflt=0, pos=5),
+  "SOQUAL": Int64Col(shape=(), dflt=0, pos=6),
+  "SOQC": Int64Col(shape=(), dflt=0, pos=7),
+  "IQADDR": Int64Col(shape=(), dflt=0, pos=8),
+  "IQADWT": Int64Col(shape=(), dflt=0, pos=9),
+  "IQADEP": Int64Col(shape=(), dflt=0, pos=10)}
+  byteorder := 'little'
+  chunkshape := (780,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SQO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SOQSP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SOQS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SOQO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SOQOC": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SOQUAL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SOQC": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IQADDR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IQADWT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IQADEP": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/IMPLND/IQUAL/IQUAL1/FLAGS (Group) ''
+/IMPLND/IQUAL/IQUAL1/FLAGS/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "QUALID": StringCol(itemsize=3, shape=(), dflt=b'', pos=1),
+  "QTYID": StringCol(itemsize=2, shape=(), dflt=b'', pos=2),
+  "QSDFG": Int64Col(shape=(), dflt=0, pos=3),
+  "VPFWFG": Int64Col(shape=(), dflt=0, pos=4),
+  "QSOFG": Int64Col(shape=(), dflt=0, pos=5),
+  "VQOFG": Int64Col(shape=(), dflt=0, pos=6)}
+  byteorder := 'little'
+  chunkshape := (1598,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "QUALID": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "QTYID": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "QSDFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "VPFWFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "QSOFG": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "VQOFG": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/IMPLND/IQUAL/IQUAL1/PARAMETERS (Group) ''
+/IMPLND/IQUAL/IQUAL1/PARAMETERS/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "SQO": Float64Col(shape=(), dflt=0.0, pos=1),
+  "POTFW": Float64Col(shape=(), dflt=0.0, pos=2),
+  "ACQOP": Float64Col(shape=(), dflt=0.0, pos=3),
+  "SQOLIM": Float64Col(shape=(), dflt=0.0, pos=4),
+  "WSQOP": Float64Col(shape=(), dflt=0.0, pos=5)}
+  byteorder := 'little'
+  chunkshape := (1489,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SQO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "POTFW": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ACQOP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SQOLIM": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "WSQOP": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/IMPLND/GENERAL/ACTIVITY (Group) ''
+/IMPLND/GENERAL/ACTIVITY/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "ATEMP": Int64Col(shape=(), dflt=0, pos=1),
+  "SNOW": Int64Col(shape=(), dflt=0, pos=2),
+  "IWATER": Int64Col(shape=(), dflt=0, pos=3),
+  "SOLIDS": Int64Col(shape=(), dflt=0, pos=4),
+  "IWTGAS": Int64Col(shape=(), dflt=0, pos=5),
+  "IQUAL": Int64Col(shape=(), dflt=0, pos=6)}
+  byteorder := 'little'
+  chunkshape := (1260,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "ATEMP": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SNOW": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IWATER": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SOLIDS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IWTGAS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IQUAL": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/IMPLND/GENERAL/INFO (Group) ''
+/IMPLND/GENERAL/INFO/table (Table(1,)) ''
+  description := {
+  "index": StringCol(itemsize=4, shape=(), dflt=b'', pos=0),
+  "LSID": StringCol(itemsize=17, shape=(), dflt=b'', pos=1),
+  "IUNITS": Int64Col(shape=(), dflt=0, pos=2),
+  "OUNITS": Int64Col(shape=(), dflt=0, pos=3),
+  "PUNIT1": Int64Col(shape=(), dflt=0, pos=4),
+  "PUNIT2": Int64Col(shape=(), dflt=0, pos=5),
+  "BUNIT1": Int64Col(shape=(), dflt=0, pos=6),
+  "BUNIT2": Int64Col(shape=(), dflt=0, pos=7)}
+  byteorder := 'little'
+  chunkshape := (949,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "LSID": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "IUNITS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OUNITS": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PUNIT1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "PUNIT2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BUNIT1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "BUNIT2": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/FTABLES/FT001 (Group) ''
+/FTABLES/FT001/table (Table(14,)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "Depth": Float64Col(shape=(), dflt=0.0, pos=1),
+  "Area": Float64Col(shape=(), dflt=0.0, pos=2),
+  "Volume": Float64Col(shape=(), dflt=0.0, pos=3),
+  "Disch1": Float64Col(shape=(), dflt=0.0, pos=4),
+  "Disch2": Float64Col(shape=(), dflt=0.0, pos=5),
+  "Disch3": Float64Col(shape=(), dflt=0.0, pos=6)}
+  byteorder := 'little'
+  chunkshape := (1170,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Depth": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Area": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Volume": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Disch1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Disch2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Disch3": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/FTABLES/FT002 (Group) ''
+/FTABLES/FT002/table (Table(13,)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "Depth": Float64Col(shape=(), dflt=0.0, pos=1),
+  "Area": Float64Col(shape=(), dflt=0.0, pos=2),
+  "Volume": Float64Col(shape=(), dflt=0.0, pos=3),
+  "Disch1": Float64Col(shape=(), dflt=0.0, pos=4)}
+  byteorder := 'little'
+  chunkshape := (1638,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Depth": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Area": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Volume": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Disch1": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/FTABLES/FT003 (Group) ''
+/FTABLES/FT003/table (Table(13,)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "Depth": Float64Col(shape=(), dflt=0.0, pos=1),
+  "Area": Float64Col(shape=(), dflt=0.0, pos=2),
+  "Volume": Float64Col(shape=(), dflt=0.0, pos=3),
+  "Disch1": Float64Col(shape=(), dflt=0.0, pos=4)}
+  byteorder := 'little'
+  chunkshape := (1638,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Depth": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Area": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Volume": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Disch1": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/FTABLES/FT004 (Group) ''
+/FTABLES/FT004/table (Table(13,)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "Depth": Float64Col(shape=(), dflt=0.0, pos=1),
+  "Area": Float64Col(shape=(), dflt=0.0, pos=2),
+  "Volume": Float64Col(shape=(), dflt=0.0, pos=3),
+  "Disch1": Float64Col(shape=(), dflt=0.0, pos=4)}
+  byteorder := 'little'
+  chunkshape := (1638,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Depth": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Area": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Volume": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Disch1": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/FTABLES/FT005 (Group) ''
+/FTABLES/FT005/table (Table(13,)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "Depth": Float64Col(shape=(), dflt=0.0, pos=1),
+  "Area": Float64Col(shape=(), dflt=0.0, pos=2),
+  "Volume": Float64Col(shape=(), dflt=0.0, pos=3),
+  "Disch1": Float64Col(shape=(), dflt=0.0, pos=4)}
+  byteorder := 'little'
+  chunkshape := (1638,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Depth": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Area": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Volume": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Disch1": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/CONTROL/EXT_SOURCES (Group) ''
+/CONTROL/EXT_SOURCES/table (Table(50,)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "SVOL": StringCol(itemsize=1, shape=(), dflt=b'', pos=1),
+  "SVOLNO": StringCol(itemsize=5, shape=(), dflt=b'', pos=2),
+  "SMEMN": StringCol(itemsize=4, shape=(), dflt=b'', pos=3),
+  "SMEMSB": StringCol(itemsize=2, shape=(), dflt=b'', pos=4),
+  "SSYST": StringCol(itemsize=4, shape=(), dflt=b'', pos=5),
+  "SGAPST": StringCol(itemsize=4, shape=(), dflt=b'', pos=6),
+  "MFACTOR": Float64Col(shape=(), dflt=0.0, pos=7),
+  "TRAN": StringCol(itemsize=4, shape=(), dflt=b'', pos=8),
+  "TVOL": StringCol(itemsize=6, shape=(), dflt=b'', pos=9),
+  "TGRPN": StringCol(itemsize=5, shape=(), dflt=b'', pos=10),
+  "TMEMN": StringCol(itemsize=6, shape=(), dflt=b'', pos=11),
+  "TMEMSB": StringCol(itemsize=1, shape=(), dflt=b'', pos=12),
+  "TVOLNO": StringCol(itemsize=4, shape=(), dflt=b'', pos=13),
+  "COMMENT": StringCol(itemsize=1, shape=(), dflt=b'', pos=14)}
+  byteorder := 'little'
+  chunkshape := (1040,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SVOL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SVOLNO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SMEMN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SMEMSB": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SSYST": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SGAPST": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "MFACTOR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TRAN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TVOL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TGRPN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TMEMN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TMEMSB": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TVOLNO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "COMMENT": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/CONTROL/GLOBAL (Group) ''
+/CONTROL/GLOBAL/table (Table(3,)) ''
+  description := {
+  "index": StringCol(itemsize=7, shape=(), dflt=b'', pos=0),
+  "Info": StringCol(itemsize=74, shape=(), dflt=b'', pos=1)}
+  byteorder := 'irrelevant'
+  chunkshape := (809,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "Info": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/CONTROL/LINKS (Group) ''
+/CONTROL/LINKS/table (Table(7,)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "AFACTR": Float64Col(shape=(), dflt=0.0, pos=1),
+  "MLNO": StringCol(itemsize=5, shape=(), dflt=b'', pos=2),
+  "SVOL": StringCol(itemsize=6, shape=(), dflt=b'', pos=3),
+  "SVOLNO": StringCol(itemsize=4, shape=(), dflt=b'', pos=4),
+  "TMEMSB1": StringCol(itemsize=1, shape=(), dflt=b'', pos=5),
+  "TMEMSB2": StringCol(itemsize=1, shape=(), dflt=b'', pos=6),
+  "TVOL": StringCol(itemsize=6, shape=(), dflt=b'', pos=7),
+  "TVOLNO": StringCol(itemsize=4, shape=(), dflt=b'', pos=8),
+  "MFACTOR": StringCol(itemsize=1, shape=(), dflt=b'', pos=9),
+  "SGRPN": StringCol(itemsize=1, shape=(), dflt=b'', pos=10),
+  "SMEMN": StringCol(itemsize=1, shape=(), dflt=b'', pos=11),
+  "SMEMSB": StringCol(itemsize=1, shape=(), dflt=b'', pos=12),
+  "TGRPN": StringCol(itemsize=1, shape=(), dflt=b'', pos=13),
+  "TMEMN": StringCol(itemsize=1, shape=(), dflt=b'', pos=14),
+  "TMEMSB": StringCol(itemsize=1, shape=(), dflt=b'', pos=15),
+  "TRAN": StringCol(itemsize=1, shape=(), dflt=b'', pos=16),
+  "COMMENTS": StringCol(itemsize=1, shape=(), dflt=b'', pos=17)}
+  byteorder := 'little'
+  chunkshape := (1260,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "AFACTR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "MLNO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SVOL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SVOLNO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TMEMSB1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TMEMSB2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TVOL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TVOLNO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "MFACTOR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SGRPN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SMEMN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SMEMSB": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TGRPN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TMEMN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TMEMSB": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TRAN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "COMMENTS": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/CONTROL/MASS_LINKS (Group) ''
+/CONTROL/MASS_LINKS/table (Table(15,)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "SVOL": StringCol(itemsize=6, shape=(), dflt=b'', pos=1),
+  "SGRPN": StringCol(itemsize=6, shape=(), dflt=b'', pos=2),
+  "SMEMN": StringCol(itemsize=6, shape=(), dflt=b'', pos=3),
+  "SMEMSB1": StringCol(itemsize=1, shape=(), dflt=b'', pos=4),
+  "SMEMSB2": StringCol(itemsize=1, shape=(), dflt=b'', pos=5),
+  "MFACTOR": Float64Col(shape=(), dflt=0.0, pos=6),
+  "TVOL": StringCol(itemsize=6, shape=(), dflt=b'', pos=7),
+  "TMEMN": StringCol(itemsize=5, shape=(), dflt=b'', pos=8),
+  "TMEMSB1": StringCol(itemsize=1, shape=(), dflt=b'', pos=9),
+  "TMEMSB2": StringCol(itemsize=1, shape=(), dflt=b'', pos=10),
+  "MLNO": StringCol(itemsize=5, shape=(), dflt=b'', pos=11),
+  "COMMENTS": StringCol(itemsize=1, shape=(), dflt=b'', pos=12)}
+  byteorder := 'little'
+  chunkshape := (1191,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SVOL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SGRPN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SMEMN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SMEMSB1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SMEMSB2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "MFACTOR": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TVOL": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TMEMN": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TMEMSB1": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "TMEMSB2": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "MLNO": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "COMMENTS": Index(6, medium, shuffle, zlib(1)).is_csi=False}
+/CONTROL/OP_SEQUENCE (Group) ''
+/CONTROL/OP_SEQUENCE/table (Table(7,)) ''
+  description := {
+  "index": Int64Col(shape=(), dflt=0, pos=0),
+  "OPERATION": StringCol(itemsize=6, shape=(), dflt=b'', pos=1),
+  "SEGMENT": StringCol(itemsize=4, shape=(), dflt=b'', pos=2),
+  "INDELT_minutes": Int64Col(shape=(), dflt=0, pos=3)}
+  byteorder := 'little'
+  chunkshape := (2520,)
+  autoindex := True
+  colindexes := {
+    "index": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "OPERATION": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "SEGMENT": Index(6, medium, shuffle, zlib(1)).is_csi=False,
+    "INDELT_minutes": Index(6, medium, shuffle, zlib(1)).is_csi=False}
