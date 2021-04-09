@@ -976,7 +976,7 @@ def gqual(store, siminfo, uci, ts):
 				tiqal  = idqal + isqal4
 				troqal = rodqal + rosqal4
 				if nexits > 1:
-					for n in range(1, nexits):
+					for n in range(0, nexits-1):
 						toqal[n] = odqal[n] + tosqal[n]
 
 				if avdepe > 0.17:     # simulate decay on suspended sediment
