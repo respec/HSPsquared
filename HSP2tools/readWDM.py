@@ -128,7 +128,6 @@ def readWDM(wdmfile, hdffile, compress_output=False):
 
             records = np.asarray(records)
             offsets = np.asarray(offsets)
-            dates, values = _process_groups(iarray, farray, records, offsets, tgroup)
 
             dates, values, stop_datetime = _process_groups(iarray, farray, records, offsets, tgroup)
             stop_datetime = datetime.datetime(*bits_to_date(stop_datetime))
@@ -313,3 +312,4 @@ def _process_groups(iarray, farray, records, offsets, tgroup):
     date_array = date_array[1:]
     value_array = value_array[1:]
 
+    return date_array, value_array, group_enddate
