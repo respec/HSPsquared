@@ -26,7 +26,7 @@ attrinfo = {1:('TSTYPE','S',4),     2:('STAID','S',16),    11:('DAREA','R',1),
 freq = {7:'100YS', 6:'YS', 5:'MS', 4:'D', 3:'H', 2:'min', 1:'S'}   # pandas date_range() frequency by TCODE, TGROUP
 
 
-def readWDM(wdmfile, hdffile, compress_output=True):
+def readWDM(wdmfile, hdffile, compress_output=False):
     iarray = np.fromfile(wdmfile, dtype=np.int32)
     farray = np.fromfile(wdmfile, dtype=np.float32)
 
@@ -129,6 +129,9 @@ def readWDM(wdmfile, hdffile, compress_output=True):
             records = np.asarray(records)
             offsets = np.asarray(offsets)
             dates, values = _process_groups(iarray, farray, records, offsets, tgroup)
+
+            dates, values, stop_datetime = _process_groups(iarray, farray, records, offsets, tgroup)
+            stop_datetime = datetime.datetime(*bits_to_date(stop_datetime))
             dates = np.array(dates)
             dates_converted = date_convert(dates, date_epoch, dt_year, dt_month, dt_day, dt_hour, dt_minute, dt_second)
             series = pd.Series(values, index=dates_converted)
@@ -140,7 +143,7 @@ def readWDM(wdmfile, hdffile, compress_output=True):
                 series.to_hdf(store, dsname, format='t', data_columns=True)
 
             data = [
-                str(series.index[0]), str(series.index[-1]), str(tstep) + freq[tcode],
+                str(series.index[0]), str(stop_datetime), str(tstep) + freq[tcode],
                 len(series),  dattr['TSTYPE'], dattr['TFILL']
                 ]
             columns = ['Start', 'Stop', 'Freq','Length', 'TSTYPE', 'TFILL']
@@ -154,6 +157,7 @@ def readWDM(wdmfile, hdffile, compress_output=True):
 
         dfsummary = pd.DataFrame(summary, index=summaryindx, columns=columns)
         store.put('TIMESERIES/SUMMARY',dfsummary, format='t', data_columns=True)
+
     return dfsummary
 
 @njit 
@@ -309,4 +313,3 @@ def _process_groups(iarray, farray, records, offsets, tgroup):
     date_array = date_array[1:]
     value_array = value_array[1:]
 
-    return date_array, value_array
