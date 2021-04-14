@@ -141,6 +141,8 @@ def advect(imat, conc, nexits, vols, vol, srovol, erovol, sovol, eovol):
 	# eovol  = EOVOL[loop,:]
 
 	omat = 0.0
+	if nexits > 1:
+		omat = zeros((nexits))
 	if vol > 0.0:    # reach/res contains water
 		concs = conc
 		conc = (imat + concs * (vols - srovol)) / (vol + erovol)  # material entering during interval, weighted volume of outflow based on conditions at start of ivl (srovol), and weighted volume of outflow based on conditions at end of ivl (erovol)
