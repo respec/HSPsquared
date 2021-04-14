@@ -1,0 +1,66 @@
+         12132291 function calls (11881198 primitive calls) in 13.961 seconds
+
+   Ordered by: internal time
+   List reduced from 1873 to 60 due to restriction <60>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        5    1.248    0.250    3.153    0.631 GQUAL.py:18(gqual)
+    46083    1.179    0.000    1.179    0.000 {method '_g_getattr' of 'tables.hdf5extension.AttributeSet' objects}
+        5    0.709    0.142    0.830    0.166 SEDTRN.py:13(sedtrn)
+    18899    0.707    0.000    0.707    0.000 {method '_g_get_objinfo' of 'tables.hdf5extension.Group' objects}
+   212169    0.617    0.000    1.853    0.000 typeddict.py:147(__getitem__)
+     4700    0.529    0.000    0.637    0.000 {method '_open_array' of 'tables.hdf5extension.Array' objects}
+     4869    0.443    0.000    0.443    0.000 {method '_g_get_lchild_attr' of 'tables.hdf5extension.Group' objects}
+   214417    0.307    0.000    0.882    0.000 dispatcher.py:677(typeof_pyval)
+   353485    0.243    0.000    0.243    0.000 {built-in method numpy.zeros}
+        5    0.235    0.047    0.277    0.055 HTRCH.py:39(htrch)
+1110618/1110615    0.219    0.000    0.327    0.000 {built-in method builtins.isinstance}
+   212169    0.217    0.000    0.278    0.000 typeddict.py:37(_getitem)
+    42532    0.203    0.000    0.203    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+    51177    0.199    0.000    2.081    0.000 attributeset.py:295(__getattr__)
+   131760    0.149    0.000    0.251    0.000 GQUAL.py:1205(advqal)
+   214427    0.145    0.000    0.560    0.000 typeof.py:25(typeof)
+        5    0.138    0.028    0.161    0.032 CONS.py:133(loopsub)
+      276    0.121    0.000    0.121    0.000 {method '_read_records' of 'tables.tableextension.Table' objects}
+      241    0.118    0.000    0.118    0.000 {method '_g_flush' of 'tables.hdf5extension.Leaf' objects}
+9821/4549    0.110    0.000    0.647    0.000 base.py:250(__new__)
+   214427    0.110    0.000    0.330    0.000 functools.py:870(wrapper)
+   214427    0.109    0.000    0.186    0.000 functools.py:814(dispatch)
+590426/541216    0.104    0.000    5.086    0.000 {built-in method builtins.getattr}
+     6969    0.102    0.000    2.401    0.000 attributeset.py:205(__init__)
+        5    0.100    0.020    0.100    0.020 ADCALC.py:86(adcalc_)
+    68485    0.094    0.000    0.522    0.000 file.py:391(cache_node)
+     1175    0.093    0.000    0.093    0.000 {method '_g_read_slice' of 'tables.hdf5extension.Array' objects}
+     1841    0.089    0.000    0.089    0.000 {method '_g_get_gchild_attr' of 'tables.hdf5extension.Group' objects}
+   219600    0.087    0.000    0.118    0.000 ADCALC.py:131(advect)
+     2783    0.084    0.000    0.084    0.000 {method '_g_close' of 'tables.hdf5extension.Leaf' objects}
+    39521    0.081    0.000    0.323    0.000 fromnumeric.py:70(_wrapreduction)
+    68522    0.080    0.000    0.180    0.000 file.py:378(register_node)
+      380    0.076    0.000    0.077    0.000 {method '_create_carray' of 'tables.hdf5extension.Array' objects}
+   327742    0.076    0.000    0.105    0.000 generic.py:30(_check)
+    84016    0.074    0.000    0.514    0.000 attributeset.py:61(issysattrname)
+     2426    0.069    0.000    0.069    0.000 {method '_g_close' of 'tables.indexesextension.IndexArray' objects}
+61574/7490    0.064    0.000    5.422    0.001 file.py:404(get_node)
+    96358    0.063    0.000    0.068    0.000 group.py:838(__setattr__)
+   430186    0.062    0.000    0.062    0.000 typeddict.py:131(_numba_type_)
+   215115    0.062    0.000    0.062    0.000 serialize.py:140(_numba_unpickle)
+   694979    0.061    0.000    0.061    0.000 {method 'append' of 'list' objects}
+43267/42291    0.059    0.000    0.060    0.000 {built-in method numpy.array}
+        2    0.059    0.029    0.064    0.032 SNOW.py:88(_snow_)
+    76149    0.056    0.000    0.056    0.000 {method 'pop' of 'tables.lrucacheextension.NodeCache' objects}
+     1470    0.056    0.000    0.075    0.000 {method '_g_setattr' of 'tables.hdf5extension.AttributeSet' objects}
+   214427    0.056    0.000    0.056    0.000 weakref.py:382(__getitem__)
+       36    0.056    0.002    0.056    0.002 {method '_g_delete' of 'tables.hdf5extension.Node' objects}
+    83861    0.055    0.000    0.055    0.000 weakref.py:147(__contains__)
+    43920    0.052    0.000    0.060    0.000 GQUAL.py:1122(adecay)
+50488/46715    0.052    0.000    0.449    0.000 {built-in method numpy.core._multiarray_umath.implement_array_function}
+        5    0.052    0.010    0.593    0.119 ADCALC.py:20(adcalc)
+   214427    0.050    0.000    0.085    0.000 <string>:1(__new__)
+      169    0.046    0.000    0.132    0.001 {method '_get_info' of 'tables.tableextension.Table' objects}
+      368    0.044    0.000    0.044    0.000 {method '_g_list_group' of 'tables.hdf5extension.Group' objects}
+ 7236/780    0.043    0.000    5.559    0.007 node.py:197(__init__)
+        1    0.042    0.042    0.046    0.046 PWTGAS.py:28(pwtgas)
+   230623    0.041    0.000    0.041    0.000 {built-in method __new__ of type object at 0x10662f6e8}
+    38618    0.040    0.000    0.355    0.000 fromnumeric.py:2912(prod)
+     6969    0.038    0.000    0.038    0.000 {method '_g_list_attr' of 'tables.hdf5extension.AttributeSet' objects}
+    62199    0.037    0.000    0.072    0.000 common.py:1610(_is_dtype_type)
