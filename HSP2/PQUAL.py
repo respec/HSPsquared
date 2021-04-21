@@ -16,7 +16,7 @@ PQUAL high level will contain list of constituents.
 NEED to check all units conversions
 '''
 
-ERRMSG = []
+ERRMSGS =('PQUAL: A constituent must be associated with overland flow in order to receive atmospheric deposition inputs','')     #ERRMSG0
 
 # english system
 FACTA  = 1.0
@@ -38,7 +38,7 @@ def pqual(store, siminfo, uci, ts):
 		flags = uci['PQUAL' + pqual + '_FLAGS']
 		constituents.append(flags['QUALID'])
 
-	errorsV = zeros(len(ERRMSG), dtype=int)
+	errorsV = zeros(len(ERRMSGS), dtype=int)
 	delt60 = siminfo['delt'] / 60  # delt60 - simulation time interval in hours
 	simlen = siminfo['steps']
 	tindex = siminfo['tindex']
@@ -137,6 +137,9 @@ def pqual(store, siminfo, uci, ts):
 				ts['PQADCN'] = initm(siminfo, uci, pqadfgc, 'PQUAL' + str(index) + '_MONTHLY/PQADCN', 0.0)
 			elif pqadfgc == -1:
 				ts['PQADCN'] = ts['PQADCN' + str(index) + ' 1']
+
+			if QSOFG == 0 and (pqadfgf != 0 or pqadfgc != 0):
+				errorsV[0] += 1  # error - non-qualof cannot have atmospheric deposition
 
 		if 'PQADFX' not in ts:
 			ts['PQADFX'] = zeros(simlen)
@@ -329,5 +332,5 @@ def pqual(store, siminfo, uci, ts):
 			PQADDR[loop] = adfxfx
 			PQADEP[loop] = adtot
 	
-	return errorsV, ERRMSG
+	return errorsV, ERRMSGS
 

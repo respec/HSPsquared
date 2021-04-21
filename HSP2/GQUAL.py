@@ -1245,7 +1245,7 @@ def advqal(isqal,rsed,bsed,depscr,rosed,osed,nexits,rsqals,rbqals,errors):
 		if bsed <= 0.0:     # no bed sediments at end of interval
 			bqal = -1.0e30
 			if abs(dsqal) > 0.0 or abs(rbqals > 0.0):
-				errors[4] += 1  # ERRMSG4: error-under these conditions these values should be zero
+				errors[5] += 1  # ERRMSG4: error-under these conditions these values should be zero
 		else:     # there is bed sediment at the end of the interval
 			rbqal= dsqal + rbqals
 			bqal = rbqal / bsed
