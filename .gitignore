@@ -31,3 +31,4 @@ __pycache__/*
 .tox/*
 stats.dat
 .ropeproject
+.idea

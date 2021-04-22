@@ -17,6 +17,9 @@ MESSU      22   test10.ech
            66   test10.d66
            94   test10.p94
            95   test10.p95
+BINO       81   test10P.hbn
+BINO       82   test10I.hbn
+BINO       83   test10R.hbn
 END FILES
 
 OPN SEQUENCE
@@ -53,11 +56,17 @@ PERLND
     1              4    4         4    4                                      12
   END PRINT-INFO
 
+  BINARY-INFO
+*** < PLS>               Binary Output Flags                           PIVL  PYR
+*** x  - x ATMP SNOW PWAT  SED  PST  PWG PQAL MSTL PEST NITR PHOS TRAC
+    1         2    2    2         2    2                                  1   12
+  END BINARY-INFO
+
   GEN-INFO
-    <PLS ><-------Name------->        Unit-systems   Printer ***
-    # -  #                                t-series Engl Metr ***
-                                           in  out           ***
-    1      BICKNELL FARM                    1    1    1    0
+    <PLS ><-------Name------->        Unit-systems   Printer BinaryOut ***
+    # -  #                                t-series Engl Metr Engl Metr ***
+                                           in  out                     ***
+    1      BICKNELL FARM                    1    1    1    0   81    0
   END GEN-INFO
 
   *** Section SNOW ***
@@ -182,11 +191,17 @@ IMPLND
     1              4    4    4    4    4        12
   END PRINT-INFO
 
+  BINARY-INFO
+*** <ILS > **** Binary-Output-flags **** PIVL  PYR
+*** x -  x ATMP SNOW IWAT  SLD  IWG IQAL *********
+    1              2    2    2    2    2    1   12
+  END BINARY-INFO
+
   GEN-INFO
-    <ILS ><-------Name------->   Unit-systems   Printer ***
-    # -  #                           t-series Engl Metr ***
-                                      in  out           ***
-    1      DONIGIAN INDUSTRY           1    1    1    0
+    <ILS ><-------Name------->   Unit-systems   Printer BinaryOut ***
+    # -  #                           t-series Engl Metr Engl Metr ***
+                                      in  out                     ***
+    1      DONIGIAN INDUSTRY           1    1    1    0   82    0
   END GEN-INFO
 
   *** Section SNOW ***
@@ -304,15 +319,21 @@ RCHRES
     5         4    4    4    4    4    4    4    4    4    4        12
   END PRINT-INFO
 
+  BINARY-INFO
+*** RCHRES  Binary Output level flags
+*** x -  x HYDR ADCA CONS HEAT  SED  GQL OXRX NUTR PLNK PHCB PIVL  PYR
+    1    5    2    2    2    2    2    2    2    2    2    2    1   12
+  END BINARY-INFO
+
   GEN-INFO
-    RCHRES<-------Name------->Nexit   Unit Systems   Printer      ***
-    # -  #                               t-series  Engl Metr LKFG ***
-                                           in  out                ***
-    1     MEIER POND              2         1    1    1    0    1
-    2     OUTLET                  1         1    1    1    0
-    3     SPILLWAY                1         1    1    1    0
-    4     UPPER KITTLE CREEK      1         1    1    1    0
-    5     LOWER KITTLE CREEK      1         1    1    1    0
+    RCHRES<-------Name------->Nexit   Unit Systems   Printer      BinaryOut ***
+    # -  #                               t-series  Engl Metr LKFG Engl Metr ***
+                                           in  out                          ***
+    1     MEIER POND              2         1    1    1    0    1   83    0
+    2     OUTLET                  1         1    1    1    0    0   83    0
+    3     SPILLWAY                1         1    1    1    0    0   83    0
+    4     UPPER KITTLE CREEK      1         1    1    1    0    0   83    0
+    5     LOWER KITTLE CREEK      1         1    1    1    0    0   83    0
   END GEN-INFO
 
   *** Section HYDR ***
