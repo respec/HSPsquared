@@ -23,7 +23,8 @@ attrinfo = {1:('TSTYPE','S',4),     2:('STAID','S',16),    11:('DAREA','R',1),
 
 freq = {7:'100YS', 6:'YS', 5:'MS', 4:'D', 3:'H', 2:'min', 1:'S'}   # pandas date_range() frequency by TCODE, TGROUP
 
-def readWDM(wdmfile, hdffile, jupyterlab=True):
+
+def readWDM(wdmfile, hdffile, jupyterlab=True, mode="store"):
     iarray = np.fromfile(wdmfile, dtype=np.int32)
     farray = np.fromfile(wdmfile, dtype=np.float32)
 
@@ -132,10 +133,11 @@ def readWDM(wdmfile, hdffile, jupyterlab=True):
             series = pd.Series(floats[:findex], index=tindex[:findex])
             dsname = f'TIMESERIES/TS{dsn:03d}'
             # series.to_hdf(store, dsname, complib='blosc', complevel=9)
-            if jupyterlab:
-                series.to_hdf(store, dsname, complib='blosc', complevel=9)  # This is the official version
-            else:
-                series.to_hdf(store, dsname, format='t', data_columns=True)  # show the columns in HDFView
+            if mode == 'store':
+                if jupyterlab:
+                    series.to_hdf(store, dsname, complib='blosc', complevel=9)  # This is the official version
+                else:
+                    series.to_hdf(store, dsname, format='t', data_columns=True)  # show the columns in HDFView
 
             data = [str(tindex[0]), str(tindex[-1]), str(tstep) + freq[tcode],
              len(series),  dattr['TSTYPE'], dattr['TFILL']]
@@ -153,6 +155,140 @@ def readWDM(wdmfile, hdffile, jupyterlab=True):
         dfsummary = pd.DataFrame(summary, index=summaryindx, columns=columns)
         store.put('TIMESERIES/SUMMARY',dfsummary, format='t', data_columns=True)
     return dfsummary
+
+
+'''
+Get single time series data from a WDM file
+based on a collection of attributes (name-value pairs)
+'''
+def get_wdm_data_set(wdmfile, attributes):
+    if attributes == None:
+        return None
+
+    search_loc = attributes['location']
+    search_cons = attributes['constituent']
+    search_dsn = attributes['dsn']
+
+    iarray = np.fromfile(wdmfile, dtype=np.int32)
+    farray = np.fromfile(wdmfile, dtype=np.float32)
+
+    if iarray[0] != -998:
+        print('Not a WDM file, magic number is not -990. Stopping!')
+        return None
+    nrecords    = iarray[28]    # first record is File Definition Record
+    ntimeseries = iarray[31]
+
+    dsnlist = []
+    for index in range(512, nrecords * 512, 512):
+        if not (iarray[index]==0 and iarray[index+1]==0 and iarray[index+2]==0 and iarray[index+3]==0) and iarray[index+5]==1:
+            dsnlist.append(index)
+    if len(dsnlist) != ntimeseries:
+        print('PROGRAM ERROR, wrong number of DSN records found')
+
+    summary = []
+    summaryindx = []
+
+    # check to see which extra attributes are on each dsn
+    columns_to_add = []
+    search = ['STAID', 'STNAM', 'SCENARIO', 'CONSTITUENT', 'LOCATION']
+    '''
+    for att in search:
+        found_in_all = True
+        for index in dsnlist:
+            dattr = {}
+            psa = iarray[index + 9]
+            if psa > 0:
+                sacnt = iarray[index + psa - 1]
+            for i in range(psa + 1, psa + 1 + 2 * sacnt, 2):
+                id = iarray[index + i]
+                ptr = iarray[index + i + 1] - 1 + index
+                if id not in attrinfo:
+                    continue
+                name, atype, length = attrinfo[id]
+                if atype == 'I':
+                    dattr[name] = iarray[ptr]
+                elif atype == 'R':
+                    dattr[name] = farray[ptr]
+                else:
+                    dattr[name] = ''.join([itostr(iarray[k]) for k in range(ptr, ptr + length // 4)]).strip()
+            if att not in dattr:
+                found_in_all = False
+        if found_in_all:
+            columns_to_add.append(att)
+    '''
+
+    for index in dsnlist:
+        # get layout information for TimeSeries Dataset frame
+        dsn = iarray[index+4]
+        psa = iarray[index+9]
+        if psa > 0:
+            sacnt = iarray[index+psa-1]
+        pdat = iarray[index+10]
+        pdatv = iarray[index+11]
+        frepos = iarray[index+pdat]
+
+        print(f'{dsn} reading from wdm')
+
+        # get attributes
+        dattr = {'TSBDY':1, 'TSBHR':1, 'TSBMO':1, 'TSBYR':1900, 'TFILL':-999.}   # preset defaults
+        for i in range(psa+1, psa+1 + 2*sacnt, 2):
+            id = iarray[index + i]
+            ptr = iarray[index + i + 1] - 1 + index
+            if id not in attrinfo:
+                # print('PROGRAM ERROR: ATTRIBUTE INDEX not found', id, 'Attribute pointer', iarray[index + i+1])
+                continue
+
+            name, atype, length = attrinfo[id]
+            if atype == 'I':
+                dattr[name] = iarray[ptr]
+            elif atype == 'R':
+                dattr[name] = farray[ptr]
+            else:
+                dattr[name] = ''.join([itostr(iarray[k]) for k in range(ptr, ptr + length//4)]).strip()
+
+        if (search_dsn > 0 and search_dsn == dsn):
+            pass
+        else:
+            # could do more attribute based filtering here such as constituent, location etc
+            if (search_cons == dattr['TSTYPE']):
+                pass
+            else:
+                continue
+
+        # Get timeseries timebase data
+        records = []
+        for i in range(pdat+1, pdatv-1):
+            a = iarray[index+i]
+            if a != 0:
+                records.append(splitposition(a))
+        if len(records) == 0:
+            continue   # WDM preallocation, but nothing saved here yet
+
+        srec, soffset = records[0]
+        start = splitdate(iarray[srec*512 + soffset])
+
+        sprec, spoffset = splitposition(frepos)
+        finalindex = sprec * 512 + spoffset
+
+        # calculate number of data points in each group, tindex is final index for storage
+        tgroup = dattr['TGROUP']
+        tstep  = dattr['TSSTEP']
+        tcode  = dattr['TCODE']
+        cindex = pd.date_range(start=start, periods=len(records)+1, freq=freq[tgroup])
+        tindex = pd.date_range(start=start, end=cindex[-1], freq=str(tstep) + freq[tcode])
+        counts = np.diff(np.searchsorted(tindex, cindex))
+
+        ## Get timeseries data
+        floats = np.zeros(sum(counts),  dtype=np.float32)
+        findex = 0
+        for (rec,offset),count in zip(records, counts):
+            findex = getfloats(iarray, farray, floats, findex, rec, offset, count, finalindex, tcode, tstep)
+
+        ts = pd.Series(floats[:findex], index=tindex[:findex])
+        df = pd.DataFrame({'ts': ts})
+        return df
+
+    return None
 
 
 def todatetime(yr=1900, mo=1, dy=1, hr=0):
@@ -283,3 +419,4 @@ def adjustNval(ldate, ltstep, tstep, ltcode, tcode, comp, nval):
               str(nval) + ',', str(lnval), ')')
 
     return nval
+
