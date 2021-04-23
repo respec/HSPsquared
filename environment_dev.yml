@@ -20,6 +20,9 @@ dependencies:
   # - texlive-core  # to export notebooks to PDF. https://nbconvert.readthedocs.io/en/latest/install.html#installing-tex
   - matplotlib
 
+  # Dev tools (optional)
+  # - python-language-server
+
   # package management
   - conda
   - conda-build
