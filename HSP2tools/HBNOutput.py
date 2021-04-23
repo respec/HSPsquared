@@ -13,6 +13,8 @@ class HBNOutput:
         self.summarycols = []
         self.summaryindx = []
 
+        self.output_dictionary = {}
+
         self.tcodes = {1: 'Minutely', 2: 'Hourly', 3: 'Daily', 4: 'Monthly', 5: 'Yearly'}
 
     def read_data(self):
@@ -94,6 +96,7 @@ class HBNOutput:
 
             self.summaryindx.append(dfname)
             self.summary.append((operation, activity, str(id), self.tcodes[tcode], str(df.shape), df.index[0], df.index[-1]))
+            self.output_dictionary[dfname] = mapn[operation, id, activity]
 
     def get_time_series(self, name, time_unit):
         """

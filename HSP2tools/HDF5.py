@@ -22,6 +22,8 @@ class HDF5:
         # self.dd_perlnd = {}
         # self.dd_rchres = {}
         self.dd_key_separator = ':'
+        self.start_time = None
+        self.end_time = None
 
         self.tcodes = {1: 'Minutely', 2: 'Hourly', 3: 'Daily', 4: 'Monthly', 5: 'Yearly'}
 
@@ -40,10 +42,15 @@ class HDF5:
             Summary information of data found in HDF5 file HSP2 outputs
         """
         with h5py.File(self.file_name, "r") as f:
-            str_starttime = f.get('/CONTROL/GLOBAL')['table'].fields('Info')[1].astype('datetime64[D]')
-            str_endtime = f.get('/CONTROL/GLOBAL')['table'].fields('Info')[2].astype('datetime64[D]')
-            start_time = pd.to_datetime(str_starttime)
-            end_time = pd.to_datetime(str_endtime)
+            if self.start_time is None or self.end_time is None:
+                str_starttime = f.get('/CONTROL/GLOBAL')['table'].fields('Info')[1].astype('datetime64[D]')
+                str_endtime = f.get('/CONTROL/GLOBAL')['table'].fields('Info')[2].astype('datetime64[D]')
+                self.start_time = pd.to_datetime(str_starttime)
+                self.end_time = pd.to_datetime(str_endtime)
+                if len(self.time_index) == 0:
+                    self.time_index = list(
+                        pd.date_range(self.start_time, self.end_time, freq='H')[:-1])  # issue in HDF5 table!
+
             section = f.get('/RESULTS')
             opn_keys = list(section.keys())
             for opn_key in opn_keys:
@@ -57,7 +64,8 @@ class HDF5:
                     for table_attr in all_table_attrs:
                         str_attr_value = ''
                         try:
-                            str_attr_value = data_table.attrs[table_attr].astype('unicode') # e.g. table_attr = FIELD_2_NAME
+                            str_attr_value = data_table.attrs[table_attr].astype(
+                                'unicode')  # e.g. table_attr = FIELD_2_NAME
                         except:
                             str_attr_value = ''
                         if (not str_attr_value == '') and table_attr.startswith('FIELD') and table_attr.endswith('NAME'):
@@ -66,14 +74,16 @@ class HDF5:
                             field_indices[int(name_parts[1])] = str_attr_value
                     self.data_dictionary[dd_key] = field_indices
                     self.data_dictionary[dd_key + f'{self.dd_key_separator}values'] = None
+                    '''
                     if len(self.time_index) == 0:
                         # alternatively, could construct the time index from the start and end times above
-                        self.time_index = list(pd.date_range(start_time, end_time, freq='H')[:-1])  # issue in HDF5 table!
-                        '''
-                        for row in range(data_table.attrs['NROWS']):
-                            dt = pd.to_datetime(data_table.fields('index')[row].astype('datetime64[D]'))
-                            self.time_index.append(dt)
-                        '''
+                        self.time_index = list(
+                            pd.date_range(self.start_time, self.end_time, freq='H')[:-1])  # issue in HDF5 table!
+                        # reading row by row is VERY VERY SLOW! so this is left here to warn you.
+                        # for row in range(data_table.attrs['NROWS']):
+                        #     dt = pd.to_datetime(data_table.fields('index')[row].astype('datetime64[D]'))
+                        #     self.time_index.append(dt)
+                    '''
                     pass
                 pass
             pass
@@ -114,10 +124,6 @@ class HDF5:
         for mapn_key in mapn_keys:
             mapn.append(self.data_dictionary[table_key][mapn_key])
         with h5py.File(self.file_name, "r") as f:
-            str_starttime = f.get('/CONTROL/GLOBAL')['table'].fields('Info')[1].astype('datetime64[D]')
-            str_endtime = f.get('/CONTROL/GLOBAL')['table'].fields('Info')[2].astype('datetime64[D]')
-            start_time = pd.to_datetime(str_starttime)
-            end_time = pd.to_datetime(str_endtime)
             section = f.get('/RESULTS')
             data_table = section[opn_key][activity_key]['table']  # e.g. activity_key = IQUAL
             data_table_rows = list(data_table)
@@ -134,24 +140,71 @@ class HDF5:
         for dd_key_to_read in dd_keys_to_read:
             self.read_output_from_table(dd_key_to_read)
 
-    def get_time_series(self, name, duration):
+    def find_output_activity(self, constituent):
+        # has to search for it based on constituent name
+        # assuming all of the output items are unique in any given operation
+        if self.data_dictionary is None or len(self.data_dictionary) == 0:
+            return None
+        for key in self.data_dictionary.keys():
+            if key.endswith('values'):
+                continue
+            name_indices = self.data_dictionary[key].keys()
+            for name_index in name_indices:
+                if self.data_dictionary[key][name_index] == constituent.upper():
+                    (opn_key, activity) = key.split(self.dd_key_separator)
+                    return activity
+        return None
+
+    def get_time_series(self, operation, id, constituent, activity=None):
         """
         get a single time series based on:
-        1. constituent name
-        2. duration: yearly, monthly, full (default is 'full' simulation duration)
+        1.   operation: e.g. IMPLND, PERLND, RCHRES
+        2.          id: e.g. 1, 2, 3, ...
+        3. constituent: e.g. SUPY, PERO, SOQUAL etc
+        4.    activity: e.g. IQUAL, IWATER, PWATER, PWTGAS, SNOW etc, could leave blank, the program will look for it
+
+        the above inputs will be used to build data_table_key: e.g. IMPLND_I001:IQUAL
+        5. duration: yearly, monthly, full (default is 'full' simulation duration) <-- hdf5 output currently only has 2
         """
-        search_shape = self.simulation_duration_count
-        if duration == 'yearly':
-            search_shape = 366
-        elif duration == 'monthly':
-            search_shape = 12
+        data_table_key = operation.upper()
+        key_opn = operation.upper()
+        key_id = f'{id:03}'
 
-        for data_frame in self.data_frames:
-            for key in data_frame.keys():
-                if key == name and data_frame[key].shape[0] == search_shape:
-                    return data_frame[key]
+        if activity is None:
+            activity = self.find_output_activity(constituent)
 
-        return None
+        key_act = activity.upper()
+        if key_opn == 'IMPLND':
+            data_table_key += f'_I{key_id}' + self.dd_key_separator + key_act
+        elif key_opn == 'PERLND':
+            data_table_key += f'_P{key_id}' + self.dd_key_separator + key_act
+        elif key_opn == 'RCHRES':
+            data_table_key += f'_R{key_id}' + self.dd_key_separator + key_act
+
+        data_value_key = f'{data_table_key}{self.dd_key_separator}values'
+        if data_value_key in self.data_dictionary:
+            if self.data_dictionary[data_value_key] is None:
+                self.read_output_from_table(data_table_key)
+        else:
+            return None
+
+        # the data frames in the in-memory collection for a table
+        # don't have the first 'index' column from the h5 files
+        # so the actual index in the in-memory collection will be (df_index - 1)
+        # regardless, the collection is keyed on constituent name, so it's easy to find.
+        # this search is just to be double sure that the constituent is legit
+        df_index = -1
+        for key in self.data_dictionary[data_table_key].keys():
+            if operation.upper() == 'IMPLND' and key_act == 'IQUAL':
+                if self.data_dictionary[data_table_key][key].endswith(constituent.upper()):
+                    df_index = key
+            elif self.data_dictionary[data_table_key][key] == constituent.upper():
+                df_index = key
+
+        if df_index >= 0:
+            return self.data_dictionary[data_value_key][constituent.upper()]
+        else:
+            return None
 
     @staticmethod
     def save_time_series_to_file(file_name, time_series):
