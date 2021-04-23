@@ -134,6 +134,7 @@ def readWDM(wdmfile, hdffile, compress_output=False):
             dates = np.array(dates)
             dates_converted = date_convert(dates, date_epoch, dt_year, dt_month, dt_day, dt_hour, dt_minute, dt_second)
             series = pd.Series(values, index=dates_converted)
+            series.index.freq = str(tstep) + freq[tcode] 
 
             dsname = f'TIMESERIES/TS{dsn:03d}'
             if compress_output:
