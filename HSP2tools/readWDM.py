@@ -24,7 +24,7 @@ attrinfo = {1:('TSTYPE','S',4),     2:('STAID','S',16),    11:('DAREA','R',1),
 freq = {7:'100YS', 6:'YS', 5:'MS', 4:'D', 3:'H', 2:'min', 1:'S'}   # pandas date_range() frequency by TCODE, TGROUP
 
 
-def readWDM(wdmfile, hdffile, jupyterlab=True, mode="store"):
+def readWDM(wdmfile, hdffile, jupyterlab=True):
     iarray = np.fromfile(wdmfile, dtype=np.int32)
     farray = np.fromfile(wdmfile, dtype=np.float32)
 
@@ -133,11 +133,10 @@ def readWDM(wdmfile, hdffile, jupyterlab=True, mode="store"):
             series = pd.Series(floats[:findex], index=tindex[:findex])
             dsname = f'TIMESERIES/TS{dsn:03d}'
             # series.to_hdf(store, dsname, complib='blosc', complevel=9)
-            if mode == 'store':
-                if jupyterlab:
-                    series.to_hdf(store, dsname, complib='blosc', complevel=9)  # This is the official version
-                else:
-                    series.to_hdf(store, dsname, format='t', data_columns=True)  # show the columns in HDFView
+            if jupyterlab:
+                series.to_hdf(store, dsname, complib='blosc', complevel=9)  # This is the official version
+            else:
+                series.to_hdf(store, dsname, format='t', data_columns=True)  # show the columns in HDFView
 
             data = [str(tindex[0]), str(tindex[-1]), str(tstep) + freq[tcode],
              len(series),  dattr['TSTYPE'], dattr['TFILL']]
