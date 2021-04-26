@@ -304,7 +304,7 @@ def _process_groups(iarray, farray, records, offsets, tgroup):
                 index += 1 + nval
                 offset +=1 + nval
             
-            if offset >= 512:
+            if offset >= 511:
                 offset = 4
                 index = (pscfwr - 1) * 512 + offset
                 record = pscfwr
