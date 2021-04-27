@@ -4,6 +4,7 @@ License: LGPL2
 '''
 
 from numpy import zeros
+from numba import njit
 from HSP2.utilities import make_numba_dict
 
 # The clean way to get calculated data from adcalc() into advert() is to use a closure. 
@@ -127,7 +128,7 @@ def adcalc_(simlen, delts, nexits, crrat, ks, vol, ADFG, O, VOL, SROVOL, EROVOL,
 	return
 
 
-#@jit(nopython=True)
+#@njit(cache=True)
 def advect(imat, conc, nexits, vols, vol, srovol, erovol, sovol, eovol):
 	''' Simulate advection of constituent totally entrained in water.
 	Originally designed to be called as: advect(loop, imat, conc, omat, *ui['adcalcData'])
@@ -140,9 +141,7 @@ def advect(imat, conc, nexits, vols, vol, srovol, erovol, sovol, eovol):
 	# sovol  = SOVOL[loop,:]
 	# eovol  = EOVOL[loop,:]
 
-	omat = 0.0
-	if nexits > 1:
-		omat = zeros((nexits))
+	omat = zeros((nexits))
 	if vol > 0.0:    # reach/res contains water
 		concs = conc
 		conc = (imat + concs * (vols - srovol)) / (vol + erovol)  # material entering during interval, weighted volume of outflow based on conditions at start of ivl (srovol), and weighted volume of outflow based on conditions at end of ivl (erovol)
