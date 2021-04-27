@@ -657,8 +657,8 @@ def colby(v, db50, fhrad, fsl, tempr):
 		if vx > v:
 			break
 	iv2 = iv1 + 1
-	yy1 = log10(VG[iv1])
-	yy2 = log10(VG[iv2])
+	yy1 = log10(VG[iv1-1])
+	yy2 = log10(VG[iv2-1])
 	yyratio = (log10(v) - yy1) / (yy2 - yy1)		
 		
 	tmpr = min(100.0, max(32.0, tempr * 1.8 + 32.0))
