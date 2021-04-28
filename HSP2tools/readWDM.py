@@ -132,7 +132,7 @@ def readWDM(wdmfile, hdffile, compress_output=False):
             dates, values, stop_datetime = _process_groups(iarray, farray, records, offsets, tgroup)
             stop_datetime = datetime.datetime(*bits_to_date(stop_datetime))
             dates = np.array(dates)
-            dates_converted = date_convert(dates, date_epoch, dt_year, dt_month, dt_day, dt_hour, dt_minute, dt_second)
+            dates_converted = _date_convert(dates, date_epoch, dt_year, dt_month, dt_day, dt_hour, dt_minute, dt_second)
             series = pd.Series(values, index=dates_converted)
             try:
                 series.index.freq = str(tstep) + freq[tcode] 
@@ -169,7 +169,7 @@ def _splitdate(x):
     month = np.int64(x >> 10 & 0xF)
     day = np.int64(x >> 5 & 0x1F)
     hour = np.int64(x & 0x1F)
-    return correct_date(year, month, day, hour, 0,0)
+    return _correct_date(year, month, day, hour, 0,0)
 
 @njit 
 def _splitcontrol(x):
@@ -199,12 +199,12 @@ def bits_to_date(x):
     return year, month, day, hour, minute, second
 
 @njit 
-def date_to_bits(year, month, day, hour, minute, second):
+def _date_to_bits(year, month, day, hour, minute, second):
     x = year << 26 | month << 22 | day << 17 | hour << 12 | minute << 6 | second 
     return x
 
 @njit 
-def increment_date(date, timecode, timestep):
+def _increment_date(date, timecode, timestep):
     year, month, day, hour, minute, second = bits_to_date(date)
     
     if timecode == 7: year += 100 * timestep
@@ -215,10 +215,10 @@ def increment_date(date, timecode, timestep):
     elif timecode == 2 : minute += timestep
     elif timecode == 1 : second += timestep
 
-    return correct_date(year, month, day, hour, minute, second)
+    return _correct_date(year, month, day, hour, minute, second)
 
 @njit 
-def correct_date(year, month, day, hour, minute, second):
+def _correct_date(year, month, day, hour, minute, second):
     while second >= 60:
         second -= 60
         minute += 1
@@ -234,7 +234,7 @@ def correct_date(year, month, day, hour, minute, second):
     while month > 12:
         month -= 12
         year += 1
-    return date_to_bits(year, month, day, hour, minute, second)
+    return _date_to_bits(year, month, day, hour, minute, second)
     
 @njit 
 def _days_in_month(year, month):
@@ -260,7 +260,7 @@ def _is_leapyear(year):
         return False
 
 @njit
-def date_convert(dates, date_epoch, dt_year, dt_month, dt_day, dt_hour, dt_minute, dt_second):
+def _date_convert(dates, date_epoch, dt_year, dt_month, dt_day, dt_hour, dt_minute, dt_second):
     converted_dates = []
     for x in dates:
         year, month, day, hour, minute, second = bits_to_date(x)
@@ -285,7 +285,7 @@ def _process_groups(iarray, farray, records, offsets, tgroup):
         index = record * 512 + offset
         pscfwr = iarray[record * 512 + 3] #should be 0 for last record in timeseries 
         current_date = _splitdate(iarray[index])
-        group_enddate = increment_date(current_date, tgroup, 1)
+        group_enddate = _increment_date(current_date, tgroup, 1)
         offset +=1
         index +=1
 
@@ -295,14 +295,14 @@ def _process_groups(iarray, farray, records, offsets, tgroup):
             if comp == 1:
                 for i in range(0, nval, 1):
                     date_array.append(current_date)
-                    current_date = increment_date(current_date, ltcode, ltstep) 
+                    current_date = _increment_date(current_date, ltcode, ltstep) 
                     value_array.append(farray[index + 1])
                 index += 2
                 offset +=2
             else:
                 for i in range(0, nval, 1):
                     date_array.append(current_date)
-                    current_date = increment_date(current_date, ltcode, ltstep) 
+                    current_date = _increment_date(current_date, ltcode, ltstep) 
                     value_array.append(farray[index + 1 + i])
                 index += 1 + nval
                 offset +=1 + nval
