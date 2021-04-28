@@ -10,6 +10,8 @@ import pandas as pd
 from numba import jit, njit
 import datetime
 
+import warnings
+
 # look up attributes NAME, data type (Integer; Real; String) and data length by attribute number
 attrinfo = {1:('TSTYPE','S',4),     2:('STAID','S',16),    11:('DAREA','R',1),
            17:('TCODE','I',1),     27:('TSBYR','I',1),     28:('TSBMO','I',1),
@@ -455,6 +457,7 @@ def get_wdm_data_set(wdmfile, attributes):
 
 def todatetime(yr=1900, mo=1, dy=1, hr=0):
     '''takes yr,mo,dy,hr information then returns its datetime64'''
+    warnings.warn("use '_date_convert' instead; Removed for numba compatible datetime handling; reference commit 1b52a1736e45a497ccdf78cd6e2eab8c0b7a444f", DeprecationWarning)
     if hr == 24:
         return datetime.datetime(yr, mo, dy, 23) + pd.Timedelta(1,'h')
     else:
@@ -462,20 +465,25 @@ def todatetime(yr=1900, mo=1, dy=1, hr=0):
 
 def splitdate(x):
     '''splits WDM int32 DATWRD into year, month, day, hour -> then returns its datetime64'''
+    warnings.warn("use '_splitdate' instead; naming updated to indicate internal function", DeprecationWarning)
     return todatetime(x >> 14, x >> 10 & 0xF, x >> 5 & 0x1F, x & 0x1F) # args: year, month, day, hour
 
 def splitcontrol(x):
     ''' splits int32 into (qual, compcode, units, tstep, nvalues)'''
+    warnings.warn("use '_splitcontrol' instead; naming updated to indicate internal function", DeprecationWarning)
     return(x & 0x1F, x >> 5 & 0x3, x >> 7 & 0x7, x >> 10 & 0x3F, x >> 16)
 
 def splitposition(x):
     ''' splits int32 into (record, offset), converting to Pyton zero based indexing'''
+    warnings.warn("use '_spiltposition' instead; naming updated to indicate internal function", DeprecationWarning)
     return((x>>9) - 1, (x&0x1FF) - 1)
 
 def itostr(i):
+    warnings.warn("use '_inttostr' instead; naming updated to indicate internal function; method also handles integer argments so updated name from 'i' to 'int' for additonal clarity", DeprecationWarning)
     return chr(i & 0xFF) + chr(i>>8 & 0xFF) + chr(i>>16 & 0xFF) + chr(i>>24 & 0xFF)
 
 def getfloats(iarray, farray, floats, findex, rec, offset, count, finalindex, tcode, tstep):
+    warnings.warn("discontinue use and replace with new 'process_groups' instead; Function replaced by incompatible group/block processing approach; reference commit c5b2a1cdd6a55eccc0db67d7840ec3eaf904dcec .",DeprecationWarning)
     index = rec * 512 + offset + 1
     stop = (rec + 1) * 512
     cntr = 0
@@ -528,6 +536,7 @@ def getfloats(iarray, farray, floats, findex, rec, offset, count, finalindex, tc
     return findex
 
 def adjustNval(ldate, ltstep, tstep, ltcode, tcode, comp, nval):
+    warnings.warn("supporting function for deprecated 'get_floats' function;", DeprecationWarning)
     lnval = nval
     if comp != 1:
         nval = -1  # only can adjust compressed data
