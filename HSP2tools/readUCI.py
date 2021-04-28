@@ -481,7 +481,7 @@ def operation(info, llines, op):
             if cat == 'SKIP':
                 continue
             if cat in {'PARAMETERS', 'STATES', 'FLAGS', 'ACTIVITY','INFO'}:
-                df = concat([temp[1] for temp in history[path,cat]], axis='columns')
+                df = concat([temp[1] for temp in history[path,cat]], axis='columns', sort=False)
                 df = fix_df(df, op, path, ddfaults, valid)
                 if cat == 'ACTIVITY' and op == 'PERLND':
                     df = df.rename(columns = {'AIRTFG':'ATEMP', 'SNOWFG':'SNOW',

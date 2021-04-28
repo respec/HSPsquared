@@ -11,9 +11,9 @@ from numba import njit
 from HSP2.utilities  import hoursval, initm, make_numba_dict
 
 
-ERRMSG = ['SLTMP temperature less than 100C',   # MSG0
-		'ULTMP temperature less than 100C',     # MSG1
-		'LGTMP temperature less than 100C', 	# MSG2
+ERRMSG = ['SLTMP temperature less than -100C',   # MSG0
+		'ULTMP temperature less than -100C',     # MSG1
+		'LGTMP temperature less than -100C', 	# MSG2
 		'SLTMP temperature greater than 100C', 	# MSG3
 		'ULTMP temperature greater than 100C',  # MSG4
 		'LGTMP temperature greater than 100C']  # MSG5

@@ -8,12 +8,18 @@ from math import log10, exp
 from HSP2.ADCALC import advect
 from HSP2.utilities  import make_numba_dict
 
-ERRMSG = []
+ERRMSGS =('SEDTRN: Warning -- bed storage of sediment size fraction sand is empty',                                   #ERRMSG0
+          'SEDTRN: Warning -- bed storage of sediment size fraction silt is empty',                                   #ERRMSG1
+          'SEDTRN: Warning -- bed storage of sediment size fraction clay is empty',                                   #ERRMSG2
+          'SEDTRN: Warning -- bed depth appears excessive',                                                           #ERRMSG3
+          'SEDTRN: Fatal error ocurred in colby method- variable outside valid range- switching to toffaleti method', #ERRMSG4
+          'SEDTRN: Simulation of sediment requires all 3 "auxiliary flags" (AUX1FG, etc) in section HYDR must be turned on', #ERRMSG5
+          'SEDTRN: When specifying the initial composition of the bed, the fraction of sand, silt, and clay must sum to a value close to 1.0.')  #ERRMSG6
 
 def sedtrn(store, siminfo, uci, ts):
 	''' Simulate behavior of inorganic sediment'''
 
-	errorsV = zeros(len(ERRMSG), dtype=int)
+	errorsV = zeros(len(ERRMSGS), dtype=int)
 
 	simlen = siminfo['steps']
 	delt   = siminfo['delt']
@@ -30,6 +36,9 @@ def sedtrn(store, siminfo, uci, ts):
 
 	# table SANDFG
 	sandfg = ui['SANDFG']   # 1: Toffaleti method, 2:Colby method, 3:old HSPF power function
+
+	if ui['AUX3FG'] == 0:
+		errorsV[5] += 1  # error - sediment transport requires aux3fg to be on
 
 	# table SED-GENPARM
 	bedwid = ui['BEDWID']
@@ -99,7 +108,7 @@ def sedtrn(store, siminfo, uci, ts):
 	clay_bedfr  = ui['CLAYFR']	
 	total_bedfr = sand_bedfr + silt_bedfr + clay_bedfr
 	if abs(total_bedfr - 1.0) > 0.01:
-		pass # error message: sum of bed sediment fractions is not close enough to 1.0
+		errorsV[6] += 1  # error message: sum of bed sediment fractions is not close enough to 1.0
 
 	# suspended sediment concentrations; table ssed-init
 	sand_ssed1  = ui['SSED1']
@@ -390,17 +399,20 @@ def sedtrn(store, siminfo, uci, ts):
 		osed4 += osed1
 		sand_rssed1 = sand_t_rsed7 = sand_rsed1 + sand_wt_rsed4  # total storage in mg.vol/l
 		if sand_wt_rsed4 == 0.0:       # warn that bed is empty
-			pass # errmsg
+			# errmsg
+			errorsV[0] += 1  # The bed storage of sediment size fraction sand is empty.
 
 		osed4 += osed2
 		silt_rssed2 = silt_t_rsed8 = silt_rsed2 + silt_wt_rsed5    # total storage in mg.vol/l
 		if silt_wt_rsed5 == 0.0:         # warn that bed is empty
-			pass # errmsg
+			# errmsg
+			errorsV[1] += 1  # The bed storage of sediment size fraction silt is empty.
 
 		osed4 += osed3
 		clay_rssed3 = clay_t_rsed9 = clay_rsed3 + clay_wt_rsed6  	# total storage in mg.vol/l
 		if clay_wt_rsed6 == 0.0:   # warn that bed is empty
-			pass # errmsg
+			# errmsg
+			errorsV[2] += 1  # The bed storage of sediment size fraction clay is empty.
 
 		# find the volume occupied by each fraction of bed sediment- ft3 or m3
 		volsed = (sand_wt_rsed4 / (sand_rho * 1.0e06)
@@ -418,7 +430,8 @@ def sedtrn(store, siminfo, uci, ts):
 		volsed = volsed / (1.0 - por)        #  allow for porosit
 		beddep = volsed / (len_ * bedwid)     # calculate thickness of bed- ft or m
 		if beddep > bedwrn:
-			pass  # Errormsg:  warn that bed depth appears excessive
+			# Errormsg:  warn that bed depth appears excessive
+			errorsV[3] += 1
 
 		svol = vol  # svol is volume at start of time step, update for next time thru
 
@@ -487,7 +500,7 @@ def sedtrn(store, siminfo, uci, ts):
 			ts['OSED3' + str(i + 1)] = OSED3[:, i]
 			ts['OSED4' + str(i + 1)] = OSED4[:, i]
 
-	return errorsV, ERRMSG
+	return errorsV, ERRMSGS
 
 
 def bdexch (avdepm, w, tau, taucd, taucs, m, vol, frcsed, susp, bed):
@@ -644,8 +657,8 @@ def colby(v, db50, fhrad, fsl, tempr):
 		if vx > v:
 			break
 	iv2 = iv1 + 1
-	yy1 = log10(VG[iv1])
-	yy2 = log10(VG[iv2])
+	yy1 = log10(VG[iv1-1])
+	yy2 = log10(VG[iv2-1])
 	yyratio = (log10(v) - yy1) / (yy2 - yy1)		
 		
 	tmpr = min(100.0, max(32.0, tempr * 1.8 + 32.0))
