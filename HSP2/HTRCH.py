@@ -34,12 +34,12 @@ mlapse = [0.0019, 0.0019, 0.0019, 0.0019, 0.0019, 0.0019, 0.0021, 0.0022, 0.0023
   0.0026, 0.0026, 0.0027, 0.0027, 0.0028, 0.0028, 0.0027, 0.0026, 0.0024, 0.0023, 0.0022,
   0.0021, 0.0021, 0.0020]
 
-ERRMSG = []
+ERRMSGS =('HTRCH: Water temperature is above 66 C (150 F) -- In most cases, this indicates an instability in advection','')     #ERRMSG0
 
 def htrch(store, siminfo, uci, ts):
 	'''Simulate heat exchange and water temperature'''
 
-	errorsV = zeros(len(ERRMSG), dtype=int)
+	errorsV = zeros(len(ERRMSGS), dtype=int)
 
 	advectData = uci['advectData']
 	(nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = advectData
@@ -172,7 +172,7 @@ def htrch(store, siminfo, uci, ts):
 
 		if tw > 66.0:
 			if adfg < 2:
-				# errormsg:  'advect:tw problem ',dtw, airtmp
+				errorsV[0] += 1  # Water temperature is above 66 C (150 F).  In most cases, this indicates an instability in advection.
 				rtw = tw
 			else:
 				tw = tws
@@ -369,7 +369,7 @@ def htrch(store, siminfo, uci, ts):
 		for i in range(nexits):
 			ts['OHEAT' + str(i+1)] = OHEAT[:, i]
 
-	return errorsV, ERRMSG
+	return errorsV, ERRMSGS
 
 def vapor(tmp):
 		'''	# define vapor function based on temperature (deg c); vapor pressure is expressed in millibars'''

@@ -31,6 +31,27 @@ to run HSP2.
 legacy WDM and UCI files to HDF5 files for HSP2, and to provide additional new
 and legacy capabilities.
 
+**tests** contains unit testing code for testing code conversion (convert\conversion_test) and code performance
+
+
+## Installation Instructions
+
+HSP2 is designed to work with Python 3.6, 3.7 and 3.8.
+
+Follow these steps to install.
+
+#### 1. Install the Anaconda Python Distribution
+
+We recommend installing the [latest release](https://docs.anaconda.com/anaconda/reference/release-notes/) of [**Anaconda Individual Edition**](https://www.anaconda.com/distribution). Follow their [installation](https://docs.anaconda.com/anaconda/install/) documentation.
+
+#### 2. Clone or Download this HSPsquared repository
+
+From this Github site, click on the green "Code" dropdown button near the upper right. Select to either Open in GitHub Desktop (i.e. git clone) or "Download ZIP". We recommend using GitHub Desktop, to most easily receive updates.
+
+Place your copy of the HSPsquared folder in any convenient location on your computer.
+
+#### 3. Create a Conda Environment for HSP2 Modeling (optional)
+
 
 ## Installation Instructions
 

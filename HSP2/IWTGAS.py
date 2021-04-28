@@ -125,17 +125,23 @@ def iwtgas(store, siminfo, uci, ts):
 				if slico2 >= 0.0:     # there is co2 conc of surface lateral inflow
 					soco2 = slico2 * slifac + soco2 * (1.0 - slifac)
 
+			SOHT[loop]   = sotmp * suro * EFACTA  # compute outflow of heat energy in water - units are deg. c-in./ivl
+			SODOXM[loop] = sodox * suro * MFACTA  # calculate outflow mass of dox - units are mg-in./l-ivl
+			SOCO2M[loop] = soco2 * suro * MFACTA  # calculate outflow mass of co2 - units are mg-in./l-ivl
+			SOTMP[loop]  = (sotmp * 9.0 / 5.0) + 32.0
+			SODOX[loop]  = sodox
+			SOCO2[loop]  = soco2
+
 		else:
 			sotmp = -1.0e30
 			sodox = -1.0e30
 			soco2 = -1.0e30
 
-		SOHT[loop]   = sotmp * suro * EFACTA  # compute outflow of heat energy in water - units are deg. c-in./ivl
-		SODOXM[loop] = sodox * suro * MFACTA  # calculate outflow mass of dox - units are mg-in./l-ivl
-		SOCO2M[loop] = soco2 * suro * MFACTA  # calculate outflow mass of co2 - units are mg-in./l-ivl
-		
-		SOTMP[loop]  = (sotmp * 9.0 / 5.0) + 32.0
-		SODOX[loop]  = sodox
-		SOCO2[loop]  = soco2
+			SOHT[loop]   = 0.0
+			SODOXM[loop] = 0.0
+			SOCO2M[loop] = 0.0
+			SOTMP[loop]  = sotmp
+			SODOX[loop]  = sodox
+			SOCO2[loop]  = soco2
 
 	return errorsV, ERRMSG

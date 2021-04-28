@@ -19,7 +19,7 @@ NEED to fix units conversions
 UNDEFINED: sliqsp
 '''
 
-ERRMSG = []
+ERRMSGS =('IQUAL: A constituent must be associated with overland flow in order to receive atmospheric deposition inputs','')     #ERRMSG0
 
 def iqual(store, siminfo, uci, ts):
 	''' Simulate washoff of quality constituents (other than solids, Heat, dox, and co2)
@@ -35,7 +35,7 @@ def iqual(store, siminfo, uci, ts):
 		flags = uci['IQUAL' + iqual + '_FLAGS']
 		constituents.append(flags['QUALID'])
 
-	errorsV = zeros(len(ERRMSG), dtype=int)
+	errorsV = zeros(len(ERRMSGS), dtype=int)
 	delt60 = siminfo['delt'] / 60     # delt60 - simulation time interval in hours
 	simlen = siminfo['steps']
 	tindex = siminfo['tindex']
@@ -117,6 +117,9 @@ def iqual(store, siminfo, uci, ts):
 				ts['IQADCN'] = initm(siminfo, uci, iqadfgc, 'IQUAL' + str(index) + '_MONTHLY/IQADCN', 0.0)
 			elif iqadfgc == -1:
 				ts['IQADCN'] = ts['IQADCN' + str(index) + ' 1']
+
+			if QSOFG == 0 and (iqadfgf != 0 or iqadfgc != 0):
+				errorsV[0] += 1  # error - non-qualof cannot have atmospheric deposition
 
 		if 'IQADFX' not in ts:
 			ts['IQADFX'] = zeros(simlen)
@@ -229,5 +232,5 @@ def iqual(store, siminfo, uci, ts):
 			IQADDR[loop] = adfxfx
 			IQADEP[loop] = adtot
 			
-	return errorsV, ERRMSG
+	return errorsV, ERRMSGS
 
