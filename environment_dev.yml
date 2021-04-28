@@ -20,6 +20,11 @@ dependencies:
   # - texlive-core  # to export notebooks to PDF. https://nbconvert.readthedocs.io/en/latest/install.html#installing-tex
   - matplotlib
 
+  # Dev tools (optional)
+  # - python-language-server
+  - jupyter-lsp-python  # Includes both the server extension (jupyter-lsp) and pyls third-party server (python-language-server)
+  - jupyterlab-lsp # Docs at https://github.com/krassowski/jupyterlab-lsp
+
   # package management
   - conda
   - conda-build
