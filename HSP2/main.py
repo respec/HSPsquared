@@ -44,7 +44,7 @@ def main(hdfname, saveall=False, jupyterlab=True):
         for _, operation, segment, delt in opseq.itertuples():
             msg(2, f'{operation} {segment} DELT(minutes): {delt}')
             siminfo['delt']      = delt
-            siminfo['tindex']    = date_range(start, stop, freq=Minute(delt))[0:-1]
+            siminfo['tindex']    = date_range(start, stop, freq=Minute(delt))[1:]
             siminfo['steps']     = len(siminfo['tindex'])
 
             # now conditionally execute all activity modules for the op, segment

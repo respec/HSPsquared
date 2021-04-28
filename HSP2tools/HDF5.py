@@ -45,11 +45,12 @@ class HDF5:
             if self.start_time is None or self.end_time is None:
                 str_starttime = f.get('/CONTROL/GLOBAL')['table'].fields('Info')[1].astype('datetime64[D]')
                 str_endtime = f.get('/CONTROL/GLOBAL')['table'].fields('Info')[2].astype('datetime64[D]')
-                self.start_time = pd.to_datetime(str_starttime)
+                # start at end of 1st simulation period
+                self.start_time = pd.to_datetime(str_starttime) + pd.to_timedelta(1, unit='h')
                 self.end_time = pd.to_datetime(str_endtime)
                 if len(self.time_index) == 0:
                     self.time_index = list(
-                        pd.date_range(self.start_time, self.end_time, freq='H')[:-1])  # issue in HDF5 table!
+                        pd.date_range(self.start_time, self.end_time, freq='H'))
 
             section = f.get('/RESULTS')
             opn_keys = list(section.keys())
