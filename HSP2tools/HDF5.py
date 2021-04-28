@@ -22,6 +22,7 @@ class HDF5:
         # self.dd_perlnd = {}
         # self.dd_rchres = {}
         self.dd_key_separator = ':'
+        self.dd_key_implnd_iqual_ids = 'IMPLND_IQUAL_ID'
         self.start_time = None
         self.end_time = None
 
@@ -51,6 +52,12 @@ class HDF5:
                 if len(self.time_index) == 0:
                     self.time_index = list(
                         pd.date_range(self.start_time, self.end_time, freq='H'))
+
+            # look at IQUAL's QUALID for naming of h5 IQUAL constituents in the RESULT group
+            iqual_flag_grp_rows = f.get('/IMPLND/IQUAL/IQUAL1/FLAGS')['table']['index','QUALID']
+            self.data_dictionary[self.dd_key_implnd_iqual_ids] = {}
+            for (bindex, bqualid) in iqual_flag_grp_rows:
+                self.data_dictionary[self.dd_key_implnd_iqual_ids][bindex.astype('unicode')] = bqualid.astype('unicode')
 
             section = f.get('/RESULTS')
             opn_keys = list(section.keys())
@@ -195,15 +202,21 @@ class HDF5:
         # regardless, the collection is keyed on constituent name, so it's easy to find.
         # this search is just to be double sure that the constituent is legit
         df_index = -1
+        col_key = ''
         for key in self.data_dictionary[data_table_key].keys():
             if operation.upper() == 'IMPLND' and key_act == 'IQUAL':
-                if self.data_dictionary[data_table_key][key].endswith(constituent.upper()):
+                iqual_id = self.data_dictionary[self.dd_key_implnd_iqual_ids][key_opn[0:1] + key_id]
+                if self.data_dictionary[data_table_key][key].endswith('_' + constituent.upper().replace(iqual_id, '')):
                     df_index = key
+                    col_key = self.data_dictionary[data_table_key][key]
+                    break
             elif self.data_dictionary[data_table_key][key] == constituent.upper():
                 df_index = key
+                col_key = constituent.upper()
+                break
 
         if df_index >= 0:
-            return self.data_dictionary[data_value_key][constituent.upper()]
+            return self.data_dictionary[data_value_key][col_key]
         else:
             return None
 
