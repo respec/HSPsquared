@@ -34,14 +34,11 @@ __pycache__/*
 htmlcov
 .tox
 .tox/*
-.coverage
-.coverage/*
 
-# Translations
-*.mo
-
-
-# Stashes, etc.
-.hg
-*.tmp*
-tests/_LargeFileStash
+stats.dat
+.ropeproject
+.idea
+*.ech
+*.log
+*.hbnhead
+*.units.dbf

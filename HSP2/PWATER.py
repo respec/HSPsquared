@@ -21,7 +21,7 @@ ERRMSGS =('PWATER: Sum of irrtgt in not one',             #ERRMSG0
           'PWATER: Proute runoff did not converge',       #ERRMSG6
           'PWATER: UZI highly negative',                  #ERRMSG7
           'PWATER: Reset AGWS to zero',                   #ERRMSG8
-          'PWATER: High Water Table code not implimented', #ERRMSG9
+          'PWATER: High Water Table code not implemented', #ERRMSG9
           )
 
 def pwater(store, siminfo, uci, ts):

@@ -88,10 +88,12 @@ def main(hdfname, saveall=False, jupyterlab=True):
                         ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
                         # ui['STATES']['VOL'] = uci[(operation, 'HYDR', segment)]['STATES']['VOL']
                         ui['PARAMETERS']['HTFG'] = flags['HTRCH']
+                        ui['PARAMETERS']['AUX3FG'] = 0
                         if flags['HYDR']:
                             ui['PARAMETERS']['LEN'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LEN']
                             ui['PARAMETERS']['DELTH'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['DELTH']
                             ui['PARAMETERS']['DB50'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['DB50']
+                            ui['PARAMETERS']['AUX3FG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['AUX3FG']
                     if activity == 'GQUAL':
                         ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
                         ui['PARAMETERS']['HTFG'] = flags['HTRCH']
