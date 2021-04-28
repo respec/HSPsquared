@@ -102,7 +102,7 @@ def _snow_(ui, ts):
         icefg  = int(ui['ICEFG'])
 
     melev  = ui['MELEV']
-    packf  = ui['PACKF']     # inital df.PKSNOW += df.PKICE fixed in uciReader
+    packf  = ui['PACKF'] + ui['PACKI']
     packi  = ui['PACKI']
     packw  = ui['PACKW']
     paktmp = ui['PAKTMP']
@@ -535,7 +535,7 @@ def _snow_(ui, ts):
         PACKF[step]  = packf
         PACKI[step]  = packi
         PACKW[step]  = packw
-        PACK[step]   = packf + packi + packw
+        PACK[step]   = packf + packw # + packi
         PAKTMP[step] = paktmp
         PDEPTH[step] = pdepth
         PRAIN[step]  = prain
@@ -565,6 +565,7 @@ def vapor(SVP, temp):
 def hour6flag(siminfo, dofirst=False):
     '''timeseries with 1 at 6am and earlier each day, and zero otherwise'''
     hours24 = zeros(24)
+    hours24[0] = 1.0
     hours24[1] = 1.0
     hours24[2] = 1.0
     hours24[3] = 1.0

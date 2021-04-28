@@ -1,5 +1,6 @@
 # Editors & IDEs
 .vscode/
+.idea
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -36,12 +37,17 @@ htmlcov
 .tox/*
 .coverage
 .coverage/*
+*.ech
+*.log
+*.hbnhead
+*.units.dbf
 
 # Translations
 *.mo
 
-
 # Stashes, etc.
+stats.dat
+.ropeproject
 .hg
 *.tmp*
 tests/_LargeFileStash
