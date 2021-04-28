@@ -1,11 +1,15 @@
+# Editors & IDEs
+.vscode/
+
+# Jupyter Notebook
 .ipynb_checkpoints
+
+# Distribution / packaging
 build
 build/*
 _build
 _build/*
 .bzr
-.coverage
-.coverage/*
 develop-eggs
 dist
 dist/*
@@ -15,20 +19,22 @@ downloads
 *.egg-info
 eggs
 fake-eggs
-.hg
-htmlcov
 .installed.cfg
-*.mo
 .mr.developer.cfg
 parts
+
+# Byte-compiled / optimized / DLL files
 *.pyc
 __pycache__
 __pycache__/*
 *.pyo
 .svn
-*.tmp*
+
+# Unit test / coverage reports
+htmlcov
 .tox
 .tox/*
+
 stats.dat
 .ropeproject
 .idea
