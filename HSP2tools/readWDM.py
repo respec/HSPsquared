@@ -130,7 +130,7 @@ def readWDM(wdmfile, hdffile, compress_output=False):
             offsets = np.asarray(offsets)
 
             dates, values, stop_datetime = _process_groups(iarray, farray, records, offsets, tgroup)
-            stop_datetime = datetime.datetime(*bits_to_date(stop_datetime))
+            stop_datetime = datetime.datetime(*_bits_to_date(stop_datetime))
             dates = np.array(dates)
             dates_converted = _date_convert(dates, date_epoch, dt_year, dt_month, dt_day, dt_hour, dt_minute, dt_second)
             series = pd.Series(values, index=dates_converted)
@@ -189,7 +189,7 @@ def _inttostr(i):
     return chr(i & 0xFF) + chr(i>>8 & 0xFF) + chr(i>>16 & 0xFF) + chr(i>>24 & 0xFF)
 
 @njit 
-def bits_to_date(x):
+def _bits_to_date(x):
     year = x >> 26
     month = x >> 22 & 0xf
     day = x >> 17 & 0x1f
@@ -205,7 +205,7 @@ def _date_to_bits(year, month, day, hour, minute, second):
 
 @njit 
 def _increment_date(date, timecode, timestep):
-    year, month, day, hour, minute, second = bits_to_date(date)
+    year, month, day, hour, minute, second = _bits_to_date(date)
     
     if timecode == 7: year += 100 * timestep
     elif timecode == 6 : year += timestep
@@ -263,7 +263,7 @@ def _is_leapyear(year):
 def _date_convert(dates, date_epoch, dt_year, dt_month, dt_day, dt_hour, dt_minute, dt_second):
     converted_dates = []
     for x in dates:
-        year, month, day, hour, minute, second = bits_to_date(x)
+        year, month, day, hour, minute, second = _bits_to_date(x)
         date = date_epoch
         date += (year - 1970) * dt_year
         date += (month - 1) * dt_month
