@@ -9,8 +9,6 @@ import numpy as np
 import pandas as pd
 from numba import jit, njit
 import datetime
-from dateutil.relativedelta import relativedelta
-import timeit
 
 # look up attributes NAME, data type (Integer; Real; String) and data length by attribute number
 attrinfo = {1:('TSTYPE','S',4),     2:('STAID','S',16),    11:('DAREA','R',1),
