@@ -136,6 +136,7 @@ def iqual(store, siminfo, uci, ts):
 		remqop = 0.0
 		soqs = 0.0
 		soqoc = 0.0
+		soqsp = 0.0
 		for loop in range(simlen):
 			suro   = SURO[loop]
 			sosld  = SOSLD[loop]
@@ -148,7 +149,6 @@ def iqual(store, siminfo, uci, ts):
 				
 			# simulate by association with solids
 			suroqs = 0.0
-			soqsp  = 0.0
 			if QSDFG:
 				# washsd ()
 				if dayfg == 1:      # it is the first interval of the day
@@ -203,7 +203,10 @@ def iqual(store, siminfo, uci, ts):
 						sqo   = sqo - soqo  # update storage of constituent - units are in qty/acre
 
 					# compute and output concentration - units are qty/acre-in.
-					soqoc = soqo / suro if suro > 0.0 else -1.0e30					
+					if suro > 0.0:
+						soqoc = soqo / suro / 3630.0  # 3630 converts from ft3 to ac-in
+					else:
+						soqoc = -1.0e30
 					# end washof()
 					
 				elif QSOFG == -1:
@@ -214,7 +217,7 @@ def iqual(store, siminfo, uci, ts):
 					the storage (sqo) is reported as zero'''
 					acqop = acqop * 0.2266
 					soqo  = suro * acqop
-					soqoc = acqop
+					soqoc = acqop / 3630.0  # 3630 converts from ft3 to ac-in
 					sqo   = 0.0
 				suroqo = soqo
 
@@ -223,7 +226,7 @@ def iqual(store, siminfo, uci, ts):
 			SOQC[loop]   = (soqual / suro / 3630.0) if suro > 0.0 else -1.0e30
 			SQO[loop]    = sqo
 			SOQS[loop]   = soqs   
-			SOQOC[loop]  = soqoc / 3630.0     # 3630 converts from ft3 to ac-in
+			SOQOC[loop]  = soqoc
 
 			SOQO[loop]   = soqo
 			SOQSP[loop]  = soqsp
