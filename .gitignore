@@ -1,5 +1,6 @@
 # Editors & IDEs
-.vscode/
+.vscode
+.vs
 .idea
 
 # Jupyter Notebook
