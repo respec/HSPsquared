@@ -98,11 +98,14 @@ class HBNOutput:
             self.summary.append((operation, activity, str(id), self.tcodes[tcode], str(df.shape), df.index[0], df.index[-1]))
             self.output_dictionary[dfname] = mapn[operation, id, activity]
 
-    def get_time_series(self, name, time_unit):
+    def get_time_series(self, t_opn, t_opn_id, t_cons, t_activity, time_unit):
         """
         get a single time series based on:
-        1. constituent name
-        2. time_unit: yearly, monthly, full (default is 'full' simulation duration)
+        1.      t_opn: RCHRES, IMPLND, PERLND
+        2.   t_opn_id: 1, 2, 3, etc
+        3.     t_cons: target constituent name
+        4. t_activity: HYDR, IQUAL, etc
+        5.  time_unit: yearly, monthly, full (default is 'full' simulation duration)
         """
         target_tcode = 2
         for tcode_key in self.tcodes.keys():
@@ -110,16 +113,19 @@ class HBNOutput:
                 target_tcode = tcode_key
                 break
 
-        target_data_frames = []
+        target_data_frames = {}
         for index_group_key in self.summaryindx:
             if index_group_key.endswith(str(target_tcode)):
                 group_index = self.summaryindx.index(index_group_key)
-                target_data_frames.append(self.data_frames[group_index])
+                target_data_frames[index_group_key] = self.data_frames[group_index]
 
-        for data_frame in target_data_frames:
-            for key in data_frame.keys():
-                if key == name:
-                    return data_frame[key]
+        for key in target_data_frames.keys():
+            (operation, activity, oid, tu) = key.split('_')
+            if operation == t_opn and int(oid) == t_opn_id and activity == t_activity:
+                data_frame = target_data_frames[key]
+                for cons_key in data_frame.keys():
+                    if cons_key == t_cons:
+                        return data_frame[cons_key]
 
         return None
 
