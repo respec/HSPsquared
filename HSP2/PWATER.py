@@ -186,6 +186,7 @@ def _pwater_(ui, ts):
     slsur  = ui['SLSUR']
     surs   = ui['SURS']
     uzs    = ui['UZS']
+    forest = ui['FOREST']
 
     if ICEFG:
         fzg  = ui['FZG']
@@ -260,7 +261,7 @@ def _pwater_(ui, ts):
             snocov = SNOCOV[step]
             SUPY[step] = RAINF[step] * (1.0 - snocov) + WYIELD[step]
             if hrfg:
-                petadj = 1.0 - snocov
+                petadj = (1.0 - forest) * (1.0 - snocov) + forest
                 if (airtmp < petmax) and (petadj > 0.5):
                     petadj = 0.5
                 if airtmp < petmin:
