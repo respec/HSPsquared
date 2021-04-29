@@ -103,7 +103,7 @@ class RegressTestBase(object):
                     #   get single output time series from HBNOutput object
                     #   get single output time series from HDF5 object
                     #   compare and generate HTML report
-                    hbn_time_series = hbn_dataset.get_time_series(cons, 'hourly')
+                    hbn_time_series = hbn_dataset.get_time_series(operation, int(opn_id), cons, activity, 'hourly')
                     h5_time_series = hdf5_data[0].get_time_series(operation, int(opn_id), cons, activity)
                     # hbn_s = pd.Series(hbn_time_series.values)
                     # h5_s = pd.Series(h5_time_series.values)
