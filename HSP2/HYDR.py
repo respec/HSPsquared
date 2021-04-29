@@ -442,7 +442,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
                 if avdep > 0.0:
                     # SHEAR; ustar (bed shear velocity), tau (bed shear stress)
                     if LKFG:              # flag, 1:lake, 0:stream
-                        ustar = (2.3/AKAPPA) * avvel / (17.66 + log10(avdep/(96.5*DB50)))
+                        ustar = avvel / (17.66 + (log10(avdep / (96.5 * DB50))) * 2.3 / AKAPPA)
                         tau   =  GAM/GRAV * ustar**2              #3796
                     else:
                         hrad = (avdep*twid)/(2.0*avdep + twid) # hydraulic radius, manual eq 41
