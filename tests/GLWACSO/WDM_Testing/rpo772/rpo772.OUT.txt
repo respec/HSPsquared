@@ -1,0 +1,1150 @@
+ OUTPUT LEVEL IS BLOCK     
+ UPDATE OPTION IS NO 
+
+ WDM FILE: rpo772.wdm                                                      
+   MAXREC      :    20
+   FREREC      :    15
+
+ ATTRIBUTE 443/444 FIXED FLAG IS    0
+
+ COUNT OF DATASETS BY TYPE
+   1-TIMESERIES:     1
+   2-TABLE     :     0
+   3-SCHEMATIC :     0
+   4-PROJECT   :     0
+   5-VECTOR    :     0
+   6-RASTOR    :     0
+   7-SPACE-TIME:     0
+   8-ATTRIBUTE :     0
+   9-MESSAGE   :     0
+
+
+ CHAIN OF TIMESERIES DATASETS:   772
+
+ LOOKING FOR DIRECTORY RECORDS
+   FOUND DIR REC:     1 ON PHYS REC    3 FOR DSN:   501 -   1000
+     DSN,REC:   772       2
+ END SEARCH FOR DIRECTORY RECORDS
+
+
+ FREE REC CHN :    15   16   17   18   19   20
+
+ DSN:   772    TYPE: 1-TIMESERIES     LENGTH:   12
+             CHAIN:     2    4    5    6    7    8    9   10   11   12   13   14
+
+      GEN POINTERS:    13   24   35  197  499
+       TO POINTERS:     0
+     FROM POINTERS:     0
+     SATTR CNT,PTR:    22   97
+     ATTRIB NUM,IND,LOC:     1  443   97
+     ATTRIB NUM,IND,LOC:     2  444  101
+     ATTRIB NUM,IND,LOC:     3   17  105
+                   NAME:      TCODE
+                  VALUE:          2
+     ATTRIB NUM,IND,LOC:     4   33  106
+                   NAME:     TSSTEP
+                  VALUE:         15
+     ATTRIB NUM,IND,LOC:     5  288  107
+     ATTRIB NUM,IND,LOC:     6  290  109
+     ATTRIB NUM,IND,LOC:     7  289  111
+     ATTRIB NUM,IND,LOC:     8    1  113
+                   NAME:     TSTYPE
+                  VALUE: PO4P
+     ATTRIB NUM,IND,LOC:     9   34  114
+                   NAME:     TGROUP
+                  VALUE:          6
+     ATTRIB NUM,IND,LOC:    10   83  115
+                   NAME:     COMPFG
+                  VALUE:          1
+     ATTRIB NUM,IND,LOC:    11   84  116
+                   NAME:     TSFORM
+                  VALUE:          1
+     ATTRIB NUM,IND,LOC:    12   32  117
+                   NAME:     TSFILL
+                  VALUE:    -999.00
+     ATTRIB NUM,IND,LOC:    13   85  118
+                   NAME:     VBTIME
+                  VALUE:          2
+     ATTRIB NUM,IND,LOC:    14   27  119
+                   NAME:      TSBYR
+                  VALUE:       2000
+     ATTRIB NUM,IND,LOC:    15   10  120
+     ATTRIB NUM,IND,LOC:    16  286  140
+     ATTRIB NUM,IND,LOC:    17  287  141
+     ATTRIB NUM,IND,LOC:    18   13  142
+     ATTRIB NUM,IND,LOC:    19   12  143
+     ATTRIB NUM,IND,LOC:    20   14  144
+     ATTRIB NUM,IND,LOC:    21   15  145
+     ATTRIB NUM,IND,LOC:    22   16  146
+     FREE POS OF DATA:   14  419
+         CHECKING TIMSERIES GROUPS
+         TGROUP:       6
+         BASE DATE: 2000  1  1  0  0  0
+         GROUP #:   4  HAS VALID DATES:  2003 12 31 24  0  0
+             BLOCK REC :     2 OFF: 500 NOV:    90 TST:   1 TUN:   4 CMP: 1 QUA: 31 NSKP:     2 DAT: 2004  1  1  0  0  0
+             BLOCK REC :     2 OFF: 502 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2004  3 31  0  0  0
+             BLOCK REC :     2 OFF: 504 NOV:   169 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  3 31  0 15  0
+             BLOCK REC :     2 OFF: 506 NOV:     6 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     7 DAT: 2004  4  1 18 30  0
+             NEW RECORD:     4 OFFSET:   5
+             BLOCK REC :     4 OFF:   5 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2004  4  1 20  0  0
+             BLOCK REC :     4 OFF:   8 NOV:  1060 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  4  1 20 30  0
+             BLOCK REC :     4 OFF:  10 NOV:    21 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    22 DAT: 2004  4 12 21 30  0
+             BLOCK REC :     4 OFF:  32 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  4 13  2 45  0
+             BLOCK REC :     4 OFF:  34 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  4 13  3 15  0
+             BLOCK REC :     4 OFF:  36 NOV:   751 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  4 13  3 45  0
+             BLOCK REC :     4 OFF:  38 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2004  4 20 23 30  0
+             BLOCK REC :     4 OFF:  40 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  4 20 23 45  0
+             BLOCK REC :     4 OFF:  42 NOV:    15 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    16 DAT: 2004  4 21  0 15  0
+             BLOCK REC :     4 OFF:  58 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  4 21  4  0  0
+             BLOCK REC :     4 OFF:  60 NOV:    38 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  4 21  4 45  0
+             BLOCK REC :     4 OFF:  62 NOV:     6 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     7 DAT: 2004  4 21 14 15  0
+             BLOCK REC :     4 OFF:  69 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  4 21 15 45  0
+             BLOCK REC :     4 OFF:  71 NOV:     9 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    10 DAT: 2004  4 21 16 15  0
+             BLOCK REC :     4 OFF:  81 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  4 21 18 30  0
+             BLOCK REC :     4 OFF:  83 NOV:   313 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  4 21 19 15  0
+             BLOCK REC :     4 OFF:  85 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2004  4 25  1 30  0
+             BLOCK REC :     4 OFF:  90 NOV:    10 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  4 25  2 30  0
+             BLOCK REC :     4 OFF:  92 NOV:    12 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    13 DAT: 2004  4 25  5  0  0
+             BLOCK REC :     4 OFF: 105 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  4 25  8  0  0
+             BLOCK REC :     4 OFF: 107 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  4 25  8 30  0
+             BLOCK REC :     4 OFF: 109 NOV:    15 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    16 DAT: 2004  4 25  9  0  0
+             BLOCK REC :     4 OFF: 125 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  4 25 12 45  0
+             BLOCK REC :     4 OFF: 127 NOV:   100 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  4 25 13 30  0
+             BLOCK REC :     4 OFF: 129 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2004  4 26 14 30  0
+             BLOCK REC :     4 OFF: 134 NOV:   430 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  4 26 15 30  0
+             BLOCK REC :     4 OFF: 136 NOV:    20 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    21 DAT: 2004  5  1  3  0  0
+             BLOCK REC :     4 OFF: 157 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5  1  8  0  0
+             BLOCK REC :     4 OFF: 159 NOV:    25 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5  1  8 45  0
+             BLOCK REC :     4 OFF: 161 NOV:    68 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    69 DAT: 2004  5  1 15  0  0
+             BLOCK REC :     4 OFF: 230 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5  2  8  0  0
+             BLOCK REC :     4 OFF: 232 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2004  5  2  8 30  0
+             BLOCK REC :     4 OFF: 237 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5  2  9 30  0
+             BLOCK REC :     4 OFF: 239 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5  2 10 15  0
+             BLOCK REC :     4 OFF: 241 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2004  5  2 10 45  0
+             BLOCK REC :     4 OFF: 243 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5  2 11  0  0
+             BLOCK REC :     4 OFF: 245 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5  2 11 30  0
+             BLOCK REC :     4 OFF: 247 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5  2 12  0  0
+             BLOCK REC :     4 OFF: 249 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2004  5  2 12 30  0
+             BLOCK REC :     4 OFF: 252 NOV:   428 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5  2 13  0  0
+             BLOCK REC :     4 OFF: 254 NOV:    10 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    11 DAT: 2004  5  6 24  0  0
+             BLOCK REC :     4 OFF: 265 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5  7  2 30  0
+             BLOCK REC :     4 OFF: 267 NOV:     9 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    10 DAT: 2004  5  7  3  0  0
+             BLOCK REC :     4 OFF: 277 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5  7  5 15  0
+             BLOCK REC :     4 OFF: 279 NOV:    73 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5  7  5 45  0
+             BLOCK REC :     4 OFF: 281 NOV:    13 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    14 DAT: 2004  5  7 24  0  0
+             BLOCK REC :     4 OFF: 295 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5  8  3 15  0
+             BLOCK REC :     4 OFF: 297 NOV:    10 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5  8  4  0  0
+             BLOCK REC :     4 OFF: 299 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2004  5  8  6 30  0
+             BLOCK REC :     4 OFF: 304 NOV:    70 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5  8  7 30  0
+             BLOCK REC :     4 OFF: 306 NOV:    16 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    17 DAT: 2004  5  9  1  0  0
+             BLOCK REC :     4 OFF: 323 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5  9  5  0  0
+             BLOCK REC :     4 OFF: 325 NOV:    54 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5  9  5 30  0
+             BLOCK REC :     4 OFF: 327 NOV:    31 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    32 DAT: 2004  5  9 19  0  0
+             BLOCK REC :     4 OFF: 359 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 10  2 45  0
+             BLOCK REC :     4 OFF: 361 NOV:     4 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 10  3 15  0
+             BLOCK REC :     4 OFF: 363 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 10  4 15  0
+             BLOCK REC :     4 OFF: 365 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 10  4 45  0
+             BLOCK REC :     4 OFF: 367 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2004  5 10  5 30  0
+             BLOCK REC :     4 OFF: 369 NOV:    55 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 10  5 45  0
+             BLOCK REC :     4 OFF: 371 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2004  5 10 19 30  0
+             BLOCK REC :     4 OFF: 375 NOV:    11 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 10 20 15  0
+             BLOCK REC :     4 OFF: 377 NOV:     9 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    10 DAT: 2004  5 10 23  0  0
+             BLOCK REC :     4 OFF: 387 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 11  1 15  0
+             BLOCK REC :     4 OFF: 389 NOV:     8 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     9 DAT: 2004  5 11  2  0  0
+             BLOCK REC :     4 OFF: 398 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 11  4  0  0
+             BLOCK REC :     4 OFF: 400 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2004  5 11  4 30  0
+             BLOCK REC :     4 OFF: 402 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 11  4 45  0
+             BLOCK REC :     4 OFF: 404 NOV:   236 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 11  5 15  0
+             BLOCK REC :     4 OFF: 406 NOV:     6 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     7 DAT: 2004  5 13 16 15  0
+             BLOCK REC :     4 OFF: 413 NOV:    10 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 13 17 45  0
+             BLOCK REC :     4 OFF: 415 NOV:     9 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    10 DAT: 2004  5 13 20 15  0
+             BLOCK REC :     4 OFF: 425 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 13 22 30  0
+             BLOCK REC :     4 OFF: 427 NOV:    63 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 13 23 15  0
+             BLOCK REC :     4 OFF: 429 NOV:    14 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    15 DAT: 2004  5 14 15  0  0
+             BLOCK REC :     4 OFF: 444 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 14 18 30  0
+             BLOCK REC :     4 OFF: 446 NOV:    15 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    16 DAT: 2004  5 14 19  0  0
+             BLOCK REC :     4 OFF: 462 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 14 22 45  0
+             BLOCK REC :     4 OFF: 464 NOV:   250 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 14 23 30  0
+             BLOCK REC :     4 OFF: 466 NOV:    18 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    19 DAT: 2004  5 17 14  0  0
+             BLOCK REC :     4 OFF: 485 NOV:     4 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 17 18 30  0
+             BLOCK REC :     4 OFF: 487 NOV:   306 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 17 19 30  0
+             BLOCK REC :     4 OFF: 489 NOV:    11 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    12 DAT: 2004  5 20 24  0  0
+             BLOCK REC :     4 OFF: 501 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 21  2 45  0
+             BLOCK REC :     4 OFF: 503 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2004  5 21  3 15  0
+             BLOCK REC :     4 OFF: 506 NOV:    41 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 21  3 45  0
+             BLOCK REC :     4 OFF: 508 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2004  5 21 14  0  0
+             NEW RECORD:     5 OFFSET:   5
+             BLOCK REC :     5 OFF:   5 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2004  5 21 15  0  0
+             BLOCK REC :     5 OFF:   8 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 21 15 30  0
+             BLOCK REC :     5 OFF:  10 NOV:     6 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 21 16  0  0
+             BLOCK REC :     5 OFF:  12 NOV:    22 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 21 17 30  0
+             BLOCK REC :     5 OFF:  14 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2004  5 21 23  0  0
+             BLOCK REC :     5 OFF:  19 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 21 24  0  0
+             BLOCK REC :     5 OFF:  21 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 21 24 45  0
+             BLOCK REC :     5 OFF:  23 NOV:     4 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 22  1 30  0
+             BLOCK REC :     5 OFF:  25 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 22  2 30  0
+             BLOCK REC :     5 OFF:  27 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2004  5 22  3 15  0
+             BLOCK REC :     5 OFF:  29 NOV:     6 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 22  3 30  0
+             BLOCK REC :     5 OFF:  31 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 22  5  0  0
+             BLOCK REC :     5 OFF:  33 NOV:     6 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     7 DAT: 2004  5 22  5 30  0
+             BLOCK REC :     5 OFF:  40 NOV:     4 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 22  7  0  0
+             BLOCK REC :     5 OFF:  42 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2004  5 22  8  0  0
+             BLOCK REC :     5 OFF:  45 NOV:    58 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 22  8 30  0
+             BLOCK REC :     5 OFF:  47 NOV:     5 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     6 DAT: 2004  5 22 23  0  0
+             BLOCK REC :     5 OFF:  53 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 23  0 15  0
+             BLOCK REC :     5 OFF:  55 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2004  5 23  0 45  0
+             BLOCK REC :     5 OFF:  58 NOV:    67 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 23  1 15  0
+             BLOCK REC :     5 OFF:  60 NOV:    12 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    13 DAT: 2004  5 23 18  0  0
+             BLOCK REC :     5 OFF:  73 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 23 21  0  0
+             BLOCK REC :     5 OFF:  75 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 23 21 45  0
+             BLOCK REC :     5 OFF:  77 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2004  5 23 22 30  0
+             BLOCK REC :     5 OFF:  81 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 23 23 15  0
+             BLOCK REC :     5 OFF:  83 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 23 23 45  0
+             BLOCK REC :     5 OFF:  85 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2004  5 24  0 15  0
+             BLOCK REC :     5 OFF:  88 NOV:     5 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 24  0 45  0
+             BLOCK REC :     5 OFF:  90 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2004  5 24  2  0  0
+             BLOCK REC :     5 OFF:  95 NOV:     5 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 24  3  0  0
+             BLOCK REC :     5 OFF:  97 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2004  5 24  4 15  0
+             BLOCK REC :     5 OFF:  99 NOV:   114 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 24  4 30  0
+             BLOCK REC :     5 OFF: 101 NOV:     8 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     9 DAT: 2004  5 25  9  0  0
+             BLOCK REC :     5 OFF: 110 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 25 11  0  0
+             BLOCK REC :     5 OFF: 112 NOV:   196 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 25 11 30  0
+             BLOCK REC :     5 OFF: 114 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2004  5 27 12 30  0
+             BLOCK REC :     5 OFF: 118 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 27 13 15  0
+             BLOCK REC :     5 OFF: 120 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2004  5 27 13 45  0
+             BLOCK REC :     5 OFF: 124 NOV:   302 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 27 14 30  0
+             BLOCK REC :     5 OFF: 126 NOV:    18 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    19 DAT: 2004  5 30 18  0  0
+             BLOCK REC :     5 OFF: 145 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 30 22 30  0
+             BLOCK REC :     5 OFF: 147 NOV:    13 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 30 23 15  0
+             BLOCK REC :     5 OFF: 149 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2004  5 31  2 30  0
+             BLOCK REC :     5 OFF: 154 NOV:    15 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 31  3 30  0
+             BLOCK REC :     5 OFF: 156 NOV:     6 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     7 DAT: 2004  5 31  7 15  0
+             BLOCK REC :     5 OFF: 163 NOV:     9 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 31  8 45  0
+             BLOCK REC :     5 OFF: 165 NOV:    12 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    13 DAT: 2004  5 31 11  0  0
+             BLOCK REC :     5 OFF: 178 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 31 14  0  0
+             BLOCK REC :     5 OFF: 180 NOV:   131 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  5 31 14 45  0
+             BLOCK REC :     5 OFF: 182 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2004  6  1 23 30  0
+             BLOCK REC :     5 OFF: 187 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6  2  0 30  0
+             BLOCK REC :     5 OFF: 189 NOV:    52 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6  2  1  0  0
+             BLOCK REC :     5 OFF: 191 NOV:    29 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    30 DAT: 2004  6  2 14  0  0
+             BLOCK REC :     5 OFF: 221 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6  2 21 15  0
+             BLOCK REC :     5 OFF: 223 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6  2 21 45  0
+             BLOCK REC :     5 OFF: 225 NOV:    17 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6  2 22 15  0
+             BLOCK REC :     5 OFF: 227 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2004  6  3  2 30  0
+             BLOCK REC :     5 OFF: 231 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6  3  3 15  0
+             BLOCK REC :     5 OFF: 233 NOV:   615 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6  3  3 45  0
+             BLOCK REC :     5 OFF: 235 NOV:    16 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    17 DAT: 2004  6  9 13 30  0
+             BLOCK REC :     5 OFF: 252 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6  9 17 30  0
+             BLOCK REC :     5 OFF: 254 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6  9 18 15  0
+             BLOCK REC :     5 OFF: 256 NOV:    12 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    13 DAT: 2004  6  9 19  0  0
+             BLOCK REC :     5 OFF: 269 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6  9 22  0  0
+             BLOCK REC :     5 OFF: 271 NOV:    10 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6  9 22 30  0
+             BLOCK REC :     5 OFF: 273 NOV:     8 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     9 DAT: 2004  6 10  1  0  0
+             BLOCK REC :     5 OFF: 282 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 10  3  0  0
+             BLOCK REC :     5 OFF: 284 NOV:     9 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    10 DAT: 2004  6 10  3 30  0
+             BLOCK REC :     5 OFF: 294 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 10  5 45  0
+             BLOCK REC :     5 OFF: 296 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2004  6 10  6 15  0
+             BLOCK REC :     5 OFF: 300 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 10  7  0  0
+             BLOCK REC :     5 OFF: 302 NOV:     6 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 10  7 45  0
+             BLOCK REC :     5 OFF: 304 NOV:     9 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    10 DAT: 2004  6 10  9 15  0
+             BLOCK REC :     5 OFF: 314 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 10 11 30  0
+             BLOCK REC :     5 OFF: 316 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2004  6 10 12  0  0
+             BLOCK REC :     5 OFF: 321 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 10 13  0  0
+             BLOCK REC :     5 OFF: 323 NOV:     6 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 10 13 45  0
+             BLOCK REC :     5 OFF: 325 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2004  6 10 15 15  0
+             BLOCK REC :     5 OFF: 327 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 10 15 30  0
+             BLOCK REC :     5 OFF: 329 NOV:    10 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    11 DAT: 2004  6 10 16  0  0
+             BLOCK REC :     5 OFF: 340 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 10 18 30  0
+             BLOCK REC :     5 OFF: 342 NOV:     6 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     7 DAT: 2004  6 10 19  0  0
+             BLOCK REC :     5 OFF: 349 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 10 20 30  0
+             BLOCK REC :     5 OFF: 351 NOV:    50 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    51 DAT: 2004  6 10 21  0  0
+             BLOCK REC :     5 OFF: 402 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 11  9 30  0
+             BLOCK REC :     5 OFF: 404 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 11 10  0  0
+             BLOCK REC :     5 OFF: 406 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 11 10 45  0
+             BLOCK REC :     5 OFF: 408 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 11 11 30  0
+             BLOCK REC :     5 OFF: 410 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 11 12  0  0
+             BLOCK REC :     5 OFF: 412 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 11 12 45  0
+             BLOCK REC :     5 OFF: 414 NOV:     4 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 11 13 15  0
+             BLOCK REC :     5 OFF: 416 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2004  6 11 14 15  0
+             BLOCK REC :     5 OFF: 418 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 11 14 30  0
+             BLOCK REC :     5 OFF: 420 NOV:    70 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 11 15  0  0
+             BLOCK REC :     5 OFF: 422 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2004  6 12  8 30  0
+             BLOCK REC :     5 OFF: 424 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 12  8 45  0
+             BLOCK REC :     5 OFF: 426 NOV:     8 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     9 DAT: 2004  6 12  9 15  0
+             BLOCK REC :     5 OFF: 435 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 12 11 15  0
+             BLOCK REC :     5 OFF: 437 NOV:   126 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 12 12  0  0
+             BLOCK REC :     5 OFF: 439 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2004  6 13 19 30  0
+             BLOCK REC :     5 OFF: 441 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 13 19 45  0
+             BLOCK REC :     5 OFF: 443 NOV:     8 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     9 DAT: 2004  6 13 20 30  0
+             BLOCK REC :     5 OFF: 452 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 13 22 30  0
+             BLOCK REC :     5 OFF: 454 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2004  6 13 23  0  0
+             BLOCK REC :     5 OFF: 456 NOV:    63 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 13 23 15  0
+             BLOCK REC :     5 OFF: 458 NOV:    15 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    16 DAT: 2004  6 14 15  0  0
+             BLOCK REC :     5 OFF: 474 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 14 18 45  0
+             BLOCK REC :     5 OFF: 476 NOV:   176 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 14 19 30  0
+             BLOCK REC :     5 OFF: 478 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2004  6 16 15 30  0
+             BLOCK REC :     5 OFF: 483 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 16 16 30  0
+             BLOCK REC :     5 OFF: 485 NOV:    24 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 16 17  0  0
+             BLOCK REC :     5 OFF: 487 NOV:    18 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    19 DAT: 2004  6 16 23  0  0
+             BLOCK REC :     5 OFF: 506 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 17  3 30  0
+             BLOCK REC :     5 OFF: 508 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 17  4  0  0
+             BLOCK REC :     5 OFF: 510 NOV:    10 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 17  4 30  0
+             NEW RECORD:     6 OFFSET:   5
+             BLOCK REC :     6 OFF:   5 NOV:    11 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    12 DAT: 2004  6 17  7  0  0
+             BLOCK REC :     6 OFF:  17 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 17  9 45  0
+             BLOCK REC :     6 OFF:  19 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2004  6 17 10 15  0
+             BLOCK REC :     6 OFF:  21 NOV:    22 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 17 10 30  0
+             BLOCK REC :     6 OFF:  23 NOV:    12 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    13 DAT: 2004  6 17 16  0  0
+             BLOCK REC :     6 OFF:  36 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 17 19  0  0
+             BLOCK REC :     6 OFF:  38 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2004  6 17 19 30  0
+             BLOCK REC :     6 OFF:  40 NOV:   359 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 17 19 45  0
+             BLOCK REC :     6 OFF:  42 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2004  6 21 13 30  0
+             BLOCK REC :     6 OFF:  47 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 21 14 30  0
+             BLOCK REC :     6 OFF:  49 NOV:    16 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 21 15  0  0
+             BLOCK REC :     6 OFF:  51 NOV:    13 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    14 DAT: 2004  6 21 19  0  0
+             BLOCK REC :     6 OFF:  65 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 21 22 15  0
+             BLOCK REC :     6 OFF:  67 NOV:     7 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 21 22 45  0
+             BLOCK REC :     6 OFF:  69 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2004  6 22  0 30  0
+             BLOCK REC :     6 OFF:  74 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 22  1 30  0
+             BLOCK REC :     6 OFF:  76 NOV:   586 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 22  2  0  0
+             BLOCK REC :     6 OFF:  78 NOV:    19 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    20 DAT: 2004  6 28  4 30  0
+             BLOCK REC :     6 OFF:  98 NOV:   583 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  6 28  9 15  0
+             BLOCK REC :     6 OFF: 100 NOV:    23 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    24 DAT: 2004  7  4 11  0  0
+             BLOCK REC :     6 OFF: 124 NOV:   225 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7  4 16 45  0
+             BLOCK REC :     6 OFF: 126 NOV:    21 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    22 DAT: 2004  7  7  1  0  0
+             BLOCK REC :     6 OFF: 148 NOV:   461 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7  7  6 15  0
+             BLOCK REC :     6 OFF: 150 NOV:    19 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    20 DAT: 2004  7 12  1 30  0
+             BLOCK REC :     6 OFF: 170 NOV:    19 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 12  6 15  0
+             BLOCK REC :     6 OFF: 172 NOV:     8 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     9 DAT: 2004  7 12 11  0  0
+             BLOCK REC :     6 OFF: 181 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 12 13  0  0
+             BLOCK REC :     6 OFF: 183 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2004  7 12 13 30  0
+             BLOCK REC :     6 OFF: 187 NOV:     4 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 12 14 15  0
+             BLOCK REC :     6 OFF: 189 NOV:   131 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 12 15 15  0
+             BLOCK REC :     6 OFF: 191 NOV:     9 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    10 DAT: 2004  7 13 24  0  0
+             BLOCK REC :     6 OFF: 201 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 14  2 15  0
+             BLOCK REC :     6 OFF: 203 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 14  2 45  0
+             BLOCK REC :     6 OFF: 205 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2004  7 14  3 15  0
+             BLOCK REC :     6 OFF: 208 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 14  3 45  0
+             BLOCK REC :     6 OFF: 210 NOV:    55 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 14  4 15  0
+             BLOCK REC :     6 OFF: 212 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2004  7 14 18  0  0
+             BLOCK REC :     6 OFF: 217 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 14 19  0  0
+             BLOCK REC :     6 OFF: 219 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2004  7 14 19 30  0
+             BLOCK REC :     6 OFF: 224 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 14 20 30  0
+             BLOCK REC :     6 OFF: 226 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2004  7 14 21  0  0
+             BLOCK REC :     6 OFF: 228 NOV:   183 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 14 21 15  0
+             BLOCK REC :     6 OFF: 230 NOV:    35 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    36 DAT: 2004  7 16 19  0  0
+             BLOCK REC :     6 OFF: 266 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 17  3 45  0
+             BLOCK REC :     6 OFF: 268 NOV:     9 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 17  4 15  0
+             BLOCK REC :     6 OFF: 270 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2004  7 17  6 30  0
+             BLOCK REC :     6 OFF: 275 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 17  7 30  0
+             BLOCK REC :     6 OFF: 277 NOV:   127 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 17  8 15  0
+             BLOCK REC :     6 OFF: 279 NOV:    17 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    18 DAT: 2004  7 18 16  0  0
+             BLOCK REC :     6 OFF: 297 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 18 20 15  0
+             BLOCK REC :     6 OFF: 299 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 18 20 45  0
+             BLOCK REC :     6 OFF: 301 NOV:    17 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 18 21 15  0
+             BLOCK REC :     6 OFF: 303 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2004  7 19  1 30  0
+             BLOCK REC :     6 OFF: 307 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 19  2 15  0
+             BLOCK REC :     6 OFF: 309 NOV:   123 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 19  2 45  0
+             BLOCK REC :     6 OFF: 311 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2004  7 20  9 30  0
+             BLOCK REC :     6 OFF: 316 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 20 10 30  0
+             BLOCK REC :     6 OFF: 318 NOV:   141 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 20 11 15  0
+             BLOCK REC :     6 OFF: 320 NOV:    25 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    26 DAT: 2004  7 21 22 30  0
+             BLOCK REC :     6 OFF: 346 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 22  4 45  0
+             BLOCK REC :     6 OFF: 348 NOV:   457 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 22  5 15  0
+             BLOCK REC :     6 OFF: 350 NOV:     6 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     7 DAT: 2004  7 26 23 30  0
+             BLOCK REC :     6 OFF: 357 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 27  1  0  0
+             BLOCK REC :     6 OFF: 359 NOV:     7 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 27  1 45  0
+             BLOCK REC :     6 OFF: 361 NOV:    41 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    42 DAT: 2004  7 27  3 30  0
+             BLOCK REC :     6 OFF: 403 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 27 13 45  0
+             BLOCK REC :     6 OFF: 405 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 27 14 30  0
+             BLOCK REC :     6 OFF: 407 NOV:     6 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     7 DAT: 2004  7 27 15  0  0
+             BLOCK REC :     6 OFF: 414 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 27 16 30  0
+             BLOCK REC :     6 OFF: 416 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2004  7 27 17  0  0
+             BLOCK REC :     6 OFF: 421 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 27 18  0  0
+             BLOCK REC :     6 OFF: 423 NOV:    10 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    11 DAT: 2004  7 27 18 30  0
+             BLOCK REC :     6 OFF: 434 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 27 21  0  0
+             BLOCK REC :     6 OFF: 436 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 27 21 30  0
+             BLOCK REC :     6 OFF: 438 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 27 22  0  0
+             BLOCK REC :     6 OFF: 440 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 27 22 30  0
+             BLOCK REC :     6 OFF: 442 NOV:     9 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    10 DAT: 2004  7 27 23  0  0
+             BLOCK REC :     6 OFF: 452 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 28  1 15  0
+             BLOCK REC :     6 OFF: 454 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 28  1 45  0
+             BLOCK REC :     6 OFF: 456 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 28  2 30  0
+             BLOCK REC :     6 OFF: 458 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 28  3 15  0
+             BLOCK REC :     6 OFF: 460 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 28  3 45  0
+             BLOCK REC :     6 OFF: 462 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2004  7 28  4 15  0
+             BLOCK REC :     6 OFF: 464 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 28  4 30  0
+             BLOCK REC :     6 OFF: 466 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2004  7 28  5  0  0
+             BLOCK REC :     6 OFF: 469 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 28  5 30  0
+             BLOCK REC :     6 OFF: 471 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2004  7 28  6  0  0
+             BLOCK REC :     6 OFF: 474 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 28  6 30  0
+             BLOCK REC :     6 OFF: 476 NOV:   240 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 28  7  0  0
+             BLOCK REC :     6 OFF: 478 NOV:    34 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    35 DAT: 2004  7 30 19  0  0
+             NEW RECORD:     7 OFFSET:   5
+             BLOCK REC :     7 OFF:   5 NOV:     8 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     9 DAT: 2004  7 31  3 30  0
+             BLOCK REC :     7 OFF:  14 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 31  5 30  0
+             BLOCK REC :     7 OFF:  16 NOV:     9 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 31  6 15  0
+             BLOCK REC :     7 OFF:  18 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2004  7 31  8 30  0
+             BLOCK REC :     7 OFF:  23 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 31  9 30  0
+             BLOCK REC :     7 OFF:  25 NOV:   252 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  7 31 10  0  0
+             BLOCK REC :     7 OFF:  27 NOV:    12 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    13 DAT: 2004  8  3  1  0  0
+             BLOCK REC :     7 OFF:  40 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8  3  4  0  0
+             BLOCK REC :     7 OFF:  42 NOV:     8 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8  3  4 30  0
+             BLOCK REC :     7 OFF:  44 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2004  8  3  6 30  0
+             BLOCK REC :     7 OFF:  48 NOV:    83 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8  3  7 15  0
+             BLOCK REC :     7 OFF:  50 NOV:    24 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    25 DAT: 2004  8  4  4  0  0
+             BLOCK REC :     7 OFF:  75 NOV:     5 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8  4 10  0  0
+             BLOCK REC :     7 OFF:  77 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2004  8  4 11 15  0
+             BLOCK REC :     7 OFF:  79 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8  4 11 30  0
+             BLOCK REC :     7 OFF:  81 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8  4 12  0  0
+             BLOCK REC :     7 OFF:  83 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8  4 12 30  0
+             BLOCK REC :     7 OFF:  85 NOV:     5 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8  4 13  0  0
+             BLOCK REC :     7 OFF:  87 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2004  8  4 14 15  0
+             BLOCK REC :     7 OFF:  90 NOV:   981 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8  4 14 45  0
+             BLOCK REC :     7 OFF:  92 NOV:    21 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    22 DAT: 2004  8 14 20  0  0
+             BLOCK REC :     7 OFF: 114 NOV:    59 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8 15  1 15  0
+             BLOCK REC :     7 OFF: 116 NOV:    18 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    19 DAT: 2004  8 15 16  0  0
+             BLOCK REC :     7 OFF: 135 NOV:    32 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8 15 20 30  0
+             BLOCK REC :     7 OFF: 137 NOV:     5 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     6 DAT: 2004  8 16  4 30  0
+             BLOCK REC :     7 OFF: 143 NOV:     4 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8 16  5 45  0
+             BLOCK REC :     7 OFF: 145 NOV:   413 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8 16  6 45  0
+             BLOCK REC :     7 OFF: 147 NOV:    29 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    30 DAT: 2004  8 20 14  0  0
+             BLOCK REC :     7 OFF: 177 NOV:    25 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8 20 21 15  0
+             BLOCK REC :     7 OFF: 179 NOV:     6 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     7 DAT: 2004  8 21  3 30  0
+             BLOCK REC :     7 OFF: 186 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8 21  5  0  0
+             BLOCK REC :     7 OFF: 188 NOV:   453 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8 21  5 45  0
+             BLOCK REC :     7 OFF: 190 NOV:    12 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    13 DAT: 2004  8 25 23  0  0
+             BLOCK REC :     7 OFF: 203 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8 26  2  0  0
+             BLOCK REC :     7 OFF: 205 NOV:    11 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    12 DAT: 2004  8 26  2 30  0
+             BLOCK REC :     7 OFF: 217 NOV:   131 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8 26  5 15  0
+             BLOCK REC :     7 OFF: 219 NOV:    17 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    18 DAT: 2004  8 27 14  0  0
+             BLOCK REC :     7 OFF: 237 NOV:    47 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8 27 18 15  0
+             BLOCK REC :     7 OFF: 239 NOV:     9 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    10 DAT: 2004  8 28  6  0  0
+             BLOCK REC :     7 OFF: 249 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8 28  8 15  0
+             BLOCK REC :     7 OFF: 251 NOV:     6 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8 28  8 45  0
+             BLOCK REC :     7 OFF: 253 NOV:    17 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8 28 10 15  0
+             BLOCK REC :     7 OFF: 255 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2004  8 28 14 30  0
+             BLOCK REC :     7 OFF: 259 NOV:    17 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8 28 15 15  0
+             BLOCK REC :     7 OFF: 261 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2004  8 28 19 30  0
+             BLOCK REC :     7 OFF: 265 NOV:    45 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8 28 20 15  0
+             BLOCK REC :     7 OFF: 267 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2004  8 29  7 30  0
+             BLOCK REC :     7 OFF: 269 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8 29  7 45  0
+             BLOCK REC :     7 OFF: 271 NOV:    17 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    18 DAT: 2004  8 29  8 15  0
+             BLOCK REC :     7 OFF: 289 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8 29 12 30  0
+             BLOCK REC :     7 OFF: 291 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2004  8 29 13  0  0
+             BLOCK REC :     7 OFF: 294 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8 29 13 30  0
+             BLOCK REC :     7 OFF: 296 NOV:   169 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8 29 14 15  0
+             BLOCK REC :     7 OFF: 298 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2004  8 31  8 30  0
+             BLOCK REC :     7 OFF: 303 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8 31  9 30  0
+             BLOCK REC :     7 OFF: 305 NOV:   404 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  8 31 10  0  0
+             BLOCK REC :     7 OFF: 307 NOV:    13 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    14 DAT: 2004  9  4 15  0  0
+             BLOCK REC :     7 OFF: 321 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  9  4 18 15  0
+             BLOCK REC :     7 OFF: 323 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  9  4 18 45  0
+             BLOCK REC :     7 OFF: 325 NOV:    44 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  9  4 19 30  0
+             BLOCK REC :     7 OFF: 327 NOV:     5 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     6 DAT: 2004  9  5  6 30  0
+             BLOCK REC :     7 OFF: 333 NOV:   161 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  9  5  7 45  0
+             BLOCK REC :     7 OFF: 335 NOV:    28 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    29 DAT: 2004  9  6 24  0  0
+             BLOCK REC :     7 OFF: 364 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  9  7  7  0  0
+             BLOCK REC :     7 OFF: 366 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2004  9  7  7 30  0
+             BLOCK REC :     7 OFF: 369 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  9  7  8  0  0
+             BLOCK REC :     7 OFF: 371 NOV:   144 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  9  7  8 30  0
+             BLOCK REC :     7 OFF: 373 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2004  9  8 20 30  0
+             BLOCK REC :     7 OFF: 377 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  9  8 21 15  0
+             BLOCK REC :     7 OFF: 379 NOV:    12 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    13 DAT: 2004  9  8 21 45  0
+             BLOCK REC :     7 OFF: 392 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  9  9  0 45  0
+             BLOCK REC :     7 OFF: 394 NOV:  1943 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  9  9  1 30  0
+             BLOCK REC :     7 OFF: 396 NOV:   281 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004  9 29  7 15  0
+             BLOCK REC :     7 OFF: 398 NOV:    23 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    24 DAT: 2004 10  2  5 30  0
+             BLOCK REC :     7 OFF: 422 NOV:   615 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004 10  2 11 15  0
+             BLOCK REC :     7 OFF: 424 NOV:     9 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    10 DAT: 2004 10  8 21  0  0
+             BLOCK REC :     7 OFF: 434 NOV:    19 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004 10  8 23 15  0
+             BLOCK REC :     7 OFF: 436 NOV:     9 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    10 DAT: 2004 10  9  4  0  0
+             BLOCK REC :     7 OFF: 446 NOV:   443 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004 10  9  6 15  0
+             BLOCK REC :     7 OFF: 448 NOV:    24 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    25 DAT: 2004 10 13 21  0  0
+             BLOCK REC :     7 OFF: 473 NOV:    14 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004 10 14  3  0  0
+             BLOCK REC :     7 OFF: 475 NOV:     6 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     7 DAT: 2004 10 14  6 30  0
+             BLOCK REC :     7 OFF: 482 NOV:    90 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004 10 14  8  0  0
+             BLOCK REC :     7 OFF: 484 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2004 10 15  6 30  0
+             BLOCK REC :     7 OFF: 486 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004 10 15  6 45  0
+             BLOCK REC :     7 OFF: 488 NOV:    24 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    25 DAT: 2004 10 15  7 15  0
+             NEW RECORD:     8 OFFSET:   5
+             BLOCK REC :     8 OFF:   5 NOV:    39 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    40 DAT: 2004 10 15 13 15  0
+             BLOCK REC :     8 OFF:  45 NOV:    26 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004 10 15 23  0  0
+             BLOCK REC :     8 OFF:  47 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2004 10 16  5 30  0
+             BLOCK REC :     8 OFF:  52 NOV:     6 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004 10 16  6 30  0
+             BLOCK REC :     8 OFF:  54 NOV:    20 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    21 DAT: 2004 10 16  8  0  0
+             BLOCK REC :     8 OFF:  75 NOV:    26 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004 10 16 13  0  0
+             BLOCK REC :     8 OFF:  77 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2004 10 16 19 30  0
+             BLOCK REC :     8 OFF:  82 NOV:   184 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004 10 16 20 30  0
+             BLOCK REC :     8 OFF:  84 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2004 10 18 18 30  0
+             BLOCK REC :     8 OFF:  89 NOV:   462 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004 10 18 19 30  0
+             BLOCK REC :     8 OFF:  91 NOV:    29 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    30 DAT: 2004 10 23 15  0  0
+             BLOCK REC :     8 OFF: 121 NOV:     8 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004 10 23 22 15  0
+             BLOCK REC :     8 OFF: 123 NOV:     6 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     7 DAT: 2004 10 24  0 15  0
+             BLOCK REC :     8 OFF: 130 NOV:   477 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004 10 24  1 45  0
+             BLOCK REC :     8 OFF: 132 NOV:    20 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    21 DAT: 2004 10 29  1  0  0
+             BLOCK REC :     8 OFF: 153 NOV:    14 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004 10 29  6  0  0
+             BLOCK REC :     8 OFF: 155 NOV:    11 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    12 DAT: 2004 10 29  9 30  0
+             BLOCK REC :     8 OFF: 167 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004 10 29 12 15  0
+             BLOCK REC :     8 OFF: 169 NOV:     8 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     9 DAT: 2004 10 29 12 45  0
+             BLOCK REC :     8 OFF: 178 NOV:    53 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004 10 29 14 45  0
+             BLOCK REC :     8 OFF: 180 NOV:    12 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    13 DAT: 2004 10 30  4  0  0
+             BLOCK REC :     8 OFF: 193 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004 10 30  7  0  0
+             BLOCK REC :     8 OFF: 195 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2004 10 30  7 30  0
+             BLOCK REC :     8 OFF: 198 NOV:   160 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2004 10 30  8  0  0
+             BLOCK REC :     8 OFF: 200 NOV:  5856 TST:  15 TUN:   2 CMP: 1 QUA: 31 NSKP:     2 DAT: 2004 10 31 24  0  0
+             END OF GROUP AT: 2004 12 31 24  0  0
+         GROUP #:   5  HAS VALID DATES:  2004 12 31 24  0  0
+             BLOCK REC :     8 OFF: 203 NOV:     1 TST:   1 TUN:   6 CMP: 1 QUA: 31 NSKP:     2 DAT: 2005  1  1  0  0  0
+             END OF GROUP AT: 2006  1  1  0  0  0
+         GROUP #:   6  HAS VALID DATES:  2005 12 31 24  0  0
+             BLOCK REC :     8 OFF: 206 NOV:     1 TST:   1 TUN:   6 CMP: 1 QUA: 31 NSKP:     2 DAT: 2006  1  1  0  0  0
+             END OF GROUP AT: 2007  1  1  0  0  0
+         GROUP #:   7  HAS VALID DATES:  2006 12 31 24  0  0
+             BLOCK REC :     8 OFF: 209 NOV:     1 TST:   1 TUN:   6 CMP: 1 QUA: 31 NSKP:     2 DAT: 2007  1  1  0  0  0
+             END OF GROUP AT: 2008  1  1  0  0  0
+         GROUP #:   8  HAS VALID DATES:  2007 12 31 24  0  0
+             BLOCK REC :     8 OFF: 212 NOV:     1 TST:   1 TUN:   6 CMP: 1 QUA: 31 NSKP:     2 DAT: 2008  1  1  0  0  0
+             END OF GROUP AT: 2009  1  1  0  0  0
+         GROUP #:   9  HAS VALID DATES:  2008 12 31 24  0  0
+             BLOCK REC :     8 OFF: 215 NOV:     1 TST:   1 TUN:   6 CMP: 1 QUA: 31 NSKP:     2 DAT: 2009  1  1  0  0  0
+             END OF GROUP AT: 2010  1  1  0  0  0
+         GROUP #:  10  HAS VALID DATES:  2009 12 31 24  0  0
+             BLOCK REC :     8 OFF: 218 NOV:     1 TST:   1 TUN:   6 CMP: 1 QUA: 31 NSKP:     2 DAT: 2010  1  1  0  0  0
+             END OF GROUP AT: 2011  1  1  0  0  0
+         GROUP #:  11  HAS VALID DATES:  2010 12 31 24  0  0
+             BLOCK REC :     8 OFF: 221 NOV:     1 TST:   1 TUN:   6 CMP: 1 QUA: 31 NSKP:     2 DAT: 2011  1  1  0  0  0
+             END OF GROUP AT: 2012  1  1  0  0  0
+         GROUP #:  12  HAS VALID DATES:  2011 12 31 24  0  0
+             BLOCK REC :     8 OFF: 224 NOV:     1 TST:   1 TUN:   6 CMP: 1 QUA: 31 NSKP:     2 DAT: 2012  1  1  0  0  0
+             END OF GROUP AT: 2013  1  1  0  0  0
+         GROUP #:  13  HAS VALID DATES:  2012 12 31 24  0  0
+             BLOCK REC :     8 OFF: 227 NOV:     1 TST:   1 TUN:   6 CMP: 1 QUA: 31 NSKP:     2 DAT: 2013  1  1  0  0  0
+             END OF GROUP AT: 2014  1  1  0  0  0
+         GROUP #:  14  HAS VALID DATES:  2013 12 31 24  0  0
+             BLOCK REC :     8 OFF: 230 NOV:     1 TST:   1 TUN:   6 CMP: 1 QUA: 31 NSKP:     2 DAT: 2014  1  1  0  0  0
+             END OF GROUP AT: 2015  1  1  0  0  0
+         GROUP #:  15  HAS VALID DATES:  2014 12 31 24  0  0
+             BLOCK REC :     8 OFF: 233 NOV:     1 TST:   1 TUN:   6 CMP: 1 QUA: 31 NSKP:     2 DAT: 2015  1  1  0  0  0
+             END OF GROUP AT: 2016  1  1  0  0  0
+         GROUP #:  16  HAS VALID DATES:  2015 12 31 24  0  0
+             BLOCK REC :     8 OFF: 236 NOV: 32000 TST:   1 TUN:   2 CMP: 1 QUA: 31 NSKP:     2 DAT: 2016  1  1  0  0  0
+             BLOCK REC :     8 OFF: 238 NOV: 32000 TST:   1 TUN:   2 CMP: 1 QUA: 31 NSKP:     2 DAT: 2016  1 23  5 20  0
+             BLOCK REC :     8 OFF: 240 NOV: 32000 TST:   1 TUN:   2 CMP: 1 QUA: 31 NSKP:     2 DAT: 2016  2 14 10 40  0
+             BLOCK REC :     8 OFF: 242 NOV: 32000 TST:   1 TUN:   2 CMP: 1 QUA: 31 NSKP:     2 DAT: 2016  3  7 16  0  0
+             BLOCK REC :     8 OFF: 244 NOV: 32000 TST:   1 TUN:   2 CMP: 1 QUA: 31 NSKP:     2 DAT: 2016  3 29 21 20  0
+             BLOCK REC :     8 OFF: 246 NOV: 32000 TST:   1 TUN:   2 CMP: 1 QUA: 31 NSKP:     2 DAT: 2016  4 21  2 40  0
+             BLOCK REC :     8 OFF: 248 NOV: 32000 TST:   1 TUN:   2 CMP: 1 QUA: 31 NSKP:     2 DAT: 2016  5 13  8  0  0
+             BLOCK REC :     8 OFF: 250 NOV: 32000 TST:   1 TUN:   2 CMP: 1 QUA: 31 NSKP:     2 DAT: 2016  6  4 13 20  0
+             BLOCK REC :     8 OFF: 252 NOV: 32000 TST:   1 TUN:   2 CMP: 1 QUA: 31 NSKP:     2 DAT: 2016  6 26 18 40  0
+             BLOCK REC :     8 OFF: 254 NOV: 32000 TST:   1 TUN:   2 CMP: 1 QUA: 31 NSKP:     2 DAT: 2016  7 18 24  0  0
+             BLOCK REC :     8 OFF: 256 NOV: 32000 TST:   1 TUN:   2 CMP: 1 QUA: 31 NSKP:     2 DAT: 2016  8 10  5 20  0
+             BLOCK REC :     8 OFF: 258 NOV: 32000 TST:   1 TUN:   2 CMP: 1 QUA: 31 NSKP:     2 DAT: 2016  9  1 10 40  0
+             BLOCK REC :     8 OFF: 260 NOV: 32000 TST:   1 TUN:   2 CMP: 1 QUA: 31 NSKP:     2 DAT: 2016  9 23 16  0  0
+             BLOCK REC :     8 OFF: 262 NOV: 32000 TST:   1 TUN:   2 CMP: 1 QUA: 31 NSKP:     2 DAT: 2016 10 15 21 20  0
+             BLOCK REC :     8 OFF: 264 NOV: 32000 TST:   1 TUN:   2 CMP: 1 QUA: 31 NSKP:     2 DAT: 2016 11  7  2 40  0
+             BLOCK REC :     8 OFF: 266 NOV: 32000 TST:   1 TUN:   2 CMP: 1 QUA: 31 NSKP:     2 DAT: 2016 11 29  8  0  0
+             BLOCK REC :     8 OFF: 268 NOV: 13615 TST:   1 TUN:   2 CMP: 1 QUA: 31 NSKP:     2 DAT: 2016 12 21 13 20  0
+             BLOCK REC :     8 OFF: 270 NOV:    95 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2016 12 31  0 15  0
+             END OF GROUP AT: 2016 12 31 24  0  0
+         GROUP #:  17  HAS VALID DATES:  2016 12 31 24  0  0
+             BLOCK REC :     8 OFF: 273 NOV:   171 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1  1  0  0  0
+             BLOCK REC :     8 OFF: 275 NOV:    16 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    17 DAT: 2017  1  2 18 45  0
+             BLOCK REC :     8 OFF: 292 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1  2 22 45  0
+             BLOCK REC :     8 OFF: 294 NOV:    25 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    26 DAT: 2017  1  2 23 15  0
+             BLOCK REC :     8 OFF: 320 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1  3  5 30  0
+             BLOCK REC :     8 OFF: 322 NOV:     5 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     6 DAT: 2017  1  3  6  0  0
+             BLOCK REC :     8 OFF: 328 NOV:    47 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1  3  7 15  0
+             BLOCK REC :     8 OFF: 330 NOV:     8 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     9 DAT: 2017  1  3 19  0  0
+             BLOCK REC :     8 OFF: 339 NOV:   246 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1  3 21  0  0
+             BLOCK REC :     8 OFF: 341 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2017  1  6 10 30  0
+             BLOCK REC :     8 OFF: 346 NOV:   342 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1  6 11 30  0
+             BLOCK REC :     8 OFF: 348 NOV:    35 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    36 DAT: 2017  1 10  1  0  0
+             BLOCK REC :     8 OFF: 384 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1 10  9 45  0
+             BLOCK REC :     8 OFF: 386 NOV:    26 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    27 DAT: 2017  1 10 10 30  0
+             BLOCK REC :     8 OFF: 413 NOV:     7 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1 10 17  0  0
+             BLOCK REC :     8 OFF: 415 NOV:    16 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    17 DAT: 2017  1 10 18 45  0
+             BLOCK REC :     8 OFF: 432 NOV:    77 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1 10 22 45  0
+             BLOCK REC :     8 OFF: 434 NOV:    12 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    13 DAT: 2017  1 11 18  0  0
+             BLOCK REC :     8 OFF: 447 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1 11 21  0  0
+             BLOCK REC :     8 OFF: 449 NOV:     6 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     7 DAT: 2017  1 11 21 45  0
+             BLOCK REC :     8 OFF: 456 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1 11 23 15  0
+             BLOCK REC :     8 OFF: 458 NOV:    13 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    14 DAT: 2017  1 11 23 45  0
+             BLOCK REC :     8 OFF: 472 NOV:    25 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1 12  3  0  0
+             BLOCK REC :     8 OFF: 474 NOV:     9 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    10 DAT: 2017  1 12  9 15  0
+             BLOCK REC :     8 OFF: 484 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1 12 11 30  0
+             BLOCK REC :     8 OFF: 486 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017  1 12 12  0  0
+             BLOCK REC :     8 OFF: 489 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1 12 12 30  0
+             BLOCK REC :     8 OFF: 491 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  1 12 13  0  0
+             BLOCK REC :     8 OFF: 493 NOV:   378 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1 12 13 15  0
+             BLOCK REC :     8 OFF: 495 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2017  1 16 11 45  0
+             BLOCK REC :     8 OFF: 500 NOV:     4 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1 16 12 45  0
+             BLOCK REC :     8 OFF: 502 NOV:    10 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    11 DAT: 2017  1 16 13 45  0
+             NEW RECORD:     9 OFFSET:   5
+             BLOCK REC :     9 OFF:   5 NOV:     5 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     6 DAT: 2017  1 16 16 15  0
+             BLOCK REC :     9 OFF:  11 NOV:     6 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1 16 17 30  0
+             BLOCK REC :     9 OFF:  13 NOV:    45 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    46 DAT: 2017  1 16 19  0  0
+             BLOCK REC :     9 OFF:  59 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1 17  6 15  0
+             BLOCK REC :     9 OFF:  61 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  1 17  6 45  0
+             BLOCK REC :     9 OFF:  63 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1 17  7  0  0
+             BLOCK REC :     9 OFF:  65 NOV:     9 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    10 DAT: 2017  1 17  7 30  0
+             BLOCK REC :     9 OFF:  75 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1 17  9 45  0
+             BLOCK REC :     9 OFF:  77 NOV:     6 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     7 DAT: 2017  1 17 10 15  0
+             BLOCK REC :     9 OFF:  84 NOV:    21 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1 17 11 45  0
+             BLOCK REC :     9 OFF:  86 NOV:     5 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     6 DAT: 2017  1 17 17  0  0
+             BLOCK REC :     9 OFF:  92 NOV:    48 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1 17 18 15  0
+             BLOCK REC :     9 OFF:  94 NOV:     5 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     6 DAT: 2017  1 18  6 15  0
+             BLOCK REC :     9 OFF: 100 NOV:   190 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1 18  7 30  0
+             BLOCK REC :     9 OFF: 102 NOV:    15 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    16 DAT: 2017  1 20  7  0  0
+             BLOCK REC :     9 OFF: 118 NOV:   271 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1 20 10 45  0
+             BLOCK REC :     9 OFF: 120 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2017  1 23  6 30  0
+             BLOCK REC :     9 OFF: 125 NOV:    10 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1 23  7 30  0
+             BLOCK REC :     9 OFF: 127 NOV:    12 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    13 DAT: 2017  1 23 10  0  0
+             BLOCK REC :     9 OFF: 140 NOV:    64 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1 23 13  0  0
+             BLOCK REC :     9 OFF: 142 NOV:     9 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    10 DAT: 2017  1 24  5  0  0
+             BLOCK REC :     9 OFF: 152 NOV:    79 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1 24  7 15  0
+             BLOCK REC :     9 OFF: 154 NOV:     8 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     9 DAT: 2017  1 25  3  0  0
+             BLOCK REC :     9 OFF: 163 NOV:   155 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1 25  5  0  0
+             BLOCK REC :     9 OFF: 165 NOV:     6 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     7 DAT: 2017  1 26 19 45  0
+             BLOCK REC :     9 OFF: 172 NOV:   389 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1 26 21 15  0
+             BLOCK REC :     9 OFF: 174 NOV:    37 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    38 DAT: 2017  1 30 22 30  0
+             BLOCK REC :     9 OFF: 212 NOV:    37 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1 31  7 45  0
+             BLOCK REC :     9 OFF: 214 NOV:     6 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     7 DAT: 2017  1 31 17  0  0
+             BLOCK REC :     9 OFF: 221 NOV:    38 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  1 31 18 30  0
+             BLOCK REC :     9 OFF: 223 NOV:    17 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    18 DAT: 2017  2  1  4  0  0
+             BLOCK REC :     9 OFF: 241 NOV:    35 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  2  1  8 15  0
+             BLOCK REC :     9 OFF: 243 NOV:    13 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    14 DAT: 2017  2  1 17  0  0
+             BLOCK REC :     9 OFF: 257 NOV:   529 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  2  1 20 15  0
+             BLOCK REC :     9 OFF: 259 NOV:    38 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    39 DAT: 2017  2  7  8 30  0
+             BLOCK REC :     9 OFF: 298 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  2  7 18  0  0
+             BLOCK REC :     9 OFF: 300 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017  2  7 18 30  0
+             BLOCK REC :     9 OFF: 303 NOV:   389 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  2  7 19  0  0
+             BLOCK REC :     9 OFF: 305 NOV:    18 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    19 DAT: 2017  2 11 20 15  0
+             BLOCK REC :     9 OFF: 324 NOV:     7 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  2 12  0 45  0
+             BLOCK REC :     9 OFF: 326 NOV:    29 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    30 DAT: 2017  2 12  2 30  0
+             BLOCK REC :     9 OFF: 356 NOV:   241 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  2 12  9 45  0
+             BLOCK REC :     9 OFF: 358 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2017  2 14 22  0  0
+             BLOCK REC :     9 OFF: 363 NOV:   870 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  2 14 23  0  0
+             BLOCK REC :     9 OFF: 365 NOV:    16 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    17 DAT: 2017  2 24  0 30  0
+             BLOCK REC :     9 OFF: 382 NOV:    45 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  2 24  4 30  0
+             BLOCK REC :     9 OFF: 384 NOV:     8 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     9 DAT: 2017  2 24 15 45  0
+             BLOCK REC :     9 OFF: 393 NOV:    18 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  2 24 17 45  0
+             BLOCK REC :     9 OFF: 395 NOV:     6 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     7 DAT: 2017  2 24 22 15  0
+             BLOCK REC :     9 OFF: 402 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  2 24 23 45  0
+             BLOCK REC :     9 OFF: 404 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017  2 25  0 15  0
+             BLOCK REC :     9 OFF: 407 NOV:   312 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  2 25  0 45  0
+             BLOCK REC :     9 OFF: 409 NOV:    11 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    12 DAT: 2017  2 28  6 45  0
+             BLOCK REC :     9 OFF: 421 NOV:    34 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  2 28  9 30  0
+             BLOCK REC :     9 OFF: 423 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2017  2 28 18  0  0
+             BLOCK REC :     9 OFF: 428 NOV:     6 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  2 28 19  0  0
+             BLOCK REC :     9 OFF: 430 NOV:     9 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    10 DAT: 2017  2 28 20 30  0
+             BLOCK REC :     9 OFF: 440 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  2 28 22 45  0
+             BLOCK REC :     9 OFF: 442 NOV:    26 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    27 DAT: 2017  2 28 23 15  0
+             BLOCK REC :     9 OFF: 469 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3  1  5 45  0
+             BLOCK REC :     9 OFF: 471 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  3  1  6 30  0
+             BLOCK REC :     9 OFF: 473 NOV:    28 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3  1  6 45  0
+             BLOCK REC :     9 OFF: 475 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017  3  1 13 45  0
+             BLOCK REC :     9 OFF: 478 NOV:   184 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3  1 14 15  0
+             BLOCK REC :     9 OFF: 480 NOV:   287 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3  3 12 15  0
+             BLOCK REC :     9 OFF: 482 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2017  3  6 12  0  0
+             BLOCK REC :     9 OFF: 486 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3  6 12 45  0
+             BLOCK REC :     9 OFF: 488 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2017  3  6 13 30  0
+             BLOCK REC :     9 OFF: 493 NOV:    23 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3  6 14 30  0
+             BLOCK REC :     9 OFF: 495 NOV:    11 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    12 DAT: 2017  3  6 20 15  0
+             BLOCK REC :     9 OFF: 507 NOV:    17 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3  6 23  0  0
+             BLOCK REC :     9 OFF: 509 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2017  3  7  3 15  0
+             NEW RECORD:    10 OFFSET:   5
+             BLOCK REC :    10 OFF:   5 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2017  3  7  4  0  0
+             BLOCK REC :    10 OFF:   9 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3  7  4 45  0
+             BLOCK REC :    10 OFF:  11 NOV:    12 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    13 DAT: 2017  3  7  5 30  0
+             BLOCK REC :    10 OFF:  24 NOV:    11 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3  7  8 30  0
+             BLOCK REC :    10 OFF:  26 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2017  3  7 11 15  0
+             BLOCK REC :    10 OFF:  31 NOV:   547 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3  7 12 15  0
+             BLOCK REC :    10 OFF:  33 NOV:    50 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    51 DAT: 2017  3 13  5  0  0
+             BLOCK REC :    10 OFF:  84 NOV:   379 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3 13 17 30  0
+             BLOCK REC :    10 OFF:  86 NOV:    23 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    24 DAT: 2017  3 17 16 15  0
+             BLOCK REC :    10 OFF: 110 NOV:    30 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3 17 22  0  0
+             BLOCK REC :    10 OFF: 112 NOV:    23 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    24 DAT: 2017  3 18  5 30  0
+             BLOCK REC :    10 OFF: 136 NOV:   160 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3 18 11 15  0
+             BLOCK REC :    10 OFF: 138 NOV:    10 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    11 DAT: 2017  3 20  3 15  0
+             BLOCK REC :    10 OFF: 149 NOV:     7 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3 20  5 45  0
+             BLOCK REC :    10 OFF: 151 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2017  3 20  7 30  0
+             BLOCK REC :    10 OFF: 155 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3 20  8 15  0
+             BLOCK REC :    10 OFF: 157 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017  3 20  9  0  0
+             BLOCK REC :    10 OFF: 160 NOV:    37 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3 20  9 30  0
+             BLOCK REC :    10 OFF: 162 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017  3 20 18 45  0
+             BLOCK REC :    10 OFF: 165 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3 20 19 15  0
+             BLOCK REC :    10 OFF: 167 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2017  3 20 19 45  0
+             BLOCK REC :    10 OFF: 171 NOV:   297 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3 20 20 30  0
+             BLOCK REC :    10 OFF: 173 NOV:    17 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    18 DAT: 2017  3 23 22 45  0
+             BLOCK REC :    10 OFF: 191 NOV:    91 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3 24  3  0  0
+             BLOCK REC :    10 OFF: 193 NOV:     5 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     6 DAT: 2017  3 25  1 45  0
+             BLOCK REC :    10 OFF: 199 NOV:   127 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3 25  3  0  0
+             BLOCK REC :    10 OFF: 201 NOV:    15 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    16 DAT: 2017  3 26 10 45  0
+             BLOCK REC :    10 OFF: 217 NOV:     6 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3 26 14 30  0
+             BLOCK REC :    10 OFF: 219 NOV:    24 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    25 DAT: 2017  3 26 16  0  0
+             BLOCK REC :    10 OFF: 244 NOV:   295 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3 26 22  0  0
+             BLOCK REC :    10 OFF: 246 NOV:     7 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     8 DAT: 2017  3 29 23 45  0
+             BLOCK REC :    10 OFF: 254 NOV:    22 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3 30  1 30  0
+             BLOCK REC :    10 OFF: 256 NOV:    18 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    19 DAT: 2017  3 30  7  0  0
+             BLOCK REC :    10 OFF: 275 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3 30 11 30  0
+             BLOCK REC :    10 OFF: 277 NOV:     6 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     7 DAT: 2017  3 30 12  0  0
+             BLOCK REC :    10 OFF: 284 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3 30 13 30  0
+             BLOCK REC :    10 OFF: 286 NOV:    11 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    12 DAT: 2017  3 30 14 15  0
+             BLOCK REC :    10 OFF: 298 NOV:     4 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3 30 17  0  0
+             BLOCK REC :    10 OFF: 300 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  3 30 18  0  0
+             BLOCK REC :    10 OFF: 302 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3 30 18 15  0
+             BLOCK REC :    10 OFF: 304 NOV:     9 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    10 DAT: 2017  3 30 18 45  0
+             BLOCK REC :    10 OFF: 314 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3 30 21  0  0
+             BLOCK REC :    10 OFF: 316 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  3 30 21 45  0
+             BLOCK REC :    10 OFF: 318 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3 30 22  0  0
+             BLOCK REC :    10 OFF: 320 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017  3 30 22 45  0
+             BLOCK REC :    10 OFF: 323 NOV:     4 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3 30 23 15  0
+             BLOCK REC :    10 OFF: 325 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  3 31  0 15  0
+             BLOCK REC :    10 OFF: 327 NOV:   337 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  3 31  0 30  0
+             BLOCK REC :    10 OFF: 329 NOV:    10 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    11 DAT: 2017  4  3 12 45  0
+             BLOCK REC :    10 OFF: 340 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4  3 15 15  0
+             BLOCK REC :    10 OFF: 342 NOV:     6 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4  3 16  0  0
+             BLOCK REC :    10 OFF: 344 NOV:    22 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    23 DAT: 2017  4  3 17 30  0
+             BLOCK REC :    10 OFF: 367 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4  3 23  0  0
+             BLOCK REC :    10 OFF: 369 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4  3 23 30  0
+             BLOCK REC :    10 OFF: 371 NOV:     4 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4  3 24  0  0
+             BLOCK REC :    10 OFF: 373 NOV:    25 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    26 DAT: 2017  4  4  1  0  0
+             BLOCK REC :    10 OFF: 399 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4  4  7 15  0
+             BLOCK REC :    10 OFF: 401 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4  4  7 45  0
+             BLOCK REC :    10 OFF: 403 NOV:   127 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4  4  8 15  0
+             BLOCK REC :    10 OFF: 405 NOV:    21 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    22 DAT: 2017  4  5 16  0  0
+             BLOCK REC :    10 OFF: 427 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4  5 21 15  0
+             BLOCK REC :    10 OFF: 429 NOV:     9 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    10 DAT: 2017  4  5 21 45  0
+             BLOCK REC :    10 OFF: 439 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4  5 24  0  0
+             BLOCK REC :    10 OFF: 441 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017  4  5 24 30  0
+             BLOCK REC :    10 OFF: 444 NOV:    19 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4  6  1  0  0
+             BLOCK REC :    10 OFF: 446 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2017  4  6  5 45  0
+             BLOCK REC :    10 OFF: 450 NOV:    15 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4  6  6 30  0
+             BLOCK REC :    10 OFF: 452 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  4  6 10 15  0
+             BLOCK REC :    10 OFF: 454 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4  6 10 30  0
+             BLOCK REC :    10 OFF: 456 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2017  4  6 11  0  0
+             BLOCK REC :    10 OFF: 460 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4  6 11 45  0
+             BLOCK REC :    10 OFF: 462 NOV:    15 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    16 DAT: 2017  4  6 12 30  0
+             BLOCK REC :    10 OFF: 478 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4  6 16 15  0
+             BLOCK REC :    10 OFF: 480 NOV:     5 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     6 DAT: 2017  4  6 16 45  0
+             BLOCK REC :    10 OFF: 486 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4  6 18  0  0
+             BLOCK REC :    10 OFF: 488 NOV:     7 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     8 DAT: 2017  4  6 18 30  0
+             BLOCK REC :    10 OFF: 496 NOV:     4 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4  6 20 15  0
+             BLOCK REC :    10 OFF: 498 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2017  4  6 21 15  0
+             BLOCK REC :    10 OFF: 502 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4  6 22  0  0
+             BLOCK REC :    10 OFF: 504 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2017  4  6 22 30  0
+             BLOCK REC :    10 OFF: 509 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4  6 23 30  0
+             BLOCK REC :    10 OFF: 511 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  4  6 24  0  0
+             NEW RECORD:    11 OFFSET:   5
+             BLOCK REC :    11 OFF:   5 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2017  4  6 24 15  0
+             BLOCK REC :    11 OFF:  10 NOV:   330 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4  7  1 15  0
+             BLOCK REC :    11 OFF:  12 NOV:     7 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     8 DAT: 2017  4 10 11 45  0
+             BLOCK REC :    11 OFF:  20 NOV:    15 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4 10 13 30  0
+             BLOCK REC :    11 OFF:  22 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2017  4 10 17 15  0
+             BLOCK REC :    11 OFF:  26 NOV:    21 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4 10 18  0  0
+             BLOCK REC :    11 OFF:  28 NOV:    11 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    12 DAT: 2017  4 10 23 15  0
+             BLOCK REC :    11 OFF:  40 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4 11  2  0  0
+             BLOCK REC :    11 OFF:  42 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  4 11  2 45  0
+             BLOCK REC :    11 OFF:  44 NOV:   392 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4 11  3  0  0
+             BLOCK REC :    11 OFF:  46 NOV:     9 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    10 DAT: 2017  4 15  5  0  0
+             BLOCK REC :    11 OFF:  56 NOV:   417 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4 15  7 15  0
+             BLOCK REC :    11 OFF:  58 NOV:    17 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    18 DAT: 2017  4 19 15 30  0
+             BLOCK REC :    11 OFF:  76 NOV:    44 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4 19 19 45  0
+             BLOCK REC :    11 OFF:  78 NOV:     9 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    10 DAT: 2017  4 20  6 45  0
+             BLOCK REC :    11 OFF:  88 NOV:    20 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4 20  9  0  0
+             BLOCK REC :    11 OFF:  90 NOV:    13 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    14 DAT: 2017  4 20 14  0  0
+             BLOCK REC :    11 OFF: 104 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4 20 17 15  0
+             BLOCK REC :    11 OFF: 106 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4 20 18  0  0
+             BLOCK REC :    11 OFF: 108 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  4 20 18 30  0
+             BLOCK REC :    11 OFF: 110 NOV:   644 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4 20 18 45  0
+             BLOCK REC :    11 OFF: 112 NOV:     5 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     6 DAT: 2017  4 27 11 45  0
+             BLOCK REC :    11 OFF: 118 NOV:   236 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4 27 13  0  0
+             BLOCK REC :    11 OFF: 120 NOV:    17 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    18 DAT: 2017  4 29 24  0  0
+             BLOCK REC :    11 OFF: 138 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4 30  4 15  0
+             BLOCK REC :    11 OFF: 140 NOV:    27 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4 30  5  0  0
+             BLOCK REC :    11 OFF: 142 NOV:    13 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    14 DAT: 2017  4 30 11 45  0
+             BLOCK REC :    11 OFF: 156 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4 30 15  0  0
+             BLOCK REC :    11 OFF: 158 NOV:     8 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  4 30 15 45  0
+             BLOCK REC :    11 OFF: 160 NOV:    26 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    27 DAT: 2017  4 30 17 45  0
+             BLOCK REC :    11 OFF: 187 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5  1  0 15  0
+             BLOCK REC :    11 OFF: 189 NOV:    10 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5  1  0 45  0
+             BLOCK REC :    11 OFF: 191 NOV:    11 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    12 DAT: 2017  5  1  3 15  0
+             BLOCK REC :    11 OFF: 203 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5  1  6  0  0
+             BLOCK REC :    11 OFF: 205 NOV:     4 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5  1  6 45  0
+             BLOCK REC :    11 OFF: 207 NOV:    10 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    11 DAT: 2017  5  1  7 45  0
+             BLOCK REC :    11 OFF: 218 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5  1 10 15  0
+             BLOCK REC :    11 OFF: 220 NOV:     9 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    10 DAT: 2017  5  1 10 45  0
+             BLOCK REC :    11 OFF: 230 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5  1 13  0  0
+             BLOCK REC :    11 OFF: 232 NOV:    64 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5  1 13 45  0
+             BLOCK REC :    11 OFF: 234 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2017  5  2  5 45  0
+             BLOCK REC :    11 OFF: 239 NOV:   192 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5  2  6 45  0
+             BLOCK REC :    11 OFF: 241 NOV:    57 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    58 DAT: 2017  5  4  6 45  0
+             BLOCK REC :    11 OFF: 299 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5  4 21  0  0
+             BLOCK REC :    11 OFF: 301 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2017  5  4 21 30  0
+             BLOCK REC :    11 OFF: 305 NOV:     5 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5  4 22 15  0
+             BLOCK REC :    11 OFF: 307 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5  4 23 30  0
+             BLOCK REC :    11 OFF: 309 NOV:     8 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     9 DAT: 2017  5  4 24  0  0
+             BLOCK REC :    11 OFF: 318 NOV:    10 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5  5  2  0  0
+             BLOCK REC :    11 OFF: 320 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017  5  5  4 30  0
+             BLOCK REC :    11 OFF: 323 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5  5  5  0  0
+             BLOCK REC :    11 OFF: 325 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5  5  5 30  0
+             BLOCK REC :    11 OFF: 327 NOV:    12 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    13 DAT: 2017  5  5  6  0  0
+             BLOCK REC :    11 OFF: 340 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5  5  9  0  0
+             BLOCK REC :    11 OFF: 342 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017  5  5  9 30  0
+             BLOCK REC :    11 OFF: 345 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5  5 10  0  0
+             BLOCK REC :    11 OFF: 347 NOV:    15 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    16 DAT: 2017  5  5 10 30  0
+             BLOCK REC :    11 OFF: 363 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5  5 14 15  0
+             BLOCK REC :    11 OFF: 365 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5  5 14 45  0
+             BLOCK REC :    11 OFF: 367 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5  5 15 15  0
+             BLOCK REC :    11 OFF: 369 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2017  5  5 15 45  0
+             BLOCK REC :    11 OFF: 373 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5  5 16 30  0
+             BLOCK REC :    11 OFF: 375 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  5  5 17  0  0
+             BLOCK REC :    11 OFF: 377 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5  5 17 15  0
+             BLOCK REC :    11 OFF: 379 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5  5 18  0  0
+             BLOCK REC :    11 OFF: 381 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  5  5 18 45  0
+             BLOCK REC :    11 OFF: 383 NOV:   504 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5  5 19  0  0
+             BLOCK REC :    11 OFF: 385 NOV:    16 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    17 DAT: 2017  5 11  1  0  0
+             BLOCK REC :    11 OFF: 402 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 11  5  0  0
+             BLOCK REC :    11 OFF: 404 NOV:    18 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 11  5 45  0
+             BLOCK REC :    11 OFF: 406 NOV:     7 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     8 DAT: 2017  5 11 10 15  0
+             BLOCK REC :    11 OFF: 414 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 11 12  0  0
+             BLOCK REC :    11 OFF: 416 NOV:   442 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 11 12 45  0
+             BLOCK REC :    11 OFF: 418 NOV:     8 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     9 DAT: 2017  5 16  3 15  0
+             BLOCK REC :    11 OFF: 427 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 16  5 15  0
+             BLOCK REC :    11 OFF: 429 NOV:    10 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    11 DAT: 2017  5 16  5 45  0
+             BLOCK REC :    11 OFF: 440 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 16  8 15  0
+             BLOCK REC :    11 OFF: 442 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 16  8 45  0
+             BLOCK REC :    11 OFF: 444 NOV:   336 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 16  9 30  0
+             BLOCK REC :    11 OFF: 446 NOV:     5 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     6 DAT: 2017  5 19 21 30  0
+             BLOCK REC :    11 OFF: 452 NOV:    65 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 19 22 45  0
+             BLOCK REC :    11 OFF: 454 NOV:    13 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    14 DAT: 2017  5 20 15  0  0
+             BLOCK REC :    11 OFF: 468 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 20 18 15  0
+             BLOCK REC :    11 OFF: 470 NOV:    23 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 20 19  0  0
+             BLOCK REC :    11 OFF: 472 NOV:     8 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     9 DAT: 2017  5 21  0 45  0
+             BLOCK REC :    11 OFF: 481 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 21  2 45  0
+             BLOCK REC :    11 OFF: 483 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017  5 21  3 15  0
+             BLOCK REC :    11 OFF: 486 NOV:    14 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 21  3 45  0
+             BLOCK REC :    11 OFF: 488 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017  5 21  7 15  0
+             BLOCK REC :    11 OFF: 491 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 21  7 45  0
+             BLOCK REC :    11 OFF: 493 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017  5 21  8 15  0
+             BLOCK REC :    11 OFF: 496 NOV:     5 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 21  8 45  0
+             BLOCK REC :    11 OFF: 498 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2017  5 21 10  0  0
+             BLOCK REC :    11 OFF: 503 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 21 11  0  0
+             BLOCK REC :    11 OFF: 505 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017  5 21 11 30  0
+             BLOCK REC :    11 OFF: 508 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 21 12  0  0
+             BLOCK REC :    11 OFF: 510 NOV:    11 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 21 12 30  0
+             NEW RECORD:    12 OFFSET:   5
+             BLOCK REC :    12 OFF:   5 NOV:     7 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     8 DAT: 2017  5 21 15 15  0
+             BLOCK REC :    12 OFF:  13 NOV:   271 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 21 17  0  0
+             BLOCK REC :    12 OFF:  15 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2017  5 24 12 45  0
+             BLOCK REC :    12 OFF:  20 NOV:    16 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 24 13 45  0
+             BLOCK REC :    12 OFF:  22 NOV:    17 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    18 DAT: 2017  5 24 17 45  0
+             BLOCK REC :    12 OFF:  40 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 24 22  0  0
+             BLOCK REC :    12 OFF:  42 NOV:     9 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    10 DAT: 2017  5 24 22 45  0
+             BLOCK REC :    12 OFF:  52 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 25  1  0  0
+             BLOCK REC :    12 OFF:  54 NOV:    15 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 25  1 45  0
+             BLOCK REC :    12 OFF:  56 NOV:    24 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    25 DAT: 2017  5 25  5 30  0
+             BLOCK REC :    12 OFF:  81 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 25 11 30  0
+             BLOCK REC :    12 OFF:  83 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  5 25 12  0  0
+             BLOCK REC :    12 OFF:  85 NOV:     4 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 25 12 15  0
+             BLOCK REC :    12 OFF:  87 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  5 25 13 15  0
+             BLOCK REC :    12 OFF:  89 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 25 13 30  0
+             BLOCK REC :    12 OFF:  91 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 25 14  0  0
+             BLOCK REC :    12 OFF:  93 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 25 14 30  0
+             BLOCK REC :    12 OFF:  95 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  5 25 15  0  0
+             BLOCK REC :    12 OFF:  97 NOV:   292 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 25 15 15  0
+             BLOCK REC :    12 OFF:  99 NOV:    10 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    11 DAT: 2017  5 28 16 15  0
+             BLOCK REC :    12 OFF: 110 NOV:     9 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 28 18 45  0
+             BLOCK REC :    12 OFF: 112 NOV:    12 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    13 DAT: 2017  5 28 21  0  0
+             BLOCK REC :    12 OFF: 125 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 28 24  0  0
+             BLOCK REC :    12 OFF: 127 NOV:    60 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 28 24 45  0
+             BLOCK REC :    12 OFF: 129 NOV:    16 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    17 DAT: 2017  5 29 15 45  0
+             BLOCK REC :    12 OFF: 146 NOV:     4 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 29 19 45  0
+             BLOCK REC :    12 OFF: 148 NOV:   112 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 29 20 45  0
+             BLOCK REC :    12 OFF: 150 NOV:     5 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     6 DAT: 2017  5 31  0 45  0
+             BLOCK REC :    12 OFF: 156 NOV:   223 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  5 31  2  0  0
+             BLOCK REC :    12 OFF: 158 NOV:     8 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     9 DAT: 2017  6  2  9 45  0
+             BLOCK REC :    12 OFF: 167 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6  2 11 45  0
+             BLOCK REC :    12 OFF: 169 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6  2 12 15  0
+             BLOCK REC :    12 OFF: 171 NOV:   178 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6  2 12 45  0
+             BLOCK REC :    12 OFF: 173 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2017  6  4  9 15  0
+             BLOCK REC :    12 OFF: 177 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6  4 10  0  0
+             BLOCK REC :    12 OFF: 179 NOV:   961 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6  4 10 30  0
+             BLOCK REC :    12 OFF: 181 NOV:    10 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    11 DAT: 2017  6 14 10 45  0
+             BLOCK REC :    12 OFF: 192 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 14 13 15  0
+             BLOCK REC :    12 OFF: 194 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  6 14 13 45  0
+             BLOCK REC :    12 OFF: 196 NOV:    60 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 14 14  0  0
+             BLOCK REC :    12 OFF: 198 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2017  6 15  5  0  0
+             BLOCK REC :    12 OFF: 202 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 15  5 45  0
+             BLOCK REC :    12 OFF: 204 NOV:    32 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 15  6 15  0
+             BLOCK REC :    12 OFF: 206 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2017  6 15 14 15  0
+             BLOCK REC :    12 OFF: 211 NOV:    20 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 15 15 15  0
+             BLOCK REC :    12 OFF: 213 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2017  6 15 20 15  0
+             BLOCK REC :    12 OFF: 218 NOV:   169 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 15 21 15  0
+             BLOCK REC :    12 OFF: 220 NOV:    10 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    11 DAT: 2017  6 17 15 30  0
+             BLOCK REC :    12 OFF: 231 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 17 18  0  0
+             BLOCK REC :    12 OFF: 233 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  6 17 18 30  0
+             BLOCK REC :    12 OFF: 235 NOV:    17 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 17 18 45  0
+             BLOCK REC :    12 OFF: 237 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2017  6 17 23  0  0
+             BLOCK REC :    12 OFF: 241 NOV:   153 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 17 23 45  0
+             BLOCK REC :    12 OFF: 243 NOV:    12 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    13 DAT: 2017  6 19 14  0  0
+             BLOCK REC :    12 OFF: 256 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 19 17  0  0
+             BLOCK REC :    12 OFF: 258 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  6 19 17 30  0
+             BLOCK REC :    12 OFF: 260 NOV:    97 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 19 17 45  0
+             BLOCK REC :    12 OFF: 262 NOV:    13 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    14 DAT: 2017  6 20 18  0  0
+             BLOCK REC :    12 OFF: 276 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 20 21 15  0
+             BLOCK REC :    12 OFF: 278 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 20 21 45  0
+             BLOCK REC :    12 OFF: 280 NOV:   130 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 20 22 30  0
+             BLOCK REC :    12 OFF: 282 NOV:    17 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    18 DAT: 2017  6 22  7  0  0
+             BLOCK REC :    12 OFF: 300 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 22 11 15  0
+             BLOCK REC :    12 OFF: 302 NOV:    29 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 22 12  0  0
+             BLOCK REC :    12 OFF: 304 NOV:    34 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    35 DAT: 2017  6 22 19 15  0
+             BLOCK REC :    12 OFF: 339 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 23  3 45  0
+             BLOCK REC :    12 OFF: 341 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 23  4 15  0
+             BLOCK REC :    12 OFF: 343 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2017  6 23  4 45  0
+             BLOCK REC :    12 OFF: 348 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 23  5 45  0
+             BLOCK REC :    12 OFF: 350 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  6 23  6 15  0
+             BLOCK REC :    12 OFF: 352 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 23  6 30  0
+             BLOCK REC :    12 OFF: 354 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  6 23  7  0  0
+             BLOCK REC :    12 OFF: 356 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 23  7 15  0
+             BLOCK REC :    12 OFF: 358 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  6 23  7 45  0
+             BLOCK REC :    12 OFF: 360 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 23  8  0  0
+             BLOCK REC :    12 OFF: 362 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  6 23  8 30  0
+             BLOCK REC :    12 OFF: 364 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 23  8 45  0
+             BLOCK REC :    12 OFF: 366 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  6 23  9 30  0
+             BLOCK REC :    12 OFF: 368 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 23  9 45  0
+             BLOCK REC :    12 OFF: 370 NOV:     7 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     8 DAT: 2017  6 23 10 15  0
+             BLOCK REC :    12 OFF: 378 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 23 12  0  0
+             BLOCK REC :    12 OFF: 380 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2017  6 23 12 30  0
+             BLOCK REC :    12 OFF: 384 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 23 13 15  0
+             BLOCK REC :    12 OFF: 386 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  6 23 13 45  0
+             BLOCK REC :    12 OFF: 388 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 23 14  0  0
+             BLOCK REC :    12 OFF: 390 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017  6 23 14 30  0
+             BLOCK REC :    12 OFF: 393 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 23 15  0  0
+             BLOCK REC :    12 OFF: 395 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017  6 23 15 30  0
+             BLOCK REC :    12 OFF: 398 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 23 16  0  0
+             BLOCK REC :    12 OFF: 400 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 23 16 30  0
+             BLOCK REC :    12 OFF: 402 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017  6 23 17  0  0
+             BLOCK REC :    12 OFF: 405 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 23 17 30  0
+             BLOCK REC :    12 OFF: 407 NOV:   254 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 23 18 15  0
+             BLOCK REC :    12 OFF: 409 NOV:     8 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     9 DAT: 2017  6 26  9 45  0
+             BLOCK REC :    12 OFF: 418 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 26 11 45  0
+             BLOCK REC :    12 OFF: 420 NOV:    20 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 26 12 30  0
+             BLOCK REC :    12 OFF: 422 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2017  6 26 17 30  0
+             BLOCK REC :    12 OFF: 426 NOV:    11 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 26 18 15  0
+             BLOCK REC :    12 OFF: 428 NOV:     7 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     8 DAT: 2017  6 26 21  0  0
+             BLOCK REC :    12 OFF: 436 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 26 22 45  0
+             BLOCK REC :    12 OFF: 438 NOV:   213 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 26 23 15  0
+             BLOCK REC :    12 OFF: 440 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2017  6 29  4 30  0
+             BLOCK REC :    12 OFF: 445 NOV:    79 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 29  5 30  0
+             BLOCK REC :    12 OFF: 447 NOV:    16 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    17 DAT: 2017  6 30  1 15  0
+             BLOCK REC :    12 OFF: 464 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 30  5 15  0
+             BLOCK REC :    12 OFF: 466 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 30  5 45  0
+             BLOCK REC :    12 OFF: 468 NOV:    39 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 30  6 30  0
+             BLOCK REC :    12 OFF: 470 NOV:    23 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    24 DAT: 2017  6 30 16 15  0
+             BLOCK REC :    12 OFF: 494 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 30 22  0  0
+             BLOCK REC :    12 OFF: 496 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  6 30 22 30  0
+             BLOCK REC :    12 OFF: 498 NOV:   265 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  6 30 22 45  0
+             BLOCK REC :    12 OFF: 500 NOV:   331 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  7  3 17  0  0
+             BLOCK REC :    12 OFF: 502 NOV:    10 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    11 DAT: 2017  7  7  3 45  0
+             NEW RECORD:    13 OFFSET:   5
+             BLOCK REC :    13 OFF:   5 NOV:     9 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    10 DAT: 2017  7  7  6 15  0
+             BLOCK REC :    13 OFF:  15 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  7  7  8 30  0
+             BLOCK REC :    13 OFF:  17 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  7  7  9  0  0
+             BLOCK REC :    13 OFF:  19 NOV:    38 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  7  7  9 30  0
+             BLOCK REC :    13 OFF:  21 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2017  7  7 19  0  0
+             BLOCK REC :    13 OFF:  26 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  7  7 20  0  0
+             BLOCK REC :    13 OFF:  28 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017  7  7 20 45  0
+             BLOCK REC :    13 OFF:  31 NOV:   240 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  7  7 21 15  0
+             BLOCK REC :    13 OFF:  33 NOV:    19 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    20 DAT: 2017  7 10  9 15  0
+             BLOCK REC :    13 OFF:  53 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  7 10 14  0  0
+             BLOCK REC :    13 OFF:  55 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  7 10 14 30  0
+             BLOCK REC :    13 OFF:  57 NOV:    93 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  7 10 15  0  0
+             BLOCK REC :    13 OFF:  59 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2017  7 11 14 15  0
+             BLOCK REC :    13 OFF:  63 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  7 11 15  0  0
+             BLOCK REC :    13 OFF:  65 NOV:    82 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  7 11 15 30  0
+             BLOCK REC :    13 OFF:  67 NOV:     8 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     9 DAT: 2017  7 12 12  0  0
+             BLOCK REC :    13 OFF:  76 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  7 12 14  0  0
+             BLOCK REC :    13 OFF:  78 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  7 12 14 30  0
+             BLOCK REC :    13 OFF:  80 NOV:    54 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  7 12 15  0  0
+             BLOCK REC :    13 OFF:  82 NOV:    15 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    16 DAT: 2017  7 13  4 30  0
+             BLOCK REC :    13 OFF:  98 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  7 13  8 15  0
+             BLOCK REC :    13 OFF: 100 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  7 13  8 45  0
+             BLOCK REC :    13 OFF: 102 NOV:   865 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  7 13  9 15  0
+             BLOCK REC :    13 OFF: 104 NOV:     6 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     7 DAT: 2017  7 22  9 30  0
+             BLOCK REC :    13 OFF: 111 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  7 22 11  0  0
+             BLOCK REC :    13 OFF: 113 NOV:   361 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  7 22 11 45  0
+             BLOCK REC :    13 OFF: 115 NOV:     5 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     6 DAT: 2017  7 26  6  0  0
+             BLOCK REC :    13 OFF: 121 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  7 26  7 15  0
+             BLOCK REC :    13 OFF: 123 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  7 26  7 45  0
+             BLOCK REC :    13 OFF: 125 NOV:   578 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  7 26  8 30  0
+             BLOCK REC :    13 OFF: 127 NOV:    12 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    13 DAT: 2017  8  1  9  0  0
+             BLOCK REC :    13 OFF: 140 NOV:   112 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8  1 12  0  0
+             BLOCK REC :    13 OFF: 142 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  8  2 16  0  0
+             BLOCK REC :    13 OFF: 144 NOV:   141 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8  2 16 15  0
+             BLOCK REC :    13 OFF: 146 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  8  4  3 30  0
+             BLOCK REC :    13 OFF: 148 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8  4  3 45  0
+             BLOCK REC :    13 OFF: 150 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017  8  4  4 15  0
+             BLOCK REC :    13 OFF: 153 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8  4  4 45  0
+             BLOCK REC :    13 OFF: 155 NOV:   673 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8  4  5 15  0
+             BLOCK REC :    13 OFF: 157 NOV:    11 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    12 DAT: 2017  8 11  5 30  0
+             BLOCK REC :    13 OFF: 169 NOV:   127 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8 11  8 15  0
+             BLOCK REC :    13 OFF: 171 NOV:     6 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     7 DAT: 2017  8 12 16  0  0
+             BLOCK REC :    13 OFF: 178 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8 12 17 30  0
+             BLOCK REC :    13 OFF: 180 NOV:     8 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8 12 18 15  0
+             BLOCK REC :    13 OFF: 182 NOV:    11 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    12 DAT: 2017  8 12 20 15  0
+             BLOCK REC :    13 OFF: 194 NOV:    16 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8 12 23  0  0
+             BLOCK REC :    13 OFF: 196 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2017  8 13  3  0  0
+             BLOCK REC :    13 OFF: 201 NOV:     4 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8 13  4  0  0
+             BLOCK REC :    13 OFF: 203 NOV:   200 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8 13  5  0  0
+             BLOCK REC :    13 OFF: 205 NOV:    17 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    18 DAT: 2017  8 15  7  0  0
+             BLOCK REC :    13 OFF: 223 NOV:   172 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8 15 11 15  0
+             BLOCK REC :    13 OFF: 225 NOV:    15 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    16 DAT: 2017  8 17  6 15  0
+             BLOCK REC :    13 OFF: 241 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8 17 10  0  0
+             BLOCK REC :    13 OFF: 243 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8 17 10 30  0
+             BLOCK REC :    13 OFF: 245 NOV:     4 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8 17 11  0  0
+             BLOCK REC :    13 OFF: 247 NOV:    17 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    18 DAT: 2017  8 17 12  0  0
+             BLOCK REC :    13 OFF: 265 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8 17 16 15  0
+             BLOCK REC :    13 OFF: 267 NOV:   467 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8 17 17  0  0
+             BLOCK REC :    13 OFF: 269 NOV:     9 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    10 DAT: 2017  8 22 13 45  0
+             BLOCK REC :    13 OFF: 279 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8 22 16  0  0
+             BLOCK REC :    13 OFF: 281 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  8 22 16 30  0
+             BLOCK REC :    13 OFF: 283 NOV:   559 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8 22 16 45  0
+             BLOCK REC :    13 OFF: 285 NOV:     9 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    10 DAT: 2017  8 28 12 30  0
+             BLOCK REC :    13 OFF: 295 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8 28 14 45  0
+             BLOCK REC :    13 OFF: 297 NOV:     8 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8 28 15 30  0
+             BLOCK REC :    13 OFF: 299 NOV:    14 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    15 DAT: 2017  8 28 17 30  0
+             BLOCK REC :    13 OFF: 314 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8 28 21  0  0
+             BLOCK REC :    13 OFF: 316 NOV:     7 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     8 DAT: 2017  8 28 21 45  0
+             BLOCK REC :    13 OFF: 324 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8 28 23 30  0
+             BLOCK REC :    13 OFF: 326 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017  8 28 24  0  0
+             BLOCK REC :    13 OFF: 328 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8 28 24 15  0
+             BLOCK REC :    13 OFF: 330 NOV:    50 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8 28 24 45  0
+             BLOCK REC :    13 OFF: 332 NOV:    11 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    12 DAT: 2017  8 29 13 15  0
+             BLOCK REC :    13 OFF: 344 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8 29 16  0  0
+             BLOCK REC :    13 OFF: 346 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2017  8 29 16 30  0
+             BLOCK REC :    13 OFF: 350 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8 29 17 15  0
+             BLOCK REC :    13 OFF: 352 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017  8 29 17 45  0
+             BLOCK REC :    13 OFF: 355 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8 29 18 15  0
+             BLOCK REC :    13 OFF: 357 NOV:    20 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8 29 19  0  0
+             BLOCK REC :    13 OFF: 359 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2017  8 29 24  0  0
+             BLOCK REC :    13 OFF: 364 NOV:    21 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8 30  1  0  0
+             BLOCK REC :    13 OFF: 366 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2017  8 30  6 15  0
+             BLOCK REC :    13 OFF: 371 NOV:   374 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  8 30  7 15  0
+             BLOCK REC :    13 OFF: 373 NOV:    10 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    11 DAT: 2017  9  3  4 45  0
+             BLOCK REC :    13 OFF: 384 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  9  3  7 15  0
+             BLOCK REC :    13 OFF: 386 NOV:    84 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  9  3  8  0  0
+             BLOCK REC :    13 OFF: 388 NOV:    50 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  9  4  5  0  0
+             BLOCK REC :    13 OFF: 390 NOV:    11 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    12 DAT: 2017  9  4 17 30  0
+             BLOCK REC :    13 OFF: 402 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  9  4 20 15  0
+             BLOCK REC :    13 OFF: 404 NOV:    41 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  9  4 21  0  0
+             BLOCK REC :    13 OFF: 406 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017  9  5  7 15  0
+             BLOCK REC :    13 OFF: 409 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  9  5  7 45  0
+             BLOCK REC :    13 OFF: 411 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2017  9  5  8 15  0
+             BLOCK REC :    13 OFF: 415 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  9  5  9  0  0
+             BLOCK REC :    13 OFF: 417 NOV:   218 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  9  5  9 45  0
+             BLOCK REC :    13 OFF: 419 NOV:     8 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     9 DAT: 2017  9  7 16 15  0
+             BLOCK REC :    13 OFF: 428 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  9  7 18 15  0
+             BLOCK REC :    13 OFF: 430 NOV:    46 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  9  7 19  0  0
+             BLOCK REC :    13 OFF: 432 NOV:     5 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     6 DAT: 2017  9  8  6 30  0
+             BLOCK REC :    13 OFF: 438 NOV:   283 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  9  8  7 45  0
+             BLOCK REC :    13 OFF: 440 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2017  9 11  6 30  0
+             BLOCK REC :    13 OFF: 445 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  9 11  7 30  0
+             BLOCK REC :    13 OFF: 447 NOV:   574 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  9 11  8  0  0
+             BLOCK REC :    13 OFF: 449 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2017  9 17  7 30  0
+             BLOCK REC :    13 OFF: 454 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  9 17  8 30  0
+             BLOCK REC :    13 OFF: 456 NOV:   202 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  9 17  9 15  0
+             BLOCK REC :    13 OFF: 458 NOV:    19 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    20 DAT: 2017  9 19 11 45  0
+             BLOCK REC :    13 OFF: 478 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  9 19 16 30  0
+             BLOCK REC :    13 OFF: 480 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  9 19 17  0  0
+             BLOCK REC :    13 OFF: 482 NOV:  1208 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017  9 19 17 30  0
+             BLOCK REC :    13 OFF: 484 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2017 10  2  7 30  0
+             BLOCK REC :    13 OFF: 488 NOV:   342 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10  2  8 15  0
+             BLOCK REC :    13 OFF: 490 NOV:    16 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    17 DAT: 2017 10  5 21 45  0
+             BLOCK REC :    13 OFF: 507 NOV:     6 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10  6  1 45  0
+             BLOCK REC :    13 OFF: 509 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2017 10  6  3 15  0
+             NEW RECORD:    14 OFFSET:   5
+             BLOCK REC :    14 OFF:   5 NOV:    37 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    38 DAT: 2017 10  6  4  0  0
+             BLOCK REC :    14 OFF:  43 NOV:    26 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10  6 13 15  0
+             BLOCK REC :    14 OFF:  45 NOV:     8 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     9 DAT: 2017 10  6 19 45  0
+             BLOCK REC :    14 OFF:  54 NOV:    14 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10  6 21 45  0
+             BLOCK REC :    14 OFF:  56 NOV:    11 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    12 DAT: 2017 10  7  1 15  0
+             BLOCK REC :    14 OFF:  68 NOV:    69 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10  7  4  0  0
+             BLOCK REC :    14 OFF:  70 NOV:    12 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    13 DAT: 2017 10  7 21 15  0
+             BLOCK REC :    14 OFF:  83 NOV:    95 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10  8  0 15  0
+             BLOCK REC :    14 OFF:  85 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2017 10  8 24  0  0
+             BLOCK REC :    14 OFF:  90 NOV:     7 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10  9  1  0  0
+             BLOCK REC :    14 OFF:  92 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2017 10  9  2 45  0
+             BLOCK REC :    14 OFF:  96 NOV:   111 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10  9  3 30  0
+             BLOCK REC :    14 OFF:  98 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2017 10 10  7 15  0
+             BLOCK REC :    14 OFF: 103 NOV:    70 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 10  8 15  0
+             BLOCK REC :    14 OFF: 105 NOV:     8 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     9 DAT: 2017 10 11  1 45  0
+             BLOCK REC :    14 OFF: 114 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 11  3 45  0
+             BLOCK REC :    14 OFF: 116 NOV:    26 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    27 DAT: 2017 10 11  4 30  0
+             BLOCK REC :    14 OFF: 143 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 11 11  0  0
+             BLOCK REC :    14 OFF: 145 NOV:     7 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     8 DAT: 2017 10 11 11 30  0
+             BLOCK REC :    14 OFF: 153 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 11 13 15  0
+             BLOCK REC :    14 OFF: 155 NOV:     5 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     6 DAT: 2017 10 11 13 45  0
+             BLOCK REC :    14 OFF: 161 NOV:     4 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 11 15  0  0
+             BLOCK REC :    14 OFF: 163 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 11 16  0  0
+             BLOCK REC :    14 OFF: 165 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017 10 11 16 30  0
+             BLOCK REC :    14 OFF: 168 NOV:    65 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 11 17  0  0
+             BLOCK REC :    14 OFF: 170 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 12  9 15  0
+             BLOCK REC :    14 OFF: 172 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017 10 12  9 45  0
+             BLOCK REC :    14 OFF: 175 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 12 10 15  0
+             BLOCK REC :    14 OFF: 177 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017 10 12 10 45  0
+             BLOCK REC :    14 OFF: 180 NOV:   183 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 12 11 15  0
+             BLOCK REC :    14 OFF: 182 NOV:    13 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    14 DAT: 2017 10 14  9  0  0
+             BLOCK REC :    14 OFF: 196 NOV:     5 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 14 12 15  0
+             BLOCK REC :    14 OFF: 198 NOV:    11 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    12 DAT: 2017 10 14 13 30  0
+             BLOCK REC :    14 OFF: 210 NOV:     3 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 14 16 15  0
+             BLOCK REC :    14 OFF: 212 NOV:    15 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    16 DAT: 2017 10 14 17  0  0
+             BLOCK REC :    14 OFF: 228 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 14 20 45  0
+             BLOCK REC :    14 OFF: 230 NOV:    10 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    11 DAT: 2017 10 14 21 15  0
+             BLOCK REC :    14 OFF: 241 NOV:    48 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 14 23 45  0
+             BLOCK REC :    14 OFF: 243 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2017 10 15 11 45  0
+             BLOCK REC :    14 OFF: 247 NOV:   773 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 15 12 30  0
+             BLOCK REC :    14 OFF: 249 NOV:    19 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    20 DAT: 2017 10 23 13 45  0
+             BLOCK REC :    14 OFF: 269 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 23 18 30  0
+             BLOCK REC :    14 OFF: 271 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017 10 23 19  0  0
+             BLOCK REC :    14 OFF: 274 NOV:     6 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 23 19 30  0
+             BLOCK REC :    14 OFF: 276 NOV:    17 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    18 DAT: 2017 10 23 21  0  0
+             BLOCK REC :    14 OFF: 294 NOV:    13 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 24  1 15  0
+             BLOCK REC :    14 OFF: 296 NOV:     7 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     8 DAT: 2017 10 24  4 30  0
+             BLOCK REC :    14 OFF: 304 NOV:    49 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 24  6 15  0
+             BLOCK REC :    14 OFF: 306 NOV:    27 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    28 DAT: 2017 10 24 18 30  0
+             BLOCK REC :    14 OFF: 334 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 25  1 15  0
+             BLOCK REC :    14 OFF: 336 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017 10 25  1 45  0
+             BLOCK REC :    14 OFF: 339 NOV:     9 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 25  2 15  0
+             BLOCK REC :    14 OFF: 341 NOV:     1 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     2 DAT: 2017 10 25  4 30  0
+             BLOCK REC :    14 OFF: 343 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 25  4 45  0
+             BLOCK REC :    14 OFF: 345 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017 10 25  5 15  0
+             BLOCK REC :    14 OFF: 348 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 25  5 45  0
+             BLOCK REC :    14 OFF: 350 NOV:     2 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 25  6 15  0
+             BLOCK REC :    14 OFF: 352 NOV:     2 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     3 DAT: 2017 10 25  6 45  0
+             BLOCK REC :    14 OFF: 355 NOV:    12 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 25  7 15  0
+             BLOCK REC :    14 OFF: 357 NOV:     4 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     5 DAT: 2017 10 25 10 15  0
+             BLOCK REC :    14 OFF: 362 NOV:    85 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 25 11 15  0
+             BLOCK REC :    14 OFF: 364 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2017 10 26  8 30  0
+             BLOCK REC :    14 OFF: 368 NOV:   125 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 26  9 15  0
+             BLOCK REC :    14 OFF: 370 NOV:    38 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:    39 DAT: 2017 10 27 16 30  0
+             BLOCK REC :    14 OFF: 409 NOV:   255 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 28  2  0  0
+             BLOCK REC :    14 OFF: 411 NOV:     3 TST:  15 TUN:   2 CMP: 0 QUA:  0 NSKP:     4 DAT: 2017 10 30 17 45  0
+             BLOCK REC :    14 OFF: 415 NOV:   118 TST:  15 TUN:   2 CMP: 1 QUA:  0 NSKP:     2 DAT: 2017 10 30 18 30  0
+             BLOCK REC :    14 OFF: 417 NOV:  5856 TST:  15 TUN:   2 CMP: 1 QUA: 31 NSKP:     2 DAT: 2017 10 31 24  0  0
+             END OF GROUP AT: 2017 12 31 24  0  0
+             COUNT OF GROUPS:   14
+
+
+ LOOKING FOR MISSING RECORDS IN CHAINS
+
+ MAP OF RECORD USAGE
+     1 -    10:      -3   772    -1   772   772   772   772   772   772   772
+    11 -    20:     772   772   772   772    -2    -2    -2    -2    -2    -2
+
+    FOUND NO RECORDS MISSING FROM CHAINS
+
+
+ CHECKING DATASET COUNTS
+    ALL DATASET COUNTS MATCH

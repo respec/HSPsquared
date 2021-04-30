@@ -1,0 +1,45 @@
+name: hsp2_py38_dev
+channels:
+  - conda-forge
+  - nodefaults
+
+dependencies:
+  # Running HSP2
+  - python =3.8*
+  - scipy  # Scipy also installs numpy
+  - pandas  # Pandas installs most scientific Python modules, such as Numpy, etc.
+  - numba
+  - pytables >=3.6.1  # Installs HDF5 v1.10.6
+  - h5py >=3.1        # Installs HDF5 v1.10.6
+  - dask
+  - networkx  # used in HSP2tools/graph.py.
+
+  # Interactivity & Visualization
+  - jupyterlab >=3.0.12
+  - ipywidgets
+  # - texlive-core  # to export notebooks to PDF. https://nbconvert.readthedocs.io/en/latest/install.html#installing-tex
+  - matplotlib
+
+  # Dev tools (optional)
+  # - python-language-server
+  - jupyter-lsp-python  # Includes both the server extension (jupyter-lsp) and pyls third-party server (python-language-server)
+  - jupyterlab-lsp # Docs at https://github.com/krassowski/jupyterlab-lsp
+
+  # package management
+  - conda
+  - conda-build
+
+  # Optional extension dependencies for JupyterLab
+  # - nodejs  # required for many extensions
+  # - ipympl  # jupyter-matplotlib, https://github.com/matplotlib/ipympl
+  # - qgrid  # https://github.com/quantopian/qgrid
+
+  # PIP install requirements only if it is not  possible with conda
+  # https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#using-pip-in-an-environment
+  - pip
+  - pip:
+    - lckr-jupyterlab-variableinspector  # https://github.com/lckr/jupyterlab-variableInspector
+    # jupyterlab_hdf is not yet compatible with jupyterlab >3.0, but it will soon.
+      # See https://github.com/jupyterlab/jupyterlab-hdf5/issues/42#issuecomment-801786628
+    # - jupyterlab_hdf  # https://github.com/jupyterlab/jupyterlab-hdf5
+    # - hdf5plugin  # https://github.com/jupyterlab/jupyterlab-hdf5#compression-filters

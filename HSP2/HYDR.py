@@ -146,6 +146,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
     length = ui['LEN'] * 5280.0                # length of reach, in feet
     DB50   = ui['DB50'] / 12.0         # mean diameter of bed material
     DELTH  = ui['DELTH']
+    stcor  = ui['STCOR']
 
     volumeFT = ts['volumeFT']
     depthFT  = ts['depthFT']
@@ -191,6 +192,10 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
         ts['SAREA'] = SAREA = zeros(steps)
         ts['USTAR'] = USTAR = zeros(steps)
         ts['TAU']   = TAU   = zeros(steps)
+        ts['AVDEP'] = AVDEP = zeros(steps)
+        ts['AVVEL'] = AVVEL = zeros(steps)
+        ts['HRAD']  = HRAD  = zeros(steps)
+        ts['TWID']  = TWID  = zeros(steps)
 
     zeroindex = fndrow(0.0, volumeFT)                                           #$1126-1127
     topvolume = volumeFT[-1]
@@ -214,7 +219,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
 
     # back to PHYDR
     if AUX1FG >= 1:
-        dep, sarea = auxil(volumeFT, depthFT, sareaFT, indx, vol, AUX1FG, errors) # initial depth and surface area
+        dep, stage, sarea, avdep, twid, hrad = auxil(volumeFT, depthFT, sareaFT, indx, vol, length, stcor, AUX1FG, errors) # initial
 
     # hydr-irrig
     irexit = int(ui['IREXIT']) -1    # irexit - exit number for irrigation withdrawals, 0 based ???
@@ -252,7 +257,8 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
 
                 # back to HYDR
                 if AUX1FG >= 1:     # recompute surface area and depth
-                    dep, sarea = auxil(volumeFT, depthFT, sareaFT, indx, vol, AUX1FG, errors)
+                    dep, stage, sarea, avdep, twid, hrad = auxil(volumeFT, depthFT, sareaFT, indx, vol, length, stcor,
+                                                                 AUX1FG, errors)
             else:
                 irrdem =  0.0
             #o[irexit] = 0.0                                                   #???? not used anywhere, check if o[irexit]
@@ -416,7 +422,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
             if vol >= topvolume:
                 errors[1] += 1       # ERRMSG1: extrapolation of rchtab
             indx = fndrow(vol, volumeFT)
-            dep, sarea = auxil(volumeFT, depthFT, sareaFT, indx, vol, AUX1FG, errors)
+            dep, stage, sarea, avdep, twid, hrad = auxil(volumeFT, depthFT, sareaFT, indx, vol, length, stcor, AUX1FG, errors)
             DEP[step]   = dep
             SAREA[step] = sarea * AFACTA
 
@@ -436,7 +442,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
                 if avdep > 0.0:
                     # SHEAR; ustar (bed shear velocity), tau (bed shear stress)
                     if LKFG:              # flag, 1:lake, 0:stream
-                        ustar = (2.3/AKAPPA) * avvel / (17.66 + log10(avdep/(96.5*DB50)))
+                        ustar = avvel / (17.66 + (log10(avdep / (96.5 * DB50))) * 2.3 / AKAPPA)
                         tau   =  GAM/GRAV * ustar**2              #3796
                     else:
                         hrad = (avdep*twid)/(2.0*avdep + twid) # hydraulic radius, manual eq 41
@@ -449,6 +455,11 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
                     hrad  = 0.0
                 USTAR[step] = ustar * LFACTA
                 TAU[step]   = tau   * TFACTA
+
+            AVDEP[step] = avdep
+            AVVEL[step] = avvel
+            HRAD[step]  = hrad
+            TWID[step]  = twid
     # END MAIN LOOP
 
     # NUMBA limitation for ts, and saving to HDF5 file is in individual columns
@@ -500,8 +511,8 @@ def demand(vol, rowFT, funct, nexits, delts, convf, colind, outdgt):
 
 
 @njit(cache=True)
-def auxil(volumeFT, depthFT, sareaFT, indx, vol, AUX1FG, errors):
-    ''' Compute depth and surface area'''
+def auxil(volumeFT, depthFT, sareaFT, indx, vol, length, stcor, AUX1FG, errors):
+    '''Compute depth, stage, surface area, average depth, topwidth and hydraulic radius'''
     if vol > 0.0:
         sa1  = sareaFT[indx]
         a    = sareaFT[indx+1] - sa1
@@ -523,10 +534,42 @@ def auxil(volumeFT, depthFT, sareaFT, indx, vol, AUX1FG, errors):
         dep1  = depthFT[indx]
         dep   = dep1 + rdep2 * (depthFT[indx+1] - dep1)    # manual eq (36)
         sarea = sa1 + a * rdep2
+
+        avdep = vol / sarea                           # average depth calculation, manual eq (39)
+        twid = sarea / length                         # top-width calculation, manual eq (40)
+        hrad = (avdep * twid) / (2.0 * avdep + twid)  # hydraulic radius, manual eq (41)
     elif AUX1FG == 2:
         dep   = depthFT[indx]    # removed in HSPF 12.4
         sarea = sareaFT[indx]
+        avdep = 0.0
+        twid = sarea / length
+        hrad = 0.0
     else:
         dep   = 0.0
         sarea = 0.0
-    return dep, sarea
+        avdep = 0.0
+        twid  = 0.0
+        hrad  = 0.0
+
+    stage = dep + stcor    # stage calculation and output, manual eq (37)
+
+    return dep, stage, sarea, avdep, twid, hrad
+
+def expand_HYDR_masslinks(flags, uci, dat, recs):
+    if flags['HYDR']:
+        # IVOL
+        rec = {}
+        rec['MFACTOR'] = dat.MFACTOR
+        rec['SGRPN'] = 'HYDR'
+        if dat.SGRPN == "ROFLOW":
+            rec['SMEMN'] = 'ROVOL'
+        else:
+            rec['SMEMN'] = 'OVOL'
+        rec['SMEMSB1'] = dat.SMEMSB1
+        rec['SMEMSB2'] = dat.SMEMSB2
+        rec['TMEMN'] = 'IVOL'
+        rec['TMEMSB1'] = dat.TMEMSB1
+        rec['TMEMSB2'] = dat.TMEMSB2
+        rec['SVOL'] = dat.SVOL
+        recs.append(rec)
+    return recs
