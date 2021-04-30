@@ -77,7 +77,7 @@ def transform(ts, name, how, siminfo):
     if freq == tsfreq:
         pass
     elif tsfreq == None:     # Sparse time base, frequency not defined
-        ts = ts.reindex(siminfo['tbase']).ffill().bfill()
+         ts = ts.reindex(siminfo['tbase']).ffill().bfill()
     elif how == 'SAME':
         ts = ts.resample(freq).ffill()  # tsfreq >= freq assumed, or bad user choice
     elif not how:
