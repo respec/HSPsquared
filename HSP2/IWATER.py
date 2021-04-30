@@ -46,8 +46,12 @@ def iwater(store, siminfo, uci, ts):
 
     # process optional monthly arrays to return interpolated data or constant array
     u = uci['PARAMETERS']
-    ts['RETSC'] = initm(siminfo, uci, u['VRSFG'], 'MONTHLY_RETSC', u['RETSC'])
-    ts['NSUR']  = initm(siminfo, uci, u['VNNFG'], 'MONTHLY_NSUR',  u['NSUR'])
+    if 'VRSFG' in u:
+        ts['RETSC'] = initm(siminfo, uci, u['VRSFG'], 'MONTHLY_RETSC', u['RETSC'])
+        ts['NSUR']  = initm(siminfo, uci, u['VNNFG'], 'MONTHLY_NSUR',  u['NSUR'])
+    else:
+        ts['RETSC'] = full(steps, u['RETSC'])
+        ts['NSUR']  = full(steps, u['NSUR'])
 
     # true the first time and at 1am every day of simulation
     ts['HR1FG'] = hourflag(siminfo, 1, dofirst=True).astype(float64)  # numba Dict limitation
@@ -77,7 +81,16 @@ def _iwater_(ui, ts):
 
     lsur   = ui['LSUR']
     slsur  = ui['SLSUR']
-    RTLIFG = int(ui['RTLIFG'])
+
+    RTLIFG = 0
+    if 'RTLIFG' in ui:
+        RTLIFG = int(ui['RTLIFG'])
+    CSNOFG = 0
+    if 'CSNOFG' in ui:
+        CSNOFG = int(ui['CSNOFG'])
+    RTOPFG = 0
+    if 'RTOPFG' in ui:
+        RTOPFG = int(ui['RTOPFG'])
 
     HRFG   = ts['HRFG'].astype(int64)
     HR1FG  = ts['HR1FG'].astype(int64)
@@ -108,8 +121,6 @@ def _iwater_(ui, ts):
     surs = ui['SURS']
     msupy = surs
 
-    RTLIFG = int(ui['RTLIFG'])
-
     # Needed by Numba 0.31
     dec   = nan
     src   = nan
@@ -126,7 +137,7 @@ def _iwater_(ui, ts):
         retsc = RETSC[step]
         petinp = PETINP[step]
 
-        if int(ui['CSNOFG']):
+        if CSNOFG:
             airtmp = AIRTMP[step]
             petmax = PETMAX[step]
             petmin = PETMIN[step]
@@ -175,24 +186,21 @@ def _iwater_(ui, ts):
         msupy = suri + surs
 
         suro = 0.0
-        if msupy > 0.0:
-            if ui['RTOPFG']:
+        if msupy > 0.0002:
+            if RTOPFG:
                 # IROUTE for RTOPFG==True, the way it is done in arm, nps, and hspx
                 if oldmsupy == 0.0 or HR1FG[step]:   # Time to recompute
                     dummy  = NSUR[step] * lsur
                     dec = 0.00982 * (dummy/sqrt(slsur))**0.6
                     src = 1020.0 * sqrt(slsur)/dummy
-                if msupy <= 0.0002:
-                    suro = msupy
-                    surs = 0.0
-                else:
-                    sursm = (surs + msupy) * 0.5
-                    dummy = sursm * 1.6
-                    if suri > 0.0:
-                        d = dec*suri**0.6
-                        if d > sursm:
-                            surse = d
-                            dummy = sursm * (1.0 + 0.6 * (sursm / surse)**3)
+
+                sursm = (surs + msupy) * 0.5
+                dummy = sursm * 1.6
+                if suri > 0.0:
+                    d = dec*suri**0.6
+                    if d > sursm:
+                        surse = d
+                        dummy = sursm * (1.0 + 0.6 * (sursm / surse)**3)
                 tsuro = delt60 * src * dummy**1.67
                 suro  = msupy if tsuro > msupy else tsuro
                 surs  = 0.0   if tsuro > msupy else msupy - suro
@@ -202,12 +210,8 @@ def _iwater_(ui, ts):
                     dummy = NSUR[step] * lsur
                     dec = 0.00982 * (dummy/sqrt(slsur))**0.6
                     src = 1020.0 * sqrt(slsur)/dummy
-                if msupy <= 0.0002:
-                    suro = msupy
-                    surs = 0.0
-                else:
-                    ssupr  = suri / delt60
-                    surse  = dec * ssupr**0.6 if ssupr > 0.0 else 0.0
+                ssupr  = suri / delt60
+                surse  = dec * ssupr**0.6 if ssupr > 0.0 else 0.0
                 sursnw = msupy
                 suro   = 0.0
 
@@ -236,6 +240,9 @@ def _iwater_(ui, ts):
                 else:
                     errors[0] = errors[0] + 1  # IROUTE did not converge
                 surs = sursnw
+        else:
+            suro = msupy
+            surs = 0.0
 
         # EVRETN
         if rets > 0.0:

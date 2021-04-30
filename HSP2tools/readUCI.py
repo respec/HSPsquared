@@ -49,6 +49,26 @@ def parseD(line, parse):
         d[name] = convert[type_](field) if field else convert[type_](default)
     return d
 
+def parseD2(line, parse, d):
+    icnt = 0
+    for name, type_, start, end, default in parse:
+        field = line[start:end].strip()
+        icnt += 1
+        # don't do anything with the first 7 values
+        if icnt > 8:
+            d[name] = convert[type_](field) if field else convert[type_](default)
+    return d
+
+def parseD3(line, parse, d):
+    icnt = 0
+    for name, type_, start, end, default in parse:
+        field = line[start:end].strip()
+        icnt += 1
+        # don't do anything with the first 14 values
+        if icnt > 15:
+            d[name] = convert[type_](field) if field else convert[type_](default)
+    return d
+
 
 def get_opnid(opnidstr, operation):
     first, *last = opnidstr.split()
@@ -84,7 +104,7 @@ skip = {
 
 
 ops = {'PERLND','IMPLND','RCHRES'}
-conlike = {'CONS':'NCONS', 'PQUAL':'NQUAL', 'IQUAL':'NQUAL'}
+conlike = {'CONS':'NCONS', 'PQUAL':'NQUAL', 'IQUAL':'NQUAL', 'GQUAL':'NQUAL'}
 def readUCI(uciname, hdfname):
     # create lookup dictionaries from 'ParseTable.csv' and 'rename.csv'
     parse = defaultdict(list)
@@ -228,6 +248,16 @@ def readUCI(uciname, hdfname):
                 df['FZGL'] = 0.1
                 df.to_hdf(store, path, data_columns=True)
 
+        path = '/PERLND/PQUAL/PARAMETERS'
+        if path in keys:
+            df = read_hdf(store, path)
+            if 'SDLFAC' not in df.columns:  # didn't read LAT-FACTOR table
+                df['SDLFAC'] = 0.0
+                df['SLIFAC'] = 0.0
+                df['ILIFAC'] = 0.0
+                df['ALIFAC'] = 0.0
+                df.to_hdf(store, path, data_columns=True)
+
         path = '/RCHRES/GENERAL/INFO'
         if path in keys:
             dfinfo = read_hdf(store, path)
@@ -244,6 +274,44 @@ def readUCI(uciname, hdfname):
             del dfinfo['NEXITS']
             del dfinfo['LKFG']
             dfinfo.to_hdf(store, 'RCHRES/GENERAL/INFO', data_columns=True)
+
+        path = '/RCHRES/HTRCH/FLAGS'
+        if path in keys:
+            df = read_hdf(store, path)
+            if 'BEDFLG' not in df.columns:  # didn't read HT-BED-FLAGS table
+                df['BEDFLG'] = 0
+                df['TGFLG']  = 2
+                df['TSTOP']  = 55
+                df.to_hdf(store, path, data_columns=True)
+
+        path = '/RCHRES/HTRCH/PARAMETERS'
+        if path in keys:
+            df = read_hdf(store, path)
+            if 'ELEV' not in df.columns:  # didn't read HEAT-PARM table
+                df['ELEV']  = 0.0
+                df['ELDAT'] = 0.0
+                df['CFSAEX']= 1.0
+                df['KATRAD']= 9.37
+                df['KCOND'] = 6.12
+                df['KEVAP'] = 2.24
+                df.to_hdf(store, path, data_columns=True)
+
+        path = '/RCHRES/HTRCH/PARAMETERS'
+        if path in keys:
+            df = read_hdf(store, path)
+            if 'ELEV' not in df.columns:  # didn't read HT-BED-PARM table
+                df['MUDDEP']= 0.33
+                df['TGRND'] = 59.0
+                df['KMUD']  = 50.0
+                df['KGRND'] = 1.4
+                df.to_hdf(store, path, data_columns=True)
+
+        path = '/RCHRES/HTRCH/STATES'
+        if path in keys:
+            df = read_hdf(store, path)
+            if 'ELEV' not in df.columns:  # didn't read HEAT-INIT table
+                df['TW']    = 60.0
+                df['AIRTMP']= 60.0
     return
 
 
@@ -369,19 +437,41 @@ def operation(info, llines, op):
 
     history = defaultdict(list)
     lines = iter(llines)
+    gcount = 0
     for line in lines:
         tokens = line.split()
         if len(tokens) == 1:
             table = tokens[0]
-            rows = {}
-            for line in lines:
-                if (op,table) not in parse or line[2:5] == 'END':
-                    break
-                d = parseD(line, parse[op,table])
-                for opnid in get_opnid(d.pop('OPNID'), op):
-                    rows[opnid] = d
+            if dcat[op,table] == 'EXTENDED':
+                rows = {}
+                extended_line = 0
+                for line in lines:
+                    extended_line += 1
+                    if (op, table) not in parse or line[2:5] == 'END':
+                        break
+                    if extended_line == 1:
+                        d = parseD(line, parse[op, table])
+                    elif extended_line == 2:
+                        d = parseD2(line, parse[op, table], d)
+                    elif extended_line == 3:
+                        d = parseD3(line, parse[op, table], d)
+                        for opnid in get_opnid(d.pop('OPNID'), op):
+                            rows[opnid] = d
+            else:
+                rows = {}
+                for line in lines:
+                    if (op,table) not in parse or line[2:5] == 'END':
+                        break
+                    d = parseD(line, parse[op,table])
+                    for opnid in get_opnid(d.pop('OPNID'), op):
+                        rows[opnid] = d
             df = DataFrame.from_dict(rows, orient='index')
-            history[dpath[op,table],dcat[op,table]].append((table,df))
+            cat = dcat[op,table]
+            if cat.startswith('GQUAL'):
+                if table == 'GQ-QALDATA':
+                    gcount += 1
+                cat = cat + str(gcount)
+            history[dpath[op,table],cat].append((table,df))
 
     if len(history['GENERAL','INFO']) > 0:
         (_,df) = history['GENERAL','INFO'][0]
@@ -391,7 +481,7 @@ def operation(info, llines, op):
             if cat == 'SKIP':
                 continue
             if cat in {'PARAMETERS', 'STATES', 'FLAGS', 'ACTIVITY','INFO'}:
-                df = concat([temp[1] for temp in history[path,cat]], axis='columns')
+                df = concat([temp[1] for temp in history[path,cat]], axis='columns', sort=False)
                 df = fix_df(df, op, path, ddfaults, valid)
                 if cat == 'ACTIVITY' and op == 'PERLND':
                     df = df.rename(columns = {'AIRTFG':'ATEMP', 'SNOWFG':'SNOW',
@@ -437,14 +527,18 @@ def operation(info, llines, op):
             elif cat == 'CONS':
                 count = 0
                 for table,df in history[path,cat]:
-                    if table == 'CONSDATA':
+                    if table == 'NCONS':
+                        temp_path = '/RCHRES/CONS/PARAMETERS'
+                        df = fix_df(df, op, path, ddfaults, valid)
+                        df.to_hdf(store, temp_path, data_columns=True)
+                    elif table == 'CONS-DATA':
                         count += 1
                         df = fix_df(df, op, path, ddfaults, valid)
-                    df.to_hdf(store, f'{op}/{path}/{cat}{count}', data_columns=True)
+                        df.to_hdf(store, f'{op}/{path}/{cat}{count}', data_columns=True)
             elif cat == 'PQUAL' or cat == 'IQUAL':
+                count = 0
                 for table,df in history[path,cat]:
                     if table == 'NQUALS':
-                        count = 0
                         if cat == 'IQUAL':
                             temp_path = '/IMPLND/IQUAL/PARAMETERS'
                         else:
@@ -464,16 +558,20 @@ def operation(info, llines, op):
                             tag = 'PARAMETERS'
                         df = fix_df(df, op, path, ddfaults, valid)
                         df.to_hdf(store, f'{op}/{path}/{cat}{count}/{tag}', data_columns=True)
-            elif cat == 'GQUAL':
+            elif cat.startswith('GQUAL'):
+                count = 0
                 for table,df in history[path,cat]:
                     if table.startswith('MON'):
                         name = rename[(op, table)]
                         df = fix_df(df, op, path, ddfaults, valid)
                         df.columns = Months
-                        df.to_hdf(store, f'{op}/{path}/MONTHLY/{name}', data_columns=True)
+                        df.to_hdf(store, f'{op}/{path}/{cat}/MONTHLY/{name}', data_columns=True)
                     else:
+                        if table == 'GQ-QALDATA':
+                            count += 1
+                        df = concat([temp[1] for temp in history[path, cat]], axis='columns')
                         df = fix_df(df, op, path, ddfaults, valid)
-                        df.to_hdf(store, f'{op}/{path}', data_columns=True)
+                        df.to_hdf(store, f'{op}/{path}/{cat}', data_columns=True)
             else:
                 print('UCI TABLE is not understood (yet) by readUCI', op, cat)
 
