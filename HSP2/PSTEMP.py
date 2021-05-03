@@ -49,6 +49,10 @@ def pstemp(store, siminfo, uci, ts):
 		ultmp = ui['ULTMP']
 	if 'LGTMP' in ui:
 		lgtmp = ui['LGTMP']
+	airtc = (airtc - 32.0) * 0.555
+	sltmp = (sltmp - 32.0) * 0.555
+	ultmp = (ultmp - 32.0) * 0.555
+	lgtmp = (lgtmp - 32.0) * 0.555
 
 	# preallocate storage
 	AIRTC = ts['AIRTC'] = zeros(simlen)
@@ -84,6 +88,13 @@ def pstemp(store, siminfo, uci, ts):
 	ULTP2 = ts['ULTP2']
 	LGTP1 = ts['LGTP1']
 	LGTP2 = ts['LGTP2']
+
+	if TSOPFG == 1:
+		ULTP1= (ULTP1 - 32.0) * 0.555
+		LGTP1= (LGTP1 - 32.0) * 0.555
+	else:
+		ULTP2=  0.555 * ULTP2
+		LGTP2 = 0.555 * LGTP2
 
 	ts['HRFG'] = hoursval(siminfo, ones(24), dofirst=True).astype(float64)  # numba Dict limitation
 	HRFG = ts['HRFG']
@@ -159,7 +170,7 @@ def pstemp(store, siminfo, uci, ts):
 		# Need to convert back to English units here
 		AIRTC[loop] = (airtc * 9.0 / 5.0) + 32.0
 		SLTMP[loop] = (sltmp * 9.0 / 5.0) + 32.0
-		ULTMP[loop] = (ultmp* 9.0 / 5.0) + 32.0
-		LGTMP[loop] = lgtmp
+		ULTMP[loop] = (ultmp * 9.0 / 5.0) + 32.0
+		LGTMP[loop] = (lgtmp * 9.0 / 5.0) + 32.0
 
 	return errorsV, ERRMSG
