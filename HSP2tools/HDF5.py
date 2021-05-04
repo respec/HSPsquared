@@ -23,6 +23,7 @@ class HDF5:
         # self.dd_rchres = {}
         self.dd_key_separator = ':'
         self.dd_key_implnd_iqual_ids = 'IMPLND_IQUAL_ID'
+        self.dd_key_rchres_cons_ids = 'RCHRES_CONS_ID'
         self.start_time = None
         self.end_time = None
 
@@ -58,6 +59,17 @@ class HDF5:
             self.data_dictionary[self.dd_key_implnd_iqual_ids] = {}
             for (bindex, bqualid) in iqual_flag_grp_rows:
                 self.data_dictionary[self.dd_key_implnd_iqual_ids][bindex.astype('unicode')] = bqualid.astype('unicode')
+
+            # get rchres conservative cons names, not sure why it would be per rchres as diff cons in diff table!
+            rcons_groups = f.get('/RCHRES/CONS')
+            self.data_dictionary[self.dd_key_rchres_cons_ids] = {}
+            for rcon_group_key in rcons_groups.keys():
+                if rcon_group_key.startswith('CONS'):
+                    self.data_dictionary[self.dd_key_rchres_cons_ids][rcon_group_key] = {}
+                    rcons_grp_rows = f.get('/RCHRES/CONS/' + rcon_group_key)['table']['index','CONID']
+                    for (bindex, bqualid) in rcons_grp_rows:
+                        self.data_dictionary[self.dd_key_rchres_cons_ids][rcon_group_key][bindex.astype('unicode')] = \
+                            bqualid.astype('unicode')
 
             section = f.get('/RESULTS')
             opn_keys = list(section.keys())
@@ -207,6 +219,17 @@ class HDF5:
             if operation.upper() == 'IMPLND' and key_act == 'IQUAL':
                 iqual_id = self.data_dictionary[self.dd_key_implnd_iqual_ids][key_opn[0:1] + key_id]
                 if self.data_dictionary[data_table_key][key].endswith('_' + constituent.upper().replace(iqual_id, '')):
+                    df_index = key
+                    col_key = self.data_dictionary[data_table_key][key]
+                    break
+            elif operation.upper() == 'RCHRES' and key_act == 'CONS':
+                if '_' not in self.data_dictionary[data_table_key][key]:
+                    continue
+                (o_cons_id, o_cons_name) = self.data_dictionary[data_table_key][key].split('_') # e.g. CONS1_ROCON
+                p_cons_id = self.data_dictionary[self.dd_key_rchres_cons_ids][o_cons_id][f'R{key_id}']
+                if o_cons_name == 'CON':
+                    o_cons_name = 'CONC'
+                if o_cons_name == constituent.upper().replace(p_cons_id, ''):
                     df_index = key
                     col_key = self.data_dictionary[data_table_key][key]
                     break
