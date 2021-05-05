@@ -196,7 +196,7 @@ def htrch(store, siminfo, uci, ts):
 		# calculate heat transfer rates for water surface; units are kcal/m2.ivl
 
 		# get quantity of precipitation and convert ft/ivl to m/ivl,
-		prec = PREC[loop]
+		prec = PREC[loop] / 12.0
 		if prec > 0.0:
 			mprec = prec /3.2808 if UUNITS == 1 else prec
 			# calculate heat added by precip, assuming temperature is equal to reach/res water temperature
