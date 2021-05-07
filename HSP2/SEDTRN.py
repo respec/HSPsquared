@@ -600,19 +600,20 @@ def colby(v, db50, fhrad, fsl, tempr):
 	F[1, 9],  F[2, 9],  F[3, 9],  F[4, 9],  F[5, 9]  = 1.0,  1.3,  3.5,   12.0,  43.0
 	F[1, 10], F[2, 10], F[3, 10], F[4, 10], F[5, 10] = 1.0,  1.4,  4.9,   22.0,  120.0
 	  
-	T = array([[1.2,  1.15, 1.10, 0.96, 0.90, 0.85, 0.82], 
-			   [1.35, 1.25, 1.12, 0.92, 0.86, 0.80, 0.75],
-			   [1.60, 1.40, 1.20, 0.89, 0.80, 0.72, 0.66], 
-			   [2.00, 1.65, 1.30, 0.85, 0.72, 0.63, 0.55]]).T                     # Temperature adjustment, Figure 24
+	T = array([[-999, -999, -999, -999, -999, -999, -999, -999],
+			   [-999, 1.2,  1.15, 1.10, 0.96, 0.90, 0.85, 0.82],
+			   [-999, 1.35, 1.25, 1.12, 0.92, 0.86, 0.80, 0.75],
+			   [-999, 1.60, 1.40, 1.20, 0.89, 0.80, 0.72, 0.66],
+			   [-999, 2.00, 1.65, 1.30, 0.85, 0.72, 0.63, 0.55]]).T                     # Temperature adjustment, Figure 24
 
-	DF   = array([0.10, 0.20, 0.30, 0.60, 1.00, 2.00, 6.00, 10.00, 20.00, 1.E2])               # Depths for Figure 24	
-	CF   = array([0.00, 1.E4, 5.E4, 1.E5, 1.5E5])  	                       # Concentrations of sediment for Figure 24
-	P    = array([0.60, 0.90, 1.0, 1.0, 0.83, 0.60, 0.40, 0.25, 0.15, 0.09, 0.05])  # Percentage Effect for Figure 24
-	DP   = array([0.10, 0.15, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00]) # Median diameters for Figure 24
-	DG   = array([0.10, 1.00, 10.0, 100.0])                              # Depth values for Figure 26
-	VG   = array([1.0, 1.5, 2.0, 3.0, 4.0, 6.0, 8.0, 10.0])           # Velocity values for Figure 26
-	D50G = array([0.10, 0.20, 0.30, 0.40, 0.60, 0.80])                  # Median values for figure 26
-	TEMP = array([32.0, 40.0, 50.0, 70.0, 80.0, 90.0, 100.0])  # Temperatures for lookup in Figure 26
+	DF   = array([-999, 0.10, 0.20, 0.30, 0.60, 1.00, 2.00, 6.00, 10.00, 20.00, 1.E2])               # Depths for Figure 24
+	CF   = array([-999, 0.00, 1.E4, 5.E4, 1.E5, 1.5E5])  	                       # Concentrations of sediment for Figure 24
+	P    = array([-999, 0.60, 0.90, 1.0, 1.0, 0.83, 0.60, 0.40, 0.25, 0.15, 0.09, 0.05])  # Percentage Effect for Figure 24
+	DP   = array([-999, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00]) # Median diameters for Figure 24
+	DG   = array([-999, 0.10, 1.00, 10.0, 100.0])                              # Depth values for Figure 26
+	VG   = array([-999, 1.0, 1.5, 2.0, 3.0, 4.0, 6.0, 8.0, 10.0])           # Velocity values for Figure 26
+	D50G = array([-999, 0.10, 0.20, 0.30, 0.40, 0.60, 0.80])                  # Median values for figure 26
+	TEMP = array([-999, 32.0, 40.0, 50.0, 70.0, 80.0, 90.0, 100.0])  # Temperatures for lookup in Figure 26
 	  
 	ferror = 0
 	d50err = 0
@@ -631,6 +632,7 @@ def colby(v, db50, fhrad, fsl, tempr):
 	for id501, db50x in enumerate(D50G):
 		if db50x > db50:
 			break
+	id501 -= 1
 	id502 = id501 + 1
 	zz1 = log10(D50G[id501])
 	zz2 = log10(D50G[id502])
@@ -656,9 +658,10 @@ def colby(v, db50, fhrad, fsl, tempr):
 	for iv1, vx in enumerate(VG):
 		if vx > v:
 			break
+	iv1 -= 1
 	iv2 = iv1 + 1
-	yy1 = log10(VG[iv1-1])
-	yy2 = log10(VG[iv2-1])
+	yy1 = log10(VG[iv1])
+	yy2 = log10(VG[iv2])
 	yyratio = (log10(v) - yy1) / (yy2 - yy1)		
 		
 	tmpr = min(100.0, max(32.0, tempr * 1.8 + 32.0))
@@ -695,10 +698,10 @@ def colby(v, db50, fhrad, fsl, tempr):
 		it2 = it1
 		it1 -= 1
 
-		xt11 = log10(T[it1,id1])
-		xt21 = log10(T[it2,id1])
-		xt12 = log10(T[it1,id2])
-		xt22 = log10(T[it2,id2])
+		xt11 = log10(T[it1][id1])
+		xt21 = log10(T[it2][id1])
+		xt12 = log10(T[it1][id2])
+		xt22 = log10(T[it2][id2])
 		
 		xnt   = log10(tmpr / TEMP[it1]) / log10(TEMP[it2] / TEMP[it1])
 		xct1  = xt11 + xnt * (xt21 - xt11)
