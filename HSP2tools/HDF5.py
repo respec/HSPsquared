@@ -27,12 +27,15 @@ class HDF5:
         self.dd_key_rchres_gqual_ids = 'RCHRES_GQUAL_ID'
         self.dd_key_rchres_gqual_alias = {}
         self.dd_key_rchres_sedtrn_alias = {}
+        self.dd_key_rchres_htrch_alias = {}
+        self.dd_key_perlnd_pstemp_alias = {}
         self.start_time = None
         self.end_time = None
 
         self.tcodes = {1: 'Minutely', 2: 'Hourly', 3: 'Daily', 4: 'Monthly', 5: 'Yearly'}
 
     def set_qual_alias_to_hspf(self):
+        # setup H5 name -> HBN name aliasing
         self.dd_key_rchres_gqual_alias['ADQAL1'] = 'ADQALSUSPSAND'
         self.dd_key_rchres_gqual_alias['ADQAL2'] = 'ADQALSUSPSILT'
         self.dd_key_rchres_gqual_alias['ADQAL3'] = 'ADQALSUSPCLAY'
@@ -138,6 +141,14 @@ class HDF5:
         self.dd_key_rchres_sedtrn_alias['OSED25'] = 'OSEDSILTEXIT5'
         self.dd_key_rchres_sedtrn_alias['OSED35'] = 'OSEDCLAYEXIT5'
         self.dd_key_rchres_sedtrn_alias['OSED45'] = 'OSEDTOTEXIT5'
+
+        self.dd_key_rchres_htrch_alias['OHEAT1'] = 'OHEAT  EXIT1'  # two spaces!!!
+        self.dd_key_rchres_htrch_alias['OHEAT2'] = 'OHEAT  EXIT2'
+        self.dd_key_rchres_htrch_alias['OHEAT3'] = 'OHEAT  EXIT3'
+        self.dd_key_rchres_htrch_alias['OHEAT4'] = 'OHEAT  EXIT4'
+        self.dd_key_rchres_htrch_alias['OHEAT5'] = 'OHEAT  EXIT5'
+
+        self.dd_key_perlnd_pstemp_alias['AIRTC'] = 'AIRT'
 
     def open_output(self):
         """
@@ -343,13 +354,22 @@ class HDF5:
                 df_index = key
                 col_key = constituent.upper()
                 break
-            elif operation.upper() == 'IMPLND' and key_act == 'IQUAL': # special matching
+            elif operation.upper() == 'IMPLND' and key_act == 'IQUAL':  # special matching
                 iqual_id = self.data_dictionary[self.dd_key_implnd_iqual_ids][key_opn[0:1] + key_id]
                 if self.data_dictionary[data_table_key][key].endswith('_' + constituent.upper().replace(iqual_id, '')):
                     df_index = key
                     col_key = self.data_dictionary[data_table_key][key]
                     break
-            elif operation.upper() == 'RCHRES' and key_act == 'CONS': # special matching
+            elif operation.upper() == 'PERLND' and key_act == 'PSTEMP':  # special matching
+                o_cons_name = self.data_dictionary[data_table_key][key]
+                if o_cons_name in self.dd_key_perlnd_pstemp_alias:
+                    # switch to HSPF output name
+                    o_cons_name = self.dd_key_perlnd_pstemp_alias[o_cons_name]
+                if o_cons_name == constituent.upper():
+                    df_index = key
+                    col_key = self.data_dictionary[data_table_key][key]
+                    break
+            elif operation.upper() == 'RCHRES' and key_act == 'CONS':  # special matching
                 if '_' not in self.data_dictionary[data_table_key][key]:
                     continue
                 (o_cons_id, o_cons_name) = self.data_dictionary[data_table_key][key].split('_') # e.g. CONS1_ROCON
@@ -360,7 +380,7 @@ class HDF5:
                     df_index = key
                     col_key = self.data_dictionary[data_table_key][key]
                     break
-            elif operation.upper() == 'RCHRES' and key_act == 'GQUAL': # special matching
+            elif operation.upper() == 'RCHRES' and key_act == 'GQUAL':  # special matching
                 if '_' not in self.data_dictionary[data_table_key][key]:
                     continue
                 (o_cons_id, o_cons_name) = self.data_dictionary[data_table_key][key].split('_') # e.g. GQUAL1_SQAL6
@@ -372,11 +392,20 @@ class HDF5:
                     df_index = key
                     col_key = self.data_dictionary[data_table_key][key]
                     break
-            elif operation.upper() == 'RCHRES' and key_act == 'SEDTRN': # special matching
+            elif operation.upper() == 'RCHRES' and key_act == 'SEDTRN':  # special matching
                 o_cons_name = self.data_dictionary[data_table_key][key]
                 if o_cons_name in self.dd_key_rchres_sedtrn_alias:
                     # switch to HSPF output name
                     o_cons_name = self.dd_key_rchres_sedtrn_alias[o_cons_name]
+                if o_cons_name == constituent.upper():
+                    df_index = key
+                    col_key = self.data_dictionary[data_table_key][key]
+                    break
+            elif operation.upper() == 'RCHRES' and key_act == 'HTRCH':  # special matching
+                o_cons_name = self.data_dictionary[data_table_key][key]
+                if o_cons_name in self.dd_key_rchres_htrch_alias:
+                    # switch to HSPF output name
+                    o_cons_name = self.dd_key_rchres_htrch_alias[o_cons_name]
                 if o_cons_name == constituent.upper():
                     df_index = key
                     col_key = self.data_dictionary[data_table_key][key]
