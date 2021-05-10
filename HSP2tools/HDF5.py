@@ -303,7 +303,7 @@ class HDF5:
         get a single time series based on:
         1.   operation: e.g. IMPLND, PERLND, RCHRES
         2.          id: e.g. 1, 2, 3, ...
-        3. constituent: e.g. SUPY, PERO, SOQUAL etc
+        3. constituent: e.g. SUPY, PERO, SOQUAL etc, currently, this can match output name from HSPF HBN file
         4.    activity: e.g. IQUAL, IWATER, PWATER, PWTGAS, SNOW etc, could leave blank, the program will look for it
 
         the above inputs will be used to build data_table_key: e.g. IMPLND_I001:IQUAL
@@ -339,7 +339,11 @@ class HDF5:
         df_index = -1
         col_key = ''
         for key in self.data_dictionary[data_table_key].keys():
-            if operation.upper() == 'IMPLND' and key_act == 'IQUAL': # special matching
+            if self.data_dictionary[data_table_key][key] == constituent.upper():
+                df_index = key
+                col_key = constituent.upper()
+                break
+            elif operation.upper() == 'IMPLND' and key_act == 'IQUAL': # special matching
                 iqual_id = self.data_dictionary[self.dd_key_implnd_iqual_ids][key_opn[0:1] + key_id]
                 if self.data_dictionary[data_table_key][key].endswith('_' + constituent.upper().replace(iqual_id, '')):
                     df_index = key
@@ -377,10 +381,6 @@ class HDF5:
                     df_index = key
                     col_key = self.data_dictionary[data_table_key][key]
                     break
-            elif self.data_dictionary[data_table_key][key] == constituent.upper():
-                df_index = key
-                col_key = constituent.upper()
-                break
 
         if df_index >= 0:
             return self.data_dictionary[data_value_key][col_key]
