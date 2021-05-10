@@ -26,6 +26,7 @@ class HDF5:
         self.dd_key_rchres_cons_ids = 'RCHRES_CONS_ID'
         self.dd_key_rchres_gqual_ids = 'RCHRES_GQUAL_ID'
         self.dd_key_rchres_gqual_alias = {}
+        self.dd_key_rchres_sedtrn_alias = {}
         self.start_time = None
         self.end_time = None
 
@@ -91,6 +92,53 @@ class HDF5:
         self.dd_key_rchres_gqual_alias['SQDEC6'] = 'SQDECBEDCLAY'
         self.dd_key_rchres_gqual_alias['SQDEC7'] = 'SQDECBEDTOT'
 
+        self.dd_key_rchres_sedtrn_alias['ISED1'] = 'ISEDSAND'
+        self.dd_key_rchres_sedtrn_alias['ISED2'] = 'ISEDSILT'
+        self.dd_key_rchres_sedtrn_alias['ISED3'] = 'ISEDCLAY'
+        self.dd_key_rchres_sedtrn_alias['DEPSCR1'] = 'DEPSCOURSAND'
+        self.dd_key_rchres_sedtrn_alias['DEPSCR2'] = 'DEPSCOURSILT'
+        self.dd_key_rchres_sedtrn_alias['DEPSCR3'] = 'DEPSCOURCLAY'
+        self.dd_key_rchres_sedtrn_alias['DEPSCR4'] = 'DEPSCOURTOT'
+        self.dd_key_rchres_sedtrn_alias['ROSED1'] = 'ROSEDSAND'
+        self.dd_key_rchres_sedtrn_alias['ROSED2'] = 'ROSEDSILT'
+        self.dd_key_rchres_sedtrn_alias['ROSED3'] = 'ROSEDCLAY'
+        self.dd_key_rchres_sedtrn_alias['ROSED4'] = 'ROSEDTOT'
+        self.dd_key_rchres_sedtrn_alias['SSED1'] = 'SSEDSAND'
+        self.dd_key_rchres_sedtrn_alias['SSED2'] = 'SSEDSILT'
+        self.dd_key_rchres_sedtrn_alias['SSED3'] = 'SSEDCLAY'
+        self.dd_key_rchres_sedtrn_alias['SSED4'] = 'SSEDTOT'
+        self.dd_key_rchres_sedtrn_alias['RSED1'] = 'RSEDSUSPSAND'
+        self.dd_key_rchres_sedtrn_alias['RSED2'] = 'RSEDSUSPSILT'
+        self.dd_key_rchres_sedtrn_alias['RSED3'] = 'RSEDSUSPCLAY'
+        self.dd_key_rchres_sedtrn_alias['RSED4'] = 'RSEDBEDSAND'
+        self.dd_key_rchres_sedtrn_alias['RSED5'] = 'RSEDBEDSILT'
+        self.dd_key_rchres_sedtrn_alias['RSED6'] = 'RSEDBEDCLAY'
+        self.dd_key_rchres_sedtrn_alias['RSED7'] = 'RSEDTOTSAND'
+        self.dd_key_rchres_sedtrn_alias['RSED8'] = 'RSEDTOTSILT'
+        self.dd_key_rchres_sedtrn_alias['RSED9'] = 'RSEDTOTCLAY'
+        self.dd_key_rchres_sedtrn_alias['RSED10'] = 'RSEDTOTTOT'
+
+        self.dd_key_rchres_sedtrn_alias['OSED11'] = 'OSEDSANDEXIT1'
+        self.dd_key_rchres_sedtrn_alias['OSED21'] = 'OSEDSILTEXIT1'
+        self.dd_key_rchres_sedtrn_alias['OSED31'] = 'OSEDCLAYEXIT1'
+        self.dd_key_rchres_sedtrn_alias['OSED41'] = 'OSEDTOTEXIT1'
+        self.dd_key_rchres_sedtrn_alias['OSED12'] = 'OSEDSANDEXIT2'
+        self.dd_key_rchres_sedtrn_alias['OSED22'] = 'OSEDSILTEXIT2'
+        self.dd_key_rchres_sedtrn_alias['OSED32'] = 'OSEDCLAYEXIT2'
+        self.dd_key_rchres_sedtrn_alias['OSED42'] = 'OSEDTOTEXIT2'
+        self.dd_key_rchres_sedtrn_alias['OSED13'] = 'OSEDSANDEXIT3'
+        self.dd_key_rchres_sedtrn_alias['OSED23'] = 'OSEDSILTEXIT3'
+        self.dd_key_rchres_sedtrn_alias['OSED33'] = 'OSEDCLAYEXIT3'
+        self.dd_key_rchres_sedtrn_alias['OSED43'] = 'OSEDTOTEXIT3'
+        self.dd_key_rchres_sedtrn_alias['OSED14'] = 'OSEDSANDEXIT4'
+        self.dd_key_rchres_sedtrn_alias['OSED24'] = 'OSEDSILTEXIT4'
+        self.dd_key_rchres_sedtrn_alias['OSED34'] = 'OSEDCLAYEXIT4'
+        self.dd_key_rchres_sedtrn_alias['OSED44'] = 'OSEDTOTEXIT4'
+        self.dd_key_rchres_sedtrn_alias['OSED15'] = 'OSEDSANDEXIT5'
+        self.dd_key_rchres_sedtrn_alias['OSED25'] = 'OSEDSILTEXIT5'
+        self.dd_key_rchres_sedtrn_alias['OSED35'] = 'OSEDCLAYEXIT5'
+        self.dd_key_rchres_sedtrn_alias['OSED45'] = 'OSEDTOTEXIT5'
+
     def open_output(self):
         """
         Reads ALL data dictionary from hdf5_file's /RESULTS group
@@ -105,9 +153,7 @@ class HDF5:
         data_dictionary : {}
             Summary information of data found in HDF5 file HSP2 outputs
         """
-
         self.set_qual_alias_to_hspf()
-
         with h5py.File(self.file_name, "r") as f:
             if self.start_time is None or self.end_time is None:
                 str_starttime = f.get('/CONTROL/GLOBAL')['table'].fields('Info')[1].astype('datetime64[D]')
@@ -319,6 +365,15 @@ class HDF5:
                     # switch to HSPF output name
                     o_cons_name = self.dd_key_rchres_gqual_alias[o_cons_name]
                 if o_cons_name == constituent.upper().replace(p_cons_id, ''):
+                    df_index = key
+                    col_key = self.data_dictionary[data_table_key][key]
+                    break
+            elif operation.upper() == 'RCHRES' and key_act == 'SEDTRN': # special matching
+                o_cons_name = self.data_dictionary[data_table_key][key]
+                if o_cons_name in self.dd_key_rchres_sedtrn_alias:
+                    # switch to HSPF output name
+                    o_cons_name = self.dd_key_rchres_sedtrn_alias[o_cons_name]
+                if o_cons_name == constituent.upper():
                     df_index = key
                     col_key = self.data_dictionary[data_table_key][key]
                     break
