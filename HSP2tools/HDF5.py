@@ -24,10 +24,72 @@ class HDF5:
         self.dd_key_separator = ':'
         self.dd_key_implnd_iqual_ids = 'IMPLND_IQUAL_ID'
         self.dd_key_rchres_cons_ids = 'RCHRES_CONS_ID'
+        self.dd_key_rchres_gqual_ids = 'RCHRES_GQUAL_ID'
+        self.dd_key_rchres_gqual_alias = {}
         self.start_time = None
         self.end_time = None
 
         self.tcodes = {1: 'Minutely', 2: 'Hourly', 3: 'Daily', 4: 'Monthly', 5: 'Yearly'}
+
+    def set_qual_alias_to_hspf(self):
+        self.dd_key_rchres_gqual_alias['ADQAL1'] = 'ADQALSUSPSAND'
+        self.dd_key_rchres_gqual_alias['ADQAL2'] = 'ADQALSUSPSILT'
+        self.dd_key_rchres_gqual_alias['ADQAL3'] = 'ADQALSUSPCLAY'
+        self.dd_key_rchres_gqual_alias['ADQAL4'] = 'ADQALBEDSAND'
+        self.dd_key_rchres_gqual_alias['ADQAL5'] = 'ADQALBEDSILT'
+        self.dd_key_rchres_gqual_alias['ADQAL6'] = 'ADQALBEDCLAY'
+        self.dd_key_rchres_gqual_alias['ADQAL7'] = 'ADQALTOT'
+
+        self.dd_key_rchres_gqual_alias['DDQAL1'] = 'DDQALHYDROL'
+        self.dd_key_rchres_gqual_alias['DDQAL2'] = 'DDQALOXID'
+        self.dd_key_rchres_gqual_alias['DDQAL3'] = 'DDQALPHOTOL'
+        self.dd_key_rchres_gqual_alias['DDQAL4'] = 'DDQALVOLAT'
+        self.dd_key_rchres_gqual_alias['DDQAL5'] = 'DDQALBIODEG'
+        self.dd_key_rchres_gqual_alias['DDQAL6'] = 'DDQALGEN'
+        self.dd_key_rchres_gqual_alias['DDQAL7'] = 'DDQALTOT'
+
+        self.dd_key_rchres_gqual_alias['DSQAL1'] = 'DSQALSAND'
+        self.dd_key_rchres_gqual_alias['DSQAL2'] = 'DSQALSILT'
+        self.dd_key_rchres_gqual_alias['DSQAL3'] = 'DSQALCLAY'
+        self.dd_key_rchres_gqual_alias['DSQAL4'] = 'DSQALTOT'
+
+        self.dd_key_rchres_gqual_alias['ISQAL1'] = 'ISQALSAND'
+        self.dd_key_rchres_gqual_alias['ISQAL2'] = 'ISQALSILT'
+        self.dd_key_rchres_gqual_alias['ISQAL3'] = 'ISQALCLAY'
+        self.dd_key_rchres_gqual_alias['ISQAL4'] = 'ISQALTOT'
+
+        self.dd_key_rchres_gqual_alias['ROSQAL1'] = 'ROSQALSAND'
+        self.dd_key_rchres_gqual_alias['ROSQAL2'] = 'ROSQALSILT'
+        self.dd_key_rchres_gqual_alias['ROSQAL3'] = 'ROSQALCLAY'
+        self.dd_key_rchres_gqual_alias['ROSQAL4'] = 'ROSQALTOT'
+
+        self.dd_key_rchres_gqual_alias['RSQAL1'] = 'RSQALSUSPSAND'
+        self.dd_key_rchres_gqual_alias['RSQAL2'] = 'RSQALSUSPSILT'
+        self.dd_key_rchres_gqual_alias['RSQAL3'] = 'RSQALSUSPCLAY'
+        self.dd_key_rchres_gqual_alias['RSQAL4'] = 'RSQALSUSPTOT'
+        self.dd_key_rchres_gqual_alias['RSQAL5'] = 'RSQALBEDSAND'
+        self.dd_key_rchres_gqual_alias['RSQAL6'] = 'RSQALBEDSILT'
+        self.dd_key_rchres_gqual_alias['RSQAL7'] = 'RSQALBEDCLAY'
+        self.dd_key_rchres_gqual_alias['RSQAL8'] = 'RSQALBEDTOT'
+        self.dd_key_rchres_gqual_alias['RSQAL9'] = 'RSQALTOTSAND'
+        self.dd_key_rchres_gqual_alias['RSQAL10'] = 'RSQALTOTSILT'
+        self.dd_key_rchres_gqual_alias['RSQAL11'] = 'RSQALTOTCLAY'
+        self.dd_key_rchres_gqual_alias['RSQAL12'] = 'RSQALTOTTOT'
+
+        self.dd_key_rchres_gqual_alias['SQAL1'] = 'SQALSUSPSAND'
+        self.dd_key_rchres_gqual_alias['SQAL2'] = 'SQALSUSPSILT'
+        self.dd_key_rchres_gqual_alias['SQAL3'] = 'SQALSUSPCLAY'
+        self.dd_key_rchres_gqual_alias['SQAL4'] = 'SQALBEDSAND'
+        self.dd_key_rchres_gqual_alias['SQAL5'] = 'SQALBEDSILT'
+        self.dd_key_rchres_gqual_alias['SQAL6'] = 'SQALBEDCLAY'
+
+        self.dd_key_rchres_gqual_alias['SQDEC1'] = 'SQDECSUSPSAND'
+        self.dd_key_rchres_gqual_alias['SQDEC2'] = 'SQDECSUSPSILT'
+        self.dd_key_rchres_gqual_alias['SQDEC3'] = 'SQDECSUSPCLAY'
+        self.dd_key_rchres_gqual_alias['SQDEC4'] = 'SQDECBEDSAND'
+        self.dd_key_rchres_gqual_alias['SQDEC5'] = 'SQDECBEDSILT'
+        self.dd_key_rchres_gqual_alias['SQDEC6'] = 'SQDECBEDCLAY'
+        self.dd_key_rchres_gqual_alias['SQDEC7'] = 'SQDECBEDTOT'
 
     def open_output(self):
         """
@@ -43,6 +105,9 @@ class HDF5:
         data_dictionary : {}
             Summary information of data found in HDF5 file HSP2 outputs
         """
+
+        self.set_qual_alias_to_hspf()
+
         with h5py.File(self.file_name, "r") as f:
             if self.start_time is None or self.end_time is None:
                 str_starttime = f.get('/CONTROL/GLOBAL')['table'].fields('Info')[1].astype('datetime64[D]')
@@ -69,6 +134,18 @@ class HDF5:
                     rcons_grp_rows = f.get('/RCHRES/CONS/' + rcon_group_key)['table']['index','CONID']
                     for (bindex, bqualid) in rcons_grp_rows:
                         self.data_dictionary[self.dd_key_rchres_cons_ids][rcon_group_key][bindex.astype('unicode')] = \
+                            bqualid.astype('unicode')
+
+            # get rchres gqual names, not sure why it would be per rchres as diff gqual cons in diff table!
+            rgqual_groups = f.get('/RCHRES/GQUAL')
+            self.data_dictionary[self.dd_key_rchres_gqual_ids] = {}
+            for rgqual_group_key in rgqual_groups.keys():
+                if rgqual_group_key.startswith('GQUAL'):
+                    self.data_dictionary[self.dd_key_rchres_gqual_ids][rgqual_group_key] = {}
+                    rgqual_grp_rows = f.get('/RCHRES/GQUAL/' + rgqual_group_key)['table']['index', 'GQID']
+                    for (bindex, bqualid) in rgqual_grp_rows:
+                        self.data_dictionary[self.dd_key_rchres_gqual_ids][rgqual_group_key][
+                            bindex.astype('unicode')] = \
                             bqualid.astype('unicode')
 
             section = f.get('/RESULTS')
@@ -216,19 +293,31 @@ class HDF5:
         df_index = -1
         col_key = ''
         for key in self.data_dictionary[data_table_key].keys():
-            if operation.upper() == 'IMPLND' and key_act == 'IQUAL':
+            if operation.upper() == 'IMPLND' and key_act == 'IQUAL': # special matching
                 iqual_id = self.data_dictionary[self.dd_key_implnd_iqual_ids][key_opn[0:1] + key_id]
                 if self.data_dictionary[data_table_key][key].endswith('_' + constituent.upper().replace(iqual_id, '')):
                     df_index = key
                     col_key = self.data_dictionary[data_table_key][key]
                     break
-            elif operation.upper() == 'RCHRES' and key_act == 'CONS':
+            elif operation.upper() == 'RCHRES' and key_act == 'CONS': # special matching
                 if '_' not in self.data_dictionary[data_table_key][key]:
                     continue
                 (o_cons_id, o_cons_name) = self.data_dictionary[data_table_key][key].split('_') # e.g. CONS1_ROCON
                 p_cons_id = self.data_dictionary[self.dd_key_rchres_cons_ids][o_cons_id][f'R{key_id}']
                 if o_cons_name == 'CON':
                     o_cons_name = 'CONC'
+                if o_cons_name == constituent.upper().replace(p_cons_id, ''):
+                    df_index = key
+                    col_key = self.data_dictionary[data_table_key][key]
+                    break
+            elif operation.upper() == 'RCHRES' and key_act == 'GQUAL': # special matching
+                if '_' not in self.data_dictionary[data_table_key][key]:
+                    continue
+                (o_cons_id, o_cons_name) = self.data_dictionary[data_table_key][key].split('_') # e.g. GQUAL1_SQAL6
+                p_cons_id = self.data_dictionary[self.dd_key_rchres_gqual_ids][o_cons_id][f'R{key_id}']
+                if o_cons_name in self.dd_key_rchres_gqual_alias:
+                    # switch to HSPF output name
+                    o_cons_name = self.dd_key_rchres_gqual_alias[o_cons_name]
                 if o_cons_name == constituent.upper().replace(p_cons_id, ''):
                     df_index = key
                     col_key = self.data_dictionary[data_table_key][key]
