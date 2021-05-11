@@ -104,6 +104,9 @@ def iqual(store, siminfo, uci, ts):
 		ts['ACQOP'] = initm(siminfo, uci, ui_flags['VQOFG'], 'IQUAL' + str(index) + '_MONTHLY/ACQOP', ui_parms['ACQOP'])
 		ts['SQOLIM'] = initm(siminfo, uci, ui_flags['VQOFG'], 'IQUAL' + str(index) + '_MONTHLY/SQOLIM', ui_parms['SQOLIM'])
 
+		ts['IQADFX'] = zeros(simlen)
+		ts['IQADCN'] = zeros(simlen)
+
 		if 'FLAGS' in uci:
 			u = uci['FLAGS']
 			# get atmos dep timeseries
@@ -120,11 +123,6 @@ def iqual(store, siminfo, uci, ts):
 
 			if QSOFG == 0 and (iqadfgf != 0 or iqadfgc != 0):
 				errorsV[0] += 1  # error - non-qualof cannot have atmospheric deposition
-
-		if 'IQADFX' not in ts:
-			ts['IQADFX'] = zeros(simlen)
-		if 'IQADCN' not in ts:
-			ts['IQADCN'] = zeros(simlen)
 
 		POTFW  = ts['POTFW']
 		ACQOP  = ts['ACQOP']

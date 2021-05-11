@@ -124,6 +124,10 @@ def pqual(store, siminfo, uci, ts):
 		ts['SQOLIM'] = initm(siminfo, uci, ui_flags['VQOFG'], 'PQUAL' + str(index) + '_MONTHLY/SQOLIM', ui_parms['SQOLIM'])
 		ts['IOQCP'] = initm(siminfo, uci, ui_flags['VIQCFG'], 'PQUAL' + str(index) + '_MONTHLY/IOQC', ui_parms['IOQC'])
 		ts['AOQCP'] = initm(siminfo, uci, ui_flags['VAQCFG'], 'PQUAL' + str(index) + '_MONTHLY/AOQC', ui_parms['AOQC'])
+
+		ts['PQADFX'] = zeros(simlen)
+		ts['PQADCN'] = zeros(simlen)
+
 		if 'FLAGS' in uci:
 			u = uci['FLAGS']
 			# get atmos dep timeseries
@@ -140,11 +144,6 @@ def pqual(store, siminfo, uci, ts):
 
 			if QSOFG == 0 and (pqadfgf != 0 or pqadfgc != 0):
 				errorsV[0] += 1  # error - non-qualof cannot have atmospheric deposition
-
-		if 'PQADFX' not in ts:
-			ts['PQADFX'] = zeros(simlen)
-		if 'PQADCN' not in ts:
-			ts['PQADCN'] = zeros(simlen)
 
 		POTFW  = ts['POTFW']
 		POTFS  = ts['POTFS']
