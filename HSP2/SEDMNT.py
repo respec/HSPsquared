@@ -65,7 +65,10 @@ def sedmnt(store, siminfo, uci, ts):
 		RAIN = ts['RAINF']
 	else:
 		RAIN = ts['PREC']
-		
+
+	if 'SLSED1 1' in ts:
+		ts['SLSED'] = ts['SLSED1 1']
+
 	for name in ['PREC', 'SLSED', 'SNOCOV', 'SURO', 'SURS']:
 		if name not in ts:
 			ts[name] = zeros(simlen)
