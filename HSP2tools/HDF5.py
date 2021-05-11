@@ -185,25 +185,27 @@ class HDF5:
             # get rchres conservative cons names, not sure why it would be per rchres as diff cons in diff table!
             rcons_groups = f.get('/RCHRES/CONS')
             self.data_dictionary[self.dd_key_rchres_cons_ids] = {}
-            for rcon_group_key in rcons_groups.keys():
-                if rcon_group_key.startswith('CONS'):
-                    self.data_dictionary[self.dd_key_rchres_cons_ids][rcon_group_key] = {}
-                    rcons_grp_rows = f.get('/RCHRES/CONS/' + rcon_group_key)['table']['index','CONID']
-                    for (bindex, bqualid) in rcons_grp_rows:
-                        self.data_dictionary[self.dd_key_rchres_cons_ids][rcon_group_key][bindex.astype('unicode')] = \
-                            bqualid.astype('unicode')
+            if rcons_groups:
+                for rcon_group_key in rcons_groups.keys():
+                    if rcon_group_key.startswith('CONS'):
+                        self.data_dictionary[self.dd_key_rchres_cons_ids][rcon_group_key] = {}
+                        rcons_grp_rows = f.get('/RCHRES/CONS/' + rcon_group_key)['table']['index','CONID']
+                        for (bindex, bqualid) in rcons_grp_rows:
+                            self.data_dictionary[self.dd_key_rchres_cons_ids][rcon_group_key][bindex.astype('unicode')] = \
+                                bqualid.astype('unicode')
 
             # get rchres gqual names, not sure why it would be per rchres as diff gqual cons in diff table!
             rgqual_groups = f.get('/RCHRES/GQUAL')
             self.data_dictionary[self.dd_key_rchres_gqual_ids] = {}
-            for rgqual_group_key in rgqual_groups.keys():
-                if rgqual_group_key.startswith('GQUAL'):
-                    self.data_dictionary[self.dd_key_rchres_gqual_ids][rgqual_group_key] = {}
-                    rgqual_grp_rows = f.get('/RCHRES/GQUAL/' + rgqual_group_key)['table']['index', 'GQID']
-                    for (bindex, bqualid) in rgqual_grp_rows:
-                        self.data_dictionary[self.dd_key_rchres_gqual_ids][rgqual_group_key][
-                            bindex.astype('unicode')] = \
-                            bqualid.astype('unicode')
+            if rgqual_groups:
+                for rgqual_group_key in rgqual_groups.keys():
+                    if rgqual_group_key.startswith('GQUAL'):
+                        self.data_dictionary[self.dd_key_rchres_gqual_ids][rgqual_group_key] = {}
+                        rgqual_grp_rows = f.get('/RCHRES/GQUAL/' + rgqual_group_key)['table']['index', 'GQID']
+                        for (bindex, bqualid) in rgqual_grp_rows:
+                            self.data_dictionary[self.dd_key_rchres_gqual_ids][rgqual_group_key][
+                                bindex.astype('unicode')] = \
+                                bqualid.astype('unicode')
 
             section = f.get('/RESULTS')
             opn_keys = list(section.keys())
