@@ -4,7 +4,6 @@ License: LGPL2
 
 Conversion of HSPF HPERTMP.FOR module into Python''' 
 
-''' NOTE: needs lots of Celcius temp conversions, in and out'''
 
 from numpy import zeros, where, ones, float64, full
 from numba import njit
@@ -117,7 +116,7 @@ def pstemp(store, siminfo, uci, ts):
 
 		if TSOPFG == 1: # compute subsurface temperature using regression and monthly values
 			if hrfg:   # it is time to update subsurface temperatures temperature of upper layer is computed by regression with air temperature
-				ault  = (ULTP1[loop]- 32.0) * 0.555
+				ault  = ULTP1[loop]
 				bult  = ULTP2[loop]
 				ultmp = ault + bult * airtc
 
