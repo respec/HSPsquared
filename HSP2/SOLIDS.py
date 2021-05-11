@@ -49,11 +49,11 @@ def solids(store, siminfo, uci, ts):
 	u = uci['PARAMETERS']
 	# process optional monthly arrays to return interpolated data or constant array
 	if 'VASDFG' in u:
-		ts['ACCSDP'] = initm(siminfo, uci, u['VASDFG'], 'ACCSDM', u['ACCSDP'])
+		ts['ACCSDP'] = initm(siminfo, uci, u['VASDFG'], 'MONTHLY_ACCSDP', u['ACCSDP'])
 	else:
 		ts['ACCSDP'] = full(simlen, u['ACCSDP'])
 	if 'VRSDFG' in u:
-		ts['REMSDP'] = initm(siminfo, uci, u['VRSDFG'], 'REMSDM', u['REMSDP'])
+		ts['REMSDP'] = initm(siminfo, uci, u['VRSDFG'], 'MONTHLY_REMSDP', u['REMSDP'])
 	else:
 		ts['REMSDP'] = full(simlen, u['REMSDP'])
 	ACCSDP = ts['ACCSDP']
@@ -79,7 +79,7 @@ def solids(store, siminfo, uci, ts):
 					sosld = slds * suro / arg
 				else:				# sufficient solids storage, base removal on the calculated capacity'''
 					sosld = stcap * suro / arg
-					slds  = slds - sosld
+				slds  = slds - sosld
 			else:
 				sosld = 0.0  # no runoff occurs, so no removal by runoff
 		else:              # using method 2
