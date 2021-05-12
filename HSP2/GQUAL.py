@@ -79,7 +79,7 @@ def gqual(store, siminfo, uci, ts):
 				ts['GQADFX'] = ts['GQADFX' + str(index) + ' 1']
 			gqadfgc = ui_parms['GQADFG' + str(index * 2)]
 			if gqadfgc > 0:
-				ts['GQADCN'] = initm(siminfo, uci, gqadfgc, 'IQUAL' + str(index) + '_MONTHLY/GQADCN', 0.0)
+				ts['GQADCN'] = initm(siminfo, uci, gqadfgc, 'GQUAL' + str(index) + '_MONTHLY/GQADCN', 0.0)
 			elif gqadfgc == -1:
 				ts['GQADCN'] = ts['GQADCN' + str(index) + ' 1']
 
