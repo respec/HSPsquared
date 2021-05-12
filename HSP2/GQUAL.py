@@ -765,6 +765,12 @@ def gqual(store, siminfo, uci, ts):
 				osed1 = [x / 3.121E-08 for x in osed1]
 				osed2 = [x / 3.121E-08 for x in osed2]
 				osed3 = [x / 3.121E-08 for x in osed3]
+				rsed[1] = RSED1[loop] / 3.121E-08
+				rsed[2] = RSED2[loop] / 3.121E-08
+				rsed[3] = RSED3[loop] / 3.121E-08
+				rsed[4] = RSED4[loop] / 3.121E-08
+				rsed[5] = RSED5[loop] / 3.121E-08
+				rsed[6] = RSED6[loop] / 3.121E-08
 			else:
 				depscr1 = DEPSCR1[loop] / 2.83E-08
 				depscr2 = DEPSCR2[loop] / 2.83E-08
@@ -778,6 +784,12 @@ def gqual(store, siminfo, uci, ts):
 				osed1 = [x / 2.83E-08 for x in osed1]
 				osed2 = [x / 2.83E-08 for x in osed2]
 				osed3 = [x / 2.83E-08 for x in osed3]
+				rsed[1] = RSED1[loop] / 2.83E-08
+				rsed[2] = RSED2[loop] / 2.83E-08
+				rsed[3] = RSED3[loop] / 2.83E-08
+				rsed[4] = RSED4[loop] / 2.83E-08
+				rsed[5] = RSED5[loop] / 2.83E-08
+				rsed[6] = RSED6[loop] / 2.83E-08
 			isqal1 = ISQAL1[loop]
 			isqal2 = ISQAL2[loop]
 			isqal3 = ISQAL3[loop]
@@ -928,6 +940,8 @@ def gqual(store, siminfo, uci, ts):
 				# advect this material, including calculation of deposition and scour
 				errors, sqal[1], sqal[4], dsqal1, rosqal1, osqal1 = advqal(isqal1, rsed[1], rsed[4], depscr1, rosed1, osed1,
 																	 nexits, rsqal1, rsqal5, errors)
+				rosqal1 = rosqal1 / conv
+				osqal1  = osqal1 / conv
 				# GQECNT(1),SQAL(J,I),SQAL(J + 3,I),DSQAL(J,I), ROSQAL(J,I),OSQAL(1,J,I)) = ADVQAL (ISQAL(J,I),RSED(J),RSED(J + 3),\
 				# DEPSCR(J),ROSED(J),OSED(1,J),NEXITS,RCHNO, MESSU,MSGFL,DATIM, GQID(1,I),J,RSQAL(J,I),RSQAL(J + 4,I),GQECNT(1),
 				# SQAL(J,I),SQAL(J + 3,I),DSQAL(J,I),ROSQAL(J,I),OSQAL(1,J,I))
@@ -943,6 +957,8 @@ def gqual(store, siminfo, uci, ts):
 				# advect this material, including calculation of deposition and scour
 				errors, sqal[2], sqal[5], dsqal2, rosqal2, osqal2 = advqal(isqal2, rsed[2], rsed[5], depscr2, rosed2, osed2,
 																	 nexits, rsqal2, rsqal6, errors)
+				rosqal2 = rosqal2 / conv
+				osqal2  = osqal2 / conv
 				# GQECNT(1), SQAL(J, I), SQAL(J + 3, I), DSQAL(J, I), ROSQAL(J, I), OSQAL(1, J, I)) = ADVQAL(
 				# 	ISQAL(J, I), RSED(J), RSED(J + 3), \
 				# 	DEPSCR(J), ROSED(J), OSED(1, J), NEXITS, RCHNO, MESSU, MSGFL, DATIM, GQID(1, I), J, RSQAL(J, I),
@@ -960,6 +976,8 @@ def gqual(store, siminfo, uci, ts):
 				# advect this material, including calculation of deposition and scour
 				errors, sqal[3], sqal[6], dsqal3, rosqal3, osqal3 = advqal(isqal3, rsed[3], rsed[6], depscr3, rosed3, osed3,
 																	 nexits, rsqal3, rsqal7, errors)
+				rosqal3 = rosqal3 / conv
+				osqal3  = osqal3 / conv
 				# GQECNT(1), SQAL(J, I), SQAL(J + 3, I), DSQAL(J, I), ROSQAL(J, I), OSQAL(1, J, I)) = ADVQAL(
 				# 	ISQAL(J, I), RSED(J), RSED(J + 3), \
 				# 	DEPSCR(J), ROSED(J), OSED(1, J), NEXITS, RCHNO, MESSU, MSGFL, DATIM, GQID(1, I), J, RSQAL(J, I),
@@ -1104,7 +1122,7 @@ def gqual(store, siminfo, uci, ts):
 			SQDEC5[loop] = sqdec5 / conv
 			SQDEC6[loop] = sqdec6 / conv
 			SQDEC7[loop] = sqdec7 / conv
-			TIQAL[loop]  = tiqal
+			TIQAL[loop]  = tiqal / conv
 			TOSQAL[loop] = tosqal
 			TROQAL[loop] = troqal / conv
 
