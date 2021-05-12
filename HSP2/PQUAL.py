@@ -68,7 +68,7 @@ def pqual(store, siminfo, uci, ts):
 		# update UI values for this constituent here!
 		ui_flags = uci['PQUAL' + str(index) + '_FLAGS']
 		ui_parms = uci['PQUAL' + str(index) + '_PARAMETERS']
-		name = 'IQUAL' + str(index)  # arbitrary identification
+		name = 'PQUAL' + str(index)  # arbitrary identification
 
 		qualid = ui_flags['QUALID']
 		qtyid  = ui_flags['QTYID']
