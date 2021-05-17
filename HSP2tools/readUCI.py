@@ -322,8 +322,9 @@ def global_(info, lines):
       + Timedelta(int(d['SHR']), 'h') + Timedelta(int(d['SMI']), 'T'))[0:16]
     stop  = str(Timestamp(f"{d['EYR']}-{d['EMO']}-{d['EDA']}")
       + Timedelta(int(d['EHR']), 'h') + Timedelta(int(d['EMI']), 'T'))[0:16]
-    data = [lines[0].strip(), start, stop]
-    dfglobal = DataFrame(data, index=['Comment','Start','Stop'],columns=['Info'])
+    units = lines[3].strip()[56:60]
+    data = [lines[0].strip(), start, stop, units]
+    dfglobal = DataFrame(data, index=['Comment','Start','Stop', 'Units'],columns=['Info'])
     dfglobal.to_hdf(store, '/CONTROL/GLOBAL', data_columns=True)
 
 
