@@ -114,7 +114,8 @@ def _snow_(ui, ts):
         packi = packi / 25.4
         packw = packw / 25.4
         covinx= covinx / 25.4
-        paktmp = (paktmp * 9./5.) + 32.
+        paktmp= (paktmp * 9./5.) + 32.
+        melev = melev * 3.28084
     rdcsn  = ui['RDCSN']
     rdenpf = ui['RDENPF']
     skyclr = ui['SKYCLR']
@@ -137,7 +138,7 @@ def _snow_(ui, ts):
     CLOUD   = ts['CLOUD']
     COVIND  = ts['COVIND']
     DTMPG   = ts['DTMPG']
-    HR6IND   = ts['HR6IND'].astype(int64)
+    HR6IND  = ts['HR6IND'].astype(int64)
     HRFG    = ts['HRFG'].astype(int64)
     KMELT   = ts['KMELT']  * delt/1440.0     # time conversion
     MGMELT  = ts['MGMELT'] * delt/1440.0     # time conversion
@@ -153,6 +154,7 @@ def _snow_(ui, ts):
 
     if uunits == 2:
         COVIND = COVIND / 25.4
+        MGMELT = MGMELT / 25.4
 
     # like MATLAB, much faster to preallocate arrays! Storing in ts Dict
     ts['ALBEDO'] = ALBEDO = zeros(steps)
@@ -514,19 +516,17 @@ def _snow_(ui, ts):
 
                 # NOPACK
                 hr6fg  = 1
-                covinx = 0.1 * covind
-                mneghs = nan
-                neghts = 0.0
                 packf  = 0.0
                 packi  = 0.0
                 packw  = 0.0
-                paktmp = 32.0
                 pdepth = 0.0
-                prain  = 0.0
                 rdenpf = nan
+                covinx = 0.1 * covind
                 snocov = 0.0
-                snowe  = 0.0
                 xlnmlt = 0.0
+                mneghs = nan
+                paktmp = 32.0
+                neghts = 0.0
 
                 # pbd -- need this set for energy balance method?
                 dull = -1.0E30
@@ -565,9 +565,9 @@ def _snow_(ui, ts):
         WYIELD[step] = wyield
         XLNMLT[step] = xlnmlt
         if uunits == 2:
-            PAKTMP[step] = (paktmp - 32.0) * 5./9. # convert to C
-            DEWTMP[step] = (dewtmp - 32.0) * 5./9.  # convert to C
-            SNOTMP[step] = (snotmp - 32.0) * 5./9.  # convert to C
+            PAKTMP[step] = (paktmp * 0.555) - 17.777 # convert to C
+            DEWTMP[step] = (dewtmp * 0.555) - 17.777  # convert to C
+            SNOTMP[step] = (snotmp * 0.555) - 17.777  # convert to C
             PACKF[step] = packf * 25.4
             PACKI[step] = packi * 25.4
             PACKW[step] = packw * 25.4
