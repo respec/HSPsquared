@@ -258,7 +258,7 @@ def sedtrn(store, siminfo, uci, ts):
 			ised3 = ISED3[loop] / 3.121E-08
 		tau = TAU[loop]
 		tw  = TW[loop]
-		tw = (tw - 32.0) * 0.555
+		tw = (tw - 32.0) * 0.5555
 
 		# Following is routine #&COHESV() to simulate behavior of cohesive sediments (silt and clay)
 		# compute bed fractions based on relative storages

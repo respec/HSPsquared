@@ -171,6 +171,10 @@ def get_uci(store):
                 temp = store[path].to_dict()['Info']
                 siminfo['start'] = Timestamp(temp['Start'])
                 siminfo['stop']  = Timestamp(temp['Stop'])
+                siminfo['units'] = 1
+                if 'Units' in temp:
+                    if int(temp['Units']):
+                        siminfo['units'] = int(temp['Units'])
             elif module == 'LINKS':
                 for row in store[path].replace('na','').itertuples():
                     ddlinks[row.TVOLNO].append(row)
