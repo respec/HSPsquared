@@ -628,7 +628,7 @@ def colby(v, db50, fhrad, fsl, tempr):
 	if not 0.80 >= db50 >=  0.10:  # D50G limits
 		ferror = 1
 		d50err = 1
-		return
+		return 0.0, ferror, d50err, hrerr, velerr
 	for id501, db50x in enumerate(D50G):
 		if db50x > db50:
 			break
@@ -641,7 +641,7 @@ def colby(v, db50, fhrad, fsl, tempr):
 	if not 100.0 >= fhrad >= 0.10:  # DG limits
 		ferror = 1
 		hrerr  = 1
-		return
+		return 0.0, ferror, d50err, hrerr, velerr
 	for id1,dgx in enumerate(DG):
 		if fhrad > dgx:
 			break
@@ -654,7 +654,7 @@ def colby(v, db50, fhrad, fsl, tempr):
 	if not 10.0 >= v >= 1.0:  # VG limits
 		ferror = 1
 		velerr = 1
-		return
+		return 0.0, ferror, d50err, hrerr, velerr
 	for iv1, vx in enumerate(VG):
 		if vx > v:
 			break
