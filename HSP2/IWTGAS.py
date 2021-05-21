@@ -39,13 +39,18 @@ def iwtgas(store, siminfo, uci, ts):
 	errorsV = zeros(len(ERRMSG), dtype=int)
 	simlen = siminfo['steps']
 	tindex = siminfo['tindex']
+	uunits = siminfo['units']
 
 	ui = make_numba_dict(uci)
 	slifac  = ui['SLIFAC']  # from LAT_FACTOR table
 	sotmp  = ui['SOTMP']
 	sodox  = ui['SODOX']
 	soco2  = ui['SOCO2']
-	elevgc = ((288.0 - 0.00198 *  ui['ELEV']) / 288.0)**5.256
+	elev   = ui['ELEV']
+	if uunits == 2:
+		sotmp= (sotmp * 9./5.) + 32.
+		elev = elev * 3.281   # m to ft
+	elevgc = ((288.0 - 0.00198 * elev) / 288.0)**5.256
 	
 	for name in ['AIRTMP', 'WYIELD', 'SURO', 'SURLI']:
 		if name not in ts:
@@ -83,6 +88,11 @@ def iwtgas(store, siminfo, uci, ts):
 	SOCO2M = ts['SOCO2M'] = zeros(simlen)
 	
 	DAYFG = hourflag(siminfo, 0, dofirst=True).astype(bool)
+
+	if uunits == 2:
+		AWTF = (AWTF * 9./5.) + 32.
+		WYIELD = WYIELD * 0.0394  # / 25.4
+		SURO = SURO * 0.0394              # mm to inches
 
 	awtf = AWTF[0]
 	bwtf = BWTF[0]
@@ -128,7 +138,10 @@ def iwtgas(store, siminfo, uci, ts):
 			SOHT[loop]   = sotmp * suro * EFACTA  # compute outflow of heat energy in water - units are deg. c-in./ivl
 			SODOXM[loop] = sodox * suro * MFACTA  # calculate outflow mass of dox - units are mg-in./l-ivl
 			SOCO2M[loop] = soco2 * suro * MFACTA  # calculate outflow mass of co2 - units are mg-in./l-ivl
-			SOTMP[loop]  = (sotmp * 9.0 / 5.0) + 32.0
+			if uunits != 2:
+				SOTMP[loop]  = (sotmp * 9.0 / 5.0) + 32.0
+			else:
+				SOTMP[loop] = sotmp
 			SODOX[loop]  = sodox
 			SOCO2[loop]  = soco2
 
@@ -143,5 +156,10 @@ def iwtgas(store, siminfo, uci, ts):
 			SOTMP[loop]  = sotmp
 			SODOX[loop]  = sodox
 			SOCO2[loop]  = soco2
+
+		if uunits == 2:
+			SOHT[loop]   = SOHT[loop] / 3.96567 * 2.471    # btu/ac to kcal/ha
+			SODOXM[loop] = SODOXM[loop] / 2.205 * 2.471  # lbs/ac to kg/ha
+			SOCO2M[loop] = SOCO2M[loop] / 2.205 * 2.471  # lbs/ac to kg/ha
 
 	return errorsV, ERRMSG
