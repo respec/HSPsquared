@@ -21,16 +21,17 @@ def solids(store, siminfo, uci, ts):
 	delt60 = siminfo['delt'] / 60     # delt60 - simulation time interval in hours
 	simlen = siminfo['steps']
 	tindex = siminfo['tindex']
+	uunits = siminfo['units']
 
 	ui = make_numba_dict(uci)  # Note: all values converted to float automatically
 	if 'SDOPFG' in ui:
 		SDOPFG = ui['SDOPFG']
 	else:
-	    SDOPFG = 0
+		SDOPFG = 0
 	keim   = ui['KEIM']
 	jeim   = ui['JEIM']
 	slds   = ui['SLDS']
-	
+
 	for name in ['SURO', 'SURS', 'PREC', 'SLSLD']:
 		if name not in ts:
 			ts[name] = zeros(simlen)
@@ -58,8 +59,12 @@ def solids(store, siminfo, uci, ts):
 		ts['REMSDP'] = full(simlen, u['REMSDP'])
 	ACCSDP = ts['ACCSDP']
 	REMSDP = ts['REMSDP']
+	if uunits == 2:
+		ACCSDP = ACCSDP * 1.10231 / 2.471 # metric tonnes/ha to tons/ac
+		SURO = SURO * 0.0394              # mm to inches
+		SURS = SURS * 0.0394              # mm to inches
+		slds = slds * 1.10231 / 2.471     # metric tonnes/ha to tons/ac
 
-	slds = ui['SLDS']
 	for loop in range(simlen):
 		suro   = SURO[loop]
 		surs   = SURS[loop]
@@ -112,4 +117,8 @@ def solids(store, siminfo, uci, ts):
 
 		SOSLD[loop] = sosld  # * MFACTA
 		SLDS[loop]  = slds   # * MFACTA
+
+		if uunits == 2:
+			SOSLD[loop] = sosld / 1.10231 * 2.471  # tons/ac to metric tonnes/ha
+			SLDS[loop]  = slds / 1.10231 * 2.471   # tons/ac to metric tonnes/ha
 	return errorsV, ERRMSG
