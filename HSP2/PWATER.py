@@ -81,6 +81,7 @@ def pwater(store, siminfo, uci, ts):
     ui['steps']  = siminfo['steps']
     ui['delt']   = siminfo['delt']
     ui['errlen'] = len(ERRMSGS)
+    ui['uunits'] = siminfo['units']
 
     # kludge to make ICEFG available from SNOW to PWATER
     ui['ICEFG']  = siminfo['ICEFG'] if 'ICEFG' in siminfo else 0.0
@@ -110,6 +111,7 @@ def _pwater_(ui, ts):
 
     delt60 = ui['delt'] / 60.0      # simulation interval in hours
     steps  = int(ui['steps'])
+    uunits = ui['uunits']
     DAYFG  = ts['DAYFG'].astype(int64)
     HRFG   = ts['HRFG'].astype(int64)
 
@@ -188,9 +190,21 @@ def _pwater_(ui, ts):
     uzs    = ui['UZS']
     forest = ui['FOREST']
 
+    if uunits == 2:
+        lsur = lsur * 3.28
+        ceps = ceps * 0.0394  # / 25.4
+        surs = surs * 0.0394  # / 25.4
+        uzs  = uzs * 0.0394  # / 25.4
+        ifws = ifws * 0.0394  # / 25.4
+        lzs  = lzs * 0.0394  # / 25.4
+        agws = agws * 0.0394  # / 25.4
+        gwvs = gwvs * 0.0394  # / 25.4
+
     if ICEFG:
         fzg  = ui['FZG']
         fzgl = ui['FZGL']
+        if uunits == 2:
+            fzg = fzg * 0.0394
 
     AGWLI  = ts['AGWLI']
     AGWRC  = ts['AGWRC']
@@ -218,6 +232,16 @@ def _pwater_(ui, ts):
     UZLI   = ts['UZLI']
     UZSN   = ts['UZSN']
     WYIELD = ts['WYIELD']
+
+    if uunits == 2:
+        CEPSC = CEPSC * 0.0394 # / 25.4
+        UZSN  = UZSN * 0.0394  # / 25.4
+        INFILT= INFILT * 0.0394  # / 25.4
+        KVARY = KVARY / 0.0394
+        LZSN  = LZSN * 0.0394  # / 25.4
+        PETMAX = (ts['PETMAX'] * 9./5.) + 32.
+        PETMIN = (ts['PETMIN'] * 9./5.) + 32.
+        WYIELD = WYIELD * 0.0394  # / 25.4
 
     # initialize  variables
     kgwV = 1.0 - AGWRC**(delt60/24.0)    # groundwater recession parameter
@@ -632,6 +656,37 @@ def _pwater_(ui, ts):
         UZET[step]  = uzet
         UZI[step]   = uzi
         UZS[step]   = uzs
+
+        if uunits == 2:
+            AGWET[step]= agwet * 25.4
+            AGWI[step] = agwi * 25.4
+            AGWO[step] = agwo * 25.4
+            AGWS[step] = agws * 25.4
+            BASET[step]= baset * 25.4
+            CEPE[step] = cepe * 25.4
+            CEPS[step] = ceps * 25.4
+            GWVS[step] = gwvs * 25.4
+            IFWI[step] = ifwi * 25.4
+            IFWO[step] = ifwo * 25.4
+            IFWS[step] = ifws * 25.4
+            IGWI[step] = igwi * 25.4
+            INFIL[step]= infil * 25.4
+            LZET[step] = lzet * 25.4
+            LZI[step]  = lzi * 25.4
+            LZS[step]  = lzs * 25.4
+            PERC[step] = perc * 25.4
+            PERO[step] = (suro + ifwo + agwo) * 25.4
+            PERS[step] = (ceps + surs + ifws + uzs + lzs + TGWS[step]) * 25.4
+            SURI[step] = suri * 25.4
+            SURO[step] = suro * 25.4
+            SURS[step] = surs * 25.4
+            TAET[step] = taet * 25.4
+            UZET[step] = uzet * 25.4
+            UZI[step]  = uzi * 25.4
+            UZS[step]  = uzs * 25.4
+            SUPY[step] = SUPY[step] * 25.4
+            PET[step]  = PET[step] * 25.4
+
     # done with MASTER step
     #WATIN  = SUPY + SURLI + UZLI + IFWLI + LZLI + AGWLI+ irrapp[6]   # total input of water to the pervious land segment
     #WATDIF = WATIN - (PERO + IGWI + TAET + irdraw[2])                # net input of water to the pervious land segment
