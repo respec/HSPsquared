@@ -26,6 +26,7 @@ def sedmnt(store, siminfo, uci, ts):
 	delt   = siminfo['delt']
 	simlen = siminfo['steps']
 	tindex = siminfo['tindex']
+	uunits = siminfo['units']
 
 	ui = make_numba_dict(uci)  # Note: all values converted to float automatically
 	if 'VSIVFG' in ui:
@@ -85,8 +86,14 @@ def sedmnt(store, siminfo, uci, ts):
 	SOSED = ts['SOSED'] = zeros(simlen)
 	COVER = ts['COVER'] = zeros(simlen)
 
-        # HSPF 12.5 has only one sediment block
+    # HSPF 12.5 has only one sediment block
 	dets = ui['DETS']
+
+	if uunits == 2:
+		NVSI = NVSI * 2.205 / 2.471       # metric kg/ha to lbs/ac
+		SURO = SURO * 0.0394              # mm to inches
+		SURS = SURS * 0.0394              # mm to inches
+		dets = dets * 1.10231 / 2.471     # metric tonnes/ha to tons/ac
 
 	# BLOCK SPECIFIC VALUES
 	# nblks = ui['NBLKS']
@@ -226,5 +233,11 @@ def sedmnt(store, siminfo, uci, ts):
 		SCRSD[loop] = scrsd
 		SOSED[loop] = sosed
 		COVER[loop] = cover
+
+		if uunits == 2:
+			DETS[loop] = dets / 1.10231 * 2.471  # tons/ac to metric tonnes/ha
+			WSSD[loop] = wssd / 1.10231 * 2.471   # tons/ac to metric tonnes/ha
+			SCRSD[loop]= scrsd / 1.10231 * 2.471   # tons/ac to metric tonnes/ha
+			SOSED[loop]= sosed / 1.10231 * 2.471   # tons/ac to metric tonnes/ha
 
 	return errorsV, ERRMSG
