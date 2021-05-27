@@ -26,6 +26,7 @@ def pstemp(store, siminfo, uci, ts):
 	
 	simlen = siminfo['steps']
 	tindex = siminfo['tindex']
+	uunits = siminfo['units']
 
 	ui = make_numba_dict(uci)
 	if 'TSOPFG' in ui:
@@ -40,6 +41,11 @@ def pstemp(store, siminfo, uci, ts):
 	sltmp  = 60.0
 	ultmp  = 60.0
 	lgtmp  = 60.0
+	if uunits == 2:
+		airtc = 16.0
+		sltmp = 16.0
+		ultmp = 16.0
+		lgtmp = 16.0
 	if 'AIRTC' in ui:
 		airtc = ui['AIRTC']
 	if 'SLTMP' in ui:
@@ -48,10 +54,11 @@ def pstemp(store, siminfo, uci, ts):
 		ultmp = ui['ULTMP']
 	if 'LGTMP' in ui:
 		lgtmp = ui['LGTMP']
-	airtc = (airtc - 32.0) * 0.555
-	sltmp = (sltmp - 32.0) * 0.555
-	ultmp = (ultmp - 32.0) * 0.555
-	lgtmp = (lgtmp - 32.0) * 0.555
+	if uunits != 2:
+		airtc = (airtc - 32.0) * 0.555
+		sltmp = (sltmp - 32.0) * 0.555
+		ultmp = (ultmp - 32.0) * 0.555
+		lgtmp = (lgtmp - 32.0) * 0.555
 
 	# preallocate storage
 	AIRTC = ts['AIRTC'] = zeros(simlen)
@@ -60,6 +67,8 @@ def pstemp(store, siminfo, uci, ts):
 	LGTMP = ts['LGTMP'] = zeros(simlen)
 	
 	AIRTMP = ts['AIRTMP']
+	if uunits == 2:
+		AIRTMP = (AIRTMP - 32.0) * 0.555
 
 	u = uci['PARAMETERS']
 	if 'SLTVFG' in u:
@@ -88,12 +97,13 @@ def pstemp(store, siminfo, uci, ts):
 	LGTP1 = ts['LGTP1']
 	LGTP2 = ts['LGTP2']
 
-	if TSOPFG == 1:
-		ULTP1= (ULTP1 - 32.0) * 0.555
-		LGTP1= (LGTP1 - 32.0) * 0.555
-	else:
-		ULTP2=  0.555 * ULTP2
-		LGTP2 = 0.555 * LGTP2
+	if uunits != 2:
+		if TSOPFG == 1:
+			ULTP1= (ULTP1 - 32.0) * 0.555
+			LGTP1= (LGTP1 - 32.0) * 0.555
+		else:
+			ULTP2=  0.555 * ULTP2
+			LGTP2 = 0.555 * LGTP2
 
 	ts['HRFG'] = hoursval(siminfo, ones(24), dofirst=True).astype(float64)  # numba Dict limitation
 	HRFG = ts['HRFG']
@@ -104,13 +114,20 @@ def pstemp(store, siminfo, uci, ts):
 		hrfg = HRFG[loop]
 		airtmp = AIRTMP[loop]
 
-		# convert to centigrade
-		airtcs = (airts - 32.0) * 0.555
-		airtc  = (airtmp - 32.0) * 0.555
+		if uunits != 2:
+			# convert to centigrade
+			airtcs = (airts - 32.0) * 0.555
+			airtc  = (airtmp - 32.0) * 0.555
+		else:
+			airtcs = airts
+			airtc  = airtmp
 
 		# determine soil temperatures - units are deg c temperature of surface layer is always estimated using a linear regression with air temperature
 		if hrfg:    # it is time to update surface layer temperature
-			aslt = (ASLT[loop]- 32.0) * 0.555
+			if uunits != 2:
+				aslt = (ASLT[loop]- 32.0) * 0.555
+			else:
+				aslt = ASLT[loop]
 			bslt = BSLT[loop]
 			sltmp = aslt + bslt * airtc
 
@@ -166,10 +183,16 @@ def pstemp(store, siminfo, uci, ts):
 		if AIRTFG == 0:
 			airts = airtmp
 
-		# Need to convert back to English units here
-		AIRTC[loop] = (airtc * 9.0 / 5.0) + 32.0
-		SLTMP[loop] = (sltmp * 9.0 / 5.0) + 32.0
-		ULTMP[loop] = (ultmp * 9.0 / 5.0) + 32.0
-		LGTMP[loop] = (lgtmp * 9.0 / 5.0) + 32.0
+		if uunits != 2:
+			# Need to convert back to English units here
+			AIRTC[loop] = (airtc * 9.0 / 5.0) + 32.0
+			SLTMP[loop] = (sltmp * 9.0 / 5.0) + 32.0
+			ULTMP[loop] = (ultmp * 9.0 / 5.0) + 32.0
+			LGTMP[loop] = (lgtmp * 9.0 / 5.0) + 32.0
+		else:
+			AIRTC[loop] = airtc
+			SLTMP[loop] = sltmp
+			ULTMP[loop] = ultmp
+			LGTMP[loop] = lgtmp
 
 	return errorsV, ERRMSG

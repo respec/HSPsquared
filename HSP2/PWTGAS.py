@@ -33,9 +33,9 @@ def pwtgas(store, siminfo, uci, ts):
     simlen  = siminfo['steps']
     delt    = siminfo['delt']
     tindex  = siminfo['tindex']
+    uunits = siminfo['units']
 
     ui = make_numba_dict(uci)
-    elevgc = ((288.0 - 0.00198 * ui['ELEV'])  /288.0)**5.256
 
     CSNOFG = int(ui['CSNOFG'])
     sotmp  = ui['SOTMP']
@@ -51,6 +51,13 @@ def pwtgas(store, siminfo, uci, ts):
     slifac = ui['SLIFAC']
     ilifac = ui['ILIFAC']
     alifac = ui['ALIFAC']
+    elev   = ui['ELEV']
+    if uunits == 2:
+        sotmp = (sotmp * 9. / 5.) + 32.
+        iotmp = (iotmp * 9. / 5.) + 32.
+        aotmp = (aotmp * 9. / 5.) + 32.
+        elev = elev * 3.281  # m to ft
+    elevgc = ((288.0 - 0.00198 * elev) / 288.0) ** 5.256
 
     u = uci['PARAMETERS']
     if 'IDVFG' in u:
@@ -136,6 +143,15 @@ def pwtgas(store, siminfo, uci, ts):
     POCO2M = ts['POCO2M'] = zeros(simlen)
 
     DAYFG = hourflag(siminfo, 0, dofirst=True).astype(bool)
+
+    if uunits == 2:
+        SLTMP = (SLTMP * 9. / 5.) + 32.
+        ULTMP = (ULTMP * 9. / 5.) + 32.
+        LGTMP = (LGTMP * 9. / 5.) + 32.
+        WYIELD = WYIELD * 0.0394  # / 25.4
+        SURO = SURO * 0.0394  # mm to inches
+        IFWO = IFWO * 0.0394  # mm to inches
+        AGWO = AGWO * 0.0394  # mm to inches
 
     for loop in range(simlen):
         dayfg   = DAYFG[loop]
@@ -271,20 +287,17 @@ def pwtgas(store, siminfo, uci, ts):
         aoco2m = aoco2 * agwo * MFACTA
         POCO2M[loop] = soco2m + ioco2m + aoco2m
 
-        if sotmp < -1e28:
-            SOTMP[loop] = sotmp
-        else:
-            SOTMP[loop]  = (sotmp * 9.0 / 5.0) + 32.0
+        SOTMP[loop] = sotmp
+        if sotmp > -1e28 and uunits!= 2:
+            SOTMP[loop] = (sotmp * 9.0 / 5.0) + 32.0
 
-        if iotmp < -1e28:
-            IOTMP[loop] = iotmp
-        else:
-            IOTMP[loop]  = (iotmp * 9.0 / 5.0) + 32.0
+        IOTMP[loop] = iotmp
+        if iotmp > -1e28 and uunits!= 2:
+            IOTMP[loop] = (iotmp * 9.0 / 5.0) + 32.0
 
-        if aotmp < -1e28:
-            AOTMP[loop] = aotmp
-        else:
-            AOTMP[loop]  = (aotmp * 9.0 / 5.0) + 32.0
+        AOTMP[loop] = aotmp
+        if aotmp > -1e28 and uunits!= 2:
+            AOTMP[loop] = (aotmp * 9.0 / 5.0) + 32.0
 
         SODOX[loop]  = sodox
         SOCO2[loop]  = soco2
@@ -302,5 +315,19 @@ def pwtgas(store, siminfo, uci, ts):
         IOCO2M[loop] = ioco2m
         AODOXM[loop] = aodoxm
         AOCO2M[loop] = aoco2m
+
+        if uunits == 2:
+            SOHT[loop] = SOHT[loop] / 3.96567 * 2.471  # btu/ac to kcal/ha
+            IOHT[loop] = IOHT[loop] / 3.96567 * 2.471  # btu/ac to kcal/ha
+            AOHT[loop] = AOHT[loop] / 3.96567 * 2.471  # btu/ac to kcal/ha
+            POHT[loop] = POHT[loop] / 3.96567 * 2.471  # btu/ac to kcal/ha
+            SODOXM[loop] = SODOXM[loop] / 2.205 * 2.471  # lbs/ac to kg/ha
+            SOCO2M[loop] = SOCO2M[loop] / 2.205 * 2.471  # lbs/ac to kg/ha
+            IODOXM[loop] = IODOXM[loop] / 2.205 * 2.471  # lbs/ac to kg/ha
+            IOCO2M[loop] = IOCO2M[loop] / 2.205 * 2.471  # lbs/ac to kg/ha
+            AODOXM[loop] = AODOXM[loop] / 2.205 * 2.471  # lbs/ac to kg/ha
+            AOCO2M[loop] = AOCO2M[loop] / 2.205 * 2.471  # lbs/ac to kg/ha
+            PODOXM[loop] = PODOXM[loop] / 2.205 * 2.471  # lbs/ac to kg/ha
+            POCO2M[loop] = POCO2M[loop] / 2.205 * 2.471  # lbs/ac to kg/ha
 
     return errorsV, ERRMSG
