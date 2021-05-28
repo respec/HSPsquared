@@ -36,14 +36,20 @@ def cons(store, siminfo, uci, ts):
 	errorsV = zeros(len(ERRMSG), dtype=int)
 
 	simlen = siminfo['steps']
+	uunits = siminfo['units']
 	delt60 = siminfo['delt'] / 60  # delt60 - simulation time interval in hours
+
+	AFACT = 43560.0
+	if uunits == 2:
+		# si units conversion constants, 1 hectare is 10000 sq m
+		AFACT = 1000000.0
 
 	PREC  = ts['PREC']
 	SAREA = ts['SAREA']
 
 	advectData = uci['advectData']
 	(nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = advectData
-	svol = vol * 43560
+	svol = vol * AFACT
 
 	ui = make_numba_dict(uci)
 	nexits = int(ui['NEXITS'])
@@ -87,7 +93,7 @@ def cons(store, siminfo, uci, ts):
 		# get incoming flow of constituent or zeros;
 		if (name + '_ICON') not in ts:
 			ts[name + '_ICON'] = zeros(simlen)
-		ICON = ts[name + '_ICON'] * conv * 43560 * VOL
+		ICON = ts[name + '_ICON'] * conv * AFACT * VOL
 
 		# # dry deposition; flag: COADFG; monthly COAFXM; value: COADFX
 		# COADFG1 = ui['COADFG1']    # table-type cons-ad-flags
@@ -116,11 +122,11 @@ def cons(store, siminfo, uci, ts):
 		if 'COADCN' not in ts:
 			ts['COADCN'] = zeros(simlen)
 
-		COADFX = ts['COADFX'] * delt60 / (24.0 * 43560.0)
+		COADFX = ts['COADFX'] * delt60 / (24.0 * AFACT)
 		COADCN = ts['COADCN']
 
 		loopsub(SAREA, PREC, VOL, COADFX, COADCN, ICON, simlen, conid, CON, ROCON, OCON, RCON, COADWT, COADDR, COADEP,
-				SROVOL, EROVOL, SOVOL, EOVOL, conv, svol, con, nexits)
+				SROVOL, EROVOL, SOVOL, EOVOL, conv, svol, con, nexits, uunits)
 
 		if nexits > 1:
 			for i in range(nexits):
@@ -131,13 +137,18 @@ def cons(store, siminfo, uci, ts):
 
 # @jit(nopython=True)
 def loopsub(SAREA, PREC ,VOL, COADFX, COADCN, ICON, simlen, conid, CON, ROCON, OCON, RCON, COADWT, COADDR, COADEP,
-			SROVOL, EROVOL, SOVOL, EOVOL, conv, svol, con, nexits):
+			SROVOL, EROVOL, SOVOL, EOVOL, conv, svol, con, nexits, uunits):
 	''' loop as function to allow Numba to cache compilation'''		
-	
+
+	AFACT = 43560.0
+	if uunits == 2:
+		# si units conversion constants, 1 hectare is 10000 sq m
+		AFACT = 1000000.0
+
 	for loop in range(simlen):
 		sarea  = SAREA[loop]
 		prec   = PREC[loop]
-		vol    = VOL[loop] * 43560
+		vol    = VOL[loop] * AFACT
 
 		coadfx = COADFX[loop]
 		coadcn = COADCN[loop]
