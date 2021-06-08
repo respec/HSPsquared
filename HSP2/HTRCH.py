@@ -47,6 +47,7 @@ def htrch(store, siminfo, uci, ts):
 	simlen = siminfo['steps']
 	delt   = siminfo['delt']
 	delt60 = siminfo['delt'] / 60
+	uunits = siminfo['units']
 
 	DAYFG = hourflag(siminfo, 0, dofirst=True).astype(bool)
 
@@ -63,6 +64,9 @@ def htrch(store, siminfo, uci, ts):
 	HTWCNT= 0
 	elev =  ui['ELEV']
 	eldat  = ui['ELDAT']
+	if uunits == 2:
+		elev = elev * 3.281
+		eldat = eldat * 3.281
 	cfsaex = ui['CFSAEX']
 	katrad = ui['KATRAD']
 	kcond  = ui['KCOND']
@@ -105,10 +109,18 @@ def htrch(store, siminfo, uci, ts):
 	cfpres= ((288.0 - 0.001981 * elev) / 288.0)**5.256
 
 	tw     = ui['TW']
-	tw     = (tw - 32.0) * 0.555
+	if uunits == 1:
+		tw     = (tw - 32.0) * 0.555
+
 	airtmp = ui['AIRTMP']
-	airtmp = (airtmp - 32.0) * 0.555
-	svol = vol
+	if uunits == 1:
+		airtmp = (airtmp - 32.0) * 0.555
+
+	AFACT = 43560.0
+	if uunits == 2:
+		# si units conversion constants, 1 hectare is 10000 sq m
+		AFACT = 1000000.0
+	svol = vol * AFACT
 	rheat  = tw * svol     # compute initial value of heat storage
 
 	# if bedflg == 2:  # compute initial tmud and tmuddt for brock/caupp model
@@ -128,10 +140,14 @@ def htrch(store, siminfo, uci, ts):
 	if not 'IHEAT' in ts:
 		ts['IHEAT'] = zeros(simlen)
 	IHEAT = ts['IHEAT']  # kcal.vol/l.ivl; heat is relative to 0 degreees c
+	if uunits == 1:
+		IHEAT = IHEAT * 0.0089  # conv factor from rchrests.seq
+	else:
+		IHEAT = IHEAT * 0.4034 / 1000.0
+		ts['IHEAT'] = IHEAT * 1000.0
 
 	AVDEP = ts['AVDEP']
-	UUNITS = 1  # assume english units for now
-	AVDEPE = AVDEP  if UUNITS == 1 else AVDEP * 3.28 	# avdepe is the average depth in english units
+	AVDEPE = AVDEP  if uunits == 1 else AVDEP * 3.28 	# avdepe is the average depth in english units
 
 	SOLRAD = ts['SOLRAD']
 	if shadfg == 1:
@@ -157,16 +173,16 @@ def htrch(store, siminfo, uci, ts):
 	for loop in range(simlen):
 
 		tws = tw
-		iheat  = IHEAT[loop] * 0.0089   # conv factor from rchrests.seq     vol * 43560. also needed
+		iheat  = IHEAT[loop]
 		solrad = SOLRAD[loop]
 		oheat  = 0.0
 
-		vol = VOL[loop]
+		vol = VOL[loop] * AFACT
 		srovol = SROVOL[loop]
 		erovol = EROVOL[loop]
 		sovol  = SOVOL[loop,:]
 		eovol  = EOVOL[loop,:]
-		tw, roheat, oheat = advect(iheat, tw, nexits, svol * 43560, vol * 43560, srovol, erovol, sovol, eovol) # watertemp treated as a concentration
+		tw, roheat, oheat = advect(iheat, tw, nexits, svol, vol, srovol, erovol, sovol, eovol) # watertemp treated as a concentration
 		#                   advect(imat, conc, nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL)
 		svol = vol
 
@@ -198,7 +214,10 @@ def htrch(store, siminfo, uci, ts):
 		# get quantity of precipitation and convert ft/ivl to m/ivl,
 		prec = PREC[loop] / 12.0
 		if prec > 0.0:
-			mprec = prec /3.2808 if UUNITS == 1 else prec
+			if uunits == 1:
+				mprec = prec /3.2808
+			else:
+				mprec = prec / (3.2808*3.2808)
 			# calculate heat added by precip, assuming temperature is equal to reach/res water temperature
 			qprec = mprec * tw * 1000.0
 		else:
@@ -359,11 +378,18 @@ def htrch(store, siminfo, uci, ts):
 
 		rheat = tw * vol     # calculate storage of thermal energy in rchres
 
-		TW[loop]    = (tw * 9.0 / 5.0) + 32.0
-		AIRTMP[loop]= (airtmp * 9.0 / 5.0) + 32.0
-		HTEXCH[loop]= htexch * 407960. * 12.
-		ROHEAT[loop]= roheat / 0.0089
-		OHEAT[loop] = oheat / 0.0089
+		if uunits == 1:
+			TW[loop]    = (tw * 9.0 / 5.0) + 32.0
+			AIRTMP[loop]= (airtmp * 9.0 / 5.0) + 32.0
+			HTEXCH[loop] = htexch * 407960. * 12. / 43560.
+			ROHEAT[loop] = roheat / 0.0089
+			OHEAT[loop] = oheat / 0.0089
+		else:
+			TW[loop] = tw
+			AIRTMP[loop] = airtmp
+			HTEXCH[loop] = htexch * 1000.
+			ROHEAT[loop]= roheat * 1000.
+			OHEAT[loop] = oheat * 1000.
 
 	if nexits > 1:
 		for i in range(nexits):
