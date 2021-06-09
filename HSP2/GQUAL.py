@@ -22,14 +22,18 @@ def gqual(store, siminfo, uci, ts):
 	delt60 = siminfo['delt'] / 60  # delt60 - simulation time interval in hours
 	simlen = siminfo['steps']
 	delts = siminfo['delt'] * 60
+	uunits = siminfo['units']
+
+	AFACT = 43560.0
+	if uunits == 2:
+		# si units conversion
+		AFACT = 1000000.0
 
 	advectData = uci['advectData']
 	(nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = advectData
-	svol = vol * 43560
+	svol = vol * AFACT
 
 	ui = make_numba_dict(uci)
-
-	UUNITS = 1  # assume english units for now
 
 	# table-type gq-gendata
 	ngqual = 1
@@ -59,6 +63,8 @@ def gqual(store, siminfo, uci, ts):
 	if 'LEN' in ui:
 		len_  = ui["LEN"] * 5280.0  # mi to feet
 		delth = ui["DELTH"]
+		if uunits == 2:
+			len_ = ui['LEN'] * 1000.0  # length of reach, in meters
 	ts['HRFG'] = hour24Flag(siminfo).astype(float)
 	HRFG = ts['HRFG']
 
@@ -83,12 +89,8 @@ def gqual(store, siminfo, uci, ts):
 			elif gqadfgc == -1:
 				ts['GQADCN'] = ts['GQADCN' + str(index) + ' 1']
 
-			if UUNITS == 1:
-				if 'GQADFX' in ts:
-					ts['GQADFX'] *= delt60 / (24.0 * 43560.0)
-			else:
-				if 'GQADFX' in ts:
-					ts['GQADFX'] *= delt60 / (24.0 * 10000.0)
+			if 'GQADFX' in ts:
+				ts['GQADFX'] *= delt60 / (24.0 * AFACT)
 
 		if 'GQADFX' not in ts:
 			ts['GQADFX'] = zeros(simlen)
@@ -285,7 +287,7 @@ def gqual(store, siminfo, uci, ts):
 				rsed2 = ui['SSED2']
 				rsed3 = ui['SSED3']
 
-			if UUNITS == 1:
+			if uunits == 1:
 				rsed[1] = RSED1[0] / 3.121E-08
 				rsed[2] = RSED2[0] / 3.121E-08
 				rsed[3] = RSED3[0] / 3.121E-08
@@ -293,12 +295,12 @@ def gqual(store, siminfo, uci, ts):
 				rsed[5] = RSED5[0] / 3.121E-08
 				rsed[6] = RSED6[0] / 3.121E-08
 			else:
-				rsed[1] = RSED1[0] / 2.83E-08
-				rsed[2] = RSED2[0] / 2.83E-08
-				rsed[3] = RSED3[0] / 2.83E-08
-				rsed[4] = RSED4[0] / 2.83E-08
-				rsed[5] = RSED5[0] / 2.83E-08
-				rsed[6] = RSED6[0] / 2.83E-08
+				rsed[1] = RSED1[0] / 1E-06 # 2.83E-08
+				rsed[2] = RSED2[0] / 1E-06
+				rsed[3] = RSED3[0] / 1E-06
+				rsed[4] = RSED4[0] / 1E-06
+				rsed[5] = RSED5[0] / 1E-06
+				rsed[6] = RSED6[0] / 1E-06
 
 			rsqal1 = sqal[1] * rsed1 * svol
 			rsqal2 = sqal[2] * rsed2 * svol
@@ -749,10 +751,10 @@ def gqual(store, siminfo, uci, ts):
 				tw20 = 30.0
 			prec = PREC[loop]
 			sarea= SAREA[loop]
-			vol  = VOL[loop] * 43560
+			vol  = VOL[loop] * AFACT
 			toqal = TOQAL[loop]
 			tosqal = TOSQAL[loop]
-			if UUNITS == 1:
+			if uunits == 1:
 				depscr1 = DEPSCR1[loop] / 3.121E-08
 				depscr2 = DEPSCR2[loop] / 3.121E-08
 				depscr3 = DEPSCR3[loop] / 3.121E-08
@@ -772,29 +774,29 @@ def gqual(store, siminfo, uci, ts):
 				rsed[5] = RSED5[loop] / 3.121E-08
 				rsed[6] = RSED6[loop] / 3.121E-08
 			else:
-				depscr1 = DEPSCR1[loop] / 2.83E-08
-				depscr2 = DEPSCR2[loop] / 2.83E-08
-				depscr3 = DEPSCR3[loop] / 2.83E-08
-				rosed1 = ROSED1[loop] / 2.83E-08
-				rosed2 = ROSED2[loop] / 2.83E-08
-				rosed3 = ROSED3[loop] / 2.83E-08
+				depscr1 = DEPSCR1[loop] / 1E-06
+				depscr2 = DEPSCR2[loop] / 1E-06
+				depscr3 = DEPSCR3[loop] / 1E-06 # 2.83E-08
+				rosed1 = ROSED1[loop] / 1E-06
+				rosed2 = ROSED2[loop] / 1E-06
+				rosed3 = ROSED3[loop] / 1E-06
 				osed1 = OSED1[loop]
 				osed2 = OSED2[loop]
 				osed3 = OSED3[loop]
-				osed1 = [x / 2.83E-08 for x in osed1]
-				osed2 = [x / 2.83E-08 for x in osed2]
-				osed3 = [x / 2.83E-08 for x in osed3]
-				rsed[1] = RSED1[loop] / 2.83E-08
-				rsed[2] = RSED2[loop] / 2.83E-08
-				rsed[3] = RSED3[loop] / 2.83E-08
-				rsed[4] = RSED4[loop] / 2.83E-08
-				rsed[5] = RSED5[loop] / 2.83E-08
-				rsed[6] = RSED6[loop] / 2.83E-08
+				osed1 = [x / 1E-06 for x in osed1]
+				osed2 = [x / 1E-06 for x in osed2]
+				osed3 = [x / 1E-06 for x in osed3]
+				rsed[1] = RSED1[loop] / 1E-06
+				rsed[2] = RSED2[loop] / 1E-06
+				rsed[3] = RSED3[loop] / 1E-06
+				rsed[4] = RSED4[loop] / 1E-06
+				rsed[5] = RSED5[loop] / 1E-06
+				rsed[6] = RSED6[loop] / 1E-06
 			isqal1 = ISQAL1[loop]
 			isqal2 = ISQAL2[loop]
 			isqal3 = ISQAL3[loop]
 
-			if UUNITS == 2:  # uci is in metric units
+			if uunits == 2:  # uci is in metric units
 				avdepm = AVDEP[loop]
 				avdepe = AVDEP[loop] * 3.28
 				avvele = AVVEL[loop] * 3.28
@@ -851,7 +853,7 @@ def gqual(store, siminfo, uci, ts):
 				if avdepe > 0.17:   # rchres depth is sufficient to consider volatilization
 					# compute oxygen reaeration rate-korea
 					korea = oxrea(lkfg, wind, cforea, avvele, avdepe, tcginv, reamfg, reak, reakt, expred, exprev,
-						  			len_, delth, tw, delts, delt60, UUNITS)
+						  			len_, delth, tw, delts, delt60, uunits)
 					# KOREA = OXREA(LKFG,WIND,CFOREA,AVVELE,AVDEPE,TCGINV,REAMFG,REAK,REAKT,EXPRED,EXPREV,LEN, DELTH,TWAT,DELTS,DELT60,UUNITS,KOREA)
 				else:
 					# rchres depth is not sufficient to consider volatilization
