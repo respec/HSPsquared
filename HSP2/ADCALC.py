@@ -174,8 +174,12 @@ def oxrea(LKFG,wind,cforea,avvele,avdepe,tcginv,reamfg,reak,reakt,expred,exprev,
 	elif reamfg == 1:
 		# calculate reaeration coefficient based on energy dissipation principles (tsivoglou method)
 		# convert length and drop in energy line along length of rchres to english units, if necessary
-		lene   = len
-		delthe = delth
+		if uunits == 2:
+			lene = len * 3.28
+			delthe = delth * 3.28
+		else:
+			lene   = len
+			delthe = delth
 
 		if abs(avvele) > 0.0:
 			flotim = lene / avvele

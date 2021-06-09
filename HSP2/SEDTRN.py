@@ -25,10 +25,16 @@ def sedtrn(store, siminfo, uci, ts):
 	delt   = siminfo['delt']
 	delt60 = siminfo['delt'] / 60
 	delts  = siminfo['delt'] * 60
+	uunits = siminfo['units']
+
+	AFACT = 43560.0
+	if uunits == 2:
+		# si units conversion
+		AFACT = 1000000.0
 
 	advectData = uci['advectData']
 	(nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = advectData
-	vol = vol * 43560
+	vol = vol * AFACT
 
 	ui = make_numba_dict(uci)
 	svol = vol
@@ -45,9 +51,8 @@ def sedtrn(store, siminfo, uci, ts):
 	bedwrn = ui['BEDWRN']
 	por    = ui['POR']
 
-	UUNITS = 1  # assume english units for now
 	# table SED-HYDPARM
-	if UUNITS == 1:
+	if uunits == 1:
 		len_ = ui['LEN'] * 5280
 		db50 = ui['DB50'] * 0.0833
 	else:
@@ -56,7 +61,7 @@ def sedtrn(store, siminfo, uci, ts):
 	delth  = ui['DELTH']
 
 	# evaluate some quantities used in colby and/or toffaleti sand transport simulation methods
-	if UUNITS == 1:
+	if uunits == 1:
 		db50e = db50
 		db50m = db50 * 304.8
 	else: 
@@ -65,7 +70,7 @@ def sedtrn(store, siminfo, uci, ts):
 	slope = delth / len_
 	
 	# SAND PARAMETERS; table SAND-PM
-	if UUNITS == 1:
+	if uunits == 1:
 		sand_d = ui['D'] * 0.0833
 		sand_w = ui['W'] * delts * 0.0254 # convert settling velocity from m/sec to m/ivl
 	else:
@@ -77,7 +82,7 @@ def sedtrn(store, siminfo, uci, ts):
 
 	# SILT PARAMETERS; table SILT-CLAY-PM --- note: first occurance is silt
 	ui_silt = uci['SILT']
-	if UUNITS == 1:
+	if uunits == 1:
 		silt_d = ui_silt['D'] * 0.0833
 		silt_w = ui_silt['W'] * delts * 0.0254 # convert settling velocity from m/sec to m/ivl
 	else:
@@ -90,7 +95,7 @@ def sedtrn(store, siminfo, uci, ts):
 	
 	# CLAY PARAMETERS; table SILT-CLAY-PM --- note: second occurance is clay
 	ui_clay = uci['CLAY']
-	if UUNITS == 1:
+	if uunits == 1:
 		clay_d = ui_clay['D'] * 0.0833
 		clay_w = ui_clay['W'] * delts * 0.0254 # convert settling velocity from m/sec to m/ivl
 	else:
@@ -236,7 +241,7 @@ def sedtrn(store, siminfo, uci, ts):
 	for loop in range(simlen):
 
 		# perform any necessary unit conversions
-		if UUNITS == 2:  # uci is in metric units
+		if uunits == 2:  # uci is in metric units
 			avvele = AVVEL[loop] * 3.28
 			avdepm = AVDEP[loop]
 			avdepe = AVDEP[loop] * 3.28
@@ -266,7 +271,7 @@ def sedtrn(store, siminfo, uci, ts):
 		frcsed1 = silt_wt_rsed5 / totbed  	if totbed > 0.0 else 0.5
 		frcsed2 = clay_wt_rsed6 / totbed  	if totbed > 0.0 else 0.5
 
-		vol = VOL[loop] * 43560
+		vol = VOL[loop] * AFACT
 		srovol = SROVOL[loop]
 		erovol = EROVOL[loop]
 		sovol = SOVOL[loop, :]
@@ -440,7 +445,7 @@ def sedtrn(store, siminfo, uci, ts):
 		SSED3[loop] = clay_ssed3
 		SSED4[loop] = total_ssed4
 		BEDDEP[loop]= beddep
-		if UUNITS == 1:
+		if uunits == 1:
 			RSED1[loop] = sand_rsed1 * 3.121E-08
 			RSED2[loop] = silt_rsed2 * 3.121E-08
 			RSED3[loop] = clay_rsed3 * 3.121E-08
@@ -467,31 +472,31 @@ def sedtrn(store, siminfo, uci, ts):
 			OSED3[loop] = osed3 * 3.121E-08
 			OSED4[loop] = osed4 * 3.121E-08
 		else:
-			RSED1[loop] = sand_rsed1 * 2.83E-08
-			RSED2[loop] = silt_rsed2 * 2.83E-08
-			RSED3[loop] = clay_rsed3 * 2.83E-08
-			RSED4[loop] = sand_wt_rsed4 * 2.83E-08
-			RSED5[loop] = silt_wt_rsed5 * 2.83E-08
-			RSED6[loop] = clay_wt_rsed6 * 2.83E-08
-			RSED7[loop] = sand_t_rsed7 * 2.83E-08
-			RSED8[loop] = silt_t_rsed8 * 2.83E-08
-			RSED9[loop] = clay_t_rsed9 * 2.83E-08
-			RSED10[loop] = total_rsed10 * 2.83E-08
-			TSED1[loop] = tsed1 * 2.83E-08
-			TSED2[loop] = tsed2 * 2.83E-08
-			TSED3[loop] = tsed3 * 2.83E-08
-			DEPSCR1[loop] = depscr1 * 2.83E-08
-			DEPSCR2[loop] = depscr2 * 2.83E-08
-			DEPSCR3[loop] = depscr3 * 2.83E-08
-			DEPSCR4[loop] = depscr4 * 2.83E-08
-			ROSED1[loop] = rosed1 * 2.83E-08
-			ROSED2[loop] = rosed2 * 2.83E-08
-			ROSED3[loop] = rosed3 * 2.83E-08
-			ROSED4[loop] = rosed4 * 2.83E-08
-			OSED1[loop] = osed1 * 2.83E-08
-			OSED2[loop] = osed2 * 2.83E-08
-			OSED3[loop] = osed3 * 2.83E-08
-			OSED4[loop] = osed4 * 2.83E-08
+			RSED1[loop] = sand_rsed1 * 1E-06
+			RSED2[loop] = silt_rsed2 * 1E-06
+			RSED3[loop] = clay_rsed3 * 1E-06
+			RSED4[loop] = sand_wt_rsed4 * 1E-06
+			RSED5[loop] = silt_wt_rsed5 * 1E-06
+			RSED6[loop] = clay_wt_rsed6 * 1E-06
+			RSED7[loop] = sand_t_rsed7 * 1E-06
+			RSED8[loop] = silt_t_rsed8 * 1E-06
+			RSED9[loop] = clay_t_rsed9 * 1E-06
+			RSED10[loop] = total_rsed10 * 1E-06
+			TSED1[loop] = tsed1 * 1E-06
+			TSED2[loop] = tsed2 * 1E-06
+			TSED3[loop] = tsed3 * 1E-06
+			DEPSCR1[loop] = depscr1 * 1E-06
+			DEPSCR2[loop] = depscr2 * 1E-06
+			DEPSCR3[loop] = depscr3 * 1E-06
+			DEPSCR4[loop] = depscr4 * 1E-06
+			ROSED1[loop] = rosed1 * 1E-06 # 2.83E-08
+			ROSED2[loop] = rosed2 * 1E-06
+			ROSED3[loop] = rosed3 * 1E-06
+			ROSED4[loop] = rosed4 * 1E-06
+			OSED1[loop] = osed1 * 1E-06
+			OSED2[loop] = osed2 * 1E-06
+			OSED3[loop] = osed3 * 1E-06
+			OSED4[loop] = osed4 * 1E-06
 
 	if nexits > 1:
 		for i in range(nexits):
