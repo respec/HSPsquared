@@ -29,20 +29,6 @@ ERRMSGS =('HYDR: SOLVE equations are indeterminate',             #ERRMSG0
 TOLERANCE = 0.001   # newton method max loops
 MAXLOOPS  = 100     # newton method exit tolerance
 
-# units conversion constants, 1 ACRE is 43560 sq ft. assumes input in acre-ft
-VFACT  = 43560.0
-AFACT  = 43560.0
-VFACTA = 1.0/VFACT
-LFACTA = 1.0
-AFACTA = 1.0/AFACT
-SFACTA = 1.0
-TFACTA = 1.0
-
-# physical constants (English units)
-GAM    = 62.4             # density of water
-GRAV   = 32.2             # gravitational acceleration
-AKAPPA = 0.4              # von karmen constant
-
 
 def hydr(store, siminfo, uci, ts):
     ''' find the state of the reach/reservoir at the end of the time interval
@@ -55,7 +41,16 @@ def hydr(store, siminfo, uci, ts):
        ts is a dictionary with RID specific timeseries'''
 
     steps   = siminfo['steps']                # number of simulation points
+    uunits  = siminfo['units']
     nexits  = int(uci['PARAMETERS']['NEXITS'])
+
+    # units conversion constants, 1 ACRE is 43560 sq ft. assumes input in acre-ft
+    VFACT = 43560.0
+    AFACT = 43560.0
+    if uunits == 2:
+        # si units conversion constants, 1 hectare is 10000 sq m, assumes area input in hectares, vol in Mm3
+        VFACT = 1.0e6
+        AFACT = 10000.0
 
     u = uci['PARAMETERS']
     funct  = array([u[name] for name in u.keys() if name.startswith('FUNCT')]).astype(int)[0:nexits]
@@ -113,6 +108,7 @@ def hydr(store, siminfo, uci, ts):
     ui['errlen'] = len(ERRMSGS)
     ui['nrows']  = rchtab.shape[0]
     ui['nodfv']  = any(ODFVF)
+    ui['uunits'] = uunits
 
     # Numba can't do 'O' + str(i) stuff yet, so do it here. Also need new style lists
     Olabels = List()
@@ -137,16 +133,39 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
 
     steps  = int(ui['steps'])            # number of simulation steps
     delts  = ui['delt'] * 60.0           # seconds in simulation interval
+    uunits = ui['uunits']
     nrows  = int(ui['nrows'])
     nexits = int(ui['nexits'])
     AUX1FG = int(ui['AUX1FG'])         # True means DEP, SAREA will be computed
     AUX2FG = int(ui['AUX2FG'])
     AUX3FG = int(ui['AUX3FG'])
     LKFG   = int(ui['LKFG'])           # flag, 1:lake, 0:stream
-    length = ui['LEN'] * 5280.0                # length of reach, in feet
+    length = ui['LEN'] * 5280.0        # length of reach, in feet
+    if uunits == 2:
+        length = ui['LEN'] * 1000.0    # length of reach, in meters
     DB50   = ui['DB50'] / 12.0         # mean diameter of bed material
+    if uunits == 2:
+        DB50 = ui['DB50'] / 40.0       # mean diameter of bed material
     DELTH  = ui['DELTH']
     stcor  = ui['STCOR']
+
+    # units conversion constants, 1 ACRE is 43560 sq ft. assumes input in acre-ft
+    VFACT = 43560.0
+    AFACT = 43560.0
+    LFACTA = 1.0
+    SFACTA = 1.0
+    TFACTA = 1.0
+    # physical constants (English units)
+    GAM = 62.4  # density of water
+    GRAV = 32.2  # gravitational acceleration
+    AKAPPA = 0.4  # von karmen constant
+    if uunits == 2:
+        # si units conversion constants, 1 hectare is 10000 sq m, assumes area input in hectares, vol in Mm3
+        VFACT = 1.0e6
+        AFACT = 10000.0
+        # physical constants (English units)
+        GAM = 9806.  # density of water
+        GRAV = 9.81  # gravitational acceleration
 
     volumeFT = ts['volumeFT']
     depthFT  = ts['depthFT']
@@ -264,10 +283,14 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
             #o[irexit] = 0.0                                                   #???? not used anywhere, check if o[irexit]
 
         prsupy = PREC[step] * sarea
+        if uunits == 2:
+            prsupy = PREC[step] * sarea / 3.281
         volt   = vol + IVOL[step] + prsupy
         volev = 0.0
         if AUX1FG:                  # subtract evaporation
             volpev = POTEV[step] * sarea
+            if uunits == 2:
+                volpev = POTEV[step] * sarea / 3.281
             if volev >= volt:
                 volev = volt
                 volt = 0.0
@@ -411,12 +434,12 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
         # HYDR
         if nexits > 1:
             O[step,:]    = o[:]    * SFACTA * LFACTA
-            OVOL[step,:] = ovol[:] * VFACTA
-        PRSUPY[step] = prsupy * AFACTA
+            OVOL[step,:] = ovol[:] / VFACT
+        PRSUPY[step] = prsupy / VFACT
         RO[step]     = ro     * SFACTA * LFACTA
-        ROVOL[step]  = rovol  * VFACTA
-        VOLEV[step]  = volev  * VFACTA
-        VOL[step]    = vol    * VFACTA
+        ROVOL[step]  = rovol  / VFACT
+        VOLEV[step]  = volev  / VFACT
+        VOL[step]    = vol    / VFACT
 
         if AUX1FG:   # compute final depth, surface area
             if vol >= topvolume:
@@ -424,7 +447,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
             indx = fndrow(vol, volumeFT)
             dep, stage, sarea, avdep, twid, hrad = auxil(volumeFT, depthFT, sareaFT, indx, vol, length, stcor, AUX1FG, errors)
             DEP[step]   = dep
-            SAREA[step] = sarea * AFACTA
+            SAREA[step] = sarea / AFACT
 
             if vol > 0.0 and sarea > 0.0:
                 twid  = sarea / length
