@@ -28,7 +28,7 @@ def atemp(store, siminfo, uci, ts):
     return errors, ERRMSGS
 
 
-# @njit(cache=True)
+@njit(cache=True)
 def _atemp_(ui, ts):
     ''' computes airtemp by correcting gage temp with prec and elevation
     general, ui, ts are Python dictionaries for user input and time series,
