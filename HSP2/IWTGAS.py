@@ -4,8 +4,8 @@ License: LGPL2
 
 Conversion of HSPF HIMPGAS.FOR module into Python''' 
 
-from numpy import zeros, where, full
-from numba import jit
+from numpy import zeros, where, full, float64, int64
+from numba import njit
 from HSP2.utilities import initm, make_numba_dict, hourflag
 
 ERRMSG = []
@@ -30,18 +30,48 @@ PCFLX2 = IGCF1(2,LEV) * MFACTA
 PCFLX3 = IGCF1(3,LEV) * MFACTA
 '''
 
-ERRMSG = []
-
 def iwtgas(store, siminfo, uci, ts):
 	''' Estimate water temperature, dissolved oxygen, and carbon dioxide in the outflows
 	from a impervious land segment. calculate associated fluxes through exit gate'''
-	
-	errorsV = zeros(len(ERRMSG), dtype=int)
+
 	simlen = siminfo['steps']
-	tindex = siminfo['tindex']
-	uunits = siminfo['units']
 
 	ui = make_numba_dict(uci)
+	ui['simlen'] = siminfo['steps']
+	ui['uunits'] = siminfo['units']
+	ui['errlen'] = len(ERRMSG)
+
+	u = uci['PARAMETERS']
+	if 'WTFVFG' in u:
+		ts['AWTF'] = initm(siminfo, uci, u['WTFVFG'], 'MONTHLY_AWTF', u['AWTF'])
+		ts['BWTF'] = initm(siminfo, uci, u['WTFVFG'], 'MONTHLY_BWTF', u['BWTF'])
+	else:
+		ts['AWTF'] = full(simlen, u['AWTF'])
+		ts['BWTF'] = full(simlen, u['BWTF'])
+
+	for name in ['AIRTMP', 'WYIELD', 'SURO', 'SURLI']:
+		if name not in ts:
+			ts[name] = zeros(simlen)
+
+	ts['DAYFG'] = hourflag(siminfo, 0, dofirst=True).astype(float64)
+
+	############################################################################
+	errors = _iwtgas_(ui, ts)  # run IWTGAS simulation code
+	############################################################################
+
+	return errors, ERRMSG
+
+@njit(cache=True)
+def _iwtgas_(ui, ts):
+	''' Estimate water temperature, dissolved oxygen, and carbon dioxide in the outflows
+		from a impervious land segment. calculate associated fluxes through exit gate'''
+
+	errorsV = zeros(int(ui['errlen'])).astype(int64)
+
+	uunits = ui['uunits']
+	simlen = int(ui['simlen'])
+	# delt60 = ui['delt60']
+
 	slifac  = ui['SLIFAC']  # from LAT_FACTOR table
 	sotmp  = ui['SOTMP']
 	sodox  = ui['SODOX']
@@ -51,11 +81,7 @@ def iwtgas(store, siminfo, uci, ts):
 		sotmp= (sotmp * 9./5.) + 32.
 		elev = elev * 3.281   # m to ft
 	elevgc = ((288.0 - 0.00198 * elev) / 288.0)**5.256
-	
-	for name in ['AIRTMP', 'WYIELD', 'SURO', 'SURLI']:
-		if name not in ts:
-			ts[name] = zeros(simlen)
-			
+
 	AIRTMP = ts['AIRTMP']
 	WYIELD = ts['WYIELD']
 	SURO   = ts['SURO']
@@ -69,13 +95,6 @@ def iwtgas(store, siminfo, uci, ts):
 	SLIDOX = ts['SLIDOX']
 	SLICO2 = ts['SLICO2']
 
-	u = uci['PARAMETERS']
-	if 'WTFVFG' in u:
-		ts['AWTF'] = initm(siminfo, uci, u['WTFVFG'], 'MONTHLY_AWTF', u['AWTF'])
-		ts['BWTF'] = initm(siminfo, uci, u['WTFVFG'], 'MONTHLY_BWTF', u['BWTF'])
-	else:
-		ts['AWTF'] = full(simlen, u['AWTF'])
-		ts['BWTF'] = full(simlen, u['BWTF'])
 	AWTF = ts['AWTF']
 	BWTF = ts['BWTF']
 	
@@ -87,7 +106,7 @@ def iwtgas(store, siminfo, uci, ts):
 	SODOXM = ts['SODOXM'] = zeros(simlen)
 	SOCO2M = ts['SOCO2M'] = zeros(simlen)
 	
-	DAYFG = hourflag(siminfo, 0, dofirst=True).astype(bool)
+	DAYFG = ts['DAYFG'].astype(int64)
 
 	if uunits == 2:
 		AWTF = (AWTF * 9./5.) + 32.
@@ -162,4 +181,4 @@ def iwtgas(store, siminfo, uci, ts):
 			SODOXM[loop] = SODOXM[loop] / 2.205 * 2.471  # lbs/ac to kg/ha
 			SOCO2M[loop] = SOCO2M[loop] / 2.205 * 2.471  # lbs/ac to kg/ha
 
-	return errorsV, ERRMSG
+	return errorsV
