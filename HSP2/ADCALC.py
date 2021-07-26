@@ -169,44 +169,60 @@ def oxrea(LKFG,wind,cforea,avvele,avdepe,tcginv,reamfg,reak,reakt,expred,exprev,
 		windsp = wind / delts
 		windf = windsp * (-0.46 + 0.136 * windsp)  if windsp > 6.0 else 2.0
 		korea = (0.032808 * windf * cforea / avdepe) * delt60
-	
-	# calculate reaeration coefficient for free-flowing reach
-	elif reamfg == 1:
-		# calculate reaeration coefficient based on energy dissipation principles (tsivoglou method)
-		# convert length and drop in energy line along length of rchres to english units, if necessary
-		if uunits == 2:
-			lene = len * 3.28
-			delthe = delth * 3.28
-		else:
-			lene   = len
-			delthe = delth
 
-		if abs(avvele) > 0.0:
-			flotim = lene / avvele
-			korea  = reakt * (delthe / flotim) * (tcginv**(tw - 20.)) * delts
+	else:
+		# calculate reaeration coefficient for free-flowing reach
+		if reamfg == 1:
+			# calculate reaeration coefficient based on energy dissipation principles (tsivoglou method)
+			# convert length and drop in energy line along length of rchres to english units, if necessary
+			if uunits == 2:
+				lene = len * 3.28
+				delthe = delth * 3.28
+			else:
+				lene   = len
+				delthe = delth
+
+			if abs(avvele) > 0.0:
+				flotim = lene / avvele
+				korea  = reakt * (delthe / flotim) * (tcginv**(tw - 20.)) * delts
+			else:
+				korea = 0.0
 		else:
-			korea = 0.0
-	elif reamfg == 2:
-		# calculate reaeration coefficient as a power function of average hydraulic
-		# depth and velocity; determine exponents to depth and velocity terms and assign value to reak
-		if avdepe <= 2.0:  # use owen's formulation for reaeration
-			reak   = 0.906
-			exprev = 0.67
-			expred = -1.85
-		else:
-			# calculate transition depth; transition depth determines which method
-			# of calculation is used given the current velocity
-			trandp = 0.0  if avvele < 1.7 else 0.4263 * (avvele**2.9135)
-			if avdepe - trandp <= 0.0:  # use churchill's formulation for reaeration
-				reak   = 0.484
-				exprev = 0.969
-				expred = -1.673
-			else:                       # use o'connor-dobbins formulation for reaeration
-				reak   = 0.538
-				exprev = 0.5
-				expred = -1.5
-		korea = reak * avvele**exprev * avdepe**expred * tcginv**(tw - 20.0) * delt60  if tw < 66 else  0.999
+			if reamfg == 2:
+				# calculate reaeration coefficient as a power function of average hydraulic
+				# depth and velocity; determine exponents to depth and velocity terms and assign value to reak
+				if avdepe <= 2.0:  # use owen's formulation for reaeration
+					reak   = 0.906
+					exprev = 0.67
+					expred = -1.85
+				else:
+					# calculate transition depth; transition depth determines which method
+					# of calculation is used given the current velocity
+					trandp = 0.0  if avvele < 1.7 else 0.4263 * (avvele**2.9135)
+					if avdepe - trandp <= 0.0:  # use churchill's formulation for reaeration
+						reak   = 0.484
+						exprev = 0.969
+						expred = -1.673
+					else:                       # use o'connor-dobbins formulation for reaeration
+						reak   = 0.538
+						exprev = 0.5
+						expred = -1.5
+			korea = reak * avvele**exprev * avdepe**expred * tcginv**(tw - 20.0) * delt60  if tw < 66 else  0.999
 
 	if korea > 1.0:
 		korea = 0.999
 	return korea
+
+
+#@jit(nopython=True)
+def sink (vol, avdepe, kset, conc):
+	''' calculate quantity of material settling out of the control volume; determine the change in concentration as a result of sinking'''
+	if kset > 0.0 and avdepe > 0.17:
+		# calculate concentration change due to outgoing material; snkout is expressed in mass/liter/ivl; kset is expressed as ft/ivl and avdepe as feet
+		snkout = conc * (kset / avdepe)  if kset < avdepe else conc  # calculate portion of material which settles out of the control volume during time step; snkout is expressed as mass/liter.ivl; conc is the concentration of material in the control volume
+		conc  -= snkout        # calculate remaining concentration of material in the control volume
+		snkmat = snkout * vol    # find quantity of material that sinks out; units are  mass.ft3/l.ivl in english system, and mass.m3/l.ivl in metric system
+	else:
+		snkout = 0.0
+		snkmat = 0.0
+	return conc, snkmat

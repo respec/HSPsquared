@@ -86,7 +86,7 @@ def snow(store, siminfo, uci, ts):
     return errors, ERRMSGS
 
 
-# @njit(cache=True)
+@njit(cache=True)
 def _snow_(ui, ts):
     ''' SNOW processing '''
     errors = zeros(int(ui['errlen'])).astype(int64)
