@@ -5,7 +5,7 @@ channels:
 
 dependencies:
   # Running HSP2
-  - python =3.8*
+  - python =3.8.*
   - scipy  # Scipy also installs numpy
   - pandas  # Pandas installs most scientific Python modules, such as Numpy, etc.
   - numba
@@ -14,11 +14,15 @@ dependencies:
   - dask
   - networkx  # used in HSP2tools/graph.py.
 
-  # Interactivity & Visualization
+  # Interactivity & Visualization via Jupyter Notebooks
   - jupyterlab >=3.0.12
+  - nb_conda  # Conda environment & package access extension from within Jupyter
   - ipywidgets
   # - texlive-core  # to export notebooks to PDF. https://nbconvert.readthedocs.io/en/latest/install.html#installing-tex
   - matplotlib
+
+  # HoloViz (optional), https://holoviz.org
+  - hvplot  # hvPlot installs most HoloViz libs
 
   # Dev tools (optional)
   # - python-language-server
