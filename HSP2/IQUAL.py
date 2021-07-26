@@ -75,7 +75,6 @@ def iqual(store, siminfo, uci, ts):
 		ts['IQADFX' + str(index)] = zeros(simlen)
 		ts['IQADCN' + str(index)] = zeros(simlen)
 		if 'FLAGS' in uci:
-			QSOFG = ui_flags['QSOFG']
 			# get atmos dep timeseries
 			iqadfgf = u['IQADFG' + str((index * 2) - 1)]
 			if iqadfgf > 0:
@@ -102,7 +101,7 @@ def iqual(store, siminfo, uci, ts):
 
 	return errors, ERRMSGS
 
-#@njit(cache=True)
+@njit(cache=True)
 def _iqual_(ui, ts):
 	''' Simulate washoff of quality constituents (other than solids, Heat, dox, and co2)
 	using simple relationships with solids And/or water yield'''
