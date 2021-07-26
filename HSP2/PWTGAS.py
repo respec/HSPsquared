@@ -349,4 +349,4 @@ def _pwtgas_(ui, ts):
             PODOXM[loop] = PODOXM[loop] / 2.205 * 2.471  # lbs/ac to kg/ha
             POCO2M[loop] = POCO2M[loop] / 2.205 * 2.471  # lbs/ac to kg/ha
 
-    return errorsV, ERRMSG
+    return errorsV
