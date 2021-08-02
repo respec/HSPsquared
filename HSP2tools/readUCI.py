@@ -111,6 +111,7 @@ def readUCI(uciname, hdfname):
     defaults = {}
     cat = {}
     path = {}
+    hsp_paths = {}
     datapath = os.path.join(HSP2tools.__path__[0], 'data', 'ParseTable.csv')
     for row in read_csv(datapath).itertuples():
         parse[row.OP,row.TABLE].append((row.NAME, row.TYPE, row.START, row.STOP, row.DEFAULT))
@@ -119,6 +120,14 @@ def readUCI(uciname, hdfname):
 
         cat[row.OP,row.TABLE]  = row.CAT
         path[row.OP,row.TABLE] = row.SAVE
+
+        # store paths for checking defaults:
+        hsp_path = f'/{row.OP}/{row.SAVE}/{row.CAT}'
+        if not hsp_path in hsp_paths:
+            hsp_paths[hsp_path] = {}
+            
+        hsp_paths[hsp_path][row.NAME] = defaults[row.OP, row.SAVE, row.NAME]
+
     rename = {}
     extendlen = {}
     datapath = os.path.join(HSP2tools.__path__[0], 'data', 'rename.csv')
@@ -299,7 +308,7 @@ def readUCI(uciname, hdfname):
         path = '/RCHRES/HTRCH/PARAMETERS'
         if path in keys:
             df = read_hdf(store, path)
-            if 'ELEV' not in df.columns:  # didn't read HT-BED-PARM table
+            if 'MUDDEP' not in df.columns:  # didn't read HT-BED-PARM table
                 df['MUDDEP']= 0.33
                 df['TGRND'] = 59.0
                 df['KMUD']  = 50.0
@@ -309,9 +318,27 @@ def readUCI(uciname, hdfname):
         path = '/RCHRES/HTRCH/STATES'
         if path in keys:
             df = read_hdf(store, path)
-            if 'ELEV' not in df.columns:  # didn't read HEAT-INIT table
-                df['TW']    = 60.0
-                df['AIRTMP']= 60.0
+            #if 'TW' not in df.columns:  # didn't read HEAT-INIT table
+            #    df['TW']    = 60.0
+            #    df['AIRTMP']= 60.0
+
+        # apply defaults:
+        for path in hsp_paths:
+            if path in keys:
+                df = read_hdf(store, path)
+                dct_params = hsp_paths[path]
+
+                for par_name in dct_params:
+                    if par_name == 'CFOREA':
+                        ichk = 0
+
+                    if par_name not in df.columns:   # missing value in HDF5 path
+                        def_val = dct_params[par_name]
+                        if def_val != 'None':
+                            df[par_name] = def_val
+                
+                df.to_hdf(store, path, data_columns=True)
+
     return
 
 
