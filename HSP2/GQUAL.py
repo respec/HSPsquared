@@ -767,12 +767,13 @@ def gqual(store, siminfo, uci, ts):
 				osed1 = [x / 3.121E-08 for x in osed1]
 				osed2 = [x / 3.121E-08 for x in osed2]
 				osed3 = [x / 3.121E-08 for x in osed3]
-				rsed[1] = RSED1[loop] / 3.121E-08
-				rsed[2] = RSED2[loop] / 3.121E-08
-				rsed[3] = RSED3[loop] / 3.121E-08
-				rsed[4] = RSED4[loop] / 3.121E-08
-				rsed[5] = RSED5[loop] / 3.121E-08
-				rsed[6] = RSED6[loop] / 3.121E-08
+				if qalfg[7] == 1:   # constituent is sediment-associated
+					rsed[1] = RSED1[loop] / 3.121E-08
+					rsed[2] = RSED2[loop] / 3.121E-08
+					rsed[3] = RSED3[loop] / 3.121E-08
+					rsed[4] = RSED4[loop] / 3.121E-08
+					rsed[5] = RSED5[loop] / 3.121E-08
+					rsed[6] = RSED6[loop] / 3.121E-08
 			else:
 				depscr1 = DEPSCR1[loop] / 1E-06
 				depscr2 = DEPSCR2[loop] / 1E-06
@@ -786,12 +787,13 @@ def gqual(store, siminfo, uci, ts):
 				osed1 = [x / 1E-06 for x in osed1]
 				osed2 = [x / 1E-06 for x in osed2]
 				osed3 = [x / 1E-06 for x in osed3]
-				rsed[1] = RSED1[loop] / 1E-06
-				rsed[2] = RSED2[loop] / 1E-06
-				rsed[3] = RSED3[loop] / 1E-06
-				rsed[4] = RSED4[loop] / 1E-06
-				rsed[5] = RSED5[loop] / 1E-06
-				rsed[6] = RSED6[loop] / 1E-06
+				if qalfg[7] == 1:   # constituent is sediment-associated
+					rsed[1] = RSED1[loop] / 1E-06
+					rsed[2] = RSED2[loop] / 1E-06
+					rsed[3] = RSED3[loop] / 1E-06
+					rsed[4] = RSED4[loop] / 1E-06
+					rsed[5] = RSED5[loop] / 1E-06
+					rsed[6] = RSED6[loop] / 1E-06
 			isqal1 = ISQAL1[loop]
 			isqal2 = ISQAL2[loop]
 			isqal3 = ISQAL3[loop]
