@@ -4,26 +4,29 @@ License: LGPL2
 '''
 
 from numpy import where
-from HRCHOXR import oxrx
-from HRCHNUT import nutrx
-from HRCHPLK import plank
-from HRCHPHC import phcarb
+from HSP2.utilities  import make_numba_dict
+from HSP2.OXRX import oxrx
+#from HSP2.NUTRX import nutrx
+#from HSP2.PLANK import plank
+#from HSP2.PHCARB import phcarb
 
 UUNITS = 1
 
 
 
-def RQUAL(general, ui, ts):
+def rqual(store, siminfo, uci, ts):
 	''' Simulate constituents involved in biochemical transformations'''
 
-	simlen = general['SIMLEN']
+	simlen = siminfo['steps']
 	
+	ui = make_numba_dict(uci)
+
 	BENRFG = ui['BENFGX']   # table-type benth-flag
 
 	# table type ACTIVITY
 	NUTFG = ui['NUTFG']
 	PLKFG = ui['PLKFG']
-	PHFG  = ui['PLKFG']
+	PHFG  = ui['PHFG']
 	
 	# get external time series
 	PREC  = ts['PREC']
@@ -31,7 +34,7 @@ def RQUAL(general, ui, ts):
 	AVDEP = ts['AVDEP']
 	AVVEL = ts['AVVEL']
 	TW    = ts['TW'] 
-	if LKFG = 1:
+	if LKFG == 1:
 		WIND  = ts['WIND']
 	
 	nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL = ui['advectData']
@@ -224,38 +227,38 @@ def RQUAL(general, ui, ts):
 	return
 
 
-#@jit(nopython=True)
-def benth (dox, anaer, BRCON, scrfac, depcor, conc):
-	''' simulate benthal release of constituent'''
-	# calculate benthal release of constituent; release is a step function of aerobic/anaerobic conditions, and stream velocity;
-	# scrfac, the scouring factor dependent on stream velocity and depcor, the conversion factor from mg/m2 to mg/l,
-	# both calculated in rqual; releas is expressed in mg/m2.ivl
-	releas = BRCON[0] * scrfac * depcor  if dox > anaer else BRCON[1] * scrfac * depcor
-	conc  += releas
-	return conc, releas
+# #@jit(nopython=True)
+# def benth (dox, anaer, BRCON, scrfac, depcor, conc):
+# 	''' simulate benthal release of constituent'''
+# 	# calculate benthal release of constituent; release is a step function of aerobic/anaerobic conditions, and stream velocity;
+# 	# scrfac, the scouring factor dependent on stream velocity and depcor, the conversion factor from mg/m2 to mg/l,
+# 	# both calculated in rqual; releas is expressed in mg/m2.ivl
+# 	releas = BRCON[0] * scrfac * depcor  if dox > anaer else BRCON[1] * scrfac * depcor
+# 	conc  += releas
+# 	return conc, releas
 
 
-#@jit(nopython=True)
-def decbal(TAMFG, PO4FG, decnit, decpo4, tam, no3, po4):
-	''' perform materials balance for transformation from organic to inorganic material by decay in reach water'''
-	if TAMFG:
-		tam += decnit   # add nitrogen transformed to inorganic nitrogen by biomass decomposition
-	else:
-		no3 += decnit   # add nitrogen transformed to inorganic nitrogen by biomass decomposition
-	if PO4FG:   # add phosphorus transformed to inorganic phosphorus by biomass decomposition to po4 state variable
-		po4 += decpo4
-	return tam, no3, po4
+# #@jit(nopython=True)
+# def decbal(TAMFG, PO4FG, decnit, decpo4, tam, no3, po4):
+# 	''' perform materials balance for transformation from organic to inorganic material by decay in reach water'''
+# 	if TAMFG:
+# 		tam += decnit   # add nitrogen transformed to inorganic nitrogen by biomass decomposition
+# 	else:
+# 		no3 += decnit   # add nitrogen transformed to inorganic nitrogen by biomass decomposition
+# 	if PO4FG:   # add phosphorus transformed to inorganic phosphorus by biomass decomposition to po4 state variable
+# 		po4 += decpo4
+# 	return tam, no3, po4
 
 
-#@jit(nopython=True)
-def sink (vol, avdepe, kset, conc, snkmat):
-	''' calculate quantity of material settling out of the control volume; determine the change in concentration as a result of sinking'''
-	if kset > 0.0 and avdepe > 0.17:
-		# calculate concentration change due to outgoing material; snkout is expressed in mass/liter/ivl; kset is expressed as ft/ivl and avdepe as feet
-		snkout = conc * (kset / avdepe)  if kset < avdepe else conc  # calculate portion of material which settles out of the control volume during time step; snkout is expressed as mass/liter.ivl; conc is the concentration of material in the control volume
-		conc  -= snkout        # calculate remaining concentration of material in the control volume
-		snkmat = snkout * vol    # find quantity of material that sinks out; units are  mass.ft3/l.ivl in english system, and mass.m3/l.ivl in metric system
-	else:
-		snkout = 0.0
-		snkmat = 0.0		
-	return conc, snkmat
+# #@jit(nopython=True)
+# def sink (vol, avdepe, kset, conc, snkmat):
+# 	''' calculate quantity of material settling out of the control volume; determine the change in concentration as a result of sinking'''
+# 	if kset > 0.0 and avdepe > 0.17:
+# 		# calculate concentration change due to outgoing material; snkout is expressed in mass/liter/ivl; kset is expressed as ft/ivl and avdepe as feet
+# 		snkout = conc * (kset / avdepe)  if kset < avdepe else conc  # calculate portion of material which settles out of the control volume during time step; snkout is expressed as mass/liter.ivl; conc is the concentration of material in the control volume
+# 		conc  -= snkout        # calculate remaining concentration of material in the control volume
+# 		snkmat = snkout * vol    # find quantity of material that sinks out; units are  mass.ft3/l.ivl in english system, and mass.m3/l.ivl in metric system
+# 	else:
+# 		snkout = 0.0
+# 		snkmat = 0.0		
+# 	return conc, snkmat
