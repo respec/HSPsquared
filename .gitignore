@@ -52,3 +52,6 @@ stats.dat
 .hg
 *.tmp*
 tests/_LargeFileStash
+
+# Specific files
+run.py

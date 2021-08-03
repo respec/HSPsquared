@@ -821,7 +821,7 @@ def _gqual_(ui, ts):
 			# osed1 = [x / 3.121E-08 for x in osed1]
 			# osed2 = [x / 3.121E-08 for x in osed2]
 			# osed3 = [x / 3.121E-08 for x in osed3]
-			rsed[1] = RSED1[loop] / 3.121E-08
+      rsed[1] = RSED1[loop] / 3.121E-08
 			rsed[2] = RSED2[loop] / 3.121E-08
 			rsed[3] = RSED3[loop] / 3.121E-08
 			rsed[4] = RSED4[loop] / 3.121E-08

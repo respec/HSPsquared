@@ -5,11 +5,26 @@ License: LGPL2
 
 from numpy import zeros, array
 from numba import jit
-from hrchrq import sink
+from HSP2.RQUTIL import sink, decbal
+from HSP2.utilities  import make_numba_dict
 
-def nutrx():
+ERRMSGS=('Placeholder')
+
+def nutrx(store, siminfo, uci, ts):
 	''' Determine primary inorganic nitrogen and phosphorus balances'''
-	
+
+	errors = zeros(len(ERRMSGS), dtype=int)
+
+	advectData = uci['advectData']
+	(nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = advectData
+
+	simlen = siminfo['steps']
+	delt   = siminfo['delt']
+	delt60 = siminfo['delt'] / 60
+	uunits = siminfo['units']
+
+	ui = make_numba_dict(uci)
+
 	# table-type nut-flags
 	TAMFG  = ui['NH3FG']
 	NO2FG  = ui['NO2FG']
@@ -19,9 +34,14 @@ def nutrx():
 	ADNHFG = ui['ADNHFG']
 	ADPOFG = ui['ADPOFG']
 	PHFLAG = ui['PHFLAG']
+	BENRFG = ui['BENRFG']
 	
 	# table-type nut-ad-flags
-	NUADFG = ui['NUADFG']    # dimension = 3 for  NO3, NH3, PO4
+	NUADFG = zeros(7)
+	for j in range(1, 7):
+		NUADFG[j] = ui['NUADFG(' + str(j) + ')']
+
+	#NUADFG = ui['NUADFG']    # dimension = 3 for  NO3, NH3, PO4
 
 	if (TAMFG == 0 and (AMVFG == 1 or ADNHFG == 1)) or (PO4FG == 0 and ADPOFG == 1):
 		pass
@@ -34,6 +54,7 @@ def nutrx():
 		pass
 		# ERRMSG: error - sediment associated nh4 and/or po4 is being simulated,but sediment is not being simulated in section sedtrn
 
+	uafxm = zeros((13,4))
 	if NUADFG[1] > 0:
 		uafxm[:,1] = ui['NUAFXM1']
 	if NUADFG[2] > 0:
@@ -42,7 +63,7 @@ def nutrx():
 		uafxm[:,3] = ui['NUAFXM3']		
 	
 	# convert units to internal
-	if UUNITS == 1:     # convert from lb/ac.day to mg.ft3/l.ft2.ivl
+	if uunits == 1:     # convert from lb/ac.day to mg.ft3/l.ft2.ivl
 		uafxm[:,1]  *= 0.3677 * delt60 / 24.0		
 		uafxm[:,2]  *= 0.3677 * delt60 / 24.0
 		uafxm[:,3]  *= 0.3677 * delt60 / 24.0		
@@ -67,7 +88,7 @@ def nutrx():
 	if BENRFG == 1 or PLKFG == 1:    # benthal release parms - table-type nut-benparm
 		brnit1 = ui['BRNIT1']  * delt60    #  convert units from 1/hr to 1/ivl
 		brnit2 = ui['BRNIT2']  * delt60    #  convert units from 1/hr to 1/ivl
-		brpo41 = ui[' BRPO41'] * delt60    #  convert units from 1/hr to 1/ivl
+		brpo41 = ui['BRPO41'] * delt60    #  convert units from 1/hr to 1/ivl
 
 	# nitrification parameters - table-type nut-nitdenit
 	ktam20 = ui['KTAM20'] * delt60     # convert units from 1/hr to 1/ivl
@@ -84,258 +105,264 @@ def nutrx():
 	if TAMFG == 1 and PHFLAG == 3:     # monthly ph values table mon-phval, not in RCHRES.SEQ
 		phvalm = ui['PHVALM']
 
+	nupm3 = zeros(7)
+	nuadpm = zeros(7)
+	rsnh4 = zeros(13)
+	rspo4 = zeros(13)
+
 	if (TAMFG == 1 and ADNHFG == 1) or (PO4FG == 1 and ADPOFG == 1):
 		# bed sediment concentrations of nh4 and po4 - table nut-bedconc, not in RCHRES.SEQ
 		nupm3[:] = ui['NUPM3']  /1.0E6   # convert concentrations from mg/kg to internal units of mg/mg
 		
 		# initialize adsorbed nutrient mass storages in bed
-		rsnh4(8) = 0.0
-		rspo4(8) = 0.0
-        """
+		rsnh4[8] = 0.0
+		rspo4[8] = 0.0
+		"""
 		do 70 i= 5,7
 			rsnh4(i) = bnh4(i-4) * rsed(i)
 			rspo4(i) = bpo4(i-4) * rsed(i)
 			rsnh4(8) = rsnh4(8)  + rsnh4(i)
 			rspo4(8) = rspo4(8)  + rspo4(i)
-            """
+		"""
             
 		# adsorption parameters - table-type nut-adsparm
 		nuadpm[:] = ui['NUADPM']  # dimension 6; NH4 (sand, silt, cla) and PO4 (sand, silt, clay)
 
 	# initial conditions - table-type nut-dinit
-	dnust(1) = ui['NO3'];   dnust2(1) = dnust(1) * vol
-	dnust(2) = ui['TAM'];	dnust2(2) = dnust(2) * vol
-	dnust(3) = ui['NO2'];	dnust2(3) = dnust(3) * vol
-	dnust(4) = ui['PO4'];	dnust2(4) = dnust(4) * vol
+	dnust = zeros(7); dnust2 = zeros(7)
+	dnust[1] = ui['NO3'];   dnust2[1] *= vol
+	dnust[2] = ui['TAM'];	dnust2[2] *= vol
+	dnust[3] = ui['NO2'];	dnust2[3] *= vol
+	dnust[4] = ui['PO4'];	dnust2[4] *= vol
 	
-	IF TAMFG == 1:  # do the tam-associated initial values (nh4 nh3 phval)
+	if TAMFG == 1:  # do the tam-associated initial values (nh4 nh3 phval)
 		phval = ui['PHVAL']
 		# assume nh4 and nh3 are 0.99 x tam and 0.01 x tam respectively
-		dnust(5) = 0.99 * dnust(2);   dnust2(5) = dnust(5) * vol
-		dnust(6) = 0.01 * dnust(2);   dnust2(6) = dnust(6) * vol
+		dnust[5] = 0.99 * dnust[2];   dnust2[5] = dnust[5] * vol
+		dnust[6] = 0.01 * dnust[2];   dnust2[6] = dnust[6] * vol
 
-	if (TAMFG == 1 and ADNHFG == 1) or (PO4FG == 1 AND ADPOFG == 1):
+	if (TAMFG == 1 and ADNHFG == 1) or (PO4FG == 1 and ADPOFG == 1):
 		# suspended sediment concentrations of nh4 and po4 - table nut-adsinit
 		# (input concentrations are mg/kg - these are converted to mg/mg for
 		# internal computations)
-		snh4[:] = ui['snh4'] / 1.0e6  # suspended nh4 (sand, silt, clay) 
-		spo4[:] = ui['spo4'] / 1.0e6  # suspended po4 (sand, silt, clay) 
+		snh4[:] = ui['SNH4'] / 1.0e6  # suspended nh4 (sand, silt, clay) 
+		spo4[:] = ui['SPO4'] / 1.0e6  # suspended po4 (sand, silt, clay) 
 		# initialize adsorbed nutrient mass storages in suspension
-		rsnh4(4) = 0.0
-		rspo4(4) = 0.0
-		do 110 i= 1,3
-			rsnh4(i) = snh4(i) * rsed(i)
-			rspo4(i) = spo4(i) * rsed(i)
-			rsnh4(4) = rsnh4(4) + rsnh4(i)
-			rspo4(4) = rspo4(4) + rspo4(i)
+		rsnh4[4] = 0.0
+		rspo4[4] = 0.0
+		for i in range(1, 4):
+			rsnh4[i] = snh4[i] * rsed[i]
+			rspo4[i] = spo4[i] * rsed[i]
+			rsnh4[4] += rsnh4[i]
+			rspo4[4] += rspo4[i]
 		# initialize totals on sand, silt, clay, and grand total
-		rsnh4(9)  = rsnh4(1) + rsnh4(5)
-		rsnh4(10) = rsnh4(2) + rsnh4(6)
-		rsnh4(11) = rsnh4(3) + rsnh4(7)
-		rsnh4(12) = rsnh4(4) + rsnh4(8)
-		rspo4(9)  = rspo4(1) + rspo4(5)
-		rspo4(10) = rspo4(2) + rspo4(6)
-		rspo4(11) = rspo4(3) + rspo4(7)
-		rspo4(12) = rspo4(4) + rspo4(8)
+		rsnh[9]  = rsnh[1] + rsnh[5]
+		rsnh[10] = rsnh[2] + rsnh[6]
+		rsnh[11] = rsnh[3] + rsnh[7]
+		rsnh[12] = rsnh[4] + rsnh[8]
+		rspo4[9]  = rspo4[1] + rspo4[5]
+		rspo4[10] = rspo4[2] + rspo4[6]
+		rspo4[11] = rspo4[3] + rspo4[7]
+		rspo4[12] = rspo4[4] + rspo4[8]
 
 	# initialize total storages of nutrients in reach
-	nust(1,1) = dnust2(1)
-	nust(2,1) = dnust2(2)
-	if ADNHFG == 1:
-		nust(2,1) = nust(2,1) + rsnh4(4)
+	nust = zeros((5,2))
 
-	nust(3,1) = dnust2(3)
-	nust(4,1) = dnust2(4)
+	nust[1,1] = dnust2[1]
+	nust[2,1] = dnust2[2]
+	if ADNHFG == 1:
+		nust[2,1] += rsnh[4]
+
+	nust[3,1] = dnust2[3]
+	nust[4,1] = dnust2[4]
 	if ADPOFG == 1:
-		nust(4,1) = nust(4,1) + rspo4(4)
+		nust[4,1] += rspo4[4]
 
 	# initialize nutrient flux if nutrient is not simulated
+	otam = ono2 = opo4 = zeros(nexits)
+	rosnh4 = rospo4 = zeros(5)
+	dspo4 = dsnh4 = zeros(5)
+	adpo4 = adnh4 = zeros(5)
+	ospo4 = osnh4 = zeros((nexits, 5))
+	nucf1 = zeros((5,2))
+	nucf2 = nucf3 = nucf8 = tnucf2 = zeros((5,3))
+	nucf4 = zeros((8,2))
+	nucf5 = zeros((9,2))
+	nucf6 = zeros((2,2))
+	nucf7 = zeros((7,2))
+
 	if TAMFG == 0:
-		nucf1(2,1) = 0.0
+		nucf1[2,1] = 0.0
 		otam[:] = 0.0   # dimension nexits
 
 	if ADNHFG == 0:
-		do 130 i = 1,4
-			rosnh4(i) = 0.0
-			dsnh4(i)  = 0.0
-			adnh4(i)  = 0.0
-		do 140 n = 1, nexits
-			osnh4(n,1) = 0.0
-			osnh4(n,2) = 0.0
-			osnh4(n,3) = 0.0
-			osnh4(n,4) = 0.0
+		rosnh4[:]  = 0.0
+		dsnh4[:]   = 0.0
+		adnh4[:]   = 0.0
+		osnh4[:,:] = 0.0
 
 	if NO2FG == 0:
-		nucf1(3,1) = 0.0
+		nucf1[3,1] = 0.0
 		ono2[:]    = 0.0
 
 	if PO4FG == 0:
-		nucf1(4,1) = 0.0
+		nucf1[4,1] = 0.0
 		opo4[:]    = 0.0
 
 	if ADPOFG == 0:
-		do 170 i = 1,4
-			rospo4(i) = 0.0
-			dspo4(i)  = 0.0
-			adpo4(i)  = 0.0
-		do 180 n = 1,nexits
-			ospo4(n,1) = 0.0
-			ospo4(n,2) = 0.0
-			ospo4(n,3) = 0.0
-			ospo4(n,4) = 0.0
+		rospo4[:]  = 0.0
+		dspo4[:]   = 0.0
+		adpo4[:]   = 0.0
+		ospo4[:,:] = 0.0
 
 	# initialize nutrient process fluxes (including ads/des and dep/scour)
-	do 190 i= 1, 6
-		nucf4(i,1) = 0.0
-		nucf5(i,1) = 0.0
-		nucf7(i,1) = 0.0
-	# 190  continue
-	nucf4(7,1) = 0.0
-	nucf5(7,1) = 0.0
-	nucf5(8,1) = 0.0
-	nucf6(1,1) = 0.0
-	do 210 i= 1, 4
-		do 200 j = 1,2
-			nucf3(i,j,1) = 0.0
-			nucf8(i,j,1) = 0.0
-		# 200    continue
-	# 210  continue
-
-
-
+	nucf4[1:7,1] = 0.0
+	nucf5[1:7,1] = 0.0
+	nucf7[1:7,1] = 0.0
 	
+	nucf4[7,1] = 0.0
+	nucf5[7,1] = 0.0
+	nucf5[8,1] = 0.0
+	nucf6[1,1] = 0.0
+
+	nucf3[1:5,1:3] = 0.0
+	nucf8[1:5,1:3] = 0.0
+
+	return errors, ERRMSGS
+
 	#@jit(nopython=True)	
 	def nutrx(dox, bod, tw, ino3, inh3, ino2, ipo4, nuafx, nuacn, prec, sarea, advData):
 		''' Determine primary inorganic nitrogen and phosphorus balances'''
 		
 		#compute atmospheric deposition influx
-		do 10 i= 1, 3
+		for i in range(1,4):
 			n= 2*(i-1)+ 1
 			# dry deposition
-			if (nuadfg(n) .le. -1) then
+			if nuadfg[n] <= -1:
 				nuadfx = ts['nuadfx']
-				nuaddr(i) = sarea*nuadfx
-			else if (nuadfg(n) .ge. 1) then
-				nuaddr(i) = sarea*dayval(nuafxm(mon,i),nuafxm(nxtmon,i),day, ndays)
-			else
-				nuaddr(i) = 0.0
+				nuaddr[i] = sarea*nuadfx
+			elif nuadfg[n] >= 1:
+				nuaddr[i] = sarea*dayval(nuafxm[mon,i],nuafxm[nxtmon,i],day, ndays)
+			else:
+				nuaddr[i] = 0.0
 			# wet deposition
-			if (nuadfg(n+1) .le. -1) then
+			if nuadfg[n+1] <= -1:
 				nuadcn = ts['nuadcn']
-				nuadwt(i)= prec*sarea*nuadcn
-			else if (nuadfg(n+1) .ge. 1) then
-				nuadwt(i) = prec*sarea*dayval(nuacnm(mon,i),nuacnm(nxtmon,i),day,ndays)
-			else
-				nuadwt(i) = 0.0
-			nuadep(i)= nuaddr(i)+ nuadwt(i)
-		# 10   continue
+				nuadwt[n]= prec*sarea*nuadcn
+			elif (nuadfg[n+1] >= 1):
+				nuadwt[i] = prec*sarea*dayval(nuacnm[mon,i],nuacnm[nxtmon,i],day,ndays)
+			else:
+				nuadwt[i] = 0.0
+			nuadep[i]= nuaddr[i]+ nuadwt[i]
 
 		# get inflowing material from pad
 		if ino3fp > 0:
-			ino3 = ui['ino3']  # else zero if missing
-		tnuif(1) = ino3
-		inno3 = ino3 + nuadep(1)
+			ino3 = ui['INO3']  # else zero if missing
+		tnuif[1] = ino3
+		inno3 = ino3 + nuadep[1]
 
 		# advect nitrate
 		no3, rono3,ono3 = advect(inno3, no3,rono3, ono3)
 
-		nucf1(1) = rono3
+		nucf1[1] = rono3
 		if nexits > 1:
 			tnucf2[:,1] = ono3[:]   # nexits
 
 		if TAMFG:
 			if itamfp > 0:
-				itam= ui['itam']  # or zero if missing
-			intam = itam + nuadep(2)
+				itam= ui['ITAM']  # or zero if missing
+			intam = itam + nuadep[2]
 			# advect total ammonia
 			tam, rotam, otam = advect(intam, tam, rotam,otam)
 
 		if NO2FG:
 			if ino2fp > 0:
-				ino2 = ui['ino2']
-			tnuif(3) = ino2
+				ino2 = ui['INO2']
+			tnuif[3] = ino2
 			# advect nitrite
 			no2, rono2, ono2 =  advect(ino2, no2, rono2,ono2)
-			tnucf1(3) = rono2
+			tnucf1[3] = rono2
 			if nexits > 1:
 				tnucf2[:,3] = ono2[:]   # nexits
 				
 		if PO4FG:
 			if ipo4fp > 0:
-				ipo4 = ui['ipo4']  # or zero if missing
-			inpo4 = ipo4 + nuadep(3)
+				ipo4 = ui['IPO4']  # or zero if missing
+			inpo4 = ipo4 + nuadep[3]
 			# advect ortho-phosphorus
 			po4, ropo4, opo4 = advect(inpo4,po4,ropo4,opo4)
 
 		if ADPOFG:       # advect adsorbed phosphate
 			# zero the accumulators
-			ispo4(4)  = 0.0
-			dspo4(4)  = 0.0
-			rospo4(4) = 0.0
+			ispo4[4]  = 0.0
+			dspo4[4]  = 0.0
+			rospo4[4] = 0.0
 			if nexits > 1:
 				ospo4[:,4] = 0.0  # nexits
 
 			# repeat for each sediment fraction
-			do 20 j= 1,3       # get data on sediment-associated phosphate
-				fpt = ispofp(j)
+			for j in range(1, 4):       # get data on sediment-associated phosphate
+				fpt = ispofp[j]
 				if fpt:
-					ispo4(j) = ui['ispo4']   # else zero if missing
+					ispo4[j] = ui['ISPO4']   # else zero if missing
 
-				nuecnt(3),spo4(j),dspo4(j), rospo4(j),ospo4(1,j)) = advnut(ispo4(j),rsed(j),rsed(j +3),depscr(j),
-				rosed(j),osed(1,j),nexits,rchno,messu,msgfl,datim,nutid(2),j,rspo4(j),rspo4(j + 4),bpo4(j),
-				nuecnt(3),spo4(j),dspo4(j), rospo4(j),ospo4(1,j)) 
+				nuecnt[3],spo4[j],dspo4[j], rospo4[j],ospo4[1,j] = \
+					advnut(ispo4[j],rsed[j],rsed[j +3],depscr[j],rosed[j],osed[1,j],nexits, \
+					rchno,messu,msgfl,datim,nutid[2],j,rspo4[j],rspo4[j + 4],bpo4[j], \
+					nuecnt[3],spo4[j],dspo4[j], rospo4[j],ospo4[1,j]) 
 
-				ispo4(4)  = ispo4(4)  + ispo4(j)
-				dspo4(4)  = dspo4(4)  + dspo4(j)
-				rospo4(4) = rospo4(4) + rospo4(j)
+				ispo4[4]  += ispo4[j]
+				dspo4[4]  += dspo4[j]
+				rospo4[4] += rospo4[j]
 				if nexits > 1:
-					ospo4[:,4] = ospo4[:,4] + ospo4[:,j]   # nexits
-			tnuif(4)  = ipo4  + ispo4(4)
-			tnucf1(4) = ropo4 + rospo4(4)
+					ospo4[:,4] += ospo4[:,j]   # nexits
+			tnuif[4]  = ipo4  + ispo4[4]
+			tnucf1[4] = ropo4 + rospo4[4]
 			if nexits > 1:
 				tnucf2[:,4] = opo4[:]+ ospo4[:,4]  # nexits
 		else:            # no adsorbed fraction
-			tnuif(4)  = ipo4
-			tnucf1(4) = ropo4
+			tnuif[4]  = ipo4
+			tnucf1[4] = ropo4
 			if nexits > 1:
 				tnucf2[:,4] = opo4[:]
 
 		if TAMFG and ADNHFG:    # advect adsorbed ammonium
 			# zero the accumulators
-			isnh4(4)  = 0.0
-			dsnh4(4)  = 0.0
-			rosnh4(4) = 0.0
+			isnh4[4]  = 0.0
+			dsnh4[4]  = 0.0
+			rosnh4[4] = 0.0
 			if nexits > 1:
 				osnh4[:,4] = 0.0   # nexits
 
 			# repeat for each sediment fraction
-			do 30 j= 1,3
+			for j in range(1, 4):
 				# get data on sediment-associated ammonium
-				fpt = isnhfp(j)
-				isnh4(j)= ui['osnh4']  # or zero if not there
+				fpt = isnhfp[j]
+				isnh4[j]= ui['OSNH4']  # or zero if not there
 
-				nuecnt(3),snh4(j),dsnh4(j),rosnh4(j),osnh4(1,j) advnut (isnh4(j),rsed(j),rsed(j +3),depscr(j),
-				rosed(j),osed(1,j),nexits,rchno,messu,msgfl,datim, nutid(1),j,rsnh4(j),rsnh4(j + 4),bnh4(j),
-				nuecnt(3),snh4(j),dsnh4(j),rosnh4(j),osnh4(1,j))
+				nuecnt[3],snh4[j],dsnh4[j],rosnh4[j],osnh4[1,j] = \
+					advnut (isnh4[j],rsed[j],rsed[j + 3],depscr[j],rosed[j],osed[1,j],nexits, \
+						    rchno,messu,msgfl,datim, nutid[1],j,rsnh[j],rsnh4[j + 4],bnh4[j], \
+							nuecnt[3],snh4[j],dsnh4[j],rosnh4[j],osnh4[1,j])
 
-				isnh4(4)  = isnh4(4)  + isnh4(j)
-				dsnh4(4)  = dsnh4(4)  + dsnh4(j)
-				rosnh4(4) = rosnh4(4) + rosnh4(j)
+				isnh4[4]  = isnh4[4]  + isnh4[j]
+				dsnh4[4]  = dsnh4[4]  + dsnh4[j]
+				rosnh4[4] = rosnh4[4] + rosnh4[j]
 				if nexits > 1:
 					osnh4[:,4] = osnh4[:,4] + osnh4[:,j]   # nexits
-			tnuif(2)  = itam + isnh4(4)
-			tnucf1(2) = rotam + rosnh4(4)
+			tnuif[2]  = itam + isnh4[4]
+			tnucf1[2] = rotam + rosnh4[4]
 			if nexits > 1:
 				tnucf2[:,2] = otam[:] + osnh4[:,4]  # nexits
 		else:                 # no adsorbed fraction
-			tnuif(2)  = itam
-			tnucf1(2) = rotam
+			tnuif[2]  = itam
+			tnucf1[2] = rotam
 			if nexits > 1:
-					tnucf2[:,2] = otam(n)  # nexits
+					tnucf2[:,2] = otam[:]  # nexits
 
 		if TAMFG:     # calculate ammonia ionization in water column
 			# get ph values
-			ph = ??? # last computed value, time series, monthly, constant; phflag
+			#TMR ph = ??? # last computed value, time series, monthly, constant; phflag
 			# compute ammonia ionization
 			nh3, nh4 = ammion(tw, hval, tam, nh3, nh4)
 
@@ -343,12 +370,12 @@ def nutrx():
 			if BENRFG:
 				# simulate benthal release of inorganic nitrogen and
 				# ortho-phosphorus; and compute associated fluxes
-				IF TAMFG:
-					tam, bentam = benth (dox,anaer,brtam,scrfac,depcor,tam,bentam)
+				if TAMFG:
+					tam, bentam = benth(dox,anaer,brtam,scrfac,depcor,tam,bentam)
 					bnrtam = bentam * voL
 
 				if PO4FG:
-					po4, benpo4 = benth (dox,anaer,brpo4,scrfac,depcor, po4, benpo4)
+					po4, benpo4 = benth(dox,anaer,brpo4,scrfac,depcor, po4, benpo4)
 					bnrpo4 = benpo4 * vol
 
 			if TAMFG:
@@ -362,8 +389,8 @@ def nutrx():
 
 				# calculate amount of nitrification; nitrification does not
 				# take place if the do concentration is less than 2.0 mg/l
-				tam,no2,no3,dox, dodemd,tamnit,no2ntc,no3nit = nitrif (ktam20,tcnit,tw,no2fg,kno220,
-				tam,no2,no3,dox,dodemd,tamnit,no2ntc,no3nit)
+				tam,no2,no3,dox, dodemd,tamnit,no2ntc,no3nit = \
+					nitrif(ktam20,tcnit,tw,no2fg,kno220,tam,no2,no3,dox,dodemd,tamnit,no2ntc,no3nit)
 
 				# compute nitrification fluxes
 				nitdox = -dodemd * vol
@@ -392,12 +419,12 @@ def nutrx():
 				bodpo4 = decpo4 * vol
 
 			if PO4FG and SEDFG and ADPOFG:   # compute adsorption/desorption of phosphate
-				po4, spo4(1), dumxxx, adpo4(1) = addsnu(vols rsed(1), adpopm(1), po4, spo4(1), dumxxx, adpo4(1))
+				po4, spo4[1], dumxxx, adpo4[1] = addsnu(vol, rsed[1], adpopm[1], po4, spo4[1], dumxxx, adpo4[1])
 
 			if TAMFG and SEDFG and ADNHFG:  # compute adsorption/desorption of ammonium
 				# first compute ammonia ionization
 				nh3, nh4 = ammion(tw, phval, tam, nh3, nh4)
-				nh4, snh4(1), tam, adnh4(1) = addsnu(vol, rsed(1), adnhpm(1), nh4, snh4(1), tam, adnh4(1))
+				nh4, snh4[1], tam, adnh4[1] = addsnu(vol, rsed[1], adnhpm[1], nh4, snh4[1], tam, adnh4[1])
 				# then re-compute ammonia ionization
 				nh3, nh4 = ammion (tw, phval, tam, nh3, nh4)
 		else:
@@ -417,9 +444,9 @@ def nutrx():
 			bodno3 = 0.0
 			bnrpo4 = 0.0
 			bodpo4 = 0.0
-			do 80 k= 1,4
-				adnh4(k) = 0.0
-				adpo4(k) = 0.0
+			for k in range(1, 5):
+				adnh4[k] = 0.0
+				adpo4[k] = 0.0
 			# 80     continue
 		
 		totdox = readox + boddox + bendox + nitdox
@@ -432,43 +459,43 @@ def nutrx():
 			totpm1 = 0.0
 			totpm2 = 0.0
 			totpm3 = 0.0
-			do 90 j= 1,3
-				rspo4(j)     = spo4(j) * rsed(j)         # compute mass of phosphate adsorbed to each suspended fraction
-				rspo4(j + 4) = bpo4(j) * rsed(j + 3)     # compute mass of phosphate adsorbed to each bed fraction
-				rspo4(j + 8) = rspo4(j) + rspo4(j + 4)   # compute total mass of phosphate on each sediment fraction
+			for j in range(1, 4):
+				rspo4[j]     = spo4[j] * rsed[j]         # compute mass of phosphate adsorbed to each suspended fraction
+				rspo4[j + 4] = bpo4[j] * rsed[j + 3]     # compute mass of phosphate adsorbed to each bed fraction
+				rspo4[j + 8] = rspo4[j] + rspo4[j + 4]   # compute total mass of phosphate on each sediment fraction
 				
-				totpm1 = totpm1 + rspo4(j)
-				totpm2 = totpm2 + rspo4(j + 4)
-				totpm3 = totpm3 + rspo4(j + 8)
+				totpm1 = totpm1 + rspo4[j]
+				totpm2 = totpm2 + rspo4[j + 4]
+				totpm3 = totpm3 + rspo4[j + 8]
 
-			rspo4(4)  = totpm1	 # compute total suspended phosphate
-			rspo4(8)  = totpm2   # compute total bed phosphate
-			rspo4(12) = totpm3   # compute total sediment-associated phosphate
+			rspo4[4]  = totpm1	 # compute total suspended phosphate
+			rspo4[8]  = totpm2   # compute total bed phosphate
+			rspo4[12] = totpm3   # compute total sediment-associated phosphate
 
 		if TAMFG and SEDFG and ADNHFG:    # find total amount of ammonium on various forms of sediment
 			totnm1 = 0.0
 			totnm2 = 0.0
 			totnm3 = 0.0
-			do 100 j= 1,3
-				rsnh4(j)     = snh4(j)  * rsed(j)       # compute mass of ammonium adsorbed to each suspended fraction
-				rsnh4(j + 4) = bnh4(j)  * rsed(j + 3)   # compute mass of ammonium adsorbed to each bed fraction
-				rsnh4(j + 8) = rsnh4(j) + rsnh4(j + 4)  # compute total mass of ammonium on each sediment fraction
+			for j in range(1, 4):
+				rsnh4[j]     = snh4[j]  * rsed[j]       # compute mass of ammonium adsorbed to each suspended fraction
+				rsnh4[j + 4] = bnh4[j]  * rsed[j + 3]   # compute mass of ammonium adsorbed to each bed fraction
+				rsnh4[j + 8] = rsnh4[j] + rsnh4[j + 4]  # compute total mass of ammonium on each sediment fraction
 				
-				totnm1 = totnm1 + rsnh4(j)
-				totnm2 = totnm2 + rsnh4(j + 4)
-				totnm3 = totnm3 + rsnh4(j + 8)
-			rsnh4(4)  = totnm1      # compute total suspended ammonium
-			rsnh4(8)  = totnm2		# compute total bed ammonium
-			rsnh4(12) = totnm3      # compute total sediment-associated ammonium
+				totnm1 += rsnh4[j]
+				totnm2 += rsnh4[j + 4]
+				totnm3 += rsnh4[j + 8]
+			rsnh4[4]  = totnm1      # compute total suspended ammonium
+			rsnh4[8]  = totnm2		# compute total bed ammonium
+			rsnh4[12] = totnm3      # compute total sediment-associated ammonium
 
-		return (dox, bod, orn, orp, orc, torn, torp, torc, potbod, phyto, zoo, benal,
-		 phycla, balcla, rophyto, rozoo, robenal, rophycla, robalcla, ophyto, ozoo, 
+		return (dox, bod, orn, orp, orc, torn, torp, torc, potbod, phyto, zoo, benal, \
+		 phycla, balcla, rophyto, rozoo, robenal, rophycla, robalcla, ophyto, ozoo, \
 		 obenal, ophycla, obalcla, binv, pladfx, pladcn)
 	return nutrx
 
 
 
-def addsnu(vol, rsed, adpm, dnut, snut, dnutxx, adnut)
+def addsnu(vol, rsed, adpm, dnut, snut, dnutxx, adnut):
 	''' simulate exchange of nutrient (phosphate or ammonium) between the
 	dissolved state and adsorption on suspended sediment- 3 adsorption
 	sites are considered: 1- suspended sand  2- susp. silt
@@ -481,45 +508,41 @@ def addsnu(vol, rsed, adpm, dnut, snut, dnutxx, adnut)
 		num    = vol * dnut
 		denom  = vol
 
-		do 20 j=1,3
-			if rsed(j) > 0.0:   # accumulate terms for numerator and denominator in dnut equation
-				num   = num   + snut(j) * rsed(j)
-				denom = denom + adpm(j) * rsed(j)
-		# 20     continue
+		for j in range(1, 4):
+			if rsed[j] > 0.0:   # accumulate terms for numerator and denominator in dnut equation
+				num   += snut[j] * rsed[j]
+				denom += adpm[j] * rsed[j]
 
 		dnut  = num / denom 		        # calculate new dissolved concentration-units are mg/l
 		dnutxx= dnutxx - (dnutin - dnut)  	# also calculate new tam conc if doing nh4 adsorption
 
 		# calculate new conc on each sed class and the corresponding adsorption/desorption flux
-		adnut(4) = 0.0
+		adnut[4] = 0.0
 
-		do 30 j=1,3
-			if rsed(j) > 0.0:    # this sediment class is present-calculate data pertaining to it
-				temp = dnut * adpm(j)  # new concentration
+		for j in range(1, 4):
+			if rsed[j] > 0.0:    # this sediment class is present-calculate data pertaining to it
+				temp = dnut * adpm[j]  # new concentration
 
 				# quantity of material transferred
-				# adnut(j)= (temp - snut(j))*rsed(j)
-				snut(j) = temp
+				# adnut[j]= (temp - snut[j])*rsed[j]
+				snut[j] = temp
 
 				# accumulate total adsorption/desorption flux above bed
-				adnut(4) = adnut(4) + adnut(j)
+				adnut[4] += adnut[j]
 
 			else:    # this sediment class is absent
-				adnut(j) = 0.0
-				# snut(j) is unchanged-"undefined"
-		# 30     continue
+				adnut[j] = 0.0
+				# snut[j] is unchanged-"undefined"
+
 	else:   # no water, no adsorption/desorption
-		do 40 j= 1, 7
-			adnut(j) = 0.0
-			# snut(1 thru 3) and dnut should already have been set to undefined values
-		# 40     continue
+		adnut[1:8] = 0.0
+		# snut(1 thru 3) and dnut should already have been set to undefined values
 
 	return dnut, snut, dnutxx, adnut
 
 
-
 def  advnut(isnut,rsed,bsed,depscr,rosed,osed,nexits, rchno,messu,msgfl,datim,
-	nutid,j,rsnuts,rbnuts,bnut, ecnt,snut,dsnut,rosnut,osnut)
+			nutid,j,rsnuts,rbnuts,bnut, ecnt,snut,dsnut,rosnut,osnut):
 
 	''' simulate the advective processes, including deposition and scour for the
 	inorganic nutrient adsorbed to one sediment size fraction'''
@@ -546,6 +569,7 @@ def  advnut(isnut,rsed,bsed,depscr,rosed,osed,nexits, rchno,messu,msgfl,datim,
 			# the total mass over a printout period; note that 1.0e-3 mg*ft3/l is 0.028 mg
 			# (a very, very small mass)
 			if abs(isnut) > 1.0e-3 or abs(rsnuts) > 1.0e-3:
+				pass
 				# errmsg: error-under these conditions these values should be zero
 		else:		# there was some suspended sediment during the interval
 			# calculate conc on suspended sed
@@ -559,7 +583,7 @@ def  advnut(isnut,rsed,bsed,depscr,rosed,osed,nexits, rchno,messu,msgfl,datim,
 				snut = -1.0e30
 
 		# calculate conditions on the bed
-		if bsed = 0.0:
+		if bsed == 0.0:
 			# no bed sediments at end of interval
 			if abs(dsnut) > 0.0 or abs(rbnuts) > 0.0:
 				pass # errsg: error-under this condition these values should be zero
@@ -738,7 +762,7 @@ def nh3vol(expnvg, expnvl, korea, wind, delt60, delts, avdepm, twkelv, tw, phval
 		# compute bulk liquid film gas transfer coefficient for ammonia using
 		# equation 183 of mccutcheon; 1.8789 equals the ratio of oxygen
 		# molecule molecular weight to ammonia molecular weight
-		nh3k l= dokl * 1.8789**(expnvl / 2.0)
+		nh3kl = dokl * 1.8789**(expnvl / 2.0)
 
 		# convert wind speed from meters/ivl (wind) to meters/sec (windsp)
 		windsp = wind / delts
@@ -783,7 +807,7 @@ def nh3vol(expnvg, expnvl, korea, wind, delt60, delts, avdepm, twkelv, tw, phval
 	return tam, nh3vlt
 
 
-def nitrif(ktam20, tcnit, tw, no2fg, kno220, tam, no2, no3, dox, dodemd, tamnit, no2ntc, no3nit)
+def nitrif(ktam20, tcnit, tw, no2fg, kno220, tam, no2, no3, dox, dodemd, tamnit, no2ntc, no3nit):
 	''' calculate amount of nitrification; nitrification does not take place if the do concentration is less than 2.0 mg/l'''
 	
 	if dox >= 2.0:

@@ -107,6 +107,7 @@ def main(hdfname, saveall=False, jupyterlab=True):
                             ui['PARAMETERS']['LEN'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LEN']
                             ui['PARAMETERS']['DELTH'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['DELTH']
                         if flags['OXRX']:
+                            ui['PARAMETERS']['LKFG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LKFG']
                             ui['PARAMETERS']['CFOREA'] = uci[(operation, 'OXRX', segment)]['PARAMETERS']['CFOREA']
                         if flags['SEDTRN']:
                             ui['PARAMETERS']['SSED1'] = uci[(operation, 'SEDTRN', segment)]['STATES']['SSED1']
@@ -117,6 +118,23 @@ def main(hdfname, saveall=False, jupyterlab=True):
                         elif flags['PLANK']:
                             if 'CFSAEX' in uci[(operation, 'PLANK', segment)]['PARAMETERS']:
                                 ui['PARAMETERS']['CFSAEX'] = uci[(operation, 'PLANK', segment)]['PARAMETERS']['CFSAEX']
+                    
+                    if activity in ['OXRX','NUTRX','PLANK']:
+                        ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
+                        if flags['HYDR']:
+                            ui['PARAMETERS']['LKFG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LKFG']
+                        ui['FLAGS']['BENRFG'] = uci[(operation, 'RQUAL', segment)]['FLAGS']['BENRFG']
+
+                        if activity == 'PLANK':
+                            ui['PARAMETERS']['HTFG'] = flags['HTRCH']
+                            ui['FLAGS']['BPCNTC'] = uci[(operation, 'NUTRX', segment)]['PARAMETERS']['BPCNTC']
+                            ui['FLAGS']['CVBO'] = uci[(operation, 'NUTRX', segment)]['PARAMETERS']['CVBO']
+                            ui['FLAGS']['CVBPC'] = uci[(operation, 'NUTRX', segment)]['PARAMETERS']['CVBPC']
+                            ui['FLAGS']['NH3FG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['NH3FG']
+                            ui['FLAGS']['PO4FG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['PO4FG']
+
+                    if activity == 'RQUAL':
+                        pass
 
                 ############ calls activity function like snow() ##############
                 errors, errmessages = function(store, siminfo, ui, ts)
@@ -163,6 +181,8 @@ def get_uci(store):
     ddmasslinks = defaultdict(list)
     ddext_sources = defaultdict(list)
     siminfo = {}
+    opseq = 0
+
     for path in store.keys():   # finds ALL data sets into HDF5 file
         op, module, *other = path[1:].split(sep='/', maxsplit=3)
         s = '_'.join(other)
@@ -309,15 +329,15 @@ def get_flows(store, ts, flags, uci, segment, ddlinks, ddmasslinks, steps, msg):
                 if tmemn not in {'IVOL', 'ICON', 'IHEAT', 'ISED', 'ISED1', 'ISED2', 'ISED3', 'IDQAL', 'ISQAL1', 'ISQAL2', 'ISQAL3'}:
                     continue
                 if (sgrpn == 'OFLOW' and smemn == 'OVOL') or (sgrpn == 'ROFLOW' and smemn == 'ROVOL'):
-                     sgrpn = 'HYDR'
+                    sgrpn = 'HYDR'
                 if (sgrpn == 'OFLOW' and smemn == 'OHEAT') or (sgrpn == 'ROFLOW' and smemn == 'ROHEAT'):
-                     sgrpn = 'HTRCH'
+                    sgrpn = 'HTRCH'
                 if (sgrpn == 'OFLOW' and smemn == 'OSED') or (sgrpn == 'ROFLOW' and smemn == 'ROSED'):
-                     sgrpn = 'SEDTRN'
+                    sgrpn = 'SEDTRN'
                 if (sgrpn == 'OFLOW' and smemn == 'ODQAL') or (sgrpn == 'ROFLOW' and smemn == 'RODQAL'):
-                     sgrpn = 'GQUAL'
+                    sgrpn = 'GQUAL'
                 if (sgrpn == 'OFLOW' and smemn == 'OSQAL') or (sgrpn == 'ROFLOW' and smemn == 'ROSQAL'):
-                     sgrpn = 'GQUAL'
+                    sgrpn = 'GQUAL'
                 if tmemn == 'ISED' or tmemn == 'ISQAL':
                     tmemn = tmemn + tmemsb1    # need to add sand, silt, clay subscript
 
