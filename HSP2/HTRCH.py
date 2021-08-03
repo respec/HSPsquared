@@ -1,5 +1,5 @@
 ''' Copyright (c) 2020 by RESPEC, INC.
-Author: Robert Heaphy, Ph.D.
+Authors: Robert Heaphy, Ph.D. and Paul Duda
 License: LGPL2
 '''
 
@@ -22,10 +22,10 @@ C         metric to english
           FFACTB= 0.0
         END IF
 '''
-	
-import numpy as np
+
 from HSP2.ADCALC import advect
-from numpy import zeros, full
+from numpy import zeros, full, float64, int64
+from numba import njit
 from HSP2.utilities  import make_numba_dict, hourflag, hoursval, initm
 
 		
@@ -39,38 +39,105 @@ ERRMSGS =('HTRCH: Water temperature is above 66 C (150 F) -- In most cases, this
 def htrch(store, siminfo, uci, ts):
 	'''Simulate heat exchange and water temperature'''
 
-	errorsV = zeros(len(ERRMSGS), dtype=int)
-
 	advectData = uci['advectData']
 	(nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = advectData
 
-	simlen = siminfo['steps']
-	delt   = siminfo['delt']
-	delt60 = siminfo['delt'] / 60
-	uunits = siminfo['units']
+	ts['VOL'] = VOL
+	ts['SROVOL'] = SROVOL
+	ts['EROVOL'] = EROVOL
+	for i in range(nexits):
+		ts['SOVOL' + str(i + 1)] = SOVOL[:, i]
+		ts['EOVOL' + str(i + 1)] = EOVOL[:, i]
 
-	DAYFG = hourflag(siminfo, 0, dofirst=True).astype(bool)
+	simlen = siminfo['steps']
+
+	ts['DAYFG'] = hourflag(siminfo, 0, dofirst=True).astype(float64)
 
 	ui = make_numba_dict(uci)
 	nexits = int(ui['NEXITS'])
+	ui['simlen'] = siminfo['steps']
+	ui['uunits'] = siminfo['units']
+	ui['delt']   = siminfo['delt']
+	ui['delt60'] = siminfo['delt'] / 60
+	ui['errlen'] = len(ERRMSGS)
+	ui['vol'] = vol
+
+	bedflg = 0
+	if 'BEDFLG' in ui:
+		bedflg = ui['BEDFLG']
+	tgrnd = 59.0
+	if bedflg == 1 or bedflg == 2:
+		tgrnd = ui['TGRND']
+	tstop = 55
+	if 'TSTOP' in ui:
+		tstop = ui['TSTOP']
+	# even though delh and deltt are not ts, numba requires them to be passed as such
+	if 'DELH' in ui:
+		delh = ui['DELH']
+	else:
+		delh = zeros(tstop)
+	ts['DELH'] = delh
+	if 'DELTT' in ui:
+		deltt = ui['DELTT']
+	else:
+		deltt = zeros(tstop)
+	ts['DELTT'] = deltt
+
+	u = uci['PARAMETERS']
+	# process optional monthly arrays to return interpolated data or constant array
+	if 'TGFLG' in u:
+		ts['TGRND'] = initm(siminfo, uci, u['TGFLG'], 'TGRND', tgrnd)
+	else:
+		ts['TGRND'] = full(simlen, tgrnd)
+
+	ts['LAPSE'] = hoursval(siminfo, mlapse, lapselike=True)
+
+	############################################################################
+	errors = _htrch_(ui, ts)  # run HTRCH simulation code
+	############################################################################
+
+	if nexits > 1:
+		u = uci['SAVE']
+		key = 'OHEAT'
+		for i in range(nexits):
+			u[f'{key}{i + 1}'] = u[key]
+		del u[key]
+
+	return errors, ERRMSGS
+
+
+@njit(cache=True)
+def _htrch_(ui, ts):
+	'''Simulate heat exchange and water temperature'''
+
+	errorsV = zeros(int(ui['errlen'])).astype(int64)
+
+	simlen = int(ui['simlen'])
+	nexits = int(ui['NEXITS'])
+	uunits = int(ui['uunits'])
+	delt60 = ui['delt60']
+	delt   = ui['delt']
+	vol = ui['vol']
 	adfg = int(ui['ADFG'])
 
-	TW     = ts['TW']     = zeros(simlen)
+	TW = ts['TW'] = zeros(simlen)
 	AIRTMP = ts['AIRTMP'] = zeros(simlen)
 	HTEXCH = ts['HTEXCH'] = zeros(simlen)
 	ROHEAT = ts['ROHEAT'] = zeros(simlen)
-	OHEAT  = zeros((simlen, nexits))
-	
-	HTWCNT= 0
-	elev =  ui['ELEV']
-	eldat  = ui['ELDAT']
+	OHEAT = zeros((simlen, nexits))
+
+	DAYFG = ts['DAYFG'].astype(int64)
+
+	HTWCNT = 0
+	elev = ui['ELEV']
+	eldat = ui['ELDAT']
 	if uunits == 2:
 		elev = elev * 3.281
 		eldat = eldat * 3.281
 	cfsaex = ui['CFSAEX']
 	katrad = ui['KATRAD']
-	kcond  = ui['KCOND']
-	kevap  = ui['KEVAP']
+	kcond = ui['KCOND']
+	kevap = ui['KEVAP']
 
 	# for table HT-BED-FLAGS
 	if 'BEDFLG' in ui:
@@ -78,24 +145,24 @@ def htrch(store, siminfo, uci, ts):
 	else:
 		bedflg = 0
 	if 'TGFLG' in ui:
-		tgflg  = ui['TGFLG']
+		tgflg = ui['TGFLG']
 	else:
 		tgflg = 2
 	if 'TSTOP' in ui:
-		tstop  = ui['TSTOP']
+		tstop = ui['TSTOP']
 	else:
 		tstop = 55
 
 	tgrnd = 59.0
 	if bedflg == 1 or bedflg == 2:
 		muddep = ui['MUDDEP']
-		tgrnd  = ui['TGRND']
-		kmud   = ui['KMUD']  * delt60  # convert rate coefficients from kcal/m2/C/hr to kcal/m2/C/ivl
-		kgrnd  = ui['KGRND'] * delt60
+		tgrnd = ui['TGRND']
+		kmud = ui['KMUD'] * delt60  # convert rate coefficients from kcal/m2/C/hr to kcal/m2/C/ivl
+		kgrnd = ui['KGRND'] * delt60
 
-	if bedflg == 3:
-		delh  = ui['DELH']
-		delt  = ui['DELT']
+	# if bedflg == 3:
+	delh = ts['DELH']
+	deltt = ts['DELTT']
 
 	if 'SHADFG' in ui:
 		shadfg = ui['SHADFG']
@@ -103,14 +170,14 @@ def htrch(store, siminfo, uci, ts):
 		shadfg = 0
 
 	# if SHADFG:
-		# pshade()  # not implemented for now
-	
-	# calculate the pressure correction factor for conductive-convective heat transport
-	cfpres= ((288.0 - 0.001981 * elev) / 288.0)**5.256
+	# pshade()  # not implemented for now
 
-	tw     = ui['TW']
+	# calculate the pressure correction factor for conductive-convective heat transport
+	cfpres = ((288.0 - 0.001981 * elev) / 288.0) ** 5.256
+
+	tw = ui['TW']
 	if uunits == 1:
-		tw     = (tw - 32.0) * 0.555
+		tw = (tw - 32.0) * 0.555
 
 	airtmp = ui['AIRTMP']
 	if uunits == 1:
@@ -121,20 +188,14 @@ def htrch(store, siminfo, uci, ts):
 		# si units conversion constants, 1 hectare is 10000 sq m
 		AFACT = 1000000.0
 	svol = vol * AFACT
-	rheat  = tw * svol     # compute initial value of heat storage
+	rheat = tw * svol  # compute initial value of heat storage
 
 	# if bedflg == 2:  # compute initial tmud and tmuddt for brock/caupp model
-	tmud   = tw        # assume tmud = tw and
-	tmuddt = -0.1      # tmuddt is small + negative (at midnight)
+	tmud = tw  # assume tmud = tw and
+	tmuddt = -0.1  # tmuddt is small + negative (at midnight)
 
 	############### end of PTHRCH
 
-	u = uci['PARAMETERS']
-	# process optional monthly arrays to return interpolated data or constant array
-	if 'TGFLG' in u:
-		ts['TGRND'] = initm(siminfo, uci, u['TGFLG'], 'TGRND', tgrnd)
-	else:
-		ts['TGRND'] = full(simlen, tgrnd)
 	TGRND = ts['TGRND']
 
 	if not 'IHEAT' in ts:
@@ -147,28 +208,28 @@ def htrch(store, siminfo, uci, ts):
 		ts['IHEAT'] = IHEAT * 1000.0
 
 	AVDEP = ts['AVDEP']
-	AVDEPE = AVDEP  if uunits == 1 else AVDEP * 3.28 	# avdepe is the average depth in english units
+	AVDEPE = AVDEP if uunits == 1 else AVDEP * 3.28  # avdepe is the average depth in english units
 
 	SOLRAD = ts['SOLRAD']
 	if shadfg == 1:
 		DSOLAR = ts['DSOLAR']
-	PREC   = ts['PREC']
-	CLOUD  = ts['CLOUD']
-	GATMP  = ts['GATMP']  # get gage air temperature
+	PREC = ts['PREC']
+	CLOUD = ts['CLOUD']
+	GATMP = ts['GATMP']  # get gage air temperature
 	DEWTMP = ts['DEWTMP']
-	WIND   = ts['WIND']  # get wind movement expressed in m/ivl
-	ts['LAPSE'] = hoursval(siminfo, mlapse, lapselike=True)
-	LAPSE  = ts['LAPSE']
+	WIND = ts['WIND']  # get wind movement expressed in m/ivl
+	LAPSE = ts['LAPSE']
+
+	VOL = ts['VOL']
+	SROVOL = ts['SROVOL']
+	EROVOL = ts['EROVOL']
+	SOVOL = zeros((simlen, nexits))
+	EOVOL = zeros((simlen, nexits))
+	for i in range(nexits):
+		SOVOL[:, i] = ts['SOVOL' + str(i + 1)]
+		EOVOL[:, i] = ts['EOVOL' + str(i + 1)]
 
 	qsolar = 0.0
-	deltt = []
-
-	if nexits > 1:
-		u = uci['SAVE']
-		key = 'OHEAT'
-		for i in range(nexits):
-			u[f'{key}{i + 1}'] = u[key]
-		del u[key]
 
 	for loop in range(simlen):
 
@@ -183,7 +244,6 @@ def htrch(store, siminfo, uci, ts):
 		sovol  = SOVOL[loop,:]
 		eovol  = EOVOL[loop,:]
 		tw, roheat, oheat = advect(iheat, tw, nexits, svol, vol, srovol, erovol, sovol, eovol) # watertemp treated as a concentration
-		#                   advect(imat, conc, nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL)
 		svol = vol
 
 		if tw > 66.0:
@@ -271,12 +331,14 @@ def htrch(store, siminfo, uci, ts):
 			# (597.3 - .57*tw) multiplied by the density of water(1000 kg/m3);
 			# changed sign of qevap to make it consistent with other fluxes; ie, positive = heat gain; brb 6/95
 			qevap = (597300.0 - 570.0 * tw) * evap * -1.0
+			# print('qevap')
 
 			# bed conduction
-			if bedflg == 1 or bedflg == 2:
-				pass # tgrnd = ???  #user defined ts, monthly or single valued by TGFLG (1 for TS; 2 for constant; 3 for monthly)
+			# if bedflg == 1 or bedflg == 2:
+			# 	pass # tgrnd = ???  #user defined ts, monthly or single valued by TGFLG (1 for TS; 2 for constant; 3 for monthly)
 
 			# compute conduction heat flux
+			# print('bedflg')
 			if bedflg == 1:   # one-layer bed conduction model
 				tgrnd = TGRND[loop]
 				qbed = kmud * (tgrnd - tw)
@@ -297,7 +359,7 @@ def htrch(store, siminfo, uci, ts):
 				# compute a new mud temperature slope using heat flux and heat capacity of mud/water and depth ("thermal capacity") of mud
 				tmuddt = -bflux / cpr / muddep
 
-				#  mud temperature at center of time step
+				# mud temperature at center of time step
 				bthalf = tmud
 
 				# compute heat flux between ground and mud based on mud temperature at center of current time step and input ground temperature,
@@ -320,7 +382,6 @@ def htrch(store, siminfo, uci, ts):
 				qbed = 0.0
 			else:   # no bed conductance
 				qbed = 0.0
-
 
 			# calculate total heat exchange at water surface; qtotal in kcal/m2.ivl
 			qtotal = qsolar + qlongw + qcon + qevap + qprec + qbed
@@ -395,11 +456,14 @@ def htrch(store, siminfo, uci, ts):
 		for i in range(nexits):
 			ts['OHEAT' + str(i+1)] = OHEAT[:, i]
 
-	return errorsV, ERRMSGS
+	return errorsV
 
+
+@njit(cache=True)
 def vapor(tmp):
 		'''	# define vapor function based on temperature (deg c); vapor pressure is expressed in millibars'''
 		return 33.8639 * ((0.00738 * tmp + 0.8072)**8 - 0.000019 * abs(1.8 * tmp + 48.0) + 0.001316)
+
 
 def expand_HTRCH_masslinks(flags, uci, dat, recs):
 	if flags['HTRCH']:
