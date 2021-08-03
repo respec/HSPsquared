@@ -1,10 +1,11 @@
 ''' Copyright (c) 2020 by RESPEC, INC.
-Author: Robert Heaphy, Ph.D.
+Authors: Robert Heaphy, Ph.D. and Paul Duda
 License: LGPL2
 '''
 
-from numpy import array, zeros, where
+from numpy import array, zeros, where, int64
 from math import log10, exp
+from numba import njit
 from HSP2.ADCALC import advect
 from HSP2.utilities  import make_numba_dict
 
@@ -19,24 +20,92 @@ ERRMSGS =('SEDTRN: Warning -- bed storage of sediment size fraction sand is empt
 def sedtrn(store, siminfo, uci, ts):
 	''' Simulate behavior of inorganic sediment'''
 
-	errorsV = zeros(len(ERRMSGS), dtype=int)
-
-	simlen = siminfo['steps']
-	delt   = siminfo['delt']
+	# simlen = siminfo['steps']
+	# delt   = siminfo['delt']
 	delt60 = siminfo['delt'] / 60
 	delts  = siminfo['delt'] * 60
 	uunits = siminfo['units']
+
+	advectData = uci['advectData']
+	(nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = advectData
+
+	ts['VOL'] = VOL
+	ts['SROVOL'] = SROVOL
+	ts['EROVOL'] = EROVOL
+	for i in range(nexits):
+		ts['SOVOL' + str(i + 1)] = SOVOL[:, i]
+		ts['EOVOL' + str(i + 1)] = EOVOL[:, i]
+
+	ui = make_numba_dict(uci)
+	ui['simlen'] = siminfo['steps']
+	ui['uunits'] = siminfo['units']
+	ui['vol'] = vol
+	ui['delts'] = siminfo['delt'] * 60
+	ui['delt60'] = siminfo['delt'] / 60
+	ui['errlen'] = len(ERRMSGS)
+
+	ui_silt = uci['SILT']
+	if uunits == 1:
+		ui['silt_d'] = ui_silt['D'] * 0.0833
+		ui['silt_w'] = ui_silt['W'] * delts * 0.0254  # convert settling velocity from m/sec to m/ivl
+	else:
+		ui['silt_d'] = ui_silt['D'] * 0.001
+		ui['silt_w'] = ui_silt['W'] * delts * 0.001  # convert settling velocity from m/sec to m/ivl
+	ui['silt_rho'] = ui_silt['RHO']
+	ui['silt_taucd'] = ui_silt['TAUCD']
+	ui['silt_taucs'] = ui_silt['TAUCS']
+	ui['silt_m'] = ui_silt['M'] * delt60 / 24.0 * 4.880  # convert erodibility coeff from /day to /ivl
+
+	ui_clay = uci['CLAY']
+	if uunits == 1:
+		ui['clay_d'] = ui_clay['D'] * 0.0833
+		ui['clay_w'] = ui_clay['W'] * delts * 0.0254 # convert settling velocity from m/sec to m/ivl
+	else:
+		ui['clay_d'] = ui_clay['D'] * 0.001
+		ui['clay_w'] = ui_clay['W'] * delts * 0.001  # convert settling velocity from m/sec to m/ivl
+	ui['clay_rho']   = ui_clay['RHO']
+	ui['clay_taucd'] = ui_clay['TAUCD']
+	ui['clay_taucs'] = ui_clay['TAUCS']
+	ui['clay_m']     = ui_clay['M']	* delt60 / 24.0 * 4.880 # convert erodibility coeff from /day to /ivl
+
+	############################################################################
+	errors = _sedtrn_(ui, ts)  # run SEDTRN simulation code
+	############################################################################
+
+	if nexits > 1:
+		u = uci['SAVE']
+		key1 = 'OSED1'
+		key2 = 'OSED2'
+		key3 = 'OSED3'
+		key4 = 'OSED4'
+		for i in range(nexits):
+			u[f'{key1}{i + 1}'] = u[key1]
+			u[f'{key2}{i + 1}'] = u[key2]
+			u[f'{key3}{i + 1}'] = u[key3]
+			u[f'{key4}{i + 1}'] = u[key4]
+		del u[key1]
+		del u[key2]
+		del u[key3]
+		del u[key4]
+
+	return errors, ERRMSGS
+
+@njit(cache=True)
+def _sedtrn_(ui, ts):
+	''' Simulate behavior of inorganic sediment'''
+	errorsV = zeros(int(ui['errlen'])).astype(int64)
+
+	simlen = int(ui['simlen'])
+	uunits = int(ui['uunits'])
+	delts = ui['delts']
+	delt60 = ui['delt60']
 
 	AFACT = 43560.0
 	if uunits == 2:
 		# si units conversion
 		AFACT = 1000000.0
+	vol = ui['vol'] * AFACT
 
-	advectData = uci['advectData']
-	(nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = advectData
-	vol = vol * AFACT
-
-	ui = make_numba_dict(uci)
 	svol = vol
 	nexits = int(ui['NEXITS'])
 
@@ -81,30 +150,20 @@ def sedtrn(store, siminfo, uci, ts):
 	sand_expsnd = ui['EXPSND']
 
 	# SILT PARAMETERS; table SILT-CLAY-PM --- note: first occurance is silt
-	ui_silt = uci['SILT']
-	if uunits == 1:
-		silt_d = ui_silt['D'] * 0.0833
-		silt_w = ui_silt['W'] * delts * 0.0254 # convert settling velocity from m/sec to m/ivl
-	else:
-		silt_d = ui_silt['D'] * 0.001
-		silt_w = ui_silt['W'] * delts *  0.001  # convert settling velocity from m/sec to m/ivl
-	silt_rho   = ui_silt['RHO']
-	silt_taucd = ui_silt['TAUCD']
-	silt_taucs = ui_silt['TAUCS']
-	silt_m     = ui_silt['M'] * delt60 / 24.0 * 4.880 # convert erodibility coeff from /day to /ivl
+	silt_d = ui['silt_d']
+	silt_w = ui['silt_w']
+	silt_rho   = ui['silt_rho']
+	silt_taucd = ui['silt_taucd']
+	silt_taucs = ui['silt_taucs']
+	silt_m     = ui['silt_m']
 	
 	# CLAY PARAMETERS; table SILT-CLAY-PM --- note: second occurance is clay
-	ui_clay = uci['CLAY']
-	if uunits == 1:
-		clay_d = ui_clay['D'] * 0.0833
-		clay_w = ui_clay['W'] * delts * 0.0254 # convert settling velocity from m/sec to m/ivl
-	else:
-		clay_d = ui_clay['D'] * 0.001
-		clay_w = ui_clay['W'] * delts * 0.001  # convert settling velocity from m/sec to m/ivl
-	clay_rho   = ui_clay['RHO']
-	clay_taucd = ui_clay['TAUCD']
-	clay_taucs = ui_clay['TAUCS']
-	clay_m     = ui_clay['M']	* delt60 / 24.0 * 4.880 # convert erodibility coeff from /day to /ivl
+	clay_d = ui['clay_d']
+	clay_w = ui['clay_w']
+	clay_rho   = ui['clay_rho']
+	clay_taucd = ui['clay_taucd']
+	clay_taucs = ui['clay_taucs']
+	clay_m     = ui['clay_m']
 	
 	# bed sediment conditions; table BED-INIT
 	beddep      = ui['BEDDEP']
@@ -189,21 +248,6 @@ def sedtrn(store, siminfo, uci, ts):
 	OSED2 = zeros((simlen, nexits))
 	OSED3 = zeros((simlen, nexits))
 	OSED4 = zeros((simlen, nexits))
-	if nexits > 1:
-		u = uci['SAVE']
-		key1 = 'OSED1'
-		key2 = 'OSED2'
-		key3 = 'OSED3'
-		key4 = 'OSED4'
-		for i in range(nexits):
-			u[f'{key1}{i + 1}'] = u[key1]
-			u[f'{key2}{i + 1}'] = u[key2]
-			u[f'{key3}{i + 1}'] = u[key3]
-			u[f'{key4}{i + 1}'] = u[key4]
-		del u[key1]
-		del u[key2]
-		del u[key3]
-		del u[key4]
 
 	fact = 1.0 / total_bedfr  # normalize fractions to sum to one
 	sand_bedfr *= fact
@@ -235,6 +279,15 @@ def sedtrn(store, siminfo, uci, ts):
 	tsed3 = total_rsed10 = sand_t_rsed7 + silt_t_rsed8 + clay_t_rsed9
 
 	wsande = sand_w * 3.28 / delts  # convert fall velocity from m/ivl to ft/sec
+
+	VOL = ts['VOL']
+	SROVOL = ts['SROVOL']
+	EROVOL = ts['EROVOL']
+	SOVOL = zeros((simlen, nexits))
+	EOVOL = zeros((simlen, nexits))
+	for i in range(nexits):
+		SOVOL[:, i] = ts['SOVOL' + str(i + 1)]
+		EOVOL[:, i] = ts['EOVOL' + str(i + 1)]
 
 	#################### END PSED
 
@@ -505,9 +558,10 @@ def sedtrn(store, siminfo, uci, ts):
 			ts['OSED3' + str(i + 1)] = OSED3[:, i]
 			ts['OSED4' + str(i + 1)] = OSED4[:, i]
 
-	return errorsV, ERRMSGS
+	return errorsV
 
 
+@njit(cache=True)
 def bdexch (avdepm, w, tau, taucd, taucs, m, vol, frcsed, susp, bed):
 	''' simulate deposition and scour of a cohesive sediment fraction- silt or clay'''
 	if w > 0.0 and tau < taucd and susp > 1.0e-30:    # deposition will occur
@@ -533,6 +587,7 @@ def bdexch (avdepm, w, tau, taucd, taucs, m, vol, frcsed, susp, bed):
 ''' Sediment Transport in Alluvial Channels, 1963-65 by Bruce Colby.
 This report explains the following empirical algorithm.'''
 
+@njit(cache=True)
 def colby(v, db50, fhrad, fsl, tempr):
 # 	Colby's method to calculate the capacity of the flow to transport sand.
 #
@@ -605,11 +660,21 @@ def colby(v, db50, fhrad, fsl, tempr):
 	F[1, 9],  F[2, 9],  F[3, 9],  F[4, 9],  F[5, 9]  = 1.0,  1.3,  3.5,   12.0,  43.0
 	F[1, 10], F[2, 10], F[3, 10], F[4, 10], F[5, 10] = 1.0,  1.4,  4.9,   22.0,  120.0
 	  
-	T = array([[-999, -999, -999, -999, -999, -999, -999, -999],
-			   [-999, 1.2,  1.15, 1.10, 0.96, 0.90, 0.85, 0.82],
-			   [-999, 1.35, 1.25, 1.12, 0.92, 0.86, 0.80, 0.75],
-			   [-999, 1.60, 1.40, 1.20, 0.89, 0.80, 0.72, 0.66],
-			   [-999, 2.00, 1.65, 1.30, 0.85, 0.72, 0.63, 0.55]]).T                     # Temperature adjustment, Figure 24
+	# T = array([[-999, -999, -999, -999, -999, -999, -999, -999],
+	# 		   [-999, 1.2,  1.15, 1.10, 0.96, 0.90, 0.85, 0.82],
+	# 		   [-999, 1.35, 1.25, 1.12, 0.92, 0.86, 0.80, 0.75],
+	# 		   [-999, 1.60, 1.40, 1.20, 0.89, 0.80, 0.72, 0.66],
+	# 		   [-999, 2.00, 1.65, 1.30, 0.85, 0.72, 0.63, 0.55]]).T               # Temperature adjustment, Figure 24
+
+	T = zeros((6,9))
+	T[1, 1],  T[2, 1],  T[3, 1],  T[4, 1],  T[5, 1]  = -999, -999, -999, -999, -999
+	T[1, 1],  T[2, 1],  T[3, 1],  T[4, 1],  T[5, 1]  = -999, 1.2,  1.35, 1.60, 2.00
+	T[1, 1],  T[2, 1],  T[3, 1],  T[4, 1],  T[5, 1]  = -999, 1.15, 1.25, 1.40, 1.65
+	T[1, 1],  T[2, 1],  T[3, 1],  T[4, 1],  T[5, 1]  = -999, 1.10, 1.12, 1.20, 1.30
+	T[1, 1],  T[2, 1],  T[3, 1],  T[4, 1],  T[5, 1]  = -999, 0.96, 0.92, 0.89, 0.85
+	T[1, 1],  T[2, 1],  T[3, 1],  T[4, 1],  T[5, 1]  = -999, 0.90, 0.86, 0.80, 0.72
+	T[1, 1],  T[2, 1],  T[3, 1],  T[4, 1],  T[5, 1]  = -999, 0.85, 0.80, 0.72, 0.63
+	T[1, 1],  T[2, 1],  T[3, 1],  T[4, 1],  T[5, 1]  = -999, 0.82, 0.75, 0.66, 0.55
 
 	DF   = array([-999, 0.10, 0.20, 0.30, 0.60, 1.00, 2.00, 6.00, 10.00, 20.00, 1.E2])               # Depths for Figure 24
 	CF   = array([-999, 0.00, 1.E4, 5.E4, 1.E5, 1.5E5])  	                       # Concentrations of sediment for Figure 24
@@ -763,6 +828,7 @@ def colby(v, db50, fhrad, fsl, tempr):
 	return gtuc * (cfd * tcf + 1.0), ferror, d50err, hrerr, velerr
 
 
+@njit(cache=True)
 def toffaleti(v, fdiam, fhrad, slope, tempr, vset):
 	''' Toffaleti's method to calculate the capacity of the flow to transport sand.'''
 
@@ -834,6 +900,7 @@ def toffaleti(v, fdiam, fhrad, slope, tempr, vset):
 	gsb = (cmi * ((2.0 * fdiam)**(zn))) / 1.0e+30  	                            # bed layer transport capacity
 
 	return max(0.0, gsu + gsm + gsl + gsb)              # Total transport capacity of the rchres (tons/day/ft)
+
 
 def expand_SEDTRN_masslinks(flags, uci, dat, recs):
 	if flags['SEDTRN']:

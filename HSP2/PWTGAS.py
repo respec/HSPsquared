@@ -4,8 +4,8 @@ License: LGPL2
 
 Conversion of HSPF HPERGAS.FOR module into Python''' 
 
-from numpy import zeros, where, full
-from numba import jit
+from numpy import zeros, where, full, int64, float64
+from numba import njit
 from HSP2.utilities import initm, make_numba_dict, hourflag
 
 
@@ -28,14 +28,49 @@ MFACTB = 0.
 def pwtgas(store, siminfo, uci, ts):
     ''' Estimate water temperature, dissolved oxygen, and carbon dioxide in the outflows
     from a pervious landsegment. calculate associated fluxes through exit gates'''
-
-    errorsV = zeros(len(ERRMSG), dtype=int)
-    simlen  = siminfo['steps']
-    delt    = siminfo['delt']
-    tindex  = siminfo['tindex']
-    uunits = siminfo['units']
+    simlen = siminfo['steps']
 
     ui = make_numba_dict(uci)
+    ui['simlen'] = siminfo['steps']
+    ui['uunits'] = siminfo['units']
+    ui['errlen'] = len(ERRMSG)
+
+    u = uci['PARAMETERS']
+    if 'IDVFG' in u:
+        ts['IDOXP'] = initm(siminfo, uci, u['IDVFG'], 'MONTHLY_IDOXP', u['IDOXP'])
+    else:
+        ts['IDOXP'] = full(simlen, u['IDOXP'])
+    if 'ICVFG' in u:
+        ts['ICO2P'] = initm(siminfo, uci, u['ICVFG'], 'MONTHLY_ICO2P', u['ICO2P'])
+    else:
+        ts['ICO2P'] = full(simlen, u['ICO2P'])
+    if 'GDVFG' in u:
+        ts['ADOXP'] = initm(siminfo, uci, u['GDVFG'], 'MONTHLY_ADOXP', u['ADOXP'])
+    else:
+        ts['ADOXP'] = full(simlen, u['ADOXP'])
+    if 'GCVFG' in u:
+        ts['ACO2P'] = initm(siminfo, uci, u['GCVFG'], 'MONTHLY_ACO2P', u['ACO2P'])
+    else:
+        ts['ACO2P'] = full(simlen, u['ACO2P'])
+
+    ts['DAYFG'] = hourflag(siminfo, 0, dofirst=True).astype(float64)
+
+    ############################################################################
+    errors = _pwtgas_(ui, ts)  # run PWTGAS simulation code
+    ############################################################################
+
+    return errors, ERRMSG
+
+
+@njit(cache=True)
+def _pwtgas_(ui, ts):
+    ''' Estimate water temperature, dissolved oxygen, and carbon dioxide in the outflows
+    from a pervious landsegment. calculate associated fluxes through exit gates'''
+
+    errorsV = zeros(int(ui['errlen'])).astype(int64)
+
+    uunits = ui['uunits']
+    simlen = int(ui['simlen'])
 
     CSNOFG = int(ui['CSNOFG'])
     sotmp  = ui['SOTMP']
@@ -59,25 +94,10 @@ def pwtgas(store, siminfo, uci, ts):
         elev = elev * 3.281  # m to ft
     elevgc = ((288.0 - 0.00198 * elev) / 288.0) ** 5.256
 
-    u = uci['PARAMETERS']
-    if 'IDVFG' in u:
-        ts['IDOXP'] = initm(siminfo, uci, u['IDVFG'], 'MONTHLY_IDOXP', u['IDOXP'])
-    else:
-        ts['IDOXP'] = full(simlen, u['IDOXP'])
-    if 'ICVFG' in u:
-        ts['ICO2P'] = initm(siminfo, uci, u['ICVFG'], 'MONTHLY_ICO2P', u['ICO2P'])
-    else:
-        ts['ICO2P'] = full(simlen, u['ICO2P'])
-    if 'GDVFG' in u:
-        gdvfg = u['GDVFG']
-        ts['ADOXP'] = initm(siminfo, uci, u['GDVFG'], 'MONTHLY_ADOXP', u['ADOXP'])
+    if 'GDVFG' in ui:
+        gdvfg = ui['GDVFG']
     else:
         gdvfg = 0
-        ts['ADOXP'] = full(simlen, u['ADOXP'])
-    if 'GCVFG' in u:
-        ts['ACO2P'] = initm(siminfo, uci, u['GCVFG'], 'MONTHLY_ACO2P', u['ACO2P'])
-    else:
-        ts['ACO2P'] = full(simlen, u['ACO2P'])
 
     IDOXP = ts['IDOXP']
     ICO2P = ts['ICO2P']
@@ -142,7 +162,7 @@ def pwtgas(store, siminfo, uci, ts):
     PODOXM = ts['PODOXM'] = zeros(simlen)
     POCO2M = ts['POCO2M'] = zeros(simlen)
 
-    DAYFG = hourflag(siminfo, 0, dofirst=True).astype(bool)
+    DAYFG = ts['DAYFG'].astype(int64)
 
     if uunits == 2:
         SLTMP = (SLTMP * 9. / 5.) + 32.
@@ -245,7 +265,6 @@ def pwtgas(store, siminfo, uci, ts):
             alidox = ALIDOX[loop]
             alico2 = ALICO2[loop]
 
-
         if dayfg:    #it is the first interval of the day
             if gdvfg:
                 adoxp = ADOXP[loop]
@@ -330,4 +349,4 @@ def pwtgas(store, siminfo, uci, ts):
             PODOXM[loop] = PODOXM[loop] / 2.205 * 2.471  # lbs/ac to kg/ha
             POCO2M[loop] = POCO2M[loop] / 2.205 * 2.471  # lbs/ac to kg/ha
 
-    return errorsV, ERRMSG
+    return errorsV
