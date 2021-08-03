@@ -1,4 +1,4 @@
-name: hsp2_py38_dev
+name: hsp2_py38
 channels:
   - conda-forge
   - nodefaults

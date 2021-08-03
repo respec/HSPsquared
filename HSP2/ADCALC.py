@@ -1,5 +1,5 @@
 ''' Copyright (c) 2020 by RESPEC, INC.
-Author: Robert Heaphy, Ph.D.
+Authors: Robert Heaphy, Ph.D. and Paul Duda
 License: LGPL2
 '''
 
@@ -24,69 +24,88 @@ def adcalc(store, siminfo, uci, ts):
 	errorsV = zeros(len(ERRMSG), dtype=int)
 
 	simlen = siminfo['steps']
-	delts  = siminfo['delt'] * 60.0     # delts is the simulation interval in seconds
 
 	ui = make_numba_dict(uci)
 	nexits = int(ui['NEXITS'])          # table type GEN-INFO
-	ADFG   = ui['ADFG']                 # table type ACTIVITY
-
-	# table ADCALC-DATA
-	if 'CRRAT' in ui:
-		crrat = ui['CRRAT']
-	else:
-		crrat = 1.5
-	if 'VOL' in ui:
-		vol   = ui['VOL']
-	else:
-		vol   = 0.0
-	
-	# external time series
-	O = []
-	for timeindex in range(simlen):
-		tarray = []
-		if nexits > 1:
-			for index in range(nexits):
-				tarray.append(ts['O' + str(index+1)][timeindex])
-		else:
-			tarray.append(ts['RO'][timeindex])
-		O.append(tarray)  	 # total rate of outflow per exit: O[simlen, nexits]
+	ui['simlen'] = siminfo['steps']
+	ui['delts'] = siminfo['delt'] * 60.0     # delts is the simulation interval in seconds
 
 	# calculated timeseries for advect()
 	if 'SROVOL' not in ts:
 		ts['SROVOL'] = zeros(simlen)
 	if 'EROVOL' not in ts:
 		ts['EROVOL'] = zeros(simlen)
+
+	############################################################################
+	errors = _adcalc_(ui, ts)  # run ADCALC simulation code
+	############################################################################
+
+	if 'VOL' in ui:
+		vol = ui['VOL']
+	else:
+		vol = 0.0
+
+	VOL = ts['VOL']
+	SROVOL = ts['SROVOL']
+	EROVOL = ts['EROVOL']
+	SOVOL = zeros((simlen, nexits))
+	EOVOL = zeros((simlen, nexits))
+	for i in range(nexits):
+		SOVOL[:, i] = ts['SOVOL' + str(i + 1)]
+		EOVOL[:, i] = ts['EOVOL' + str(i + 1)]
+
+	uci['adcalcData'] = (nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL)
+
+	return errorsV, ERRMSG
+
+
+@njit(cache=True)
+def _adcalc_(ui, ts):
+	''' Internal adcalc() loop for Numba'''
+
+	ADFG = ui['ADFG']  # table type ACTIVITY
+	simlen = int(ui['simlen'])
+	nexits = int(ui['NEXITS'])
+	delts  = ui['delts']
+	# table ADCALC-DATA
+	if 'CRRAT' in ui:
+		crrat = ui['CRRAT']
+	else:
+		crrat = 1.5
+	if 'VOL' in ui:
+		vol = ui['VOL']
+	else:
+		vol = 0.0
+
+	ks = 0.0
+	if ADFG == 2:
+		ks = ui['KS']  # need to get from HYDR section
+
+	VOL = ts['VOL']
+
 	SROVOL = ts['SROVOL']
 	EROVOL = ts['EROVOL']
 	if 'SOVOL' in ts:
 		SOVOL = ts['SOVOL']
 	else:
 		SOVOL = zeros((simlen, nexits))
-		# for index in range(nexits):
-		# 	ts['SOVOL' + str(index+1)] = SOVOL[:,index]
+		for index in range(nexits):
+			ts['SOVOL' + str(index+1)] = SOVOL[:,index]
 	if 'EOVOL' in ts:
 		EOVOL = ts['EOVOL']
 	else:
 		EOVOL = zeros((simlen, nexits))
-		# for index in range(nexits):
-		# 	ts['EOVOL' + str(index + 1)] = EOVOL[:, index]
+		for index in range(nexits):
+			ts['EOVOL' + str(index + 1)] = EOVOL[:, index]
 
-	ks = 0.0
-	if ADFG == 2:
-		ks = ui['KS']   # need to get from HYDR section
+	# external time series
+	O = zeros((simlen, nexits))
+	if nexits > 1:
+		for i in range(nexits):
+			O[:, i] = ts['O' + str(i + 1)]
+	else:
+		O[:, 0] = ts['RO']
 
-	VOL = ts['VOL']
-
-	adcalc_(simlen, delts, nexits, crrat, ks, vol, ADFG, O, VOL, SROVOL, EROVOL, SOVOL, EOVOL)
-	uci['adcalcData'] = (nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL)
-
-	return errorsV, ERRMSG
-
-
-#@jit(nopython=True)	
-def adcalc_(simlen, delts, nexits, crrat, ks, vol, ADFG, O, VOL, SROVOL, EROVOL, SOVOL, EOVOL):
-	''' Internal adcalc() loop for Numba'''
-	
 	for loop in range(simlen):
 		vols = VOL[loop-1] * 43560  if loop > 0 else vol
 
@@ -123,12 +142,12 @@ def adcalc_(simlen, delts, nexits, crrat, ks, vol, ADFG, O, VOL, SROVOL, EROVOL,
 		EROVOL[loop] = cojs * ro  * delts
 		# if nexits > 1:  # determine weighted volume of outflow at start and end of ivl per exit
 		for index in range(nexits):
-			SOVOL[loop][index] = js * os[index] * delts
-			EOVOL[loop][index] = cojs * o[index] * delts
+			ts['SOVOL' + str(index + 1)][loop] = js * os[index] * delts
+			ts['EOVOL' + str(index + 1)][loop] = cojs * o[index] * delts
 	return
 
 
-#@njit(cache=True)
+@njit(cache=True)
 def advect(imat, conc, nexits, vols, vol, srovol, erovol, sovol, eovol):
 	''' Simulate advection of constituent totally entrained in water.
 	Originally designed to be called as: advect(loop, imat, conc, omat, *ui['adcalcData'])
@@ -156,7 +175,7 @@ def advect(imat, conc, nexits, vols, vol, srovol, erovol, sovol, eovol):
 	return conc, romat, omat
 	
 
-#@jit(nopython=True)
+@njit(cache=True)
 def oxrea(LKFG,wind,cforea,avvele,avdepe,tcginv,reamfg,reak,reakt,expred,exprev,len, delth,tw,delts,delt60,uunits):
 	''' Calculate oxygen reaeration coefficient'''
 	# DELTS  - ???
@@ -169,44 +188,60 @@ def oxrea(LKFG,wind,cforea,avvele,avdepe,tcginv,reamfg,reak,reakt,expred,exprev,
 		windsp = wind / delts
 		windf = windsp * (-0.46 + 0.136 * windsp)  if windsp > 6.0 else 2.0
 		korea = (0.032808 * windf * cforea / avdepe) * delt60
-	
-	# calculate reaeration coefficient for free-flowing reach
-	elif reamfg == 1:
-		# calculate reaeration coefficient based on energy dissipation principles (tsivoglou method)
-		# convert length and drop in energy line along length of rchres to english units, if necessary
-		if uunits == 2:
-			lene = len * 3.28
-			delthe = delth * 3.28
-		else:
-			lene   = len
-			delthe = delth
 
-		if abs(avvele) > 0.0:
-			flotim = lene / avvele
-			korea  = reakt * (delthe / flotim) * (tcginv**(tw - 20.)) * delts
+	else:
+		# calculate reaeration coefficient for free-flowing reach
+		if reamfg == 1:
+			# calculate reaeration coefficient based on energy dissipation principles (tsivoglou method)
+			# convert length and drop in energy line along length of rchres to english units, if necessary
+			if uunits == 2:
+				lene = len * 3.28
+				delthe = delth * 3.28
+			else:
+				lene   = len
+				delthe = delth
+
+			if abs(avvele) > 0.0:
+				flotim = lene / avvele
+				korea  = reakt * (delthe / flotim) * (tcginv**(tw - 20.)) * delts
+			else:
+				korea = 0.0
 		else:
-			korea = 0.0
-	elif reamfg == 2:
-		# calculate reaeration coefficient as a power function of average hydraulic
-		# depth and velocity; determine exponents to depth and velocity terms and assign value to reak
-		if avdepe <= 2.0:  # use owen's formulation for reaeration
-			reak   = 0.906
-			exprev = 0.67
-			expred = -1.85
-		else:
-			# calculate transition depth; transition depth determines which method
-			# of calculation is used given the current velocity
-			trandp = 0.0  if avvele < 1.7 else 0.4263 * (avvele**2.9135)
-			if avdepe - trandp <= 0.0:  # use churchill's formulation for reaeration
-				reak   = 0.484
-				exprev = 0.969
-				expred = -1.673
-			else:                       # use o'connor-dobbins formulation for reaeration
-				reak   = 0.538
-				exprev = 0.5
-				expred = -1.5
-		korea = reak * avvele**exprev * avdepe**expred * tcginv**(tw - 20.0) * delt60  if tw < 66 else  0.999
+			if reamfg == 2:
+				# calculate reaeration coefficient as a power function of average hydraulic
+				# depth and velocity; determine exponents to depth and velocity terms and assign value to reak
+				if avdepe <= 2.0:  # use owen's formulation for reaeration
+					reak   = 0.906
+					exprev = 0.67
+					expred = -1.85
+				else:
+					# calculate transition depth; transition depth determines which method
+					# of calculation is used given the current velocity
+					trandp = 0.0  if avvele < 1.7 else 0.4263 * (avvele**2.9135)
+					if avdepe - trandp <= 0.0:  # use churchill's formulation for reaeration
+						reak   = 0.484
+						exprev = 0.969
+						expred = -1.673
+					else:                       # use o'connor-dobbins formulation for reaeration
+						reak   = 0.538
+						exprev = 0.5
+						expred = -1.5
+			korea = reak * avvele**exprev * avdepe**expred * tcginv**(tw - 20.0) * delt60  if tw < 66 else  0.999
 
 	if korea > 1.0:
 		korea = 0.999
 	return korea
+
+
+@njit(cache=True)
+def sink (vol, avdepe, kset, conc):
+	''' calculate quantity of material settling out of the control volume; determine the change in concentration as a result of sinking'''
+	if kset > 0.0 and avdepe > 0.17:
+		# calculate concentration change due to outgoing material; snkout is expressed in mass/liter/ivl; kset is expressed as ft/ivl and avdepe as feet
+		snkout = conc * (kset / avdepe)  if kset < avdepe else conc  # calculate portion of material which settles out of the control volume during time step; snkout is expressed as mass/liter.ivl; conc is the concentration of material in the control volume
+		conc  -= snkout        # calculate remaining concentration of material in the control volume
+		snkmat = snkout * vol    # find quantity of material that sinks out; units are  mass.ft3/l.ivl in english system, and mass.m3/l.ivl in metric system
+	else:
+		snkout = 0.0
+		snkmat = 0.0
+	return conc, snkmat

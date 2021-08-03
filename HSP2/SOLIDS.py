@@ -1,12 +1,12 @@
 ''' Copyright (c) 2020 by RESPEC, INC.
-Author: Robert Heaphy, Ph.D.
+Authors: Robert Heaphy, Ph.D. and Paul Duda
 License: LGPL2
 
 Conversion of HSPF HIMPSLD.FOR module into Python''' 
 
-from numpy import zeros, where, full
+from numpy import zeros, where, full, int64, float64
 from numba import njit
-from HSP2.utilities  import initm, make_numba_dict, hourflag
+from HSP2.utilities import initm, make_numba_dict, hourflag
 
 
 MFACTA = 1.0  # english units
@@ -16,36 +16,12 @@ ERRMSG = []
 
 def solids(store, siminfo, uci, ts):
 	'''Accumulate and remove solids from the impervious land segment'''
-	
-	errorsV = zeros(len(ERRMSG), dtype=int)
-	delt60 = siminfo['delt'] / 60     # delt60 - simulation time interval in hours
-	simlen = siminfo['steps']
-	tindex = siminfo['tindex']
-	uunits = siminfo['units']
 
-	ui = make_numba_dict(uci)  # Note: all values converted to float automatically
-	if 'SDOPFG' in ui:
-		SDOPFG = ui['SDOPFG']
-	else:
-		SDOPFG = 0
-	keim   = ui['KEIM']
-	jeim   = ui['JEIM']
-	slds   = ui['SLDS']
+	simlen = siminfo['steps']
 
 	for name in ['SURO', 'SURS', 'PREC', 'SLSLD']:
 		if name not in ts:
 			ts[name] = zeros(simlen)
-	SURO  = ts['SURO']
-	SURS  = ts['SURS']	
-	PREC  = ts['PREC']
-	SLSLD = ts['SLSLD']  # lateral input of solids is considered
-	
-	# preallocate output arrays
-	SOSLD = ts['SOSLD'] = zeros(simlen)
-	SLDS  = ts['SLDS']  = zeros(simlen)
-
-	drydfg = 1  # assume day is dry
-	DAYFG = hourflag(siminfo, 0, dofirst=True).astype(bool)
 
 	u = uci['PARAMETERS']
 	# process optional monthly arrays to return interpolated data or constant array
@@ -57,6 +33,52 @@ def solids(store, siminfo, uci, ts):
 		ts['REMSDP'] = initm(siminfo, uci, u['VRSDFG'], 'MONTHLY_REMSDP', u['REMSDP'])
 	else:
 		ts['REMSDP'] = full(simlen, u['REMSDP'])
+
+	ui = make_numba_dict(uci)  # Note: all values converted to float automatically
+	ui['uunits'] = siminfo['units']
+	ui['simlen'] = siminfo['steps']
+	ui['delt60'] = siminfo['delt'] / 60     # delt60 - simulation time interval in hours
+	ui['errlen'] = len(ERRMSG)
+
+	ts['DAYFG'] = hourflag(siminfo, 0, dofirst=True).astype(float64)
+
+	############################################################################
+	errors = _solids_(ui, ts)  # run SOLIDS simulation code
+	############################################################################
+
+	return errors, ERRMSG
+
+
+@njit(cache=True)
+def _solids_(ui, ts):
+	'''Accumulate and remove solids from the impervious land segment'''
+	errorsV = zeros(int(ui['errlen'])).astype(int64)
+
+	uunits = ui['uunits']
+	simlen = int(ui['simlen'])
+	delt60 = ui['delt60']
+
+	SURO = ts['SURO']
+	SURS = ts['SURS']
+	PREC = ts['PREC']
+	SLSLD = ts['SLSLD']  # lateral input of solids is considered
+
+	keim   = ui['KEIM']
+	jeim   = ui['JEIM']
+	slds   = ui['SLDS']
+
+	if 'SDOPFG' in ui:
+		SDOPFG = ui['SDOPFG']
+	else:
+		SDOPFG = 0
+
+	# preallocate output arrays
+	SOSLD = ts['SOSLD'] = zeros(simlen)
+	SLDS = ts['SLDS'] = zeros(simlen)
+
+	drydfg = 1  # assume day is dry
+	DAYFG = ts['DAYFG'].astype(int64)
+
 	ACCSDP = ts['ACCSDP']
 	REMSDP = ts['REMSDP']
 	if uunits == 2:
@@ -121,4 +143,4 @@ def solids(store, siminfo, uci, ts):
 		if uunits == 2:
 			SOSLD[loop] = sosld / 1.10231 * 2.471  # tons/ac to metric tonnes/ha
 			SLDS[loop]  = slds / 1.10231 * 2.471   # tons/ac to metric tonnes/ha
-	return errorsV, ERRMSG
+	return errorsV
