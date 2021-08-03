@@ -5,7 +5,7 @@ License: LGPL2
 Conversion of HSPF HPERTMP.FOR module into Python''' 
 
 
-from numpy import zeros, where, ones, float64, full
+from numpy import zeros, where, ones, float64, full, int64
 from numba import njit
 from HSP2.utilities  import hoursval, initm, make_numba_dict
 
@@ -22,13 +22,53 @@ MAXTMP = 100
 
 def pstemp(store, siminfo, uci, ts):
 	'''Estimate soil temperatures in a pervious land segment'''
-	errorsV = zeros(len(ERRMSG), dtype=int)
-	
 	simlen = siminfo['steps']
-	tindex = siminfo['tindex']
-	uunits = siminfo['units']
-
+	
 	ui = make_numba_dict(uci)
+	ui['simlen'] = siminfo['steps']
+	ui['uunits'] = siminfo['units']
+	ui['delt'] = siminfo['delt']
+	ui['errlen'] = len(ERRMSG)
+
+	u = uci['PARAMETERS']
+	if 'SLTVFG' in u:
+		ts['ASLT'] = initm(siminfo, uci, u['SLTVFG'], 'MONTHLY_ASLT', u['ASLT'])
+		ts['BSLT'] = initm(siminfo, uci, u['SLTVFG'], 'MONTHLY_BSLT', u['BSLT'])
+	else:
+		ts['ASLT'] = full(simlen, u['ASLT'])
+		ts['BSLT'] = full(simlen, u['BSLT'])
+	if 'ULTVFG' in u:
+		ts['ULTP1'] = initm(siminfo, uci, u['ULTVFG'], 'MONTHLY_ULTP1', u['ULTP1'])
+		ts['ULTP2'] = initm(siminfo, uci, u['ULTVFG'], 'MONTHLY_ULTP2', u['ULTP2'])
+	else:
+		ts['ULTP1'] = full(simlen, u['ULTP1'])
+		ts['ULTP2'] = full(simlen, u['ULTP2'])
+	if 'LGTVFG' in u:
+		ts['LGTP1'] = initm(siminfo, uci, u['LGTVFG'], 'MONTHLY_LGTP1', u['LGTP1'])
+		ts['LGTP2'] = initm(siminfo, uci, u['LGTVFG'], 'MONTHLY_LGTP2', u['LGTP2'])
+	else:
+		ts['LGTP1'] = full(simlen, u['LGTP1'])
+		ts['LGTP2'] = full(simlen, u['LGTP2'])
+
+	ts['HRFG'] = hoursval(siminfo, ones(24), dofirst=True).astype(float64)  # numba Dict limitation
+
+	############################################################################
+	errors = _pstemp_(ui, ts)  # run PSTEMP simulation code
+	############################################################################
+
+	return errors, ERRMSG
+
+
+@njit(cache=True)
+def _pstemp_(ui, ts):
+	'''Estimate soil temperatures in a pervious land segment'''
+
+	errorsV = zeros(int(ui['errlen'])).astype(int64)
+
+	simlen = int(ui['simlen'])
+	delt = ui['delt']
+	uunits = ui['uunits']
+
 	if 'TSOPFG' in ui:
 		TSOPFG = ui['TSOPFG']
 	else:
@@ -70,26 +110,6 @@ def pstemp(store, siminfo, uci, ts):
 	if uunits == 2:
 		AIRTMP = (AIRTMP - 32.0) * 0.555
 
-	u = uci['PARAMETERS']
-	if 'SLTVFG' in u:
-		ts['ASLT'] = initm(siminfo, uci, u['SLTVFG'], 'MONTHLY_ASLT', u['ASLT'])
-		ts['BSLT'] = initm(siminfo, uci, u['SLTVFG'], 'MONTHLY_BSLT', u['BSLT'])
-	else:
-		ts['ASLT'] = full(simlen, u['ASLT'])
-		ts['BSLT'] = full(simlen, u['BSLT'])
-	if 'ULTVFG' in u:
-		ts['ULTP1'] = initm(siminfo, uci, u['ULTVFG'], 'MONTHLY_ULTP1', u['ULTP1'])
-		ts['ULTP2'] = initm(siminfo, uci, u['ULTVFG'], 'MONTHLY_ULTP2', u['ULTP2'])
-	else:
-		ts['ULTP1'] = full(simlen, u['ULTP1'])
-		ts['ULTP2'] = full(simlen, u['ULTP2'])
-	if 'LGTVFG' in u:
-		ts['LGTP1'] = initm(siminfo, uci, u['LGTVFG'], 'MONTHLY_LGTP1', u['LGTP1'])
-		ts['LGTP2'] = initm(siminfo, uci, u['LGTVFG'], 'MONTHLY_LGTP2', u['LGTP2'])
-	else:
-		ts['LGTP1'] = full(simlen, u['LGTP1'])
-		ts['LGTP2'] = full(simlen, u['LGTP2'])
-
 	ASLT  = ts['ASLT']
 	BSLT  = ts['BSLT']
 	ULTP1 = ts['ULTP1']
@@ -105,8 +125,7 @@ def pstemp(store, siminfo, uci, ts):
 			ULTP2=  0.555 * ULTP2
 			LGTP2 = 0.555 * LGTP2
 
-	ts['HRFG'] = hoursval(siminfo, ones(24), dofirst=True).astype(float64)  # numba Dict limitation
-	HRFG = ts['HRFG']
+	HRFG = ts['HRFG'].astype(int64)
 
 	airts = AIRTMP[0]
 
@@ -195,4 +214,4 @@ def pstemp(store, siminfo, uci, ts):
 			ULTMP[loop] = ultmp
 			LGTMP[loop] = lgtmp
 
-	return errorsV, ERRMSG
+	return errorsV

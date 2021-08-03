@@ -5,8 +5,8 @@ License: LGPL2
 Conversion of HSPF HPERQUA.FOR module into Python''' 
 
 from math import exp
-from numpy import zeros, where, full
-from numba import jit
+from numpy import zeros, where, full, float64, int64
+from numba import njit
 from HSP2.utilities import initm, make_numba_dict, hourflag
 
 ''' DESIGN NOTES
@@ -28,6 +28,8 @@ def pqual(store, siminfo, uci, ts):
 	''' Simulate quality constituents (other than sediment, heat, dox, and co2)
 	using simple relationships with sediment and water yield'''
 
+	simlen = siminfo['steps']
+
 	nquals = 1
 	if 'PARAMETERS' in uci:
 		if 'NQUAL' in uci['PARAMETERS']:
@@ -38,37 +40,21 @@ def pqual(store, siminfo, uci, ts):
 		flags = uci['PQUAL' + pqual + '_FLAGS']
 		constituents.append(flags['QUALID'])
 
-	errorsV = zeros(len(ERRMSGS), dtype=int)
-	delt60 = siminfo['delt'] / 60  # delt60 - simulation time interval in hours
-	simlen = siminfo['steps']
-	tindex = siminfo['tindex']
-
-	for name in ['SURO', 'IFWO', 'AGWO', 'PERO', 'WSSD', 'SCRSD']:
-		if name not in ts:
-			ts[name] = zeros(simlen)
-	SURO  = ts['SURO']
-	IFWO  = ts['IFWO']
-	AGWO  = ts['AGWO']
-	PERO  = ts['PERO']
-	WSSD  = ts['WSSD']
-	SCRSD = ts['SCRSD']
-	PREC  = ts['PREC']
-
 	ui = make_numba_dict(uci)
-	sdlfac = ui['SDLFAC']
-	slifac = ui['SLIFAC']
-	ilifac = ui['ILIFAC']
-	alifac = ui['ALIFAC']
-
-	DAYFG = hourflag(siminfo, 0, dofirst=True).astype(bool)
+	ui['simlen'] = siminfo['steps']
+	ui['delt60'] = siminfo['delt'] / 60  # delt60 - simulation time interval in hours
+	ui['nquals'] = nquals
+	ui['errlen'] = len(ERRMSGS)
+	# constituents = ui['CONSTITUENTS']   # (short) names of constituents
+	if 'FLAGS' in uci:
+		u = uci['FLAGS']
 
 	index = 0
-	for constituent in constituents:     # simulate constituent
+	for constituent in constituents:  # simulate constituent
 		index += 1
 		# update UI values for this constituent here!
 		ui_flags = uci['PQUAL' + str(index) + '_FLAGS']
 		ui_parms = uci['PQUAL' + str(index) + '_PARAMETERS']
-		name = 'PQUAL' + str(index)  # arbitrary identification
 
 		qualid = ui_flags['QUALID']
 		qtyid  = ui_flags['QTYID']
@@ -78,7 +64,103 @@ def pqual(store, siminfo, uci, ts):
 		QAGWFG = ui_flags['QAGWFG']
 		sqo    = ui_parms['SQO']
 		wsqop  = ui_parms['WSQOP']
+
+		ui['QSDFG' + str(index)] = QSDFG
+		ui['QSOFG' + str(index)] = QSOFG
+		ui['QIFWFG' + str(index)] = QIFWFG
+		ui['QAGWFG' + str(index)] = QAGWFG
+		ui['SQO' + str(index)] = sqo
+		ui['WSQOP' + str(index)] = wsqop
+		ui['VIQCFG' + str(index)] = ui_flags['VIQCFG']
+		ui['VAQCFG' + str(index)] = ui_flags['VAQCFG']
+
+		ts['POTFW' + str(index)] = initm(siminfo, uci, ui_flags['VPFWFG'], 'PQUAL' + str(index) + '_MONTHLY/POTFW', ui_parms['POTFW'])
+		ts['POTFS' + str(index)] = initm(siminfo, uci, ui_flags['VPFSFG'], 'PQUAL' + str(index) + '_MONTHLY/POTFS', ui_parms['POTFS'])
+		ts['ACQOP' + str(index)] = initm(siminfo, uci, ui_flags['VQOFG'], 'PQUAL' + str(index) + '_MONTHLY/ACQOP', ui_parms['ACQOP'])
+		ts['SQOLIM' + str(index)] = initm(siminfo, uci, ui_flags['VQOFG'], 'PQUAL' + str(index) + '_MONTHLY/SQOLIM', ui_parms['SQOLIM'])
+		ts['IOQCP' + str(index)] = initm(siminfo, uci, ui_flags['VIQCFG'], 'PQUAL' + str(index) + '_MONTHLY/IOQC', ui_parms['IOQC'])
+		ts['AOQCP' + str(index)] = initm(siminfo, uci, ui_flags['VAQCFG'], 'PQUAL' + str(index) + '_MONTHLY/AOQC', ui_parms['AOQC'])
+
+		pqadfgf = 0
+		pqadfgc = 0
+		ts['PQADFX' + str(index)] = zeros(simlen)
+		ts['PQADCN' + str(index)] = zeros(simlen)
+		if 'FLAGS' in uci:
+			# get atmos dep timeseries
+			pqadfgf = u['PQADFG' + str((index * 2) - 1)]
+			if pqadfgf > 0:
+				ts['PQADFX' + str(index)] = initm(siminfo, uci, pqadfgf, 'PQUAL' + str(index) + '_MONTHLY/PQADFX', 0.0)
+			elif pqadfgf == -1:
+				ts['PQADFX' + str(index)] = ts['PQADFX' + str(index) + ' 1']
+			pqadfgc = u['PQADFG' + str(index * 2)]
+			if pqadfgc > 0:
+				ts['PQADCN' + str(index)] = initm(siminfo, uci, pqadfgc, 'PQUAL' + str(index) + '_MONTHLY/PQADCN', 0.0)
+			elif pqadfgc == -1:
+				ts['PQADCN' + str(index)] = ts['PQADCN' + str(index) + ' 1']
+		ui['pqadfgf' + str(index)] = pqadfgf
+		ui['pqadfgc' + str(index)] = pqadfgc
+
+	for name in ['SLIQSP', 'ILIQC', 'ALIQC']:
+		if name not in ts:
+			ts[name] = zeros(simlen)
+
+	ts['DAYFG'] = hourflag(siminfo, 0, dofirst=True).astype(float64)
+
+	for name in ['SURO', 'IFWO', 'AGWO', 'PERO', 'WSSD', 'SCRSD']:
+		if name not in ts:
+			ts[name] = zeros(simlen)
+
+	############################################################################
+	errors = _pqual_(ui, ts)  # run PQUAL simulation code
+	############################################################################
+
+	return errors, ERRMSGS
+
+@njit(cache=True)
+def _pqual_(ui, ts):
+	''' Simulate washoff of quality constituents (other than solids, Heat, dox, and co2)
+	using simple relationships with sediment and water yield'''
+
+	errorsV = zeros(int(ui['errlen'])).astype(int64)
+
+	simlen = int(ui['simlen'])
+	delt60 = ui['delt60']
+	nquals = int(ui['nquals'])
+
+	SURO  = ts['SURO']
+	IFWO  = ts['IFWO']
+	AGWO  = ts['AGWO']
+	PERO  = ts['PERO']
+	WSSD  = ts['WSSD']
+	SCRSD = ts['SCRSD']
+	PREC  = ts['PREC']
+
+	sdlfac = ui['SDLFAC']
+	slifac = ui['SLIFAC']
+	ilifac = ui['ILIFAC']
+	alifac = ui['ALIFAC']
+
+	DAYFG = ts['DAYFG'].astype(int64)
+
+	for i in range(nquals):  # simulate constituent
+		index = i + 1
+		# update UI values for this constituent here!
+		#ui_flags = uci['PQUAL' + str(index) + '_FLAGS']
+		#ui_parms = uci['PQUAL' + str(index) + '_PARAMETERS']
+		name = 'PQUAL' + str(index)  # arbitrary identification
+
+		QSDFG  = ui['QSDFG' + str(index)]
+		QSOFG  = ui['QSOFG' + str(index)]
+		QIFWFG = ui['QIFWFG' + str(index)]
+		QAGWFG = ui['QAGWFG' + str(index)]
+		sqo    = ui['SQO' + str(index)]
+		wsqop  = ui['WSQOP' + str(index)]
 		wsfac = 2.30 / wsqop
+
+		pqadfgf = ui['pqadfgf' + str(index)]
+		pqadfgc = ui['pqadfgc' + str(index)]
+		if QSOFG == 0 and (pqadfgf != 0 or pqadfgc != 0):
+			errorsV[0] += 1  # error - non-qualof cannot have atmospheric deposition
 
 		# preallocate output arrays (always needed)
 		SQO    = ts[name + '_SQO']    = zeros(simlen)
@@ -111,48 +193,18 @@ def pqual(store, siminfo, uci, ts):
 		SLIQO = ts[name + '_SLIQO'] = zeros(simlen)  # lateral inflow
 		INFLOW = ts[name + '_INFLOW'] = zeros(simlen)  # total inflow
 
-		for name in ['SLIQSP', 'ILIQC', 'ALIQC']:
-			if name not in ts:
-				ts[name] = zeros(simlen)
 		SLIQSP = ts['SLIQSP']
 		ILIQC  = ts['ILIQC']
 		ALIQC  = ts['ALIQC']
 
-		ts['POTFW'] = initm(siminfo, uci, ui_flags['VPFWFG'], 'PQUAL' + str(index) + '_MONTHLY/POTFW', ui_parms['POTFW'])
-		ts['POTFS'] = initm(siminfo, uci, ui_flags['VPFSFG'], 'PQUAL' + str(index) + '_MONTHLY/POTFS', ui_parms['POTFS'])
-		ts['ACQOP'] = initm(siminfo, uci, ui_flags['VQOFG'], 'PQUAL' + str(index) + '_MONTHLY/ACQOP', ui_parms['ACQOP'])
-		ts['SQOLIM'] = initm(siminfo, uci, ui_flags['VQOFG'], 'PQUAL' + str(index) + '_MONTHLY/SQOLIM', ui_parms['SQOLIM'])
-		ts['IOQCP'] = initm(siminfo, uci, ui_flags['VIQCFG'], 'PQUAL' + str(index) + '_MONTHLY/IOQC', ui_parms['IOQC'])
-		ts['AOQCP'] = initm(siminfo, uci, ui_flags['VAQCFG'], 'PQUAL' + str(index) + '_MONTHLY/AOQC', ui_parms['AOQC'])
-
-		ts['PQADFX'] = zeros(simlen)
-		ts['PQADCN'] = zeros(simlen)
-
-		if 'FLAGS' in uci:
-			u = uci['FLAGS']
-			# get atmos dep timeseries
-			pqadfgf = u['PQADFG' + str((index * 2) - 1)]
-			if pqadfgf > 0:
-				ts['PQADFX'] = initm(siminfo, uci, pqadfgf, 'PQUAL' + str(index) + '_MONTHLY/PQADFX', 0.0)
-			elif pqadfgf == -1:
-				ts['PQADFX'] = ts['PQADFX' + str(index) + ' 1']
-			pqadfgc = u['PQADFG' + str(index * 2)]
-			if pqadfgc > 0:
-				ts['PQADCN'] = initm(siminfo, uci, pqadfgc, 'PQUAL' + str(index) + '_MONTHLY/PQADCN', 0.0)
-			elif pqadfgc == -1:
-				ts['PQADCN'] = ts['PQADCN' + str(index) + ' 1']
-
-			if QSOFG == 0 and (pqadfgf != 0 or pqadfgc != 0):
-				errorsV[0] += 1  # error - non-qualof cannot have atmospheric deposition
-
-		POTFW  = ts['POTFW']
-		POTFS  = ts['POTFS']
-		ACQOP  = ts['ACQOP']
-		SQOLIM = ts['SQOLIM']
-		IOQCP  = ts['IOQCP']
-		AOQCP  = ts['AOQCP']
-		PQADFX = ts['PQADFX']
-		PQADCN = ts['PQADCN']
+		POTFW  = ts['POTFW' + str(index)]
+		POTFS  = ts['POTFS' + str(index)]
+		ACQOP  = ts['ACQOP' + str(index)]
+		SQOLIM = ts['SQOLIM' + str(index)]
+		IOQCP  = ts['IOQCP' + str(index)]
+		AOQCP  = ts['AOQCP' + str(index)]
+		PQADFX = ts['PQADFX' + str(index)]
+		PQADCN = ts['PQADCN' + str(index)]
 
 		soqo = 0.0
 		remqop = 0.0
@@ -212,6 +264,7 @@ def pqual(store, siminfo, uci, ts):
 			adtot  = 0.0
 			adfxfx = 0.0
 			adcnfx = 0.0
+			soqoc  = -1.0e30
 			if QSOFG:   #constituent n is simulated by association with overland flow;
 				# qualof()
 				''' Simulate accumulation of a quality constituent on the land surface and its removal by a constant unit rate and by overland flow'''	
@@ -251,7 +304,7 @@ def pqual(store, siminfo, uci, ts):
 						sqo = sqo - soqo
 
 				# compute and output concentration - units are qty/acre-inch
-				soqoc = soqo / suro  if suro > 0.0 else -1.0e30  # soqoc not used ???
+				soqoc = soqo / suro  if suro > 0.0 else -1.0e30
 				# end qualof()
 				
 				suroqo = soqo
@@ -270,7 +323,7 @@ def pqual(store, siminfo, uci, ts):
 				# qualif()
 				'''Simulate quality constituents by fixed concentration in interflow'''
 				ioqc = IOQCP[loop] * 3630.0
-				if ui_flags['VIQCFG'] == 3 or ui_flags['VIQCFG'] == 4:
+				if ui['VIQCFG' + str(index)] == 3 or ui['VIQCFG' + str(index)] == 4:
 					ioqc = ioqc * 6.238e-5
 
 				# simulate constituents carried by interflow - units are qty/acre-ivl
@@ -289,7 +342,7 @@ def pqual(store, siminfo, uci, ts):
 				# qualgw()
 				''' Simulate quality constituents by fixed concentration in groundwater flow'''
 				aoqc = AOQCP[loop] * 3630.0
-				if ui_flags['VAQCFG'] == 3 or ui_flags['VAQCFG'] == 4:
+				if ui['VAQCFG' + str(index)] == 3 or ui['VAQCFG' + str(index)] == 4:
 					aoqc = aoqc * 6.238e-5
 					
 				# simulate constituents carried by groundwater flow - units are qty/acre-ivl
@@ -331,5 +384,5 @@ def pqual(store, siminfo, uci, ts):
 			PQADDR[loop] = adfxfx
 			PQADEP[loop] = adtot
 	
-	return errorsV, ERRMSGS
+	return errorsV
 
