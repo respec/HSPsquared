@@ -223,7 +223,7 @@ def gqual(store, siminfo, uci, ts):
 	return errors, ERRMSGS
 
 
-# @njit(cache=True)
+@njit(cache=True)
 def _gqual_(ui, ts):
 	''' Simulate the behavior of a generalized quality constituent'''
 	errors = zeros(int(ui['errlen'])).astype(int64)
@@ -834,12 +834,12 @@ def _gqual_(ui, ts):
 			rosed1 = ROSED1[loop] / 1E-06
 			rosed2 = ROSED2[loop] / 1E-06
 			rosed3 = ROSED3[loop] / 1E-06
-			osed1 = OSED1[loop]
-			osed2 = OSED2[loop]
-			osed3 = OSED3[loop]
-			osed1 = [x / 1E-06 for x in osed1]
-			osed2 = [x / 1E-06 for x in osed2]
-			osed3 = [x / 1E-06 for x in osed3]
+			osed1 = array(OSED1[loop])
+			osed2 = array(OSED2[loop])
+			osed3 = array(OSED3[loop])
+			osed1 = osed1 / 1E-06
+			osed2 = osed2 / 1E-06
+			osed3 = osed3 / 1E-06
 			rsed[1] = RSED1[loop] / 1E-06
 			rsed[2] = RSED2[loop] / 1E-06
 			rsed[3] = RSED3[loop] / 1E-06
@@ -965,9 +965,9 @@ def _gqual_(ui, ts):
 		dsqal2 = 0.0
 		dsqal3 = 0.0
 		dsqal4 = 0.0
-		osqal1 = 0.0
-		osqal2 = 0.0
-		osqal3 = 0.0
+		#osqal1 = 0.0
+		#osqal2 = 0.0
+		#osqal3 = 0.0
 		osqal4 = 0.0
 		rosqal1 = 0.0
 		rosqal2 = 0.0
