@@ -25,8 +25,10 @@ def decbal(TAMFG, PO4FG, decnit, decpo4, tam, no3, po4):
 
 
 #@jit(nopython=True)
-def sink (vol, avdepe, kset, conc, snkmat):
+def sink (vol, avdepe, kset, conc):
 	''' calculate quantity of material settling out of the control volume; determine the change in concentration as a result of sinking'''
+	snkmat = 0.0
+
 	if kset > 0.0 and avdepe > 0.17:
 		# calculate concentration change due to outgoing material; snkout is expressed in mass/liter/ivl; kset is expressed as ft/ivl and avdepe as feet
 		snkout = conc * (kset / avdepe)  if kset < avdepe else conc  # calculate portion of material which settles out of the control volume during time step; snkout is expressed as mass/liter.ivl; conc is the concentration of material in the control volume
