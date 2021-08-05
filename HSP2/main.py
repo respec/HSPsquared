@@ -54,7 +54,10 @@ def main(hdfname, saveall=False, jupyterlab=True):
                 get_flows(store, ts, flags, uci, segment, ddlinks, ddmasslinks, siminfo['steps'], msg)
 
             for activity, function in activities[operation].items():
-                if function == noop or not flags[activity]:
+                if function == noop:  #or not flags[activity]:
+                    continue
+
+                if (activity in flags) and (not flags[activity]):
                     continue
 
                 msg(3, f'{activity}')
@@ -127,17 +130,38 @@ def main(hdfname, saveall=False, jupyterlab=True):
 
                         if activity == 'PLANK':
                             ui['PARAMETERS']['HTFG'] = flags['HTRCH']
+                            ui['PARAMETERS']['ADNHFG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['ADNHFG']
+                            ui['PARAMETERS']['ADPOFG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['ADPOFG']
                             ui['FLAGS']['BPCNTC'] = uci[(operation, 'NUTRX', segment)]['PARAMETERS']['BPCNTC']
                             ui['FLAGS']['CVBO'] = uci[(operation, 'NUTRX', segment)]['PARAMETERS']['CVBO']
                             ui['FLAGS']['CVBPC'] = uci[(operation, 'NUTRX', segment)]['PARAMETERS']['CVBPC']
+                            ui['FLAGS']['CVBPN'] = uci[(operation, 'NUTRX', segment)]['PARAMETERS']['CVBPN']
                             ui['FLAGS']['NH3FG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['NH3FG']
+                            ui['FLAGS']['NO2FG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['NO2FG']
                             ui['FLAGS']['PO4FG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['PO4FG']
 
                     if activity == 'RQUAL':
-                        pass
+                        ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
+                        if flags['HYDR']:
+                            ui['PARAMETERS']['LKFG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LKFG']
+
+                        ui['PARAMETERS']['HTFG'] = flags['HTRCH']
+                        ui['PARAMETERS']['PLKFG'] = flags['OXFG']
+                        ui['PARAMETERS']['NUTFG'] = flags['NUTFG']
+                        ui['PARAMETERS']['PLKFG'] = flags['PLKFG']
+                        ui['PARAMETERS']['PHFG'] = flags['PHFG']
+
+                        ui_oxrx = uci[(operation, 'OXRX', segment)] 
+                        ui_nutrx = uci[(operation, 'NUTRX', segment)] 
+                        ui_plank = uci[(operation, 'PLANK', segment)] 
+
 
                 ############ calls activity function like snow() ##############
-                errors, errmessages = function(store, siminfo, ui, ts)
+                if (activity != 'RQUAL'):
+                    errors, errmessages = function(store, siminfo, ui, ts)
+
+                else:                    
+                    errors, errmessages = function(store, siminfo, ui, ui_oxrx, ui_nutrx, ui_plank, ts)
                 ###############################################################
 
                 for errorcnt, errormsg in zip(errors, errmessages):
