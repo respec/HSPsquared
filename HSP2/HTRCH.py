@@ -75,12 +75,12 @@ def htrch(store, siminfo, uci, ts):
 	if 'DELH' in ui:
 		delh = ui['DELH']
 	else:
-		delh = zeros(tstop)
+		delh = zeros(int(tstop))
 	ts['DELH'] = delh
 	if 'DELTT' in ui:
 		deltt = ui['DELTT']
 	else:
-		deltt = zeros(tstop)
+		deltt = zeros(int(tstop))
 	ts['DELTT'] = deltt
 
 	u = uci['PARAMETERS']
