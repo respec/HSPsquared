@@ -3,30 +3,36 @@ Author: Robert Heaphy, Ph.D.
 License: LGPL2
 '''
 
-from numpy import where
+from numpy import where, zeros, array
 from HSP2.utilities  import make_numba_dict
-from HSP2.OXRX import oxrx
+from HSP2.OXRX_Class import OXRX_Class
+#from HSP2.OXRX import oxrx
 #from HSP2.NUTRX import nutrx
 #from HSP2.PLANK import plank
 #from HSP2.PHCARB import phcarb
 
-UUNITS = 1
+ERRSMGS = ('Placeholder')
 
-
-
-def rqual(store, siminfo, uci, ts):
+def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, ts):
 	''' Simulate constituents involved in biochemical transformations'''
 
+	# simulation-level:
+	delt60 = siminfo['delt'] / 60  # delt60 - simulation time interval in hours
 	simlen = siminfo['steps']
+	delts  = siminfo['delt'] * 60
+	uunits = siminfo['units']
 	
+	# numba dictionaries:
 	ui = make_numba_dict(uci)
 
-	BENRFG = ui['BENFGX']   # table-type benth-flag
+	BENRFG = int(ui['BENRFG'])   # table-type benth-flag
 
 	# table type ACTIVITY
-	NUTFG = ui['NUTFG']
-	PLKFG = ui['PLKFG']
-	PHFG  = ui['PHFG']
+	NUTFG = int(ui['NUTFG'])
+	PLKFG = int(ui['PLKFG'])
+	PHFG  = int(ui['PHFG'])
+
+	LKFG = int(ui['LKFG'])
 	
 	# get external time series
 	PREC  = ts['PREC']
@@ -36,45 +42,65 @@ def rqual(store, siminfo, uci, ts):
 	TW    = ts['TW'] 
 	if LKFG == 1:
 		WIND  = ts['WIND']
+	else:
+		WIND = zeros(simlen)
 	
-	nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL = ui['advectData']
+	advectData = uci['advectData']
+	(nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = advectData
 	
 	TW     = where(TW < -100.0, 20.0, TW)  # fix undefined temps if present
-	AVDEPE = where(UUNITS == 2, AVDEP * 3.28, AVDEP)  # convert to english units) in feet
-	AVVELE = where(UUNITS == 2, AVVEL * 3.28, AVVEL)  # convert to english units)
-	DEPCOR = where(avdepe > 0.0, 3.28084e-3 / AVDEPE, -1.e30)  # # define conversion factor from mg/m2 to mg/l
+	AVDEPE = where(uunits == 2, AVDEP * 3.28, AVDEP)  # convert to english units) in feet
+	AVVELE = where(uunits == 2, AVVEL * 3.28, AVVEL)  # convert to english units)
+	DEPCOR = where(AVDEPE > 0.0, 3.28084e-3 / AVDEPE, -1.e30)  # # define conversion factor from mg/m2 to mg/l
 	if BENRFG == 1: 
 		scrvel = ui['SCRVEL']   # table-type scour-parms
 		scrmul = ui['SCRMUL']   # table-type scour-parms
 		SCRFAC = where(AVVELE > scrvel, scrmul, 1.0)   # calculate scouring factor
 	
+	ts['SCRFAC'] = SCRFAC
+
 	# use Closures to capture 'ui' data to minimize calling arguments.
 	#### OXRX  ####
 	
-	IDOX  = ts['IDOX']  # optional, input flow
-	IBOD  = ts['IBOD']  # optional, input flow	
+	if ('IDOX' in ts):
+		IDOX  = ts['IDOX']  # optional, input flow
+	else:
+		IDOX = zeros(simlen)
 	
+	if ('IBOD' in ts):
+		IBOD  = ts['IBOD']  # optional, input flow	
+	else:
+		IBOD = zeros(simlen)
+
 	# preallocate storage for OXRX calculated results
 	DOX   = ts['DOX']   = zeros(simlen)   # concentration, state variable
 	BOD   = ts['BOD']   = zeros(simlen)   # concentration, state variable
 	SATDO = ts['SATDO'] = zeros(simlen)   # concentration, state variable
 	RODOX = ts['RODOX'] = zeros(simlen)             # reach outflow of DOX
 	ROBOD = ts['ROBOD'] = zeros(simlen)             # reach outflow of BOD
-	ODOX  = ts['ODOX']  = zeros((simlen, nexits))   # reach outflow per gate of DOX
-	OBOD  = ts['OBOD']  = zeros((simlen, nexits))   # reach outflow per gate of BOD
+	ODOX  = zeros((simlen, nexits))   # reach outflow per gate of DOX
+	OBOD  = zeros((simlen, nexits))   # reach outflow per gate of BOD
+
+	for i in range(nexits):
+		ts['ODOX' + str(i + 1)] = zeros(simlen)
+		ts['OBOD' + str(i + 1)] = zeros(simlen)
+
+	# instantiate OXRX class:	
+	ui_oxrx = make_numba_dict(uci_oxrx)
+	OXRX = OXRX_Class(store, siminfo, uci, ui_oxrx, ts)
+	#oxrx = poxrx()  # returns Numba accelerated function in closure
 	
-	oxrx = poxrx()  # returns Numba accelerated function in closure
-	
+	NUTFG = 0
 	if NUTFG:
 		# get NUTRX specific time series
 		INO3 = ts['INO3']   # optional, input
 		INH3 = ts['INH3']   # optional, input
 		INO2 = ts['INO2']   # optional, input
 		IPO4 = ts['IPO4']   # optional, input
-		
+
 		NUAFX = setit()  # NUAFXM monthly, constant or time series
 		NUACN = setit()  # NUACNM monthly, constant or time series
-		
+
 		# preallocate storage for computed time series
 		NO3   = ts['NO3']   = zeros(simlen)   # concentration, state variable
 		NO2   = ts['NO2']   = zeros(simlen)   # concentration, state variable
@@ -89,9 +115,11 @@ def rqual(store, siminfo, uci, ts):
 		ONO2  = ts['ONO2']  = zeros((simlen, NEXITS))   # outflow
 		ONH3  = ts['ONH3']  = zeros((simlen, NEXITS))   # outflow
 		OPO4  = ts['OPO4']  = zeros((simlen, NEXITS))   # outflow
-		 
+
+		ui_nutrx = make_numba_dict(uci_nutrx)
 		nutrx = pnutrx()  # returns Numba accelerated function in closure		
-		
+
+	PLKFG = 0
 	if PLKFG:
 		# get PLANK specific time series
 		IPHYTO = ts['IPHYTO']   # optional
@@ -101,7 +129,7 @@ def rqual(store, siminfo, uci, ts):
 		IORC   = ts['IORC']     # optional
 		WASH   = ts['WASH']
 		SOLRAD = ts['SOLRAD']
-		 
+
 		# preallocate arrays for better performance
 		ORN    = ts['PKST3_ORN']    = zeros(simlen)  # state variable
 		ORP    = ts['PKST3_ORP']    = zeros(simlen)  # state variable
@@ -110,13 +138,13 @@ def rqual(store, siminfo, uci, ts):
 		TORP   = ts['PKST3_TORP']   = zeros(simlen)  # state variable
 		TORC   = ts['PKST3_TORC']   = zeros(simlen)  # state variable
 		POTBOD = ts['PKST3_POTBOD'] = zeros(simlen)  # state variable
-		
+	
 		PHYTO  = ts['PHYTO']        = zeros(simlen)  # concentration
 		ZOO    = ts['ZOO']          = zeros(simlen)  # concentration
 		BENAL  = ts['BENAL']        = zeros(simlen)  # concentration
 		PHYCLA = ts['PHYCLA']       = zeros(simlen)  # concentration
 		BALCLA = ts['BALCLA']       = zeros(simlen)  # concentration
-		
+	
 		ROPHYTO  = ts['ROPHYTO']  = zeros(simlen)  # total outflow
 		ROZOO    = ts['ROZOO']    = zeros(simlen)  # total outflow
 		ROBENAL  = ts['ROBENAL']  = zeros(simlen)  # total outflow
@@ -133,6 +161,7 @@ def rqual(store, siminfo, uci, ts):
 		PLADFX = setit()   # time series, monthly(PLAFXM)
 		PLADCN = setit()   # time series, monthly(PLAFXM)		
 		
+		ui_plank = make_numba_dict(uci_plank)
 		plank = pplank()  # returns Numba accelerated function in closure
 	
 	if PHFG:
@@ -166,16 +195,16 @@ def rqual(store, siminfo, uci, ts):
 		advData = nexits, vol, VOL[loop], SROVOL[loop], EROVOL[loop], SOVOL[loop], EOVOL[loop]		
 		
 		# simulate primary do and bod balances
-		(dox, bod, satdo, rodo, robod, odo, 
-		obod) = oxrx(
-		IDOX[loop], IBOD[loop], WIND[loop], avdepe, avvele, tw, depcor, BENRFG, advData)   
-		
-		
+		OXRX.simulate(IDOX[loop], IBOD[loop], WIND[loop], SCRFAC[loop], avdepe, avvele, depcor, tw, advData)
+
+		#(dox, bod, satdo, rodo, robod, odo, bod
+		#obod) = oxrx_run(
+		#	IDOX[loop], IBOD[loop], WIND[loop], avdepe, avvele, tw, depcor, advData)   
 	
 		if NUTFG == 1:  # simulate primary inorganic nitrogen and phosphorus balances
 			(dox, bod, NO3[loop], NO2[loop], NH3[loop], PO4[loop], TAM[loop], RONO3[loop],
 			 RONO2[loop], RONH3[loop], ROPO4[loop], ONO3[loop], ONO2[loop], ONH3[loop],
-			 OPO4[loop]) = nutrx(
+			 OPO4[loop], rsnh4, rspo4) = nutrx_run(
 			 dox, bod, tw, INO3[loop], INH3[loop], INO2[loop], IPO4[loop], NUAFX[loop],
 			 NUACN[loop], PREC[loop], SAREA[loop], advData) 
 			
@@ -185,9 +214,9 @@ def rqual(store, siminfo, uci, ts):
 				 PHYCLA[loop], BALCLA[loop], ROPHYTO[loop], ROZOO[loop], ROBENAL[loop],
 				 ROPHYCLA[loop], ROBALCLA[loop], OPHYTO[loop], OZOO[loop], 
 				 OBENAL[loop], OPHYCLA[loop], OBALCLA[loop], BINV[loop], PLADFX[loop], 
-				 PLADCN[loop]) = plank(
+				 PLADCN[loop]) = plank_run(
 				 dox, bod, IPHYTO[loop], IZOO[loop], IORN[loop], IORP[loop], 
-				 IORC[loop], tw, WASH[loop], SOLRAD[loop], PREC[loop], SAREA[loop], advData)
+				 IORC[loop], rsnh4, rspo4, tw, WASH[loop], SOLRAD[loop], PREC[loop], SAREA[loop], advData)
 				
 				if PHFG == 1:   # simulate ph and carbon species
 					
@@ -215,11 +244,11 @@ def rqual(store, siminfo, uci, ts):
 				rrpo4 += rspo4(4) # add adsorbed suspended po4 to dissolved
 
 		# check do level; if dox exceeds user specified level of supersaturation, then release excess do to the atmosphere
-		doxs = dox
-		if dox > supsat * satdo:
-			dox = supsat * satdo
-		readox = readox + (dox - doxs) * vol
-		totdox = readox + boddox + bendox + nitdox + phydox + zoodox + baldox
+		doxs = OXRX.dox
+		if OXRX.dox > OXRX.supsat * OXRX.satdo:
+			OXRX.dox = OXRX.supsat * OXRX.satdo
+		OXRX.readox = OXRX.readox + (OXRX.dox - doxs) * vol
+		OXRX.totdox = OXRX.readox + OXRX.boddox + OXRX.bendox + nitdox + phydox + zoodox + baldox
 		
 		# update dissolved totals and totals of nutrients
 		rdox = dox * vol
