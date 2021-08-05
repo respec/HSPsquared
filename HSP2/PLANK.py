@@ -25,23 +25,28 @@ def  plank(store, siminfo, uci, ts):
 	ui = make_numba_dict(uci)
 	
 	# flags - table-type PLNK-FLAGS
-	PHYFG  = ui['PHYFG']
-	ZOOFG  = ui['ZOOFG']
-	BALFG  = ui['BALFG']
-	SDLTFG = ui['SDLTFG']
-	AMRFG  = ui['AMRFG']
-	DECFG  = ui['DECFG']
-	NSFG   = ui['NSFG']
-	ZFOOD  = ui['ZFOOD']
-	BNPFG  = ui['BNPFG']
+	PHYFG  = int(ui['PHYFG'])
+	ZOOFG  = int(ui['ZOOFG'])
+	BALFG  = int(ui['BALFG'])
+	SDLTFG = int(ui['SDLTFG'])
+	AMRFG  = int(ui['AMRFG'])
+	DECFG  = int(ui['DECFG'])
+	NSFG   = int(ui['NSFG'])
+	ZFOOD  = int(ui['ZFOOD'])
+	BNPFG  = int(ui['BNPFG'])
 
-	HTFG   = ui['HTFG']
-	TAMFG  = ui['NH3FG']
-	PO4FG  = ui['PO4FG']
+	HTFG   = int(ui['HTFG'])
+	TAMFG  = int(ui['NH3FG'])
+	NO2FG  = int(ui['NO2FG'])
+	PO4FG  = int(ui['PO4FG'])
+
+	ADNHFG = int(ui['ADNHFG'])
+	ADPOFG = int(ui['ADPOFG'])
 
 	bpcntc = ui['BPCNTC']
 	cvbo  = ui['CVBO']
 	cvbpc  = ui['CVBPC']
+	cvbpn  = ui['CVBPN']
 	
 	if ZOOFG == 1 and PHYFG == 0:
 		pass # ERRMSG: error - zooplankton cannot be simulated without phytoplankton
@@ -52,12 +57,12 @@ def  plank(store, siminfo, uci, ts):
 
 	if BALFG == 2:   # user has selected multiple species with more complex kinetics
 		# additional benthic algae flags - table-type BENAL-FLAG
-		numbal  = ui['NUMBAL']
-		BINVFG  = ui['BINVFG']
-		BFIXFG1 = ui['BFIXFG1'] 
-		BFIXFG2 = ui['BFIXFG2'] 
-		BFIXFG3 = ui['BFIXFG3'] 
-		BFIXFG4 = ui['BFIXFG4'] 
+		numbal  = int(ui['NUMBAL'])
+		BINVFG  = int(ui['BINVFG'])
+		BFIXFG1 = int(ui['BFIXFG1'])
+		BFIXFG2 = int(ui['BFIXFG2'])
+		BFIXFG3 = int(ui['BFIXFG3'])
+		BFIXFG4 = int(ui['BFIXFG4'])
 	else:
 		numbal = BALFG          # single species or none
 		
@@ -79,6 +84,7 @@ def  plank(store, siminfo, uci, ts):
 	cvnrbo = nonref * cvbo
 
 	cvbp = (31.0 * bpcntc) / (1200.0 * cvbpc)
+	cvbn = 14.0 * cvbpn * cvbp / 31.0
 	cvpb   = 31.0 / (1000.0 * cvbp)
 	cvbcl  = 31.0 * ratclp / cvpb
 
@@ -210,48 +216,21 @@ def  plank(store, siminfo, uci, ts):
 	orc   = ui['ORC']
 
 	# atmospheric deposition flags
-	PLADFG = array(ui['PLADFG'])   # six  PLADFG1 to PLADFG6;  table-type PLNK-AD-FLAGS
-	PLAFXM = zeros(4)
+	PLADFG = zeros(7)
+	for j in range(1,7):
+		PLADFG[j] = ui['PLADFG(' + str(j) + ')']
 
-	for j in range(1, 4):
-		n = 2*(j - 1) + 1
-		if PLADFG[n] > 0:  # monthly flux must be read
-			PLAFXM[j] = array(ui[('PLAFXM',j)])
-			if uunits == 1:     # convert from lb/ac.day to mg.ft3/l.ft2.ivl
-				PLAFXM[j] *= 0.3677 * DELT60 / 24.0
-			elif uunits == 2:	      # convert from kg/ha.day to mg.m3/l.m2.ivl
-				PLAFXM[j] *= 0.1 * DELT60 / 24.0
-	# Note: get PLAFX array from monthly (above), constant, or time series
-	# PLAFX is dimension (simlen, 3)
-	# same with PLADCN 
-
-	# compute atmospheric deposition influx; [N, P, C]
-	pladdr = zeros(4)
-	pladwt = zeros(4)
-	pladep = zeros(4)
-	flxbal = zeros((4,numbal))
-
-	for i in range(1,4):
-		n = 2 * (i - 1) + 1
-		pladdr[i] = SAREA * PLADFX[i]          # dry deposition
-		pladwt[i] = PREC * SAREA * PLADCN[i]   # wet deposition
-		pladep[i] = pladdr[i] + pladwt[i]	
-	
+	# variable initialization:
 	if PHYFG == 0:   # initialize fluxes of inactive constituent
 		rophyt = 0.0
 		ophyt[:] = 0.0	#nexits
-		phydox = 0.0
-		phybod = 0.0
-		phytam = 0.0
-		phyno3 = 0.0
-		phypo4 = 0.0
-		phyorn = 0.0
-		phyorp = 0.0
-		phyorc = 0.0
+		phydox = phybod = 0.0
+		phytam = phyno3 = phypo4 = 0.0
+		phyorn = phyorp = phyorc = 0.0
 		pyco2  = 0.0
-		dthphy = 0.0
-		grophy = 0.0
-		totphy = 0.0
+		dthphy = grophy = totphy = 0.0
+
+	ozoo = zeros(nexits)
 
 	if ZOOFG == 1:   # convert zoo to mg/l
 		zoo *= zomass
@@ -259,21 +238,16 @@ def  plank(store, siminfo, uci, ts):
 		# initialize fluxes of inactive constituent
 		rozoo = 0.0
 		ozoo[:] = 0.0	#nexits
-		zoodox = 0.0
-		zoobod = 0.0
-		zootam = 0.0
-		zoono3 = 0.0
-		zoopo4 = 0.0
-		zooorn = 0.0
-		zooorp = 0.0
-		zooorc = 0.0
+		zoodox = zoobod = 0.0
+		zootam = zoono3 = zoopo4 = 0.0
+		zooorn = zooorp = zooorc = 0.0
 		zoophy = 0.0
 		zoco2  = 0.0
-		grozoo = 0.0
-		dthzoo = 0.0
-		totzoo = 0.0
+		grozoo = dthzoo = totzoo = 0.0
 
 	benal = zeros(numbal)
+	flxbal = zeros((4,5))
+
 	if numbal == 1:      # single species
 		benal[1] = ui['BENAL']       # points to  table-type plnk-init above for rvals
 	elif numbal >= 2:      # multiple species - table-type benal-init
@@ -281,32 +255,30 @@ def  plank(store, siminfo, uci, ts):
 			str_ba = 'BENAL' + str(n+1)
 			benal[n] = ui[str_ba] 	# how to get multiples???
 	else:                     # no benthic algae simulated
-		baldox = 0.0
-		balbod = 0.0
-		baltam = 0.0
-		balno3 = 0.0
-		balpo4 = 0.0
-		balorn = 0.0
-		balorp = 0.0
-		balorc = 0.0
+		baldox = balbod = 0.0
+		baltam = balno3 = balpo4 = 0.0
+		balorn = balorp = balorc = 0.0
 		baco2 = 0.0
 		flxbal[1:4,1:5] = 0.0
 
 	# compute derived quantities
 	phycla = phyto * cvbcl
-	balcla = zeros(numbal)
+	balcla = zeros(4)
 	for i in range(numbal):
 		balcla[i] = benal[i] * cvbcl
 
+	lsnh4 = lspo4 = zeros(4)
+
 	if vol > 0.0:   # compute initial summary concentrations
 		for i in range(1, 4):
-			lsnh4[i] = rsnh4[i] / vol
-			lspo4[i] = rspo4[i] / vol
-		
-		torn,torp,torc,potbod,tn,tp = \
-			pksums (phyfg,zoofg,tamfg,no2fg,po4fg,adnhfg,adpofg, 
+			#lsnh4[i] = rsnh4[i] / vol		#LTI-need to address this NUTRX var.
+			#lspo4[i] = rspo4[i] / vol		#LTI-need to address this NUTRX var.
+			pass
+
+		(torn,torp,torc,potbod,tn,tp) = \
+			pksums (PHYFG,ZOOFG,TAMFG,NO2FG,PO4FG,ADNHFG,ADPOFG,
 					cvbn,cvbp,cvbc,cvbo,cvnrbo,phyto,zoo,orn,orp,orc,no3,tam,no2,lsnh4[1],lsnh4[2],
-					lsnh4[3],po4,lspo4[1],lspo4[2],lspo4[3],bod,torn,torp,torc,potbod,tn,tp)
+					lsnh4[3],po4,lspo4[1],lspo4[2],lspo4[3],bod) #,torn,torp,torc,potbod,tn,tp)
 	else:    # undefined summary concentrations
 		torn   = -1.0e30
 		torp   = -1.0e30
@@ -318,8 +290,34 @@ def  plank(store, siminfo, uci, ts):
 	return errors, ERRMSGS
 
 	@jit(nopython = True)
-	def plank(dox, bod, iphyto, izoo, iorn, iorp, iorc, tw, wash, solrad, prec, sarea, advData):
+	def plank_run(dox, bod, iphyto, izoo, iorn, iorp, iorc, rsnh4, rspo4, tw, wash, solrad, prec, sarea, advData):
 		'''Simulate behavior of plankton populations and associated reactions'''
+
+		# update atmospheric deposition:
+		PLAFXM = zeros(4)
+
+		for j in range(1, 4):
+			n = 2*(j - 1) + 1
+			if PLADFG[n] > 0:  # monthly flux must be read
+				PLAFXM[j] = array(ui[('PLAFXM',j)])  #LTI-needs testing
+				if uunits == 1:     # convert from lb/ac.day to mg.ft3/l.ft2.ivl
+					PLAFXM[j] *= 0.3677 * DELT60 / 24.0
+				elif uunits == 2:	      # convert from kg/ha.day to mg.m3/l.m2.ivl
+					PLAFXM[j] *= 0.1 * DELT60 / 24.0
+		# Note: get PLAFX array from monthly (above), constant, or time series
+		# PLAFX is dimension (simlen, 3)
+		# same with PLADCN 
+
+		# compute atmospheric deposition influx; [N, P, C]
+		pladdr = pladwt = pladep = zeros(4)
+
+		for i in range(1,4):
+			n = 2 * (i - 1) + 1
+			pladdr[i] = SAREA * PLADFX[i]          # dry deposition
+			pladwt[i] = PREC * SAREA * PLADCN[i]   # wet deposition
+			pladep[i] = pladdr[i] + pladwt[i]	
+		
+
 		if PHYFG == 1:   # phytoplankton simulated
 			# advecvt phytoplankton
 			phyto, rophyt,ophyt = advplk(iphyto,vols,srovol,vol,erovol,sovol, eovol,nexits,oref,mxstay,seed,delts,phyto,rophyt,ophyt)
@@ -623,8 +621,8 @@ def  plank(store, siminfo, uci, ts):
 				= pksums(phyfg,zoofg,
 				tamfg,no2fg,po4fg,adnhfg,adpofg,cvbn,cvbp,cvbc,cvbo,cvnrbo,ophyt[i],ozoo[i],
 				oorn[i],oorp[i],oorc[i],ono3[i],otam[i],ono2[i], osnh4[i,1],osnh4[i,2],
-				osnh4[i,3],opo4[i], ospo4[i,1],ospo4[i,2],ospo4[i,3],obod[i],otorn[i],
-				otorp[i],otorc[i],dumval,ototn[i],ototp[i])
+				osnh4[i,3],opo4[i], ospo4[i,1],ospo4[i,2],ospo4[i,3],obod[i])
+				#otorn[i],otorp[i],otorc[i],dumval,ototn[i],ototp[i])
 
 		# cbrb  added call to ammion to redistribute tam after algal influence
 		nh3,nh4 = ammion(tw, phval, tam, nh3, nh4)
