@@ -122,38 +122,36 @@ def main(hdfname, saveall=False, jupyterlab=True):
                             if 'CFSAEX' in uci[(operation, 'PLANK', segment)]['PARAMETERS']:
                                 ui['PARAMETERS']['CFSAEX'] = uci[(operation, 'PLANK', segment)]['PARAMETERS']['CFSAEX']
                     
-                    if activity in ['OXRX','NUTRX','PLANK']:
-                        ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
-                        if flags['HYDR']:
-                            ui['PARAMETERS']['LKFG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LKFG']
-                        ui['FLAGS']['BENRFG'] = uci[(operation, 'RQUAL', segment)]['FLAGS']['BENRFG']
-
-                        if activity == 'PLANK':
-                            ui['PARAMETERS']['HTFG'] = flags['HTRCH']
-                            ui['PARAMETERS']['ADNHFG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['ADNHFG']
-                            ui['PARAMETERS']['ADPOFG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['ADPOFG']
-                            ui['FLAGS']['BPCNTC'] = uci[(operation, 'NUTRX', segment)]['PARAMETERS']['BPCNTC']
-                            ui['FLAGS']['CVBO'] = uci[(operation, 'NUTRX', segment)]['PARAMETERS']['CVBO']
-                            ui['FLAGS']['CVBPC'] = uci[(operation, 'NUTRX', segment)]['PARAMETERS']['CVBPC']
-                            ui['FLAGS']['CVBPN'] = uci[(operation, 'NUTRX', segment)]['PARAMETERS']['CVBPN']
-                            ui['FLAGS']['NH3FG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['NH3FG']
-                            ui['FLAGS']['NO2FG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['NO2FG']
-                            ui['FLAGS']['PO4FG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['PO4FG']
-
                     if activity == 'RQUAL':
+                        # RQUAL inputs:
                         ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
                         if flags['HYDR']:
                             ui['PARAMETERS']['LKFG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LKFG']
 
-                        ui['PARAMETERS']['HTFG'] = flags['HTRCH']
-                        ui['PARAMETERS']['PLKFG'] = flags['OXFG']
-                        ui['PARAMETERS']['NUTFG'] = flags['NUTFG']
-                        ui['PARAMETERS']['PLKFG'] = flags['PLKFG']
-                        ui['PARAMETERS']['PHFG'] = flags['PHFG']
+                        ui['FLAGS']['HTFG'] = flags['HTRCH']
+                        ui['FLAGS']['GQFG'] = flags['GQUAL']
+                        ui['FLAGS']['GQALFG4'] = uci[(operation, 'GQUAL', segment)]['GQUAL1']['QALFG4']
+                        ui['FLAGS']['OXFG'] = flags['OXFG']
+                        ui['FLAGS']['NUTFG'] = flags['NUTRX']
+                        ui['FLAGS']['PLKFG'] = flags['PLANK']
+                        ui['FLAGS']['PHFG'] = flags['PHCARB']
 
+                        # OXRX module inputs:
                         ui_oxrx = uci[(operation, 'OXRX', segment)] 
+                        
+                        if flags['HYDR']:
+                            ui_oxrx['PARAMETERS']['LEN'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LEN']
+                            ui_oxrx['PARAMETERS']['DELTH'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['DELTH']
+                        
+                        if flags['HTRCH']:
+                            ui_oxrx['PARAMETERS']['ELEV'] = uci[(operation, 'HTRCH', segment)]['PARAMETERS']['ELEV']
+
+                        # NUTRX module inputs:
                         ui_nutrx = uci[(operation, 'NUTRX', segment)] 
+
+                        # PLANK module inputs:
                         ui_plank = uci[(operation, 'PLANK', segment)] 
+
 
 
                 ############ calls activity function like snow() ##############

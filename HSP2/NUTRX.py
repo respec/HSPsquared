@@ -55,22 +55,20 @@ def nutrx(store, siminfo, uci, ts):
 		# ERRMSG: error - sediment associated nh4 and/or po4 is being simulated,but sediment is not being simulated in section sedtrn
 
 	uafxm = zeros((13,4))
+	sf = 1.0
+
+	if uunits == 1:			# convert from lb/ac.day to mg.ft3/l.ft2.ivl
+		sf = 0.3677 * delt60 / 24.0
+	else:					# convert from kg/ha.day to mg.m3/l.m2.ivl	
+		sf = 0.1 * delt60 / 24.0	
+
+	# convert units to internal:
 	if NUADFG[1] > 0:
-		uafxm[:,1] = ui['NUAFXM1']
+		uafxm[:,1] = ui['NUAFXM1'] * sf
 	if NUADFG[2] > 0:
-		uafxm[:,2] = ui['NUAFXM2']
+		uafxm[:,2] = ui['NUAFXM2'] * sf
 	if NUADFG[3] > 0:
-		uafxm[:,3] = ui['NUAFXM3']		
-	
-	# convert units to internal
-	if uunits == 1:     # convert from lb/ac.day to mg.ft3/l.ft2.ivl
-		uafxm[:,1]  *= 0.3677 * delt60 / 24.0		
-		uafxm[:,2]  *= 0.3677 * delt60 / 24.0
-		uafxm[:,3]  *= 0.3677 * delt60 / 24.0		
-	else:	             # convert from kg/ha.day to mg.m3/l.m2.ivl		
-		uafxm[:,1]  *= 0.1 * delt60 / 24.0		
-		uafxm[:,2]  *= 0.1 * delt60 / 24.0
-		uafxm[:,3]  *= 0.1 * delt60 / 24.0	
+		uafxm[:,3] = ui['NUAFXM3'] * sf
 		
 	# conversion factors - table-type conv-val1
 	cvbo   = ui['CVBO']

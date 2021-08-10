@@ -1,48 +1,106 @@
 from numpy import zeros, array
+from numba import njit, int32, float32, float64, char
+from numba.experimental import jitclass
 from math import exp
+
 from HSP2.ADCALC import advect, oxrea
 from HSP2.RQUTIL import sink
 from HSP2.utilities	 import make_numba_dict
 
+spec = [
+	('AFACT', float32),
+	('benod', float32),
+	('benox', float32),
+	('BENRFG', int32),
+	('bod', float32),
+	('bodbnr', float32),
+	('bodox', float32),
+	('BRBOD', float64[:]),
+	('cforea', float32),
+	('cfpres', float32),
+	('decbod', float32),
+	('delt60', float32),
+	('delth', float32),
+	('delts', float32),
+	('doben', float32),
+	('dorea', float32),
+	('dox', float32),
+	('errors', int32[:]),
+	('expod', float32),
+	('expred', float32),
+	('exprel', float32),
+	('kbod20', float32),
+	('kodset', float32),
+	('korea', float32),
+	('len_', float32),
+	('LKFG', int32),
+	('nexits', int32),
+	('obod', float64[:]),
+	('odox', float64[:]),
+	('rbod', float32),
+	('rdox', float32),
+	('readox', float32),
+	('reak', float32),
+	('reakt', float32),
+	('REAMFG', int32),
+	('rdox', float32),
+	('rbod', float32),
+	('relbod', float32),
+	('robod', float32),
+	('rodox', float32),
+	('satdo', float32),
+	('simlen', int32),
+	('snkbod', float32),
+	('supsat', float32),
+	('svol', float32),
+	('tcben', float32),
+	('tcbod', float32),
+	('tcginv', float32),
+	('totdox', float32),
+	('totbod', float32),
+	('uunits', int32),
+	('vol', float32),
+]
 
+#@jitclass(spec)
 class OXRX_Class:
-
-	# class variables:
-	ERRMSGS=('Placeholder')
 
 	#-------------------------------------------------------------------
 	# class initialization:
 	#-------------------------------------------------------------------
-	def __init__(self, store, siminfo, uci_rq, ui, ts):
+	def __init__(self, siminfo, advectData, ui_rq, ui, ts):
 
 		''' Initialize variables for primary DO, BOD balances '''
 
-		self.errors = zeros(len(self.ERRMSGS), dtype=int)
+		#self.ERRMSGS = array('Placeholder')
+		#self.errors = zeros(len(self.ERRMSGS), dtype=int32)
 
-		#advectData = uci['advectData']
-		(nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = uci_rq['advectData']
+		(nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = advectData
 		
-		ui_rq = make_numba_dict(uci_rq)
-
-		delt60 = siminfo['delt'] / 60  # delt60 - simulation time interval in hours
+		delt60 = siminfo['delt'] / 60.0  # delt60 - simulation time interval in hours
 		self.delt60 = delt60
-		self.simlen = siminfo['steps']
+		self.simlen = int(siminfo['steps'])
 		self.delts  = siminfo['delt'] * 60
-		self.uunits = siminfo['units']
+		self.uunits = int(siminfo['units'])
 
-		self.nexits = nexits
+		self.nexits = int(nexits)
 
 		self.AFACT = 43560.0
 		if self.uunits == 2:
 			# si units conversion
 			self.AFACT = 1000000.0
 
-		self.svol = vol * self.AFACT
+		self.vol = vol * self.AFACT
+		self.svol = self.vol
+
+		# gqual flags
+		self.GQFG = int(ui_rq['GQFG'])
+		self.GQALFG4 = int(ui_rq['GQALFG4'])
 
 		# table-type ox-genparm
-		self.kbod20 = ui['KBOD20'] * self.delt60	 # convert units from 1/hr to 1/ivl
+		self.kbod20 = ui['KBOD20'] * delt60	 # convert units from 1/hr to 1/ivl
 		self.tcbod	= ui['TCBOD']
-		self.kodset = ui['KODSET'] * self.delt60	 # convert units from 1/hr to 1/ivl
+		self.kodset = ui['KODSET'] * delt60	 # convert units from 1/hr to 1/ivl
 		self.supsat = ui['SUPSAT']
 		
 		# table-type ox-init
@@ -61,15 +119,22 @@ class OXRX_Class:
 		self.LKFG = int(ui_rq['LKFG'])
 		if self.LKFG == 1:
 			self.cforea = ui['CFOREA']	 # reaeration parameter from table-type ox-cforea
+		
 		elif self.REAMFG == 1:			 # tsivoglou method;  table-type ox-tsivoglou
 			self.reakt	= ui['REAKT']
 			self.tcginv = ui['TCGINV']
-			self.len_	= ui['LEN']
+			
+			self.len_	= ui['LEN'] * 5280.0  # mi to feet
 			self.delth	= ui['DELTH']
+			if self.uunits == 2:
+				self.len_ = ui['LEN'] * 1000.0  # length of reach, in meters
+				self.delth = ui['DELTH'] * 1000.0  # convert to meters
+
 		elif self.REAMFG == 2:			# owen/churchill/o'connor-dobbins; table-type ox-tcginv
 			self.tcginv = ui['TCGINV']
 			self.reak	= ui['REAK']
 			self.expred = ui['EXPRED']
+		
 		elif self.REAMFG == 3:			# user formula - table-type ox-reaparm
 			self.tcginv = ui['TCGINV']
 			self.reak	= ui['REAK']
@@ -79,35 +144,41 @@ class OXRX_Class:
 			self.benod	= ui['BENOD'] * self.delt60	# convert units from 1/hr to 1/ivl
 			self.tcben	= ui['TCBEN']
 			self.expod	= ui['EXPOD']
-			self.exprel = ui['EXPREL']		
-			self.BRBOD	= array([ui['BRBOD1'] , ui['BRBOD2']])	* self.delt60  # convert units from 1/hr to 1/ivl
+			self.exprel = ui['EXPREL']
+
+			self.BRBOD = zeros(2)
+			self.BRBOD[0] = ui['BRBOD1'] * self.delt60		# convert units from 1/hr to 1/ivl
+			self.BRBOD[1] = ui['BRBOD2'] * self.delt60		# convert units from 1/hr to 1/ivl
+
+			#self.BRBOD	= array([ui['BRBOD1'] , ui['BRBOD2']])	* self.delt60  # convert units from 1/hr to 1/ivl
 
 		self.snkbod = 0.0
 
-		self.rdox = self.dox * vol
-		self.rbod = self.bod * vol
+		self.rdox = self.dox * self.vol
+		self.rbod = self.bod * self.vol
 
 		self.odox = zeros(nexits)
-		self.odob = zeros(nexits)
+		self.obod = zeros(nexits)
 
 		self.korea = 0.0
 
 	#-------------------------------------------------------------------
 	# simulation (single timestep):
 	#-------------------------------------------------------------------
-	def simulate(self, idox, ibod, wind, scrfac, avdepe, avvele, depcor, tw, advData):
+
+	def simulate(self, idox, ibod, wind, scrfac, avdepe, avvele, depcor, tw, advectData):
 
 		# hydraulics:
-		(nexits, vol_, vol, srovol, erovol, sovol, eovol) = advData
+		(nexits, vol_, vol, srovol, erovol, sovol, eovol) = advectData
 
 		self.vol = vol * self.AFACT
 
 		# advect dissolved oxygen
-		(self.dox, rodox, self.odox) = \
+		(self.dox, self.rodox, self.odox) = \
 			advect(idox, self.dox, nexits, self.svol, vol, srovol, erovol, sovol, eovol)
 
 		# advect bod
-		(self.bod, robod, self.obod) = \
+		(self.bod, self.robod, self.obod) = \
 			advect(ibod, self.bod, nexits, self.svol, vol, srovol, erovol, sovol, eovol)
 
 		self.svol = vol
@@ -154,11 +225,11 @@ class OXRX_Class:
 
 		elif self.LKFG == 1:
 			# calculate oxygen reaeration
-			if not (GQFG == 1 and GQALFG(4) == 1):
+			if not (self.GQFG == 1 and self.GQALFG4 == 1):
 				self.korea = oxrea(
 					self.LKFG, wind,self.cforea,avvele,avdepe,self.tcginv, 
 					self.REAMFG,self.reak,self.reakt,self.expred,self.exprev,self.len_,
-					delth,tw,self.delts,self.self.delt60,self.uunits, self.korea)
+					self.delth,tw,self.delts,self.self.delt60,self.uunits, self.korea)
 
 			# calculate oxygen saturation level for current water
 			# temperature; satdo is expressed as mg oxygen per liter
@@ -173,7 +244,7 @@ class OXRX_Class:
 				self.satdo = 0.0   # reset saturation level
 
 			# compute dissolved oxygen value after reaeration,and the reaeration flux
-			dorea  = self.korea * (self.satdo - self.dox)
+			self.dorea  = self.korea * (self.satdo - self.dox)
 			self.dox	= self.dox + dorea
 			self.readox = dorea * vol
 
@@ -232,7 +303,7 @@ class OXRX_Class:
 					+ nitdox + phydox + zoodox + baldox
 		
 		# update dissolved totals and totals of nutrients
-		self.rdox = self.ox * vol
+		self.rdox = self.dox * vol
 		self.rbod = self.bod * vol
 
 
