@@ -292,7 +292,7 @@ def _htrch_(ui, ts):
 		gatmp  = (gatmp - 32.0) * 0.555
 		dewtmp = DEWTMP[loop]
 		dewtmp = (dewtmp - 32.0) * 0.555
-		wind   = WIND[loop] * 5280.0 / 3.28     # get wind movement expressed in m/ivl
+		wind   = WIND[loop] * 1609.0  # 5280.0 / 3.28     # get wind movement expressed in m/ivl
 		lapse  = LAPSE[loop]
 		# ratemp -- correct air temperature for elevation differences
 		#   find precipitation rate during the interval; prrat is expressed in m/min
