@@ -63,6 +63,12 @@ def gqual(store, siminfo, uci, ts):
 	# ui = uci['PARAMETERS']
 	if 'NGQUAL' in ui:
 		ngqual = int(ui['NGQUAL'])
+		tempfg = ui['TEMPFG']
+		phflag = ui['PHFLAG']
+		roxfg = ui['ROXFG']
+		cldfg = ui['CLDFG']
+		sdfg = ui['SDFG']
+		phytfg = ui['PHYTFG']
 	ui['ngqual'] = ngqual
 
 	ts['HRFG'] = hour24Flag(siminfo).astype(float)
