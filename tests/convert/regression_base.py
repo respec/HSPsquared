@@ -108,6 +108,11 @@ class RegressTestBase(object):
                     # hbn_s = pd.Series(hbn_time_series.values)
                     # h5_s = pd.Series(h5_time_series.values)
 
+                    if (activity == "PWTGAS" and (cons == "SOTMP" or cons == "SODOX" or cons == "SOCO2")):  # prepare for special exceptions
+                        hbn_suro_time_series = hbn_dataset.get_time_series(operation, int(opn_id), "SURO", "PWATER", 'hourly')
+                        h5_suro_time_series = hdf5_data[0].get_time_series(operation, int(opn_id), "SURO", "PWATER")
+                    if (activity == "SEDTRN" and (cons == "SSEDCLAY" or cons == "SSEDTOT")):  # prepare for special exceptions
+                        h5_vol_time_series = hdf5_data[0].get_time_series(operation, int(opn_id), "VOL", "HYDR")
                     missing_data_h5 = ''
                     missing_data_hbn = ''
                     if hbn_time_series is None:
@@ -117,11 +122,36 @@ class RegressTestBase(object):
                     if len(missing_data_h5) > 0 or len(missing_data_hbn) > 0:
                         html += f'<tr><td>-</td><td>{cons}</td><td>NA</td><td>NA</td><td>{missing_data_h5}<br>{missing_data_hbn}</td></tr>\n'
                     else:
+                        abstol = 1e-2
+                        ### special cade here to catch cases that are not signficant differences but appear to be
+                        for i in range(h5_time_series.values.size):
+                            if np.isnan(h5_time_series.values[i]):
+                                h5_time_series.values[i] = 0.0
+                            if hbn_time_series.values[i] < -1.0e28:
+                                hbn_time_series.values[i] = 0.0
+                            if h5_time_series.values[i] < -1.0e28:
+                                h5_time_series.values[i] = 0.0
+                            # special exceptions
+                            # if tiny suro in one and no suro in the other, don't trigger on suro-dependent numbers
+                            if (activity == "PWTGAS" and (cons == "SOTMP" or cons == "SODOX" or cons == "SOCO2")):
+                                if (h5_suro_time_series.values[i] == 0.0 and hbn_suro_time_series.values[i] < 1.0e-8) or \
+                                    (hbn_suro_time_series.values[i] == 0.0 and h5_suro_time_series.values[i] < 1.0e-8):
+                                    h5_time_series.values[i] = 0.0
+                                    hbn_time_series.values[i] = 0.0
+                            # if volume in reach is going to zero, small concentration differences are not signficant
+                            if (activity == "SEDTRN" and (cons == "SSEDCLAY" or cons == "SSEDTOT")):
+                                if h5_vol_time_series.values[i] < 1.0e-4:
+                                    h5_time_series.values[i] = 0.0
+                                    hbn_time_series.values[i] = 0.0
+                        # if heat related term, compute special tolerance
+                        if cons == 'HTEXCH' or cons == 'IHEAT' or cons == 'ROHEAT' or cons.startswith('OHEAT'):
+                            abstol = max(abs(h5_time_series.values.min()), abs(h5_time_series.values.max())) * 1e-4
+                        ### end special exception code here
                         max_diff1 = (hbn_time_series.values - h5_time_series.values).max()
                         max_diff2 = (h5_time_series.values - hbn_time_series.values).max()
                         max_diff = max(max_diff1, max_diff2)
                         match = False
-                        if np.allclose(hbn_time_series, h5_time_series, rtol=1e-2, atol=1e-2, equal_nan=False):
+                        if np.allclose(hbn_time_series, h5_time_series, rtol=1e-2, atol=abstol, equal_nan=False):
                             match = True
                         match_symbol = f'<span style="font-weight:bold;color:red">X</span>'
                         if match:
