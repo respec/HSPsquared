@@ -223,7 +223,7 @@ def gqual(store, siminfo, uci, ts):
 	return errors, ERRMSGS
 
 
-# @njit(cache=True)
+#@njit(cache=True)
 def _gqual_(ui, ts):
 	''' Simulate the behavior of a generalized quality constituent'''
 	errors = zeros(int(ui['errlen'])).astype(int64)
@@ -793,7 +793,8 @@ def _gqual_(ui, ts):
 
 		# tw20 may be required for bed decay of qual even if tw is undefined (due to vol=0.0)
 		tw   = TW[loop]
-		tw = (tw - 32.0) * 0.5555   # 5.0 / 9.0
+		if uunits == 1:
+			tw = (tw - 32.0) * 0.5555   # 5.0 / 9.0
 		tw20 = tw - 20.0           # TW20[loop]
 		if tw <= -10.0:
 			tw20 = 0.0
