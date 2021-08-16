@@ -178,20 +178,28 @@ class HDF5:
                         pd.date_range(self.start_time, self.end_time, freq='H'))
 
             # look at IQUAL's QUALID for naming of h5 IQUAL constituents in the RESULT group
+            iqual_groups = f.get('/IMPLND/IQUAL')
             self.data_dictionary[self.dd_key_implnd_iqual_ids] = {}
-            iqual_groups = f.get('/IMPLND/IQUAL/IQUAL1/FLAGS')
             if iqual_groups:
-                iqual_flag_grp_rows = iqual_groups['table']['index','QUALID']
-                for (bindex, bqualid) in iqual_flag_grp_rows:
-                    self.data_dictionary[self.dd_key_implnd_iqual_ids][bindex.astype('unicode')] = bqualid.astype('unicode')
+                for iqual_group_key in iqual_groups.keys():
+                    if iqual_group_key.startswith('IQUAL'):
+                        self.data_dictionary[self.dd_key_implnd_iqual_ids][iqual_group_key] = {}
+                        iqual_grp_rows = f.get('/IMPLND/IQUAL/' + iqual_group_key + '/FLAGS')['table']['index', 'QUALID']
+                        for (bindex, bqualid) in iqual_grp_rows:
+                            self.data_dictionary[self.dd_key_implnd_iqual_ids][iqual_group_key][bindex.astype('unicode')] = \
+                                bqualid.astype('unicode')
 
             # look at PQUAL's QUALID for naming of h5 PQUAL constituents in the RESULT group
+            pqual_groups = f.get('/PERLND/PQUAL')
             self.data_dictionary[self.dd_key_perlnd_pqual_ids] = {}
-            pqual_groups = f.get('/PERLND/PQUAL/PQUAL1/FLAGS')
             if pqual_groups:
-                pqual_flag_grp_rows = pqual_groups['table']['index','QUALID']
-                for (bindex, bqualid) in pqual_flag_grp_rows:
-                    self.data_dictionary[self.dd_key_perlnd_pqual_ids][bindex.astype('unicode')] = bqualid.astype('unicode')
+                for pqual_group_key in pqual_groups.keys():
+                    if pqual_group_key.startswith('PQUAL'):
+                        self.data_dictionary[self.dd_key_perlnd_pqual_ids][pqual_group_key] = {}
+                        pqual_grp_rows = f.get('/PERLND/PQUAL/' + pqual_group_key + '/FLAGS')['table']['index', 'QUALID']
+                        for (bindex, bqualid) in pqual_grp_rows:
+                            self.data_dictionary[self.dd_key_perlnd_pqual_ids][pqual_group_key][bindex.astype('unicode')] = \
+                                bqualid.astype('unicode')
 
             # get rchres conservative cons names, not sure why it would be per rchres as diff cons in diff table!
             rcons_groups = f.get('/RCHRES/CONS')
@@ -368,14 +376,20 @@ class HDF5:
                 col_key = constituent.upper()
                 break
             elif operation.upper() == 'IMPLND' and key_act == 'IQUAL':  # special matching
-                iqual_id = self.data_dictionary[self.dd_key_implnd_iqual_ids][key_opn[0:1] + key_id]
-                if self.data_dictionary[data_table_key][key].endswith('_' + constituent.upper().replace(iqual_id, '')):
+                if '_' not in self.data_dictionary[data_table_key][key]:
+                    continue
+                (o_cons_id, o_cons_name) = self.data_dictionary[data_table_key][key].split('_') # e.g. IQUAL1_SOQC
+                i_cons_id = self.data_dictionary[self.dd_key_implnd_iqual_ids][o_cons_id][f'I{key_id}']
+                if o_cons_name == constituent.upper().replace(i_cons_id, ''):
                     df_index = key
                     col_key = self.data_dictionary[data_table_key][key]
                     break
             elif operation.upper() == 'PERLND' and key_act == 'PQUAL':  # special matching
-                pqual_id = self.data_dictionary[self.dd_key_perlnd_pqual_ids][key_opn[0:1] + key_id]
-                if self.data_dictionary[data_table_key][key].endswith('_' + constituent.upper().replace(pqual_id, '')):
+                if '_' not in self.data_dictionary[data_table_key][key]:
+                    continue
+                (o_cons_id, o_cons_name) = self.data_dictionary[data_table_key][key].split('_') # e.g. PQUAL1_SOQC
+                p_cons_id = self.data_dictionary[self.dd_key_perlnd_pqual_ids][o_cons_id][f'P{key_id}']
+                if o_cons_name == constituent.upper().replace(p_cons_id, ''):
                     df_index = key
                     col_key = self.data_dictionary[data_table_key][key]
                     break
