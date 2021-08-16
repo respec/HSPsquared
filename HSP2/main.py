@@ -80,6 +80,7 @@ def main(hdfname, saveall=False, jupyterlab=True):
                         ui['PARAMETERS']['ADFG'] = flags['ADCALC']
                         ui['PARAMETERS']['KS']   = uci[(operation, 'HYDR', segment)]['PARAMETERS']['KS']
                         ui['PARAMETERS']['VOL']  = uci[(operation, 'HYDR', segment)]['STATES']['VOL']
+                        ui['PARAMETERS']['ROS']  = uci[(operation, 'HYDR', segment)]['PARAMETERS']['ROS']
                     if activity == 'HTRCH':
                         ui['PARAMETERS']['ADFG'] = flags['ADCALC']
                         ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
