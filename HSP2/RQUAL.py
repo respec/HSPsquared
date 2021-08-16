@@ -70,13 +70,13 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, ts):
 
 	#### OXRX  ####
 	
-	if ('IDOX' in ts):
-		IDOX  = ts['IDOX']  # optional, input flow
+	if ('OXIF1' in ts):
+		IDOX  = ts['OXIF1']  # optional, input flow
 	else:
 		IDOX = zeros(simlen)
 	
-	if ('IBOD' in ts):
-		IBOD  = ts['IBOD']  # optional, input flow	
+	if ('OXIF2' in ts):
+		IBOD  = ts['OXIF2']  # optional, input flow	
 	else:
 		IBOD = zeros(simlen)
 
@@ -99,23 +99,31 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, ts):
 
 	#oxrx = poxrx()  # returns Numba accelerated function in closure
 	
-	NUTFG = 0		#TMR!!!
+	#NUTFG = 0		#TMR!!!
 	if NUTFG:
+
+		ui_nutrx = make_numba_dict(uci_nutrx)
+
 		# get NUTRX specific input time series
 		INO3 = zeros(simlen); INO2 = zeros(simlen)
 		INH3 = zeros(simlen); IPO4 = zeros(simlen)
 
-		if 'INO3' in ts:
-			INO3 = ts['INO3']   # optional, input
+		if 'NUIF11' in ts:
+			INO3 = ts['NUIF11']   # optional, input
 
-		if 'INH3' in ts:				
-			INH3 = ts['INH3']   # optional, input
+		if 'NUIF12' in ts:				
+			INH3 = ts['NUIF12']   # optional, input
 		
-		if 'INO2' in ts:
-			INO2 = ts['INO2']   # optional, input
+		if 'NUIF13' in ts:
+			INO2 = ts['NUIF13']   # optional, input
 
-		if 'IPO4' in ts:
-			IPO4 = ts['IPO4']   # optional, input
+		if 'NUIF14' in ts:
+			IPO4 = ts['NUIF14']   # optional, input
+
+		# atmospheric deposition - create time series:
+		NUADFX = zeros((simlen,4))
+		NUADCN = zeros((simlen,4))
+		
 
 		#LTI NUAFX = setit()  # NUAFXM monthly, constant or time series
 		#LTI NUACN = setit()  # NUACNM monthly, constant or time series
@@ -141,11 +149,10 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, ts):
 			ts['ONH3' + str(i + 1)] = zeros(simlen)
 			ts['OPO4' + str(i + 1)] = zeros(simlen)
 
-		ui_nutrx = make_numba_dict(uci_nutrx)
 		NUTRX = NUTRX_Class(siminfo_, advectData, ui, ui_nutrx, ts, 
 							OXRX.dox, OXRX.bod, OXRX.korea)
 
-	PLKFG = 0		#TMR!!!
+	PLKFG = 0		#LTI!!!
 	if PLKFG:
 		# get PLANK specific time series
 		IPHYTO = ts['IPHYTO']   # optional
@@ -199,6 +206,7 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, ts):
 
 		#plank = pplank()  # returns Numba accelerated function in closure
 	
+	PHYFG = 0	#LTI!!!
 	if PHFG:
 		# get PHCARB() specific external time series
 		ALK  = ts['CON']    # ALCON only
@@ -229,6 +237,9 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, ts):
 		avdepe = AVDEPE[loop]
 		avvele = AVVELE[loop]
 		tw     = TW[loop]
+		if uunits == 1:
+			tw = (tw - 32.0) * (5.0 / 9.0)
+
 		depcor = DEPCOR[loop]
 		
 		advData = nexits, vol, VOL[loop], SROVOL[loop], EROVOL[loop], SOVOL[loop], EOVOL[loop]		
@@ -264,14 +275,11 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, ts):
 					 ) = phcarb(
 					 dox, bod, ALK[loop], ITIC[loop], ICO2[loop], tw, avdepe, SCRFAC[loop],  advData)
 	
+				# check do level; if dox exceeds user specified level of supersaturation, then release excess do to the atmosphere
+				OXRX.adjust_dox(vol, NUTRX.nitdox, PLANK.phydox, PLANK.zoodox, PLANK.baldox)
 			
 			# update totals of nutrients
 			NUTRX.updateMass()
-
-
-		# check do level; if dox exceeds user specified level of supersaturation, then release excess do to the atmosphere
-		OXRX.adjust_dox(vol, NUTRX.nitdox, PLANK.phydox, PLANK.zoodox, PLANK.baldox)
-
 
 	return
 
