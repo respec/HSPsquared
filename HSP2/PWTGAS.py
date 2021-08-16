@@ -197,7 +197,7 @@ def _pwtgas_(ui, ts):
         soco2 = -1.0e30
         if suro > 0.0:  # there is surface outflow
             # local surface outflow temp equals surface soil temp
-            sotmp = (sltmp - 32.0) * 0.555
+            sotmp = (sltmp - 32.0) * 5./9.
             if sotmp < 0.5:
                 sotmp = 0.5  # min water temp
             if CSNOFG:      # effects of snow are considered
@@ -240,7 +240,7 @@ def _pwtgas_(ui, ts):
         ioco2 = -1.0e30
         if ifwo > 0.0:   # there is interflow outflow
             # local interflow outflow temp equals upper soil temp
-            iotmp = (ultmp - 32.0) * 0.555
+            iotmp = (ultmp - 32.0) * 5./9.
             if iotmp < 0.5:
                 iotmp = 0.5    # min water temp
 
@@ -274,7 +274,7 @@ def _pwtgas_(ui, ts):
         aodox = -1.0e30
         aoco2 = -1.0e30
         if agwo > 0.0:   # there is baseflow
-            aotmp = (LGTMP[loop] - 32.0) * 0.555		# local baseflow temp equals lower/gw soil temp
+            aotmp = (LGTMP[loop] - 32.0) * 5./9.		# local baseflow temp equals lower/gw soil temp
             if aotmp < 0.5:     # min water temp
                 aotmp = 0.5
 
