@@ -153,7 +153,10 @@ def _pqual_(ui, ts):
 		QSOFG  = ui['QSOFG' + str(index)]
 		QIFWFG = ui['QIFWFG' + str(index)]
 		QAGWFG = ui['QAGWFG' + str(index)]
-		sqo    = ui['SQO' + str(index)]
+		if QSOFG:
+			sqo = ui['SQO' + str(index)]
+		else:
+			sqo = 0.0
 		wsqop  = ui['WSQOP' + str(index)]
 		wsfac = 2.30 / wsqop
 

@@ -30,6 +30,7 @@ class HDF5:
         self.dd_key_rchres_sedtrn_alias = {}
         self.dd_key_rchres_htrch_alias = {}
         self.dd_key_perlnd_pstemp_alias = {}
+        self.dd_key_perlnd_atemp_alias = {}
         self.start_time = None
         self.end_time = None
 
@@ -150,6 +151,9 @@ class HDF5:
         self.dd_key_rchres_htrch_alias['OHEAT5'] = 'OHEAT  EXIT5'
 
         self.dd_key_perlnd_pstemp_alias['AIRTC'] = 'AIRT'
+
+        self.dd_key_perlnd_atemp_alias['AIRTMP'] = 'SEGMENT'
+        self.dd_key_perlnd_atemp_alias['GATMP'] = 'GAGE'
 
     def open_output(self):
         """
@@ -398,6 +402,15 @@ class HDF5:
                 if o_cons_name in self.dd_key_perlnd_pstemp_alias:
                     # switch to HSPF output name
                     o_cons_name = self.dd_key_perlnd_pstemp_alias[o_cons_name]
+                if o_cons_name == constituent.upper():
+                    df_index = key
+                    col_key = self.data_dictionary[data_table_key][key]
+                    break
+            elif operation.upper() == 'PERLND' and key_act == 'ATEMP':  # special matching
+                o_cons_name = self.data_dictionary[data_table_key][key]
+                if o_cons_name in self.dd_key_perlnd_atemp_alias:
+                    # switch to HSPF output name
+                    o_cons_name = self.dd_key_perlnd_atemp_alias[o_cons_name]
                 if o_cons_name == constituent.upper():
                     df_index = key
                     col_key = self.data_dictionary[data_table_key][key]
