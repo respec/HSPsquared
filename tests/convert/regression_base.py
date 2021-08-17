@@ -127,9 +127,9 @@ class RegressTestBase(object):
                         for i in range(h5_time_series.values.size):
                             if np.isnan(h5_time_series.values[i]):
                                 h5_time_series.values[i] = 0.0
-                            if hbn_time_series.values[i] < -1.0e28:
+                            if hbn_time_series.values[i] < -1.0e26:
                                 hbn_time_series.values[i] = 0.0
-                            if h5_time_series.values[i] < -1.0e28:
+                            if h5_time_series.values[i] < -1.0e26:
                                 h5_time_series.values[i] = 0.0
                             # special exceptions
                             # if tiny suro in one and no suro in the other, don't trigger on suro-dependent numbers
