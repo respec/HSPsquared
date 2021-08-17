@@ -223,7 +223,7 @@ def gqual(store, siminfo, uci, ts):
 	return errors, ERRMSGS
 
 
-#@njit(cache=True)
+@njit(cache=True)
 def _gqual_(ui, ts):
 	''' Simulate the behavior of a generalized quality constituent'''
 	errors = zeros(int(ui['errlen'])).astype(int64)
@@ -695,28 +695,20 @@ def _gqual_(ui, ts):
 	ROSED2 = ts['ROSED2']
 	ROSED3 = ts['ROSED3']
 
-	# OSED1 = zeros((simlen, nexits))
-	# OSED2 = zeros((simlen, nexits))
-	# OSED3 = zeros((simlen, nexits))
-	OSED1 = []
-	OSED2 = []
-	OSED3 = []
+	OSED1 = zeros((simlen, nexits))
+	OSED2 = zeros((simlen, nexits))
+	OSED3 = zeros((simlen, nexits))
+
 	for timeindex in range(simlen):
-		tarray1 = []
-		tarray2 = []
-		tarray3 = []
 		if nexits > 1:
 			for xindex in range(nexits):
-				tarray1.append(ts['OSED1' + str(xindex + 1)][timeindex])
-				tarray2.append(ts['OSED2' + str(xindex + 1)][timeindex])
-				tarray3.append(ts['OSED3' + str(xindex + 1)][timeindex])
+				OSED1[timeindex, xindex] = ts['OSED1' + str(xindex + 1)][timeindex]
+				OSED2[timeindex, xindex] = ts['OSED2' + str(xindex + 1)][timeindex]
+				OSED3[timeindex, xindex] = ts['OSED3' + str(xindex + 1)][timeindex]
 		else:
-			tarray1.append(ts['ROSED1'][timeindex])
-			tarray2.append(ts['ROSED2'][timeindex])
-			tarray3.append(ts['ROSED3'][timeindex])
-		OSED1.append(tarray1)
-		OSED2.append(tarray2)
-		OSED3.append(tarray3)
+			OSED1[timeindex, 0] = ts['ROSED1'][timeindex]
+			OSED2[timeindex, 0] = ts['ROSED2'][timeindex]
+			OSED3[timeindex, 0] = ts['ROSED3'][timeindex]
 
 	# this number is used to adjust reaction rates for temperature
 	# TW20 = TW - 20.0
@@ -801,54 +793,45 @@ def _gqual_(ui, ts):
 		# correct unrealistically high values of tw calculated in htrch
 		if tw >= 50.0:
 			tw20 = 30.0
+		
 		prec = PREC[loop]
 		sarea= SAREA[loop]
 		vol  = VOL[loop] * AFACT
 		toqal = TOQAL[loop]
 		tosqal = TOSQAL[loop]
-		if uunits == 1:
-			depscr1 = DEPSCR1[loop] / 3.121E-08
-			depscr2 = DEPSCR2[loop] / 3.121E-08
-			depscr3 = DEPSCR3[loop] / 3.121E-08
-			rosed1 = ROSED1[loop] / 3.121E-08
-			rosed2 = ROSED2[loop] / 3.121E-08
-			rosed3 = ROSED3[loop] / 3.121E-08
-			osed1 = array(OSED1[loop])
-			osed2 = array(OSED2[loop])
-			osed3 = array(OSED3[loop])
-			osed1 = osed1 / 3.121E-08
-			osed2 = osed2 / 3.121E-08
-			osed3 = osed3 / 3.121E-08
-			# osed1 = [x / 3.121E-08 for x in osed1]
-			# osed2 = [x / 3.121E-08 for x in osed2]
-			# osed3 = [x / 3.121E-08 for x in osed3]
-			if qalfg[7] == 1:   # constituent is sediment-associated
-				rsed[1] = RSED1[loop] / 3.121E-08
-				rsed[2] = RSED2[loop] / 3.121E-08
-				rsed[3] = RSED3[loop] / 3.121E-08
-				rsed[4] = RSED4[loop] / 3.121E-08
-				rsed[5] = RSED5[loop] / 3.121E-08
-				rsed[6] = RSED6[loop] / 3.121E-08
+
+		# initialize sediment-related variables:
+		osed1 = zeros(nexits)
+		osed2 = zeros(nexits)
+		osed3 = zeros(nexits)
+
+		cf_denom = 1.0
+		if uunits ==1:
+			cf_denom = 3.121e-8
 		else:
-			depscr1 = DEPSCR1[loop] / 1E-06
-			depscr2 = DEPSCR2[loop] / 1E-06
-			depscr3 = DEPSCR3[loop] / 1E-06 # 2.83E-08
-			rosed1 = ROSED1[loop] / 1E-06
-			rosed2 = ROSED2[loop] / 1E-06
-			rosed3 = ROSED3[loop] / 1E-06
-			osed1 = OSED1[loop]
-			osed2 = OSED2[loop]
-			osed3 = OSED3[loop]
-			osed1 = [x / 1E-06 for x in osed1]
-			osed2 = [x / 1E-06 for x in osed2]
-			osed3 = [x / 1E-06 for x in osed3]
-			if qalfg[7] == 1:   # constituent is sediment-associated
-				rsed[1] = RSED1[loop] / 1E-06
-				rsed[2] = RSED2[loop] / 1E-06
-				rsed[3] = RSED3[loop] / 1E-06
-				rsed[4] = RSED4[loop] / 1E-06
-				rsed[5] = RSED5[loop] / 1E-06
-				rsed[6] = RSED6[loop] / 1E-06
+			cf_denom = 1.0e-6
+
+		depscr1 = DEPSCR1[loop] / cf_denom
+		depscr2 = DEPSCR2[loop] / cf_denom
+		depscr3 = DEPSCR3[loop] / cf_denom
+		rosed1 = ROSED1[loop] / cf_denom
+		rosed2 = ROSED2[loop] / cf_denom
+		rosed3 = ROSED3[loop] / cf_denom
+
+		for i in range(nexits):
+			osed1[i] = OSED1[loop, i] / cf_denom
+			osed2[i] = OSED2[loop, i] / cf_denom
+			osed3[i] = OSED3[loop, i] / cf_denom
+
+		rsed = zeros(7)
+		if qalfg[7] == 1:   # constituent is sediment-associated
+			rsed[1] = RSED1[loop] / 3.121E-08
+			rsed[2] = RSED2[loop] / 3.121E-08
+			rsed[3] = RSED3[loop] / 3.121E-08
+			rsed[4] = RSED4[loop] / 3.121E-08
+			rsed[5] = RSED5[loop] / 3.121E-08
+			rsed[6] = RSED6[loop] / 3.121E-08
+
 		isqal1 = ISQAL1[loop]
 		isqal2 = ISQAL2[loop]
 		isqal3 = ISQAL3[loop]
@@ -968,10 +951,10 @@ def _gqual_(ui, ts):
 		dsqal2 = 0.0
 		dsqal3 = 0.0
 		dsqal4 = 0.0
-		osqal1 = 0.0
-		osqal2 = 0.0
-		osqal3 = 0.0
-		osqal4 = 0.0
+		osqal1 = zeros(nexits)
+		osqal2 = zeros(nexits)
+		osqal3 = zeros(nexits)
+		osqal4 = zeros(nexits)
 		rosqal1 = 0.0
 		rosqal2 = 0.0
 		rosqal3 = 0.0
