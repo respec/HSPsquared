@@ -126,6 +126,14 @@ def _htrch_(ui, ts):
 	ROHEAT = ts['ROHEAT'] = zeros(simlen)
 	OHEAT = zeros((simlen, nexits))
 
+	QTOTAL = ts['QTOTAL'] = zeros(simlen)
+	QSOLAR = ts['QSOLAR'] = zeros(simlen)
+	QLONGW = ts['QLONGW'] = zeros(simlen)
+	QCON   = ts['QCON']   = zeros(simlen)
+	QEVAP  = ts['QEVAP']  = zeros(simlen)
+	QPREC  = ts['QPREC']  = zeros(simlen)
+	QBED   = ts['QBED']   = zeros(simlen)
+
 	DAYFG = ts['DAYFG'].astype(int64)
 
 	HTWCNT = 0
@@ -445,12 +453,26 @@ def _htrch_(ui, ts):
 			HTEXCH[loop] = htexch * 407960. * 12. / 43560.
 			ROHEAT[loop] = roheat / 0.0089
 			OHEAT[loop] = oheat / 0.0089
+			QTOTAL[loop] = qtotal * 0.369
+			QSOLAR[loop] = qsolar * 0.369
+			QLONGW[loop] = qlongw * 0.369
+			QCON[loop] = qcon * 0.369
+			QEVAP[loop] = qevap * 0.369
+			QPREC[loop] = qprec * 0.369
+			QBED[loop] = qbed * 0.369
 		else:
 			TW[loop] = tw
 			AIRTMP[loop] = airtmp
 			HTEXCH[loop] = htexch * 1000.
 			ROHEAT[loop]= roheat * 1000.
 			OHEAT[loop] = oheat * 1000.
+			QTOTAL[loop] = qtotal
+			QSOLAR[loop] = qsolar
+			QLONGW[loop] = qlongw
+			QCON[loop]   = qcon
+			QEVAP[loop]  = qevap
+			QPREC[loop]  = qprec
+			QBED[loop]   = qbed
 
 	if nexits > 1:
 		for i in range(nexits):

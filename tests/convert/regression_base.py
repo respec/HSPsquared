@@ -144,8 +144,12 @@ class RegressTestBase(object):
                                     h5_time_series.values[i] = 0.0
                                     hbn_time_series.values[i] = 0.0
                         # if heat related term, compute special tolerance
-                        if cons == 'HTEXCH' or cons == 'IHEAT' or cons == 'ROHEAT' or cons.startswith('OHEAT'):
+                        if cons == 'IHEAT' or cons == 'ROHEAT' or cons.startswith('OHEAT') or \
+                                cons == 'QSOLAR' or cons == 'QLONGW' or cons == 'QEVAP' or \
+                                cons == 'QCON' or cons == 'QPREC' or cons == 'QBED':
                             abstol = max(abs(h5_time_series.values.min()), abs(h5_time_series.values.max())) * 1e-4
+                        elif cons == 'QTOTAL' or cons == 'HTEXCH' :
+                            abstol = max(abs(h5_time_series.values.min()), abs(h5_time_series.values.max())) * 1e-3
                         ### end special exception code here
                         max_diff1 = (hbn_time_series.values - h5_time_series.values).max()
                         max_diff2 = (h5_time_series.values - hbn_time_series.values).max()
