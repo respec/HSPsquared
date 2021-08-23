@@ -27,9 +27,9 @@ class PLANK_Class:
 
 		''' Initialize instance variables for lower food web simulation '''
 
-		#self.OXRX = OXRX
-		#self.NUTRX = NUTRX
-
+		#self.ERRMSGS=('Placeholder')
+		#self.errors = zeros(len(self.ERRMSGS), dtype=int)
+		
 		self.limit = np.chararray(8, itemsize=4)
 		self.limit[1] = 'LIT'
 		self.limit[2] = 'NON'
@@ -41,9 +41,6 @@ class PLANK_Class:
 
 		#self.limit = ['  ', 'LIT', 'NON', 'TEM', 'NIT',' PO4', 'NONE', 'WAT']
 
-		#self.ERRMSGS=('Placeholder')
-		#self.errors = zeros(len(self.ERRMSGS), dtype=int)
-		
 		self.delt = siminfo['delt']
 		delt60 = siminfo['delt'] / 60.0  # delt60 - simulation time interval in hours
 		self.delt60 = delt60
@@ -69,13 +66,6 @@ class PLANK_Class:
 
 		self.HTFG   = int(ui_rq['HTFG'])
 		self.PHFG   = int(ui_rq['PHFG'])
-
-		self.TAMFG  = NUTRX.TAMFG
-		self.NO2FG  = NUTRX.NO2FG
-		self.PO4FG  = NUTRX.PO4FG
-
-		self.ADNHFG = NUTRX.ADNHFG
-		self.ADPOFG = NUTRX.ADPOFG
 
 		self.bpcntc = NUTRX.bpcntc
 		self.cvbo  = NUTRX.cvbo
