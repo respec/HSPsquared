@@ -106,7 +106,7 @@ def htrch(store, siminfo, uci, ts):
 	return errors, ERRMSGS
 
 
-@njit(cache=True)
+#@njit(cache=True)
 def _htrch_(ui, ts):
 	'''Simulate heat exchange and water temperature'''
 
