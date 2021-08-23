@@ -130,6 +130,7 @@ def main(hdfname, saveall=False, jupyterlab=True):
                             ui['PARAMETERS']['LKFG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LKFG']
 
                         ui['FLAGS']['HTFG'] = flags['HTRCH']
+                        ui['FLAGS']['SEDFG'] = flags['SEDTRN']
                         ui['FLAGS']['GQFG'] = flags['GQUAL']
                         ui['FLAGS']['GQALFG4'] = uci[(operation, 'GQUAL', segment)]['GQUAL1']['QALFG4']
                         ui['FLAGS']['OXFG'] = flags['OXFG']
@@ -147,20 +148,17 @@ def main(hdfname, saveall=False, jupyterlab=True):
                         if flags['HTRCH']:
                             ui_oxrx['PARAMETERS']['ELEV'] = uci[(operation, 'HTRCH', segment)]['PARAMETERS']['ELEV']
 
-                        # NUTRX module inputs:
+                        # NUTRX, PLANK, PHCARB module inputs:
                         ui_nutrx = uci[(operation, 'NUTRX', segment)] 
-
-                        # PLANK module inputs:
                         ui_plank = uci[(operation, 'PLANK', segment)] 
-
-
+                        ui_phcarb = uci[(operation, 'PHCARB', segment)] 
 
                 ############ calls activity function like snow() ##############
                 if (activity != 'RQUAL'):
                     errors, errmessages = function(store, siminfo, ui, ts)
 
                 else:                    
-                    errors, errmessages = function(store, siminfo, ui, ui_oxrx, ui_nutrx, ui_plank, ts)
+                    errors, errmessages = function(store, siminfo, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts)
                 ###############################################################
 
                 for errorcnt, errormsg in zip(errors, errmessages):

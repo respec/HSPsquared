@@ -26,6 +26,10 @@ from HSP2.HTRCH import htrch, expand_HTRCH_masslinks
 from HSP2.SEDTRN import sedtrn, expand_SEDTRN_masslinks
 from HSP2.CONS import cons, expand_CONS_masslinks
 from HSP2.GQUAL import gqual, expand_GQUAL_masslinks
+from HSP2.RQUAL import rqual
+from HSP2.RQUAL import expand_OXRX_masslinks
+from HSP2.RQUAL import expand_NUTRX_masslinks
+from HSP2.RQUAL import expand_PLANK_masslinks
 
 def noop (store, siminfo, ui, ts):
     ERRMSGS = []
@@ -40,7 +44,7 @@ activities = {
   'IMPLND': {'ATEMP':atemp, 'SNOW':snow, 'IWATER':iwater, 'SOLIDS':solids,
      'IWTGAS':iwtgas, 'IQUAL':iqual},
   'RCHRES': {'HYDR':hydr, 'ADCALC':adcalc, 'CONS':cons, 'HTRCH':htrch,
-     'SEDTRN':sedtrn, 'GQUAL':gqual, 'OXRX':noop, 'NUTRX':noop, 'PLANK':noop,
+     'SEDTRN':sedtrn, 'GQUAL':gqual, 'OXRX':noop, 'NUTRX':noop, 'PLANK':noop, 'RQUAL':rqual,
      'PHCARB':noop}}
 
 def expand_masslinks(flags, uci, dat, recs):
@@ -49,6 +53,11 @@ def expand_masslinks(flags, uci, dat, recs):
     recs = expand_CONS_masslinks(flags, uci, dat, recs)
     recs = expand_SEDTRN_masslinks(flags, uci, dat, recs)
     recs = expand_GQUAL_masslinks(flags, uci, dat, recs)
+    recs = expand_OXRX_masslinks(flags, uci, dat, recs)
+    recs = expand_NUTRX_masslinks(flags, uci, dat, recs)
+    recs = expand_PLANK_masslinks(flags, uci, dat, recs)
+    recs = expand_PHCARB_masslinks(flags, uci, dat, recs)
+
     return recs
 
 # NOTE: the flowtype (Python set) at the top of utilities.py may need to be
