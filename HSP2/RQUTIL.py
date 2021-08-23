@@ -1,6 +1,6 @@
 from numba import njit
 
-#@njit(cache=True)
+@njit(cache=True)
 def benth (dox, anaer, BRCON, scrfac, depcor, conc):
 	''' simulate benthal release of constituent'''
 	# calculate benthal release of constituent; release is a step function of aerobic/anaerobic conditions, and stream velocity;
@@ -11,7 +11,7 @@ def benth (dox, anaer, BRCON, scrfac, depcor, conc):
 	return conc, releas
 
 
-#@njit(cache=True)
+@njit(cache=True)
 def decbal(TAMFG, PO4FG, decnit, decpo4, tam, no3, po4):
 	''' perform materials balance for transformation from organic to inorganic material by decay in reach water'''
 	if TAMFG:

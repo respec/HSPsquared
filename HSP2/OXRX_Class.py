@@ -70,21 +70,19 @@ spec = [
 	('vol', float64),
 ]
 
-@jitclass(spec)
+#@jitclass(spec)
 class OXRX_Class:
 
 	#-------------------------------------------------------------------
 	# class initialization:
 	#-------------------------------------------------------------------
-	def __init__(self, siminfo, advectData, ui_rq, ui, ts):
+	def __init__(self, siminfo, nexits, vol, ui_rq, ui, ts):
 
 		''' Initialize variables for primary DO, BOD balances '''
 
 		#self.ERRMSGS = array('Placeholder')
 		#self.errors = zeros(len(self.ERRMSGS), dtype=int32)
 
-		(nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = advectData
-		
 		delt60 = siminfo['delt'] / 60.0  # delt60 - simulation time interval in hours
 		self.delt60 = delt60
 		self.simlen = int(siminfo['steps'])
@@ -93,12 +91,7 @@ class OXRX_Class:
 
 		self.nexits = int(nexits)
 
-		self.AFACT = 43560.0
-		if self.uunits == 2:
-			# si units conversion
-			self.AFACT = 1000000.0
-
-		self.vol = vol * self.AFACT
+		self.vol = vol
 		self.svol = self.vol
 
 		# gqual flags
@@ -186,8 +179,7 @@ class OXRX_Class:
 		# hydraulics:
 		(nexits, vols, vol, srovol, erovol, sovol, eovol) = advectData
 
-		#self.svol = vols * self.AFACT
-		self.vol = vol * self.AFACT
+		self.vol = vol
 
 		# inflows: convert & store
 		if self.uunits == 2:		# si conversion
@@ -316,9 +308,9 @@ class OXRX_Class:
 		return
 
 	#-------------------------------------------------------------------
-	# simulation (single timestep):
+	# utility functions:
 	#-------------------------------------------------------------------
-	def adjust_dox(vol, nitdox, phydox, zoodox, baldox):
+	def adjust_dox(self, vol, nitdox, phydox, zoodox, baldox):
 		# if dox exceeds user specified level of supersaturation, then release excess do to the atmosphere
 
 		doxs = self.dox
@@ -334,27 +326,9 @@ class OXRX_Class:
 		self.rbod = self.bod * vol
 
 
-	#-------------------------------------------------------------------
-	# mass links:
-	#-------------------------------------------------------------------
-	@staticmethod
-	def expand_OXRX_masslinks(flags, uci, dat, recs):
-		if flags['OXRX']:
-				for i in range(1, 2):
-					rec = {}
-					rec['MFACTOR'] = dat.MFACTOR
-					rec['SGRPN'] = 'OXRX'
-					if dat.SGRPN == "ROFLOW":
-						rec['SMEMN'] = 'OXCF1'
-						rec['SMEMSB1'] = str(i)
-						rec['SMEMSB2'] = '1'
-					else:
-						rec['SMEMN'] = 'OXCF2'
-						rec['SMEMSB1'] = dat.SMEMSB1  # first sub is exit number
-						rec['SMEMSB2'] = str(i)
-					
-					rec['TMEMN'] = 'OXIF'
-					rec['TMEMSB1'] = str(i)
-					rec['TMEMSB2'] = '1'
-					rec['SVOL'] = dat.SVOL
-					recs.append(rec)
+	def update_totals(self, nitdox, denbod):
+
+		self.totdox = self.readox + self.boddox + self.bendox + nitdox
+		self.totbod = self.decbod + self.bnrbod + self.snkbod + denbod
+
+		return
