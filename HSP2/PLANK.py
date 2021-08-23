@@ -614,7 +614,7 @@ def  plank(store, siminfo, uci, ts):
 		adnhfg,adpofg,cvbn,cvbp,cvbc,cvbo,cvnrbo,rophyt,rozoo,roorn,roorp, roorc,rono3,
 		rotam,rono2,rosnh4[1],rosnh4[2],rosnh4[3],ropo4,rospo4[1],rospo4[2],rospo4[3],robod,
 		rotorn,rotorp,rotorc,dumval,rototn,rototp)
-
+		
 		if nexits > 1:   # outflows by exit
 			for i in range(nexits):
 				otorn[i],otorp[i],otorc[i],dumval,ototn[i], ototp[i] \
