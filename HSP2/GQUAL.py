@@ -154,7 +154,7 @@ def gqual(store, siminfo, uci, ts):
 		if cldfg == 2:
 			ts['CLOUD'] = initm(siminfo, uci, cldfg, 'GQUAL' + str(index) + '_MONTHLY/CLOUD', cld)
 		if sdfg == 2:
-			ts['SSED4'] = initm(siminfo, uci, sdfg, 'GQUAL' + str(index) + '_MONTHLY/SEDCONC', sdcnc)
+			ts['SDCNC'] = initm(siminfo, uci, sdfg, 'GQUAL' + str(index) + '_MONTHLY/SEDCONC', sdcnc)
 		if phytfg == 2:
 			ts['PHYTO'] = initm(siminfo, uci, phytfg, 'GQUAL' + str(index) + '_MONTHLY/PHYTO', phy)
 
@@ -865,7 +865,7 @@ def _gqual_(ui, ts):
 					if 'PHYTO' in ts:
 						phy = ts['PHYTO'][loop]    # not available until section plank is done
 				if sdfg == 1 or sdfg == 3:
-					sdcnc = ts['SSED4'][loop]
+					sdcnc = ts['SDCNC'][loop]
 				for l in range(1, 19):
 					# evaluate the light extinction exponent- 2.76*klamda*d
 					kl   = alph[l] + gamm[l] * sdcnc + delta[l] * phy
