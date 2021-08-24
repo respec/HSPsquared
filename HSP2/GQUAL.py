@@ -161,17 +161,17 @@ def gqual(store, siminfo, uci, ts):
 
 		# for the following, if the flag value is 1 the timeseries should already be available as input
 		if tempfg == 2 or tempfg == 3:
-			ts['TW'] = initm(siminfo, uci, tempfg, 'GQUAL' + str(index) + '_MONTHLY/WATEMP', twat)
+			ts['TW_GQ'] = initm(siminfo, uci, tempfg, 'GQUAL' + str(index) + '_MONTHLY/WATEMP', twat)
 		if phflag == 2 or phflag == 3:
-			ts['PHVAL'] = initm(siminfo, uci, phflag, 'GQUAL' + str(index) + '_MONTHLY/PHVAL', phval)
+			ts['PHVAL_GQ'] = initm(siminfo, uci, phflag, 'GQUAL' + str(index) + '_MONTHLY/PHVAL', phval)
 		if roxfg == 2 or roxfg == 3:
-			ts['ROC'] = initm(siminfo, uci, roxfg, 'GQUAL' + str(index) + '_MONTHLY/ROXYGEN', roc)
+			ts['ROC_GQ'] = initm(siminfo, uci, roxfg, 'GQUAL' + str(index) + '_MONTHLY/ROXYGEN', roc)
 		if cldfg == 2 or cldfg == 3:
-			ts['CLOUD'] = initm(siminfo, uci, cldfg, 'GQUAL' + str(index) + '_MONTHLY/CLOUD', cld)
+			ts['CLOUD_GQ'] = initm(siminfo, uci, cldfg, 'GQUAL' + str(index) + '_MONTHLY/CLOUD', cld)
 		if sdfg == 2 or sdfg == 3:
-			ts['SSED4'] = initm(siminfo, uci, sdfg, 'GQUAL' + str(index) + '_MONTHLY/SEDCONC', sdcnc)
+			ts['SDCNC_GQ'] = initm(siminfo, uci, sdfg, 'GQUAL' + str(index) + '_MONTHLY/SEDCONC', sdcnc)
 		if phytfg == 2 or phytfg == 3:
-			ts['PHYTO'] = initm(siminfo, uci, phytfg, 'GQUAL' + str(index) + '_MONTHLY/PHYTO', phy)
+			ts['PHYTO_GQ'] = initm(siminfo, uci, phytfg, 'GQUAL' + str(index) + '_MONTHLY/PHYTO', phy)
 		# if any of these flags are 1 and the timeseries does not exist, that's a problem -- trigger message
 
 		ts['DAYVAL'] = dayval(siminfo, [4, 4, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4])
@@ -640,26 +640,44 @@ def _gqual_(ui, ts):
 
 	#####################  end PGQUAL
 
-	if tempfg == 1 and 'TW' not in ts:
-		errors[6] += 1  # ERRMSG6: timeseries not available
-	if phflag == 1 and 'PHVAL' not in ts:
-		errors[7] += 1  # ERRMSG7: timeseries not available
-	if roxfg == 1 and 'ROC' not in ts:
-		errors[8] += 1  # ERRMSG8: timeseries not available
-	if cldfg == 1 and 'CLOUD' not in ts:
-		errors[9] += 1  # ERRMSG9: timeseries not available
-	if sdfg == 1 and 'SSED4' not in ts:
-		errors[10] += 1  # ERRMSG10: timeseries not available
-	if phytfg == 1 and 'PHYTO' not in ts:
-		errors[11] += 1  # ERRMSG11: timeseries not available
+	if tempfg == 1:
+		if 'TW' not in ts:
+			errors[6] += 1  # ERRMSG6: timeseries not available
+		else:
+			ts['TW_GQ'] = ts['TW']
+	if phflag == 1:
+		if 'PHVAL' not in ts:
+			errors[7] += 1  # ERRMSG7: timeseries not available
+		else:
+			ts['PHVAL_GQ'] = ts['PHVAL']
+	if roxfg == 1:
+		if 'ROC' not in ts:
+			errors[8] += 1  # ERRMSG8: timeseries not available
+		else:
+			ts['ROC_GQ'] = ts['ROC']
+	if cldfg == 1:
+		if 'CLOUD' not in ts:
+			errors[9] += 1  # ERRMSG9: timeseries not available
+		else:
+			ts['CLOUD_GQ'] = ts['CLOUD']
+	if sdfg == 1:
+		if 'SSED4' not in ts:
+			errors[10] += 1  # ERRMSG10: timeseries not available
+		else:
+			ts['SDCNC_GQ'] = ts['SSED4']
+	if phytfg == 1:
+		if 'PHYTO' not in ts:
+			errors[11] += 1  # ERRMSG11: timeseries not available
+		else:
+			ts['PHYTO_GQ'] = ts['PHYTO']
 
 	# get input timeseries
-	TW    = ts['TW']
-	PHVAL = ts['PHVAL']
-	ROC   = ts['ROC']
-	CLD   = ts['CLOUD']
-	SDCNC = ts['SSED4']
-	PHYTO = ts['PHYTO']
+	TW    = ts['TW_GQ']
+	PHVAL = ts['PHVAL_GQ']
+	ROC   = ts['ROC_GQ']
+	CLD   = ts['CLOUD_GQ']
+	SDCNC = ts['SDCNC_GQ']
+	PHYTO = ts['PHYTO_GQ']
 
 	AVDEP = ts['AVDEP']
 	WIND  = ts['WIND'] * 1609.0 # miles to meters
@@ -800,7 +818,8 @@ def _gqual_(ui, ts):
 
 		# tw20 may be required for bed decay of qual even if tw is undefined (due to vol=0.0)
 		tw   = TW[loop]
-		tw = (tw - 32.0) * 0.5555   # 5.0 / 9.0
+		if uunits == 1:
+			tw = (tw - 32.0) * 0.5555   # 5.0 / 9.0
 		tw20 = tw - 20.0           # TW20[loop]
 		if tw <= -10.0:
 			tw20 = 0.0
@@ -972,10 +991,10 @@ def _gqual_(ui, ts):
 		dsqal2 = 0.0
 		dsqal3 = 0.0
 		dsqal4 = 0.0
-		#osqal1 = 0.0
-		#osqal2 = 0.0
-		#osqal3 = 0.0
-		osqal4 = 0.0
+		osqal1 = zeros(nexits)
+		osqal2 = zeros(nexits)
+		osqal3 = zeros(nexits)
+		osqal4 = zeros(nexits)
 		rosqal1 = 0.0
 		rosqal2 = 0.0
 		rosqal3 = 0.0
