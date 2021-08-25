@@ -153,7 +153,7 @@ spec = [
 	('volnh3', float64)
 ]
 
-#@jitclass(spec)
+@jitclass(spec)
 class NUTRX_Class:
 
 	#-------------------------------------------------------------------
@@ -162,8 +162,6 @@ class NUTRX_Class:
 	def __init__(self, siminfo, nexits, vol, ui_rq, ui, ts, OXRX):
 
 		''' Initialize instance variables for nutrient simulation '''
-
-		self.OXRX = OXRX
 
 		#self.ERRMSGS=('Placeholder')
 		#self.errors = zeros(len(self.ERRMSGS), dtype=int)
@@ -448,9 +446,6 @@ class NUTRX_Class:
 		(nexits, vols, vol, srovol, erovol, sovol, eovol) = advectData
 		
 		self.vol = vol
-
-		# Update OXRX current states:
-		self.OXRX = OXRX
 
 		# set instance inflow variables (w/ units conversion):
 		cf_denom = 1.0
@@ -739,7 +734,7 @@ class NUTRX_Class:
 
 		self.svol = self.vol  # svol is volume at start of time step, update for next time thru
 
-		return
+		return OXRX
 
 	def update_mass(self):
 		# calculate total resident mass of nutrient species

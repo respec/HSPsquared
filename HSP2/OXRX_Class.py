@@ -72,7 +72,7 @@ spec = [
 	('vol', nb.float64)
 ]
 
-#@jitclass(spec)
+@jitclass(spec)
 class OXRX_Class:
 
 	#-------------------------------------------------------------------

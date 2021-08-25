@@ -7,13 +7,13 @@ from numba.experimental import jitclass
 
 from HSP2.OXRX_Class import OXRX_Class
 from HSP2.NUTRX_Class import NUTRX_Class
-from HSP2.PLANK_Class import PLANK_Class
+#from HSP2.PLANK_Class import PLANK_Class
 #from HSP2.PHCARB_Class import PHCARB_Class
 from HSP2.utilities  import make_numba_dict, initm
 
 spec = [
-	#('OXRX', OXRX_Class.class_type.instance_type),
-	#('NUTRX', NUTRX_Class.class_type.instance_type),
+	('OXRX', OXRX_Class.class_type.instance_type),
+	('NUTRX', NUTRX_Class.class_type.instance_type),
 	#('PLANK', PLANK_Class.class_type.instance_type),
 	('AFACT', nb.float64),
 	('ALK', nb.float64[:]),
@@ -119,15 +119,16 @@ spec = [
 	('ZOO', nb.float64[:])
 ]
 
-#@jitclass(spec)
+@jitclass(spec)
 class RQUAL_Class:
 
 	#-------------------------------------------------------------------
 	# class initialization:
 	#-------------------------------------------------------------------
-	def __init__(self, siminfo, advectData, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts):
-
+	def __init__(self, siminfo, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts):
+	
 		''' Initialize instance variables for rqual wrapper '''
+		print('initializing RQUAL class')
 
 		# simulation data:
 		delt60 = siminfo['delt'] / 60.0  # delt60 - simulation time interval in hours
@@ -139,18 +140,27 @@ class RQUAL_Class:
 		self.uunits = int(siminfo['units'])
 
 		# hydaulic results:
-		(nexits, vol, VOL, self.SROVOL, self.EROVOL, self.SOVOL, self.EOVOL) = advectData
+		#(nexits, vol, VOL, self.SROVOL, self.EROVOL, self.SOVOL, self.EOVOL) = advectData
 
 		self.AFACT = 43560.0
 		if self.uunits == 2:
 			# si units conversion
 			self.AFACT = 1000000.0
 
-		self.VOL_arr = VOL * self.AFACT
-		self.vol = vol * self.AFACT
-		self.svol = self.vol
+		nexits = int(ui['nexits'])
+		self.nexits = nexits
 
-		self.nexits = int(nexits)
+		self.VOL = ts['VOL'] * self.AFACT
+		self.SROVOL = ts['SROVOL']
+		self.EROVOL = ts['EROVOL']
+		self.SOVOL = zeros((self.simlen, nexits))
+		self.EOVOL = zeros((simlen, nexits))
+		for i in range(nexits):
+			self.SOVOL[:, i] = ts['SOVOL' + str(i + 1)]
+			self.EOVOL[:, i] = ts['EOVOL' + str(i + 1)]
+
+		self.vol = ui['vol'] * self.AFACT
+		self.svol = self.vol
 
 		# initialize flags: 
 		self.BENRFG = int(ui['BENRFG'])   # table-type benth-flag
@@ -274,8 +284,8 @@ class RQUAL_Class:
 				if (nuadfg_wd < 0):
 					pass
 
-			#LTI NUAFX = setit()  # NUAFXM monthly, constant or time series
-			#LTI NUACN = setit()  # NUACNM monthly, constant or time series
+			# NUAFX = setit()  # NUAFXM monthly, constant or time series
+			# NUACN = setit()  # NUACNM monthly, constant or time series
 
 			# preallocate storage for computed time series
 			self.NO3   = ts['NO3']   = zeros(simlen)   # concentration, state variable
@@ -361,7 +371,7 @@ class RQUAL_Class:
 				#LTI PLADFX = setit()   # time series, monthly(PLAFXM)
 				#LTI PLADCN = setit()   # time series, monthly(PLAFXM)		
 
-				self.PLANK = PLANK_Class(siminfo, self.nexits, self.vol, ui, ui_plank, ts, self.OXRX, self.NUTRX)
+				#self.PLANK = PLANK_Class(siminfo, self.nexits, self.vol, ui, ui_plank, ts, self.OXRX, self.NUTRX)
 
 				#-------------------------------------------------------
 				# PHCARB - initialize:
@@ -417,7 +427,7 @@ class RQUAL_Class:
 
 			depcor = self.DEPCOR[loop]			
 
-			self.vol = self.VOL_arr[loop]
+			self.vol = self.VOL[loop]
 			advData = self.nexits, self.svol, self.vol, self.SROVOL[loop], self.EROVOL[loop], self.SOVOL[loop], self.EOVOL[loop]
 
 			idox = self.IDOX[loop]
@@ -437,7 +447,7 @@ class RQUAL_Class:
 			#-------------------------------------------------------
 			# OXRX - simulate do and bod balances:
 			#-------------------------------------------------------
-			self.OXRX.simulate(idox, ibod, wind_r, scrfac, avdepe, avvele, depcor, tw, advData)
+			#self.OXRX.simulate(idox, ibod, wind_r, scrfac, avdepe, avvele, depcor, tw, advData)
 
 			#-------------------------------------------------------
 			# NUTRX - simulate primary nutrient (N/P) balances:
@@ -478,7 +488,7 @@ class RQUAL_Class:
 					ispo4[4] += ispo4[j]
 
 				# simulate nutrients:
-				self.NUTRX.simulate(tw, wind, phval, self.OXRX, 
+				self.OXRX = self.NUTRX.simulate(tw, wind, phval, self.OXRX, 
 								self.INO3[loop], self.INH4[loop], self.INO2[loop], self.IPO4[loop], isnh4, ispo4,
 								self.NUADFX[loop], self.NUADCN[loop], self.PREC[loop], self.SAREA[loop], scrfac, avdepe, depcor, depscr, rosed, osed, advData)
 
@@ -496,12 +506,13 @@ class RQUAL_Class:
 					co2 = 0.0
 					#if self.PHFG == 1: co2 = PHCARB.co2		#TO-DO!
 
-					(self.OXRX, self.NUTRX) \
-						=	self.PLANK.simulate(tw, phval, co2, self.SSED4[loop], self.OXRX, self.NUTRX,
-										self.IPHYT[loop], self.IZOO[loop], 
-										self.IORN[loop], self.IORP[loop], self.IORC[loop], 
-										self.WASH[loop], self.SOLRAD[loop], self.PREC[loop], 
-										self.SAREA[loop], avdepe, avvele, depcor, ro, advData)
+					
+					#(self.OXRX, self.NUTRX) \
+					#	=	self.PLANK.simulate(tw, phval, co2, self.SSED4[loop], self.OXRX, self.NUTRX,
+					#					self.IPHYT[loop], self.IZOO[loop], 
+					#					self.IORN[loop], self.IORP[loop], self.IORC[loop], 
+					#					self.WASH[loop], self.SOLRAD[loop], self.PREC[loop], 
+					#					self.SAREA[loop], avdepe, avvele, depcor, ro, advData)
 
 
 					#-------------------------------------------------------
@@ -520,10 +531,10 @@ class RQUAL_Class:
 
 
 					# check do level; if dox exceeds user specified level of supersaturation, then release excess do to the atmosphere
-					self.OXRX.adjust_dox(self.vol, self.NUTRX.nitdox, self.PLANK.phydox, self.PLANK.zoodox, self.PLANK.baldox)
+					#self.OXRX.adjust_dox(self.vol, self.NUTRX.nitdox, self.PLANK.phydox, self.PLANK.zoodox, self.PLANK.baldox)
 
 				# update totals of nutrients
-				self.NUTRX.update_mass()
+				#self.NUTRX.update_mass()
 
 			# udate initial volume for next step:
 			self.svol = self.vol
