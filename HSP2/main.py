@@ -391,6 +391,10 @@ def get_flows(store, ts, flags, uci, segment, ddlinks, ddmasslinks, steps, msg):
                     else:
                         t *= factor
 
+                    # if poht to iheat, imprecision in hspf conversion factor requires a slight adjustment
+                    if (smemn == 'POHT' or smemn == 'SOHT') and tmemn == 'IHEAT':
+                       t *= 0.998553
+
                     # ??? ISSUE: can fetched data be at different frequency - don't know how to transform.
                     if tmemn in ts:
                         ts[tmemn] += t

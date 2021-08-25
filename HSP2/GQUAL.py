@@ -14,7 +14,13 @@ ERRMSGS =('GQUAL: one or more gquals are sediment-associated, but section sedtrn
           'GQUAL: simulation of volatilization in a free flowing stream requires aux3fg on',              #ERRMSG2
           'GQUAL: simulation of volatilization in a lake requires aux1fg on to calculate average depth',  #ERRMSG3
           'GQUAL: in advqal, the value of denom is zero, and ISQAL and RSQALS should also be zero',       #ERRMSG4
-          'GQUAL: in advqal, the value of bsed is zero, and DSQAL and RBQALS should also be zero')        #ERRMSG5
+		  'GQUAL: in advqal, the value of bsed is zero, and DSQAL and RBQALS should also be zero',        #ERRMSG5
+		  'GQUAL: the value of tempfg is 1, but timeseries TW is not available as input',                 #ERRMSG6
+		  'GQUAL: the value of phflag is 1, but timeseries PHVAL is not available as input',              #ERRMSG7
+		  'GQUAL: the value of roxfg is 1, but timeseries ROC is not available as input',                 #ERRMSG8
+		  'GQUAL: the value of cldfg is 1, but timeseries CLOUD is not available as input',               #ERRMSG9
+		  'GQUAL: the value of sdfg is 1, but timeseries SSED4 is not available as input',                #ERRMSG10
+		  'GQUAL: the value of phytfg is 1, but timeseries PHYTO is not available as input')              #ERRMSG11
 
 def gqual(store, siminfo, uci, ts):
 	''' Simulate the behavior of a generalized quality constituent'''
@@ -63,6 +69,12 @@ def gqual(store, siminfo, uci, ts):
 	# ui = uci['PARAMETERS']
 	if 'NGQUAL' in ui:
 		ngqual = int(ui['NGQUAL'])
+		tempfg = ui['TEMPFG']
+		phflag = ui['PHFLAG']
+		roxfg = ui['ROXFG']
+		cldfg = ui['CLDFG']
+		sdfg = ui['SDFG']
+		phytfg = ui['PHYTFG']
 	ui['ngqual'] = ngqual
 
 	ts['HRFG'] = hour24Flag(siminfo).astype(float)
@@ -247,6 +259,12 @@ def _gqual_(ui, ts):
 		# si units conversion
 		AFACT = 1000000.0
 
+	tempfg = 2
+	phflag = 2
+	roxfg  = 2
+	cldfg  = 2
+	sdfg   = 2
+	phytfg = 2
 	if 'TEMPFG' in ui:
 		tempfg = int(ui['TEMPFG'])
 		phflag = int(ui['PHFLAG'])
@@ -488,32 +506,6 @@ def _gqual_(ui, ts):
 	# vary monthly, or be a time series-some might be over-ridden by
 	# monthly values or time series
 
-	# table-type gq-values
-	if tempfg == 2 and "TWAT" in ui:
-		twat  = ui["TWAT"]
-	else:
-		twat  = 60.0
-	if phflag == 2 and "PHVAL" in ui:
-		phval = ui["PHVAL"]
-	else:
-		phval = 7.0
-	if roxfg == 2 and "ROC" in ui:
-		roc   = ui["ROC"]
-	else:
-		roc   = 0.0
-	if cldfg == 2 and "CLD" in ui:
-		cld   = ui["CLD"]
-	else:
-		cld   = 0.0
-	if sdfg == 2 and "SDCNC" in ui:
-		sdcnc = ui["SDCNC"]
-	else:
-		sdcnc = 0.0
-	if phytfg == 2 and "PHY" in ui:
-		phy   = ui["PHY"]
-	else:
-		phy   = 0.0
-
 	alph = zeros(19)
 	gamm = zeros(19)
 	delta = zeros(19)
@@ -648,17 +640,46 @@ def _gqual_(ui, ts):
 
 	#####################  end PGQUAL
 
+	if tempfg == 1:
+		if 'TW' not in ts:
+			errors[6] += 1  # ERRMSG6: timeseries not available
+		else:
+			ts['TW_GQ'] = ts['TW']
+	if phflag == 1:
+		if 'PHVAL' not in ts:
+			errors[7] += 1  # ERRMSG7: timeseries not available
+		else:
+			ts['PHVAL_GQ'] = ts['PHVAL']
+	if roxfg == 1:
+		if 'ROC' not in ts:
+			errors[8] += 1  # ERRMSG8: timeseries not available
+		else:
+			ts['ROC_GQ'] = ts['ROC']
+	if cldfg == 1:
+		if 'CLOUD' not in ts:
+			errors[9] += 1  # ERRMSG9: timeseries not available
+		else:
+			ts['CLOUD_GQ'] = ts['CLOUD']
+	if sdfg == 1:
+		if 'SSED4' not in ts:
+			errors[10] += 1  # ERRMSG10: timeseries not available
+		else:
+			ts['SDCNC_GQ'] = ts['SSED4']
+	if phytfg == 1:
+		if 'PHYTO' not in ts:
+			errors[11] += 1  # ERRMSG11: timeseries not available
+		else:
+			ts['PHYTO_GQ'] = ts['PHYTO']
+
 	# get input timeseries
+	TW    = ts['TW_GQ']
+	PHVAL = ts['PHVAL_GQ']
+	ROC   = ts['ROC_GQ']
+	CLD   = ts['CLOUD_GQ']
+	SDCNC = ts['SDCNC_GQ']
+	PHYTO = ts['PHYTO_GQ']
+
 	AVDEP = ts['AVDEP']
-	PHVAL = ts['PHVAL']
-	TW    = ts['TW']
-	ROC   = ts['ROC']
-	if 'SDCNC' in ts:
-		SDCNC = ts['SDCNC']    # constant, monthly, ts; SDFG, note: interpolate to daily value only
-	if 'PHY' in ts:
-		PHYTO = ts['PHY']      # constant, monthly, ts; PHYTFG, note: interpolate to daily value only
-	if 'CLD' in ts:
-		CLD   = ts['CLD']      # constant, monthly, ts['CLOUD']
 	WIND  = ts['WIND'] * 1609.0 # miles to meters
 	AVVEL = ts['AVVEL']
 	PREC  = ts['PREC']
@@ -951,7 +972,7 @@ def _gqual_(ui, ts):
 			# 						BIOPM(1,I),BIO(I),GENPM(1,I),VOLSP,DQAL(I),HR,DELT60,DDQAL(1,I))
 
 			pdqal = 0.0
-			for k in range(1, 6):
+			for k in range(1, 7):
 				if gqpm2[k] == 1:    # this compound is a "daughter"-compute the contribution to it from its "parent(s)"
 					itobe = index - 1
 					for j in range(1,itobe):
@@ -963,7 +984,7 @@ def _gqual_(ui, ts):
 				dqal = dqal + (pdqal - ddqal[7,index])/vol
 		else:
 			# rchres depth is less than two inches - dissolved decay is not considered
-			for l in range(1, 7):
+			for l in range(1, 8):
 				ddqal[l,index] = 0.0
 			# 320      CONTINUE
 			pdqal = 0.0
@@ -1002,7 +1023,7 @@ def _gqual_(ui, ts):
 
 			# sand
 			# advect this material, including calculation of deposition and scour
-			errors, sqal[1], sqal[4], dsqal1, rosqal1, osqal1 = advqal(isqal1, rsed[1], rsed[4], depscr1, rosed1, osed1,
+			errors, sqal[1], sqal[4], dsqal1, rosqal1, osqal1 = advqal(isqal1*conv, rsed[1], rsed[4], depscr1, rosed1, osed1,
 																 nexits, rsqal1, rsqal5, errors)
 			rosqal1 = rosqal1 / conv
 			osqal1  = osqal1 / conv
@@ -1019,7 +1040,7 @@ def _gqual_(ui, ts):
 
 			# silt
 			# advect this material, including calculation of deposition and scour
-			errors, sqal[2], sqal[5], dsqal2, rosqal2, osqal2 = advqal(isqal2, rsed[2], rsed[5], depscr2, rosed2, osed2,
+			errors, sqal[2], sqal[5], dsqal2, rosqal2, osqal2 = advqal(isqal2*conv, rsed[2], rsed[5], depscr2, rosed2, osed2,
 																 nexits, rsqal2, rsqal6, errors)
 			rosqal2 = rosqal2 / conv
 			osqal2  = osqal2 / conv
@@ -1038,7 +1059,7 @@ def _gqual_(ui, ts):
 
 			# clay
 			# advect this material, including calculation of deposition and scour
-			errors, sqal[3], sqal[6], dsqal3, rosqal3, osqal3 = advqal(isqal3, rsed[3], rsed[6], depscr3, rosed3, osed3,
+			errors, sqal[3], sqal[6], dsqal3, rosqal3, osqal3 = advqal(isqal3*conv, rsed[3], rsed[6], depscr3, rosed3, osed3,
 																 nexits, rsqal3, rsqal7, errors)
 			rosqal3 = rosqal3 / conv
 			osqal3  = osqal3 / conv
@@ -1056,7 +1077,7 @@ def _gqual_(ui, ts):
 					tosqal[n] = tosqal[n] + osqal3[n]
 
 			tiqal  = idqal + isqal4
-			troqal = rodqal + rosqal4
+			troqal = (rodqal / conv) + rosqal4
 			if nexits > 1:
 				for n in range(0, nexits-1):
 					toqal[n] = odqal[n] + tosqal[n]
@@ -1112,7 +1133,7 @@ def _gqual_(ui, ts):
 			# qual constituent not associated with sediment-total just
 			# above should have been set to zero by run interpreter
 			tiqal = idqal
-			troqal = rodqal
+			troqal = rodqal / conv
 			if nexits > 1:
 				for n in range(1, nexits):
 					toqal[n] = odqal[n]
@@ -1188,7 +1209,7 @@ def _gqual_(ui, ts):
 		SQDEC7[loop] = sqdec7 / conv
 		TIQAL[loop]  = tiqal / conv
 		TOSQAL[loop] = tosqal
-		TROQAL[loop] = troqal / conv
+		TROQAL[loop] = troqal
 
 	if nexits > 1:
 		for i in range(nexits):
