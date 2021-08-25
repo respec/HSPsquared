@@ -58,12 +58,24 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 
 	# hydraulic results:
 	advectData = uci['advectData']
+	(nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = advectData
+
+	ui['nexits'] = nexits
+	ui['vol'] = vol
+
+	ts['VOL'] = VOL
+	ts['SROVOL'] = SROVOL
+	ts['EROVOL'] = EROVOL
+
+	for i in range(nexits):
+		ts['SOVOL' + str(i + 1)] = SOVOL[:, i]
+		ts['EOVOL' + str(i + 1)] = EOVOL[:, i]
+
+	# initialize WQ simulation:
+	RQUAL = RQUAL_Class(siminfo_, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts)
 
 	# run WQ simulation:
-	RQUAL = RQUAL_Class(siminfo_, advectData, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts)
-
 	RQUAL.simulate(ts)
-
 
 	# SAVE time series results (TO-DO! - needs implementation for outflow series)
 
