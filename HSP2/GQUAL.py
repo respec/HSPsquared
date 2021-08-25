@@ -147,16 +147,20 @@ def gqual(store, siminfo, uci, ts):
 		else:
 			phy = 0.0
 
-		ts['TEMP'] = initm(siminfo, uci, tempfg, 'GQUAL' + str(index) + '_MONTHLY/WATEMP', twat)
-		ts['PHVAL'] = initm(siminfo, uci, phflag, 'GQUAL' + str(index) + '_MONTHLY/PHVAL', phval)
-		ts['ROC'] = initm(siminfo, uci, roxfg, 'GQUAL' + str(index) + '_MONTHLY/ROXYGEN', roc)
-
-		if cldfg == 2:
-			ts['CLOUD'] = initm(siminfo, uci, cldfg, 'GQUAL' + str(index) + '_MONTHLY/CLOUD', cld)
-		if sdfg == 2:
-			ts['SDCNC'] = initm(siminfo, uci, sdfg, 'GQUAL' + str(index) + '_MONTHLY/SEDCONC', sdcnc)
-		if phytfg == 2:
-			ts['PHYTO'] = initm(siminfo, uci, phytfg, 'GQUAL' + str(index) + '_MONTHLY/PHYTO', phy)
+		# for the following, if the flag value is 1 the timeseries should already be available as input
+		if tempfg == 2 or tempfg == 3:
+			ts['TW_GQ'] = initm(siminfo, uci, tempfg, 'GQUAL' + str(index) + '_MONTHLY/WATEMP', twat)
+		if phflag == 2 or phflag == 3:
+			ts['PHVAL_GQ'] = initm(siminfo, uci, phflag, 'GQUAL' + str(index) + '_MONTHLY/PHVAL', phval)
+		if roxfg == 2 or roxfg == 3:
+			ts['ROC_GQ'] = initm(siminfo, uci, roxfg, 'GQUAL' + str(index) + '_MONTHLY/ROXYGEN', roc)
+		if cldfg == 2 or cldfg == 3:
+			ts['CLOUD_GQ'] = initm(siminfo, uci, cldfg, 'GQUAL' + str(index) + '_MONTHLY/CLOUD', cld)
+		if sdfg == 2 or sdfg == 3:
+			ts['SDCNC_GQ'] = initm(siminfo, uci, sdfg, 'GQUAL' + str(index) + '_MONTHLY/SEDCONC', sdcnc)
+		if phytfg == 2 or phytfg == 3:
+			ts['PHYTO_GQ'] = initm(siminfo, uci, phytfg, 'GQUAL' + str(index) + '_MONTHLY/PHYTO', phy)
+		# if any of these flags are 1 and the timeseries does not exist, that's a problem -- trigger message
 
 		ts['DAYVAL'] = dayval(siminfo, [4, 4, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4])
 
@@ -793,7 +797,13 @@ def _gqual_(ui, ts):
 		# correct unrealistically high values of tw calculated in htrch
 		if tw >= 50.0:
 			tw20 = 30.0
-		
+
+		phval = PHVAL[loop]
+		roc = ROC[loop]
+		cld = CLD[loop]
+		sdcnc = SDCNC[loop]
+		phy = PHYTO[loop]
+
 		prec = PREC[loop]
 		sarea= SAREA[loop]
 		vol  = VOL[loop] * AFACT
@@ -831,6 +841,25 @@ def _gqual_(ui, ts):
 			rsed[4] = RSED4[loop] / 3.121E-08
 			rsed[5] = RSED5[loop] / 3.121E-08
 			rsed[6] = RSED6[loop] / 3.121E-08
+		else:
+			depscr1 = DEPSCR1[loop] / 1E-06
+			depscr2 = DEPSCR2[loop] / 1E-06
+			depscr3 = DEPSCR3[loop] / 1E-06 # 2.83E-08
+			rosed1 = ROSED1[loop] / 1E-06
+			rosed2 = ROSED2[loop] / 1E-06
+			rosed3 = ROSED3[loop] / 1E-06
+			osed1 = array(OSED1[loop])
+			osed2 = array(OSED2[loop])
+			osed3 = array(OSED3[loop])
+			osed1 = osed1 / 1E-06
+			osed2 = osed2 / 1E-06
+			osed3 = osed3 / 1E-06
+			rsed[1] = RSED1[loop] / 1E-06
+			rsed[2] = RSED2[loop] / 1E-06
+			rsed[3] = RSED3[loop] / 1E-06
+			rsed[4] = RSED4[loop] / 1E-06
+			rsed[5] = RSED5[loop] / 1E-06
+			rsed[6] = RSED6[loop] / 1E-06
 
 		isqal1 = ISQAL1[loop]
 		isqal2 = ISQAL2[loop]
@@ -859,13 +888,6 @@ def _gqual_(ui, ts):
 					if lset > 4:
 						lset -= 4
 
-				if cldfg == 1 or cldfg == 3:
-					cld = ts['CLOUD'][loop]
-				if phytfg == 1 or phytfg == 3:
-					if 'PHYTO' in ts:
-						phy = ts['PHYTO'][loop]    # not available until section plank is done
-				if sdfg == 1 or sdfg == 3:
-					sdcnc = ts['SDCNC'][loop]
 				for l in range(1, 19):
 					# evaluate the light extinction exponent- 2.76*klamda*d
 					kl   = alph[l] + gamm[l] * sdcnc + delta[l] * phy
