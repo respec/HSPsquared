@@ -239,7 +239,7 @@ def gqual(store, siminfo, uci, ts):
 	return errors, ERRMSGS
 
 
-@njit(cache=True)
+#@njit(cache=True)
 def _gqual_(ui, ts):
 	''' Simulate the behavior of a generalized quality constituent'''
 	errors = zeros(int(ui['errlen'])).astype(int64)
@@ -668,6 +668,7 @@ def _gqual_(ui, ts):
 	if phytfg == 1:
 		if 'PHYTO' not in ts:
 			errors[11] += 1  # ERRMSG11: timeseries not available
+			ts['PHYTO_GQ'] = zeros(simlen)
 		else:
 			ts['PHYTO_GQ'] = ts['PHYTO']
 
@@ -713,27 +714,28 @@ def _gqual_(ui, ts):
 		ts['GQUAL' + str(index) + '_ISQAL3'] = zeros(simlen)
 	ISQAL3 = ts['GQUAL' + str(index) + '_ISQAL3']
 
-	DEPSCR1 = ts['DEPSCR1']
-	DEPSCR2 = ts['DEPSCR2']
-	DEPSCR3 = ts['DEPSCR3']
-	ROSED1 = ts['ROSED1']
-	ROSED2 = ts['ROSED2']
-	ROSED3 = ts['ROSED3']
+	if qalfg[7] == 1:   # this constituent is associated with sediment
+		DEPSCR1 = ts['DEPSCR1']
+		DEPSCR2 = ts['DEPSCR2']
+		DEPSCR3 = ts['DEPSCR3']
+		ROSED1 = ts['ROSED1']
+		ROSED2 = ts['ROSED2']
+		ROSED3 = ts['ROSED3']
 
-	OSED1 = zeros((simlen, nexits))
-	OSED2 = zeros((simlen, nexits))
-	OSED3 = zeros((simlen, nexits))
+		OSED1 = zeros((simlen, nexits))
+		OSED2 = zeros((simlen, nexits))
+		OSED3 = zeros((simlen, nexits))
 
-	for timeindex in range(simlen):
-		if nexits > 1:
-			for xindex in range(nexits):
-				OSED1[timeindex, xindex] = ts['OSED1' + str(xindex + 1)][timeindex]
-				OSED2[timeindex, xindex] = ts['OSED2' + str(xindex + 1)][timeindex]
-				OSED3[timeindex, xindex] = ts['OSED3' + str(xindex + 1)][timeindex]
-		else:
-			OSED1[timeindex, 0] = ts['ROSED1'][timeindex]
-			OSED2[timeindex, 0] = ts['ROSED2'][timeindex]
-			OSED3[timeindex, 0] = ts['ROSED3'][timeindex]
+		for timeindex in range(simlen):
+			if nexits > 1:
+				for xindex in range(nexits):
+					OSED1[timeindex, xindex] = ts['OSED1' + str(xindex + 1)][timeindex]
+					OSED2[timeindex, xindex] = ts['OSED2' + str(xindex + 1)][timeindex]
+					OSED3[timeindex, xindex] = ts['OSED3' + str(xindex + 1)][timeindex]
+			else:
+				OSED1[timeindex, 0] = ts['ROSED1'][timeindex]
+				OSED2[timeindex, 0] = ts['ROSED2'][timeindex]
+				OSED3[timeindex, 0] = ts['ROSED3'][timeindex]
 
 	# this number is used to adjust reaction rates for temperature
 	# TW20 = TW - 20.0
@@ -832,55 +834,37 @@ def _gqual_(ui, ts):
 		tosqal = TOSQAL[loop]
 
 		# initialize sediment-related variables:
-		osed1 = zeros(nexits)
-		osed2 = zeros(nexits)
-		osed3 = zeros(nexits)
-
-		cf_denom = 1.0
-		if uunits ==1:
-			cf_denom = 3.121e-8
-		else:
-			cf_denom = 1.0e-6
-
-		depscr1 = DEPSCR1[loop] / cf_denom
-		depscr2 = DEPSCR2[loop] / cf_denom
-		depscr3 = DEPSCR3[loop] / cf_denom
-		rosed1 = ROSED1[loop] / cf_denom
-		rosed2 = ROSED2[loop] / cf_denom
-		rosed3 = ROSED3[loop] / cf_denom
-
-		for i in range(nexits):
-			osed1[i] = OSED1[loop, i] / cf_denom
-			osed2[i] = OSED2[loop, i] / cf_denom
-			osed3[i] = OSED3[loop, i] / cf_denom
-
-		rsed = zeros(7)
 		if qalfg[7] == 1:   # constituent is sediment-associated
-			rsed[1] = RSED1[loop] / 3.121E-08
-			rsed[2] = RSED2[loop] / 3.121E-08
-			rsed[3] = RSED3[loop] / 3.121E-08
-			rsed[4] = RSED4[loop] / 3.121E-08
-			rsed[5] = RSED5[loop] / 3.121E-08
-			rsed[6] = RSED6[loop] / 3.121E-08
-		else:
-			depscr1 = DEPSCR1[loop] / 1E-06
-			depscr2 = DEPSCR2[loop] / 1E-06
-			depscr3 = DEPSCR3[loop] / 1E-06 # 2.83E-08
-			rosed1 = ROSED1[loop] / 1E-06
-			rosed2 = ROSED2[loop] / 1E-06
-			rosed3 = ROSED3[loop] / 1E-06
-			osed1 = array(OSED1[loop])
-			osed2 = array(OSED2[loop])
-			osed3 = array(OSED3[loop])
-			osed1 = osed1 / 1E-06
-			osed2 = osed2 / 1E-06
-			osed3 = osed3 / 1E-06
-			rsed[1] = RSED1[loop] / 1E-06
-			rsed[2] = RSED2[loop] / 1E-06
-			rsed[3] = RSED3[loop] / 1E-06
-			rsed[4] = RSED4[loop] / 1E-06
-			rsed[5] = RSED5[loop] / 1E-06
-			rsed[6] = RSED6[loop] / 1E-06
+			osed1 = zeros(nexits)
+			osed2 = zeros(nexits)
+			osed3 = zeros(nexits)
+
+			# define conversion factor:
+			cf = 1.0
+			if uunits == 1:
+				cf = 3.121e-8
+			else:
+				cf = 1.0e-6
+
+			depscr1 = DEPSCR1[loop] / cf
+			depscr2 = DEPSCR2[loop] / cf
+			depscr3 = DEPSCR3[loop] / cf
+			rosed1 = ROSED1[loop] / cf
+			rosed2 = ROSED2[loop] / cf
+			rosed3 = ROSED3[loop] / cf
+
+			for i in range(nexits):
+				osed1[i] = OSED1[loop, i] / cf
+				osed2[i] = OSED2[loop, i] / cf
+				osed3[i] = OSED3[loop, i] / cf
+
+			rsed = zeros(7)
+			rsed[1] = RSED1[loop] / cf
+			rsed[2] = RSED2[loop] / cf
+			rsed[3] = RSED3[loop] / cf
+			rsed[4] = RSED4[loop] / cf
+			rsed[5] = RSED5[loop] / cf
+			rsed[6] = RSED6[loop] / cf
 
 		isqal1 = ISQAL1[loop]
 		isqal2 = ISQAL2[loop]
