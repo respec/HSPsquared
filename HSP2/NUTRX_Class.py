@@ -2,7 +2,6 @@ import numpy as np
 from numpy import zeros, array
 from math import log
 import numba as nb
-from numba import int32, int64, float32, float64, boolean, char    # import the types
 from numba.experimental import jitclass
 
 from HSP2.ADCALC import advect
@@ -11,146 +10,147 @@ from HSP2.OXRX_Class import OXRX_Class
 from HSP2.utilities  import make_numba_dict, initm
 
 spec = [
-	#('OXRX', OXRX_Class.class_type.instance_type),
-	('adnh4', float64[:]),
-	('ADNHFG', int32),
-	('adnhpm', float64[:]),
-	('adpo4', float64[:]),
-	('ADPOFG', int32),
-	('adpopm', float64[:]),
-	('AFACT', float64),
-	('AMVFG', int32),
-	('anaer', float64),
-	('benpo4', float64),
-	('BENRFG', int32),
-	('bentam', float64),
-	('bnh4', float64[:]),
-	('bnrpo4', float64),
-	('bnrpo4', float64),
-	('bnrtam', float64),
-	('bnrtam', float64),
-	('bodno3', float64),
-	('bodpo4', float64),
-	('bodtam', float64),
-	('bpcntc', float64),
-	('bpo4', float64[:]),
-	('brpo4', float64[:]),
-	('brtam', float64[:]),
-	('cvbn', float64),
-	('cvbo', float64),
-	('cvbp', float64),
-	('cvbpc', float64),
-	('cvbpn', float64),
-	('cvoc', float64),
-	('cvon', float64),
-	('cvop', float64),
-	('decco2', float64),
-	('decnit', float64),
-	('decpo4', float64),
-	('delt60', float64),
-	('delts', float64),
-	('denbod', float64),
-	('DENFG', int32),
-	('denno3', float64),
-	('denoxt', float64),
-	('dnust', float64[:]),
-	('dnust2', float64[:]),
-	('dsnh4', float64[:]),
-	('dspo4', float64[:]),
-	('errors', int64[:]),
-	('ERRSMGS', char[:]),
-	('expnvg', float64),
-	('expnvl', float64),
-	('ino2', float64),
-	('ino3', float64),
-	('ipo4', float64),
-	('isnh4', float64[:]),
-	('ispo4', float64[:]),
-	('itam', float64),
-	('kno220', float64),
-	('kno320', float64),
-	('ktam20', float64),
-	('nexits', int32),
-	('nh3', float64),
-	('nh3vlt', float64),
-	('nh4', float64),
-	('nitdox', float64),
-	('nitno2', float64),
-	('nitno3', float64),
-	('nittam', float64),
-	('no2', float64),
-	('NO2FG', int32),
-	('no3', float64),
-	('nuaddr', float64[:]),
-	('nuadep', float64[:]),
-	('NUADFG', int32[:]),
-	('nuadpm', float64[:]),
-	('nuadwt', float64[:]),
-	('nucf1', float64[:]),
-	('nucf2', float64[:,:]),
-	('nucf3', float64[:,:]),
-	('nucf4', float64[:]),
-	('nucf5', float64[:]),
-	('nucf6', float64[:]),
-	('nucf7', float64[:]),
-	('nucf8', float64[:,:]),
-	('nuecnt', float64[:]),
-	('nust', float64[:,:]),
-	('ono2', float64[:]),
-	('ono3', float64[:]),
-	('opo4', float64[:]),
-	('osnh4', float64[:,:]),
-	('ospo4', float64[:,:]),
-	('otam', float64[:]),
-	('PHFLAG', int32),
-	('phval', float64),
-	('phvalm', float64),
-	('PLKFG', int32),
-	('po4', float64),
-	('PO4FG', int32),
-	('rnh3', float64),
-	('rnh4', float64),
-	('rno2', float64),
-	('rno3', float64),
-	('rono2', float64),
-	('rono3', float64),
-	('ropo4', float64),
-	('rosnh4', float64[:]),
-	('rospo4', float64[:]),
-	('rotam', float64),
-	('rpo4', float64),
-	('rrno2', float64),
-	('rrno3', float64),
-	('rrpo4', float64),
-	('rrtam', float64),
-	('rsed', float64[:]),
-	('RSED1', float64[:]),
-	('RSED2', float64[:]),
-	('RSED3', float64[:]),
-	('RSED4', float64[:]),
-	('RSED5', float64[:]),
-	('RSED6', float64[:]),
-	('rsnh4', float64[:]),
-	('rspo4', float64[:]),
-	('rtam', float64),
-	('SEDFG', int32),
-	('simlen', int32),
-	('snh4', float64[:]),
-	('spo4', float64[:]),
-	('svol', float64),
-	('tam', float64),
-	('TAMFG', int32),
-	('tcden', float64),
-	('tcnit', float64),
-	('tnucf1', float64[:]),
-	('tnucf2', float64[:,:]),
-	('tnuif', float64[:]),
-	('totno3', float64),
-	('totpo4', float64),
-	('tottam', float64),
-	('uunits', int32),
-	('vol', float64),
-	('volnh3', float64)
+	('adnh4', nb.float64[:]),
+	('ADNHFG', nb.int32),
+	('adnhpm', nb.float64[:]),
+	('adpo4', nb.float64[:]),
+	('ADPOFG', nb.int32),
+	('adpopm', nb.float64[:]),
+	('AFACT', nb.float64),
+	('AMVFG', nb.int32),
+	('anaer', nb.float64),
+	('benpo4', nb.float64),
+	('BENRFG', nb.int32),
+	('bentam', nb.float64),
+	('bnh4', nb.float64[:]),
+	('bnrpo4', nb.float64),
+	('bnrpo4', nb.float64),
+	('bnrtam', nb.float64),
+	('bnrtam', nb.float64),
+	('bodno3', nb.float64),
+	('bodpo4', nb.float64),
+	('bodtam', nb.float64),
+	('bpcntc', nb.float64),
+	('bpo4', nb.float64[:]),
+	('brpo4', nb.float64[:]),
+	('brtam', nb.float64[:]),
+	('cvbn', nb.float64),
+	('cvbo', nb.float64),
+	('cvbp', nb.float64),
+	('cvbpc', nb.float64),
+	('cvbpn', nb.float64),
+	('cvoc', nb.float64),
+	('cvon', nb.float64),
+	('cvop', nb.float64),
+	('decco2', nb.float64),
+	('decnit', nb.float64),
+	('decpo4', nb.float64),
+	('delt60', nb.float64),
+	('delts', nb.float64),
+	('denbod', nb.float64),
+	('DENFG', nb.int32),
+	('denno3', nb.float64),
+	('denoxt', nb.float64),
+	('dnust', nb.float64[:]),
+	('dnust2', nb.float64[:]),
+	('dsnh4', nb.float64[:]),
+	('dspo4', nb.float64[:]),
+	('errors', nb.int64[:]),
+	('expnvg', nb.float64),
+	('expnvl', nb.float64),
+	('ino2', nb.float64),
+	('ino3', nb.float64),
+	('ipo4', nb.float64),
+	('isnh4', nb.float64[:]),
+	('ispo4', nb.float64[:]),
+	('itam', nb.float64),
+	('kno220', nb.float64),
+	('kno320', nb.float64),
+	('ktam20', nb.float64),
+	('nexits', nb.int32),
+	('nh3', nb.float64),
+	('nh3vlt', nb.float64),
+	('nh4', nb.float64),
+	('nitdox', nb.float64),
+	('nitno2', nb.float64),
+	('nitno3', nb.float64),
+	('nittam', nb.float64),
+	('no2', nb.float64),
+	('NO2FG', nb.int32),
+	('no3', nb.float64),
+	('nuaddr', nb.float64[:]),
+	('nuadep', nb.float64[:]),
+	('NUADCN', nb.float64[:,:]),
+	('NUADFG', nb.int32[:]),
+	('NUADFX', nb.float64[:,:]),
+	('nuadpm', nb.float64[:]),
+	('nuadwt', nb.float64[:]),
+	('nucf1', nb.float64[:]),
+	('nucf2', nb.float64[:,:]),
+	('nucf3', nb.float64[:,:]),
+	('nucf4', nb.float64[:]),
+	('nucf5', nb.float64[:]),
+	('nucf6', nb.float64[:]),
+	('nucf7', nb.float64[:]),
+	('nucf8', nb.float64[:,:]),
+	('nuecnt', nb.float64[:]),
+	('nust', nb.float64[:,:]),
+	('ono2', nb.float64[:]),
+	('ono3', nb.float64[:]),
+	('opo4', nb.float64[:]),
+	('osnh4', nb.float64[:,:]),
+	('ospo4', nb.float64[:,:]),
+	('otam', nb.float64[:]),
+	('PHFLAG', nb.int32),
+	('phval', nb.float64),
+	('phvalm', nb.float64),
+	('PLKFG', nb.int32),
+	('po4', nb.float64),
+	('PO4FG', nb.int32),
+	('rnh3', nb.float64),
+	('rnh4', nb.float64),
+	('rno2', nb.float64),
+	('rno3', nb.float64),
+	('rono2', nb.float64),
+	('rono3', nb.float64),
+	('ropo4', nb.float64),
+	('rosnh4', nb.float64[:]),
+	('rospo4', nb.float64[:]),
+	('rotam', nb.float64),
+	('rpo4', nb.float64),
+	('rrno2', nb.float64),
+	('rrno3', nb.float64),
+	('rrpo4', nb.float64),
+	('rrtam', nb.float64),
+	('rsed', nb.float64[:]),
+	('RSED1', nb.float64[:]),
+	('RSED2', nb.float64[:]),
+	('RSED3', nb.float64[:]),
+	('RSED4', nb.float64[:]),
+	('RSED5', nb.float64[:]),
+	('RSED6', nb.float64[:]),
+	('RSED7', nb.float64[:]),
+	('rsnh4', nb.float64[:]),
+	('rspo4', nb.float64[:]),
+	('rtam', nb.float64),
+	('SEDFG', nb.int32),
+	('simlen', nb.int32),
+	('snh4', nb.float64[:]),
+	('spo4', nb.float64[:]),
+	('svol', nb.float64),
+	('tam', nb.float64),
+	('TAMFG', nb.int32),
+	('tcden', nb.float64),
+	('tcnit', nb.float64),
+	('tnucf1', nb.float64[:]),
+	('tnucf2', nb.float64[:,:]),
+	('tnuif', nb.float64[:]),
+	('totno3', nb.float64),
+	('totpo4', nb.float64),
+	('tottam', nb.float64),
+	('uunits', nb.int32),
+	('vol', nb.float64),
+	('volnh3', nb.float64)
 ]
 
 @jitclass(spec)
@@ -163,10 +163,7 @@ class NUTRX_Class:
 
 		''' Initialize instance variables for nutrient simulation '''
 
-		#self.ERRMSGS=('Placeholder')
-		#self.errors = zeros(len(self.ERRMSGS), dtype=int)
-
-		#(nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = advectData
+		self.errors = zeros(int(ui['errlen']), dtype=np.int64)
 		
 		delt60 = siminfo['delt'] / 60.0  # delt60 - simulation time interval in hours
 		self.delt60 = delt60
@@ -197,29 +194,64 @@ class NUTRX_Class:
 		self.NUADFG = zeros(7, dtype=np.int32)
 
 		for j in range(1, 7):
-			self.NUADFG[j] = int(ui['NUADFG(' + str(j) + ')'])
+			self.NUADFG[j] = int(ui['NUADFG' + str(j)])
 
-		if (self.TAMFG == 0 and (self.AMVFG == 1 or self.ADNHFG == 1)) or (self.PO4FG == 0 and self.ADPOFG == 1):
-			pass
-			# error - either: 1) tam is not being simulated, and nh3 volat. or
-			# nh4 adsorption is being simulated; or 2) po4 is not being
-			# simulated, and po4 adsorption is being simulated
-			# ERRMSG:
+		# error handling:
+		if self.TAMFG == 0 and (self.AMVFG == 1 or self.ADNHFG == 1):
+			self.errors[0] += 1
+			# ERRMSG: tam is not being simulated and nh3 volat. or
+			# nh4 adsorption is being simulated
+
+		 if (self.PO4FG == 0 and self.ADPOFG == 1):
+			self.errors[1] += 1
+			# ERRMSG: po4 is not being simulated, and 
+			# po4 adsorption is being simulated
 
 		if (self.ADNHFG == 1 or self.ADPOFG == 1) and self.SEDFG == 0:
-			pass
-			# ERRMSG: error - sediment associated nh4 and/or po4 is being simulated,but sediment is not being simulated in section sedtrn
+			self.errors[2] += 1
+			# ERRMSG: sediment associated nh4 and/or po4 is being simulated,but sediment is not being simulated in section sedtrn
 
-		#self.uafxm = zeros((13,4))
+		# atmospheric deposition - initialize time series:
+		self.NUADFX = zeros((self.simlen,4))
+		self.NUADCN = zeros((self.simlen,4))
+		
+		for j in range(1, 4):
+			if 'NUADFX' + str(j) in ts: self.NUADFX[:,j] = ts['NUADFX' + str(j)]
+			if 'NUADCN' + str(j) in ts: self.NUADCN[:,j] = ts['NUADCN' + str(j)]
+
+		'''
+		NUADFX = zeros(self.simlen)
+		NUADCN = zeros(self.simlen)
+
+		for j in range (1, 4):
+			n = (2 * j) - 1
+			nuadfg1 = self.NUADFG[n]
+			nuadfg2 = self.NUADFG[n+1]
+
+			# dry deposition:
+			if nuadfg1 > 0:
+				NUADFX = initm(siminfo, ui, nuadfg1, 'NUTRX_MONTHLY/NUADFX', 0.0)
+			elif nuadfg1 == -1:
+				NUADFX = ts['NUADFX' + str(j)]
+
+			# wet deposition:
+			if nuadfg2 > 0:
+				NUADCN = initm(siminfo, ui, nuadfg2, 'NUTRX_MONTHLY/NUADCN', 0.0)
+			elif nuadfg2 == -1:
+				NUADCN = ts['NUADCN' + str(j)]			
+		'''
+
+		'''
 		sf = 1.0
 
 		if self.uunits == 1:			# convert from lb/ac.day to mg.ft3/l.ft2.ivl
 			sf = 0.3677 * delt60 / 24.0
 		else:					# convert from kg/ha.day to mg.m3/l.m2.ivl	
 			sf = 0.1 * delt60 / 24.0	
-
-		# convert units to internal:
 		'''
+
+		'''
+		# convert units to internal:
 		if self.NUADFG[1] > 0:
 			self.uafxm[:,1] = ui['NUADFXM1'] * sf
 		if self.NUADFG[2] > 0:
@@ -276,7 +308,7 @@ class NUTRX_Class:
 		self.rsnh4 = zeros(13)
 		self.rspo4 = zeros(13)
 
-		# sediment storages:
+		# sediment mass storages:
 		self.RSED1 = zeros(self.simlen);	self.RSED2 = zeros(self.simlen)
 		self.RSED3 = zeros(self.simlen);	self.RSED4 = zeros(self.simlen)
 		self.RSED5 = zeros(self.simlen);	self.RSED6 = zeros(self.simlen)
@@ -287,17 +319,27 @@ class NUTRX_Class:
 		if 'RSED4' in ts:	self.RSED4 = ts['RSED4']
 		if 'RSED5' in ts:	self.RSED5 = ts['RSED5']
 		if 'RSED6' in ts:	self.RSED6 = ts['RSED6']
+		if 'RSED7' in ts:	self.RSED7 = ts['RSED7']
 
 		self.rsed = zeros(8)
-		for i in range(1, 8):
-			self.rsed[i] = ts['RSED' + str(i)][0]
+		cf = 3.121e-8 if self.uunits == 1 else 1.00e-6
+
+		if self.SEDFG:
+			self.rsed[1] = ui_rq['SSED1'] * self.vol
+			self.rsed[2] = ui_rq['SSED2'] * self.vol
+			self.rsed[3] = ui_rq['SSED3'] * self.vol
+			self.rsed[4] = self.rsed[1] + self.rsed[2] + self.rsed[3]
+			
+			self.rsed[5] = self.RSED5[0] / cf
+			self.rsed[6] = self.RSED6[0] / cf
+			self.rsed[7] = self.RSED7[0] / cf
 
 		# bed sediment concentrations of nh4 and po4 - table nut-bedconc, not in RCHRES.SEQ
 		# initialize constant bed concentrations (NH4, PO4) 
 		# 	(convert concentrations from mg/kg to internal units of mg/mg)
 		self.bnh4 = zeros(4);	self.bpo4 = zeros(4)
 
-		if i in range(1, 4):
+		for i in range(1, 4):
 			key = 'BNH4' + str(i)
 			if key in ui:	self.bnh4[i] = ui[key] / 1.0e6
 
@@ -351,8 +393,8 @@ class NUTRX_Class:
 			# (input concentrations are mg/kg - these are converted to mg/mg for
 			# internal computations)
 			for i in range(1, 4):
-				self.snh4[i] = ui['SNH4' + str(i)]	# suspended nh4 (sand, silt, clay) 
-				self.spo4[i] = ui['SPO4' + str(i)]	# suspended po4 (sand, silt, clay) 
+				self.snh4[i] = ui['SNH4' + str(i)] / 1.0e6	# suspended nh4 (sand, silt, clay) 
+				self.spo4[i] = ui['SPO4' + str(i)] / 1.0e6	# suspended po4 (sand, silt, clay) 
 
 			# initialize adsorbed nutrient mass storages in suspension
 			self.rsnh4[4] = 0.0
@@ -425,7 +467,7 @@ class NUTRX_Class:
 		self.nuecnt = zeros(4)
 
 		# initialize nutrient states:
-		self.no3 = float64(ui['NO3'])
+		self.no3 = ui['NO3']
 		self.tam = ui['TAM']
 		self.no2 = ui['NO2']
 		self.po4 = ui['PO4']
@@ -434,12 +476,12 @@ class NUTRX_Class:
 		self.nh4 = 0.99 * self.tam
 
 		# initialize total nutrient masses:
-		x = self.update_mass()
+		self.update_mass()
 
 		return
 
-	def simulate(self, tw, wind, phval, OXRX, ino3, itam, ino2, ipo4, isnh4, ispo4, 
-					nuafx, nuacn, prec, sarea, scrfac, avdepe, depcor, depscr, rosed, osed, advectData):
+	def simulate(self, loop, tw, wind, phval, OXRX, ino3, itam, ino2, ipo4, isnh4, ispo4, 
+					prec, sarea, scrfac, avdepe, depcor, sed_depscr, sed_rosed, sed_osed, advectData):
 		''' Determine primary inorganic nitrogen and phosphorus balances'''
 
 		# hydraulics:
@@ -448,19 +490,19 @@ class NUTRX_Class:
 		self.vol = vol
 
 		# set instance inflow variables (w/ units conversion):
-		cf_denom = 1.0
+		cf = 1.0
 		if self.uunits == 2:		# si conversion
-			cf_denom = 1.0e-3
+			cf = 1.0e-3
 		else:
-			cf_denom = 6.2428e-5
+			cf = 6.2428e-5
 
-		self.ino3 = ino3 / cf_denom
-		self.itam = itam / cf_denom
-		self.ino2 = ino2 / cf_denom
-		self.ipo4 = ipo4 / cf_denom
+		self.ino3 = ino3 / cf
+		self.itam = itam / cf
+		self.ino2 = ino2 / cf
+		self.ipo4 = ipo4 / cf
 
-		self.isnh4 = isnh4 / cf_denom
-		self.ispo4 = ispo4 / cf_denom
+		self.isnh4 = isnh4 / cf
+		self.ispo4 = ispo4 / cf
 
 		#compute atmospheric deposition influx (! - to be implemented)
 		self.nuadep = zeros(7)
@@ -527,6 +569,30 @@ class NUTRX_Class:
 		if self.PO4FG == 1:
 			inpo4 = self.ipo4 + self.nuadep[3]
 			self.po4, self.ropo4, self.opo4 = advect(inpo4,self.po4, nexits, self.svol, self.vol, srovol, erovol, sovol, eovol)		
+
+		# sediment variables (require unit conversion):
+		self.rsed = zeros(8)
+		rosed = zeros(4)
+		osed = zeros((self.nexits,4))
+		depscr = zeros(4)
+
+		cf = 3.121e-8 if self.uunits == 1 else 1.00e-6
+
+		if self.SEDFG:
+			self.rsed[1] = self.RSED1[loop] / cf
+			self.rsed[2] = self.RSED2[loop] / cf
+			self.rsed[3] = self.RSED3[loop] / cf
+			self.rsed[4] = self.RSED4[loop] / cf			
+			self.rsed[5] = self.RSED5[loop] / cf
+			self.rsed[6] = self.RSED6[loop] / cf
+			self.rsed[7] = self.RSED7[loop] / cf
+
+			for j in range(1, 4):
+				rosed[j] = sed_rosed[j] / cf
+				depscr[j] = sed_depscr[j] / cf
+
+				for i in range(nexits):
+					osed[i,j] = sed_osed[i,j] / cf
 
 		# advect adsorbed PO4:
 		if self.PO4FG == 1 and self.ADPOFG == 1:
@@ -734,26 +800,30 @@ class NUTRX_Class:
 
 		self.svol = self.vol  # svol is volume at start of time step, update for next time thru
 
+		# update total nutrient masses (handle after PLANK):
+		#self.update_mass()
+
+
 		return OXRX
 
 	def update_mass(self):
 		# calculate total resident mass of nutrient species
-		vol = self.vol
 
-		self.rno3 = self.no3 * vol
-		self.rtam  = self.tam * vol
-		self.rno2  = self.no2 * vol
-		self.rpo4  = self.po4 * vol
-		self.rnh4  = self.nh4 * vol
-		self.rnh3  = self.nh3 * vol
-		self.rrno3 = self.no3 * vol
-		self.rrtam = self.tam * vol
+		self.rno3 = self.no3 * self.vol
+		self.rtam  = self.tam * self.vol
+		self.rno2  = self.no2 * self.vol
+		self.rpo4  = self.po4 * self.vol
+		self.rnh4  = self.nh4 * self.vol
+		self.rnh3  = self.nh3 * self.vol
+		
+		self.rrno3 = self.no3 * self.vol
+		self.rrtam = self.tam * self.vol
 
 		if self.ADNHFG == 1:  
 			self.rrtam += self.rsnh4[4]  # add adsorbed suspended nh4 to dissolved
 			
-		self.rrno2 = self.no2 * vol
-		self.rrpo4 = self.po4 * vol
+		self.rrno2 = self.no2 * self.vol
+		self.rrpo4 = self.po4 * self.vol
 
 		if self.ADPOFG == 1:  
 			self.rrpo4 += self.rspo4[4] # add adsorbed suspended po4 to dissolved	
@@ -809,9 +879,8 @@ class NUTRX_Class:
 
 		return dnut, snut, dnutxx, adnut
 
-
-	@staticmethod
-	def  advnut(isnut,rsed,bsed,depscr,rosed,osed,nexits,rsnuts,rbnuts,bnut):
+	
+	def  advnut(self,isnut,rsed,bsed,depscr,rosed,osed,nexits,rsnuts,rbnuts,bnut):
 
 		''' simulate the advective processes, including deposition and scour for the
 		inorganic nutrient adsorbed to one sediment size fraction'''
@@ -838,7 +907,7 @@ class NUTRX_Class:
 				# the total mass over a printout period; note that 1.0e-3 mg*ft3/l is 0.028 mg
 				# (a very, very small mass)
 				if abs(isnut) > 1.0e-3 or abs(rsnuts) > 1.0e-3:
-					pass
+					self.errors[3] += 1
 					# errmsg: error-under these conditions these values should be zero
 			else:		# there was some suspended sediment during the interval
 				# calculate conc on suspended sed
@@ -855,7 +924,8 @@ class NUTRX_Class:
 			if bsed == 0.0:
 				# no bed sediments at end of interval
 				if abs(dsnut) > 0.0 or abs(rbnuts) > 0.0:
-					pass # errsg: error-under this condition these values should be zero
+					self.errors[4] += 1
+					# errmsg: error-under this condition these values should be zero
 
 		osnut = zeros(nexits)
 		if nexits > 1:

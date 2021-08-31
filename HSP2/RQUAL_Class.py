@@ -2,23 +2,24 @@ import numpy as np
 from numpy import where, zeros, array
 from math import log
 import numba as nb
-#from numba import int32, float64    # import the types
 from numba.experimental import jitclass
 
 from HSP2.OXRX_Class import OXRX_Class
 from HSP2.NUTRX_Class import NUTRX_Class
-#from HSP2.PLANK_Class import PLANK_Class
+from HSP2.PLANK_Class import PLANK_Class
 #from HSP2.PHCARB_Class import PHCARB_Class
 from HSP2.utilities  import make_numba_dict, initm
 
 spec = [
 	('OXRX', OXRX_Class.class_type.instance_type),
 	('NUTRX', NUTRX_Class.class_type.instance_type),
-	#('PLANK', PLANK_Class.class_type.instance_type),
+	('PLANK', PLANK_Class.class_type.instance_type),
 	('AFACT', nb.float64),
 	('ALK', nb.float64[:]),
 	('AVDEP', nb.float64[:]),
+	('AVDEPE', nb.float64[:]),
 	('AVVEL', nb.float64[:]),
+	('AVVELE', nb.float64[:]),
 	('BALCLA', nb.float64[:]),
 	('BENAL', nb.float64[:]),
 	('BENRFG', nb.int32),
@@ -28,7 +29,7 @@ spec = [
 	('delts', nb.float64),
 	('DEPCOR', nb.float64[:]),
 	('DOX', nb.float64[:]),
-	('EOVOL', nb.float64[:]),
+	('EOVOL', nb.float64[:,:]),
 	('EROVOL', nb.float64[:]),
 	('IBOD', nb.float64[:]),
 	('ICO2', nb.float64[:]),
@@ -60,19 +61,22 @@ spec = [
 	('NUTFG', nb.int32),
 	('OBALCLA', nb.float64[:,:]),
 	('OBENAL', nb.float64[:,:]),
-	('OBOD', nb.float64[:]),
-	('OCO2', nb.float64[:]),
-	('ODOX', nb.float64[:]),
-	('ONH3', nb.float64[:]),
-	('ONO2', nb.float64[:]),
-	('ONO3', nb.float64[:]),
+	('OBOD', nb.float64[:,:]),
+	('OCO2', nb.float64[:,:]),
+	('ODOX', nb.float64[:,:]),
+	('ONO2', nb.float64[:,:]),
+	('ONO3', nb.float64[:,:]),
 	('OPHYCLA', nb.float64[:,:]),
-	('OPHYTO', nb.float64[:,:]),
-	('OPO4', nb.float64[:]),
+	('OPHYT', nb.float64[:,:]),
+	('OPO4', nb.float64[:,:]),
+	('OORC', nb.float64[:,:]),
+	('OORN', nb.float64[:,:]),
+	('OORP', nb.float64[:,:]),
 	('ORC', nb.float64[:]),
 	('ORN', nb.float64[:]),
 	('ORP', nb.float64[:]),
-	('OTIC', nb.float64[:]),
+	('OTAM', nb.float64[:,:]),
+	('OTIC', nb.float64[:,:]),
 	('OZOO', nb.float64[:,:]),
 	('PH', nb.float64[:]),
 	('PHFG', nb.int32),
@@ -82,17 +86,21 @@ spec = [
 	('PO4', nb.float64[:]),
 	('POTBOD', nb.float64[:]),
 	('PREC', nb.float64[:]),
+	('RO', nb.float64[:]),
 	('ROBALCLA', nb.float64[:]),
 	('ROBENAL', nb.float64[:]),
 	('ROBOD', nb.float64[:]),
 	('ROCO2', nb.float64[:]),
 	('RODOX', nb.float64[:]),
-	('RONH3', nb.float64[:]),
 	('RONO2', nb.float64[:]),
 	('RONO3', nb.float64[:]),
+	('ROORC', nb.float64[:]),
+	('ROORN', nb.float64[:]),
+	('ROORP', nb.float64[:]),
 	('ROPHYCLA', nb.float64[:]),
-	('ROPHYTO', nb.float64[:]),
+	('ROPHYT', nb.float64[:]),
 	('ROPO4', nb.float64[:]),
+	('ROTAM', nb.float64[:]),
 	('ROTIC', nb.float64[:]),
 	('ROZOO', nb.float64[:]),
 	('SAREA', nb.float64[:]),
@@ -101,10 +109,13 @@ spec = [
 	('SEDFG', nb.int32),
 	('simlen', nb.int32),
 	('SOLRAD', nb.float64[:]),
-	('SOVOL', nb.float64[:]),
+	('SOVOL', nb.float64[:,:]),
+	('SSED4', nb.float64[:]),
 	('SROVOL', nb.float64[:]),
 	('svol', nb.float64),
 	('TAM', nb.float64[:]),
+	('TBENAL1', nb.float64[:]),
+	('TBENAL2', nb.float64[:]),
 	('TIC', nb.float64[:]),
 	('TORC', nb.float64[:]),
 	('TORN', nb.float64[:]),
@@ -128,7 +139,6 @@ class RQUAL_Class:
 	def __init__(self, siminfo, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts):
 	
 		''' Initialize instance variables for rqual wrapper '''
-		print('initializing RQUAL class')
 
 		# simulation data:
 		delt60 = siminfo['delt'] / 60.0  # delt60 - simulation time interval in hours
@@ -178,7 +188,7 @@ class RQUAL_Class:
 
 		# get external time series
 		self.PREC  = ts['PREC']
-		self.SAREA = ts['SAREA'] * self.AFACT
+		self.SAREA = ts['SAREA'] #dbg * self.AFACT
 
 		self.RO = ts['RO']		
 		self.AVDEP = ts['AVDEP']
@@ -190,17 +200,39 @@ class RQUAL_Class:
 		else:
 			self.WIND = zeros(simlen)
 
-		
-		self.TW     = where(self.TW < -100.0, 20.0, self.TW)  # fix undefined temps if present
-		self.AVDEPE = where(self.uunits == 2, self.AVDEP * 3.28, self.AVDEP)  # convert to english units) in feet
-		self.AVVELE = where(self.uunits == 2, self.AVVEL * 3.28, self.AVVEL)  # convert to english units)
-		self.DEPCOR = where(self.AVDEPE > 0.0, 3.28084e-3 / self.AVDEPE, -1.e30)  # # define conversion factor from mg/m2 to mg/l
-		if self.BENRFG == 1: 
-			scrvel = ui['SCRVEL']   # table-type scour-parms
-			scrmul = ui['SCRMUL']   # table-type scour-parms
-			self.SCRFAC = where(self.AVVELE > scrvel, scrmul, 1.0)   # calculate scouring factor
-		
-		ts['SCRFAC'] = self.SCRFAC
+		# initialize time series for physical variables:
+		self.AVDEPE = zeros(simlen)
+		self.AVVELE = zeros(simlen)
+		self.DEPCOR = zeros(simlen)
+		self.SCRFAC = zeros(simlen)
+
+		for t in range(simlen):
+			# fix undefined temps if present
+			self.TW[t] = 20.0 if self.TW[t] < -100.0 else self.TW[t]
+			
+			# convert depth/velocity to english units, if necessary:
+			self.AVDEPE[t] = self.AVDEP[t]
+			self.AVVELE[t] = self.AVVEL[t]
+
+			if self.uunits == 2:
+				self.AVDEPE[t] *= 3.28
+				self.AVVELE[t] *= 3.28
+
+			# define conversion factor from mg/m2 to mg/l
+			if self.AVDEPE[t] > 0.0:
+				self.DEPCOR[t] = 3.28084e-3 / self.AVDEPE[t]
+			else:
+				self.DEPCOR[t] = -1.0e30
+
+			# calculate scouring factor
+			if self.BENRFG == 1:
+				scrvel = ui['SCRVEL']	# table-type scour-parms
+				scrmul = ui['SCRMUL']	# table-type scour-parms
+				
+				if self.AVVELE[t] > scrvel:
+					self.SCRFAC[t] = scrmul
+				else:
+					self.SCRFAC[t] = 1.0
 
 		#-------------------------------------------------------
 		# OXRX - initialize:
@@ -219,8 +251,8 @@ class RQUAL_Class:
 		self.DOX   = ts['DOX']   = zeros(simlen)   # concentration, state variable
 		self.BOD   = ts['BOD']   = zeros(simlen)   # concentration, state variable
 		self.SATDO = ts['SATDO'] = zeros(simlen)   # concentration, state variable
-		self.RODOX = ts['RODOX'] = zeros(simlen)             # reach outflow of DOX
-		self.ROBOD = ts['ROBOD'] = zeros(simlen)             # reach outflow of BOD
+		self.RODOX = ts['RODOX'] = zeros(simlen)   # reach outflow of DOX
+		self.ROBOD = ts['ROBOD'] = zeros(simlen)   # reach outflow of BOD
 		self.ODOX  = zeros((simlen, nexits))   # reach outflow per gate of DOX
 		self.OBOD  = zeros((simlen, nexits))   # reach outflow per gate of BOD
 
@@ -233,7 +265,7 @@ class RQUAL_Class:
 
 		#-------------------------------------------------------
 		# NUTRX - initialize:
-		#-------------------------------------------------------
+		#-------------------------------------------------------		
 		if self.NUTFG == 1:
 
 			# nutrient inflows:
@@ -269,6 +301,7 @@ class RQUAL_Class:
 			if 'NUIF23 2' in ts:  self.ISPO43 = ts['NUIF23 2']
 
 			# atmospheric deposition - create time series (TO-DO! - needs implementation):
+			'''
 			self.NUADFX = zeros((simlen,4))
 			self.NUADCN = zeros((simlen,4))
 			self.NUADFG = zeros(7, dtype=np.int32)
@@ -283,7 +316,7 @@ class RQUAL_Class:
 
 				if (nuadfg_wd < 0):
 					pass
-
+			'''
 			# NUAFX = setit()  # NUAFXM monthly, constant or time series
 			# NUACN = setit()  # NUACNM monthly, constant or time series
 
@@ -291,23 +324,25 @@ class RQUAL_Class:
 			self.NO3   = ts['NO3']   = zeros(simlen)   # concentration, state variable
 			self.NO2   = ts['NO2']   = zeros(simlen)   # concentration, state variable
 			self.NH3   = ts['NH3']   = zeros(simlen)   # concentration, state variable
+			self.NH4   = ts['NH4']   = zeros(simlen)   # concentration, state variable
 			self.PO4   = ts['PO4']   = zeros(simlen)   # concentration, state variable 
 			self.TAM   = ts['TAM']   = zeros(simlen)   # concentration, state variable
 			self.RONO3 = ts['RONO3'] = zeros(simlen)   # outflow
 			self.RONO2 = ts['RONO2'] = zeros(simlen)   # outflow
-			self.RONH3 = ts['RONH3'] = zeros(simlen)   # outflow
+			self.ROTAM = ts['ROTAM'] = zeros(simlen)   # outflow
 			self.ROPO4 = ts['ROPO4'] = zeros(simlen)   # outflow
 			self.ONO3  = zeros((simlen, nexits))   # outflow
 			self.ONO2  = zeros((simlen, nexits))   # outflow
-			self.ONH3  = zeros((simlen, nexits))   # outflow
+			self.OTAM  = zeros((simlen, nexits))   # outflow
 			self.OPO4  = zeros((simlen, nexits))   # outflow
 
 			for i in range(nexits):
 				ts['ONO3' + str(i + 1)] = zeros(simlen)
 				ts['ONO2' + str(i + 1)] = zeros(simlen)
-				ts['ONH3' + str(i + 1)] = zeros(simlen)
+				ts['OTAM' + str(i + 1)] = zeros(simlen)
 				ts['OPO4' + str(i + 1)] = zeros(simlen)
 
+			# NUTRX - initialize:
 			self.NUTRX = NUTRX_Class(siminfo, self.nexits, self.vol, ui, ui_nutrx, ts, self.OXRX)
 
 			#-------------------------------------------------------
@@ -343,36 +378,33 @@ class RQUAL_Class:
 				self.POTBOD = ts['PKST3_POTBOD'] = zeros(simlen)  # state variable
 			
 				self.PHYTO  = ts['PHYTO']        = zeros(simlen)  # concentration
-				self.ZOO    = ts['ZOO']          = zeros(simlen)  # concentration
-				self.BENAL  = ts['BENAL']        = zeros(simlen)  # concentration
 				self.PHYCLA = ts['PHYCLA']       = zeros(simlen)  # concentration
-				self.BALCLA = ts['BALCLA']       = zeros(simlen)  # concentration
+				self.ZOO    = ts['ZOO']          = zeros(simlen)  # concentration
+				self.TBENAL1= ts['TBENAL1']      = zeros(simlen)  # concentration
+				self.TBENAL2= ts['TBENAL2']      = zeros(simlen)  # concentration
 			
-				self.ROPHYTO  = ts['ROPHYTO']  = zeros(simlen)  # total outflow
-				self.ROZOO    = ts['ROZOO']    = zeros(simlen)  # total outflow
-				self.ROBENAL  = ts['ROBENAL']  = zeros(simlen)  # total outflow
-				self.ROPHYCLA = ts['ROPHYCLA'] = zeros(simlen)  # total outflow
-				self.ROBALCLA = ts['ROBALCLA'] = zeros(simlen)  # total outflow
+				self.ROPHYT   = ts['ROPHYT'] = zeros(simlen)  # total outflow
+				self.ROZOO    = ts['ROZOO']  = zeros(simlen)  # total outflow
+				self.ROORN    = ts['ROORN']  = zeros(simlen)  # total outflow
+				self.ROORP    = ts['ROORP']  = zeros(simlen)  # total outflow
+				self.ROORC    = ts['ROORC']  = zeros(simlen)  # total outflow
 				
-				self.OPHYTO  = zeros((simlen, nexits)) # outflow by gate	
+				self.OPHYT   = zeros((simlen, nexits)) # outflow by gate	
 				self.OZOO    = zeros((simlen, nexits)) # outflow by gate	 	
-				self.OBENAL  = zeros((simlen, nexits)) # outflow by gate	 	
-				self.OPHYCLA = zeros((simlen, nexits)) # outflow by gate	 	
-				self.OBALCLA = zeros((simlen, nexits)) # outflow by gate	 	
+				self.OORN    = zeros((simlen, nexits)) # outflow by gate	 	
+				self.OORP    = zeros((simlen, nexits)) # outflow by gate	 	
+				self.OORC    = zeros((simlen, nexits)) # outflow by gate	 	
 
 				for i in range(nexits):
-					ts['OPHYTO' + str(i + 1)] = zeros(simlen)
+					ts['OPHYT' + str(i + 1)] = zeros(simlen)
 					ts['OZOO' + str(i + 1)] = zeros(simlen)
-					ts['OBENAL' + str(i + 1)] = zeros(simlen)
-					ts['OPHYCLA' + str(i + 1)] = zeros(simlen)
-					ts['OBALCLA' + str(i + 1)] = zeros(simlen)
+					ts['OORN' + str(i + 1)] = zeros(simlen)
+					ts['OORP' + str(i + 1)] = zeros(simlen)
+					ts['OORC' + str(i + 1)] = zeros(simlen)
 
-				#LTI BINV   = setit()   # ts (BINVFG==1), monthly (BINVFG)
-				#LTI PLADFX = setit()   # time series, monthly(PLAFXM)
-				#LTI PLADCN = setit()   # time series, monthly(PLAFXM)		
-
-				#self.PLANK = PLANK_Class(siminfo, self.nexits, self.vol, ui, ui_plank, ts, self.OXRX, self.NUTRX)
-
+				# PLANK - initialize:
+				self.PLANK = PLANK_Class(siminfo, self.nexits, self.vol, ui, ui_plank, ts, self.OXRX, self.NUTRX)
+				
 				#-------------------------------------------------------
 				# PHCARB - initialize:
 				#-------------------------------------------------------
@@ -383,10 +415,9 @@ class RQUAL_Class:
 					self.ITIC = zeros(simlen)
 					self.ICO2 = zeros(simlen)
 
-					if 'CON' in ts:	self.ALK = ts['CON']
-					if 'ITIC' in ts:	self.ALK = ts['ITIC']
-					if 'ICO2' in ts:	self.ALK = ts['ICO2']
-
+					if 'CON' in ts:		self.ALK = ts['CON']
+					if 'ITIC' in ts:	self.ITIC = ts['ITIC']
+					if 'ICO2' in ts:	self.CO2 = ts['ICO2']
 
 					# preallocate output arrays for speed
 					self.PH     = ts['PH']    = zeros(simlen)            # state variable
@@ -404,6 +435,7 @@ class RQUAL_Class:
 
 					#PHCARB = PHCARB_Class(siminfo, self.nexits, self.vol, ui, ui_phcarb, ts)
 
+		return
 
 	def simulate(self, ts):
 
@@ -427,6 +459,9 @@ class RQUAL_Class:
 
 			depcor = self.DEPCOR[loop]			
 
+			svol = self.vol
+			self.svol = svol
+
 			self.vol = self.VOL[loop]
 			advData = self.nexits, self.svol, self.vol, self.SROVOL[loop], self.EROVOL[loop], self.SOVOL[loop], self.EOVOL[loop]
 
@@ -447,7 +482,14 @@ class RQUAL_Class:
 			#-------------------------------------------------------
 			# OXRX - simulate do and bod balances:
 			#-------------------------------------------------------
-			#self.OXRX.simulate(idox, ibod, wind_r, scrfac, avdepe, avvele, depcor, tw, advData)
+			self.OXRX.simulate(idox, ibod, wind_r, scrfac, avdepe, avvele, depcor, tw, advData)
+
+			# initialize DO/BOD process quantities:
+			nitdox = 0.0
+			denbod = 0.0
+			phydox = 0.0
+			zoodox = 0.0
+			baldox = 0.0
 
 			#-------------------------------------------------------
 			# NUTRX - simulate primary nutrient (N/P) balances:
@@ -466,7 +508,7 @@ class RQUAL_Class:
 						
 						if self.nexits > 1:
 							for i in range(self.nexits):
-								osed[i,j] = ts['OSED' + str(i+1)][loop,i]
+								osed[i,j] = ts['OSED' + str(i+1)][loop]
 						else:
 							osed[0,j] = rosed[j]
 
@@ -488,33 +530,34 @@ class RQUAL_Class:
 					ispo4[4] += ispo4[j]
 
 				# simulate nutrients:
-				self.OXRX = self.NUTRX.simulate(tw, wind, phval, self.OXRX, 
+				self.OXRX = self.NUTRX.simulate(loop, tw, wind, phval, self.OXRX, 
 								self.INO3[loop], self.INH4[loop], self.INO2[loop], self.IPO4[loop], isnh4, ispo4,
-								self.NUADFX[loop], self.NUADCN[loop], self.PREC[loop], self.SAREA[loop], scrfac, avdepe, depcor, depscr, rosed, osed, advData)
+								self.PREC[loop], self.SAREA[loop], scrfac, avdepe, depcor, depscr, rosed, osed, advData)
+				
 
 				# update DO / BOD totals:
 				nitdox = self.NUTRX.nitdox
 				denbod = self.NUTRX.denbod
 
-				self.OXRX.update_totals(nitdox, denbod) 
-
 				#-------------------------------------------------------
 				# PLANK - simulate plankton components & associated reactions
-				#-------------------------------------------------------
+				#-------------------------------------------------------				
 				if self.PLKFG == 1:
 					
 					co2 = 0.0
 					#if self.PHFG == 1: co2 = PHCARB.co2		#TO-DO!
-
 					
-					#(self.OXRX, self.NUTRX) \
-					#	=	self.PLANK.simulate(tw, phval, co2, self.SSED4[loop], self.OXRX, self.NUTRX,
-					#					self.IPHYT[loop], self.IZOO[loop], 
-					#					self.IORN[loop], self.IORP[loop], self.IORC[loop], 
-					#					self.WASH[loop], self.SOLRAD[loop], self.PREC[loop], 
-					#					self.SAREA[loop], avdepe, avvele, depcor, ro, advData)
+					(self.OXRX, self.NUTRX) \
+						=	self.PLANK.simulate(tw, phval, co2, self.SSED4[loop], self.OXRX, self.NUTRX,
+										self.IPHYT[loop], self.IZOO[loop], 
+										self.IORN[loop], self.IORP[loop], self.IORC[loop], 
+										self.WASH[loop], self.SOLRAD[loop], self.PREC[loop], 
+										self.SAREA[loop], avdepe, avvele, depcor, ro, advData)
 
-
+					phydox = self.PLANK.phydox
+					zoodox = self.PLANK.zoodox
+					baldox = self.PLANK.baldox
+					
 					#-------------------------------------------------------
 					# PHCARB - simulate: (TO-DO! - needs class implementation)
 					#-------------------------------------------------------
@@ -526,17 +569,121 @@ class RQUAL_Class:
 						#	phval = PHCARB.ph
 						
 						#co2 = PHCARB.co2
-						
+						i = 0
 						pass
 
+				#-------------------------------------------------------
+				# NUTRX - update masses (TO-DO! - removed for now; fails on numba compile)
+				#-------------------------------------------------------
+				'''
+				self.NUTRX.rno3 = self.NUTRX.no3 * self.vol
+				self.NUTRX.rtam = self.NUTRX.tam * self.vol
+				self.NUTRX.rno2 = self.NUTRX.no2 * self.vol
+				self.NUTRX.rpo4 = self.NUTRX.po4 * self.vol
+				self.NUTRX.rnh4 = self.NUTRX.nh4 * self.vol
+				self.NUTRX.rnh3 = self.NUTRX.nh3 * self.vol
+				
+				self.NUTRX.rrno3 = self.NUTRX.no3 * self.vol
+				self.NUTRX.rrtam = self.NUTRX.tam * self.vol
 
-					# check do level; if dox exceeds user specified level of supersaturation, then release excess do to the atmosphere
-					#self.OXRX.adjust_dox(self.vol, self.NUTRX.nitdox, self.PLANK.phydox, self.PLANK.zoodox, self.PLANK.baldox)
+				if self.NUTRX.ADNHFG == 1:  
+					self.NUTRX.rrtam += self.NUTRX.rsnh4[4]  # add adsorbed suspended nh4 to dissolved
+					
+				self.NUTRX.rrno2 = self.NUTRX.no2 * self.vol
+				self.NUTRX.rrpo4 = self.NUTRX.po4 * self.vol
 
-				# update totals of nutrients
+				if self.NUTRX.ADPOFG == 1:  
+					self.NUTRX.rrpo4 += self.NUTRX.rspo4[4] # add adsorbed suspended po4 to dissolved	
+				'''
+
 				#self.NUTRX.update_mass()
 
+			#-------------------------------------------------------
+			# OXRX - finalize DO and calculate totals
+			#-------------------------------------------------------
+
+			# check do level; if dox exceeds user specified level of supersaturation, then release excess do to the atmosphere								
+			dox = self.OXRX.dox
+			doxs = dox
+
+			if dox > (self.OXRX.supsat * self.OXRX.satdo):
+				dox = self.OXRX.supsat * self.OXRX.satdo
+
+			self.OXRX.readox += (dox - doxs) * self.vol
+			self.OXRX.totdox = self.OXRX.readox + self.OXRX.boddox + self.OXRX.bendox \
+								+ nitdox + phydox + zoodox + baldox
+
+			self.OXRX.dox = dox
+			self.OXRX.rdox = self.OXRX.dox * self.vol
+			self.OXRX.rbod = self.OXRX.bod * self.vol			
+
+			#self.OXRX.adjust_dox(nitdox, denbod, phydox, zoodox, baldox)
+
 			# udate initial volume for next step:
-			self.svol = self.vol
+			#self.svol = self.vol
+
+			#-------------------------------------------------------
+			# Store time series results (all WQ modules):
+			#-------------------------------------------------------
+
+			# OXRX results:
+			self.DOX[loop] = self.OXRX.dox
+			self.BOD[loop] = self.OXRX.bod
+			self.SATDO[loop] = self.OXRX.satdo
+			self.RODOX[loop] = self.OXRX.rodox
+			self.ROBOD[loop] = self.OXRX.robod
+
+			if self.nexits > 1:
+				for i in range(self.nexits):
+					ts['ODOX' + str(i + 1)][loop] = self.OXRX.odox[i]
+					ts['OBOD' + str(i + 1)][loop] = self.OXRX.obod[i]
+
+			# NUTRX results:
+			if self.NUTFG == 1:
+				self.NO3[loop] = self.NUTRX.no3
+				self.NO2[loop] = self.NUTRX.no2
+				self.TAM[loop] = self.NUTRX.tam
+				self.PO4[loop] = self.NUTRX.po4
+				self.NH3[loop] = self.NUTRX.nh3
+
+				self.RONO3[loop] = self.NUTRX.rono3
+				self.RONO2[loop] = self.NUTRX.rono2
+				self.ROTAM[loop] = self.NUTRX.rotam
+				self.ROPO4[loop] = self.NUTRX.ropo4
+
+				if self.nexits > 1:
+					for i in range(self.nexits):
+						ts['ONO3' + str(i + 1)][loop] = self.NUTRX.ono3[i]
+						ts['ONO2' + str(i + 1)][loop] = self.NUTRX.ono2[i]
+						ts['OTAM' + str(i + 1)][loop] = self.NUTRX.otam[i]
+						ts['OPO4' + str(i + 1)][loop] = self.NUTRX.opo4[i]
+
+				# PLANK results:
+				if self.PLKFG == 1:
+
+					self.ORN[loop] = self.PLANK.orn
+					self.ORP[loop] = self.PLANK.orp
+					self.ORC[loop] = self.PLANK.orc
+					self.TORN[loop] = self.PLANK.torn
+					self.TORP[loop] = self.PLANK.torp
+					self.TORC[loop] = self.PLANK.torc
+
+					self.PHYTO[loop] = self.PLANK.phyto
+					self.PHYCLA[loop] = self.PLANK.phycla
+					self.TBENAL1[loop] = self.PLANK.tbenal[1]
+					self.TBENAL2[loop] = self.PLANK.tbenal[2]
+					self.ZOO[loop] = self.PLANK.zoo
+
+					if self.nexits > 1:
+						for i in range(self.nexits):
+							ts['OPHYT' + str(i + 1)][loop] = self.PLANK.ophyt[i]
+							ts['OZOO' + str(i + 1)][loop] = self.PLANK.ozoo[i]
+							ts['OORN' + str(i + 1)][loop] = self.PLANK.oorn[i]
+							ts['OORP' + str(i + 1)][loop] = self.PLANK.oorp[i]
+							ts['OORC' + str(i + 1)][loop] = self.PLANK.oorc[i]	
+
+					# PHCARB results:
+					if self.PHFG == 1:
+						pass
 
 		return

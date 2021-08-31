@@ -5,20 +5,239 @@ import numba as nb
 from numba.experimental import jitclass
 
 from HSP2.ADCALC import advect
+from HSP2.OXRX_Class import OXRX_Class
+from HSP2.NUTRX_Class import NUTRX_Class
 from HSP2.RQUTIL import sink, decbal
 from HSP2.utilities  import make_numba_dict, initm
 
 spec = [
-	# TO-DO! - populate for jitclass
+	('OXRX', OXRX_Class.class_type.instance_type),
+	('NUTRX', NUTRX_Class.class_type.instance_type),
+	('aldh', nb.float64),
+	('aldl', nb.float64),
+	('alnpr', nb.float64),
+	('alr20', nb.float64),
+	('AMRFG', nb.int32),
+	('baco2', nb.float64),
+	('balbod', nb.float64),
+	('balcla', nb.float64[:]),
+	('baldep', nb.float64),
+	('baldox', nb.float64),
+	('BALFG', nb.int32),
+	('ballit', nb.float64),
+	('balno3', nb.float64),
+	('balorc', nb.float64),
+	('balorn', nb.float64),
+	('balorp', nb.float64),
+	('balpo4', nb.float64),
+	('balr20', nb.float64[:]),
+	('baltam', nb.float64),
+	('balvel', nb.float64),
+	('benal', nb.float64[:]),
+	('BFIXFG', nb.int32[:]),
+	('binv', nb.float64),
+	('BINVFG', nb.int32),
+	('binvm', nb.float64),
+	('BNPFG', nb.int32),
+	('bpcntc', nb.float64),
+	('campr', nb.float64),
+	('cbnrbo', nb.float64),
+	('cfbalg', nb.float64),
+	('cfbalr', nb.float64),
+	('cflit', nb.float64),
+	('cfsaex', nb.float64),
+	('cktrb1', nb.float64),
+	('cktrb2', nb.float64),
+	('claldh', nb.float64),
+	('cmingr', nb.float64),
+	('cmmbi', nb.float64),
+	('cmmd1', nb.float64[:]),
+	('cmmd2', nb.float64[:]),
+	('cmmlt', nb.float64),
+	('cmmn', nb.float64),
+	('cmmnb', nb.float64[:]),
+	('cmmnp', nb.float64),
+	('cmmp', nb.float64),
+	('cmmpb', nb.float64[:]),
+	('cmmv', nb.float64),
+	('co2', nb.float64),
+	('cremvl', nb.float64),
+	('cslit', nb.float64[:]),
+	('cslof1', nb.float64[:]),
+	('cslof2', nb.float64[:]),
+	('ctrbq1', nb.float64),
+	('ctrbq2', nb.float64),
+	('cvbc', nb.float64),
+	('cvbcl', nb.float64),
+	('cvbn', nb.float64),
+	('cvbo', nb.float64),
+	('cvbp', nb.float64),
+	('cvbpc', nb.float64),
+	('cvbpn', nb.float64),
+	('cvnrbo', nb.float64),
+	('cvpb', nb.float64),
+	('DECFG', nb.int32),
+	('delt', nb.float64),
+	('delt60', nb.float64),
+	('delts', nb.float64),
+	('dthbal', nb.float64[:]),
+	('dthphy', nb.float64),
+	('dthtba', nb.float64),
+	('dthzoo', nb.float64),
+	('errors', nb.int64[:]),
+	('extb', nb.float64),
+	('flxbal', nb.float64[:,:]),
+	('fravl', nb.float64),
+	('frrif', nb.float64),
+	('grobal', nb.float64[:]),
+	('grophy', nb.float64),
+	('grores', nb.float64[:]),
+	('grotba', nb.float64),
+	('grozoo', nb.float64),
+	('HTFG', nb.int32),
+	('iorc', nb.float64),
+	('iorn', nb.float64),
+	('iorp', nb.float64),
+	('iphyto', nb.float64),
+	('itorc', nb.float64),
+	('itorn', nb.float64),
+	('itorp', nb.float64),
+	('itotn', nb.float64),
+	('itotp', nb.float64),
+	('izoo', nb.float64),
+	('limbal', nb.int32[:]),
+	('limphy', nb.int32),
+	('litsed', nb.float64),
+	('lmingr', nb.float64),
+	('lsnh4', nb.float64[:]),
+	('lspo4', nb.float64[:]),
+	('malgr', nb.float64),
+	('mbal', nb.float64),
+	('mbalgr', nb.float64[:]),
+	('minbal', nb.float64),
+	('mxstay', nb.float64),
+	('mzoeat', nb.float64),
+	('naldh', nb.float64),
+	('nexits', nb.int32),
+	('nmaxfx', nb.float64),
+	('nminc', nb.float64),
+	('nmingr', nb.float64),
+	('nonref', nb.float64),
+	('NSFG', nb.int32),
+	('numbal', nb.int32),
+	('oorc', nb.float64[:]),
+	('oorn', nb.float64[:]),
+	('oorp', nb.float64[:]),
+	('ophyt', nb.float64[:]),
+	('orc', nb.float64),
+	('oref', nb.float64),
+	('orn', nb.float64),
+	('orp', nb.float64),
+	('otorc', nb.float64[:]),
+	('otorn', nb.float64[:]),
+	('otorp', nb.float64[:]),
+	('ototn', nb.float64[:]),
+	('ototp', nb.float64[:]),
+	('oxald', nb.float64),
+	('oxzd', nb.float64),
+	('ozoo', nb.float64[:]),
+	('paldh', nb.float64),
+	('paradf', nb.float64),
+	('PHFG', nb.int32),
+	('phybod', nb.float64),
+	('phycla', nb.float64),
+	('phydox', nb.float64),
+	('PHYFG', nb.int32),
+	('phylit', nb.float64),
+	('phyno3', nb.float64),
+	('phyorc', nb.float64),
+	('phyorn', nb.float64),
+	('phyorp', nb.float64),
+	('phypo4', nb.float64),
+	('physet', nb.float64),
+	('phytam', nb.float64),
+	('phyto', nb.float64),
+	('PLADCN', nb.float64[:]),
+	('PLADFG', nb.int32[:]),
+	('PLADFX', nb.float64[:]),
+	('pmingr', nb.float64),
+	('potbod', nb.float64),
+	('pyco2', nb.float64),
+	('ratclp', nb.float64),
+	('refr', nb.float64),
+	('refset', nb.float64),
+	('rifcq1', nb.float64),
+	('rifcq2', nb.float64),
+	('rifcq3', nb.float64),
+	('rifdf', nb.float64[:]),
+	('rifvf', nb.float64[:]),
+	('roorc', nb.float64),
+	('roorn', nb.float64),
+	('roorp', nb.float64),
+	('rophyt', nb.float64),
+	('rotorc', nb.float64),
+	('rotorn', nb.float64),
+	('rotorp', nb.float64),
+	('rototn', nb.float64),
+	('rototp', nb.float64),
+	('rozoo', nb.float64),
+	('SDLTFG', nb.int32),
+	('seed', nb.float64),
+	('simlen', nb.int32),
+	('snkphy', nb.float64),
+	('snkorc', nb.float64),
+	('snkorn', nb.float64),
+	('snkorp', nb.float64),
+	('svol', nb.float64),
+	('talgrh', nb.float64),
+	('talgrl', nb.float64),
+	('talgrm', nb.float64),
+	('tbenal', nb.float64[:]),
+	('tcbalg', nb.float64[:]),
+	('tcbalr', nb.float64[:]),
+	('tcgraz', nb.float64),
+	('tczfil', nb.float64),
+	('tczres', nb.float64),
+	('tn', nb.float64),
+	('torc', nb.float64),
+	('torn', nb.float64),
+	('torp', nb.float64),
+	('totbod', nb.float64),
+	('totdox', nb.float64),
+	('totno3', nb.float64),
+	('totorc', nb.float64),
+	('totorn', nb.float64),
+	('totorp', nb.float64),
+	('totphy', nb.float64),
+	('totpo4', nb.float64),
+	('tottam', nb.float64),
+	('tottba', nb.float64),
+	('totzoo', nb.float64),
+	('tp', nb.float64),
+	('uunits', nb.int32),
+	('vol', nb.float64),
+	('zd', nb.float64),
+	('zexdel', nb.float64),
+	('zfil20', nb.float64),
+	('ZFOOD', nb.int32),
+	('zoco2', nb.float64),
+	('zomass', nb.float64),
+	('zoo', nb.float64),
+	('zoobod', nb.float64),
+	('zoodox', nb.float64),
+	('ZOOFG', nb.int32),
+	('zoono3', nb.float64),
+	('zooorc', nb.float64),
+	('zooorn', nb.float64),
+	('zooorp', nb.float64),
+	('zoophy', nb.float64),
+	('zoopo4', nb.float64),
+	('zootam', nb.float64),
+	('zres20', nb.float64),
 ]
 
-
-#@jitclass(spec)
+@jitclass(spec)
 class PLANK_Class:
-
-	# class variables:
-
-	#ERRMSGS=('Placeholder')
 
 	#-------------------------------------------------------------------
 	# class initialization:
@@ -27,10 +246,10 @@ class PLANK_Class:
 
 		''' Initialize instance variables for lower food web simulation '''
 
-		#self.ERRMSGS=('Placeholder')
-		#self.errors = zeros(len(self.ERRMSGS), dtype=int)
+		self.errors = zeros(int(ui['errlen']), dtype=np.int64)
 		
-		self.limit = np.chararray(8, itemsize=4)
+		'''
+		self.limit = array(8, type=nb.char) #np.chararray(8, itemsize=4)
 		self.limit[1] = 'LIT'
 		self.limit[2] = 'NON'
 		self.limit[3] = 'TEM'
@@ -38,8 +257,7 @@ class PLANK_Class:
 		self.limit[5] = 'PO4'
 		self.limit[6] = 'NONE'
 		self.limit[7] = 'WAT'
-
-		#self.limit = ['  ', 'LIT', 'NON', 'TEM', 'NIT',' PO4', 'NONE', 'WAT']
+		'''
 
 		self.delt = siminfo['delt']
 		delt60 = siminfo['delt'] / 60.0  # delt60 - simulation time interval in hours
@@ -73,11 +291,14 @@ class PLANK_Class:
 		self.cvbpn  = NUTRX.cvbpn
 
 		if self.ZOOFG == 1 and self.PHYFG == 0:
-			pass # ERRMSG: error - zooplankton cannot be simulated without phytoplankton
-		if self.NSFG == 1 and self.TAMFG == 0:
-			pass # ERRMSG: error - ammonia cannot be included in n supply if it is not
-		if self.PO4FG == 0:
-			pass # ERRMSG: error - phosphate must be simulated if plankton are being
+			self.errors[0] += 1 
+			# ERRMSG: error - zooplankton cannot be simulated without phytoplankton
+		if self.NSFG == 1 and NUTRX.TAMFG == 0:
+			self.errors[1] += 1 
+			# ERRMSG: error - ammonia cannot be included in n supply if it is not
+		if NUTRX.PO4FG == 0:
+			self.errors[2] += 1 
+			# ERRMSG: error - phosphate must be simulated if plankton are being
 
 		self.numbal = 0
 		self.BFIXFG = zeros(5, dtype=np.int32)
@@ -102,7 +323,7 @@ class PLANK_Class:
 		self.litsed = ui['LITSED']
 		self.alnpr  = ui['ALNPR']
 		self.extb   = ui['EXTB']
-		self.malgr  = ui['MALGR'] * delt60
+		self.malgr  = ui['MALGR'] * self.delt60
 		self.paradf = ui['PARADF']
 		self.refr = 1.0 - self.nonref       # define fraction of biomass which is refractory material	
 
@@ -170,24 +391,24 @@ class PLANK_Class:
 			self.fravl  = ui['FRAVL']
 			self.nmaxfx = ui['NMAXFX']
 		
-			if self.BALFG == 2:  # user has selected multiple species with more complex kinetics
-				self.mbalgr = zeros(self.numbal)
-				self.tcbalg = zeros(self.numbal)
-				self.cmmnb  = zeros(self.numbal)
-				self.cmmpb  = zeros(self.numbal)
-				self.cmmd1  = zeros(self.numbal)
-				self.cmmd2  = zeros(self.numbal)
-				self.cslit  = zeros(self.numbal)
-				
-				self.balr20 = zeros(self.numbal)
-				self.tcbalr = zeros(self.numbal)
-				self.cslof1 = zeros(self.numbal)
-				self.cslof2 = zeros(self.numbal)
-				self.grores = zeros(self.numbal)		
-				
+			self.mbalgr = zeros(self.numbal)
+			self.tcbalg = zeros(self.numbal)
+			self.cmmnb  = zeros(self.numbal)
+			self.cmmpb  = zeros(self.numbal)
+			self.cmmd1  = zeros(self.numbal)
+			self.cmmd2  = zeros(self.numbal)
+			self.cslit  = zeros(self.numbal)
+			
+			self.balr20 = zeros(self.numbal)
+			self.tcbalr = zeros(self.numbal)
+			self.cslof1 = zeros(self.numbal)
+			self.cslof2 = zeros(self.numbal)
+			self.grores = zeros(self.numbal)		
+
+			if self.BALFG == 2:  # user has selected multiple species with more complex kinetics				
 				for i in range(self.numbal):
 					# species-specific growth parms - table type benal-grow
-					self.mbalgr[i] = ui['MBALGR']  * delt60
+					self.mbalgr[i] = ui['MBALGR'] * self.delt60
 					self.tcbalg[i] = ui['TCBALG']
 					self.cmmnb[i] =  ui['CMMNB']
 					self.cmmpb[i] =  ui['CMMPB']
@@ -195,9 +416,9 @@ class PLANK_Class:
 					self.cmmd2[i] =  ui['CMMD2']
 					self.cslit[i] =  ui['CSLIT']
 					# species-specific resp and scour parms - table type benal-resscr
-					self.balr20[i] = ui['BALR20']  * delt60
+					self.balr20[i] = ui['BALR20'] * self.delt60
 					self.tcbalr[i] = ui['TCBALR']
-					self.cslof1[i] = ui['CSLOF1']  * delt60
+					self.cslof1[i] = ui['CSLOF1'] * self.delt60
 					self.cslof2[i] = ui['CSLOF2']
 					self.grores[i] = ui['GRORES']
 
@@ -208,7 +429,7 @@ class PLANK_Class:
 				self.tcgraz = ui['TCGRAZ']
 
 				hrpyr = 8760.0		#constant
-				self.cremvl = (self.cremvl / self.cvpb) / hrpyr * delt60
+				self.cremvl = (self.cremvl / self.cvpb) / hrpyr * self.delt60
 
 				if self.SDLTFG == 2:	# turbidity regression parms - table-type benal-light
 					self.ctrbq1 = ui['CTRBQ1']
@@ -256,6 +477,7 @@ class PLANK_Class:
 			self.pyco2  = 0.0
 			self.dthphy = 0.0; self.grophy = 0.0; self.totphy = 0.0
 
+		self.rozoo = 0.0
 		self.ozoo = zeros(nexits)
 
 		if self.ZOOFG == 1:   # convert zoo to mg/l
@@ -343,9 +565,8 @@ class PLANK_Class:
 		self.iorc = iorc / cf_denom
 
 		# update atmospheric deposition (TO-DO! - best approach is likely to handle in RQUAL and pass in PLAD* values for current step):
-		self.PLAFXM = zeros(4)
-		self.PLADFX = zeros(4)
-		self.PLADCN = zeros(4)
+		self.PLADFX = zeros(6)
+		self.PLADCN = zeros(6)
 
 		'''
 		for j in range(1, 4):
@@ -469,10 +690,10 @@ class PLANK_Class:
 				(po4,no3,tam,dox,self.orn,self.orp,self.orc,bod,self.phyto,self.limphy,self.co2,self.phycla,
 				dophy,bodphy,tamphy,no3phy,po4phy,phdth,phgro,ornphy,orpphy,orcphy) \
 					= self.phyrx(self.phylit,tw,self.talgrl,self.talgrh,self.talgrm,self.malgr,self.cmmp, \
-							self.cmmnp,self.TAMFG,self.AMRFG,self.NSFG,self.cmmn,self.cmmlt,self.delt60, \
+							self.cmmnp,NUTRX.TAMFG,self.AMRFG,self.NSFG,self.cmmn,self.cmmlt,self.delt60, \
 							self.cflit,self.alr20,self.cvbpn,self.PHFG,self.DECFG,self.cvbpc,self.paldh, \
 							self.naldh,self.claldh,self.aldl,self.aldh,NUTRX.anaer,self.oxald,self.alnpr, \
-							self.cvbo,self.refr,self.cvnrbo,self.cvpb,self.cvbcl,self.limit,self.co2, \
+							self.cvbo,self.refr,self.cvnrbo,self.cvpb,self.cvbcl,self.co2, \
 							self.nmingr,self.pmingr,self.cmingr,self.lmingr,self.nminc, \
 							po4,no3,tam,dox,self.orn,self.orp,self.orc,bod,self.phyto)
 
@@ -492,9 +713,9 @@ class PLANK_Class:
 				#	zooplankton growth & death:
 				#-----------------------------------------------------------
 				if self.ZOOFG == 1:    # simulate zooplankton, zorx only called here
-					(dox,bod,zoo,self.orn,self.orp,self.orc,tam,no3,po4,zeat,zco2,dozoo,bodzoo,nitzoo,po4zoo,zgro,zdth,zorn,zorp,zorc) \
+					(dox,bod,self.zoo,self.orn,self.orp,self.orc,tam,no3,po4,zeat,zco2,dozoo,bodzoo,nitzoo,po4zoo,zgro,zdth,zorn,zorp,zorc) \
 						= self.zorx(self.zfil20,self.tczfil,tw,self.phyto,self.mzoeat,self.zexdel,self.cvpb, \
-							self.zres20,self.tczres,NUTRX.anaer,self.zomass,self.TAMFG,self.refr, \
+							self.zres20,self.tczres,NUTRX.anaer,self.zomass,NUTRX.TAMFG,self.refr, \
 							self.ZFOOD,self.zd,self.oxzd,self.cvbn,self.cvbp,self.cvbc,self.cvnrbo,self.cvbo, \
 							dox,bod,self.zoo,self.orn,self.orp,self.orc,tam,no3,po4)
 
@@ -502,7 +723,7 @@ class PLANK_Class:
 					self.zoodox = -dozoo * self.vol
 					self.zoobod = bodzoo * self.vol
 
-					if self.TAMFG != 0:   # ammonia on, so nitrogen excretion goes to ammonia
+					if NUTRX.TAMFG != 0:   # ammonia on, so nitrogen excretion goes to ammonia
 						self.zootam = nitzoo * self.vol
 						self.zoono3 = 0.0
 					else:             # ammonia off, so nitrogen excretion goes to nitrate
@@ -529,25 +750,30 @@ class PLANK_Class:
 			#-----------------------------------------------------------
 			#	benthic algae growth & respiration
 			#-----------------------------------------------------------
+			self.limbal = zeros(self.numbal, dtype=np.int32)
+
 			if self.BALFG > 0:
+				bgro = zeros(self.numbal)
+				bdth = zeros(self.numbal)
+
 				if self.BALFG == 1:     # simulate benthic algae
-					(po4,no3,tam,dox,self.orn,self.orp,self.orc,bod,self.benal[0],self.limbal,self.baco2,self.balcla,
-						dobalg,bodbal,tambal,no3bal,po4bal,balgro,bdth,ornbal,orpbal,orcbal) \
+					(po4,no3,tam,dox,self.orn,self.orp,self.orc,bod,self.benal[0],self.limbal[0],self.baco2,self.balcla[0],
+						dobalg,bodbal,tambal,no3bal,po4bal,bgro[0],bdth[0],ornbal,orpbal,orcbal) \
 						= self.balrx(self.ballit,tw,self.talgrl,self.talgrh,self.talgrm,self.malgr,self.cmmp, \
-							self.cmmnp,self.TAMFG,self.AMRFG,self.NSFG,self.cmmn,self.cmmlt,self.delt60, \
+							self.cmmnp,NUTRX.TAMFG,self.AMRFG,self.NSFG,self.cmmn,self.cmmlt,self.delt60, \
 							self.cflit,self.alr20,self.cvbpn,self.PHFG,self.DECFG,self.cvbpc,self.paldh, \
 							self.naldh,self.aldl,self.aldh,NUTRX.anaer,self.oxald,self.cfbalg,self.cfbalr, \
 							self.alnpr,self.cvbo,self.refr,self.cvnrbo,self.cvpb,self.mbal,depcor, \
-							self.limit,self.cvbcl,self.co2,self.nmingr,self.pmingr,self.cmingr,self.lmingr,self.nminc, \
+							self.cvbcl,self.co2,self.nmingr,self.pmingr,self.cmingr,self.lmingr,self.nminc, \
 							po4,no3,tam,dox,self.orn,self.orp,self.orc,bod,self.benal[0])
 
 				elif self.BALFG == 2:   # simulate enhanced benthic algae equations from dssamt (!)
 					# then perform reactions, balrx2 only called here
 					(po4,no3,tam,dox,self.orn,self.orp,self.orc,bod,self.benal,self.limbal,self.baco2,self.balcla,
 						dobalg,bodbal,tambal,no3bal,po4bal,bgro,bdth,ornbal,orpbal,orcbal) \
-						= self.balrx2 (self.ballit,tw,self.TAMFG,self.NSFG,self.delt60,self.cvbpn,self.PHFG,self.DECFG, \
+						= self.balrx2 (self.ballit,tw,NUTRX.TAMFG,self.NSFG,self.delt60,self.cvbpn,self.PHFG,self.DECFG, \
 								self.cvbpc,self.alnpr,self.cvbo,self.refr,self.cvnrbo,self.cvpb,depcor, \
-								self.limit,self.cvbcl,co2,self.numbal,self.mbalgr,self.cmmpb,self.cmmnb, \
+								self.cvbcl,co2,self.numbal,self.mbalgr,self.cmmpb,self.cmmnb, \
 								self.balr20,self.tcbalg,self.balvel,self.cmmv,self.BFIXFG,self.cslit,self.cmmd1, \
 								self.cmmd2,self.tcbalr,self.frrif,self.cremvl,self.cmmbi,self.binv,self.tcgraz, \
 								self.cslof1,self.cslof2,self.minbal,self.fravl,self.BNPFG,self.campr,self.nmingr, \
@@ -600,27 +826,26 @@ class PLANK_Class:
 			self.zoopo4 = 0.0
 			self.balpo4 = 0.0
 
-			if PHYFG == 1:  # water scarcity limits phytoplankton growth
-				limphy  = 'WAT'
-				self.phycla = self.phyto * cvbcl
-				grophy = 0.0
-				dthphy = 0.0
-				zoophy = 0.0
-				totphy= snkphy
-			if BALFG > 0:   # water scarcity limits benthic algae growth
-				limc = 'WAT'
-				self.limbal = np.chararray(self.numbal, itemsize=4)
+			if self.PHYFG == 1:  # water scarcity limits phytoplankton growth
+				self.limphy  = 7  #'WAT'
+				self.phycla = self.phyto * self.cvbcl
+				self.grophy = 0.0
+				self.dthphy = 0.0
+				self.zoophy = 0.0
+				self.totphy = self.snkphy
+
+			if self.BALFG > 0:   # water scarcity limits benthic algae growth
+				limc = 7  #'WAT'
+				self.limbal = zeros(self.numbal, dtype=np.int32)
 				self.balcla = zeros(self.numbal)
 				self.grobal = zeros(self.numbal)
 				self.dthbal = zeros(self.numbal)
 
-				for i in range(numbal):
-					balcla[i] = self.benal[i] * self.cvbcl
-					limbal[i]
+				for i in range(self.numbal):
+					self.balcla[i] = self.benal[i] * self.cvbcl
+					self.limbal[i] = limc
 
-				balcla[0] = benal[0] * cvbcl
-
-			if ZOOFG == 1:    # water scarcity limits zooplankton growth
+			if self.ZOOFG == 1:    # water scarcity limits zooplankton growth
 				self.grozoo= 0.0
 				self.dthzoo= 0.0
 				self.totzoo= 0.0
@@ -647,11 +872,11 @@ class PLANK_Class:
 		#-----------------------------------------------------------
 		# compute final process fluxes for oxygen, nutrients and organics
 		#-----------------------------------------------------------
-		self.totdox = self.readox + self.boddox + self.bendox + self.nitdox + self.phydox + self.zoodox + self.baldox
-		self.totbod = decbod + self.bnrbod + self.snkbod + self.denbod + self.phybod + self.zoobod + self.balbod
-		self.totno3 = nitno3 + self.denno3 + self.bodno3 + self.phyno3 + self.zoono3 + self.balno3
-		self.tottam = nittam + self.volnh3 + self.bnrtam + self.bodtam + self.phytam + self.zootam + self.baltam
-		self.totpo4 = bnrpo4 + self.bodpo4 + self.phypo4 + self.zoopo4 + self.balpo4
+		self.totdox = OXRX.readox + OXRX.boddox + OXRX.bendox + NUTRX.nitdox + self.phydox + self.zoodox + self.baldox
+		self.totbod = OXRX.decbod + OXRX.bnrbod + OXRX.snkbod + NUTRX.denbod + self.phybod + self.zoobod + self.balbod
+		self.totno3 = NUTRX.nitno3 + NUTRX.denno3 + NUTRX.bodno3 + self.phyno3 + self.zoono3 + self.balno3
+		self.tottam = NUTRX.nittam + NUTRX.volnh3 + NUTRX.bnrtam + NUTRX.bodtam + self.phytam + self.zootam + self.baltam
+		self.totpo4 = NUTRX.bnrpo4 + NUTRX.bodpo4 + self.phypo4 + self.zoopo4 + self.balpo4
 
 		self.totorn = self.snkorn + self.phyorn + self.zooorn + self.balorn
 		self.totorp = self.snkorp + self.phyorp + self.zooorp + self.balorp
@@ -669,7 +894,7 @@ class PLANK_Class:
 
 			(self.torn, self.torp, self.torc, self.potbod, self.tn, self.tp) \
 				= self.pksums(NUTRX,self.phyto,self.zoo,self.orn,self.orp,self.orc,
-								no3,tam,no2,self.lsnh4,po4,lspo4,bod)
+								no3,tam,no2,self.lsnh4,po4,self.lspo4,bod)
 		else:
 			self.torn   = -1.0e30
 			self.torp   = -1.0e30
@@ -685,12 +910,12 @@ class PLANK_Class:
 
 		(self.itorn, self.itorp, self.itorc, dumval, self.itotn, self.itotp) \
 			= self.pksums(NUTRX,self.iphyto,self.izoo,self.iorn,self.iorp,self.iorc,
-							NUTRX.ino3,NUTRX.itam,NUTRX.ino2,NUTRX.isnh4,NUTRX.ipo4,NUTRX.ispo4,ibod)
+							NUTRX.ino3,NUTRX.itam,NUTRX.ino2,NUTRX.isnh4,NUTRX.ipo4,NUTRX.ispo4,OXRX.ibod)
 
 		# total outflows:
 		(self.rotorn, self.rotorp, self.rotorc, dumval, self.rototn, self.rototp) \
 			= self.pksums(NUTRX,self.rophyt,self.rozoo,self.roorn,self.roorp,self.roorc,
-							NUTRX.rono3,NUTRX.rotam,NUTRX.rono2,NUTRX.rosnh4,NUTRX.ropo4,NUTRX.rospo4,robod)
+							NUTRX.rono3,NUTRX.rotam,NUTRX.rono2,NUTRX.rosnh4,NUTRX.ropo4,NUTRX.rospo4,OXRX.robod)
 
 		# outflows by exit:
 		self.otorn = zeros(nexits); self.otorp = zeros(nexits); self.otorc = zeros(nexits)
@@ -700,7 +925,7 @@ class PLANK_Class:
 			for i in range(nexits):
 				(self.otorn[i], self.otorp[i], self.otorc[i], dumval, self.ototn[i], self.ototp[i]) \
 					= self.pksums(NUTRX,self.ophyt[i],self.ozoo[i],self.oorn[i],self.oorp[i],self.oorc[i],
-									NUTRX.ono3[i],NUTRX.otam[i],NUTRX.ono2[i],NUTRX.osnh4[i],NUTRX.opo4[i],NUTRX.ospo4[i],obod[i])
+									NUTRX.ono3[i],NUTRX.otam[i],NUTRX.ono2[i],NUTRX.osnh4[i],NUTRX.opo4[i],NUTRX.ospo4[i],OXRX.obod[i])
 
 		#-----------------------------------------------------------
 		# update DO/BOD and nutrient states (for OXRX/NUTRX):
@@ -708,21 +933,13 @@ class PLANK_Class:
 		OXRX.dox = dox
 		OXRX.bod = bod
 
-		# redistribute TAM after algal influence:
-		(nh3,nh4) = ammion(tw, phval, tam, nh3, nh4)
-
 		NUTRX.po4 = po4
 		NUTRX.no3 = no3
 		NUTRX.no2 = no2
 		NUTRX.tam = tam
 
-		NUTRX.orn = self.orn
-		NUTRX.orp = self.orp
-		NUTRX.orc = self.orc
-		NUTRX.torn = self.torn
-		NUTRX.torp = self.torp
-		NUTRX.torc = self.torc
-
+		# redistribute TAM after algal influence:
+		(NUTRX.nh3,NUTRX.nh4) = NUTRX.ammion(tw, phval, tam)
 
 		self.svol = self.vol  # svol is volume at start of time step, update for next time thru
 
@@ -766,10 +983,11 @@ class PLANK_Class:
 	@staticmethod
 	def algro(light,po4,no3,tw,talgrl,talgrh,talgrm,malgr, cmmp,cmmnp,
 				TAMFG,AMRFG,tam,NSFG,cmmn,cmmlt,alr20,cflit,delt60,
-				limit,nmingr,pmingr,lmingr):
+				nmingr,pmingr,lmingr):
 
 		''' calculate unit growth and respiration rates for algae
 		population; both are expressed in units of per interval'''
+		lim = -999
 
 		if light > lmingr:    # sufficient light to support growth
 			if po4 > pmingr and no3 > nmingr:  # sufficient nutrients to support growth
@@ -824,19 +1042,19 @@ class PLANK_Class:
 					grol = (malgrt * light) / (cmmlt + light)
 					if grop < gron and grop < grol:
 						gro = grop
-						lim = 'po4'
+						lim = 5  #'po4'
 					elif gron < grol:
 						gro = gron
-						lim = 'nit'
+						lim = 4  #'nit'
 					else:
 						gro = grol
-						lim = 'lit'
+						lim = 1  #'lit'
 					if gro < 0.000001 * delt60:
 						gro = 0.0
 
 					if gro > 0.95 * malgrt:
 						# there is no limiting factor to cause less than maximum growth rate
-						lim = 'none'
+						lim = 6  #'none'
 
 					# adjust growth rate if control volume is not entirely	
 					# contained within the euphotic zone; e.g. if only one
@@ -845,13 +1063,13 @@ class PLANK_Class:
 					gro = gro * cflit
 				else:            # water temperature does not allow algal growth
 					gro = 0.0
-					lim = 'tem'
+					lim = 3  #'tem'
 			else:               # no algal growth occurs; necessary nutrients are not available
 				gro = 0.0
-				lim = 'non'
+				lim = 2  #'non'
 		else:                    # no algal growth occurs; necessary light is not available
 			gro = 0.0
-			lim = 'lit'
+			lim = 1  #'lit'
 
 		# calculate unit algal respiration rate; res is expressed in
 		# units of per interval; alr20 is the respiration rate at 20 degrees c
@@ -894,7 +1112,7 @@ class PLANK_Class:
 
 	def balrx(self, ballit,tw,talgrl,talgrh,talgrm,malgr,cmmp, cmmnp,tamfg,amrfg,nsfg,cmmn,cmmlt,delt60,
 				cflit,alr20,cvbpn,phfg,decfg,cvbpc,paldh, naldh,aldl,aldh,anaer,oxald,cfbalg,cfbalr,
-				alnpr,cvbo,refr,cvnrbo,cvpb,mbal,depcor,limit,cvbcl,baco2,nmingr,pmingr,cmingr,lmingr,
+				alnpr,cvbo,refr,cvnrbo,cvpb,mbal,depcor,cvbcl,baco2,nmingr,pmingr,cmingr,lmingr,
 				nminc, po4,no3,tam,dox,orn,orp,orc,bod,benal):
 		''' simulate behavior of benthic algae in units of umoles p per
 		liter; these units are used internally within balrx so that
@@ -904,12 +1122,13 @@ class PLANK_Class:
 		bottom surface'''
 
 		# convert benal to units of umoles phosphorus/l (bal) for internal calculations
+		i0 = 0
 		bal = (benal / cvpb) * depcor
 
 		# compute unit growth and respiration rates for benthic algae; determine growth limiting factor
 		(limbal,gro,res) \
 			= self.algro(ballit,po4,no3,tw,talgrl,talgrh,talgrm,malgr,cmmp, cmmnp,tamfg,amrfg,
-					tam,nsfg,cmmn,cmmlt,alr20, cflit,delt60,limit,nmingr,pmingr,lmingr)
+					tam,nsfg,cmmn,cmmlt,alr20, cflit,delt60,nmingr,pmingr,lmingr)
 
 		# calculate net growth rate of algae; grobal is expressed as
 		# umoles phosphorus per liter per interval; benthic algae growth
@@ -991,13 +1210,13 @@ class PLANK_Class:
 		# calculate growth rate which results in minimum free
 		# inorganic nitrogen remaining after growth; uplimn is expressed
 		# as umoles phosphorus per interval
-		if NSFG == 0:    # tam is not considered as a possible nutrient
+		if nsfg == 0:    # tam is not considered as a possible nutrient
 			uplimn = (no3 - nmingr) * 71.43 / cvbpn
 		else:
 			uplimn = (no3 + tam - nmingr) * 71.43 / cvbpn
 
 		uplimc = 1.0e30
-		if PHFG and PHFG != 2 and DECFG == 0:
+		if phfg > 0 and phfg != 2 and decfg == 0:
 			# phcarb is on, and co2 is being considered as a possible
 			# limiting nutrient to algal growth
 			if co2 >= 0.0:
@@ -1016,7 +1235,7 @@ class PLANK_Class:
 		# check that calculated growth does not result in less than
 		# minimum allowed concentrations of orthophosphate, inorganic
 		# nitrogen, or carbon dioxide; if it does, adjust growth
-		if NFIXFG:                       # n-fixation is not occurring for this algal type
+		if nfixfg:                       # n-fixation is not occurring for this algal type
 			uplim = min(uplimp, uplimn, uplimc)
 		else:                           # n-fixation is occurring, nitrogen does not limit growth
 			uplim = min(uplimp, uplimc)
@@ -1191,7 +1410,7 @@ class PLANK_Class:
 
 
 	def phyrx(self,phylit,tw,talgrl,talgrh,talgrm,malgr,cmmp,cmmnp,tamfg,amrfg,nsfg,cmmn,cmmlt,delt60,cflit,alr20,cvbpn,phfg,decfg,cvbpc,paldh,
-				naldh,claldh,aldl,aldh,anaer,oxald,alnpr,cvbo,refr,cvnrbo,cvpb,cvbcl,limit,co2,nmingr,pmingr,cmingr,lmingr,nminc,
+				naldh,claldh,aldl,aldh,anaer,oxald,alnpr,cvbo,refr,cvnrbo,cvpb,cvbcl,co2,nmingr,pmingr,cmingr,lmingr,nminc,
 				po4,no3,tam,dox,orn,orp,orc,bod,phyto):
 		''' simulate behavior of phytoplankton, as standing crop, in units of umoles p per liter'''
 
@@ -1203,7 +1422,7 @@ class PLANK_Class:
 		# determine growth limiting factor
 		(limphy,gro,res) \
 			= self.algro(phylit,po4,no3,tw,talgrl,talgrh,talgrm,malgr,cmmp,cmmnp,tamfg,amrfg,
-					tam,nsfg,cmmn,cmmlt,alr20,cflit,delt60,limit,nmingr,pmingr,lmingr)
+					tam,nsfg,cmmn,cmmlt,alr20,cflit,delt60,nmingr,pmingr,lmingr)
 
 		# calculate net growth rate of phytoplankton; grophy is
 		# expressed as umol phosphorus per liter per interval
@@ -1213,8 +1432,9 @@ class PLANK_Class:
 			# adjust growth rate to account for limitations imposed by
 			# availability of required nutrients
 			grtotn = grophy
-			(nmingr,pmingr,cmingr,i0,grtotn,grophy) \
-				= self.grochk (po4,no3,tam,phfg,decfg,co2,cvbpc,cvbpn,nsfg,nmingr,pmingr,cmingr,i0,grtotn,grophy)
+			i0 = 0
+
+			grophy = self.grochk (po4,no3,tam,phfg,decfg,co2,cvbpc,cvbpn,nsfg,nmingr,pmingr,cmingr,i0,grtotn,grophy)
 
 		# calculate phytoplankton death
 		dthphy = self.phydth(nsfg,no3,tam,po4,paldh,naldh,phycla,claldh,aldl,aldh,dox,anaer,oxald,stc)
@@ -1408,7 +1628,7 @@ class PLANK_Class:
 			return
 
 		# Calculate sums:
-		tval = bod / self.cvbo
+		tval = 0.0
 
 		if self.PHYFG == 1:
 			tval += phyto
@@ -1417,6 +1637,8 @@ class PLANK_Class:
 
 		torn   = orn + self.cvbn * tval
 		torp   = orp + self.cvbp * tval
+
+		tval += bod / self.cvbo
 		torc   = orc + self.cvbc * tval
 		potbod = bod
 
@@ -1448,7 +1670,7 @@ class PLANK_Class:
 		return torn, torp, torc, potbod, tn, tp
 
 	@staticmethod
-	def algro2 (ballit,po4,no3,tw,mbalgr,cmmp,TAMFG,tam,NSFG,cmmn,balr20,delt60,limit,tcbalg,balvel,
+	def algro2 (ballit,po4,no3,tw,mbalgr,cmmp,TAMFG,tam,NSFG,cmmn,balr20,delt60,tcbalg,balvel,
 				cmmv,BFIXFG,cslit,cmmd1,cmmd2,sumba,tcbalr,nmingr,pmingr,lmingr,nmaxfx,grores):
 
 		''' calculate unit growth and respiration rates for benthic algae using more
@@ -1456,6 +1678,7 @@ class PLANK_Class:
 
 		groba = 0.0
 		NFIXFG = 0
+		lim = -999		
 
 		if ballit > lmingr:      # sufficient light to support growth
 			if po4 > pmingr and no3 > nmingr:   # sufficient nutrients to support growth
@@ -1502,25 +1725,25 @@ class PLANK_Class:
 					grofd = (cmmd1 * sumba + cmmd2) / (sumba + cmmd2)
 					if grofp < grofn and grofp < grofl:  # phosphorus limited
 						gromin = grofp
-						lim = 'po4'
+						lim = 5  #'po4'
 					elif grofn < grofl:                  # nitrogen limited
 						gromin = grofn
-						lim = 'nit'
+						lim = 4  #'nit'
 					else:                                # light limited
 						gromin = grofl
-						lim = 'lit'
+						lim = 1  #'lit'
 					if gromin > 0.95:  # there is no limiting factor to cause less than maximum growth rate
-						lim = 'none'
+						lim = 6  #'none'
 					# calculate overall growth rate in units of per interval
 					groba = mbalgr * tcmbag * gromin * grofd
 					if groba < 1.0e-06 * delt60:
 						groba = 0.0
 			else:    # no algal growth occurs; necessary nutrients are not available
 				groba = 0.0
-				lim   ='non'
+				lim   = 2  #'non'
 		else:        # no algal growth occurs; necessary light is not available
 			groba = 0.0
-			lim = 'lit'
+			lim = 1  #'lit'
 
 		# calculate unit algal respiration rate in units of per interval
 		# balr20 is the benthic algal respiration rate at 20 degrees c
@@ -1590,7 +1813,8 @@ class PLANK_Class:
 				# than 99 percent of available free no3; if it does, satisfy
 				# excess demand with free tam; no3lim is expressed as umoles
 				# n per liter per interval
-				# no3lim= (prct99/nmgpum)*no3
+				no3lim= (prct99/nmgpum)*no3
+				
 				if alno3 > no3lim:
 					altam = altam + alno3 - no3lim
 					alno3 = no3lim
@@ -1631,7 +1855,7 @@ class PLANK_Class:
 
 
 	def balrx2(self,ballit,tw,TAMFG,NSFG,delt60,cvbpn,PHFG,DECFG,cvbpc,alnpr,cvbo,refr,cvnrbo,cvpb,
-		depcor,limit,cvbcl,co2,numbal,mbalgr,cmmpb,cmmnb,balr20,tcbalg,balvel,cmmv,BFIXFG,
+		depcor,cvbcl,co2,numbal,mbalgr,cmmpb,cmmnb,balr20,tcbalg,balvel,cmmv,BFIXFG,
 		cslit,cmmd1,cmmd2,tcbalr,frrif,cremvl,cmmbi,binv,tcgraz,cslof1,cslof2,minbal,
 		fravl,BNPFG,campr,nmingr,pmingr,cmingr,lmingr,nminc,nmaxfx,grores,
 		po4,no3,tam,dox,orn,orp,orc,bod,benal):
@@ -1662,7 +1886,7 @@ class PLANK_Class:
 		bal = zeros(numbal)
 		grobal = zeros(numbal)
 		dthbal = zeros(numbal)
-		limbal = np.chararray(numbal, itemsize=4)
+		limbal = zeros(numbal, dtype=np.int32)
 
 		for i in range(numbal):    # do 20 i = 1, numbal
 			# convert benal to units of umoles phosphorus/l (bal) for
@@ -1673,7 +1897,7 @@ class PLANK_Class:
 			# compute unit growth and respiration rates
 			(NFIXFG,limbal[i],groba,resba) \
 				= self.algro2 (ballit,po4,no3,tw,mbalgr[i],cmmpb[i],TAMFG,tam,NSFG,cmmnb[i],balr20[i],
-								delt60,limit,tcbalg[i],balvel,cmmv,BFIXFG[i],cslit[i],cmmd1[i],cmmd2[i],sumba,tcbalr[i],
+								delt60,tcbalg[i],balvel,cmmv,BFIXFG[i],cslit[i],cmmd1[i],cmmd2[i],sumba,tcbalr[i],
 								nmingr,pmingr,lmingr,nmaxfx,grores[i])
 
 			# calculate net growth rate of algae; grobal is expressed as
@@ -1702,7 +1926,7 @@ class PLANK_Class:
 				# if so, reduce growth rate of last algal type
 
 				grotmp = grotot # set temporary variable for comparison purposes
-				grotot = self.grochk (po4,no3,tam,phfg,decfg,co2,cvbpc,cvbpn,nsfg,nmingr,pmingr,cmingr,nfixfg,grtotn,grotot)
+				grotot = self.grochk (po4,no3,tam,PHFG,DECFG,co2,cvbpc,cvbpn,NSFG,nmingr,pmingr,cmingr,NFIXFG,grtotn,grotot)
 				if grotot < 0.0:            # this should never happen
 					grotot = 0.0
 
@@ -1711,7 +1935,7 @@ class PLANK_Class:
 					# adjust growth rate of last algal type
 					grobal[i] = grobal[i] - (grotmp - grotot)
 					# track changes in growth that affect available n concentrations
-					if nfixfg != 1:     # n-fixation not occurring, all growth affects n
+					if NFIXFG != 1:     # n-fixation not occurring, all growth affects n
 						groban = grobal[i]
 					else:  # n-fixation is occurring, proportionately adjust respiration (groban)
 						groban = groban * grotot / grotmp

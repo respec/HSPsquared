@@ -1,7 +1,7 @@
 import numpy as np
 from numpy import zeros, array
 import numba as nb
-from numba import njit, int32, float32, float64, char
+from numba.typed import Dict
 from numba.experimental import jitclass
 from math import exp
 
@@ -30,7 +30,7 @@ spec = [
 	('doben', nb.float64),
 	('dorea', nb.float64),
 	('dox', nb.float64),
-	('errors', nb.int32[:]),
+	('errors', nb.int64[:]),
 	('expod', nb.float64),
 	('expred', nb.float64),
 	('exprel', nb.float64),
@@ -82,8 +82,7 @@ class OXRX_Class:
 
 		''' Initialize variables for primary DO, BOD balances '''
 
-		#self.ERRMSGS = array('Placeholder')
-		#self.errors = zeros(len(self.ERRMSGS), dtype=int32)
+		self.errors = zeros(int(ui['errlen']), dtype=np.int64)
 
 		delt60 = siminfo['delt'] / 60.0  # delt60 - simulation time interval in hours
 		self.delt60 = delt60
@@ -172,6 +171,8 @@ class OXRX_Class:
 
 		self.korea = 0.0
 
+		return
+
 	#-------------------------------------------------------------------
 	# simulation (single timestep):
 	#-------------------------------------------------------------------
@@ -258,6 +259,7 @@ class OXRX_Class:
 			self.satdo = self.cfpres * self.satdo
 
 			if self.satdo < 0.0:
+				self.errors[0] += 1
 				# warning - this occurs only when water temperature is very high - above
 				# about 66 c.  usually means error in input gatmp (or tw if htrch is not being simulated).		
 				self.satdo = 0.0   # reset saturation level
@@ -312,25 +314,30 @@ class OXRX_Class:
 	#-------------------------------------------------------------------
 	# utility functions:
 	#-------------------------------------------------------------------
-	def adjust_dox(self, vol, nitdox, phydox, zoodox, baldox):
+	def adjust_dox(self, nitdox, denbod, phydox, zoodox, baldox):
 		# if dox exceeds user specified level of supersaturation, then release excess do to the atmosphere
-
+		
 		doxs = self.dox
 
 		if self.dox > self.supsat * self.satdo:
 			self.dox = self.supsat * self.satdo
-		self.readox = self.readox + (self.dox - doxs) * vol
+		
+		self.readox = self.readox + (self.dox - doxs) * self.vol
 		self.totdox = self.readox + self.boddox + self.bendox \
 					+ nitdox + phydox + zoodox + baldox
 		
+
 		# update dissolved totals and totals of nutrients
-		self.rdox = self.dox * vol
-		self.rbod = self.bod * vol
+		self.rdox = self.dox * self.vol
+		self.rbod = self.bod * self.vol
+		
+		return
 
-
+	'''
 	def update_totals(self, nitdox, denbod):
 
 		self.totdox = self.readox + self.boddox + self.bendox + nitdox
 		self.totbod = self.decbod + self.bnrbod + self.snkbod + denbod
 
 		return
+	'''
