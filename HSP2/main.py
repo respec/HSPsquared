@@ -148,6 +148,11 @@ def main(hdfname, saveall=False, jupyterlab=True):
                         if flags['HTRCH']:
                             ui_oxrx['PARAMETERS']['ELEV'] = uci[(operation, 'HTRCH', segment)]['PARAMETERS']['ELEV']
 
+                        if flags['SEDTRN']:
+                            ui['PARAMETERS']['SSED1'] = uci[(operation, 'SEDTRN', segment)]['STATES']['SSED1']
+                            ui['PARAMETERS']['SSED2'] = uci[(operation, 'SEDTRN', segment)]['STATES']['SSED2']
+                            ui['PARAMETERS']['SSED3'] = uci[(operation, 'SEDTRN', segment)]['STATES']['SSED3']
+
                         # NUTRX, PLANK, PHCARB module inputs:
                         ui_nutrx = uci[(operation, 'NUTRX', segment)] 
                         ui_plank = uci[(operation, 'PLANK', segment)] 
@@ -166,6 +171,13 @@ def main(hdfname, saveall=False, jupyterlab=True):
                         msg(4, f'Error count {errorcnt}: {errormsg}')
                 if 'SAVE' in ui:
                     save_timeseries(store,ts,ui['SAVE'],siminfo,saveall,operation,segment,activity,jupyterlab)
+        
+                if (activity == 'RQUAL'):
+                    if 'SAVE' in ui_oxrx:   save_timeseries(store,ts,ui_oxrx['SAVE'],siminfo,saveall,operation,segment,'OXRX',jupyterlab)
+                    if 'SAVE' in ui_nutrx:   save_timeseries(store,ts,ui_nutrx['SAVE'],siminfo,saveall,operation,segment,'NUTRX',jupyterlab)
+                    if 'SAVE' in ui_plank:   save_timeseries(store,ts,ui_plank['SAVE'],siminfo,saveall,operation,segment,'PLANK',jupyterlab)
+                    #if 'SAVE' in ui_phcarb:   save_timeseries(store,ts,ui_phcarb['SAVE'],siminfo,saveall,operation,segment,'PHCARB',jupyterlab)
+        
         msglist = msg(1, 'Done', final=True)
 
         df = DataFrame(msglist, columns=['logfile'])

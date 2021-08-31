@@ -9,17 +9,26 @@ from numpy import where, zeros, array, float64
 from numba import types
 from numba.typed import Dict
 
-from HSP2.utilities  import make_numba_dict
+from HSP2.utilities  import make_numba_dict, initm
 from HSP2.RQUAL_Class import RQUAL_Class
 
-ERRSMGS = ('Placeholder')
+ERRMSGS_oxrx = ('OXRX: Warning -- SATDO is less than zero. This usually occurs when water temperature is very high (above ~66 deg. C). This usually indicates an error in input GATMP (or TW, if HTRCH is not being simulated).',)
+ERRMSGS_nutrx = ('NUTRX: Error -- Inconsistent flags for NH4; TAM is not being simulated, but NH3 volatilization and/or NH4 adsorption are being simulated.',
+					'NUTRX: Error -- Inconsistent flags for PO4; PO4 is not being simulated, but PO4 adsorption is being simualted.',
+					'NUTRX: Error -- Sediment-associated NH4 and/or PO4 is being simulated, but sediment is not being simulated in module SEDTRN.',
+					'NUTRX: Error -- Inorganic nutrient mass stored in or leaving the reach non-zero, but is expected to be non-zero due to lack of suspended sediment mass.',
+					'NUTRX: Error -- Inorganic nutrient mass in bed is expected to be zero (due to the lack of bed sediments).')
+ERRMSGS_plank = ('PLANK: Error -- Zooplankton cannot be simulated without phytoplankton.',
+					'PLANK: Error -- Ammonia cannot be included in the N supply if it is not being simulated.',
+					'PLANK: Error -- Phosphate must be simulated if plankton are being simulated.')
+ERRMSGS_phcarb = ('PHCARB: Error -- Invalid CONS index specified for ALKCON (i.e., ALKCON > NCONS).',
+					'PHCARB: Error -- A satisfactory solution for pH has not been reached.')
 
 def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 	''' Simulate constituents involved in biochemical transformations'''
 
-	# errors (TO-DO! - needs implementation)
-	ERRMSGS =('')
-	errors = zeros(len(ERRMSGS), dtype=np.int32)	
+	#ERRMSGS =('')
+	#errors = zeros(len(ERRMSGS), dtype=np.int32)
 
 	# simulation information:
 	delt60 = siminfo['delt'] / 60  # delt60 - simulation time interval in hours
@@ -43,18 +52,22 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 
 	# create numba dictionaries (empty if not simulated):
 	ui_oxrx = make_numba_dict(uci_oxrx)
+	ui_oxrx['errlen'] = len(ERRMSGS_oxrx)
 
 	ui_nutrx = Dict.empty(key_type=types.unicode_type, value_type=types.float64)
 	if NUTFG == 1:
 		ui_nutrx = make_numba_dict(uci_nutrx)
+		ui_nutrx['errlen'] = len(ERRMSGS_nutrx)
 
 	ui_plank = Dict.empty(key_type=types.unicode_type, value_type=types.float64)
 	if PLKFG == 1:
 		ui_plank = make_numba_dict(uci_plank)
+		ui_plank['errlen'] = len(ERRMSGS_plank)
 
 	ui_phcarb = Dict.empty(key_type=types.unicode_type, value_type=types.float64)
 	if PHFG == 1:
 		ui_phcarb = make_numba_dict(uci_phcarb)
+		ui_phcarb['errlen'] = len(ERRMSGS_phcarb)
 
 	# hydraulic results:
 	advectData = uci['advectData']
@@ -71,22 +84,124 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 		ts['SOVOL' + str(i + 1)] = SOVOL[:, i]
 		ts['EOVOL' + str(i + 1)] = EOVOL[:, i]
 
+	#---------------------------------------------------------------------
+	#	input time series processing (atm. deposition, benthic inverts, etc.)
+	#		TO-DO! - needs testing
+	#---------------------------------------------------------------------
+	# NUTRX atmospheric deposition - initialize time series:
+	if NUTFG == 1:
+		for j in range(1, 4):
+			n = (2 * j) - 1
+
+			# dry deposition:
+			nuadfg_dd = int(ui_nutrx['NUADFG' + str(j)])
+			NUADFX = zeros(simlen)
+
+			if nuadfg_dd > 0:
+				NUADFX = initm(siminfo, ui, nuadfg_dd, 'NUTRX_MONTHLY/NUADFX', 0.0)
+			elif nuadfg_dd == -1:
+				if 'NUADFX' + str(j) in ts:
+					NUADFX = ts['NUADFX' + str(j)]
+				else:
+					pass		#ERRMSG?
+			ts['NUADFX' + str(j)] = NUADFX
+
+			# wet deposition:
+			nuadfg_wd = int(ui_nutrx['NUADFG' + str(j+1)])
+			NUADCN = zeros(simlen)
+
+			if nuadfg_wd > 0:
+				NUADCN = initm(siminfo, ui, nuadfg_wd, 'NUTRX_MONTHLY/NUADCN', 0.0)
+			elif nuadfg_wd == -1:
+				if 'NUADCN' + str(j) in ts:
+					NUADCN = ts['NUADCN' + str(j)]
+				else:
+					pass		#ERRMSG?
+			ts['NUADCN' + str(j)] = NUADCN
+
+	if PLKFG == 1:		
+		# PLANK atmospheric deposition - initialize time series:
+		for j in range(1, 4):
+			n = (2 * j) - 1
+
+			# dry deposition:
+			PLADFX = zeros(simlen)
+			pladfg_dd = int(ui_plank['PLADFG' + str(j)])
+
+			if pladfg_dd > 0:
+				PLADFX = initm(siminfo, ui, pladfg_dd, 'PLANK_MONTHLY/PLADFX', 0.0)
+			elif pladfg_dd == -1:
+				if 'PLADFX' + str(j) in ts:
+					PLADFX = ts['PLADFX' + str(j)]
+				else:
+					pass		#ERRMSG?
+			ts['PLADFX' + str(j)] = PLADFX
+
+			# wet deposition:
+			PLADCN = zeros(simlen)
+			pladfg_wd = int(ui_plank['PLADFG' + str(j+1)])
+
+			if pladfg_wd > 0:
+				PLADCN = initm(siminfo, ui, pladfg_wd, 'PLANK_MONTHLY/PLADCN', 0.0)
+			elif pladfg_wd == -1:
+				if 'PLADCN' + str(j) in ts:
+					PLADCN = ts['PLADCN' + str(j)]
+				else:
+					pass		#ERRMSG?
+			ts['PLADCN' + str(j)] = PLADCN
+
+			# PLANK - benthic invertebrates:
+			ts['BINV'] = zeros(simlen)		# 	TO-DO! - needs implementation
+
+	#---------------------------------------------------------------------
+	# initialize & run integerated WQ simulation:
+	#---------------------------------------------------------------------
+
 	# initialize WQ simulation:
 	RQUAL = RQUAL_Class(siminfo_, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts)
 
 	# run WQ simulation:
 	RQUAL.simulate(ts)
 
-	# SAVE time series results (TO-DO! - needs implementation for outflow series)
+	#---------------------------------------------------------------------
+	# compile errors & return:
+	#---------------------------------------------------------------------
+	errlen_oxr = len(RQUAL.OXRX.errors)
+	errlen_ntr = 0;	errlen_plk = 0;	errlen_phc = 0
 
-	if NUTFG == 1:
-		pass
-
+	if NUTFG == 1: 
+		errlen_ntr = len(RQUAL.NUTRX.errors)
 		if PLKFG == 1:
-			pass
-
+			errlen_plk += len(RQUAL.PLANK.errors)	
 			if PHFG == 1:
+				#errlen_phc += len(RQUAL.PHCARB.errors)
 				pass
+
+	errlen = errlen_oxr + errlen_ntr + errlen_plk + errlen_phc
+
+	errors = zeros(errlen, dtype=np.int64)
+	ERRMSGS = ()
+
+	ierr = -1
+	for i in range(errlen_oxr):
+		ierr += 1
+		errors[ierr] = RQUAL.OXRX.errors[i]
+		ERRMSGS += (ERRMSGS_oxrx[i],)
+
+	for i in range(errlen_ntr):
+		ierr += 1
+		errors[ierr] = RQUAL.NUTRX.errors[i]
+		ERRMSGS += (ERRMSGS_nutrx[i],)
+
+	for i in range(errlen_plk):
+		ierr += 1
+		errors[ierr] = RQUAL.PLANK.errors[i]
+		ERRMSGS += (ERRMSGS_plank[i],)
+
+	for i in range(errlen_phc):
+		ierr += 1
+		errors[ierr] = RQUAL.PHCARB.errors[i]
+		ERRMSGS += (ERRMSGS_phcarb[i],)
 
 	return errors, ERRMSGS
 
