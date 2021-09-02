@@ -106,7 +106,7 @@ def htrch(store, siminfo, uci, ts):
 	return errors, ERRMSGS
 
 
-#@njit(cache=True)
+@njit(cache=True)
 def _htrch_(ui, ts):
 	'''Simulate heat exchange and water temperature'''
 
@@ -167,6 +167,11 @@ def _htrch_(ui, ts):
 		tgrnd = ui['TGRND']
 		kmud = ui['KMUD'] * delt60  # convert rate coefficients from kcal/m2/C/hr to kcal/m2/C/ivl
 		kgrnd = ui['KGRND'] * delt60
+
+	if uunits == 1:			# input units are deg.F, but need deg.C
+		muddep = muddep / 3.281
+		tgrnd = (tgrnd - 32.0) * 0.555
+		tstop = (tstop - 32.0) * 0.555
 
 	# if bedflg == 3:
 	delh = ts['DELH']
@@ -349,6 +354,9 @@ def _htrch_(ui, ts):
 			# print('bedflg')
 			if bedflg == 1:   # one-layer bed conduction model
 				tgrnd = TGRND[loop]
+				if uunits == 1:
+					tgrnd = (tgrnd - 32.0) * 0.555
+
 				qbed = kmud * (tgrnd - tw)
 			elif bedflg == 2:	# two-layer bed conduction model
 				# Following is subrouting  #$BEDHT2
