@@ -220,3 +220,29 @@ def versions(import_list=[]):
     data.extend([platform.platform(), platform.processor(),
       str(datetime.datetime.now())[0:19]])
     return pandas.DataFrame(data, index=names, columns=['version'])
+
+def get_timeseries(store, ext_sourcesdd, siminfo):
+    """ makes timeseries for the current timestep and trucated to the sim interval"""
+    # explicit creation of Numba dictionary with signatures
+    ts = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
+    for row in ext_sourcesdd:
+        if row.SVOL == '*':
+            path = f'TIMESERIES/{row.SVOLNO}'
+            if path in store:
+                temp1 = store[path]
+            else:
+                print('Get Timeseries ERROR for', path)
+                continue
+        else:
+            temp1 = read_hdf(row.SVOL, path)
+
+        if row.MFACTOR != 1.0:
+            temp1 *= row.MFACTOR
+        t = transform(temp1, row.TMEMN, row.TRAN, siminfo)
+
+        tname = f'{row.TMEMN}{row.TMEMSB}'
+        if tname in ts:
+            ts[tname] += t
+        else:
+            ts[tname]  = t
+    return ts
