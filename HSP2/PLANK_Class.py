@@ -1084,6 +1084,7 @@ class PLANK_Class:
 	def baldth(nsfg,no3,tam,po4,paldh,naldh,aldl,aldh,mbal,dox,anaer,oxald,bal,depcor):
 		''' calculate benthic algae death'''
 
+		slof = 0.0
 		# determine whether to use high or low unit death rate; all
 		# unit death rates are expressed in units of per interval
 
