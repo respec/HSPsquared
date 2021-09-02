@@ -23,6 +23,7 @@ spec = [
 	('BRBOD', nb.float64[:]),
 	('cforea', nb.float64),
 	('cfpres', nb.float64),
+	('conv', nb.float64),
 	('decbod', nb.float64),
 	('delt60', nb.float64),
 	('delth', nb.float64),
@@ -94,6 +95,12 @@ class OXRX_Class:
 
 		self.vol = vol
 		self.svol = self.vol
+
+		# inflow/outflow conversion factor:
+		if self.uunits == 2:		# SI conversion: (g/m3)*(m3/ivld) --> [kg/ivld]
+			self.conv = 1.0e-3
+		else:						# Eng. conversion: (g/m3)*(ft3/ivld) --> [lb/ivld]
+			self.conv = 6.2428e-5
 
 		# gqual flags
 		self.GQFG = int(ui_rq['GQFG'])
@@ -184,13 +191,9 @@ class OXRX_Class:
 
 		self.vol = vol
 
-		# inflows: convert & store
-		if self.uunits == 2:		# si conversion
-			self.idox = oxif1 / 1.0e-3
-			self.ibod = oxif2 / 1.0e-3
-		else:
-			self.idox = oxif1 / 6.2428e-5
-			self.ibod = oxif2 / 6.2428e-5
+		# inflows: convert from [mass/ivld] to [conc.*vol/ivld]
+		self.idox = oxif1 / self.conv
+		self.ibod = oxif2 / self.conv
 
 		# advect dissolved oxygen
 		(self.dox, self.rodox, self.odox) = \

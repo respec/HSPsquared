@@ -359,7 +359,9 @@ def get_flows(store, ts, flags, uci, segment, ddlinks, ddmasslinks, steps, msg):
                 factor = afactr * mfactor
 
                 # KLUDGE until remaining HSP2 modules are available.
-                if tmemn not in {'IVOL', 'ICON', 'IHEAT', 'ISED', 'ISED1', 'ISED2', 'ISED3', 'IDQAL', 'ISQAL1', 'ISQAL2', 'ISQAL3'}:
+                if tmemn not in {'IVOL', 'ICON', 'IHEAT', 'ISED', 'ISED1', 'ISED2', 'ISED3', 
+                                    'IDQAL', 'ISQAL1', 'ISQAL2', 'ISQAL3',
+                                    'OXIF', 'NUIF1', 'NUIF2', 'PKIF'}:
                     continue
                 if (sgrpn == 'OFLOW' and smemn == 'OVOL') or (sgrpn == 'ROFLOW' and smemn == 'ROVOL'):
                     sgrpn = 'HYDR'
@@ -371,6 +373,13 @@ def get_flows(store, ts, flags, uci, segment, ddlinks, ddmasslinks, steps, msg):
                     sgrpn = 'GQUAL'
                 if (sgrpn == 'OFLOW' and smemn == 'OSQAL') or (sgrpn == 'ROFLOW' and smemn == 'ROSQAL'):
                     sgrpn = 'GQUAL'
+                if (sgrpn == 'OFLOW' and smemn == 'OXCF2') or (sgrpn == 'ROFLOW' and smemn == 'OXCF1'):
+                    sgrpn = 'OXRX'
+                if (sgrpn == 'OFLOW' and (smemn == 'NUCF9' or smemn == 'OSNH4' or smemn == 'OSPO4')) or (sgrpn == 'ROFLOW' and (smemn == 'NUCF1' or smemn == 'NUFCF2')):
+                    sgrpn = 'NUTRX'
+                if (sgrpn == 'OFLOW' and smemn == 'PKCF2') or (sgrpn == 'ROFLOW' and smemn == 'PKCF1'):
+                    sgrpn = 'PLANK'
+                
                 if tmemn == 'ISED' or tmemn == 'ISQAL':
                     tmemn = tmemn + tmemsb1    # need to add sand, silt, clay subscript
 
@@ -434,6 +443,7 @@ def expand_timeseries_names(smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmemsb2):
         else:
             smemn = 'CONS' + smemsb1 + '_ROCON'
 
+    # GQUAL:
     if tmemn == 'IDQAL':
         if tmemsb1 == '':
             tmemn = 'GQUAL1_IDQAL'
@@ -452,6 +462,46 @@ def expand_timeseries_names(smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmemsb2):
         smemn = 'GQUAL' + smemsb1 + '_RODQAL'
     if smemn == 'ROSQAL':
         smemn = 'GQUAL' + smemsb2 + '_ROSQAL' + smemsb1  # smemsb1 is ssc
+
+    # OXRX:
+    if smemn == 'OXCF1':
+        smemn = 'OXCF1' + smemsb1
+    
+    if smemn == 'OXCF2':
+        smemn = 'OXCF2' + smemsb1 + ' ' + smemsb2   # smemsb1 is exit #
+
+    if tmemn == 'OXIF':
+        tmemn = 'OXIF' + tmemsb1
+
+    # NUTRX - dissolved species:
+    if smemn == 'NUCF1':                            # total outflow
+        smemn = 'NUCF1' + smemsb1
+
+    if smemn == 'NUCF9':                            # exit-specific outflow
+        smemn = 'NUCF9' + smemsb1 + ' ' + smemsb2   # smemsb1 is exit #
+
+    if tmemn == 'NUIF1':
+        tmemn = 'NUIF1' + tmemsb1
+
+    # NUTRX - particulate species:
+    if smemn == 'NUCF2':                            # total outflow
+        smemn = 'NUCF2' + smemsb1 + ' ' + smemsb2   # smemsb1 is sediment class
+
+    if smemn == 'OSNH4' or smemn == 'OSPO4':        # exit-specific outflow
+        smemn = smemn + smemsb1 + ' ' + smemsb2     # smemsb1 is exit #, smemsb2 is sed class
+
+    if tmemn == 'NUIF2':
+        tmemn = 'NUIF2' + tmemsb1 + ' ' + tmemsb2
+
+    # PLANK:
+    if smemn == 'PKCF1':                            # total outflow
+        smemn = 'PKCF1' + smemsb1                   # smemsb1 is species index
+
+    if smemn == 'PKCF2':                            # exit-specific outflow
+        smemn = 'PKCF2' + smemsb1 + ' ' + smemsb2   # smemsb1 is exit #, smemsb2 is species index
+
+    if tmemn == 'PKIF':
+        tmemn = 'PKIF' + tmemsb1                    # smemsb1 is species index
 
     return smemn, tmemn
 
