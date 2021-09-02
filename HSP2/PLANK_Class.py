@@ -632,24 +632,26 @@ class PLANK_Class:
 		self.snkorc = -snkorc
 
 		if avdepe > 0.17:   # enough water to warrant computation of water quality reactions
-			if self.frrif < 1.0:                                          
-				# make adjustments to average water velocity and depth for the  
-				# portion of the reach that consists of riffle areas.
-				if ro < self.rifcq1:    # below first cutoff flow
-					i= 1
-				elif ro < self.rifcq2:   # below second cutoff flow
-					i= 2
-				elif ro < self.rifcq3:   # below third cutoff flow
-					i= 3
-				else:                        # above third cutoff flow
-					i= 4
+			
+			if self.BALFG > 0:
+				if self.frrif < 1.0:                                          
+					# make adjustments to average water velocity and depth for the  
+					# portion of the reach that consists of riffle areas.
+					if ro < self.rifcq1:    # below first cutoff flow
+						i= 1
+					elif ro < self.rifcq2:   # below second cutoff flow
+						i= 2
+					elif ro < self.rifcq3:   # below third cutoff flow
+						i= 3
+					else:                        # above third cutoff flow
+						i= 4
 
-				# calculate the adjusted velocity and depth for riffle sections
-				self.balvel = self.rifvf[i] * avvele
-				self.baldep = self.rifdf[i] * avdepe
-			else:                      # use full depth and velocity
-				self.balvel = avvele
-				self.baldep = avdepe
+					# calculate the adjusted velocity and depth for riffle sections
+					self.balvel = self.rifvf[i] * avvele
+					self.baldep = self.rifdf[i] * avdepe
+				else:                      # use full depth and velocity
+					self.balvel = avvele
+					self.baldep = avdepe
 
 			# calculate solar radiation absorbed; solrad is the solar radiation at gage,
 			# corrected for location of reach; 0.97 accounts for surface reflection
