@@ -31,6 +31,10 @@ from HSP2.RQUAL import expand_OXRX_masslinks
 from HSP2.RQUAL import expand_NUTRX_masslinks
 from HSP2.RQUAL import expand_PLANK_masslinks
 
+#from HSP2.GENER import gener
+from HSP2.COPY import Copy
+from HSP2.GENER import Gener
+
 def noop (store, siminfo, ui, ts):
     ERRMSGS = []
     errors = zeros(len(ERRMSGS), dtype=int)
@@ -38,6 +42,8 @@ def noop (store, siminfo, ui, ts):
 
 # Note: This is the ONLY place in HSP2 that defines activity execution order
 activities = {
+  'COPY' : Copy,
+  'GENER' : Gener,
   'PERLND': {'ATEMP':atemp, 'SNOW':snow, 'PWATER':pwater, 'SEDMNT':sedmnt,
      'PSTEMP':pstemp, 'PWTGAS':pwtgas, 'PQUAL':pqual, 'MSTLAY':noop, 'PEST':noop,
      'NITR':noop, 'PHOS':noop, 'TRACER':noop},
