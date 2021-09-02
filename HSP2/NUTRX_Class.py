@@ -34,6 +34,7 @@ spec = [
 	('bpo4', nb.float64[:]),
 	('brpo4', nb.float64[:]),
 	('brtam', nb.float64[:]),
+	('conv', nb.float64),
 	('cvbn', nb.float64),
 	('cvbo', nb.float64),
 	('cvbp', nb.float64),
@@ -176,6 +177,12 @@ class NUTRX_Class:
 		self.vol = vol
 		self.svol = self.vol
 
+		# inflow/outflow conversion factor:
+		if self.uunits == 2:		# SI conversion: (g/m3)*(m3/ivld) --> [kg/ivld]
+			self.conv = 1.0e-3
+		else:						# Eng. conversion: (g/m3)*(ft3/ivld) --> [lb/ivld]
+			self.conv = 6.2428e-5
+
 		# table-type nut-flags
 		self.TAMFG  = int(ui['NH3FG'])
 		self.NO2FG  = int(ui['NO2FG'])
@@ -202,7 +209,7 @@ class NUTRX_Class:
 			# ERRMSG: tam is not being simulated and nh3 volat. or
 			# nh4 adsorption is being simulated
 
-		 if (self.PO4FG == 0 and self.ADPOFG == 1):
+		if (self.PO4FG == 0 and self.ADPOFG == 1):
 			self.errors[1] += 1
 			# ERRMSG: po4 is not being simulated, and 
 			# po4 adsorption is being simulated
@@ -489,20 +496,14 @@ class NUTRX_Class:
 		
 		self.vol = vol
 
-		# set instance inflow variables (w/ units conversion):
-		cf = 1.0
-		if self.uunits == 2:		# si conversion
-			cf = 1.0e-3
-		else:
-			cf = 6.2428e-5
+		# inflows: convert from [mass/ivld] to [conc.*vol/ivld]
+		self.ino3 = ino3 / self.conv
+		self.itam = itam / self.conv
+		self.ino2 = ino2 / self.conv
+		self.ipo4 = ipo4 / self.conv
 
-		self.ino3 = ino3 / cf
-		self.itam = itam / cf
-		self.ino2 = ino2 / cf
-		self.ipo4 = ipo4 / cf
-
-		self.isnh4 = isnh4 / cf
-		self.ispo4 = ispo4 / cf
+		self.isnh4 = isnh4 / self.conv
+		self.ispo4 = ispo4 / self.conv
 
 		#compute atmospheric deposition influx (! - to be implemented)
 		self.nuadep = zeros(7)

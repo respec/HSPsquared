@@ -61,6 +61,7 @@ spec = [
 	('cmmpb', nb.float64[:]),
 	('cmmv', nb.float64),
 	('co2', nb.float64),
+	('conv', nb.float64),
 	('cremvl', nb.float64),
 	('cslit', nb.float64[:]),
 	('cslof1', nb.float64[:]),
@@ -270,6 +271,12 @@ class PLANK_Class:
 
 		self.vol = vol
 		self.svol = self.vol
+
+		# inflow/outflow conversion factor:
+		if self.uunits == 2:		# SI conversion: (g/m3)*(m3/ivld) --> [kg/ivld]
+			self.conv = 1.0e-3
+		else:						# Eng. conversion: (g/m3)*(ft3/ivld) --> [lb/ivld]
+			self.conv = 6.2428e-5
 
 		# flags - table-type PLNK-FLAGS
 		self.PHYFG  = int(ui['PHYFG'])
@@ -551,18 +558,12 @@ class PLANK_Class:
 
 		self.co2 = co2
 
-		# set instance inflow variables (w/ units conversion):
-		cf_denom = 1.0
-		if self.uunits == 2:		# si conversion
-			cf_denom = 1.0e-3
-		else:
-			cf_denom = 6.2428e-5
-
-		self.iphyto = iphyto / cf_denom
-		self.izoo = izoo / cf_denom
-		self.iorn = iorn / cf_denom
-		self.iorp = iorp / cf_denom
-		self.iorc = iorc / cf_denom
+		# inflows: convert from [mass/ivld] to [conc.*vol/ivld]
+		self.iphyto = iphyto / self.conv
+		self.izoo = izoo / self.conv
+		self.iorn = iorn / self.conv
+		self.iorp = iorp / self.conv
+		self.iorc = iorc / self.conv
 
 		# update atmospheric deposition (TO-DO! - best approach is likely to handle in RQUAL and pass in PLAD* values for current step):
 		self.PLADFX = zeros(6)
