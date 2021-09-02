@@ -103,7 +103,7 @@ skip = {
  ('RCHRES', 'BINARY-INFO')}
 
 
-ops = {'PERLND','IMPLND','RCHRES'}
+ops = {'PERLND', 'IMPLND', 'RCHRES', 'COPY', 'GENER'}
 conlike = {'CONS':'NCONS', 'PQUAL':'NQUAL', 'IQUAL':'NQUAL', 'GQUAL':'NQUAL'}
 def readUCI(uciname, hdfname):
     # create lookup dictionaries from 'ParseTable.csv' and 'rename.csv'
@@ -149,6 +149,7 @@ def readUCI(uciname, hdfname):
             if line[0:9] == 'MASS-LINK':   masslink(info, getlines(f))
             if line[0:7] == 'FTABLES':      ftables(info, getlines(f))
             if line[0:3] == 'EXT':              ext(info, getlines(f))
+            if line[0:5] == 'GENER':          gener(info, getlines(f))
             if line[0:6] == 'PERLND':     operation(info, getlines(f),'PERLND')
             if line[0:6] == 'IMPLND':     operation(info, getlines(f),'IMPLND')
             if line[0:6] == 'RCHRES':     operation(info, getlines(f),'RCHRES')
@@ -612,3 +613,25 @@ def operation(info, llines, op):
         for name,value in savetable[op,activity].items():
             df[name] = int(value)
         df.to_hdf(store, f'{op}/{activity}/SAVE', data_columns=True)
+
+
+def copy(info, lines):
+    #placeholder - PRT - no sure I actually need to implement this method 
+    pass
+
+def gener(info, lines):
+    store, parse, path, *_ = info
+    lst = []
+    sub_blocks = ['OPCODE','PARM']
+    current_block  = ''
+    d = {}
+    for line in lines:
+            if line [2:5] == 'END':
+                df = DataFrame(lst, columns=d)
+                df.to_hdf(store, key=f'GENER/{current_block}', data_columns=True)
+                lst.clear()
+            elif any(s in line for s in sub_blocks):
+                current_block = [s for s in sub_blocks if s in line][0]
+            else:
+                d = parseD(line, parse['GENER',current_block])
+                lst.append(d)
