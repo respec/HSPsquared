@@ -266,87 +266,87 @@ def get_timeseries(store, ext_sourcesdd, siminfo):
             ts[tname]  = t
     return ts
 
-def expand_timeseries_names(smemn, smemsb0, smemsb2, tmemn, tmemsb1, tmemsb2):
-    #special cases to expand timeseries names to resolve with output names in hdf4 file
+def expand_timeseries_names(smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmemsb2):
+    #special cases to expand timeseries names to resolve with output names in hdf5 file
     if tmemn == 'ICON':
-        if tmemsb0 == '':
-            tmemn = 'CONS0_ICON'
+        if tmemsb1 == '':
+            tmemn = 'CONS1_ICON'
         else:
-            tmemn = 'CONS' + tmemsb0 + '_ICON'
+            tmemn = 'CONS' + tmemsb1 + '_ICON'
     if smemn == 'OCON':
-        if smemsb1 == '':
-            smemn = 'CONS0_OCON' + smemsb1
+        if smemsb2 == '':
+            smemn = 'CONS1_OCON' + smemsb1
         else:
-            smemn = 'CONS' + smemsb1 + '_OCON' + smemsb1
+            smemn = 'CONS' + smemsb2 + '_OCON' + smemsb1
     if smemn == 'ROCON':
-        if smemsb0 == '':
-            smemn = 'CONS0_ROCON'
+        if smemsb1 == '':
+            smemn = 'CONS1_ROCON'
         else:
-            smemn = 'CONS' + smemsb0 + '_ROCON'
+            smemn = 'CONS' + smemsb1 + '_ROCON'
 
     # GQUAL:
     if tmemn == 'IDQAL':
-        if tmemsb0 == '':
-            tmemn = 'GQUAL0_IDQAL'
-        else:
-            tmemn = 'GQUAL' + tmemsb0 + '_IDQAL'
-    if tmemn == 'ISQAL0' or tmemn == 'ISQAL2' or tmemn == 'ISQAL3':
         if tmemsb1 == '':
-            tmemn = 'GQUAL0_' + tmemn
+            tmemn = 'GQUAL1_IDQAL'
         else:
-            tmemn = 'GQUAL' + tmemsb1 + '_' + tmemn
+            tmemn = 'GQUAL' + tmemsb1 + '_IDQAL'
+    if tmemn == 'ISQAL1' or tmemn == 'ISQAL2' or tmemn == 'ISQAL3':
+        if tmemsb2 == '':
+            tmemn = 'GQUAL1_' + tmemn
+        else:
+            tmemn = 'GQUAL' + tmemsb2 + '_' + tmemn
     if tmemn == 'ISQAL':
-        if tmemsb1 == '':
-            tmemn = 'GQUAL0_' + 'ISQAL' + tmemsb1
+        if tmemsb2 == '':
+            tmemn = 'GQUAL1_' + 'ISQAL' + tmemsb1
         else:
-            tmemn = 'GQUAL' + tmemsb1 + '_' + 'ISQAL' + tmemsb1
+            tmemn = 'GQUAL' + tmemsb2 + '_' + 'ISQAL' + tmemsb1
     if smemn == 'ODQAL':
-        smemn = 'GQUAL' + smemsb0 + '_ODQAL' + smemsb2  # smemsb2 is exit number
+        smemn = 'GQUAL' + smemsb1 + '_ODQAL' + smemsb2  # smemsb2 is exit number
     if smemn == 'OSQAL':
-        smemn = 'GQUAL' + smemsb0 + '_OSQAL' + smemsb2  # smemsb2 is ssc plus exit number
+        smemn = 'GQUAL' + smemsb1 + '_OSQAL' + smemsb2  # smemsb2 is ssc plus exit number
     if smemn == 'RODQAL':
-        smemn = 'GQUAL' + smemsb0 + '_RODQAL'
+        smemn = 'GQUAL' + smemsb1 + '_RODQAL'
     if smemn == 'ROSQAL':
-        smemn = 'GQUAL' + smemsb1 + '_ROSQAL' + smemsb1  # smemsb1 is ssc
+        smemn = 'GQUAL' + smemsb2 + '_ROSQAL' + smemsb1  # smemsb1 is ssc
 
     # OXRX:
-    if smemn == 'OXCF0':
-        smemn = 'OXCF0' + smemsb1
-    
     if smemn == 'OXCF1':
-        smemn = 'OXCF1' + smemsb1 + ' ' + smemsb2   # smemsb1 is exit #
+        smemn = 'OXCF1' + smemsb1
+    
+    if smemn == 'OXCF2':
+        smemn = 'OXCF2' + smemsb1 + ' ' + smemsb2   # smemsb1 is exit #
 
     if tmemn == 'OXIF':
-        tmemn = 'OXIF' + tmemsb0
+        tmemn = 'OXIF' + tmemsb1
 
     # NUTRX - dissolved species:
-    if smemn == 'NUCF0':                            # total outflow
-        smemn = 'NUCF0' + smemsb1
-
-    if smemn == 'NUCF8':                            # exit-specific outflow
-        smemn = 'NUCF8' + smemsb1 + ' ' + smemsb2   # smemsb1 is exit #
-
-    if tmemn == 'NUIF0':
-        tmemn = 'NUIF0' + tmemsb1
-
-    # NUTRX - particulate species:
     if smemn == 'NUCF1':                            # total outflow
-        smemn = 'NUCF1' + smemsb1 + ' ' + smemsb2   # smemsb1 is sediment class
+        smemn = 'NUCF1' + smemsb1
 
-    if smemn == 'OSNH3' or smemn == 'OSPO4':        # exit-specific outflow
-        smemn = smemn + smemsb0 + ' ' + smemsb2     # smemsb1 is exit #, smemsb2 is sed class
+    if smemn == 'NUCF9':                            # exit-specific outflow
+        smemn = 'NUCF9' + smemsb1 + ' ' + smemsb2   # smemsb1 is exit #
 
     if tmemn == 'NUIF1':
-        tmemn = 'NUIF1' + tmemsb1 + ' ' + tmemsb2
+        tmemn = 'NUIF1' + tmemsb1
+
+    # NUTRX - particulate species:
+    if smemn == 'NUCF2':                            # total outflow
+        smemn = 'NUCF2' + smemsb1 + ' ' + smemsb2   # smemsb1 is sediment class
+
+    if smemn == 'OSNH4' or smemn == 'OSPO4':        # exit-specific outflow
+        smemn = smemn + smemsb1 + ' ' + smemsb2     # smemsb1 is exit #, smemsb2 is sed class
+
+    if tmemn == 'NUIF2':
+        tmemn = 'NUIF2' + tmemsb1 + ' ' + tmemsb2
 
     # PLANK:
-    if smemn == 'PKCF0':                            # total outflow
-        smemn = 'PKCF0' + smemsb1                   # smemsb1 is species index
+    if smemn == 'PKCF1':                            # total outflow
+        smemn = 'PKCF1' + smemsb1                   # smemsb1 is species index
 
-    if smemn == 'PKCF1':                            # exit-specific outflow
-        smemn = 'PKCF1' + smemsb1 + ' ' + smemsb2   # smemsb1 is exit #, smemsb2 is species index
+    if smemn == 'PKCF2':                            # exit-specific outflow
+        smemn = 'PKCF2' + smemsb1 + ' ' + smemsb2   # smemsb1 is exit #, smemsb2 is species index
 
     if tmemn == 'PKIF':
-        tmemn = 'PKIF' + tmemsb0                    # smemsb1 is species index
+        tmemn = 'PKIF' + tmemsb1                    # smemsb1 is species index
 
     return smemn, tmemn
