@@ -690,7 +690,7 @@ class PLANK_Class:
 			#	sestonic algae growth & respiration
 			#-----------------------------------------------------------
 			if self.PHYFG == 1:   # simulate phytoplankton, phyrx only called here
-				(po4,no3,tam,dox,self.orn,self.orp,self.orc,bod,self.phyto,self.limphy,self.co2,self.phycla,
+				(po4,no3,tam,dox,self.orn,self.orp,self.orc,bod,self.phyto,self.limphy,self.pyco2,self.phycla,
 				dophy,bodphy,tamphy,no3phy,po4phy,phdth,phgro,ornphy,orpphy,orcphy) \
 					= self.phyrx(self.phylit,tw,self.talgrl,self.talgrh,self.talgrm,self.malgr,self.cmmp, \
 							self.cmmnp,NUTRX.TAMFG,self.AMRFG,self.NSFG,self.cmmn,self.cmmlt,self.delt60, \
@@ -716,7 +716,7 @@ class PLANK_Class:
 				#	zooplankton growth & death:
 				#-----------------------------------------------------------
 				if self.ZOOFG == 1:    # simulate zooplankton, zorx only called here
-					(dox,bod,self.zoo,self.orn,self.orp,self.orc,tam,no3,po4,zeat,zco2,dozoo,bodzoo,nitzoo,po4zoo,zgro,zdth,zorn,zorp,zorc) \
+					(dox,bod,self.zoo,self.orn,self.orp,self.orc,tam,no3,po4,zeat,self.zoco2,dozoo,bodzoo,nitzoo,po4zoo,zgro,zdth,zorn,zorp,zorc) \
 						= self.zorx(self.zfil20,self.tczfil,tw,self.phyto,self.mzoeat,self.zexdel,self.cvpb, \
 							self.zres20,self.tczres,NUTRX.anaer,self.zomass,NUTRX.TAMFG,self.refr, \
 							self.ZFOOD,self.zd,self.oxzd,self.cvbn,self.cvbp,self.cvbc,self.cvnrbo,self.cvbo, \
