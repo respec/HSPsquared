@@ -424,6 +424,7 @@ def get_gener_timeseries(ts: Dict, gener_instances: Dict, ddlinks: List) -> Dict
             gener = gener_instances[link.SVOLNO]
             series = gener.get_ts()
             ts[f'{link.TMEMN}{link.TMEMSB1} {link.TMEMSB2}'.rstrip()] = series
+
     return ts
 
 
