@@ -11,7 +11,7 @@ from numba.typed import Dict
 from collections import defaultdict
 from datetime import datetime as dt
 import os
-from HSP2.utilities import transform, versions, get_timeseries
+from HSP2.utilities import transform, versions, get_timeseries, expand_timeseries_names
 from HSP2.configuration import activities, noop, expand_masslinks
 
 from typing import List
@@ -414,86 +414,6 @@ def get_flows(store, ts, flags, uci, segment, ddlinks, ddmasslinks, steps, msg):
                 else:
                     print('ERROR in FLOWS for', path)
     return
-
-def expand_timeseries_names(smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmemsb2):
-    #special cases to expand timeseries names to resolve with output names in hdf5 file
-    if tmemn == 'ICON':
-        if tmemsb1 == '':
-            tmemn = 'CONS1_ICON'
-        else:
-            tmemn = 'CONS' + tmemsb1 + '_ICON'
-    if smemn == 'OCON':
-        if smemsb2 == '':
-            smemn = 'CONS1_OCON' + smemsb1
-        else:
-            smemn = 'CONS' + smemsb2 + '_OCON' + smemsb1
-    if smemn == 'ROCON':
-        if smemsb1 == '':
-            smemn = 'CONS1_ROCON'
-        else:
-            smemn = 'CONS' + smemsb1 + '_ROCON'
-
-    # GQUAL:
-    if tmemn == 'IDQAL':
-        if tmemsb1 == '':
-            tmemn = 'GQUAL1_IDQAL'
-        else:
-            tmemn = 'GQUAL' + tmemsb1 + '_IDQAL'
-    if tmemn == 'ISQAL1' or tmemn == 'ISQAL2' or tmemn == 'ISQAL3':
-        if tmemsb2 == '':
-            tmemn = 'GQUAL1_' + tmemn
-        else:
-            tmemn = 'GQUAL' + tmemsb2 + '_' + tmemn
-    if smemn == 'ODQAL':
-        smemn = 'GQUAL' + smemsb1 + '_ODQAL' + smemsb2  # smemsb2 is exit number
-    if smemn == 'OSQAL':
-        smemn = 'GQUAL' + smemsb1 + '_OSQAL' + smemsb2  # smemsb2 is ssc plus exit number
-    if smemn == 'RODQAL':
-        smemn = 'GQUAL' + smemsb1 + '_RODQAL'
-    if smemn == 'ROSQAL':
-        smemn = 'GQUAL' + smemsb2 + '_ROSQAL' + smemsb1  # smemsb1 is ssc
-
-    # OXRX:
-    if smemn == 'OXCF1':
-        smemn = 'OXCF1' + smemsb1
-    
-    if smemn == 'OXCF2':
-        smemn = 'OXCF2' + smemsb1 + ' ' + smemsb2   # smemsb1 is exit #
-
-    if tmemn == 'OXIF':
-        tmemn = 'OXIF' + tmemsb1
-
-    # NUTRX - dissolved species:
-    if smemn == 'NUCF1':                            # total outflow
-        smemn = 'NUCF1' + smemsb1
-
-    if smemn == 'NUCF9':                            # exit-specific outflow
-        smemn = 'NUCF9' + smemsb1 + ' ' + smemsb2   # smemsb1 is exit #
-
-    if tmemn == 'NUIF1':
-        tmemn = 'NUIF1' + tmemsb1
-
-    # NUTRX - particulate species:
-    if smemn == 'NUCF2':                            # total outflow
-        smemn = 'NUCF2' + smemsb1 + ' ' + smemsb2   # smemsb1 is sediment class
-
-    if smemn == 'OSNH4' or smemn == 'OSPO4':        # exit-specific outflow
-        smemn = smemn + smemsb1 + ' ' + smemsb2     # smemsb1 is exit #, smemsb2 is sed class
-
-    if tmemn == 'NUIF2':
-        tmemn = 'NUIF2' + tmemsb1 + ' ' + tmemsb2
-
-    # PLANK:
-    if smemn == 'PKCF1':                            # total outflow
-        smemn = 'PKCF1' + smemsb1                   # smemsb1 is species index
-
-    if smemn == 'PKCF2':                            # exit-specific outflow
-        smemn = 'PKCF2' + smemsb1 + ' ' + smemsb2   # smemsb1 is exit #, smemsb2 is species index
-
-    if tmemn == 'PKIF':
-        tmemn = 'PKIF' + tmemsb1                    # smemsb1 is species index
-
-    return smemn, tmemn
 
 def get_gener_timeseries(ts: Dict, gener_instances: Dict, ddlinks: List) -> Dict:
     """
