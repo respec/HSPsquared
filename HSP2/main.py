@@ -240,7 +240,11 @@ def get_uci(store):
                         siminfo['units'] = int(temp['Units'])
             elif module == 'LINKS':
                 for row in store[path].fillna('').itertuples():
-                    ddlinks[f'{row.TVOLNO}'].append(row)
+                    if row.TVOLNO != '':
+                        ddlinks[f'{row.TVOLNO}'].append(row)
+                    else:
+                        ddlinks[f'{row.TOPFST}'].append(row)
+
             elif module == 'MASS_LINKS':
                 for row in store[path].replace('na','').itertuples():
                     ddmasslinks[row.MLNO].append(row)
@@ -499,7 +503,7 @@ def get_gener_timeseries(ts: Dict, gener_instances: Dict, ddlinks: List) -> Dict
         if link.SVOL == 'GENER':
             gener = gener_instances[link.SVOLNO]
             series = gener.get_ts()
-            ts[f'{link.TMEMN}{link.TMEMSB1}{link.TMEMSB2}'] = series
+            ts[f'{link.TMEMN}{link.TMEMSB1} {link.TMEMSB2}'.rstrip()] = series
     return ts
 
 
