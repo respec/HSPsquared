@@ -418,6 +418,8 @@ def get_gener_timeseries(ts: Dict, gener_instances: Dict, ddlinks: List) -> Dict
         if link.SVOL == 'GENER':
             gener = gener_instances[link.SVOLNO]
             series = gener.get_ts()
+            if link.MFACTOR != 1: 
+                series *= link.MFACTOR
             ts[f'{link.TMEMN}{link.TMEMSB1}{link.TMEMSB2}'] = series
     return ts
 
