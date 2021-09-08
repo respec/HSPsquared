@@ -11,13 +11,13 @@ class Gener():
     Currently supports OPCODES 1-7, 9-23, & 25-26
     """
 
-    ts_input_1 = pd.Series() # type: pd.Series
-    ts_input_2 = pd.Series() # type: pd.Series
-    ts_output = pd.Series()  # type: pd.Series
-    opcode = 0               # type: int
-    k = -1.0E30              # type: float 
-    
     def __init__(self, segment: str, copies: Dict, geners: Dict, ddlinks: Dict, ddgener: Dict) -> None:
+        self.ts_input_1 = pd.Series() # type: pd.Series
+        self. ts_input_2 = pd.Series() # type: pd.Series
+        self.ts_output = pd.Series()  # type: pd.Series
+        self.opcode = 0               # type: int
+        self.k = -1.0E30              # type: float 
+
         self.opcode = ddgener['OPCODE'][segment]
         if self.opcode in [9,10,11,24,25,26]:
             self.k = ddgener['PARM'][segment]

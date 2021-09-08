@@ -10,11 +10,11 @@ class Copy():
     This functionality is not currently implemented, presently only loading from EXT SOURCES
     """
 
-    _ts = {}
-    _ts['MEAN'] = {}
-    _ts['POINT'] = {}
-
     def __init__(self, store: pd.HDFStore, sim_info: Dict, ext_sources: List) -> None:
+        self._ts = {}
+        self._ts['MEAN'] = {}
+        self._ts['POINT'] = {}
+
         ts = get_timeseries(store, ext_sources, sim_info)
         for source in ext_sources:
             themn = source.TMEMN
