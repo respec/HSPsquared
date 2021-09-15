@@ -6,7 +6,7 @@ License: LGPL2
 import logging
 import numpy as np
 from numpy import where, zeros, array, float64
-from numba import types
+from numba import types, njit
 from numba.typed import Dict
 
 from HSP2.utilities  import make_numba_dict, initm
@@ -26,9 +26,6 @@ ERRMSGS_phcarb = ('PHCARB: Error -- Invalid CONS index specified for ALKCON (i.e
 
 def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 	''' Simulate constituents involved in biochemical transformations'''
-
-	#ERRMSGS =('')
-	#errors = zeros(len(ERRMSGS), dtype=np.int32)
 
 	# simulation information:
 	delt60 = siminfo['delt'] / 60  # delt60 - simulation time interval in hours
@@ -157,22 +154,42 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 	# initialize & run integerated WQ simulation:
 	#---------------------------------------------------------------------
 
+	(err_oxrx, err_nutrx, err_plank, err_phcarb) \
+		= _rqual_run(siminfo_, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts)
+
+	#---------------------------------------------------------------------
+	# compile errors & return:
+	#---------------------------------------------------------------------
+
+	(errors, ERRMSGS) = _compile_errors(NUTFG, PLKFG, PHFG, err_oxrx, err_nutrx, err_plank, err_phcarb)
+
+	return errors, ERRMSGS
+
+
+@njit(cache=True)
+def _rqual_run(siminfo_, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts):
+
 	# initialize WQ simulation:
 	RQUAL = RQUAL_Class(siminfo_, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts)
 
 	# run WQ simulation:
 	RQUAL.simulate(ts)
 
-	#---------------------------------------------------------------------
-	# compile errors & return:
-	#---------------------------------------------------------------------
-	errlen_oxr = len(RQUAL.OXRX.errors)
+	# return error data:
+	#TO-DO! - return PHCARB errors once implemented
+	errors_PHCARB = zeros(2, dtype=np.int64)
+
+	return RQUAL.OXRX.errors, RQUAL.NUTRX.errors, RQUAL.PLANK.errors, errors_PHCARB
+
+def _compile_errors(NUTFG, PLKFG, PHFG, err_oxrx, err_nutrx, err_plank, err_phcarb):
+
+	errlen_oxr = len(err_oxrx)
 	errlen_ntr = 0;	errlen_plk = 0;	errlen_phc = 0
 
 	if NUTFG == 1: 
-		errlen_ntr = len(RQUAL.NUTRX.errors)
+		errlen_ntr = len(err_nutrx)
 		if PLKFG == 1:
-			errlen_plk += len(RQUAL.PLANK.errors)	
+			errlen_plk += len(err_plank)
 			if PHFG == 1:
 				#errlen_phc += len(RQUAL.PHCARB.errors)
 				pass
@@ -185,22 +202,22 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 	ierr = -1
 	for i in range(errlen_oxr):
 		ierr += 1
-		errors[ierr] = RQUAL.OXRX.errors[i]
+		errors[ierr] = err_oxrx[i]
 		ERRMSGS += (ERRMSGS_oxrx[i],)
 
 	for i in range(errlen_ntr):
 		ierr += 1
-		errors[ierr] = RQUAL.NUTRX.errors[i]
+		errors[ierr] = err_nutrx[i]
 		ERRMSGS += (ERRMSGS_nutrx[i],)
 
 	for i in range(errlen_plk):
 		ierr += 1
-		errors[ierr] = RQUAL.PLANK.errors[i]
+		errors[ierr] = err_plank[i]
 		ERRMSGS += (ERRMSGS_plank[i],)
 
 	for i in range(errlen_phc):
 		ierr += 1
-		errors[ierr] = RQUAL.PHCARB.errors[i]
+		errors[ierr] = err_phcarb[i]
 		ERRMSGS += (ERRMSGS_phcarb[i],)
 
 	return errors, ERRMSGS

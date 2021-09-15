@@ -27,9 +27,11 @@ class Gener():
             if link.SVOL == 'COPY': 
                 copy = copies[link.SVOLNO]
                 ts = copy.get_ts(link.SMEMN,link.SMEMSB1)
+                if link.MFACTOR != 1: ts *= link.MFACTOR
             elif link.SVOL == 'GENER':
                 gener = geners[link.SVOLNO]
                 ts = gener.get_ts()
+                if link.MFACTOR != 1: ts *= link.MFACTOR
             else:
                 raise NotImplementedError(f"Invalid SVOL. GENER module does not currently support reading TimeSeries for '{link.SVOL}'")
                 
