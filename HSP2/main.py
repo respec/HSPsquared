@@ -45,12 +45,16 @@ def main(hdfname, saveall=False, jupyterlab=True):
         # main processing loop
         msg(1, f'Simulation Start: {start}, Stop: {stop}')
         for _, operation, segment, delt in opseq.itertuples():
+            msg(2, f'{operation} {segment} DELT(minutes): {delt}')
+
             if operation == 'COPY':
                 copy_instances[segment] = activities[operation](store, siminfo, ddext_sources[(operation,segment)]) 
             elif operation == 'GENER':
-                gener_instances[segment] = activities[operation](segment, copy_instances, gener_instances, ddlinks, ddgener) 
+                try:
+                    gener_instances[segment] = activities[operation](segment, copy_instances, gener_instances, ddlinks, ddgener) 
+                except NotImplementedError as e:
+                    print(f"GENER '{segment}' encountered unsupported feature during initialization and may not function correctly. Unsupported feature: '{e}'")
             else:
-                msg(2, f'{operation} {segment} DELT(minutes): {delt}')
                 siminfo['delt']      = delt
                 siminfo['tindex']    = date_range(start, stop, freq=Minute(delt))[1:]
                 siminfo['steps']     = len(siminfo['tindex'])
@@ -239,7 +243,11 @@ def get_uci(store):
                         siminfo['units'] = int(temp['Units'])
             elif module == 'LINKS':
                 for row in store[path].fillna('').itertuples():
-                    ddlinks[f'{row.TVOLNO}{row.TOPFST}'].append(row)
+                    if row.TVOLNO != '':
+                        ddlinks[f'{row.TVOLNO}'].append(row)
+                    else:
+                        ddlinks[f'{row.TOPFST}'].append(row)
+
             elif module == 'MASS_LINKS':
                 for row in store[path].replace('na','').itertuples():
                     ddmasslinks[row.MLNO].append(row)
@@ -418,9 +426,8 @@ def get_gener_timeseries(ts: Dict, gener_instances: Dict, ddlinks: List) -> Dict
         if link.SVOL == 'GENER':
             gener = gener_instances[link.SVOLNO]
             series = gener.get_ts()
-            if link.MFACTOR != 1: 
-                series *= link.MFACTOR
-            ts[f'{link.TMEMN}{link.TMEMSB1}{link.TMEMSB2}'] = series
+            ts[f'{link.TMEMN}{link.TMEMSB1} {link.TMEMSB2}'.rstrip()] = series
+
     return ts
 
 
