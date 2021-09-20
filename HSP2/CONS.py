@@ -1,5 +1,5 @@
 ''' Copyright (c) 2020 by RESPEC, INC.
-Author: Robert Heaphy, Ph.D.
+Authors: Robert Heaphy, Ph.D. and Paul Duda
 License: LGPL2
 '''
 
@@ -24,7 +24,7 @@ NOTE: COADFG flags NOT saved.  Use logic: if ts present, use it; otherwise look 
 
 from numpy import zeros
 from HSP2.ADCALC import advect
-from numba import jit
+from numba import njit
 from HSP2.utilities  import make_numba_dict, initm
 
 ERRMSG = []
@@ -36,17 +36,31 @@ def cons(store, siminfo, uci, ts):
 	errorsV = zeros(len(ERRMSG), dtype=int)
 
 	simlen = siminfo['steps']
-	delt60 = siminfo['delt'] / 60  # delt60 - simulation time interval in hours
+	uunits = siminfo['units']
 
-	PREC  = ts['PREC']
-	SAREA = ts['SAREA']
+	AFACT = 43560.0
+	if uunits == 2:
+		# si units conversion constants, 1 hectare is 10000 sq m
+		AFACT = 1000000.0
 
 	advectData = uci['advectData']
 	(nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = advectData
-	svol = vol * 43560
+	svol = vol * AFACT
+
+	ts['VOL'] = VOL
+	ts['SROVOL'] = SROVOL
+	ts['EROVOL'] = EROVOL
+	for i in range(nexits):
+		ts['SOVOL' + str(i + 1)] = SOVOL[:, i]
+		ts['EOVOL' + str(i + 1)] = EOVOL[:, i]
 
 	ui = make_numba_dict(uci)
 	nexits = int(ui['NEXITS'])
+
+	ui['simlen'] = siminfo['steps']
+	ui['uunits'] = siminfo['units']
+	ui['svol']   = svol
+	ui['delt60'] = siminfo['delt'] / 60  # delt60 - simulation time interval in hours
 
 	# vol    = ui['VOL']
 	# conactive = ui['CONACTIVE']   # dict
@@ -62,32 +76,11 @@ def cons(store, siminfo, uci, ts):
 		conid = parms['CONID']   # string name of the conservative constituent
 		con   = parms['CON']     # initial concentration of the conservative
 		concid= parms['CONCID']  # string which specifies the concentration units for the conservative constituent.
-		conv  = parms['CONV']    # conversion factor from QTYID/VOL to the desired concentration units
+		ui['conv'] = parms['CONV']    # conversion factor from QTYID/VOL to the desired concentration units
 		qtyid = parms['QTYID']   # string which specifies the units for inflow or outflow of constituent; e.g. kg
 		name  = 'CONS' + icon    # arbitrary identification, default CONxx
-
-		# preallocate output arrays (always needed)
-		ROCON = ts[name + '_ROCON'] = zeros(simlen)
-		CON   = ts[name + '_CON']   = zeros(simlen)
-		RCON  = ts[name + '_RCON']  = zeros(simlen)
-
-		# preallocate output arrays for atmospheric deposition
-		COADDR = ts[name + '_COADDR'] = zeros(simlen)
-		COADWT = ts[name + '_COADWT'] = zeros(simlen)
-		COADEP = ts[name + '_COADEP'] = zeros(simlen)
-
-		OCON = zeros((simlen, nexits))
-		if nexits > 1:
-			u = uci['SAVE']
-			key1 = name + '_OCON'
-			for i in range(nexits):
-				u[f'{key1}{i + 1}'] = u['OCON']
-			del u['OCON']
-
-		# get incoming flow of constituent or zeros;
-		if (name + '_ICON') not in ts:
-			ts[name + '_ICON'] = zeros(simlen)
-		ICON = ts[name + '_ICON'] * conv * 43560 * VOL
+		ui['icon'] = index + 1
+		ui['con']  = con
 
 		# # dry deposition; flag: COADFG; monthly COAFXM; value: COADFX
 		# COADFG1 = ui['COADFG1']    # table-type cons-ad-flags
@@ -116,28 +109,75 @@ def cons(store, siminfo, uci, ts):
 		if 'COADCN' not in ts:
 			ts['COADCN'] = zeros(simlen)
 
-		COADFX = ts['COADFX'] * delt60 / (24.0 * 43560.0)
-		COADCN = ts['COADCN']
-
-		loopsub(SAREA, PREC, VOL, COADFX, COADCN, ICON, simlen, conid, CON, ROCON, OCON, RCON, COADWT, COADDR, COADEP,
-				SROVOL, EROVOL, SOVOL, EOVOL, conv, svol, con, nexits)
+		############################################################################
+		errors = _cons_(ui, ts)  # run CONS simulation code
+		############################################################################
 
 		if nexits > 1:
+			u = uci['SAVE']
+			key1 = name + '_OCON'
 			for i in range(nexits):
-				ts[name + '_OCON' + str(i + 1)] = OCON[:, i]
+				u[f'{key1}{i + 1}'] = u['OCON']
+			del u['OCON']
 
 	return errorsV, ERRMSG
 
 
-# @jit(nopython=True)
-def loopsub(SAREA, PREC ,VOL, COADFX, COADCN, ICON, simlen, conid, CON, ROCON, OCON, RCON, COADWT, COADDR, COADEP,
-			SROVOL, EROVOL, SOVOL, EOVOL, conv, svol, con, nexits):
-	''' loop as function to allow Numba to cache compilation'''		
-	
+@njit(cache=True)
+def _cons_(ui, ts):
+	''' Simulate behavior of conservative constituents; calculate concentration
+	of conservative constituents after advection'''
+
+	simlen = int(ui['simlen'])
+	nexits = int(ui['NEXITS'])
+	uunits = int(ui['uunits'])
+	conv   = ui['conv']
+	svol   = ui['svol']
+	delt60 = ui['delt60']
+	name = 'CONS' + str(int(ui['icon']))
+	con = ui['con']
+
+	AFACT = 43560.0
+	if uunits == 2:
+		# si units conversion constants, 1 hectare is 10000 sq m
+		AFACT = 1000000.0
+
+	PREC = ts['PREC']
+	SAREA = ts['SAREA']
+
+	VOL = ts['VOL']
+	SROVOL = ts['SROVOL']
+	EROVOL = ts['EROVOL']
+	SOVOL = zeros((simlen, nexits))
+	EOVOL = zeros((simlen, nexits))
+	for i in range(nexits):
+		SOVOL[:, i] = ts['SOVOL' + str(i + 1)]
+		EOVOL[:, i] = ts['EOVOL' + str(i + 1)]
+
+	COADFX = ts['COADFX'] * delt60 / (24.0 * AFACT)
+	COADCN = ts['COADCN']
+
+	# preallocate output arrays (always needed)
+	ROCON = ts[name + '_ROCON'] = zeros(simlen)
+	CON = ts[name + '_CON'] = zeros(simlen)
+	RCON = ts[name + '_RCON'] = zeros(simlen)
+
+	# preallocate output arrays for atmospheric deposition
+	COADDR = ts[name + '_COADDR'] = zeros(simlen)
+	COADWT = ts[name + '_COADWT'] = zeros(simlen)
+	COADEP = ts[name + '_COADEP'] = zeros(simlen)
+
+	# get incoming flow of constituent or zeros;
+	if (name + '_ICON') not in ts:
+		ts[name + '_ICON'] = zeros(simlen)
+	ICON = ts[name + '_ICON'] * conv * AFACT * VOL
+
+	OCON = zeros((simlen, nexits))
+
 	for loop in range(simlen):
 		sarea  = SAREA[loop]
 		prec   = PREC[loop]
-		vol    = VOL[loop] * 43560
+		vol    = VOL[loop] * AFACT
 
 		coadfx = COADFX[loop]
 		coadcn = COADCN[loop]
@@ -169,6 +209,10 @@ def loopsub(SAREA, PREC ,VOL, COADFX, COADCN, ICON, simlen, conid, CON, ROCON, O
 		COADWT[loop] = coadwt
 		COADDR[loop] = coaddr
 		COADEP[loop] = adtot
+
+	if nexits > 1:
+		for i in range(nexits):
+			ts[name + '_OCON' + str(i + 1)] = OCON[:, i]
 
 	return	
 

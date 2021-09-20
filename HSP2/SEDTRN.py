@@ -1,10 +1,11 @@
 ''' Copyright (c) 2020 by RESPEC, INC.
-Author: Robert Heaphy, Ph.D.
+Authors: Robert Heaphy, Ph.D. and Paul Duda
 License: LGPL2
 '''
 
-from numpy import array, zeros, where
+from numpy import array, zeros, where, int64
 from math import log10, exp
+from numba import njit
 from HSP2.ADCALC import advect
 from HSP2.utilities  import make_numba_dict
 
@@ -19,18 +20,92 @@ ERRMSGS =('SEDTRN: Warning -- bed storage of sediment size fraction sand is empt
 def sedtrn(store, siminfo, uci, ts):
 	''' Simulate behavior of inorganic sediment'''
 
-	errorsV = zeros(len(ERRMSGS), dtype=int)
-
-	simlen = siminfo['steps']
-	delt   = siminfo['delt']
+	# simlen = siminfo['steps']
+	# delt   = siminfo['delt']
 	delt60 = siminfo['delt'] / 60
 	delts  = siminfo['delt'] * 60
+	uunits = siminfo['units']
 
 	advectData = uci['advectData']
 	(nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = advectData
-	vol = vol * 43560
+
+	ts['VOL'] = VOL
+	ts['SROVOL'] = SROVOL
+	ts['EROVOL'] = EROVOL
+	for i in range(nexits):
+		ts['SOVOL' + str(i + 1)] = SOVOL[:, i]
+		ts['EOVOL' + str(i + 1)] = EOVOL[:, i]
 
 	ui = make_numba_dict(uci)
+	ui['simlen'] = siminfo['steps']
+	ui['uunits'] = siminfo['units']
+	ui['vol'] = vol
+	ui['delts'] = siminfo['delt'] * 60
+	ui['delt60'] = siminfo['delt'] / 60
+	ui['errlen'] = len(ERRMSGS)
+
+	ui_silt = uci['SILT']
+	if uunits == 1:
+		ui['silt_d'] = ui_silt['D'] * 0.0833
+		ui['silt_w'] = ui_silt['W'] * delts * 0.0254  # convert settling velocity from m/sec to m/ivl
+	else:
+		ui['silt_d'] = ui_silt['D'] * 0.001
+		ui['silt_w'] = ui_silt['W'] * delts * 0.001  # convert settling velocity from m/sec to m/ivl
+	ui['silt_rho'] = ui_silt['RHO']
+	ui['silt_taucd'] = ui_silt['TAUCD']
+	ui['silt_taucs'] = ui_silt['TAUCS']
+	ui['silt_m'] = ui_silt['M'] * delt60 / 24.0 * 4.880  # convert erodibility coeff from /day to /ivl
+
+	ui_clay = uci['CLAY']
+	if uunits == 1:
+		ui['clay_d'] = ui_clay['D'] * 0.0833
+		ui['clay_w'] = ui_clay['W'] * delts * 0.0254 # convert settling velocity from m/sec to m/ivl
+	else:
+		ui['clay_d'] = ui_clay['D'] * 0.001
+		ui['clay_w'] = ui_clay['W'] * delts * 0.001  # convert settling velocity from m/sec to m/ivl
+	ui['clay_rho']   = ui_clay['RHO']
+	ui['clay_taucd'] = ui_clay['TAUCD']
+	ui['clay_taucs'] = ui_clay['TAUCS']
+	ui['clay_m']     = ui_clay['M']	* delt60 / 24.0 * 4.880 # convert erodibility coeff from /day to /ivl
+
+	############################################################################
+	errors = _sedtrn_(ui, ts)  # run SEDTRN simulation code
+	############################################################################
+
+	if nexits > 1:
+		u = uci['SAVE']
+		key1 = 'OSED1'
+		key2 = 'OSED2'
+		key3 = 'OSED3'
+		key4 = 'OSED4'
+		for i in range(nexits):
+			u[f'{key1}{i + 1}'] = u[key1]
+			u[f'{key2}{i + 1}'] = u[key2]
+			u[f'{key3}{i + 1}'] = u[key3]
+			u[f'{key4}{i + 1}'] = u[key4]
+		del u[key1]
+		del u[key2]
+		del u[key3]
+		del u[key4]
+
+	return errors, ERRMSGS
+
+@njit(cache=True)
+def _sedtrn_(ui, ts):
+	''' Simulate behavior of inorganic sediment'''
+	errorsV = zeros(int(ui['errlen'])).astype(int64)
+
+	simlen = int(ui['simlen'])
+	uunits = int(ui['uunits'])
+	delts = ui['delts']
+	delt60 = ui['delt60']
+
+	AFACT = 43560.0
+	if uunits == 2:
+		# si units conversion
+		AFACT = 1000000.0
+	vol = ui['vol'] * AFACT
+
 	svol = vol
 	nexits = int(ui['NEXITS'])
 
@@ -45,9 +120,8 @@ def sedtrn(store, siminfo, uci, ts):
 	bedwrn = ui['BEDWRN']
 	por    = ui['POR']
 
-	UUNITS = 1  # assume english units for now
 	# table SED-HYDPARM
-	if UUNITS == 1:
+	if uunits == 1:
 		len_ = ui['LEN'] * 5280
 		db50 = ui['DB50'] * 0.0833
 	else:
@@ -56,7 +130,7 @@ def sedtrn(store, siminfo, uci, ts):
 	delth  = ui['DELTH']
 
 	# evaluate some quantities used in colby and/or toffaleti sand transport simulation methods
-	if UUNITS == 1:
+	if uunits == 1:
 		db50e = db50
 		db50m = db50 * 304.8
 	else: 
@@ -65,7 +139,7 @@ def sedtrn(store, siminfo, uci, ts):
 	slope = delth / len_
 	
 	# SAND PARAMETERS; table SAND-PM
-	if UUNITS == 1:
+	if uunits == 1:
 		sand_d = ui['D'] * 0.0833
 		sand_w = ui['W'] * delts * 0.0254 # convert settling velocity from m/sec to m/ivl
 	else:
@@ -76,30 +150,20 @@ def sedtrn(store, siminfo, uci, ts):
 	sand_expsnd = ui['EXPSND']
 
 	# SILT PARAMETERS; table SILT-CLAY-PM --- note: first occurance is silt
-	ui_silt = uci['SILT']
-	if UUNITS == 1:
-		silt_d = ui_silt['D'] * 0.0833
-		silt_w = ui_silt['W'] * delts * 0.0254 # convert settling velocity from m/sec to m/ivl
-	else:
-		silt_d = ui_silt['D'] * 0.001
-		silt_w = ui_silt['W'] * delts *  0.001  # convert settling velocity from m/sec to m/ivl
-	silt_rho   = ui_silt['RHO']
-	silt_taucd = ui_silt['TAUCD']
-	silt_taucs = ui_silt['TAUCS']
-	silt_m     = ui_silt['M'] * delt60 / 24.0 * 4.880 # convert erodibility coeff from /day to /ivl
+	silt_d = ui['silt_d']
+	silt_w = ui['silt_w']
+	silt_rho   = ui['silt_rho']
+	silt_taucd = ui['silt_taucd']
+	silt_taucs = ui['silt_taucs']
+	silt_m     = ui['silt_m']
 	
 	# CLAY PARAMETERS; table SILT-CLAY-PM --- note: second occurance is clay
-	ui_clay = uci['CLAY']
-	if UUNITS == 1:
-		clay_d = ui_clay['D'] * 0.0833
-		clay_w = ui_clay['W'] * delts * 0.0254 # convert settling velocity from m/sec to m/ivl
-	else:
-		clay_d = ui_clay['D'] * 0.001
-		clay_w = ui_clay['W'] * delts * 0.001  # convert settling velocity from m/sec to m/ivl
-	clay_rho   = ui_clay['RHO']
-	clay_taucd = ui_clay['TAUCD']
-	clay_taucs = ui_clay['TAUCS']
-	clay_m     = ui_clay['M']	* delt60 / 24.0 * 4.880 # convert erodibility coeff from /day to /ivl
+	clay_d = ui['clay_d']
+	clay_w = ui['clay_w']
+	clay_rho   = ui['clay_rho']
+	clay_taucd = ui['clay_taucd']
+	clay_taucs = ui['clay_taucs']
+	clay_m     = ui['clay_m']
 	
 	# bed sediment conditions; table BED-INIT
 	beddep      = ui['BEDDEP']
@@ -184,21 +248,6 @@ def sedtrn(store, siminfo, uci, ts):
 	OSED2 = zeros((simlen, nexits))
 	OSED3 = zeros((simlen, nexits))
 	OSED4 = zeros((simlen, nexits))
-	if nexits > 1:
-		u = uci['SAVE']
-		key1 = 'OSED1'
-		key2 = 'OSED2'
-		key3 = 'OSED3'
-		key4 = 'OSED4'
-		for i in range(nexits):
-			u[f'{key1}{i + 1}'] = u[key1]
-			u[f'{key2}{i + 1}'] = u[key2]
-			u[f'{key3}{i + 1}'] = u[key3]
-			u[f'{key4}{i + 1}'] = u[key4]
-		del u[key1]
-		del u[key2]
-		del u[key3]
-		del u[key4]
 
 	fact = 1.0 / total_bedfr  # normalize fractions to sum to one
 	sand_bedfr *= fact
@@ -231,12 +280,21 @@ def sedtrn(store, siminfo, uci, ts):
 
 	wsande = sand_w * 3.28 / delts  # convert fall velocity from m/ivl to ft/sec
 
+	VOL = ts['VOL']
+	SROVOL = ts['SROVOL']
+	EROVOL = ts['EROVOL']
+	SOVOL = zeros((simlen, nexits))
+	EOVOL = zeros((simlen, nexits))
+	for i in range(nexits):
+		SOVOL[:, i] = ts['SOVOL' + str(i + 1)]
+		EOVOL[:, i] = ts['EOVOL' + str(i + 1)]
+
 	#################### END PSED
 
 	for loop in range(simlen):
 
 		# perform any necessary unit conversions
-		if UUNITS == 2:  # uci is in metric units
+		if uunits == 2:  # uci is in metric units
 			avvele = AVVEL[loop] * 3.28
 			avdepm = AVDEP[loop]
 			avdepe = AVDEP[loop] * 3.28
@@ -258,7 +316,7 @@ def sedtrn(store, siminfo, uci, ts):
 			ised3 = ISED3[loop] / 3.121E-08
 		tau = TAU[loop]
 		tw  = TW[loop]
-		tw = (tw - 32.0) * 0.555
+		tw = (tw - 32.0) * 0.5555
 
 		# Following is routine #&COHESV() to simulate behavior of cohesive sediments (silt and clay)
 		# compute bed fractions based on relative storages
@@ -266,7 +324,7 @@ def sedtrn(store, siminfo, uci, ts):
 		frcsed1 = silt_wt_rsed5 / totbed  	if totbed > 0.0 else 0.5
 		frcsed2 = clay_wt_rsed6 / totbed  	if totbed > 0.0 else 0.5
 
-		vol = VOL[loop] * 43560
+		vol = VOL[loop] * AFACT
 		srovol = SROVOL[loop]
 		erovol = EROVOL[loop]
 		sovol = SOVOL[loop, :]
@@ -440,7 +498,7 @@ def sedtrn(store, siminfo, uci, ts):
 		SSED3[loop] = clay_ssed3
 		SSED4[loop] = total_ssed4
 		BEDDEP[loop]= beddep
-		if UUNITS == 1:
+		if uunits == 1:
 			RSED1[loop] = sand_rsed1 * 3.121E-08
 			RSED2[loop] = silt_rsed2 * 3.121E-08
 			RSED3[loop] = clay_rsed3 * 3.121E-08
@@ -467,31 +525,31 @@ def sedtrn(store, siminfo, uci, ts):
 			OSED3[loop] = osed3 * 3.121E-08
 			OSED4[loop] = osed4 * 3.121E-08
 		else:
-			RSED1[loop] = sand_rsed1 * 2.83E-08
-			RSED2[loop] = silt_rsed2 * 2.83E-08
-			RSED3[loop] = clay_rsed3 * 2.83E-08
-			RSED4[loop] = sand_wt_rsed4 * 2.83E-08
-			RSED5[loop] = silt_wt_rsed5 * 2.83E-08
-			RSED6[loop] = clay_wt_rsed6 * 2.83E-08
-			RSED7[loop] = sand_t_rsed7 * 2.83E-08
-			RSED8[loop] = silt_t_rsed8 * 2.83E-08
-			RSED9[loop] = clay_t_rsed9 * 2.83E-08
-			RSED10[loop] = total_rsed10 * 2.83E-08
-			TSED1[loop] = tsed1 * 2.83E-08
-			TSED2[loop] = tsed2 * 2.83E-08
-			TSED3[loop] = tsed3 * 2.83E-08
-			DEPSCR1[loop] = depscr1 * 2.83E-08
-			DEPSCR2[loop] = depscr2 * 2.83E-08
-			DEPSCR3[loop] = depscr3 * 2.83E-08
-			DEPSCR4[loop] = depscr4 * 2.83E-08
-			ROSED1[loop] = rosed1 * 2.83E-08
-			ROSED2[loop] = rosed2 * 2.83E-08
-			ROSED3[loop] = rosed3 * 2.83E-08
-			ROSED4[loop] = rosed4 * 2.83E-08
-			OSED1[loop] = osed1 * 2.83E-08
-			OSED2[loop] = osed2 * 2.83E-08
-			OSED3[loop] = osed3 * 2.83E-08
-			OSED4[loop] = osed4 * 2.83E-08
+			RSED1[loop] = sand_rsed1 * 1E-06
+			RSED2[loop] = silt_rsed2 * 1E-06
+			RSED3[loop] = clay_rsed3 * 1E-06
+			RSED4[loop] = sand_wt_rsed4 * 1E-06
+			RSED5[loop] = silt_wt_rsed5 * 1E-06
+			RSED6[loop] = clay_wt_rsed6 * 1E-06
+			RSED7[loop] = sand_t_rsed7 * 1E-06
+			RSED8[loop] = silt_t_rsed8 * 1E-06
+			RSED9[loop] = clay_t_rsed9 * 1E-06
+			RSED10[loop] = total_rsed10 * 1E-06
+			TSED1[loop] = tsed1 * 1E-06
+			TSED2[loop] = tsed2 * 1E-06
+			TSED3[loop] = tsed3 * 1E-06
+			DEPSCR1[loop] = depscr1 * 1E-06
+			DEPSCR2[loop] = depscr2 * 1E-06
+			DEPSCR3[loop] = depscr3 * 1E-06
+			DEPSCR4[loop] = depscr4 * 1E-06
+			ROSED1[loop] = rosed1 * 1E-06 # 2.83E-08
+			ROSED2[loop] = rosed2 * 1E-06
+			ROSED3[loop] = rosed3 * 1E-06
+			ROSED4[loop] = rosed4 * 1E-06
+			OSED1[loop] = osed1 * 1E-06
+			OSED2[loop] = osed2 * 1E-06
+			OSED3[loop] = osed3 * 1E-06
+			OSED4[loop] = osed4 * 1E-06
 
 	if nexits > 1:
 		for i in range(nexits):
@@ -500,9 +558,10 @@ def sedtrn(store, siminfo, uci, ts):
 			ts['OSED3' + str(i + 1)] = OSED3[:, i]
 			ts['OSED4' + str(i + 1)] = OSED4[:, i]
 
-	return errorsV, ERRMSGS
+	return errorsV
 
 
+@njit(cache=True)
 def bdexch (avdepm, w, tau, taucd, taucs, m, vol, frcsed, susp, bed):
 	''' simulate deposition and scour of a cohesive sediment fraction- silt or clay'''
 	if w > 0.0 and tau < taucd and susp > 1.0e-30:    # deposition will occur
@@ -528,6 +587,7 @@ def bdexch (avdepm, w, tau, taucd, taucs, m, vol, frcsed, susp, bed):
 ''' Sediment Transport in Alluvial Channels, 1963-65 by Bruce Colby.
 This report explains the following empirical algorithm.'''
 
+@njit(cache=True)
 def colby(v, db50, fhrad, fsl, tempr):
 # 	Colby's method to calculate the capacity of the flow to transport sand.
 #
@@ -600,19 +660,30 @@ def colby(v, db50, fhrad, fsl, tempr):
 	F[1, 9],  F[2, 9],  F[3, 9],  F[4, 9],  F[5, 9]  = 1.0,  1.3,  3.5,   12.0,  43.0
 	F[1, 10], F[2, 10], F[3, 10], F[4, 10], F[5, 10] = 1.0,  1.4,  4.9,   22.0,  120.0
 	  
-	T = array([[1.2,  1.15, 1.10, 0.96, 0.90, 0.85, 0.82], 
-			   [1.35, 1.25, 1.12, 0.92, 0.86, 0.80, 0.75],
-			   [1.60, 1.40, 1.20, 0.89, 0.80, 0.72, 0.66], 
-			   [2.00, 1.65, 1.30, 0.85, 0.72, 0.63, 0.55]]).T                     # Temperature adjustment, Figure 24
+	# T = array([[-999, -999, -999, -999, -999, -999, -999, -999],
+	# 		   [-999, 1.2,  1.15, 1.10, 0.96, 0.90, 0.85, 0.82],
+	# 		   [-999, 1.35, 1.25, 1.12, 0.92, 0.86, 0.80, 0.75],
+	# 		   [-999, 1.60, 1.40, 1.20, 0.89, 0.80, 0.72, 0.66],
+	# 		   [-999, 2.00, 1.65, 1.30, 0.85, 0.72, 0.63, 0.55]]).T               # Temperature adjustment, Figure 24
 
-	DF   = array([0.10, 0.20, 0.30, 0.60, 1.00, 2.00, 6.00, 10.00, 20.00, 1.E2])               # Depths for Figure 24	
-	CF   = array([0.00, 1.E4, 5.E4, 1.E5, 1.5E5])  	                       # Concentrations of sediment for Figure 24
-	P    = array([0.60, 0.90, 1.0, 1.0, 0.83, 0.60, 0.40, 0.25, 0.15, 0.09, 0.05])  # Percentage Effect for Figure 24
-	DP   = array([0.10, 0.15, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00]) # Median diameters for Figure 24
-	DG   = array([0.10, 1.00, 10.0, 100.0])                              # Depth values for Figure 26
-	VG   = array([1.0, 1.5, 2.0, 3.0, 4.0, 6.0, 8.0, 10.0])           # Velocity values for Figure 26
-	D50G = array([0.10, 0.20, 0.30, 0.40, 0.60, 0.80])                  # Median values for figure 26
-	TEMP = array([32.0, 40.0, 50.0, 70.0, 80.0, 90.0, 100.0])  # Temperatures for lookup in Figure 26
+	T = zeros((8,5))
+	T[0, 0],  T[0, 1],  T[0, 2],  T[0, 3],  T[0, 4]  = -999, -999, -999, -999, -999
+	T[1, 0],  T[1, 1],  T[1, 2],  T[1, 3],  T[1, 4]  = -999, 1.2,  1.35, 1.60, 2.00
+	T[2, 0],  T[2, 1],  T[2, 2],  T[2, 3],  T[2, 4]  = -999, 1.15, 1.25, 1.40, 1.65
+	T[3, 0],  T[3, 1],  T[3, 2],  T[3, 3],  T[3, 4]  = -999, 1.10, 1.12, 1.20, 1.30
+	T[4, 0],  T[4, 1],  T[4, 2],  T[4, 3],  T[4, 4]  = -999, 0.96, 0.92, 0.89, 0.85
+	T[5, 0],  T[5, 1],  T[5, 2],  T[5, 3],  T[5, 4]  = -999, 0.90, 0.86, 0.80, 0.72
+	T[6, 0],  T[6, 1],  T[6, 2],  T[6, 3],  T[6, 4]  = -999, 0.85, 0.80, 0.72, 0.63
+	T[7, 0],  T[7, 1],  T[7, 2],  T[7, 3],  T[7, 4]  = -999, 0.82, 0.75, 0.66, 0.55
+
+	DF   = array([-999, 0.10, 0.20, 0.30, 0.60, 1.00, 2.00, 6.00, 10.00, 20.00, 1.E2])               # Depths for Figure 24
+	CF   = array([-999, 0.00, 1.E4, 5.E4, 1.E5, 1.5E5])  	                       # Concentrations of sediment for Figure 24
+	P    = array([-999, 0.60, 0.90, 1.0, 1.0, 0.83, 0.60, 0.40, 0.25, 0.15, 0.09, 0.05])  # Percentage Effect for Figure 24
+	DP   = array([-999, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00]) # Median diameters for Figure 24
+	DG   = array([-999, 0.10, 1.00, 10.0, 100.0])                              # Depth values for Figure 26
+	VG   = array([-999, 1.0, 1.5, 2.0, 3.0, 4.0, 6.0, 8.0, 10.0])           # Velocity values for Figure 26
+	D50G = array([-999, 0.10, 0.20, 0.30, 0.40, 0.60, 0.80])                  # Median values for figure 26
+	TEMP = array([-999, 32.0, 40.0, 50.0, 70.0, 80.0, 90.0, 100.0])  # Temperatures for lookup in Figure 26
 	  
 	ferror = 0
 	d50err = 0
@@ -627,10 +698,11 @@ def colby(v, db50, fhrad, fsl, tempr):
 	if not 0.80 >= db50 >=  0.10:  # D50G limits
 		ferror = 1
 		d50err = 1
-		return
+		return 0.0, ferror, d50err, hrerr, velerr
 	for id501, db50x in enumerate(D50G):
 		if db50x > db50:
 			break
+	id501 -= 1
 	id502 = id501 + 1
 	zz1 = log10(D50G[id501])
 	zz2 = log10(D50G[id502])
@@ -639,7 +711,7 @@ def colby(v, db50, fhrad, fsl, tempr):
 	if not 100.0 >= fhrad >= 0.10:  # DG limits
 		ferror = 1
 		hrerr  = 1
-		return
+		return 0.0, ferror, d50err, hrerr, velerr
 	for id1,dgx in enumerate(DG):
 		if fhrad > dgx:
 			break
@@ -652,13 +724,14 @@ def colby(v, db50, fhrad, fsl, tempr):
 	if not 10.0 >= v >= 1.0:  # VG limits
 		ferror = 1
 		velerr = 1
-		return
+		return 0.0, ferror, d50err, hrerr, velerr
 	for iv1, vx in enumerate(VG):
 		if vx > v:
 			break
+	iv1 -= 1
 	iv2 = iv1 + 1
-	yy1 = log10(VG[iv1-1])
-	yy2 = log10(VG[iv2-1])
+	yy1 = log10(VG[iv1])
+	yy2 = log10(VG[iv2])
 	yyratio = (log10(v) - yy1) / (yy2 - yy1)		
 		
 	tmpr = min(100.0, max(32.0, tempr * 1.8 + 32.0))
@@ -695,10 +768,10 @@ def colby(v, db50, fhrad, fsl, tempr):
 		it2 = it1
 		it1 -= 1
 
-		xt11 = log10(T[it1,id1])
-		xt21 = log10(T[it2,id1])
-		xt12 = log10(T[it1,id2])
-		xt22 = log10(T[it2,id2])
+		xt11 = log10(T[it1][id1])
+		xt21 = log10(T[it2][id1])
+		xt12 = log10(T[it1][id2])
+		xt22 = log10(T[it2][id2])
 		
 		xnt   = log10(tmpr / TEMP[it1]) / log10(TEMP[it2] / TEMP[it1])
 		xct1  = xt11 + xnt * (xt21 - xt11)
@@ -755,6 +828,7 @@ def colby(v, db50, fhrad, fsl, tempr):
 	return gtuc * (cfd * tcf + 1.0), ferror, d50err, hrerr, velerr
 
 
+@njit(cache=True)
 def toffaleti(v, fdiam, fhrad, slope, tempr, vset):
 	''' Toffaleti's method to calculate the capacity of the flow to transport sand.'''
 
@@ -826,6 +900,7 @@ def toffaleti(v, fdiam, fhrad, slope, tempr, vset):
 	gsb = (cmi * ((2.0 * fdiam)**(zn))) / 1.0e+30  	                            # bed layer transport capacity
 
 	return max(0.0, gsu + gsm + gsl + gsb)              # Total transport capacity of the rchres (tons/day/ft)
+
 
 def expand_SEDTRN_masslinks(flags, uci, dat, recs):
 	if flags['SEDTRN']:

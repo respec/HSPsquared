@@ -4,7 +4,7 @@ License: LGPL2
 
 Conversion of HSPF HPERSED.FOR module into Python''' 
 
-from numpy import zeros, where, int64, full
+from numpy import zeros, where, int64, full, float64
 from numba import njit
 from HSP2.utilities  import initm, make_numba_dict, hourflag
 
@@ -20,14 +20,45 @@ PDETS= DETS*MFACTA # convert dimensional variables to external units
 
 def sedmnt(store, siminfo, uci, ts):
 	''' Produce and remove sediment from the land surface'''
-	
-	errorsV = zeros(len(ERRMSG), dtype=int)
 
-	delt   = siminfo['delt']
 	simlen = siminfo['steps']
-	tindex = siminfo['tindex']
 
 	ui = make_numba_dict(uci)  # Note: all values converted to float automatically
+	ui['simlen'] = siminfo['steps']
+	ui['uunits'] = siminfo['units']
+	ui['delt'] = siminfo['delt']
+	ui['errlen'] = len(ERRMSG)
+
+	u = uci['PARAMETERS']
+	if 'CRVFG' in u:
+		ts['COVERI'] = initm(siminfo, uci, u['CRVFG'], 'MONTHLY_COVER', u['COVER'])
+	else:
+		ts['COVERI'] = full(simlen, u['COVER'])
+
+	if 'VSIVFG' in u:
+		ts['NVSI'] = initm(siminfo, uci, u['VSIVFG'], 'MONTHLY_NVSI', u['NVSI'])
+	else:
+		ts['NVSI'] = full(simlen, u['NVSI'])
+
+	ts['DAYFG'] = hourflag(siminfo, 0, dofirst=True).astype(float64)
+
+	############################################################################
+	errors = _sedmnt_(ui, ts)  # run SEDMNT simulation code
+	############################################################################
+
+	return errors, ERRMSG
+
+
+@njit(cache=True)
+def _sedmnt_(ui, ts):
+	''' Produce and remove sediment from the land surface'''
+
+	errorsV = zeros(int(ui['errlen'])).astype(int64)
+
+	simlen = int(ui['simlen'])
+	delt = ui['delt']
+	uunits = ui['uunits']
+
 	if 'VSIVFG' in ui:
 		VSIVFG = ui['VSIVFG']
 	else:
@@ -47,25 +78,19 @@ def sedmnt(store, siminfo, uci, ts):
 	kger   = ui['KGER']
 	jger   = ui['JGER']
 
-	u = uci['PARAMETERS']
-	if 'CRVFG' in u:
-		ts['COVERI'] = initm(siminfo, uci, u['CRVFG'], 'MONTHLY_COVER', u['COVER'])
-	else:
-		ts['COVERI'] = full(simlen, u['COVER'])
 	COVERI = ts['COVERI']
 	cover = COVERI[0]   # for numba
 
-	if 'VSIVFG' in u:
-		ts['NVSI'] = initm(siminfo, uci, u['VSIVFG'], 'MONTHLY_NVSI', u['NVSI'])
-	else:
-		ts['NVSI'] = full(simlen, u['NVSI'])
 	NVSI = ts['NVSI'] * delt / 1440.
 
 	if 'RAINF' in ts:
 		RAIN = ts['RAINF']
 	else:
 		RAIN = ts['PREC']
-		
+
+	if 'SLSED1 1' in ts:
+		ts['SLSED'] = ts['SLSED1 1']
+
 	for name in ['PREC', 'SLSED', 'SNOCOV', 'SURO', 'SURS']:
 		if name not in ts:
 			ts[name] = zeros(simlen)
@@ -82,8 +107,14 @@ def sedmnt(store, siminfo, uci, ts):
 	SOSED = ts['SOSED'] = zeros(simlen)
 	COVER = ts['COVER'] = zeros(simlen)
 
-        # HSPF 12.5 has only one sediment block
+	# HSPF 12.5 has only one sediment block
 	dets = ui['DETS']
+
+	if uunits == 2:
+		NVSI = NVSI * 2.205 / 2.471       # metric kg/ha to lbs/ac
+		SURO = SURO * 0.0394              # mm to inches
+		SURS = SURS * 0.0394              # mm to inches
+		dets = dets * 1.10231 / 2.471     # metric tonnes/ha to tons/ac
 
 	# BLOCK SPECIFIC VALUES
 	# nblks = ui['NBLKS']
@@ -109,7 +140,7 @@ def sedmnt(store, siminfo, uci, ts):
 	stcap = delt60 * kser * (surs / delt60)**jser if SDOPFG else 0.0
 
 	# DAYFG = where(tindex.hour==1, True, False)   # ??? need to check if minute == 0
-	DAYFG = hourflag(siminfo, 0, dofirst=True).astype(bool)
+	DAYFG = ts['DAYFG'].astype(int64)
 	
 	DRYDFG = 1
 	
@@ -224,4 +255,10 @@ def sedmnt(store, siminfo, uci, ts):
 		SOSED[loop] = sosed
 		COVER[loop] = cover
 
-	return errorsV, ERRMSG
+		if uunits == 2:
+			DETS[loop] = dets / 1.10231 * 2.471  # tons/ac to metric tonnes/ha
+			WSSD[loop] = wssd / 1.10231 * 2.471   # tons/ac to metric tonnes/ha
+			SCRSD[loop]= scrsd / 1.10231 * 2.471   # tons/ac to metric tonnes/ha
+			SOSED[loop]= sosed / 1.10231 * 2.471   # tons/ac to metric tonnes/ha
+
+	return errorsV

@@ -1,12 +1,12 @@
 ''' Copyright (c) 2020 by RESPEC, INC.
-Author: Robert Heaphy, Ph.D.
+Authors: Robert Heaphy, Ph.D. and Paul Duda
 License: LGPL2
 
 Conversion of HSPF HIMPSLD.FOR module into Python''' 
 
-from numpy import zeros, where, full
+from numpy import zeros, where, full, int64, float64
 from numba import njit
-from HSP2.utilities  import initm, make_numba_dict, hourflag
+from HSP2.utilities import initm, make_numba_dict, hourflag
 
 
 MFACTA = 1.0  # english units
@@ -16,50 +16,77 @@ ERRMSG = []
 
 def solids(store, siminfo, uci, ts):
 	'''Accumulate and remove solids from the impervious land segment'''
-	
-	errorsV = zeros(len(ERRMSG), dtype=int)
-	delt60 = siminfo['delt'] / 60     # delt60 - simulation time interval in hours
-	simlen = siminfo['steps']
-	tindex = siminfo['tindex']
 
-	ui = make_numba_dict(uci)  # Note: all values converted to float automatically
-	if 'SDOPFG' in ui:
-		SDOPFG = ui['SDOPFG']
-	else:
-	    SDOPFG = 0
-	keim   = ui['KEIM']
-	jeim   = ui['JEIM']
-	slds   = ui['SLDS']
-	
+	simlen = siminfo['steps']
+
 	for name in ['SURO', 'SURS', 'PREC', 'SLSLD']:
 		if name not in ts:
 			ts[name] = zeros(simlen)
-	SURO  = ts['SURO']
-	SURS  = ts['SURS']	
-	PREC  = ts['PREC']
-	SLSLD = ts['SLSLD']  # lateral input of solids is considered
-	
-	# preallocate output arrays
-	SOSLD = ts['SOSLD'] = zeros(simlen)
-	SLDS  = ts['SLDS']  = zeros(simlen)
-
-	drydfg = 1  # assume day is dry
-	DAYFG = hourflag(siminfo, 0, dofirst=True).astype(bool)
 
 	u = uci['PARAMETERS']
 	# process optional monthly arrays to return interpolated data or constant array
 	if 'VASDFG' in u:
-		ts['ACCSDP'] = initm(siminfo, uci, u['VASDFG'], 'ACCSDM', u['ACCSDP'])
+		ts['ACCSDP'] = initm(siminfo, uci, u['VASDFG'], 'MONTHLY_ACCSDP', u['ACCSDP'])
 	else:
 		ts['ACCSDP'] = full(simlen, u['ACCSDP'])
 	if 'VRSDFG' in u:
-		ts['REMSDP'] = initm(siminfo, uci, u['VRSDFG'], 'REMSDM', u['REMSDP'])
+		ts['REMSDP'] = initm(siminfo, uci, u['VRSDFG'], 'MONTHLY_REMSDP', u['REMSDP'])
 	else:
 		ts['REMSDP'] = full(simlen, u['REMSDP'])
+
+	ui = make_numba_dict(uci)  # Note: all values converted to float automatically
+	ui['uunits'] = siminfo['units']
+	ui['simlen'] = siminfo['steps']
+	ui['delt60'] = siminfo['delt'] / 60     # delt60 - simulation time interval in hours
+	ui['errlen'] = len(ERRMSG)
+
+	ts['DAYFG'] = hourflag(siminfo, 0, dofirst=True).astype(float64)
+
+	############################################################################
+	errors = _solids_(ui, ts)  # run SOLIDS simulation code
+	############################################################################
+
+	return errors, ERRMSG
+
+
+@njit(cache=True)
+def _solids_(ui, ts):
+	'''Accumulate and remove solids from the impervious land segment'''
+	errorsV = zeros(int(ui['errlen'])).astype(int64)
+
+	uunits = ui['uunits']
+	simlen = int(ui['simlen'])
+	delt60 = ui['delt60']
+
+	SURO = ts['SURO']
+	SURS = ts['SURS']
+	PREC = ts['PREC']
+	SLSLD = ts['SLSLD']  # lateral input of solids is considered
+
+	keim   = ui['KEIM']
+	jeim   = ui['JEIM']
+	slds   = ui['SLDS']
+
+	if 'SDOPFG' in ui:
+		SDOPFG = ui['SDOPFG']
+	else:
+		SDOPFG = 0
+
+	# preallocate output arrays
+	SOSLD = ts['SOSLD'] = zeros(simlen)
+	SLDS = ts['SLDS'] = zeros(simlen)
+
+	drydfg = 1  # assume day is dry
+	DAYFG = ts['DAYFG'].astype(int64)
+
 	ACCSDP = ts['ACCSDP']
 	REMSDP = ts['REMSDP']
+	if uunits == 2:
+		ACCSDP = ACCSDP * 1.10231 / 2.471 # metric tonnes/ha to tons/ac
+		SURO = SURO * 0.0394              # mm to inches
+		SURS = SURS * 0.0394              # mm to inches
+		slds = slds * 1.10231 / 2.471     # metric tonnes/ha to tons/ac
 
-	slds = ui['SLDS']
 	for loop in range(simlen):
 		suro   = SURO[loop]
 		surs   = SURS[loop]
@@ -79,7 +106,7 @@ def solids(store, siminfo, uci, ts):
 					sosld = slds * suro / arg
 				else:				# sufficient solids storage, base removal on the calculated capacity'''
 					sosld = stcap * suro / arg
-					slds  = slds - sosld
+				slds  = slds - sosld
 			else:
 				sosld = 0.0  # no runoff occurs, so no removal by runoff
 		else:              # using method 2
@@ -112,4 +139,8 @@ def solids(store, siminfo, uci, ts):
 
 		SOSLD[loop] = sosld  # * MFACTA
 		SLDS[loop]  = slds   # * MFACTA
-	return errorsV, ERRMSG
+
+		if uunits == 2:
+			SOSLD[loop] = sosld / 1.10231 * 2.471  # tons/ac to metric tonnes/ha
+			SLDS[loop]  = slds / 1.10231 * 2.471   # tons/ac to metric tonnes/ha
+	return errorsV

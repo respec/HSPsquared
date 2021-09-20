@@ -63,6 +63,7 @@ def iwater(store, siminfo, uci, ts):
     ui['steps']  = steps
     ui['delt']   = siminfo['delt']
     ui['errlen'] = len(ERRMSGS)
+    ui['uunits'] = siminfo['units']
 
     ############################################################################
     errors = _iwater_(ui, ts)                       # run IWATER simulation code
@@ -78,9 +79,12 @@ def _iwater_(ui, ts):
 
     delt60 = ui['delt'] / 60.0          # simulation interval in hours
     steps  = int(ui['steps'])
+    uunits = ui['uunits']
 
     lsur   = ui['LSUR']
     slsur  = ui['SLSUR']
+    if uunits == 2:
+        lsur = lsur * 3.28
 
     RTLIFG = 0
     if 'RTLIFG' in ui:
@@ -94,17 +98,22 @@ def _iwater_(ui, ts):
 
     HRFG   = ts['HRFG'].astype(int64)
     HR1FG  = ts['HR1FG'].astype(int64)
-    RETSC  = ts['RETSC']
-    NSUR   = ts['NSUR']
-    AIRTMP = ts['AIRTMP']
-    PETMAX = ts['PETMAX']
-    PETMIN = ts['PETMIN']
-    SNOCOV = ts['SNOCOV']
-    SURLI  = ts['SURLI']
-    PETINP = ts['PETINP']
-    RAINF  = ts['RAINF']
-    WYIELD = ts['WYIELD']
-    PREC   = ts['PREC']
+    RETSC  = ts['RETSC']  # input parameter could be input monthly
+    NSUR   = ts['NSUR']   # input parameter could be input monthly
+    AIRTMP = ts['AIRTMP'] # atemp
+    PETMAX = ts['PETMAX'] # input parameter
+    PETMIN = ts['PETMIN'] # input parameter
+    SNOCOV = ts['SNOCOV'] # snow
+    SURLI  = ts['SURLI']  # ext
+    PETINP = ts['PETINP'] # ext
+    RAINF  = ts['RAINF']  # snow
+    WYIELD = ts['WYIELD'] # snow
+    PREC   = ts['PREC']   # ext
+    if uunits == 2:
+        RETSC = RETSC * 0.0394 # / 25.4
+        WYIELD = WYIELD * 0.0394 # / 25.4        ???  take to inches
+        PETMAX = (ts['PETMAX'] * 9./5.) + 32.
+        PETMIN = (ts['PETMIN'] * 9./5.) + 32.
 
     # like MATLAB, much faster to preinitialize variables. Store in ts Dict
     ts['IMPEV'] = IMPEV = zeros(steps, dtype=float64)
@@ -119,6 +128,9 @@ def _iwater_(ui, ts):
     # initial conditions
     rets = ui['RETS']
     surs = ui['SURS']
+    if uunits == 2:
+        rets = rets * 0.0394 # / 25.4
+        surs = surs * 0.0394
     msupy = surs
 
     # Needed by Numba 0.31
@@ -260,6 +272,15 @@ def _iwater_(ui, ts):
         SURI[step] = suri
         SURO[step] = suro
         SURS[step] = surs
+
+        if uunits == 2:
+            IMPEV[step]= impev * 25.4
+            RETS[step] = rets * 25.4
+            SURI[step] = suri * 25.4
+            SURO[step] = suro * 25.4
+            SURS[step] = surs * 25.4
+            SUPY[step] = supy * 25.4
+            PET[step]  = pet * 25.4
     return errors
 
 

@@ -31,6 +31,7 @@ def snow(store, siminfo, uci, ts):
        ts is a dictionary with segment specific timeseries'''
 
     steps   = siminfo['steps']                # number of simulation timesteps
+    UUNITS  = siminfo['units']
 
     ts['SVP']     = store['TIMESERIES/Saturated_Vapor_Pressure_Table'].to_numpy()
     ts['SEASONS'] = monthval(siminfo, store['TIMESERIES/SEASONS_Table'])
@@ -61,6 +62,7 @@ def snow(store, siminfo, uci, ts):
 
     ui = make_numba_dict(uci)  # Note: all values coverted to float automatically
     ui['steps']   = steps
+    ui['uunits']  = UUNITS
     ui['delt']    = siminfo['delt']
     ui['errlen']  = len(ERRMSGS)
     ui['cloudfg'] = cloudfg
@@ -84,7 +86,7 @@ def snow(store, siminfo, uci, ts):
     return errors, ERRMSGS
 
 
-# @njit(cache=True)
+@njit(cache=True)
 def _snow_(ui, ts):
     ''' SNOW processing '''
     errors = zeros(int(ui['errlen'])).astype(int64)
@@ -92,6 +94,7 @@ def _snow_(ui, ts):
     steps  = int(ui['steps'])              # number of simulation points
     delt   = ui['delt']                    # simulation interval in minutes
     delt60 = delt / 60.0                   # hours in simulation interval
+    uunits = ui['uunits']
 
     cloudfg = int(ui['cloudfg'])
     covinx = ui['COVINX']
@@ -106,6 +109,13 @@ def _snow_(ui, ts):
     packi  = ui['PACKI']
     packw  = ui['PACKW']
     paktmp = ui['PAKTMP']
+    if uunits == 2:
+        packf = packf / 25.4
+        packi = packi / 25.4
+        packw = packw / 25.4
+        covinx= covinx / 25.4
+        paktmp= (paktmp * 9./5.) + 32.
+        melev = melev * 3.28084
     rdcsn  = ui['RDCSN']
     rdenpf = ui['RDENPF']
     skyclr = ui['SKYCLR']
@@ -116,6 +126,10 @@ def _snow_(ui, ts):
 
     tbase  = ui['TBASE']
     tsnow  = ui['TSNOW']
+    if uunits == 2:
+        tbase = (tbase * 9./5.) + 32.
+        tsnow = (tsnow * 9./5.) + 32.
+
     xlnmlt = ui['XLNMLT']
 
     # get required time series
@@ -124,7 +138,7 @@ def _snow_(ui, ts):
     CLOUD   = ts['CLOUD']
     COVIND  = ts['COVIND']
     DTMPG   = ts['DTMPG']
-    HR6IND   = ts['HR6IND'].astype(int64)
+    HR6IND  = ts['HR6IND'].astype(int64)
     HRFG    = ts['HRFG'].astype(int64)
     KMELT   = ts['KMELT']  * delt/1440.0     # time conversion
     MGMELT  = ts['MGMELT'] * delt/1440.0     # time conversion
@@ -137,6 +151,10 @@ def _snow_(ui, ts):
     SOLRAD  = ts['SOLRAD']
     SVP     = ts['SVP']
     WINMOV  = ts['WINMOV']
+
+    if uunits == 2:
+        COVIND = COVIND / 25.4
+        MGMELT = MGMELT / 25.4
 
     # like MATLAB, much faster to preallocate arrays! Storing in ts Dict
     ts['ALBEDO'] = ALBEDO = zeros(steps)
@@ -498,19 +516,17 @@ def _snow_(ui, ts):
 
                 # NOPACK
                 hr6fg  = 1
-                covinx = 0.1 * covind
-                mneghs = nan
-                neghts = 0.0
                 packf  = 0.0
                 packi  = 0.0
                 packw  = 0.0
-                paktmp = 32.0
                 pdepth = 0.0
-                prain  = 0.0
                 rdenpf = nan
+                covinx = 0.1 * covind
                 snocov = 0.0
-                snowe  = 0.0
                 xlnmlt = 0.0
+                mneghs = nan
+                paktmp = 32.0
+                neghts = 0.0
 
                 # pbd -- need this set for energy balance method?
                 dull = -1.0E30
@@ -548,6 +564,23 @@ def _snow_(ui, ts):
         SNOWF[step]  = snowf
         WYIELD[step] = wyield
         XLNMLT[step] = xlnmlt
+        if uunits == 2:
+            PAKTMP[step] = (paktmp * 0.555) - 17.777 # convert to C
+            DEWTMP[step] = (dewtmp * 0.555) - 17.777  # convert to C
+            SNOTMP[step] = (snotmp * 0.555) - 17.777  # convert to C
+            PACKF[step] = packf * 25.4
+            PACKI[step] = packi * 25.4
+            PACKW[step] = packw * 25.4
+            PACK[step]  = PACKF[step] + PACKW[step]
+            PDEPTH[step]= pdepth * 25.4
+            NEGHTS[step]= neghts * 25.4
+            COVINX[step]= covinx * 25.4
+            SNOWE[step] = snowe * 25.4
+            SNOWF[step] = snowf * 25.4
+            WYIELD[step] = wyield * 25.4
+            XLNMLT[step] = xlnmlt * 25.4
+            MELT[step] = melt * 25.4
+            PRAIN[step] = prain * 25.4
     return errors
 
 
