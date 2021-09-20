@@ -201,7 +201,7 @@ class NUTRX_Class:
 		self.NUADFG = zeros(7, dtype=np.int32)
 
 		for j in range(1, 7):
-			self.NUADFG[j] = int(ui['NUADFG' + str(j)])
+			self.NUADFG[j] = int(ui['NUADFG(' + str(j) + ')'])
 
 		# error handling:
 		if self.TAMFG == 0 and (self.AMVFG == 1 or self.ADNHFG == 1):
