@@ -30,6 +30,7 @@ from HSP2.RQUAL import rqual
 from HSP2.RQUAL import expand_OXRX_masslinks
 from HSP2.RQUAL import expand_NUTRX_masslinks
 from HSP2.RQUAL import expand_PLANK_masslinks
+from HSP2.RQUAL import expand_PHCARB_masslinks
 
 #from HSP2.GENER import gener
 from HSP2.COPY import Copy
