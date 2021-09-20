@@ -648,6 +648,7 @@ def _gqual_(ui, ts):
 	if phflag == 1:
 		if 'PHVAL' not in ts:
 			errors[7] += 1  # ERRMSG7: timeseries not available
+			ts['PHVAL_GQ'] = zeros(simlen)
 		else:
 			ts['PHVAL_GQ'] = ts['PHVAL']
 	if roxfg == 1:
@@ -668,6 +669,7 @@ def _gqual_(ui, ts):
 	if phytfg == 1:
 		if 'PHYTO' not in ts:
 			errors[11] += 1  # ERRMSG11: timeseries not available
+			ts['PHYTO_GQ'] = zeros(simlen)
 		else:
 			ts['PHYTO_GQ'] = ts['PHYTO']
 
