@@ -4,8 +4,8 @@ License: LGPL2
 
 Conversion of HSPF HPERGAS.FOR module into Python''' 
 
-from numpy import zeros, where, full
-from numba import jit
+from numpy import zeros, where, full, int64, float64
+from numba import njit
 from HSP2.utilities import initm, make_numba_dict, hourflag
 
 
@@ -28,14 +28,49 @@ MFACTB = 0.
 def pwtgas(store, siminfo, uci, ts):
     ''' Estimate water temperature, dissolved oxygen, and carbon dioxide in the outflows
     from a pervious landsegment. calculate associated fluxes through exit gates'''
-
-    errorsV = zeros(len(ERRMSG), dtype=int)
-    simlen  = siminfo['steps']
-    delt    = siminfo['delt']
-    tindex  = siminfo['tindex']
+    simlen = siminfo['steps']
 
     ui = make_numba_dict(uci)
-    elevgc = ((288.0 - 0.00198 * ui['ELEV'])  /288.0)**5.256
+    ui['simlen'] = siminfo['steps']
+    ui['uunits'] = siminfo['units']
+    ui['errlen'] = len(ERRMSG)
+
+    u = uci['PARAMETERS']
+    if 'IDVFG' in u:
+        ts['IDOXP'] = initm(siminfo, uci, u['IDVFG'], 'MONTHLY_IDOXP', u['IDOXP'])
+    else:
+        ts['IDOXP'] = full(simlen, u['IDOXP'])
+    if 'ICVFG' in u:
+        ts['ICO2P'] = initm(siminfo, uci, u['ICVFG'], 'MONTHLY_ICO2P', u['ICO2P'])
+    else:
+        ts['ICO2P'] = full(simlen, u['ICO2P'])
+    if 'GDVFG' in u:
+        ts['ADOXP'] = initm(siminfo, uci, u['GDVFG'], 'MONTHLY_ADOXP', u['ADOXP'])
+    else:
+        ts['ADOXP'] = full(simlen, u['ADOXP'])
+    if 'GCVFG' in u:
+        ts['ACO2P'] = initm(siminfo, uci, u['GCVFG'], 'MONTHLY_ACO2P', u['ACO2P'])
+    else:
+        ts['ACO2P'] = full(simlen, u['ACO2P'])
+
+    ts['DAYFG'] = hourflag(siminfo, 0, dofirst=True).astype(float64)
+
+    ############################################################################
+    errors = _pwtgas_(ui, ts)  # run PWTGAS simulation code
+    ############################################################################
+
+    return errors, ERRMSG
+
+
+@njit(cache=True)
+def _pwtgas_(ui, ts):
+    ''' Estimate water temperature, dissolved oxygen, and carbon dioxide in the outflows
+    from a pervious landsegment. calculate associated fluxes through exit gates'''
+
+    errorsV = zeros(int(ui['errlen'])).astype(int64)
+
+    uunits = ui['uunits']
+    simlen = int(ui['simlen'])
 
     CSNOFG = int(ui['CSNOFG'])
     sotmp  = ui['SOTMP']
@@ -51,26 +86,18 @@ def pwtgas(store, siminfo, uci, ts):
     slifac = ui['SLIFAC']
     ilifac = ui['ILIFAC']
     alifac = ui['ALIFAC']
+    elev   = ui['ELEV']
+    if uunits == 2:
+        sotmp = (sotmp * 9. / 5.) + 32.
+        iotmp = (iotmp * 9. / 5.) + 32.
+        aotmp = (aotmp * 9. / 5.) + 32.
+        elev = elev * 3.281  # m to ft
+    elevgc = ((288.0 - 0.00198 * elev) / 288.0) ** 5.256
 
-    u = uci['PARAMETERS']
-    if 'IDVFG' in u:
-        ts['IDOXP'] = initm(siminfo, uci, u['IDVFG'], 'MONTHLY_IDOXP', u['IDOXP'])
-    else:
-        ts['IDOXP'] = full(simlen, u['IDOXP'])
-    if 'ICVFG' in u:
-        ts['ICO2P'] = initm(siminfo, uci, u['ICVFG'], 'MONTHLY_ICO2P', u['ICO2P'])
-    else:
-        ts['ICO2P'] = full(simlen, u['ICO2P'])
-    if 'GDVFG' in u:
-        gdvfg = u['GDVFG']
-        ts['ADOXP'] = initm(siminfo, uci, u['GDVFG'], 'MONTHLY_ADOXP', u['ADOXP'])
+    if 'GDVFG' in ui:
+        gdvfg = ui['GDVFG']
     else:
         gdvfg = 0
-        ts['ADOXP'] = full(simlen, u['ADOXP'])
-    if 'GCVFG' in u:
-        ts['ACO2P'] = initm(siminfo, uci, u['GCVFG'], 'MONTHLY_ACO2P', u['ACO2P'])
-    else:
-        ts['ACO2P'] = full(simlen, u['ACO2P'])
 
     IDOXP = ts['IDOXP']
     ICO2P = ts['ICO2P']
@@ -135,7 +162,16 @@ def pwtgas(store, siminfo, uci, ts):
     PODOXM = ts['PODOXM'] = zeros(simlen)
     POCO2M = ts['POCO2M'] = zeros(simlen)
 
-    DAYFG = hourflag(siminfo, 0, dofirst=True).astype(bool)
+    DAYFG = ts['DAYFG'].astype(int64)
+
+    if uunits == 2:
+        SLTMP = (SLTMP * 9. / 5.) + 32.
+        ULTMP = (ULTMP * 9. / 5.) + 32.
+        LGTMP = (LGTMP * 9. / 5.) + 32.
+        WYIELD = WYIELD * 0.0394  # / 25.4
+        SURO = SURO * 0.0394  # mm to inches
+        IFWO = IFWO * 0.0394  # mm to inches
+        AGWO = AGWO * 0.0394  # mm to inches
 
     for loop in range(simlen):
         dayfg   = DAYFG[loop]
@@ -161,7 +197,7 @@ def pwtgas(store, siminfo, uci, ts):
         soco2 = -1.0e30
         if suro > 0.0:  # there is surface outflow
             # local surface outflow temp equals surface soil temp
-            sotmp = (sltmp - 32.0) * 0.555
+            sotmp = (sltmp - 32.0) * 5./9.
             if sotmp < 0.5:
                 sotmp = 0.5  # min water temp
             if CSNOFG:      # effects of snow are considered
@@ -204,7 +240,7 @@ def pwtgas(store, siminfo, uci, ts):
         ioco2 = -1.0e30
         if ifwo > 0.0:   # there is interflow outflow
             # local interflow outflow temp equals upper soil temp
-            iotmp = (ultmp - 32.0) * 0.555
+            iotmp = (ultmp - 32.0) * 5./9.
             if iotmp < 0.5:
                 iotmp = 0.5    # min water temp
 
@@ -229,7 +265,6 @@ def pwtgas(store, siminfo, uci, ts):
             alidox = ALIDOX[loop]
             alico2 = ALICO2[loop]
 
-
         if dayfg:    #it is the first interval of the day
             if gdvfg:
                 adoxp = ADOXP[loop]
@@ -239,7 +274,7 @@ def pwtgas(store, siminfo, uci, ts):
         aodox = -1.0e30
         aoco2 = -1.0e30
         if agwo > 0.0:   # there is baseflow
-            aotmp = (LGTMP[loop] - 32.0) * 0.555		# local baseflow temp equals lower/gw soil temp
+            aotmp = (LGTMP[loop] - 32.0) * 5./9.		# local baseflow temp equals lower/gw soil temp
             if aotmp < 0.5:     # min water temp
                 aotmp = 0.5
 
@@ -271,20 +306,17 @@ def pwtgas(store, siminfo, uci, ts):
         aoco2m = aoco2 * agwo * MFACTA
         POCO2M[loop] = soco2m + ioco2m + aoco2m
 
-        if sotmp < -1e28:
-            SOTMP[loop] = sotmp
-        else:
-            SOTMP[loop]  = (sotmp * 9.0 / 5.0) + 32.0
+        SOTMP[loop] = sotmp
+        if sotmp > -1e28 and uunits!= 2:
+            SOTMP[loop] = (sotmp * 9.0 / 5.0) + 32.0
 
-        if iotmp < -1e28:
-            IOTMP[loop] = iotmp
-        else:
-            IOTMP[loop]  = (iotmp * 9.0 / 5.0) + 32.0
+        IOTMP[loop] = iotmp
+        if iotmp > -1e28 and uunits!= 2:
+            IOTMP[loop] = (iotmp * 9.0 / 5.0) + 32.0
 
-        if aotmp < -1e28:
-            AOTMP[loop] = aotmp
-        else:
-            AOTMP[loop]  = (aotmp * 9.0 / 5.0) + 32.0
+        AOTMP[loop] = aotmp
+        if aotmp > -1e28 and uunits!= 2:
+            AOTMP[loop] = (aotmp * 9.0 / 5.0) + 32.0
 
         SODOX[loop]  = sodox
         SOCO2[loop]  = soco2
@@ -303,4 +335,18 @@ def pwtgas(store, siminfo, uci, ts):
         AODOXM[loop] = aodoxm
         AOCO2M[loop] = aoco2m
 
-    return errorsV, ERRMSG
+        if uunits == 2:
+            SOHT[loop] = SOHT[loop] / 3.96567 * 2.471  # btu/ac to kcal/ha
+            IOHT[loop] = IOHT[loop] / 3.96567 * 2.471  # btu/ac to kcal/ha
+            AOHT[loop] = AOHT[loop] / 3.96567 * 2.471  # btu/ac to kcal/ha
+            POHT[loop] = POHT[loop] / 3.96567 * 2.471  # btu/ac to kcal/ha
+            SODOXM[loop] = SODOXM[loop] / 2.205 * 2.471  # lbs/ac to kg/ha
+            SOCO2M[loop] = SOCO2M[loop] / 2.205 * 2.471  # lbs/ac to kg/ha
+            IODOXM[loop] = IODOXM[loop] / 2.205 * 2.471  # lbs/ac to kg/ha
+            IOCO2M[loop] = IOCO2M[loop] / 2.205 * 2.471  # lbs/ac to kg/ha
+            AODOXM[loop] = AODOXM[loop] / 2.205 * 2.471  # lbs/ac to kg/ha
+            AOCO2M[loop] = AOCO2M[loop] / 2.205 * 2.471  # lbs/ac to kg/ha
+            PODOXM[loop] = PODOXM[loop] / 2.205 * 2.471  # lbs/ac to kg/ha
+            POCO2M[loop] = POCO2M[loop] / 2.205 * 2.471  # lbs/ac to kg/ha
+
+    return errorsV

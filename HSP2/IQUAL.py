@@ -5,8 +5,8 @@ License: LGPL2
 Conversion of HSPF HIMPQUA.FOR module into Python''' 
 
 from math import exp
-from numpy import zeros, where, full
-from numba import jit
+from numpy import zeros, where, full, float64, int64
+from numba import njit
 from HSP2.utilities import initm, make_numba_dict, hourflag
 
 
@@ -25,6 +25,8 @@ def iqual(store, siminfo, uci, ts):
 	''' Simulate washoff of quality constituents (other than solids, Heat, dox, and co2)
 	using simple relationships with solids And/or water yield'''
 
+	simlen = siminfo['steps']
+
 	nquals = 1
 	if 'PARAMETERS' in uci:
 		if 'NQUAL' in uci['PARAMETERS']:
@@ -35,45 +37,112 @@ def iqual(store, siminfo, uci, ts):
 		flags = uci['IQUAL' + iqual + '_FLAGS']
 		constituents.append(flags['QUALID'])
 
-	errorsV = zeros(len(ERRMSGS), dtype=int)
-	delt60 = siminfo['delt'] / 60     # delt60 - simulation time interval in hours
-	simlen = siminfo['steps']
-	tindex = siminfo['tindex']
-
-	SURO  = ts['SURO']
-	SOSLD = ts['SOSLD']
-	PREC  = ts['PREC']
-	
-	for name in ['SLIQSX', 'SLIQO', 'SLIQSP']:
-		if name not in ts:
-			ts[name] = full(simlen, -1.0E30)
-	SLIQSX = ts['SLIQSX']
-	SLIQO  = ts['SLIQO']
-	SLIQSP = ts['SLIQSP']
-
 	ui = make_numba_dict(uci)
+	ui['simlen'] = siminfo['steps']
+	ui['delt60'] = siminfo['delt'] / 60  # delt60 - simulation time interval in hours
+	ui['nquals'] = nquals
+	ui['errlen'] = len(ERRMSGS)
 	# constituents = ui['CONSTITUENTS']   # (short) names of constituents
-	slifac = ui['SLIFAC']
-	
-	DAYFG = hourflag(siminfo, 0, dofirst=True).astype(bool)
-	# DAYFG[0] = 1
+	if 'FLAGS' in uci:
+		u = uci['FLAGS']
 
 	index = 0
-	for constituent in constituents:     # simulate constituent
-		index +=1
+	for constituent in constituents:  # simulate constituent
+		index += 1
 		# update UI values for this constituent here!
 		ui_flags = uci['IQUAL' + str(index) + '_FLAGS']
 		ui_parms = uci['IQUAL' + str(index) + '_PARAMETERS']
-		name = 'IQUAL' + str(index)  # arbitrary identification
-
 		qualid = ui_flags['QUALID']
 		qtyid  = ui_flags['QTYID']
 		QSDFG  = ui_flags['QSDFG']
 		QSOFG  = ui_flags['QSOFG']
 		VQOFG  = ui_flags['VQOFG']
-		
 		sqo    = ui_parms['SQO']
 		wsqop  = ui_parms['WSQOP']
+		ui['QSDFG' + str(index)] = QSDFG
+		ui['QSOFG' + str(index)] = QSOFG
+		ui['VQOFG' + str(index)] = VQOFG
+		ui['sqo' + str(index)] = sqo
+		ui['wsqop' + str(index)] = wsqop
+
+		# handle monthly tables
+		ts['POTFW' + str(index)] = initm(siminfo, uci, ui_flags['VPFWFG'], 'IQUAL' + str(index) + '_MONTHLY/POTFW', ui_parms['POTFW'])
+		ts['ACQOP' + str(index)] = initm(siminfo, uci, ui_flags['VQOFG'], 'IQUAL' + str(index) + '_MONTHLY/ACQOP', ui_parms['ACQOP'])
+		ts['SQOLIM' + str(index)] = initm(siminfo, uci, ui_flags['VQOFG'], 'IQUAL' + str(index) + '_MONTHLY/SQOLIM', ui_parms['SQOLIM'])
+
+		iqadfgf = 0
+		iqadfgc = 0
+		ts['IQADFX' + str(index)] = zeros(simlen)
+		ts['IQADCN' + str(index)] = zeros(simlen)
+		if 'FLAGS' in uci:
+			# get atmos dep timeseries
+			iqadfgf = u['IQADFG' + str((index * 2) - 1)]
+			if iqadfgf > 0:
+				ts['IQADFX' + str(index)] = initm(siminfo, uci, iqadfgf, 'IQUAL' + str(index) + '_MONTHLY/IQADFX', 0.0)
+			elif iqadfgf == -1:
+				ts['IQADFX' + str(index)] = ts['IQADFX' + str(index) + ' 1']
+			iqadfgc = u['IQADFG' + str(index * 2)]
+			if iqadfgc > 0:
+				ts['IQADCN' + str(index)] = initm(siminfo, uci, iqadfgc, 'IQUAL' + str(index) + '_MONTHLY/IQADCN', 0.0)
+			elif iqadfgc == -1:
+				ts['IQADCN' + str(index)] = ts['IQADCN' + str(index) + ' 1']
+		ui['iqadfgf' + str(index)] = iqadfgf
+		ui['iqadfgc' + str(index)] = iqadfgc
+
+	for name in ['SLIQSX', 'SLIQO', 'SLIQSP']:
+		if name not in ts:
+			ts[name] = full(simlen, -1.0E30)
+
+	ts['DAYFG'] = hourflag(siminfo, 0, dofirst=True).astype(float64)
+
+	############################################################################
+	errors = _iqual_(ui, ts)  # run IQUAL simulation code
+	############################################################################
+
+	return errors, ERRMSGS
+
+@njit(cache=True)
+def _iqual_(ui, ts):
+	''' Simulate washoff of quality constituents (other than solids, Heat, dox, and co2)
+	using simple relationships with solids And/or water yield'''
+
+	errorsV = zeros(int(ui['errlen'])).astype(int64)
+
+	simlen = int(ui['simlen'])
+	delt60 = ui['delt60']
+	nquals = int(ui['nquals'])
+
+	SURO = ts['SURO']
+	SOSLD = ts['SOSLD']
+	PREC = ts['PREC']
+
+	SLIQSX = ts['SLIQSX']
+	SLIQO  = ts['SLIQO']
+	SLIQSP = ts['SLIQSP']
+
+	slifac = ui['SLIFAC']
+
+	DAYFG = ts['DAYFG'].astype(int64)
+	# DAYFG[0] = 1
+
+	for i in range(nquals):     # simulate constituent
+		index = i + 1
+		# update UI values for this constituent here!
+		#ui_flags = ui['ui_flags' + str(index)]
+		#ui_parms = ui['ui_parms' + str(index)]
+		name = 'IQUAL' + str(index)  # arbitrary identification
+
+		QSDFG  = ui['QSDFG' + str(index)]
+		QSOFG  = ui['QSOFG' + str(index)]
+		VQOFG  = ui['VQOFG' + str(index)]
+
+		iqadfgf = ui['iqadfgf' + str(index)]
+		iqadfgc = ui['iqadfgc' + str(index)]
+		if QSOFG == 0 and (iqadfgf != 0 or iqadfgc != 0):
+			errorsV[0] += 1  # error - non-qualof cannot have atmospheric deposition
+
+		sqo    = ui['sqo' + str(index)]
+		wsqop  = ui['wsqop' + str(index)]
 		wsfac = 2.30 / wsqop
 
 		# preallocate output arrays (always needed)
@@ -97,40 +166,11 @@ def iqual(store, siminfo, uci, ts):
 		SLIQO  = ts[name + '_SLIQO'] = zeros(simlen)   # lateral inflow
 		INFLOW = ts[name + '_INFLOW'] = zeros(simlen)  # total inflow
 
-		
-		# handle monthly tables
-
-		ts['POTFW'] = initm(siminfo, uci, ui_flags['VPFWFG'], 'IQUAL' + str(index) + '_MONTHLY/POTFW', ui_parms['POTFW'])
-		ts['ACQOP'] = initm(siminfo, uci, ui_flags['VQOFG'], 'IQUAL' + str(index) + '_MONTHLY/ACQOP', ui_parms['ACQOP'])
-		ts['SQOLIM'] = initm(siminfo, uci, ui_flags['VQOFG'], 'IQUAL' + str(index) + '_MONTHLY/SQOLIM', ui_parms['SQOLIM'])
-
-		if 'FLAGS' in uci:
-			u = uci['FLAGS']
-			# get atmos dep timeseries
-			iqadfgf = u['IQADFG' + str((index * 2) - 1)]
-			if iqadfgf > 0:
-				ts['IQADFX'] = initm(siminfo, uci, iqadfgf, 'IQUAL' + str(index) + '_MONTHLY/IQADFX', 0.0)
-			elif iqadfgf == -1:
-				ts['IQADFX'] = ts['IQADFX' + str(index) + ' 1']
-			iqadfgc = u['IQADFG' + str(index * 2)]
-			if iqadfgc > 0:
-				ts['IQADCN'] = initm(siminfo, uci, iqadfgc, 'IQUAL' + str(index) + '_MONTHLY/IQADCN', 0.0)
-			elif iqadfgc == -1:
-				ts['IQADCN'] = ts['IQADCN' + str(index) + ' 1']
-
-			if QSOFG == 0 and (iqadfgf != 0 or iqadfgc != 0):
-				errorsV[0] += 1  # error - non-qualof cannot have atmospheric deposition
-
-		if 'IQADFX' not in ts:
-			ts['IQADFX'] = zeros(simlen)
-		if 'IQADCN' not in ts:
-			ts['IQADCN'] = zeros(simlen)
-
-		POTFW  = ts['POTFW']
-		ACQOP  = ts['ACQOP']
-		SQOLIM = ts['SQOLIM']
-		IQADFX = ts['IQADFX']
-		IQADCN = ts['IQADCN']
+		POTFW  = ts['POTFW'  + str(index)]
+		ACQOP  = ts['ACQOP'  + str(index)]
+		SQOLIM = ts['SQOLIM' + str(index)]
+		IQADFX = ts['IQADFX' + str(index)]
+		IQADCN = ts['IQADCN' + str(index)]
 
 		soqo = 0.0
 		remqop = 0.0
@@ -235,5 +275,5 @@ def iqual(store, siminfo, uci, ts):
 			IQADDR[loop] = adfxfx
 			IQADEP[loop] = adtot
 			
-	return errorsV, ERRMSGS
+	return errorsV
 

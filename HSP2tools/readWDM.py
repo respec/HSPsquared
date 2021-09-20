@@ -184,7 +184,7 @@ def _splitcontrol(x):
 def _splitposition(x):
     return((x>>9) - 1, (x&0x1FF) - 1) #args: record, offset
 
-# @njit
+@njit
 def _inttostr(i):
     return chr(i & 0xFF) + chr(i>>8 & 0xFF) + chr(i>>16 & 0xFF) + chr(i>>24 & 0xFF)
 
@@ -259,7 +259,7 @@ def _is_leapyear(year):
     else:
         return False
 
-# @njit
+@njit
 def _date_convert(dates, date_epoch, dt_year, dt_month, dt_day, dt_hour, dt_minute, dt_second):
     converted_dates = []
     for x in dates:

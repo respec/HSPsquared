@@ -171,6 +171,10 @@ def get_uci(store):
                 temp = store[path].to_dict()['Info']
                 siminfo['start'] = Timestamp(temp['Start'])
                 siminfo['stop']  = Timestamp(temp['Stop'])
+                siminfo['units'] = 1
+                if 'Units' in temp:
+                    if int(temp['Units']):
+                        siminfo['units'] = int(temp['Units'])
             elif module == 'LINKS':
                 for row in store[path].replace('na','').itertuples():
                     ddlinks[row.TVOLNO].append(row)
@@ -207,7 +211,26 @@ def get_timeseries(store, ext_sourcesdd, siminfo):
             temp1 *= row.MFACTOR
         t = transform(temp1, row.TMEMN, row.TRAN, siminfo)
 
+        # in some cases the subscript is irrelevant, like '1' or '1 1', and we can leave it off.
+        # there are other cases where it is needed to distinguish, such as ISED and '1' or '1 1'.
         tname = f'{row.TMEMN}{row.TMEMSB}'
+        if row.TMEMN in {'GATMP', 'PREC', 'DTMPG', 'WINMOV', 'DSOLAR', 'SOLRAD', 'CLOUD', 'PETINP', 'IRRINP', 'POTEV', 'DEWTMP', 'WIND',
+                         'IVOL', 'IHEAT'}:
+            tname = f'{row.TMEMN}'
+        elif row.TMEMN == 'ISED':
+            if row.TMEMSB == '1 1' or row.TMEMSB == '1' or row.TMEMSB == '':
+                tname = 'ISED1'
+            else:
+                tname = 'ISED' + row.TMEMSB[0]
+        elif row.TMEMN in {'ICON', 'IDQAL', 'ISQAL'}:
+            tmemsb1 = '1'
+            tmemsb2 = '1'
+            if len(row.TMEMSB) > 0:
+                tmemsb1 = row.TMEMSB[0]
+            if len(row.TMEMSB) > 2:
+                tmemsb2 = row.TMEMSB[-1]
+            sname, tname = expand_timeseries_names('', '', '', row.TMEMN, tmemsb1, tmemsb2)
+
         if tname in ts:
             ts[tname] += t
         else:
@@ -346,6 +369,10 @@ def get_flows(store, ts, flags, uci, segment, ddlinks, ddmasslinks, steps, msg):
                     else:
                         t *= factor
 
+                    # if poht to iheat, imprecision in hspf conversion factor requires a slight adjustment
+                    if (smemn == 'POHT' or smemn == 'SOHT') and tmemn == 'IHEAT':
+                       t *= 0.998553
+
                     # ??? ISSUE: can fetched data be at different frequency - don't know how to transform.
                     if tmemn in ts:
                         ts[tmemn] += t
@@ -383,6 +410,11 @@ def expand_timeseries_names(smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmemsb2):
             tmemn = 'GQUAL1_' + tmemn
         else:
             tmemn = 'GQUAL' + tmemsb2 + '_' + tmemn
+    if tmemn == 'ISQAL':
+        if tmemsb2 == '':
+            tmemn = 'GQUAL1_' + 'ISQAL' + tmemsb1
+        else:
+            tmemn = 'GQUAL' + tmemsb2 + '_' + 'ISQAL' + tmemsb1
     if smemn == 'ODQAL':
         smemn = 'GQUAL' + smemsb1 + '_ODQAL' + smemsb2  # smemsb2 is exit number
     if smemn == 'OSQAL':
