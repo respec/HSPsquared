@@ -50,7 +50,10 @@ def main(hdfname, saveall=False, jupyterlab=True):
             if operation == 'COPY':
                 copy_instances[segment] = activities[operation](store, siminfo, ddext_sources[(operation,segment)]) 
             elif operation == 'GENER':
-                gener_instances[segment] = activities[operation](segment, copy_instances, gener_instances, ddlinks, ddgener) 
+                try:
+                    gener_instances[segment] = activities[operation](segment, copy_instances, gener_instances, ddlinks, ddgener) 
+                except NotImplementedError as e:
+                    print(f"GENER '{segment}' encountered unsupported feature during initialization and may not function correctly. Unsupported feature: '{e}'")
             else:
                 siminfo['delt']      = delt
                 siminfo['tindex']    = date_range(start, stop, freq=Minute(delt))[1:]
