@@ -7,14 +7,15 @@ from HSP2tools.HDF5 import HDF5
 import pandas as pd
 import numpy as np
 
+from typing import List 
 
-class RegressTestBase(object):
-    def __init__(self):
+
+class RegressTest(object):
+    def __init__(self, compare_cases:List[str]) -> None:
+        self.compare_cases = compare_cases
         self.test_dir = ''
         self.test_meta = {}
         self.compare_tcodes = [2]  # control time unit for comparison
-        # self.compare_cases = ['test05', 'test09', 'test10', 'test10b', 'Calleg', 'GRW_Plaster', 'ZRW_WestIndian']
-        self.compare_cases = ['test10']  # control test cases for comparison
 
     def run_one_test_wdm(self, testdir):
         attributes = {'location': 'unk', 'dsn': 39, 'constituent': 'PREC'}
