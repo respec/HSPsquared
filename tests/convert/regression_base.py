@@ -30,7 +30,7 @@ class RegressTestBase(object):
             if sub_dir.__contains__('HSPFresults'):
                 files = os.listdir(os.path.join(test_dir, sub_dir))
                 for file in files:
-                    if file.endswith('.hbn'):
+                    if file.lower().endswith('.hbn'):
                         hbn_files.append(os.path.join(test_dir, sub_dir, file))
                 break
 
@@ -54,7 +54,7 @@ class RegressTestBase(object):
             if sub_dir.__contains__('HSP2results'):
                 files = os.listdir(os.path.join(test_dir, sub_dir))
                 for file in files:
-                    if file.endswith('.h5'):
+                    if file.lower().endswith('.h5') or file.lower().endswith('.hdf'):
                         h5_files.append(os.path.join(test_dir, sub_dir, file))
                 break
 
