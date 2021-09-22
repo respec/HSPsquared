@@ -1,6 +1,6 @@
 from struct import unpack
 
-import h5py
+import h5py #replace with pandas HDFStore object
 from numpy import fromfile
 from pandas import DataFrame
 import pandas as pd
@@ -295,22 +295,19 @@ class HDF5:
 
         return dd_keys_to_read
 
-    def read_output_from_table(self, table_key):
+    def read_output_from_table(self, table_key:str) -> None:
         (opn_key, activity_key) = table_key.split(self.dd_key_separator)
         mapn = []
         mapn_keys = list(self.data_dictionary[table_key].keys())
         mapn_keys.sort()
         for mapn_key in mapn_keys:
             mapn.append(self.data_dictionary[table_key][mapn_key])
-        with h5py.File(self.file_name, "r") as f:
-            section = f.get('/RESULTS')
-            data_table = section[opn_key][activity_key]['table']  # e.g. activity_key = IQUAL
-            data_table_rows = list(data_table)
-            rows = []
-            for row in data_table_rows:
-                rows.append(list(row)[1:])
-            self.data_dictionary[table_key + f'{self.dd_key_separator}values'] = \
-                DataFrame(rows, index=self.time_index, columns=mapn[1:])
+        with pd.HDFStore(self.file_name) as store:
+            df = store[f'RESULTS/{opn_key}/{activity_key}/table']
+            #HDF5 stores datetime (index of the results tables) in nanoseconds 
+            df['index'] = pd.to_datetime(df['index'],unit='ns')
+            df = df.set_index('index')
+            self.data_dictionary[f'{table_key}{self.dd_key_separator}values'] = df
 
     def read_output(self, opn_type, opn_ids=None):
         if len(self.data_dictionary) == 0:
