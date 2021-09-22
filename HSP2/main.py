@@ -46,6 +46,9 @@ def main(hdfname, saveall=False, jupyterlab=True):
         msg(1, f'Simulation Start: {start}, Stop: {stop}')
         for _, operation, segment, delt in opseq.itertuples():
             msg(2, f'{operation} {segment} DELT(minutes): {delt}')
+            siminfo['delt'] = delt
+            siminfo['tindex'] = date_range(start, stop, freq=Minute(delt))[1:]
+            siminfo['steps'] = len(siminfo['tindex'])
 
             if operation == 'COPY':
                 copy_instances[segment] = activities[operation](store, siminfo, ddext_sources[(operation,segment)]) 
@@ -55,9 +58,6 @@ def main(hdfname, saveall=False, jupyterlab=True):
                 except NotImplementedError as e:
                     print(f"GENER '{segment}' encountered unsupported feature during initialization and may not function correctly. Unsupported feature: '{e}'")
             else:
-                siminfo['delt']      = delt
-                siminfo['tindex']    = date_range(start, stop, freq=Minute(delt))[1:]
-                siminfo['steps']     = len(siminfo['tindex'])
 
                 # now conditionally execute all activity modules for the op, segment
                 ts = get_timeseries(store,ddext_sources[(operation,segment)],siminfo)
