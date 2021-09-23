@@ -167,6 +167,8 @@ def _htrch_(ui, ts):
 		tgrnd = ui['TGRND']
 		kmud = ui['KMUD'] * delt60  # convert rate coefficients from kcal/m2/C/hr to kcal/m2/C/ivl
 		kgrnd = ui['KGRND'] * delt60
+	else:
+		muddep = 0.0
 
 	if uunits == 1:			# input units are deg.F, but need deg.C
 		muddep = muddep / 3.281
