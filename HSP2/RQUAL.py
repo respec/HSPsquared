@@ -166,7 +166,7 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 	return errors, ERRMSGS
 
 
-#@njit(cache=True)
+@njit(cache=True)
 def _rqual_run(siminfo_, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts):
 
 	# initialize WQ simulation:
@@ -336,7 +336,7 @@ def expand_PLANK_masslinks(flags, uci, dat, recs):
 				rec['SMEMSB1'] = str(i)   # species index
 				rec['SMEMSB2'] = ''
 			else:
-				rec['SMEMN'] = 'TPKCF2'
+				rec['SMEMN'] = 'PKCF2'
 				rec['SMEMSB1'] = dat.SMEMSB1  # exit number
 				rec['SMEMSB2'] = str(i)       # species index
 
