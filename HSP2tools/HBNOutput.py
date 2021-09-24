@@ -20,7 +20,7 @@ class HBNOutput:
 
         self.tcodes = {1: 'Minutely', 2: 'Hourly', 3: 'Daily', 4: 'Monthly', 5: 'Yearly'}
 
-    def read_data(self) -> Noner:
+    def read_data(self) -> None:
         """
         Reads ALL data from hbn_file and return them in DataFrame
 
