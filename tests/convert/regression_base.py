@@ -48,7 +48,7 @@ class RegressTest(object):
 
         return hbn_data
 
-    def get_hdf5_data(self, test_dir):
+    def get_hdf5_data(self, test_dir: str) -> List[HDF5]:
         sub_dirs = os.listdir(test_dir)
         h5_files = []
         for sub_dir in sub_dirs:
@@ -184,7 +184,8 @@ class RegressTest(object):
 
         return html
 
-    def run_test(self):
+
+    def run_test(self) -> None:
         # find all tests
         current_directory = os.path.dirname(os.path.abspath(inspect.getframeinfo(inspect.currentframe()).filename))
         source_root_path = os.path.split(os.path.split(current_directory)[0])[0]
