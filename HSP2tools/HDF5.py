@@ -10,9 +10,9 @@ class HDF5:
 
     def _read_aliases_csv(self) -> Dict[Tuple[str,str,str],str]:
         datapath = os.path.join(HSP2tools.__path__[0], 'data', 'HBNAliases.csv')
-        df = pd.read_csv()
+        df = pd.read_csv(datapath)
         df = df.set_index(['operation','activity','hspf_name'])
-        df_dict = df['hsp2'].to_dict()
+        df_dict = df['hsp2_name'].to_dict()
         return df_dict
 
     def get_time_series(self, operation:str, id:str, constituent:str, activity:str) -> Union[pd.Series, None]:
