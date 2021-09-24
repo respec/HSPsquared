@@ -20,6 +20,8 @@ class HDF5:
         constituent = constituent.upper()
         activity = activity.upper()
 
+        #We still need a special case for RCHES/GQUAL, IMPLAND/IQUAL and PERLAND/PQUAL
+
         key = f'RESULTS/{operation}_{operation[0]}{id}/{activity}/table'
         try:
             with pd.HDFStore(self.file_name, 'r') as store:
