@@ -1629,7 +1629,7 @@ class PLANK_Class:
 		tp     = -1.0e30
 
 		if (self.vol <= 0):
-			return
+			return torn, torp, torc, potbod, tn, tp
 
 		# Calculate sums:
 		tval = 0.0

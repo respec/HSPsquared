@@ -643,6 +643,7 @@ def _gqual_(ui, ts):
 	if tempfg == 1:
 		if 'TW' not in ts:
 			errors[6] += 1  # ERRMSG6: timeseries not available
+			ts['TW_GQ'] = zeros(simlen)
 		else:
 			ts['TW_GQ'] = ts['TW']
 	if phflag == 1:
@@ -654,16 +655,19 @@ def _gqual_(ui, ts):
 	if roxfg == 1:
 		if 'ROC' not in ts:
 			errors[8] += 1  # ERRMSG8: timeseries not available
+			ts['ROC_GQ'] = zeros(simlen)		
 		else:
 			ts['ROC_GQ'] = ts['ROC']
 	if cldfg == 1:
 		if 'CLOUD' not in ts:
 			errors[9] += 1  # ERRMSG9: timeseries not available
+			ts['CLOUD_GQ'] = zeros(simlen)
 		else:
 			ts['CLOUD_GQ'] = ts['CLOUD']
 	if sdfg == 1:
 		if 'SSED4' not in ts:
 			errors[10] += 1  # ERRMSG10: timeseries not available
+			ts['SDCNC_GQ'] = zeros(simlen)
 		else:
 			ts['SDCNC_GQ'] = ts['SSED4']
 	if phytfg == 1:
