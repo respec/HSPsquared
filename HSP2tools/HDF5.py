@@ -25,7 +25,8 @@ class HDF5:
             with pd.HDFStore(self.file_name, 'r') as store:
                 df = pd.read_hdf(store, key=key)
                 df['index'] = pd.to_datetime(df['index'], unit='ns')
-                df = df.set_index('index'
+                df = df.set_index('index')
+            
             if constituent in df.columns:
                 return df[constituent]
             else:
