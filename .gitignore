@@ -55,3 +55,6 @@ tests/_LargeFileStash
 
 # Specific files
 run.py
+tests/GLWACSO/HSP2results/hspp007.hdf
+tests/GLWACSO/HSPFresults/hspf006.HBN
+tests/GLWACSO/HSP2results/hspp007.uci
