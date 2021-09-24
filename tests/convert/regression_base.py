@@ -7,7 +7,7 @@ from HSP2tools.HDF5 import HDF5
 import pandas as pd
 import numpy as np
 
-from typing import List 
+from typing import List, Tuple
 
 
 class RegressTest(object):
@@ -24,7 +24,7 @@ class RegressTest(object):
         x = []
         y = []
 
-    def get_hbn_data(self, test_dir):
+    def get_hbn_data(self, test_dir: str) -> List[HBNOutput]:
         sub_dirs = os.listdir(test_dir)
         hbn_files = []
         for sub_dir in sub_dirs:
@@ -66,14 +66,6 @@ class RegressTest(object):
         for h5_file_name in h5_files:
             h5_data.append(HDF5(h5_file_name))
             
-            #h5_output = HDF5(h5_file_name)
-            # h5_output.read_output()
-            #h5_output.open_output()
-            #h5_output.read_output('IMPLND')
-            # tser = h5_output.get_time_series('SOQUALCOD', 'hourly')
-            # HBNOutput.save_time_series_to_file(os.path.join(os.path.split(h5_output.file_name)[0], 'zh5.txt'), tser)
-            #h5_data.append(h5_output)
-
         return h5_data
 
     def run_one_test(self, test_dir):
@@ -84,104 +76,114 @@ class RegressTest(object):
         hbn_data = self.get_hbn_data(test_dir)
         hdf5_data = self.get_hdf5_data(test_dir)
 
+        results_dict = {}
+
         style_th = 'style="text-align:left"'
         style_header = 'style="border:1px solid; background-color:#EEEEEE"'
         html = '<table style="border:1px solid">\n'
         for hbn_dataset in hbn_data:
             for key in hbn_dataset.output_dictionary.keys():
-                # key = f'{operation}_{activity}_{id:03d}_{tcode}'
-                tcode = int(key[key.rindex('_')+1:])
-                if tcode not in self.compare_tcodes:
-                    # only compare hourly outputs
-                    continue
-
                 html += f'<tr><th colspan=5 {style_header}>{key}</th></tr>\n'
                 html += f'<tr><th></th><th {style_th}>Constituent</th><th {style_th}>Max Diff</th><th>Match</th><th>Note</th></tr>\n'
                 (operation, activity, opn_id, tcode) = key.split('_')
                 for cons in hbn_dataset.output_dictionary[key]:
                     print(f'    {operation}_{opn_id}  {activity}  {cons}')
                     
-                    # get the operation type: IMPLND, PERLND, RCHRES
-                    # get the operation id
-                    # get the activity
-                    # now with the 4 pieces of info, opn_type, opn_id, activity, and cons:
-                    #   get single output time series from HBNOutput object
-                    #   get single output time series from HDF5 object
-                    #   compare and generate HTML report
                     hbn_time_series = hbn_dataset.get_time_series(operation, int(opn_id), cons, activity, 'hourly')
                     h5_time_series = hdf5_data[0].get_time_series(operation, opn_id, cons, activity)
-                    # hbn_s = pd.Series(hbn_time_series.values)
-                    # h5_s = pd.Series(h5_time_series.values)
 
-                    if (activity == "PWTGAS" and (cons == "SOTMP" or cons == "SODOX" or cons == "SOCO2")):  # prepare for special exceptions
-                        hbn_suro_time_series = hbn_dataset.get_time_series(operation, int(opn_id), "SURO", "PWATER", 'hourly')
-                        h5_suro_time_series = hdf5_data[0].get_time_series(operation, opn_id, "SURO", "PWATER")
-                    if (activity == "SEDTRN" and (cons == "SSEDCLAY" or cons == "SSEDTOT")):  # prepare for special exceptions
-                        h5_vol_time_series = hdf5_data[0].get_time_series(operation, opn_id, "VOL", "HYDR")
                     missing_data_h5 = ''
                     missing_data_hbn = ''
                     if hbn_time_series is None:
                         missing_data_hbn = f'not in hbn'
                     if h5_time_series is None:
                         missing_data_h5 = f'not in h5'
-                    #Special case, for some parameters (e.g PLANK.BENAL1) HSPF results look to be array.
-                    #Working assumption is that only the first index of that array are the values of interest.
-                    if len(hbn_time_series.shape) > 1:
-                        hbn_time_series = hbn_time_series.iloc[:,0]
-
+                    
                     if len(missing_data_h5) > 0 or len(missing_data_hbn) > 0:
                         html += f'<tr><td>-</td><td>{cons}</td><td>NA</td><td>NA</td><td>{missing_data_h5}<br>{missing_data_hbn}</td></tr>\n'
                     else:
-                        abstol = 1e-2
-                        # In some test cases it looked like HSP2 was executing for a single extra time step 
-                        # Trim h5 (HSP2) results to be same length as hbn (HSPF)
-                        # This is a bandaid to get testing working. long term should identify why HSP2 runs for additional time step.
-                        if len(h5_time_series) > len(hbn_time_series):
-                            h5_time_series = h5_time_series[0:len(hbn_time_series)]
+                        #Special case, for some parameters (e.g PLANK.BENAL1) HSPF results look to be array.
+                        #Working assumption is that only the first index of that array are the values of interest.
+                        if len(hbn_time_series.shape) > 1:
+                            hbn_time_series = hbn_time_series.iloc[:,0]
                        
-                        ### special case here to catch cases that are not signficant differences but appear to be
-                        for i in range(h5_time_series.values.size):
-                            if np.isnan(h5_time_series.values[i]):
-                                h5_time_series.values[i] = 0.0
-                            if hbn_time_series.values[i] < -1.0e26:
-                                hbn_time_series.values[i] = 0.0
-                            if h5_time_series.values[i] < -1.0e26:
-                                h5_time_series.values[i] = 0.0
-                            # special exceptions
-                            # if tiny suro in one and no suro in the other, don't trigger on suro-dependent numbers
-                            if (activity == "PWTGAS" and (cons == "SOTMP" or cons == "SODOX" or cons == "SOCO2")):
-                                if (h5_suro_time_series.values[i] == 0.0 and hbn_suro_time_series.values[i] < 1.0e-8) or \
-                                    (hbn_suro_time_series.values[i] == 0.0 and h5_suro_time_series.values[i] < 1.0e-8):
-                                    h5_time_series.values[i] = 0.0
-                                    hbn_time_series.values[i] = 0.0
-                            # if volume in reach is going to zero, small concentration differences are not signficant
-                            if (activity == "SEDTRN" and (cons == "SSEDCLAY" or cons == "SSEDTOT")):
-                                if h5_vol_time_series.values[i] < 1.0e-4:
-                                    h5_time_series.values[i] = 0.0
-                                    hbn_time_series.values[i] = 0.0
+                        tolerance = 1e-2
                         # if heat related term, compute special tolerance
                         if cons == 'IHEAT' or cons == 'ROHEAT' or cons.startswith('OHEAT') or \
-                                cons == 'QSOLAR' or cons == 'QLONGW' or cons == 'QEVAP' or \
-                                cons == 'QCON' or cons == 'QPREC' or cons == 'QBED':
+                            cons == 'QSOLAR' or cons == 'QLONGW' or cons == 'QEVAP' or \
+                            cons == 'QCON' or cons == 'QPREC' or cons == 'QBED':
                             abstol = max(abs(h5_time_series.values.min()), abs(h5_time_series.values.max())) * 1e-4
                         elif cons == 'QTOTAL' or cons == 'HTEXCH' :
-                            abstol = max(abs(h5_time_series.values.min()), abs(h5_time_series.values.max())) * 1e-3
-                        ### end special exception code here
-                        max_diff1 = (hbn_time_series.values - h5_time_series.values).max()
-                        max_diff2 = (h5_time_series.values - hbn_time_series.values).max()
-                        max_diff = max(max_diff1, max_diff2)
-                        match = False
-                        if np.allclose(hbn_time_series, h5_time_series, rtol=1e-2, atol=abstol, equal_nan=False):
-                            match = True
-                        match_symbol = f'<span style="font-weight:bold;color:red">X</span>'
-                        if match:
-                            match_symbol = f'<span style="font-weight:bold;color:green">&#10003;</span>'
+                            abstol = max(abs(h5_time_series.values.min()), abs(h5_time_series.values.max())) * 1e-3    
 
-                        html += f'<tr><td>-</td><td>{cons}</td><td>{max_diff}</td><td>{match_symbol}</td><td></td></tr>\n'
-                        pass
+                        h5_time_series, hbn_time_series = self.validate_time_series(h5_time_series, hbn_time_series,
+                            hdf5_data[0], hbn_dataset, operation, activity, opn_id, cons)
+                            
+                        html = self.compare_time_series(h5_time_series, hbn_time_series, html, tolerance, cons)
 
         html += f'</table>\n'
+        return html
 
+
+    def fill_nan_and_null(self, timeseries:pd.Series, replacement_value:float = 0.0) -> pd.Series:
+        """Replaces any nan or HSPF nulls -1.0e26 with provided replacement_value"""
+        timeseries = timeseries.fillna(replacement_value)
+        timeseries = timeseries.replace(-1.0e26, replacement_value)
+        return timeseries
+
+
+    def validate_time_series(self, ts_hsp2:pd.Series, ts_hspf:pd.Series, 
+            hsp2_data:HDF5, hspf_data:HBNOutput, operation:str, activity:str, 
+            id:str, cons:str) -> Tuple[pd.Series, pd.Series]:
+        """ validates a corrects time series to avoid false differences """
+   
+        # In some test cases it looked like HSP2 was executing for a single extra time step 
+        # Trim h5 (HSP2) results to be same length as hbn (HSPF)
+        # This is a bandaid to get testing working. Long term should identify why HSP2 runs for additional time step.
+        if len(ts_hsp2) > len(ts_hspf):
+            ts_hsp2 = ts_hsp2[0:len(ts_hspf)]
+
+        ts_hsp2 = self.fill_nan_and_null(ts_hsp2)
+        ts_hspf = self.fill_nan_and_null(ts_hspf)
+        
+        ### special cases
+        # if tiny suro in one and no suro in the other, don't trigger on suro-dependent numbers
+        if activity == 'PWTGAS' and cons in ['SOTMP', 'SODOX', 'SOCO2']:  
+            ts_suro_hsp2 = hsp2_data.get_time_series(operation, id, "SURO", "PWATER")
+            ts_suro_hspf = hspf_data.get_time_series(operation, int(id), "SURO", "PWATER", 'hourly')
+        
+            idx_zero_suro_hsp2 = ts_suro_hsp2 == 0
+            idx_low_suro_hsp2 = ts_suro_hsp2 < 1.0e-8
+            idx_zero_suro_hspf = ts_suro_hspf == 0
+            idx_low_suro_hspf = ts_suro_hspf < 1.0e-8
+            
+            ts_hsp2.loc[idx_zero_suro_hsp2 & idx_low_suro_hspf] = ts_hsp2.loc[idx_zero_suro_hsp2 & idx_low_suro_hspf] = 0
+            ts_hsp2.loc[idx_zero_suro_hspf & idx_low_suro_hsp2] = ts_hsp2.loc[idx_zero_suro_hspf & idx_low_suro_hsp2] = 0
+       
+        # if volume in reach is going to zero, small concentration differences are not signficant
+        if activity == 'SEDTRN' and cons in ['SSEDCLAY', 'SSEDTOT']: 
+            ts_vol_hsp2 = hsp2_data.get_time_series(operation, id, "VOL", "HYDR")
+            
+            idx_low_vol = ts_vol_hsp2 < 1.0e-4
+            ts_hsp2.loc[idx_low_vol] = ts_hsp2.loc[idx_low_vol] = 0
+            ts_hspf.loc[idx_low_vol] = ts_hspf.loc[idx_low_vol] = 0
+        ### end special cases 
+
+        return ts_hsp2, ts_hspf
+       
+    def compare_time_series(self, h5_time_series:pd.Series, hbn_time_series:pd.Series, 
+            html: str, tolerance:float, cons:str) -> str:
+        
+        max_diff1 = (hbn_time_series.values - h5_time_series.values).max()
+        max_diff2 = (h5_time_series.values - hbn_time_series.values).max()
+        max_diff = max(max_diff1, max_diff2)
+        
+        if np.allclose(hbn_time_series, h5_time_series, rtol=1e-2, atol=tolerance, equal_nan=False):
+            match_symbol = f'<span style="font-weight:bold;color:red">X</span>'
+        else:
+            match_symbol = f'<span style="font-weight:bold;color:green">&#10003;</span>'
+
+        html += f'<tr><td>-</td><td>{cons}</td><td>{max_diff}</td><td>{match_symbol}</td><td></td></tr>\n'
         return html
 
 
