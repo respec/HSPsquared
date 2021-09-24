@@ -64,6 +64,13 @@ def main(hdfname, saveall=False, jupyterlab=True):
                 ts = get_gener_timeseries(ts, gener_instances, ddlinks[segment])
                 flags = uci[(operation, 'GENERAL', segment)]['ACTIVITY']
                 if operation == 'RCHRES':
+                    # Add nutrient adsorption flags:
+                    if flags['NUTRX'] == 1:
+                        flags['TAMFG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['NH3FG']
+                        flags['ADNHFG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['ADNHFG']
+                        flags['PO4FG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['PO4FG']
+                        flags['ADPOFG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['ADPOFG']
+                    
                     get_flows(store, ts, flags, uci, segment, ddlinks, ddmasslinks, siminfo['steps'], msg)
 
                 for activity, function in activities[operation].items():
@@ -426,7 +433,11 @@ def get_gener_timeseries(ts: Dict, gener_instances: Dict, ddlinks: List) -> Dict
         if link.SVOL == 'GENER':
             gener = gener_instances[link.SVOLNO]
             series = gener.get_ts()
+            if link.MFACTOR != 1:
+                series *= link.MFACTOR
+            
             ts[f'{link.TMEMN}{link.TMEMSB1} {link.TMEMSB2}'.rstrip()] = series
+
     return ts
 
 

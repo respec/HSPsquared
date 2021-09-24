@@ -558,7 +558,7 @@ class RQUAL_Class:
 						
 						if self.nexits > 1:
 							for i in range(self.nexits):
-								osed[i,j] = ts['OSED' + str(i+1)][loop]
+								osed[i,j] = ts['OSED' + str(j) + str(i+1)][loop]
 						else:
 							osed[0,j] = rosed[j]
 
@@ -687,8 +687,8 @@ class RQUAL_Class:
 
 			if self.nexits > 1:
 				for i in range(self.nexits):
-					ts['OXCF2' + str(i + 1) + '1'][loop] = self.OXRX.odox[i] * self.OXRX.conv
-					ts['OXCF2' + str(i + 1) + '2'][loop] = self.OXRX.obod[i] * self.OXRX.conv
+					ts['OXCF2' + str(i + 1) + ' 1'][loop] = self.OXRX.odox[i] * self.OXRX.conv
+					ts['OXCF2' + str(i + 1) + ' 2'][loop] = self.OXRX.obod[i] * self.OXRX.conv
 
 			# NUTRX results:
 			if self.NUTFG == 1:
