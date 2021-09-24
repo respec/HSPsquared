@@ -64,13 +64,15 @@ class RegressTest(object):
 
         h5_data = []
         for h5_file_name in h5_files:
-            h5_output = HDF5(h5_file_name)
+            h5_data.append(HDF5(h5_file_name))
+            
+            #h5_output = HDF5(h5_file_name)
             # h5_output.read_output()
-            h5_output.open_output()
-            h5_output.read_output('IMPLND')
+            #h5_output.open_output()
+            #h5_output.read_output('IMPLND')
             # tser = h5_output.get_time_series('SOQUALCOD', 'hourly')
             # HBNOutput.save_time_series_to_file(os.path.join(os.path.split(h5_output.file_name)[0], 'zh5.txt'), tser)
-            h5_data.append(h5_output)
+            #h5_data.append(h5_output)
 
         return h5_data
 
@@ -97,6 +99,8 @@ class RegressTest(object):
                 html += f'<tr><th></th><th {style_th}>Constituent</th><th {style_th}>Max Diff</th><th>Match</th><th>Note</th></tr>\n'
                 (operation, activity, opn_id, tcode) = key.split('_')
                 for cons in hbn_dataset.output_dictionary[key]:
+                    print(f'    {operation}_{opn_id}  {activity}  {cons}')
+                    
                     # get the operation type: IMPLND, PERLND, RCHRES
                     # get the operation id
                     # get the activity
@@ -105,15 +109,15 @@ class RegressTest(object):
                     #   get single output time series from HDF5 object
                     #   compare and generate HTML report
                     hbn_time_series = hbn_dataset.get_time_series(operation, int(opn_id), cons, activity, 'hourly')
-                    h5_time_series = hdf5_data[0].get_time_series(operation, int(opn_id), cons, activity)
+                    h5_time_series = hdf5_data[0].get_time_series(operation, opn_id, cons, activity)
                     # hbn_s = pd.Series(hbn_time_series.values)
                     # h5_s = pd.Series(h5_time_series.values)
 
                     if (activity == "PWTGAS" and (cons == "SOTMP" or cons == "SODOX" or cons == "SOCO2")):  # prepare for special exceptions
                         hbn_suro_time_series = hbn_dataset.get_time_series(operation, int(opn_id), "SURO", "PWATER", 'hourly')
-                        h5_suro_time_series = hdf5_data[0].get_time_series(operation, int(opn_id), "SURO", "PWATER")
+                        h5_suro_time_series = hdf5_data[0].get_time_series(operation, opn_id, "SURO", "PWATER")
                     if (activity == "SEDTRN" and (cons == "SSEDCLAY" or cons == "SSEDTOT")):  # prepare for special exceptions
-                        h5_vol_time_series = hdf5_data[0].get_time_series(operation, int(opn_id), "VOL", "HYDR")
+                        h5_vol_time_series = hdf5_data[0].get_time_series(operation, opn_id, "VOL", "HYDR")
                     missing_data_h5 = ''
                     missing_data_hbn = ''
                     if hbn_time_series is None:
