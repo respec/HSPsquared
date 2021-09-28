@@ -153,9 +153,9 @@ class RegressTest(object):
             if constituent == 'IHEAT' or constituent == 'ROHEAT' or constituent.startswith('OHEAT') or \
                 constituent == 'QSOLAR' or constituent == 'QLONGW' or constituent == 'QEVAP' or \
                 constituent == 'QCON' or constituent == 'QPREC' or constituent == 'QBED':
-                abstol = max(abs(ts_hsp2.values.min()), abs(ts_hsp2.values.max())) * 1e-4
+                tolerance = max(abs(ts_hsp2.values.min()), abs(ts_hsp2.values.max())) * 1e-4
             elif constituent == 'QTOTAL' or constituent == 'HTEXCH' :
-                abstol = max(abs(ts_hsp2.values.min()), abs(ts_hsp2.values.max())) * 1e-3    
+                tolerance = max(abs(ts_hsp2.values.min()), abs(ts_hsp2.values.max())) * 1e-3    
 
             ts_hsp2, ts_hspf = self.validate_time_series(ts_hsp2, ts_hspf,
                 self.hsp2_data, self.hspf_data, operation, activity, id, constituent)
