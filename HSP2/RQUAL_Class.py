@@ -750,9 +750,10 @@ class RQUAL_Class:
 
 					self.PHYTO[loop] = self.PLANK.phyto
 					self.ZOO[loop] = self.PLANK.zoo
-					self.BENAL1[loop] = self.PLANK.benal[0]
-					self.TBENAL1[loop] = self.PLANK.tbenal[1]
-					self.TBENAL2[loop] = self.PLANK.tbenal[2]
+					if self.PLANK.BALFG:
+						self.BENAL1[loop] = self.PLANK.benal[0]
+						self.TBENAL1[loop] = self.PLANK.tbenal[1]
+						self.TBENAL2[loop] = self.PLANK.tbenal[2]
 					self.PHYCLA[loop] = self.PLANK.phycla
 
 					self.ORN[loop] = self.PLANK.orn

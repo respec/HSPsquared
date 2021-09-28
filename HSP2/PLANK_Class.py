@@ -652,6 +652,9 @@ class PLANK_Class:
 				else:                      # use full depth and velocity
 					self.balvel = avvele
 					self.baldep = avdepe
+			else:
+				self.balvel = 0.0
+				self.baldep = 0.0
 
 			# calculate solar radiation absorbed; solrad is the solar radiation at gage,
 			# corrected for location of reach; 0.97 accounts for surface reflection
@@ -1253,6 +1256,11 @@ class PLANK_Class:
 		''' calculate light correction factor to algal growth (cflit); 
 		determine amount of light available to phytoplankton and benthic algae'''
 		ln01 = 4.60517   # minus natural log 0.01
+
+		cflit  = 0.0
+		phylit = 0.0
+		ballit = 0.0
+
 		if inlit > 0.0:
 			# calculate extinction of light based on the base extinction
 			# coefficient of the water incremented by self-shading effects
@@ -1290,10 +1298,10 @@ class PLANK_Class:
 				ballit = inlit * exp(-extco * baldep)
 				if ballit < 0.0001:
 					ballit = 0.0
+
 		else:   # there is no incident solar radiation; algal growth cannot occur
-			cflit  = 0.0
-			phylit = 0.0
-			ballit = 0.0
+			pass
+
 		return phylit, ballit, cflit
 
 	@staticmethod
