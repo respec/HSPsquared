@@ -8,7 +8,8 @@ if __name__ == '__main__':
 
     start = datetime.now()
 
-    my_test = RegressTest(compare_case)
-    my_test.run_test()
+    test = RegressTest(compare_case, ids=['434'],activites=['GQUAL'],threads=1)  
+    results = test.run_test()
+    test.generate_report(test.html_file, results)
 
     print(f'runtime: {datetime.now() - start}')

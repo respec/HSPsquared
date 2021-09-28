@@ -1,9 +1,6 @@
-from concurrent import futures
-import concurrent
 import os
 import inspect
 import webbrowser
-from HSP2tools.readWDM import get_wdm_data_set
 from HSP2tools.HBNOutput import HBNOutput
 from HSP2tools.HDF5 import HDF5
 import pandas as pd
@@ -11,51 +8,76 @@ import numpy as np
 
 from typing import Dict, List, Tuple
 
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from copy import deepcopy
-
+from concurrent.futures import ThreadPoolExecutor, as_completed, thread
 
 class RegressTest(object):
-    def __init__(self, compare_case:str) -> None:
+    def __init__(self, compare_case:str, operations:List[str]=[], activites:List[str]=[], 
+            tcodes:List[str] = ['2'], ids:List[str] = [], threads:int=os.cpu_count() - 1) -> None:
         self.compare_case = compare_case
-        self.test_meta = {}
-        self.compare_tcodes = [2]  # control time unit for comparison
-        self.compare_ids = [434]
+        self.operations = operations
+        self.activites = activites
+        self.tcodes = tcodes
+        self.ids = ids
+        self.threads = threads
+
+        self._init_files()
+
+    def _init_files(self):
+        current_directory = os.path.dirname(os.path.abspath(inspect.getframeinfo(inspect.currentframe()).filename))
+        source_root_path = os.path.split(os.path.split(current_directory)[0])[0]
+        tests_root_dir = os.path.join(source_root_path, "tests")
+        self.html_file = os.path.join(tests_root_dir, f'HSPF_HSP2_{self.compare_case}.html')
+
+        test_dirs = os.listdir(tests_root_dir)
+        for test_dir in test_dirs:
+            if test_dir == self.compare_case:
+                test_root = os.path.join(tests_root_dir, test_dir)
+        
+        self._get_hdf5_data(test_root)
+        self._get_hbn_data(test_root)
 
     def _get_hbn_data(self, test_dir: str) -> None:
-        sub_dirs = os.listdir(test_dir)
-        hbn_files = []
-        for sub_dir in sub_dirs:
-            if sub_dir.__contains__('HSPFresults'):
-                files = os.listdir(os.path.join(test_dir, sub_dir))
-                for file in files:
-                    if file.lower().endswith('.hbn'):
-                        self.hspf_data = HBNOutput(os.path.join(test_dir, sub_dir, file))
-                        break 
-
+        sub_dir = os.path.join(test_dir, 'HSPFresults')
+        for file in os.listdir(sub_dir):
+            if file.lower().endswith('.hbn'):
+                self.hspf_data = HBNOutput(os.path.join(test_dir, sub_dir, file))
+                break 
         self.hspf_data.read_data()
 
     def _get_hdf5_data(self, test_dir: str) -> List[HDF5]:
-        sub_dirs = os.listdir(test_dir)
-        h5_files = []
-        for sub_dir in sub_dirs:
-            if sub_dir.__contains__('HSP2results'):
-                files = os.listdir(os.path.join(test_dir, sub_dir))
-                for file in files:
-                    if file.lower().endswith('.h5') or file.lower().endswith('.hdf'):
-                        self.hsp2_data = HDF5(os.path.join(test_dir, sub_dir, file))
-                        break
+        sub_dir = os.path.join(test_dir, 'HSP2results')
+        for file in os.listdir(sub_dir):
+            if file.lower().endswith('.h5') or file.lower().endswith('.hdf'):
+                self.hsp2_data = HDF5(os.path.join(sub_dir, file))
+                break
 
-    def make_html_report(self, results_dict):
+    def should_compare(self, operation:str, activity:str, id:str, tcode:str) -> bool:
+        if len(self.operations) > 0 and operation not in self.operations:
+            return False
+        if len(self.activites) > 0 and activity not in self.activites:
+            return False
+        if len(self.ids) > 0 and id not in self.ids:
+            return False
+        if len(self.tcodes) > 0 and tcode not in self.tcodes:
+            return False
+        return True
+
+    def generate_report(self, file:str, results: Dict[Tuple[str,str,str,str,str],Tuple[bool,bool,bool,float]]) -> None:
+        html = self.make_html_report(results)
+        self.write_html(file,html)
+        webbrowser.open_new_tab('file://' + file)
+
+    def make_html_report(self, results_dict:Dict[Tuple[str,str,str,str,str],Tuple[bool,bool,bool,float]]) -> str:
         """populates html table"""
         style_th = 'style="text-align:left"'
         style_header = 'style="border:1px solid; background-color:#EEEEEE"'
         
-        html = f'<table style="border:1px solid">\n'
+        html = f'<html><header><h1>CONVERSION TEST REPORT</h1></header><body>\n'
+        html += f'<table style="border:1px solid">\n'
 
         for key in self.hspf_data.output_dictionary.keys():
             operation, activity, opn_id, tcode = key.split('_')
-            if int(tcode) not in self.compare_tcodes or int(opn_id) not in self.compare_ids:
+            if not self.should_compare(operation, activity, opn_id, tcode):
                 continue 
             html += f'<tr><th colspan=5 {style_header}>{key}</th></tr>\n'
             html += f'<tr><th></th><th {style_th}>Constituent</th><th {style_th}>Max Diff</th><th>Match</th><th>Note</th></tr>\n'
@@ -65,6 +87,7 @@ class RegressTest(object):
                 html += self.make_html_comp_row(cons, no_data_hsp2, no_data_hspf, match, diff)
 
         html += f'</table>\n'
+        html += f"</body></html>\n"
         return html
 
     def make_html_comp_row(self, con:str, no_data_hsp2:bool, 
@@ -72,8 +95,8 @@ class RegressTest(object):
         """populates each constituents rows"""
         if no_data_hsp2 or no_data_hspf:
             html = f'<tr><td>-</td><td>{con}</td><td>NA</td><td>NA</td><td>'
-            html += f'{no_data_hsp2}<br>'
-            html += f'{no_data_hspf}'
+            html += f'{"Not in HSP2" if no_data_hsp2 else ""}<br>'
+            html += f'{"Not in HSPF" if no_data_hspf else ""}'
             html += f'</td></tr>\n'
         else:
             if match:
@@ -83,15 +106,18 @@ class RegressTest(object):
             html = f'<tr><td>-</td><td>{con}</td><td>{diff}</td><td>{match_symbol}</td><td></td></tr>\n'
         return html 
 
-    def _run_test(self) -> str:
+    def write_html(self, file:str, html:str) -> None:
+        with open(file, 'w') as f:
+            f.write(html)
+
+    def run_test(self) -> Dict[Tuple[str,str,str,str,str],Tuple[bool,bool,bool,float]]:
         futures = {}
         results_dict = {}
 
-        #with ThreadPoolExecutor(max_workers=os.cpu_count()-1) as executor:
-        with ThreadPoolExecutor(max_workers=1) as executor:
+        with ThreadPoolExecutor(max_workers=self.threads) as executor:
             for key in self.hspf_data.output_dictionary.keys():
                 (operation, activity, opn_id, tcode) = key.split('_')
-                if int(tcode) not in self.compare_tcodes or int(opn_id) not in self.compare_ids:
+                if not self.should_compare(operation, activity, opn_id, tcode):
                     continue 
                 for cons in self.hspf_data.output_dictionary[key]:
                     params = (operation,activity,opn_id,cons,tcode)
@@ -101,8 +127,7 @@ class RegressTest(object):
                 key = futures[future]
                 results_dict[key] = future.result()
 
-        html = self.make_html_report(results_dict) 
-        return html
+        return results_dict 
 
     def check_con(self, params:Tuple[str,str,str,str,str]) -> Tuple[bool,bool,bool,float]:
         """Performs comparision of single constituent"""
@@ -144,7 +169,6 @@ class RegressTest(object):
         timeseries = timeseries.fillna(replacement_value)
         timeseries = timeseries.replace(-1.0e26, replacement_value)
         return timeseries
-
 
     def validate_time_series(self, ts_hsp2:pd.Series, ts_hspf:pd.Series, 
             hsp2_data:HDF5, hspf_data:HBNOutput, operation:str, activity:str, 
@@ -193,37 +217,3 @@ class RegressTest(object):
         
         match = np.allclose(ts_hspf, ts_hsp2, rtol=1e-2, atol=tol, equal_nan=False)
         return (match, max_diff)
-
-
-    def run_test(self) -> None:
-        # find all tests
-        current_directory = os.path.dirname(os.path.abspath(inspect.getframeinfo(inspect.currentframe()).filename))
-        source_root_path = os.path.split(os.path.split(current_directory)[0])[0]
-        test_path = os.path.join(source_root_path, "tests")
-
-        test_dirs = os.listdir(test_path)
-        for test_dir in test_dirs:
-            if test_dir == self.compare_case:
-                test_path = os.path.join(test_path, test_dir)
-        
-        self._get_hdf5_data(test_path)
-        self._get_hbn_data(test_path)
-        #PRT - everything above this should to initializer 
-
-        html_file = os.path.join(test_path, 'test_report_conversion.html')
-        text_file = open(html_file, "w")
-        text_file.write('<html><header><h1>CONVERSION TEST REPORT</h1></header><body>\n')
-
-        print(f'conversion test case: {self.compare_case}')
-        text_file.write(f'<h3>{os.path.join(test_path, test_dir)}</h3>\n')
-        one_test_report = self._run_test()
-        text_file.write(one_test_report)
-
-        text_file.write("</body></html>\n")
-        text_file.close()
-        print('conversion tests are done.')
-
-        try:
-            webbrowser.open_new_tab('file://' + html_file)
-        except:
-            print("Error writing test results to " + html_file)
