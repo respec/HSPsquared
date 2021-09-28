@@ -50,7 +50,7 @@ class HDF5:
         constituent = constituent.upper()
         activity = activity.upper()
 
-        #We still need a special case for RCHES/GQUAL, IMPLAND/IQUAL and PERLAND/PQUAL
+        #We still need a special case for IMPLAND/IQUAL and PERLAND/PQUAL
         constituent_prefix = ''
         if activity == 'GQUAL': 
             constituent_prefix = ''
