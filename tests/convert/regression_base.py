@@ -100,9 +100,9 @@ class RegressTest(object):
             html += f'</td></tr>\n'
         else:
             if match:
-                match_symbol = f'<span style="font-weight:bold;color:red">X</span>'
-            else:
                 match_symbol = f'<span style="font-weight:bold;color:green">&#10003;</span>'
+            else:
+                match_symbol = f'<span style="font-weight:bold;color:red">X</span>'
             html = f'<tr><td>-</td><td>{con}</td><td>{diff}</td><td>{match_symbol}</td><td></td></tr>\n'
         return html 
 
