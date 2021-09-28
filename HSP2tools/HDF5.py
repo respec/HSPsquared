@@ -16,6 +16,27 @@ class HDF5:
         self.data = {}
         self.lock = Lock()
 
+        self.gqual_prefixes = self._read_gqual_mapping()
+
+    def _read_gqual_mapping(self) -> Dict[str,str]:
+        """"GQUAL is based on number which corresponds to the parameter
+        however which number is assoicated with which parameter changes 
+        based on the UCI file. Need to read from GQUAL tables
+        """ 
+
+        gqual_prefixes = {}
+        for i in range(1,7):
+            try:
+                with pd.HDFStore(self.file_name,'r') as store:
+                    df = pd.read_hdf(store,f'RCHRES/GQUAL/GQUAL{i}')
+                    row = df.iloc[0]
+                    gqid = row['GQID']
+                    gqual_prefixes[gqid] = str(i)
+            except KeyError:
+                #Mean no gqual number (e.g. QUAL3) for this run
+                pass
+        return gqual_prefixes 
+
     def _read_aliases_csv(self) -> Dict[Tuple[str,str,str],str]:
         datapath = os.path.join(HSP2tools.__path__[0], 'data', 'HBNAliases.csv')
         df = pd.read_csv(datapath)
@@ -29,11 +50,14 @@ class HDF5:
         constituent = constituent.upper()
         activity = activity.upper()
 
-        constituent_prefix = ''
-
         #We still need a special case for RCHES/GQUAL, IMPLAND/IQUAL and PERLAND/PQUAL
+        constituent_prefix = ''
         if activity == 'GQUAL': 
-            constituent_prefix = 'GQUAL1_'
+            constituent_prefix = ''
+            for key, value in self.gqual_prefixes.items(): 
+                if constituent.startswith(key): 
+                    constituent_prefix = f'GQUAL{value}_'
+                    constituent = constituent.replace(key,'')   
 
         key = (operation,id,activity)
         try:
