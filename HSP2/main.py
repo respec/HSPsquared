@@ -3,6 +3,7 @@ Author: Robert Heaphy, Ph.D.
 License: LGPL2
 '''
 
+from re import S
 from numpy import float64, float32
 from pandas import HDFStore, Timestamp, read_hdf, DataFrame, date_range
 from pandas.tseries.offsets import Minute
@@ -46,6 +47,9 @@ def main(hdfname, saveall=False, jupyterlab=True):
         msg(1, f'Simulation Start: {start}, Stop: {stop}')
         for _, operation, segment, delt in opseq.itertuples():
             msg(2, f'{operation} {segment} DELT(minutes): {delt}')
+            siminfo['delt'] = delt
+            siminfo['tindex'] = date_range(start, stop, freq=Minute(delt))[1:]
+            siminfo['steps'] = len(siminfo['tindex'])
 
             if operation == 'COPY':
                 copy_instances[segment] = activities[operation](store, siminfo, ddext_sources[(operation,segment)]) 
@@ -55,15 +59,19 @@ def main(hdfname, saveall=False, jupyterlab=True):
                 except NotImplementedError as e:
                     print(f"GENER '{segment}' encountered unsupported feature during initialization and may not function correctly. Unsupported feature: '{e}'")
             else:
-                siminfo['delt']      = delt
-                siminfo['tindex']    = date_range(start, stop, freq=Minute(delt))[1:]
-                siminfo['steps']     = len(siminfo['tindex'])
 
                 # now conditionally execute all activity modules for the op, segment
                 ts = get_timeseries(store,ddext_sources[(operation,segment)],siminfo)
                 ts = get_gener_timeseries(ts, gener_instances, ddlinks[segment])
                 flags = uci[(operation, 'GENERAL', segment)]['ACTIVITY']
                 if operation == 'RCHRES':
+                    # Add nutrient adsorption flags:
+                    if flags['NUTRX'] == 1:
+                        flags['TAMFG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['NH3FG']
+                        flags['ADNHFG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['ADNHFG']
+                        flags['PO4FG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['PO4FG']
+                        flags['ADPOFG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['ADPOFG']
+                    
                     get_flows(store, ts, flags, uci, segment, ddlinks, ddmasslinks, siminfo['steps'], msg)
 
                 for activity, function in activities[operation].items():
@@ -165,6 +173,10 @@ def main(hdfname, saveall=False, jupyterlab=True):
                                 ui['PARAMETERS']['SSED1'] = uci[(operation, 'SEDTRN', segment)]['STATES']['SSED1']
                                 ui['PARAMETERS']['SSED2'] = uci[(operation, 'SEDTRN', segment)]['STATES']['SSED2']
                                 ui['PARAMETERS']['SSED3'] = uci[(operation, 'SEDTRN', segment)]['STATES']['SSED3']
+
+                            # PLANK module inputs:
+                            if flags['HTRCH']:
+                                ui['PARAMETERS']['CFSAEX'] = uci[(operation, 'HTRCH', segment)]['PARAMETERS']['CFSAEX']
 
                             # NUTRX, PLANK, PHCARB module inputs:
                             ui_nutrx = uci[(operation, 'NUTRX', segment)] 
@@ -426,8 +438,14 @@ def get_gener_timeseries(ts: Dict, gener_instances: Dict, ddlinks: List) -> Dict
         if link.SVOL == 'GENER':
             gener = gener_instances[link.SVOLNO]
             series = gener.get_ts()
-            ts[f'{link.TMEMN}{link.TMEMSB1} {link.TMEMSB2}'.rstrip()] = series
-
+            if link.MFACTOR != 1:
+                series *= link.MFACTOR
+    
+            key = f'{link.TMEMN}{link.TMEMSB1} {link.TMEMSB2}'.rstrip()
+            if key in ts:
+                ts[key] = ts[key] + series
+            else:
+                ts[key] = series
     return ts
 
 
