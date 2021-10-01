@@ -11,11 +11,11 @@ from typing import Dict, List, Tuple
 from concurrent.futures import ThreadPoolExecutor, as_completed, thread
 
 class RegressTest(object):
-    def __init__(self, compare_case:str, operations:List[str]=[], activites:List[str]=[], 
+    def __init__(self, compare_case:str, operations:List[str]=[], activities:List[str]=[], 
             tcodes:List[str] = ['2'], ids:List[str] = [], threads:int=os.cpu_count() - 1) -> None:
         self.compare_case = compare_case
         self.operations = operations
-        self.activites = activites
+        self.activites = activities
         self.tcodes = tcodes
         self.ids = ids
         self.threads = threads
@@ -54,7 +54,7 @@ class RegressTest(object):
     def should_compare(self, operation:str, activity:str, id:str, tcode:str) -> bool:
         if len(self.operations) > 0 and operation not in self.operations:
             return False
-        if len(self.activites) > 0 and activity not in self.activites:
+        if len(self.activities) > 0 and activity not in self.activities:
             return False
         if len(self.ids) > 0 and id not in self.ids:
             return False
