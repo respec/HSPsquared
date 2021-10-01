@@ -173,6 +173,10 @@ def main(hdfname, saveall=False, jupyterlab=True):
                                 ui['PARAMETERS']['SSED2'] = uci[(operation, 'SEDTRN', segment)]['STATES']['SSED2']
                                 ui['PARAMETERS']['SSED3'] = uci[(operation, 'SEDTRN', segment)]['STATES']['SSED3']
 
+                            # PLANK module inputs:
+                            if flags['HTRCH']:
+                                ui['PARAMETERS']['CFSAEX'] = uci[(operation, 'HTRCH', segment)]['PARAMETERS']['CFSAEX']
+
                             # NUTRX, PLANK, PHCARB module inputs:
                             ui_nutrx = uci[(operation, 'NUTRX', segment)] 
                             ui_plank = uci[(operation, 'PLANK', segment)] 
