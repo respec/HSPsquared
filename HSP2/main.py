@@ -3,6 +3,7 @@ Author: Robert Heaphy, Ph.D.
 License: LGPL2
 '''
 
+from re import S
 from numpy import float64, float32
 from pandas import HDFStore, Timestamp, read_hdf, DataFrame, date_range
 from pandas.tseries.offsets import Minute
@@ -439,9 +440,12 @@ def get_gener_timeseries(ts: Dict, gener_instances: Dict, ddlinks: List) -> Dict
             series = gener.get_ts()
             if link.MFACTOR != 1:
                 series *= link.MFACTOR
-            
-            ts[f'{link.TMEMN}{link.TMEMSB1} {link.TMEMSB2}'.rstrip()] = series
-
+    
+            key = f'{link.TMEMN}{link.TMEMSB1} {link.TMEMSB2}'.rstrip()
+            if key in ts:
+                ts[key] = ts[key] + series
+            else:
+                ts[key] = series
     return ts
 
 
