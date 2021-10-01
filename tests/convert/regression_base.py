@@ -15,7 +15,7 @@ class RegressTest(object):
             tcodes:List[str] = ['2'], ids:List[str] = [], threads:int=os.cpu_count() - 1) -> None:
         self.compare_case = compare_case
         self.operations = operations
-        self.activites = activities
+        self.activities = activities
         self.tcodes = tcodes
         self.ids = ids
         self.threads = threads
