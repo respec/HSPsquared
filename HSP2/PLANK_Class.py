@@ -321,7 +321,9 @@ class PLANK_Class:
 			self.numbal = self.BALFG          # single species or none
 			
 		self.cfsaex = 1.0
-		if self.HTFG == 0 or 'CFSAEX' in ui:     # fraction of surface exposed - table-type surf-exposed
+		if self.HTFG > 0 and 'CFSAEX' in ui_rq:		# via heat-parm input table
+			self.cfsaex = ui_rq['CFSAEX']		
+		elif 'CFSAEX' in ui:     				# fraction of surface exposed - table-type surf-exposed
 			self.cfsaex = ui['CFSAEX']
 
 		# table-type plnk-parm1
@@ -348,9 +350,15 @@ class PLANK_Class:
 		self.cmmn   = ui['CMMN']
 		self.cmmnp  = ui['CMMNP']
 		self.cmmp   = ui['CMMP']
+
 		self.talgrh = ui['TALGRH']
 		self.talgrl = ui['TALGRL']
 		self.talgrm = ui['TALGRM']
+
+		if self.uunits == 1:
+			self.talgrh = (self.talgrh - 32.0) * 0.555		
+			self.talgrl = (self.talgrl - 32.0) * 0.555		
+			self.talgrm = (self.talgrm - 32.0) * 0.555		
 
 		# table-type plnk-parm3
 		self.alr20 = ui['ALR20'] * delt60   	# convert rates from 1/hr to 1/ivl
@@ -652,6 +660,9 @@ class PLANK_Class:
 				else:                      # use full depth and velocity
 					self.balvel = avvele
 					self.baldep = avdepe
+			else:
+				self.balvel = 0.0
+				self.baldep = 0.0
 
 			# calculate solar radiation absorbed; solrad is the solar radiation at gage,
 			# corrected for location of reach; 0.97 accounts for surface reflection
@@ -1253,6 +1264,11 @@ class PLANK_Class:
 		''' calculate light correction factor to algal growth (cflit); 
 		determine amount of light available to phytoplankton and benthic algae'''
 		ln01 = 4.60517   # minus natural log 0.01
+
+		cflit  = 0.0
+		phylit = 0.0
+		ballit = 0.0
+
 		if inlit > 0.0:
 			# calculate extinction of light based on the base extinction
 			# coefficient of the water incremented by self-shading effects
@@ -1290,10 +1306,10 @@ class PLANK_Class:
 				ballit = inlit * exp(-extco * baldep)
 				if ballit < 0.0001:
 					ballit = 0.0
+
 		else:   # there is no incident solar radiation; algal growth cannot occur
-			cflit  = 0.0
-			phylit = 0.0
-			ballit = 0.0
+			pass
+
 		return phylit, ballit, cflit
 
 	@staticmethod
@@ -1629,7 +1645,7 @@ class PLANK_Class:
 		tp     = -1.0e30
 
 		if (self.vol <= 0):
-			return
+			return torn, torp, torc, potbod, tn, tp
 
 		# Calculate sums:
 		tval = 0.0

@@ -558,7 +558,7 @@ class RQUAL_Class:
 						
 						if self.nexits > 1:
 							for i in range(self.nexits):
-								osed[i,j] = ts['OSED' + str(i+1)][loop]
+								osed[i,j] = ts['OSED' + str(j) + str(i+1)][loop]
 						else:
 							osed[0,j] = rosed[j]
 
@@ -687,8 +687,8 @@ class RQUAL_Class:
 
 			if self.nexits > 1:
 				for i in range(self.nexits):
-					ts['OXCF2' + str(i + 1) + '1'][loop] = self.OXRX.odox[i] * self.OXRX.conv
-					ts['OXCF2' + str(i + 1) + '2'][loop] = self.OXRX.obod[i] * self.OXRX.conv
+					ts['OXCF2' + str(i + 1) + ' 1'][loop] = self.OXRX.odox[i] * self.OXRX.conv
+					ts['OXCF2' + str(i + 1) + ' 2'][loop] = self.OXRX.obod[i] * self.OXRX.conv
 
 			# NUTRX results:
 			if self.NUTFG == 1:
@@ -750,9 +750,10 @@ class RQUAL_Class:
 
 					self.PHYTO[loop] = self.PLANK.phyto
 					self.ZOO[loop] = self.PLANK.zoo
-					self.BENAL1[loop] = self.PLANK.benal[0]
-					self.TBENAL1[loop] = self.PLANK.tbenal[1]
-					self.TBENAL2[loop] = self.PLANK.tbenal[2]
+					if self.PLANK.BALFG:
+						self.BENAL1[loop] = self.PLANK.benal[0]
+						self.TBENAL1[loop] = self.PLANK.tbenal[1]
+						self.TBENAL2[loop] = self.PLANK.tbenal[2]
 					self.PHYCLA[loop] = self.PLANK.phycla
 
 					self.ORN[loop] = self.PLANK.orn

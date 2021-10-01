@@ -91,7 +91,7 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 			n = (2 * j) - 1
 
 			# dry deposition:
-			nuadfg_dd = int(ui_nutrx['NUADFG' + str(j)])
+			nuadfg_dd = int(ui_nutrx['NUADFG(' + str(j) + ')'])
 			NUADFX = zeros(simlen)
 
 			if nuadfg_dd > 0:
@@ -104,7 +104,7 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 			ts['NUADFX' + str(j)] = NUADFX
 
 			# wet deposition:
-			nuadfg_wd = int(ui_nutrx['NUADFG' + str(j+1)])
+			nuadfg_wd = int(ui_nutrx['NUADFG(' + str(j+1) + ')'])
 			NUADCN = zeros(simlen)
 
 			if nuadfg_wd > 0:
@@ -123,7 +123,7 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 
 			# dry deposition:
 			PLADFX = zeros(simlen)
-			pladfg_dd = int(ui_plank['PLADFG' + str(j)])
+			pladfg_dd = int(ui_plank['PLADFG(' + str(j) + ')'])
 
 			if pladfg_dd > 0:
 				PLADFX = initm(siminfo, ui, pladfg_dd, 'PLANK_MONTHLY/PLADFX', 0.0)
@@ -136,7 +136,7 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 
 			# wet deposition:
 			PLADCN = zeros(simlen)
-			pladfg_wd = int(ui_plank['PLADFG' + str(j+1)])
+			pladfg_wd = int(ui_plank['PLADFG(' + str(j+1) + ')'])
 
 			if pladfg_wd > 0:
 				PLADCN = initm(siminfo, ui, pladfg_wd, 'PLANK_MONTHLY/PLADCN', 0.0)
@@ -250,7 +250,7 @@ def expand_OXRX_masslinks(flags, uci, dat, recs):
 
 			recs.append(rec)
 
-	return
+	return recs
 
 def expand_NUTRX_masslinks(flags, uci, dat, recs):
 	
@@ -267,7 +267,7 @@ def expand_NUTRX_masslinks(flags, uci, dat, recs):
 				rec['SMEMSB2'] = ''
 			else:
 				rec['SMEMN'] = 'NUCF9'
-				rec['SMEMSB2'] = dat.SMEMSB1  # exit number
+				rec['SMEMSB1'] = dat.SMEMSB1  # exit number
 				rec['SMEMSB2'] = str(i)       # species index
 
 			rec['TMEMN'] = 'NUIF1'
@@ -291,7 +291,7 @@ def expand_NUTRX_masslinks(flags, uci, dat, recs):
 					rec['SMEMSB2'] = '1'		# NH4 index
 				else:
 					rec['SMEMN'] = 'OSNH4'
-					rec['SMEMSB2'] = dat.SMEMSB1  # exit number
+					rec['SMEMSB1'] = dat.SMEMSB1  # exit number
 					rec['SMEMSB2'] = str(j)       # sediment type
 
 				rec['TMEMN'] = 'NUIF2'
@@ -312,7 +312,7 @@ def expand_NUTRX_masslinks(flags, uci, dat, recs):
 					rec['SMEMSB2'] = '2'		# PO4 index
 				else:
 					rec['SMEMN'] = 'OSPO4'
-					rec['SMEMSB2'] = dat.SMEMSB1  # exit number
+					rec['SMEMSB1'] = dat.SMEMSB1  # exit number
 					rec['SMEMSB2'] = str(j)       # sediment type
 
 				rec['TMEMN'] = 'NUIF2'
@@ -321,7 +321,7 @@ def expand_NUTRX_masslinks(flags, uci, dat, recs):
 				rec['SVOL'] = dat.SVOL
 				recs.append(rec)
 
-	return
+	return recs
 
 def expand_PLANK_masslinks(flags, uci, dat, recs):
 	if flags['PLANK']:
@@ -336,8 +336,8 @@ def expand_PLANK_masslinks(flags, uci, dat, recs):
 				rec['SMEMSB1'] = str(i)   # species index
 				rec['SMEMSB2'] = ''
 			else:
-				rec['SMEMN'] = 'TPKCF2'
-				rec['SMEMSB2'] = dat.SMEMSB1  # exit number
+				rec['SMEMN'] = 'PKCF2'
+				rec['SMEMSB1'] = dat.SMEMSB1  # exit number
 				rec['SMEMSB2'] = str(i)       # species index
 
 			rec['TMEMN'] = 'PKIF'
@@ -346,7 +346,7 @@ def expand_PLANK_masslinks(flags, uci, dat, recs):
 			rec['SVOL'] = dat.SVOL
 			recs.append(rec)
 
-	return
+	return recs
 
 def expand_PHCARB_masslinks(flags, uci, dat, recs):
 	
@@ -363,7 +363,7 @@ def expand_PHCARB_masslinks(flags, uci, dat, recs):
 				rec['SMEMSB2'] = ''
 			else:
 				rec['SMEMN'] = 'PHCF2'
-				rec['SMEMSB2'] = dat.SMEMSB1  # exit number
+				rec['SMEMSB1'] = dat.SMEMSB1  # exit number
 				rec['SMEMSB2'] = str(i)       # species index
 
 			rec['TMEMN'] = 'PHIF'
@@ -372,4 +372,4 @@ def expand_PHCARB_masslinks(flags, uci, dat, recs):
 			rec['SVOL'] = dat.SVOL
 			recs.append(rec)
 
-	return
+	return recs
