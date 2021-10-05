@@ -17,6 +17,7 @@ class HDF5:
         self.lock = Lock()
 
         self.gqual_prefixes = self._read_gqual_mapping()
+        self.iqual_prefixes = self._read_iqual_mappings()
 
     def _read_gqual_mapping(self) -> Dict[str,str]:
         """"GQUAL is based on number which corresponds to the parameter
@@ -37,6 +38,10 @@ class HDF5:
                 pass
         return gqual_prefixes 
 
+    def _read_iqual_mappings(self) -> Dict[str,str]:
+        """placeholder - for implementation similar to gqual - but for current test just assume 1"""
+        return {'':'1'}
+        
     def _read_aliases_csv(self) -> Dict[Tuple[str,str,str],str]:
         datapath = os.path.join(HSP2tools.__path__[0], 'data', 'HBNAliases.csv')
         df = pd.read_csv(datapath)
@@ -52,11 +57,12 @@ class HDF5:
 
         #We still need a special case for IMPLAND/IQUAL and PERLAND/PQUAL
         constituent_prefix = ''
-        if activity == 'GQUAL': 
+        if activity in ['GQUAL','IQUAL']: 
             constituent_prefix = ''
-            for key, value in self.gqual_prefixes.items(): 
+            prefix_dict = getattr(self, f'{activity.lower()}_prefixes')
+            for key, value in prefix_dict.items(): 
                 if constituent.startswith(key): 
-                    constituent_prefix = f'GQUAL{value}_'
+                    constituent_prefix = f'{activity}{value}_'
                     constituent = constituent.replace(key,'')   
 
         key = (operation,id,activity)
