@@ -10,6 +10,9 @@ from typing import Union, Dict, Tuple, final
 from threading import Lock
 
 class HDF5:
+    
+    REQUIRES_MAPPING = ['GQUAL','CONS']
+
     def __init__(self, file_name:str) -> None:
         self.file_name = file_name
         self.aliases = self._read_aliases_csv()
@@ -17,26 +20,37 @@ class HDF5:
         self.lock = Lock()
 
         self.gqual_prefixes = self._read_gqual_mapping()
+        self.cons_prefixes = self._read_cons_mapping()
+        self.iqual_prefixes = self._read_iqual_mapping()
 
-    def _read_gqual_mapping(self) -> Dict[str,str]:
-        """"GQUAL is based on number which corresponds to the parameter
-        however which number is assoicated with which parameter changes 
-        based on the UCI file. Need to read from GQUAL tables
+    def _read_nqual_mapping(self, key:str, target_col:str, nquals:int = 10) -> Dict[str,str]:
+        """Some modules, like GQUAL, allow for number which corresponds to the consistent
+        being modeled. However which number is assoicated with which parameter changes 
+        based on the UCI file. Need to read from specification tables 
         """ 
-
-        gqual_prefixes = {}
-        for i in range(1,7):
+        dict_mappings = {}
+        for i in range(1,nquals):
             try:
                 with pd.HDFStore(self.file_name,'r') as store:
-                    df = pd.read_hdf(store,f'RCHRES/GQUAL/GQUAL{i}')
+                    df = pd.read_hdf(store,f'{key}{i}')
                     row = df.iloc[0]
-                    gqid = row['GQID']
-                    gqual_prefixes[gqid] = str(i)
+                    gqid = row[target_col]
+                    dict_mappings[gqid] = str(i)
             except KeyError:
-                #Mean no gqual number (e.g. QUAL3) for this run
+                #Mean no nqual number (e.g. GQUAL3) for this run
                 pass
-        return gqual_prefixes 
+        return dict_mappings
 
+    def _read_gqual_mapping(self) -> Dict[str,str]:
+        return self._read_nqual_mapping(R'RCHRES/GQUAL/GQUAL', 'GQID', 7)
+
+    def _read_cons_mapping(self) -> Dict[str,str]:
+        return self._read_nqual_mapping(R'RCHRES/CONS/CONS','CONID', 7)
+
+    def _read_iqual_mapping(self) -> Dict[str,str]:
+        """placeholder - for implementation similar to gqual - but for current test just assume 1"""
+        return {'':'1'}
+        
     def _read_aliases_csv(self) -> Dict[Tuple[str,str,str],str]:
         datapath = os.path.join(HSP2tools.__path__[0], 'data', 'HBNAliases.csv')
         df = pd.read_csv(datapath)
@@ -52,11 +66,12 @@ class HDF5:
 
         #We still need a special case for IMPLAND/IQUAL and PERLAND/PQUAL
         constituent_prefix = ''
-        if activity == 'GQUAL': 
+        if activity in self.REQUIRES_MAPPING: 
             constituent_prefix = ''
-            for key, value in self.gqual_prefixes.items(): 
+            prefix_dict = getattr(self, f'{activity.lower()}_prefixes')
+            for key, value in prefix_dict.items(): 
                 if constituent.startswith(key): 
-                    constituent_prefix = f'GQUAL{value}_'
+                    constituent_prefix = f'{activity}{value}_'
                     constituent = constituent.replace(key,'')   
 
         key = (operation,id,activity)
