@@ -6,7 +6,7 @@ from HSP2tools.HDF5 import HDF5
 import pandas as pd
 import numpy as np
 
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Union
 
 from concurrent.futures import ThreadPoolExecutor, as_completed, thread
 
@@ -42,13 +42,21 @@ class RegressTest(object):
 
     def _get_hbn_data(self, test_dir: str) -> None:
         sub_dir = os.path.join(test_dir, 'HSPFresults')
+        self.hspf_data_collection = {}
         for file in os.listdir(sub_dir):
             if file.lower().endswith('.hbn'):
-                self.hspf_data = HBNOutput(os.path.join(test_dir, sub_dir, file))
-                break 
-        self.hspf_data.read_data()
+                hspf_data = HBNOutput(os.path.join(test_dir, sub_dir, file))
+                hspf_data.read_data()
+                for key in hspf_data.output_dictionary.keys():
+                    self.hspf_data_collection[key] = hspf_data
 
-    def _get_hdf5_data(self, test_dir: str) -> List[HDF5]:
+    def get_hspf_time_series(self, ops:OperationsTuple) -> Union[pd.Series,None]:
+        operation, activity, id, constituent, tcode = ops
+        key = f'{operation}_{activity}_{id}_{tcode}'
+        hspf_data = self.hspf_data_collection[key]     
+        series = hspf_data.get_time_series(operation, int(id), constituent, activity, 'hourly')
+        return series        
+
     def _get_hdf5_data(self, test_dir: str) -> None:
         sub_dir = os.path.join(test_dir, 'HSP2results')
         for file in os.listdir(sub_dir):
@@ -80,13 +88,14 @@ class RegressTest(object):
         html = f'<html><header><h1>CONVERSION TEST REPORT</h1></header><body>\n'
         html += f'<table style="border:1px solid">\n'
 
-        for key in self.hspf_data.output_dictionary.keys():
+        for key in self.hspf_data_collection.keys():
             operation, activity, opn_id, tcode = key.split('_')
             if not self.should_compare(operation, activity, opn_id, tcode):
                 continue 
             html += f'<tr><th colspan=5 {style_header}>{key}</th></tr>\n'
             html += f'<tr><th></th><th {style_th}>Constituent</th><th {style_th}>Max Diff</th><th>Match</th><th>Note</th></tr>\n'
-            for cons in self.hspf_data.output_dictionary[key]:
+            hspf_data = self.hspf_data_collection[key]
+            for cons in hspf_data.output_dictionary[key]:
                 result = results_dict[(operation,activity,opn_id, cons, tcode)]
                 no_data_hsp2, no_data_hspf, match, diff = result
                 html += self.make_html_comp_row(cons, no_data_hsp2, no_data_hspf, match, diff)
@@ -120,11 +129,12 @@ class RegressTest(object):
         results_dict = {}
 
         with ThreadPoolExecutor(max_workers=self.threads) as executor:
-            for key in self.hspf_data.output_dictionary.keys():
+            for key in self.hspf_data_collection.keys():
                 (operation, activity, opn_id, tcode) = key.split('_')
                 if not self.should_compare(operation, activity, opn_id, tcode):
                     continue 
-                for cons in self.hspf_data.output_dictionary[key]:
+                hspf_data = self.hspf_data_collection[key]
+                for cons in hspf_data.output_dictionary[key]:
                     params = (operation,activity,opn_id,cons,tcode)
                     futures[executor.submit(self.check_con, params)] = params 
             
@@ -140,7 +150,7 @@ class RegressTest(object):
         print(f'    {operation}_{id}  {activity}  {constituent}\n')
         
         ts_hsp2 = self.hsp2_data.get_time_series(operation, id, constituent, activity)
-        ts_hspf = self.hspf_data.get_time_series(operation, int(id), constituent, activity, 'hourly')
+        ts_hspf = self.get_hspf_time_series(params)
 
         no_data_hsp2 = ts_hsp2 is None
         no_data_hspf = ts_hspf is None
@@ -162,8 +172,7 @@ class RegressTest(object):
             elif constituent == 'QTOTAL' or constituent == 'HTEXCH' :
                 tolerance = max(abs(ts_hsp2.values.min()), abs(ts_hsp2.values.max())) * 1e-3    
 
-            ts_hsp2, ts_hspf = self.validate_time_series(ts_hsp2, ts_hspf,
-                self.hsp2_data, self.hspf_data, operation, activity, id, constituent)
+            ts_hsp2, ts_hspf = self.validate_time_series(ts_hsp2, ts_hspf, operation, activity, id, constituent)
                 
             match, diff = self.compare_time_series(ts_hsp2, ts_hspf, tolerance)
         
@@ -175,9 +184,8 @@ class RegressTest(object):
         timeseries = timeseries.replace(-1.0e26, replacement_value)
         return timeseries
 
-    def validate_time_series(self, ts_hsp2:pd.Series, ts_hspf:pd.Series, 
-            hsp2_data:HDF5, hspf_data:HBNOutput, operation:str, activity:str, 
-            id:str, cons:str) -> Tuple[pd.Series, pd.Series]:
+    def validate_time_series(self, ts_hsp2:pd.Series, ts_hspf:pd.Series, operation:str, 
+            activity:str, id:str, cons:str) -> Tuple[pd.Series, pd.Series]:
         """ validates a corrects time series to avoid false differences """
    
         # In some test cases it looked like HSP2 was executing for a single extra time step 
@@ -192,8 +200,8 @@ class RegressTest(object):
         ### special cases
         # if tiny suro in one and no suro in the other, don't trigger on suro-dependent numbers
         if activity == 'PWTGAS' and cons in ['SOTMP', 'SODOX', 'SOCO2']:  
-            ts_suro_hsp2 = hsp2_data.get_time_series(operation, id, "SURO", "PWATER")
-            ts_suro_hspf = hspf_data.get_time_series(operation, int(id), "SURO", "PWATER", 'hourly')
+            ts_suro_hsp2 = self.hsp2_data.get_time_series(operation, id, 'SURO', 'PWATER')
+            ts_suro_hspf = self.get_hspf_time_series((operation, 'PWATER', id, 'SURO', 2))
         
             idx_zero_suro_hsp2 = ts_suro_hsp2 == 0
             idx_low_suro_hsp2 = ts_suro_hsp2 < 1.0e-8
@@ -205,7 +213,7 @@ class RegressTest(object):
        
         # if volume in reach is going to zero, small concentration differences are not signficant
         if activity == 'SEDTRN' and cons in ['SSEDCLAY', 'SSEDTOT']: 
-            ts_vol_hsp2 = hsp2_data.get_time_series(operation, id, "VOL", "HYDR")
+            ts_vol_hsp2 = self.hsp2_data.get_time_series(operation, id, "VOL", "HYDR")
             
             idx_low_vol = ts_vol_hsp2 < 1.0e-4
             ts_hsp2.loc[idx_low_vol] = ts_hsp2.loc[idx_low_vol] = 0
