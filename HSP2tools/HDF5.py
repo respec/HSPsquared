@@ -11,7 +11,7 @@ from threading import Lock
 
 class HDF5:
     
-    REQUIRES_MAPPING = ['GQUAL','CONS']
+    REQUIRES_MAPPING = ['GQUAL','CONS','IQUAL']
 
     def __init__(self, file_name:str) -> None:
         self.file_name = file_name
