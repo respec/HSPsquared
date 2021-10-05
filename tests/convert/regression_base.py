@@ -10,6 +10,10 @@ from typing import Dict, List, Tuple
 
 from concurrent.futures import ThreadPoolExecutor, as_completed, thread
 
+
+OperationsTuple = Tuple[str,str,str,str,str]
+ResultsTuple = Tuple[bool,bool,bool,float]
+
 class RegressTest(object):
     def __init__(self, compare_case:str, operations:List[str]=[], activities:List[str]=[], 
             tcodes:List[str] = ['2'], ids:List[str] = [], threads:int=os.cpu_count() - 1) -> None:
@@ -62,12 +66,12 @@ class RegressTest(object):
             return False
         return True
 
-    def generate_report(self, file:str, results: Dict[Tuple[str,str,str,str,str],Tuple[bool,bool,bool,float]]) -> None:
+    def generate_report(self, file:str, results: Dict[OperationsTuple,ResultsTuple]) -> None:
         html = self.make_html_report(results)
         self.write_html(file,html)
         webbrowser.open_new_tab('file://' + file)
 
-    def make_html_report(self, results_dict:Dict[Tuple[str,str,str,str,str],Tuple[bool,bool,bool,float]]) -> str:
+    def make_html_report(self, results_dict:Dict[OperationsTuple,ResultsTuple]) -> str:
         """populates html table"""
         style_th = 'style="text-align:left"'
         style_header = 'style="border:1px solid; background-color:#EEEEEE"'
@@ -110,7 +114,7 @@ class RegressTest(object):
         with open(file, 'w') as f:
             f.write(html)
 
-    def run_test(self) -> Dict[Tuple[str,str,str,str,str],Tuple[bool,bool,bool,float]]:
+    def run_test(self) -> Dict[OperationsTuple,ResultsTuple]:
         futures = {}
         results_dict = {}
 
@@ -129,7 +133,7 @@ class RegressTest(object):
 
         return results_dict 
 
-    def check_con(self, params:Tuple[str,str,str,str,str]) -> Tuple[bool,bool,bool,float]:
+    def check_con(self, params:OperationsTuple) -> ResultsTuple:
         """Performs comparision of single constituent"""
         operation, activity, id, constituent, tcode = params
         print(f'    {operation}_{id}  {activity}  {constituent}\n')
