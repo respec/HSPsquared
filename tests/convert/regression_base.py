@@ -1,3 +1,4 @@
+from datetime import time
 import os
 import inspect
 import webbrowser
@@ -179,9 +180,9 @@ class RegressTest(object):
         return (no_data_hsp2, no_data_hspf, match, diff)
 
     def fill_nan_and_null(self, timeseries:pd.Series, replacement_value:float = 0.0) -> pd.Series:
-        """Replaces any nan or HSPF nulls -1.0e26 with provided replacement_value"""
+        """Replaces any nan or HSPF nulls -1.0e30 with provided replacement_value"""
         timeseries = timeseries.fillna(replacement_value)
-        timeseries = timeseries.replace(-1.0e26, replacement_value)
+        timeseries = timeseries.where(timeseries > -1.0e30, replacement_value)
         return timeseries
 
     def validate_time_series(self, ts_hsp2:pd.Series, ts_hspf:pd.Series, operation:str, 
