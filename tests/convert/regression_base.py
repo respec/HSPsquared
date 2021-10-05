@@ -49,6 +49,7 @@ class RegressTest(object):
         self.hspf_data.read_data()
 
     def _get_hdf5_data(self, test_dir: str) -> List[HDF5]:
+    def _get_hdf5_data(self, test_dir: str) -> None:
         sub_dir = os.path.join(test_dir, 'HSP2results')
         for file in os.listdir(sub_dir):
             if file.lower().endswith('.h5') or file.lower().endswith('.hdf'):
