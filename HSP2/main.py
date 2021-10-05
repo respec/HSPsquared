@@ -274,7 +274,7 @@ def get_uci(store):
         elif op == 'GENER':
             for row in store[path].itertuples():
                 start, stop = row.OPNID.split()
-                for i in range(int(start), int(stop)): ddgener[module][f'G{i:03d}'] = row[2]
+                for i in range(int(start), int(stop)+1): ddgener[module][f'G{i:03d}'] = row[2]
     return opseq, ddlinks, ddmasslinks, ddext_sources, ddgener, uci, siminfo
 
 def save_timeseries(store, ts, savedict, siminfo, saveall, operation, segment, activity, jupyterlab=True):
