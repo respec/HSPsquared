@@ -202,7 +202,10 @@ class RegressTest(object):
         # if tiny suro in one and no suro in the other, don't trigger on suro-dependent numbers
         if activity == 'PWTGAS' and cons in ['SOTMP', 'SODOX', 'SOCO2']:  
             ts_suro_hsp2 = self.hsp2_data.get_time_series(operation, id, 'SURO', 'PWATER')
+            ts_suro_hsp2 = self.fill_nan_and_null(ts_suro_hsp2)            
             ts_suro_hspf = self.get_hspf_time_series((operation, 'PWATER', id, 'SURO', 2))
+            ts_suro_hsp2 = self.fill_nan_and_null(ts_suro_hspf)            
+
         
             idx_zero_suro_hsp2 = ts_suro_hsp2 == 0
             idx_low_suro_hsp2 = ts_suro_hsp2 < 1.0e-8
@@ -215,6 +218,7 @@ class RegressTest(object):
         # if volume in reach is going to zero, small concentration differences are not signficant
         if activity == 'SEDTRN' and cons in ['SSEDCLAY', 'SSEDTOT']: 
             ts_vol_hsp2 = self.hsp2_data.get_time_series(operation, id, "VOL", "HYDR")
+            ts_vol_hsp2 = self.fill_nan_and_null(ts_vol_hsp2)
             
             idx_low_vol = ts_vol_hsp2 < 1.0e-4
             ts_hsp2.loc[idx_low_vol] = ts_hsp2.loc[idx_low_vol] = 0
