@@ -1122,7 +1122,7 @@ class PLANK_Class:
 
 		# use unit death rate to compute death rate; dthbal is expressed
 		# as umoles of phosphorus per liter per interval
-		return (ald * bal) + slof     # dthbal
+		return (ald * bal) + slof, bal     # dthbal
 
 
 	def balrx(self, ballit,tw,talgrl,talgrh,talgrm,malgr,cmmp, cmmnp,tamfg,amrfg,nsfg,cmmn,cmmlt,delt60,
@@ -1162,7 +1162,7 @@ class PLANK_Class:
 			grobal = self.grochk (po4,no3,tam,phfg,decfg,baco2,cvbpc,cvbpn,nsfg,nmingr,pmingr,cmingr,i0,grtotn,grobal)
 
 		# calculate benthic algae death, baldth only called here
-		dthbal = self.baldth(nsfg,no3,tam,po4,paldh,naldh,aldl,aldh,mbal,dox,anaer,oxald,bal,depcor)
+		(dthbal, bal) = self.baldth(nsfg,no3,tam,po4,paldh,naldh,aldl,aldh,mbal,dox,anaer,oxald,bal,depcor)
 
 		bal += grobal  # determine the new benthic algae population
 
