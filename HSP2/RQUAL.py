@@ -163,6 +163,13 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 
 	(errors, ERRMSGS) = _compile_errors(NUTFG, PLKFG, PHFG, err_oxrx, err_nutrx, err_plank, err_phcarb)
 
+	# for multiple exits, modify save table as needed
+	if nexits > 1:
+		u = uci_oxrx['SAVE']
+		for i in range(nexits):
+			u[f'OXCF2_{i + 1}1'] = u['OXCF2_11']
+			u[f'OXCF2_{i + 1}2'] = u['OXCF2_12']
+
 	return errors, ERRMSGS
 
 

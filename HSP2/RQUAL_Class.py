@@ -78,6 +78,21 @@ spec = [
 	('ORP', nb.float64[:]),
 	('OTAM', nb.float64[:,:]),
 	('OTIC', nb.float64[:,:]),
+	('OXCF3_REAR', nb.float64[:]),
+	('OXCF3_DEC', nb.float64[:]),
+	('OXCF3_BENDO', nb.float64[:]),
+	('OXCF3_NITR', nb.float64[:]),
+	('OXCF3_PHYT', nb.float64[:]),
+	('OXCF3_ZOO', nb.float64[:]),
+	('OXCF3_BALG', nb.float64[:]),
+	('OXCF3_TOTAL', nb.float64[:]),
+	('OXCF4_DEC', nb.float64[:]),
+	('OXCF4_BENR', nb.float64[:]),
+	('OXCF4_SNK', nb.float64[:]),
+	('OXCF4_PHYT', nb.float64[:]),
+	('OXCF4_ZOO', nb.float64[:]),
+	('OXCF4_BALG', nb.float64[:]),
+	('OXCF4_TOTAL', nb.float64[:]),
 	('OZOO', nb.float64[:,:]),
 	('PH', nb.float64[:]),
 	('PHFG', nb.int32),
@@ -279,13 +294,36 @@ class RQUAL_Class:
 		self.BOD   = ts['BOD']   = zeros(simlen)   # concentration, state variable
 		self.SATDO = ts['SATDO'] = zeros(simlen)   # concentration, state variable
 		
-		self.RODOX = ts['OXCF11'] = zeros(simlen)   # reach outflow of DOX
-		self.ROBOD = ts['OXCF12'] = zeros(simlen)   # reach outflow of BOD
+		self.RODOX = ts['OXCF1_1'] = zeros(simlen)   # reach outflow of DOX
+		self.ROBOD = ts['OXCF1_2'] = zeros(simlen)   # reach outflow of BOD
+
+		self.OXCF3_REAR = ts['OXCF3_REAR'] = zeros(simlen)  # flux terms
+		self.OXCF3_DEC = ts['OXCF3_DEC'] = zeros(simlen)
+		self.OXCF3_BENDO = ts['OXCF3_BENDO'] = zeros(simlen)
+		self.OXCF3_NITR = ts['OXCF3_NITR'] = zeros(simlen)
+		self.OXCF3_PHYT = ts['OXCF3_PHYT'] = zeros(simlen)
+		self.OXCF3_ZOO = ts['OXCF3_ZOO'] = zeros(simlen)
+		self.OXCF3_BALG = ts['OXCF3_BALG'] = zeros(simlen)
+		self.OXCF3_TOTAL = ts['OXCF3_TOTAL'] = zeros(simlen)
+		self.OXCF4_DEC = ts['OXCF4_DEC'] = zeros(simlen)
+		self.OXCF4_BENR = ts['OXCF4_BENR'] = zeros(simlen)
+		self.OXCF4_SNK = ts['OXCF4_SNK'] = zeros(simlen)
+		self.OXCF4_PHYT = ts['OXCF4_PHYT'] = zeros(simlen)
+		self.OXCF4_ZOO = ts['OXCF4_ZOO'] = zeros(simlen)
+		self.OXCF4_BALG = ts['OXCF4_BALG'] = zeros(simlen)
+		self.OXCF4_TOTAL = ts['OXCF4_TOTAL'] = zeros(simlen)
+
+		if 'OXIF1' not in ts:
+			ts['OXIF1'] = zeros(simlen)
+		ts['IDOX'] = ts['OXIF1']
+		if 'OXIF2' not in ts:
+			ts['OXIF2'] = zeros(simlen)
+		ts['IBOD'] = ts['OXIF2']
 
 		if nexits > 1:
 			for i in range(nexits):
-				ts['OXCF2' + str(i + 1) + ' 1'] = zeros(simlen)	# DOX outflow by exit
-				ts['OXCF2' + str(i + 1) + ' 2'] = zeros(simlen)	# BOD outflow by exit
+				ts['OXCF2_' + str(i + 1) + '1'] = zeros(simlen)	# DOX outflow by exit
+				ts['OXCF2_' + str(i + 1) + '2'] = zeros(simlen)	# BOD outflow by exit
 
 		#-------------------------------------------------------
 		# NUTRX - initialize:
@@ -687,8 +725,17 @@ class RQUAL_Class:
 
 			if self.nexits > 1:
 				for i in range(self.nexits):
-					ts['OXCF2' + str(i + 1) + ' 1'][loop] = self.OXRX.odox[i] * self.OXRX.conv
-					ts['OXCF2' + str(i + 1) + ' 2'][loop] = self.OXRX.obod[i] * self.OXRX.conv
+					ts['OXCF2_' + str(i + 1) + '1'][loop] = self.OXRX.odox[i] * self.OXRX.conv
+					ts['OXCF2_' + str(i + 1) + '2'][loop] = self.OXRX.obod[i] * self.OXRX.conv
+
+			self.OXCF3_REAR[loop] = self.OXRX.readox * self.OXRX.conv  # flux terms
+			self.OXCF3_DEC[loop] = self.OXRX.boddox * self.OXRX.conv
+			self.OXCF3_BENDO[loop] = self.OXRX.bendox * self.OXRX.conv
+			self.OXCF3_TOTAL[loop] = self.OXRX.totdox * self.OXRX.conv
+			self.OXCF4_DEC[loop] = self.OXRX.decbod * self.OXRX.conv
+			self.OXCF4_BENR[loop] = self.OXRX.bnrbod * self.OXRX.conv
+			self.OXCF4_SNK[loop] = self.OXRX.snkbod * self.OXRX.conv
+			self.OXCF4_TOTAL[loop] = self.OXRX.totbod * self.OXRX.conv
 
 			# NUTRX results:
 			if self.NUTFG == 1:
@@ -744,6 +791,8 @@ class RQUAL_Class:
 				self.RNH4[loop] = self.NUTRX.nh4 * self.vol
 				self.RNH3[loop] = self.NUTRX.nh3 * self.vol
 
+				self.OXCF3_NITR[loop] = self.NUTRX.nitdox * self.OXRX.conv  # flux terms
+
 
 				# PLANK results:
 				if self.PLKFG == 1:
@@ -794,6 +843,14 @@ class RQUAL_Class:
 							ts['PKCF2' + str(i + 1) + ' 3'][loop] = self.PLANK.oorn[i] * conv
 							ts['PKCF2' + str(i + 1) + ' 4'][loop] = self.PLANK.oorp[i] * conv
 							ts['PKCF2' + str(i + 1) + ' 5'][loop] = self.PLANK.oorc[i] * conv
+
+					self.OXCF3_PHYT[loop] = self.PLANK.phydox * self.OXRX.conv  # flux terms
+					self.OXCF3_ZOO[loop] = self.PLANK.zoodox * self.OXRX.conv
+					self.OXCF3_BALG[loop] = self.PLANK.baldox * self.OXRX.conv
+					self.OXCF4_PHYT[loop] = self.PLANK.phybod * self.OXRX.conv
+					self.OXCF4_ZOO[loop] = self.PLANK.zoobod * self.OXRX.conv
+					self.OXCF4_BALG[loop] = self.PLANK.balbod  * self.OXRX.conv
+					self.OXCF4_TOTAL[loop] = self.PLANK.totbod * self.OXRX.conv
 
 					# PHCARB results:
 					if self.PHFG == 1:

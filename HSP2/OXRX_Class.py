@@ -243,15 +243,14 @@ class OXRX_Class:
 				self.bendox = -self.doben * self.vol
 				self.bnrbod = self.bodbnr * self.vol
 
-			if self.LKFG == 1:
+			if self.LKFG != 1:
 				wind = 0.0
 
 			# calculate oxygen reaeration
-			if not (self.GQFG == 1 and self.GQALFG4 == 1):
-				self.korea = oxrea(
-						self.LKFG,wind,self.cforea,avvele,avdepe,self.tcginv, 
-						self.REAMFG,self.reak,self.reakt,self.expred,self.exprev,self.len_,
-						self.delth,tw,self.delts,self.delt60,self.uunits)
+			self.korea = oxrea(
+					self.LKFG,wind,self.cforea,avvele,avdepe,self.tcginv,
+					self.REAMFG,self.reak,self.reakt,self.expred,self.exprev,self.len_,
+					self.delth,tw,self.delts,self.delt60,self.uunits)
 
 			# calculate oxygen saturation level for current water
 			# temperature; satdo is expressed as mg oxygen per liter

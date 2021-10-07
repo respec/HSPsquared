@@ -258,7 +258,7 @@ def get_timeseries(store, ext_sourcesdd, siminfo):
                 tmemsb1 = row.TMEMSB[0]
             if len(row.TMEMSB) > 2:
                 tmemsb2 = row.TMEMSB[-1]
-            sname, tname = expand_timeseries_names('', '', '', row.TMEMN, tmemsb1, tmemsb2)
+            sname, tname = expand_timeseries_names('', '', '', '', row.TMEMN, tmemsb1, tmemsb2)
 
         if tname in ts:
             ts[tname] += t
@@ -266,7 +266,7 @@ def get_timeseries(store, ext_sourcesdd, siminfo):
             ts[tname]  = t
     return ts
 
-def expand_timeseries_names(smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmemsb2):
+def expand_timeseries_names(sgrp, smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmemsb2):
     #special cases to expand timeseries names to resolve with output names in hdf5 file
     if tmemn == 'ICON':
         if tmemsb1 == '':
@@ -311,13 +311,15 @@ def expand_timeseries_names(smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmemsb2):
 
     # OXRX:
     if smemn == 'OXCF1':
-        smemn = 'OXCF1' + smemsb1
-    
+        smemn = 'OXCF1_' + smemsb1
     if smemn == 'OXCF2':
-        smemn = 'OXCF2' + smemsb1 + ' ' + smemsb2   # smemsb1 is exit #
-
+        smemn = 'OXCF2_' + smemsb1 + smemsb2   # smemsb1 is exit #
     if tmemn == 'OXIF':
         tmemn = 'OXIF' + tmemsb1
+        if sgrp == "PQUAL" or sgrp == "IQUAL":  # could be from pqual or iqual
+            if smemsb1 == '':
+                smemsb1 = '1'
+            smemn = sgrp + smemsb1 + '_' + smemn
 
     # NUTRX - dissolved species:
     if smemn == 'NUCF1':                            # total outflow
