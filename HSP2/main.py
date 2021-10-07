@@ -388,7 +388,7 @@ def get_flows(store, ts, flags, uci, segment, ddlinks, ddmasslinks, steps, msg):
                 if tmemn == 'ISED' or tmemn == 'ISQAL':
                     tmemn = tmemn + tmemsb1    # need to add sand, silt, clay subscript
 
-                smemn, tmemn = expand_timeseries_names(smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmemsb2)
+                smemn, tmemn = expand_timeseries_names(sgrpn, smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmemsb2)
 
                 path = f'RESULTS/{x.SVOL}_{x.SVOLNO}/{sgrpn}'
                 MFname = f'{x.SVOL}{x.SVOLNO}_MFACTOR'
@@ -420,6 +420,8 @@ def get_flows(store, ts, flags, uci, segment, ddlinks, ddmasslinks, steps, msg):
                     # if poht to iheat, imprecision in hspf conversion factor requires a slight adjustment
                     if (smemn == 'POHT' or smemn == 'SOHT') and tmemn == 'IHEAT':
                        t *= 0.998553
+                    if (smemn == 'PODOXM' or smemn == 'SODOXM') and tmemn == 'OXIF1':
+                       t *= 1.000565
 
                     # ??? ISSUE: can fetched data be at different frequency - don't know how to transform.
                     if tmemn in ts:
