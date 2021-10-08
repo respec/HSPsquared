@@ -204,7 +204,7 @@ class RegressTest(object):
             ts_suro_hsp2 = self.hsp2_data.get_time_series(operation, id, 'SURO', 'PWATER')
             ts_suro_hsp2 = self.fill_nan_and_null(ts_suro_hsp2)            
             ts_suro_hspf = self.get_hspf_time_series((operation, 'PWATER', id, 'SURO', 2))
-            ts_suro_hsp2 = self.fill_nan_and_null(ts_suro_hspf)            
+            ts_suro_hspf = self.fill_nan_and_null(ts_suro_hspf)
 
         
             idx_zero_suro_hsp2 = ts_suro_hsp2 == 0
@@ -212,9 +212,9 @@ class RegressTest(object):
             idx_zero_suro_hspf = ts_suro_hspf == 0
             idx_low_suro_hspf = ts_suro_hspf < 1.0e-8
             
-            ts_hsp2.loc[idx_zero_suro_hsp2 & idx_low_suro_hspf] = ts_hsp2.loc[idx_zero_suro_hsp2 & idx_low_suro_hspf] = 0
-            ts_hsp2.loc[idx_zero_suro_hspf & idx_low_suro_hsp2] = ts_hsp2.loc[idx_zero_suro_hspf & idx_low_suro_hsp2] = 0
-       
+            ts_hsp2.loc[idx_zero_suro_hsp2 & idx_low_suro_hspf] = ts_hspf.loc[idx_zero_suro_hsp2 & idx_low_suro_hspf] = 0
+            ts_hspf.loc[idx_zero_suro_hspf & idx_low_suro_hsp2] = ts_hsp2.loc[idx_zero_suro_hspf & idx_low_suro_hsp2] = 0
+
         # if volume in reach is going to zero, small concentration differences are not signficant
         if activity == 'SEDTRN' and cons in ['SSEDCLAY', 'SSEDTOT']: 
             ts_vol_hsp2 = self.hsp2_data.get_time_series(operation, id, "VOL", "HYDR")
