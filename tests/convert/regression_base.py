@@ -216,7 +216,8 @@ class RegressTest(object):
             ts_hspf.loc[idx_zero_suro_hspf & idx_low_suro_hsp2] = ts_hsp2.loc[idx_zero_suro_hspf & idx_low_suro_hsp2] = 0
 
         # if volume in reach is going to zero, small concentration differences are not signficant
-        if activity == 'SEDTRN' and cons in ['SSEDCLAY', 'SSEDTOT']: 
+        if (activity == 'SEDTRN' and cons in ['SSEDCLAY', 'SSEDTOT']) or \
+                (activity == 'NUTRX' and cons in ['TAMCONCDIS', 'NH4CONCDIS', 'NH3CONCDIS', 'NO3CONCDIS', 'NO2CONCDIS', 'PO4CONCDIS']):
             ts_vol_hsp2 = self.hsp2_data.get_time_series(operation, id, "VOL", "HYDR")
             ts_vol_hsp2 = self.fill_nan_and_null(ts_vol_hsp2)
             
