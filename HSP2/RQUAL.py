@@ -170,6 +170,21 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 			u[f'OXCF2_{i + 1}1'] = u['OXCF2_11']
 			u[f'OXCF2_{i + 1}2'] = u['OXCF2_12']
 
+		u = uci_nutrx['SAVE']
+		for i in range(nexits):
+			u[f'NUCF9_{i + 1}1'] = u['NUCF9_11']
+			u[f'NUCF9_{i + 1}2'] = u['NUCF9_12']
+			u[f'NUCF9_{i + 1}3'] = u['NUCF9_13']
+			u[f'NUCF9_{i + 1}4'] = u['NUCF9_14']
+			u[f'OSNH4_{i + 1}1'] = u['OSNH4_11']
+			u[f'OSNH4_{i + 1}2'] = u['OSNH4_12']
+			u[f'OSNH4_{i + 1}3'] = u['OSNH4_13']
+			u[f'OSNH4_{i + 1}4'] = u['OSNH4_14']
+			u[f'OSPO4_{i + 1}1'] = u['OSPO4_11']
+			u[f'OSPO4_{i + 1}2'] = u['OSPO4_12']
+			u[f'OSPO4_{i + 1}3'] = u['OSPO4_13']
+			u[f'OSPO4_{i + 1}4'] = u['OSPO4_14']
+
 	return errors, ERRMSGS
 
 

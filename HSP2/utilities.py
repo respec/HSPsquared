@@ -323,23 +323,23 @@ def expand_timeseries_names(sgrp, smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmems
 
     # NUTRX - dissolved species:
     if smemn == 'NUCF1':                            # total outflow
-        smemn = 'NUCF1' + smemsb1
+        smemn = 'NUCF1_' + smemsb1
 
     if smemn == 'NUCF9':                            # exit-specific outflow
-        smemn = 'NUCF9' + smemsb1 + ' ' + smemsb2   # smemsb1 is exit #
+        smemn = 'NUCF9_' + smemsb1 + smemsb2        # smemsb1 is exit #
 
     if tmemn == 'NUIF1':
-        tmemn = 'NUIF1' + tmemsb1
+        tmemn = 'NUIF1_' + tmemsb1
 
     # NUTRX - particulate species:
     if smemn == 'NUCF2':                            # total outflow
-        smemn = 'NUCF2' + smemsb1 + ' ' + smemsb2   # smemsb1 is sediment class
+        smemn = 'NUCF2_' + smemsb1 + smemsb2   # smemsb1 is sediment class
 
     if smemn == 'OSNH4' or smemn == 'OSPO4':        # exit-specific outflow
-        smemn = smemn + smemsb1 + ' ' + smemsb2     # smemsb1 is exit #, smemsb2 is sed class
+        smemn = smemn + '_' + smemsb1 + smemsb2     # smemsb1 is exit #, smemsb2 is sed class
 
     if tmemn == 'NUIF2':
-        tmemn = 'NUIF2' + tmemsb1 + ' ' + tmemsb2
+        tmemn = 'NUIF2_' + tmemsb1 + tmemsb2
 
     # PLANK:
     if smemn == 'PKCF1':                            # total outflow

@@ -59,6 +59,29 @@ spec = [
 	('NUADCN', nb.float64[:]),
 	('NUADFG', nb.int32[:]),
 	('NUADFX', nb.float64[:]),
+	('NUCF4_NITNO3', nb.float64[:]),
+	('NUCF4_DENNO3', nb.float64[:]),
+	('NUCF4_BODNO3', nb.float64[:]),
+	('NUCF4_TOTNO3', nb.float64[:]),
+	('NUCF4_PHYNO3', nb.float64[:]),
+	('NUCF4_ZOONO3', nb.float64[:]),
+	('NUCF4_BALNO3', nb.float64[:]),
+	('NUCF5_NITTAM', nb.float64[:]),
+	('NUCF5_VOLNH3', nb.float64[:]),
+	('NUCF5_BNRTAM', nb.float64[:]),
+	('NUCF5_BODTAM', nb.float64[:]),
+	('NUCF5_TOTTAM', nb.float64[:]),
+	('NUCF5_PHYTAM', nb.float64[:]),
+	('NUCF5_ZOOTAM', nb.float64[:]),
+	('NUCF5_BALTAM', nb.float64[:]),
+	('NUCF6_NITNO2', nb.float64[:]),
+	('NUCF6_TOTNO2', nb.float64[:]),
+	('NUCF7_BNRPO4', nb.float64[:]),
+	('NUCF7_BODPO4', nb.float64[:]),
+	('NUCF7_TOTPO4', nb.float64[:]),
+	('NUCF7_PHYPO4', nb.float64[:]),
+	('NUCF7_ZOOPO4', nb.float64[:]),
+	('NUCF7_BALPO4', nb.float64[:]),
 	('NUTFG', nb.int32),
 	('OBALCLA', nb.float64[:,:]),
 	('OBENAL', nb.float64[:,:]),
@@ -144,8 +167,14 @@ spec = [
 	('SCRFAC', nb.float64[:]),
 	('SEDFG', nb.int32),
 	('simlen', nb.int32),
+	('SNH41', nb.float64[:]),
+	('SNH42', nb.float64[:]),
+	('SNH43', nb.float64[:]),
 	('SOLRAD', nb.float64[:]),
 	('SOVOL', nb.float64[:,:]),
+	('SPO41', nb.float64[:]),
+	('SPO42', nb.float64[:]),
+	('SPO43', nb.float64[:]),
 	('SSED4', nb.float64[:]),
 	('SROVOL', nb.float64[:]),
 	('svol', nb.float64),
@@ -158,6 +187,14 @@ spec = [
 	('TORN', nb.float64[:]),
 	('TORP', nb.float64[:]),
 	('TOTCO2', nb.float64[:]),
+	('TNUIF1', nb.float64[:]),
+	('TNUIF2', nb.float64[:]),
+	('TNUIF3', nb.float64[:]),
+	('TNUIF4', nb.float64[:]),
+	('TNUCF1_1', nb.float64[:]),
+	('TNUCF1_2', nb.float64[:]),
+	('TNUCF1_3', nb.float64[:]),
+	('TNUCF1_4', nb.float64[:]),
 	('TP', nb.float64[:]),
 	('TW', nb.float64[:]),
 	('uunits', nb.int32),
@@ -334,17 +371,17 @@ class RQUAL_Class:
 			self.INO3 = zeros(simlen); self.INO2 = zeros(simlen)
 			self.INH4 = zeros(simlen); self.IPO4 = zeros(simlen)
 
-			if 'NUIF11' in ts:
-				self.INO3 = ts['NUIF11']   # optional, input
+			if 'NUIF1_1' in ts:
+				self.INO3 = ts['NUIF1_1']   # optional, input
 
-			if 'NUIF12' in ts:				
-				self.INH4 = ts['NUIF12']   # optional, input
+			if 'NUIF1_2' in ts:
+				self.INH4 = ts['NUIF1_2']   # optional, input
 			
-			if 'NUIF13' in ts:
-				self.INO2 = ts['NUIF13']   # optional, input
+			if 'NUIF1_3' in ts:
+				self.INO2 = ts['NUIF1_3']   # optional, input
 
-			if 'NUIF14' in ts:
-				self.IPO4 = ts['NUIF14']   # optional, input
+			if 'NUIF1_4' in ts:
+				self.IPO4 = ts['NUIF1_4']   # optional, input
 
 			# sediment-adsorbed (NH4, PO4):
 			self.ISNH41 = zeros(simlen)
@@ -354,13 +391,13 @@ class RQUAL_Class:
 			self.ISPO42 = zeros(simlen)
 			self.ISPO43 = zeros(simlen)
 
-			if 'NUIF21 1' in ts:  self.ISNH41 = ts['NUIF21 1']
-			if 'NUIF22 1' in ts:  self.ISNH42 = ts['NUIF22 1']
-			if 'NUIF23 1' in ts:  self.ISNH43 = ts['NUIF23 1']
+			if 'NUIF2_11' in ts:  self.ISNH41 = ts['NUIF2_11']
+			if 'NUIF2_21' in ts:  self.ISNH42 = ts['NUIF2_21']
+			if 'NUIF2_31' in ts:  self.ISNH43 = ts['NUIF2_31']
 
-			if 'NUIF21 2' in ts:  self.ISPO41 = ts['NUIF21 2']
-			if 'NUIF22 2' in ts:  self.ISPO42 = ts['NUIF22 2']
-			if 'NUIF23 2' in ts:  self.ISPO43 = ts['NUIF23 2']
+			if 'NUIF2_12' in ts:  self.ISPO41 = ts['NUIF2_12']
+			if 'NUIF2_22' in ts:  self.ISPO42 = ts['NUIF2_22']
+			if 'NUIF2_32' in ts:  self.ISPO43 = ts['NUIF2_32']
 
 			# NUTRX - instantiate class:
 			self.NUTRX = NUTRX_Class(siminfo, self.nexits, self.vol, ui, ui_nutrx, ts, self.OXRX)
@@ -374,44 +411,78 @@ class RQUAL_Class:
 			self.NH3   = ts['NH3']   = zeros(simlen)   # concentration, state variable
 
 			#	inflows:			
-			#self.NUIF11  = ts['NUIF1_NO3'] = zeros(simlen)  # total outflow
-			#self.NUIF12  = ts['NUIF1_TAM'] = zeros(simlen)  # total outflow
-			#self.NUIF13  = ts['NUIF1_NO2'] = zeros(simlen)  # total outflow
-			#self.NUIF14  = ts['NUIF1_PO4'] = zeros(simlen)  # total outflow
+			self.TNUIF1  = ts['TNUIF1'] = zeros(simlen)  # total inflow
+			self.TNUIF2  = ts['TNUIF2'] = zeros(simlen)  # total inflow
+			self.TNUIF3  = ts['TNUIF3'] = zeros(simlen)  # total inflow
+			self.TNUIF4  = ts['TNUIF4'] = zeros(simlen)  # total inflow
+
+			self.NUCF4_NITNO3 = ts['NUCF4_NITNO3'] = zeros(simlen)  # flux terms
+			self.NUCF4_DENNO3 = ts['NUCF4_DENNO3'] = zeros(simlen)
+			self.NUCF4_BODNO3 = ts['NUCF4_BODNO3'] = zeros(simlen)
+			self.NUCF4_TOTNO3 = ts['NUCF4_TOTNO3'] = zeros(simlen)
+			self.NUCF4_PHYNO3 = ts['NUCF4_PHYNO3'] = zeros(simlen)
+			self.NUCF4_ZOONO3 = ts['NUCF4_ZOONO3'] = zeros(simlen)
+			self.NUCF4_BALNO3 = ts['NUCF4_BALNO3'] = zeros(simlen)
+			self.NUCF5_NITTAM = ts['NUCF5_NITTAM'] = zeros(simlen)
+			self.NUCF5_VOLNH3 = ts['NUCF5_VOLNH3'] = zeros(simlen)
+			self.NUCF5_BNRTAM = ts['NUCF5_BNRTAM'] = zeros(simlen)
+			self.NUCF5_BODTAM = ts['NUCF5_BODTAM'] = zeros(simlen)
+			self.NUCF5_TOTTAM = ts['NUCF5_TOTTAM'] = zeros(simlen)
+			self.NUCF5_PHYTAM = ts['NUCF5_PHYTAM'] = zeros(simlen)
+			self.NUCF5_ZOOTAM = ts['NUCF5_ZOOTAM'] = zeros(simlen)
+			self.NUCF5_BALTAM = ts['NUCF5_BALTAM'] = zeros(simlen)
+			self.NUCF6_NITNO2 = ts['NUCF6_NITNO2'] = zeros(simlen)
+			self.NUCF6_TOTNO2 = ts['NUCF6_TOTNO2'] = zeros(simlen)
+			self.NUCF7_BNRPO4 = ts['NUCF7_BNRPO4'] = zeros(simlen)
+			self.NUCF7_BODPO4 = ts['NUCF7_BODPO4'] = zeros(simlen)
+			self.NUCF7_TOTPO4 = ts['NUCF7_TOTPO4'] = zeros(simlen)
+			self.NUCF7_PHYPO4 = ts['NUCF7_PHYPO4'] = zeros(simlen)
+			self.NUCF7_ZOOPO4 = ts['NUCF7_ZOOPO4'] = zeros(simlen)
+			self.NUCF7_BALPO4 = ts['NUCF7_BALPO4'] = zeros(simlen)
 
 			#	total outflows:
-			self.RONO3 = ts['NUCF11'] = zeros(simlen)   # outflow
-			self.ROTAM = ts['NUCF12'] = zeros(simlen)   # outflow
-			self.RONO2 = ts['NUCF13'] = zeros(simlen)   # outflow
-			self.ROPO4 = ts['NUCF14'] = zeros(simlen)   # outflow
+			self.RONO3 = ts['NUCF1_1'] = zeros(simlen)   # dissolved outflow
+			self.ROTAM = ts['NUCF1_2'] = zeros(simlen)   # dissolved outflow
+			self.RONO2 = ts['NUCF1_3'] = zeros(simlen)   # dissolved outflow
+			self.ROPO4 = ts['NUCF1_4'] = zeros(simlen)   # dissolved outflow
+			self.TNUCF1_1 = ts['TNUCF1_1'] = zeros(simlen)   # total outflow
+			self.TNUCF1_2 = ts['TNUCF1_2'] = zeros(simlen)   # total outflow
+			self.TNUCF1_3 = ts['TNUCF1_3'] = zeros(simlen)   # total outflow
+			self.TNUCF1_4 = ts['TNUCF1_4'] = zeros(simlen)   # total outflow
 			
 			if self.NUTRX.ADNHFG > 0:
-				self.ROSNH41 = ts['NUCF21 1'] = zeros(simlen)	# sand
-				self.ROSNH42 = ts['NUCF22 1'] = zeros(simlen)	# silt
-				self.ROSNH43 = ts['NUCF23 1'] = zeros(simlen)	# clay
+				self.SNH41 = ts['SNH41']  = zeros(simlen)	    # sand
+				self.SNH42 = ts['SNH42']  = zeros(simlen)	    # silt
+				self.SNH43 = ts['SNH43']  = zeros(simlen)	    # clay
+				self.ROSNH41 = ts['NUCF2_11'] = zeros(simlen)	# sand
+				self.ROSNH42 = ts['NUCF2_21'] = zeros(simlen)	# silt
+				self.ROSNH43 = ts['NUCF2_31'] = zeros(simlen)	# clay
 
 			if self.NUTRX.ADPOFG > 0:
-				self.ROSPO41 = ts['NUCF21 2'] = zeros(simlen)	# sand
-				self.ROSPO42 = ts['NUCF22 2'] = zeros(simlen)	# silt
-				self.ROSPO43 = ts['NUCF23 2'] = zeros(simlen)	# clay
+				self.SPO41 = ts['SPO41']  = zeros(simlen)	    # sand
+				self.SPO42 = ts['SPO42']  = zeros(simlen)	    # silt
+				self.SPO43 = ts['SPO43']  = zeros(simlen)	    # clay
+				self.ROSPO41 = ts['NUCF2_12'] = zeros(simlen)	# sand
+				self.ROSPO42 = ts['NUCF2_22'] = zeros(simlen)	# silt
+				self.ROSPO43 = ts['NUCF2_32'] = zeros(simlen)	# clay
 
 			# exit outflows:
 			if nexits > 1:
 				for i in range(nexits):
-					ts['NUCF9' + str(i + 1) + ' 1'] = zeros(simlen)
-					ts['NUCF9' + str(i + 1) + ' 2'] = zeros(simlen)
-					ts['NUCF9' + str(i + 1) + ' 3'] = zeros(simlen)
-					ts['NUCF9' + str(i + 1) + ' 4'] = zeros(simlen)
+					ts['NUCF9_' + str(i + 1) + '1'] = zeros(simlen)
+					ts['NUCF9_' + str(i + 1) + '2'] = zeros(simlen)
+					ts['NUCF9_' + str(i + 1) + '3'] = zeros(simlen)
+					ts['NUCF9_' + str(i + 1) + '4'] = zeros(simlen)
 
 					if self.NUTRX.ADNHFG > 0:
-						ts['OSNH4' + str(i + 1) + ' 1'] = zeros(simlen)	# sand
-						ts['OSNH4' + str(i + 1) + ' 2'] = zeros(simlen)	# silt
-						ts['OSNH4' + str(i + 1) + ' 3'] = zeros(simlen)	# clay
+						ts['OSNH4_' + str(i + 1) + '1'] = zeros(simlen)	# sand
+						ts['OSNH4_' + str(i + 1) + '2'] = zeros(simlen)	# silt
+						ts['OSNH4_' + str(i + 1) + '3'] = zeros(simlen)	# clay
 					
 					if self.NUTRX.ADPOFG > 0:
-						ts['OSPO4' + str(i + 1) + ' 1'] = zeros(simlen)	# sand
-						ts['OSPO4' + str(i + 1) + ' 2'] = zeros(simlen)	# silt
-						ts['OSPO4' + str(i + 1) + ' 3'] = zeros(simlen)	# clay
+						ts['OSPO4_' + str(i + 1) + '1'] = zeros(simlen)	# sand
+						ts['OSPO4_' + str(i + 1) + '2'] = zeros(simlen)	# silt
+						ts['OSPO4_' + str(i + 1) + '3'] = zeros(simlen)	# clay
 
 			self.RNO3 = ts['RNO3'] = zeros(simlen)
 			self.RTAM = ts['RTAM'] = zeros(simlen)
@@ -419,7 +490,40 @@ class RQUAL_Class:
 			self.RPO4 = ts['RPO4'] = zeros(simlen)
 			self.RNH4 = ts['RNH4'] = zeros(simlen)
 			self.RNH3 = ts['RNH3'] = zeros(simlen)
-			
+
+			if 'NUIF1_1' not in ts:
+				ts['NUIF1_1'] = zeros(simlen)
+			ts['INO3'] = ts['NUIF1_1']
+			if 'NUIF1_2' not in ts:
+				ts['NUIF1_2'] = zeros(simlen)
+			ts['INH4'] = ts['NUIF1_2']
+			if 'NUIF1_3' not in ts:
+				ts['NUIF1_3'] = zeros(simlen)
+			ts['INO2'] = ts['NUIF1_3']
+			if 'NUIF1_4' not in ts:
+				ts['NUIF1_4'] = zeros(simlen)
+			ts['IPO4'] = ts['NUIF1_4']
+
+			if 'NUIF2_11' not in ts:
+				ts['NUIF2_11'] = zeros(simlen)
+			ts['ISNH41'] = ts['NUIF2_11']
+			if 'NUIF2_21' not in ts:
+				ts['NUIF2_21'] = zeros(simlen)
+			ts['ISNH42'] = ts['NUIF2_21']
+			if 'NUIF2_31' not in ts:
+				ts['NUIF2_31'] = zeros(simlen)
+			ts['ISNH43'] = ts['NUIF2_31']
+
+			if 'NUIF2_12' not in ts:
+				ts['NUIF2_12'] = zeros(simlen)
+			ts['ISPO41'] = ts['NUIF2_12']
+			if 'NUIF2_22' not in ts:
+				ts['NUIF2_22'] = zeros(simlen)
+			ts['ISPO42'] = ts['NUIF2_22']
+			if 'NUIF2_32' not in ts:
+				ts['NUIF2_32'] = zeros(simlen)
+			ts['ISPO43'] = ts['NUIF2_32']
+
 			#-------------------------------------------------------
 			# PLANK - simulate biological components:
 			#-------------------------------------------------------
@@ -660,29 +764,6 @@ class RQUAL_Class:
 						i = 0
 						pass
 
-				#-------------------------------------------------------
-				# NUTRX - update masses (TO-DO! - removed for now; fails on numba compile)
-				#-------------------------------------------------------
-				'''
-				self.NUTRX.rno3 = self.NUTRX.no3 * self.vol
-				self.NUTRX.rtam = self.NUTRX.tam * self.vol
-				self.NUTRX.rno2 = self.NUTRX.no2 * self.vol
-				self.NUTRX.rpo4 = self.NUTRX.po4 * self.vol
-				self.NUTRX.rnh4 = self.NUTRX.nh4 * self.vol
-				self.NUTRX.rnh3 = self.NUTRX.nh3 * self.vol
-				
-				self.NUTRX.rrno3 = self.NUTRX.no3 * self.vol
-				self.NUTRX.rrtam = self.NUTRX.tam * self.vol
-
-				if self.NUTRX.ADNHFG == 1:  
-					self.NUTRX.rrtam += self.NUTRX.rsnh4[4]  # add adsorbed suspended nh4 to dissolved
-					
-				self.NUTRX.rrno2 = self.NUTRX.no2 * self.vol
-				self.NUTRX.rrpo4 = self.NUTRX.po4 * self.vol
-
-				if self.NUTRX.ADPOFG == 1:  
-					self.NUTRX.rrpo4 += self.NUTRX.rspo4[4] # add adsorbed suspended po4 to dissolved	
-				'''
 
 				#self.NUTRX.update_mass()
 
@@ -747,20 +828,34 @@ class RQUAL_Class:
 				self.NH3[loop] = self.NUTRX.nh3
 
 				#	inflows (lb/ivld or kg/ivld):
+				conv = self.NUTRX.conv
+				self.TNUIF1[loop] = self.NUTRX.tnuif[1] * conv
+				self.TNUIF2[loop] = self.NUTRX.tnuif[2] * conv
+				self.TNUIF3[loop] = self.NUTRX.tnuif[3] * conv
+				self.TNUIF4[loop] = self.NUTRX.tnuif[4] * conv
 
 				#	outflows (convert to mass per interval (lb/ivld or kg/ivld))
-				conv = self.NUTRX.conv
 				self.RONO3[loop] = self.NUTRX.rono3 * conv
 				self.ROTAM[loop] = self.NUTRX.rotam * conv
 				self.RONO2[loop] = self.NUTRX.rono2 * conv
 				self.ROPO4[loop] = self.NUTRX.ropo4 * conv
+				self.TNUCF1_1[loop] = self.NUTRX.tnucf1[1] * conv
+				self.TNUCF1_2[loop] = self.NUTRX.tnucf1[2] * conv
+				self.TNUCF1_3[loop] = self.NUTRX.tnucf1[3] * conv
+				self.TNUCF1_4[loop] = self.NUTRX.tnucf1[4] * conv
 
 				if self.NUTRX.ADNHFG > 0:
+					self.SNH41[loop] = self.NUTRX.rsnh4[1]
+					self.SNH42[loop] = self.NUTRX.rsnh4[2]
+					self.SNH43[loop] = self.NUTRX.rsnh4[3]
 					self.ROSNH41[loop] = self.NUTRX.rosnh4[1] * conv
 					self.ROSNH42[loop] = self.NUTRX.rosnh4[2] * conv
 					self.ROSNH43[loop] = self.NUTRX.rosnh4[3] * conv
 
 				if self.NUTRX.ADPOFG > 0:
+					self.SPO41[loop] = self.NUTRX.rspo4[1]
+					self.SPO42[loop] = self.NUTRX.rspo4[2]
+					self.SPO43[loop] = self.NUTRX.rspo4[3]
 					self.ROSPO41[loop] = self.NUTRX.rospo4[1] * conv
 					self.ROSPO42[loop] = self.NUTRX.rospo4[2] * conv
 					self.ROSPO43[loop] = self.NUTRX.rospo4[3] * conv
@@ -768,31 +863,44 @@ class RQUAL_Class:
 				# exit outflows:
 				if self.nexits > 1:
 					for i in range(self.nexits):
-						ts['NUCF9' + str(i + 1) + ' 1'][loop] = self.NUTRX.ono3[i] * conv
-						ts['NUCF9' + str(i + 1) + ' 2'][loop] = self.NUTRX.otam[i] * conv
-						ts['NUCF9' + str(i + 1) + ' 3'][loop] = self.NUTRX.ono2[i] * conv
-						ts['NUCF9' + str(i + 1) + ' 4'][loop] = self.NUTRX.opo4[i] * conv
+						ts['NUCF9_' + str(i + 1) + '1'][loop] = self.NUTRX.ono3[i] * conv
+						ts['NUCF9_' + str(i + 1) + '2'][loop] = self.NUTRX.otam[i] * conv
+						ts['NUCF9_' + str(i + 1) + '3'][loop] = self.NUTRX.ono2[i] * conv
+						ts['NUCF9_' + str(i + 1) + '4'][loop] = self.NUTRX.opo4[i] * conv
 
 						if self.NUTRX.ADNHFG > 0:
-							ts['OSNH4' + str(i + 1) + ' 1'][loop] = self.NUTRX.osnh4[i,1] * conv	# sand
-							ts['OSNH4' + str(i + 1) + ' 2'][loop] = self.NUTRX.osnh4[i,2] * conv	# silt
-							ts['OSNH4' + str(i + 1) + ' 3'][loop] = self.NUTRX.osnh4[i,3] * conv	# clay
+							ts['OSNH4_' + str(i + 1) + '1'][loop] = self.NUTRX.osnh4[i,1] * conv	# sand
+							ts['OSNH4_' + str(i + 1) + '2'][loop] = self.NUTRX.osnh4[i,2] * conv	# silt
+							ts['OSNH4_' + str(i + 1) + '3'][loop] = self.NUTRX.osnh4[i,3] * conv	# clay
 						
 						if self.NUTRX.ADPOFG > 0:
-							ts['OSPO4' + str(i + 1) + ' 1'][loop] = self.NUTRX.ospo4[i,1] * conv	# sand
-							ts['OSPO4' + str(i + 1) + ' 2'][loop] = self.NUTRX.ospo4[i,2] * conv	# silt
-							ts['OSPO4' + str(i + 1) + ' 3'][loop] = self.NUTRX.ospo4[i,3] * conv	# clay
+							ts['OSPO4_' + str(i + 1) + '1'][loop] = self.NUTRX.ospo4[i,1] * conv	# sand
+							ts['OSPO4_' + str(i + 1) + '2'][loop] = self.NUTRX.ospo4[i,2] * conv	# silt
+							ts['OSPO4_' + str(i + 1) + '3'][loop] = self.NUTRX.ospo4[i,3] * conv	# clay
 
 				#	mass storages:
-				self.RNO3[loop] = self.NUTRX.no3 * self.vol
-				self.RTAM[loop] = self.NUTRX.tam * self.vol
-				self.RNO2[loop] = self.NUTRX.no2 * self.vol
-				self.RPO4[loop] = self.NUTRX.po4 * self.vol
-				self.RNH4[loop] = self.NUTRX.nh4 * self.vol
-				self.RNH3[loop] = self.NUTRX.nh3 * self.vol
+				self.RNO3[loop] = self.NUTRX.no3 * self.vol * conv
+				self.RTAM[loop] = self.NUTRX.tam * self.vol * conv
+				self.RNO2[loop] = self.NUTRX.no2 * self.vol * conv
+				self.RPO4[loop] = self.NUTRX.po4 * self.vol * conv
+				self.RNH4[loop] = self.NUTRX.nh4 * self.vol * conv
+				self.RNH3[loop] = self.NUTRX.nh3 * self.vol * conv
 
 				self.OXCF3_NITR[loop] = self.NUTRX.nitdox * self.OXRX.conv  # flux terms
-
+				self.NUCF4_NITNO3[loop] = self.NUTRX.nitno3 * conv
+				self.NUCF4_DENNO3[loop] = self.NUTRX.denno3 * conv
+				self.NUCF4_BODNO3[loop] = self.NUTRX.bodno3 * conv
+				self.NUCF4_TOTNO3[loop] = self.NUTRX.totno3 * conv
+				self.NUCF5_NITTAM[loop] = self.NUTRX.nittam * conv
+				self.NUCF5_VOLNH3[loop] = self.NUTRX.volnh3 * conv
+				self.NUCF5_BNRTAM[loop] = self.NUTRX.bnrtam * conv
+				self.NUCF5_BODTAM[loop] = self.NUTRX.bodtam * conv
+				self.NUCF5_TOTTAM[loop] = self.NUTRX.tottam * conv
+				self.NUCF6_NITNO2[loop] = self.NUTRX.nitno2 * conv
+				self.NUCF6_TOTNO2[loop] = self.NUTRX.nitno2 * conv
+				self.NUCF7_BNRPO4[loop] = self.NUTRX.bnrpo4 * conv
+				self.NUCF7_BODPO4[loop] = self.NUTRX.bodpo4 * conv
+				self.NUCF7_TOTPO4[loop] = self.NUTRX.totpo4 * conv
 
 				# PLANK results:
 				if self.PLKFG == 1:
@@ -851,6 +959,18 @@ class RQUAL_Class:
 					self.OXCF4_ZOO[loop] = self.PLANK.zoobod * self.OXRX.conv
 					self.OXCF4_BALG[loop] = self.PLANK.balbod  * self.OXRX.conv
 					self.OXCF4_TOTAL[loop] = self.PLANK.totbod * self.OXRX.conv
+					self.NUCF4_PHYNO3[loop] = self.PLANK.phyno3 * self.NUTRX.conv
+					self.NUCF4_ZOONO3[loop] = self.PLANK.zoono3 * self.NUTRX.conv
+					self.NUCF4_BALNO3[loop] = self.PLANK.balno3 * self.NUTRX.conv
+					# self.NUCF4_TOTNO3[loop] = self.PLANK.tottam * conv
+					self.NUCF5_PHYTAM[loop] = self.PLANK.phytam * self.NUTRX.conv
+					self.NUCF5_ZOOTAM[loop] = self.PLANK.zootam * self.NUTRX.conv
+					self.NUCF5_BALTAM[loop] = self.PLANK.baltam * self.NUTRX.conv
+					self.NUCF5_TOTTAM[loop] = self.PLANK.tottam * conv
+					self.NUCF7_PHYPO4[loop] = self.PLANK.phypo4 * self.NUTRX.conv
+					self.NUCF7_ZOOPO4[loop] = self.PLANK.zoopo4 * self.NUTRX.conv
+					self.NUCF7_BALPO4[loop] = self.PLANK.balpo4 * self.NUTRX.conv
+					self.NUCF7_TOTPO4[loop] = self.PLANK.totpo4 * conv
 
 					# PHCARB results:
 					if self.PHFG == 1:
