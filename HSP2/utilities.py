@@ -343,10 +343,10 @@ def expand_timeseries_names(sgrp, smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmems
 
     # PLANK:
     if smemn == 'PKCF1':                            # total outflow
-        smemn = 'PKCF1' + smemsb1                   # smemsb1 is species index
+        smemn = 'PKCF1_' + smemsb1                   # smemsb1 is species index
 
     if smemn == 'PKCF2':                            # exit-specific outflow
-        smemn = 'PKCF2' + smemsb1 + ' ' + smemsb2   # smemsb1 is exit #, smemsb2 is species index
+        smemn = 'PKCF2_' + smemsb1 + smemsb2        # smemsb1 is exit #, smemsb2 is species index
 
     if tmemn == 'PKIF':
         tmemn = 'PKIF' + tmemsb1                    # smemsb1 is species index

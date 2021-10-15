@@ -20,7 +20,7 @@ spec = [
 	('AVDEPE', nb.float64[:]),
 	('AVVEL', nb.float64[:]),
 	('AVVELE', nb.float64[:]),
-	('BALCLA', nb.float64[:]),
+	('BALCLA1', nb.float64[:]),
 	('BENAL1', nb.float64[:]),
 	('BENRFG', nb.int32),
 	('BOD', nb.float64[:]),
@@ -121,6 +121,31 @@ spec = [
 	('PHFG', nb.int32),
 	('PHYCLA', nb.float64[:]),
 	('PHYTO', nb.float64[:]),
+	('PKCF5_SNKPHY', nb.float64[:]),
+	('PKCF5_ZOOPHY', nb.float64[:]),
+	('PKCF5_DTHPHY', nb.float64[:]),
+	('PKCF5_GROPHY', nb.float64[:]),
+	('PKCF5_TOTPHY', nb.float64[:]),
+	('PKCF6_GROZOO', nb.float64[:]),
+	('PKCF6_DTHZOO', nb.float64[:]),
+	('PKCF6_TOTZOO', nb.float64[:]),
+	('PKCF7_GROBEN', nb.float64[:]),
+	('PKCF7_DTHBEN', nb.float64[:]),
+	('PKCF8_SNKORN', nb.float64[:]),
+	('PKCF8_DTPORN', nb.float64[:]),
+	('PKCF8_DTZORN', nb.float64[:]),
+	('PKCF8_DTBORN', nb.float64[:]),
+	('PKCF8_TOTORN', nb.float64[:]),
+	('PKCF9_SNKORP', nb.float64[:]),
+	('PKCF9_DTPORP', nb.float64[:]),
+	('PKCF9_DTZORP', nb.float64[:]),
+	('PKCF9_DTBORP', nb.float64[:]),
+	('PKCF9_TOTORP', nb.float64[:]),
+	('PKCF10_SNKORC', nb.float64[:]),
+	('PKCF10_DTPORC', nb.float64[:]),
+	('PKCF10_DTZORC', nb.float64[:]),
+	('PKCF10_DTBORC', nb.float64[:]),
+	('PKCF10_TOTORC', nb.float64[:]),
 	('PKIF1', nb.float64[:]),
 	('PKIF2', nb.float64[:]),
 	('PKIF3', nb.float64[:]),
@@ -156,9 +181,11 @@ spec = [
 	('ROSPO43', nb.float64[:]),
 	('ROTAM', nb.float64[:]),
 	('ROTIC', nb.float64[:]),
+	('ROTN', nb.float64[:]),
 	('ROTORC', nb.float64[:]),
 	('ROTORN', nb.float64[:]),
 	('ROTORP', nb.float64[:]),
+	('ROTP', nb.float64[:]),
 	('ROZOO', nb.float64[:]),
 	('RPO4', nb.float64[:]),
 	('RTAM', nb.float64[:]),
@@ -195,6 +222,11 @@ spec = [
 	('TNUCF1_2', nb.float64[:]),
 	('TNUCF1_3', nb.float64[:]),
 	('TNUCF1_4', nb.float64[:]),
+	('TPKIF_1', nb.float64[:]),
+	('TPKIF_2', nb.float64[:]),
+	('TPKIF_3', nb.float64[:]),
+	('TPKIF_4', nb.float64[:]),
+	('TPKIF_5', nb.float64[:]),
 	('TP', nb.float64[:]),
 	('TW', nb.float64[:]),
 	('uunits', nb.int32),
@@ -554,10 +586,11 @@ class RQUAL_Class:
 				
 				self.PHYTO  = ts['PHYTO']        = zeros(simlen)  # concentration
 				self.ZOO    = ts['ZOO']          = zeros(simlen)  # concentration
-				self.BENAL1 = ts['BENAL1']      = zeros(simlen)  # concentration
+				self.BENAL1 = ts['BENAL1']       = zeros(simlen)  # concentration
 				self.TBENAL1= ts['TBENAL1']      = zeros(simlen)  # concentration
 				self.TBENAL2= ts['TBENAL2']      = zeros(simlen)  # concentration
 				self.PHYCLA = ts['PHYCLA']       = zeros(simlen)  # concentration
+				self.BALCLA1 = ts['BALCLA1']     = zeros(simlen)  # concentration
 			
 				self.ORN    = ts['ORN']    = zeros(simlen)  # state variable
 				self.ORP    = ts['ORP']    = zeros(simlen)  # state variable
@@ -569,33 +602,69 @@ class RQUAL_Class:
 				self.TN     = ts['TN']     = zeros(simlen)  # state variable
 				self.TP     = ts['TP']     = zeros(simlen)  # state variable
 
+				self.PKCF5_SNKPHY = ts['PKCF5_SNKPHY'] = zeros(simlen)  # flux terms
+				self.PKCF5_ZOOPHY = ts['PKCF5_ZOOPHY'] = zeros(simlen)
+				self.PKCF5_DTHPHY = ts['PKCF5_DTHPHY'] = zeros(simlen)
+				self.PKCF5_GROPHY = ts['PKCF5_GROPHY'] = zeros(simlen)
+				self.PKCF5_TOTPHY = ts['PKCF5_TOTPHY'] = zeros(simlen)
+				self.PKCF6_GROZOO = ts['PKCF6_GROZOO'] = zeros(simlen)
+				self.PKCF6_DTHZOO = ts['PKCF6_DTHZOO'] = zeros(simlen)
+				self.PKCF6_TOTZOO = ts['PKCF6_TOTZOO'] = zeros(simlen)
+				self.PKCF7_GROBEN = ts['PKCF7_GROBEN'] = zeros(simlen)
+				self.PKCF7_DTHBEN = ts['PKCF7_DTHBEN'] = zeros(simlen)
+				self.PKCF8_SNKORN = ts['PKCF8_SNKORN'] = zeros(simlen)
+				self.PKCF8_DTPORN = ts['PKCF8_DTPORN'] = zeros(simlen)
+				self.PKCF8_DTZORN = ts['PKCF8_DTZORN'] = zeros(simlen)
+				self.PKCF8_DTBORN = ts['PKCF8_DTBORN'] = zeros(simlen)
+				self.PKCF8_TOTORN = ts['PKCF8_TOTORN'] = zeros(simlen)
+				self.PKCF9_SNKORP = ts['PKCF9_SNKORP'] = zeros(simlen)
+				self.PKCF9_DTPORP = ts['PKCF9_DTPORP'] = zeros(simlen)
+				self.PKCF9_DTZORP = ts['PKCF9_DTZORP'] = zeros(simlen)
+				self.PKCF9_DTBORP = ts['PKCF9_DTBORP'] = zeros(simlen)
+				self.PKCF9_TOTORP = ts['PKCF9_TOTORP'] = zeros(simlen)
+				self.PKCF10_SNKORC = ts['PKCF10_SNKORC'] = zeros(simlen)
+				self.PKCF10_DTPORC = ts['PKCF10_DTPORC'] = zeros(simlen)
+				self.PKCF10_DTZORC = ts['PKCF10_DTZORC'] = zeros(simlen)
+				self.PKCF10_DTBORC = ts['PKCF10_DTBORC'] = zeros(simlen)
+				self.PKCF10_TOTORC = ts['PKCF10_TOTORC'] = zeros(simlen)
+
 				#	inflows:
-				self.PKIF1  = ts['PKIF_PHYT'] = zeros(simlen)  # total outflow
-				self.PKIF2  = ts['PKIF_ZOO'] = zeros(simlen)  # total outflow
-				self.PKIF3  = ts['PKIF_ORN'] = zeros(simlen)  # total outflow
-				self.PKIF4  = ts['PKIF_ORP'] = zeros(simlen)  # total outflow
-				self.PKIF5  = ts['PKIF_ORC'] = zeros(simlen)  # total outflow
+				self.PKIF1  = ts['PKIF_PHYT'] = zeros(simlen)  # total inflow
+				self.PKIF2  = ts['PKIF_ZOO'] = zeros(simlen)  # total inflow
+				self.PKIF3  = ts['PKIF_ORN'] = zeros(simlen)  # total inflow
+				self.PKIF4  = ts['PKIF_ORP'] = zeros(simlen)  # total inflow
+				self.PKIF5  = ts['PKIF_ORC'] = zeros(simlen)  # total inflow
+				self.TPKIF_1  = ts['TPKIF_1'] = zeros(simlen)  # total inflow
+				self.TPKIF_2  = ts['TPKIF_2'] = zeros(simlen)  # total inflow
+				self.TPKIF_3  = ts['TPKIF_3'] = zeros(simlen)  # total inflow
+				self.TPKIF_4  = ts['TPKIF_4'] = zeros(simlen)  # total inflow
+				self.TPKIF_5  = ts['TPKIF_5'] = zeros(simlen)  # total inflow
 
 				#	outflows:
-				self.ROPHYT   = ts['PKCF11'] = zeros(simlen)  # total outflow
-				self.ROZOO    = ts['PKCF12']  = zeros(simlen)  # total outflow
-				self.ROORN    = ts['PKCF13']  = zeros(simlen)  # total outflow
-				self.ROORP    = ts['PKCF14']  = zeros(simlen)  # total outflow
-				self.ROORC    = ts['PKCF15']  = zeros(simlen)  # total outflow
+				self.ROPHYT   = ts['PKCF1_1'] = zeros(simlen)  # total outflow
+				self.ROZOO    = ts['PKCF1_2']  = zeros(simlen)  # total outflow
+				self.ROORN    = ts['PKCF1_3']  = zeros(simlen)  # total outflow
+				self.ROORP    = ts['PKCF1_4']  = zeros(simlen)  # total outflow
+				self.ROORC    = ts['PKCF1_5']  = zeros(simlen)  # total outflow
 
 				self.ROTORN   = ts['ROTORN'] = zeros(simlen)  # total outflow
 				self.ROTORP   = ts['ROTORP'] = zeros(simlen)  # total outflow
 				self.ROTORC   = ts['ROTORC'] = zeros(simlen)  # total outflow
-				#self.ROTN     = ts['ROTN']   = zeros(simlen)  # total outflow
-				#self.ROTP     = ts['ROTP']   = zeros(simlen)  # total outflow
+				self.ROTN     = ts['ROTN']   = zeros(simlen)  # total outflow
+				self.ROTP     = ts['ROTP']   = zeros(simlen)  # total outflow
 
 				if nexits > 1:
 					for i in range(nexits):
-						ts['PKCF2' + str(i + 1) + ' 1'] = zeros(simlen)	# OPHYT
-						ts['PKCF2' + str(i + 1) + ' 2'] = zeros(simlen)	# OZOO
-						ts['PKCF2' + str(i + 1) + ' 3'] = zeros(simlen)	# OORN
-						ts['PKCF2' + str(i + 1) + ' 4'] = zeros(simlen)	# OORP
-						ts['PKCF2' + str(i + 1) + ' 5'] = zeros(simlen)	# OORC
+						ts['PKCF2_' + str(i + 1) + '1'] = zeros(simlen)	# OPHYT
+						ts['PKCF2_' + str(i + 1) + '2'] = zeros(simlen)	# OZOO
+						ts['PKCF2_' + str(i + 1) + '3'] = zeros(simlen)	# OORN
+						ts['PKCF2_' + str(i + 1) + '4'] = zeros(simlen)	# OORP
+						ts['PKCF2_' + str(i + 1) + '5'] = zeros(simlen)	# OORC
+						ts['TPKCF2_' + str(i + 1) + '1'] = zeros(simlen)	# OTORN
+						ts['TPKCF2_' + str(i + 1) + '2'] = zeros(simlen)	# OTORP
+						ts['TPKCF2_' + str(i + 1) + '3'] = zeros(simlen)	# OTORC
+						ts['TPKCF2_' + str(i + 1) + '4'] = zeros(simlen)	# OTOTN
+						ts['TPKCF2_' + str(i + 1) + '5'] = zeros(simlen)	# OTOTP
 				
 				#-------------------------------------------------------
 				# PHCARB - initialize:
@@ -906,11 +975,13 @@ class RQUAL_Class:
 				if self.PLKFG == 1:
 
 					self.PHYTO[loop] = self.PLANK.phyto
-					self.ZOO[loop] = self.PLANK.zoo
+					self.ZOO[loop] = self.PLANK.zoo / self.PLANK.zomass
 					if self.PLANK.BALFG:
 						self.BENAL1[loop] = self.PLANK.benal[0]
 						self.TBENAL1[loop] = self.PLANK.tbenal[1]
 						self.TBENAL2[loop] = self.PLANK.tbenal[2]
+						self.BALCLA1[loop] = self.PLANK.balcla[0]
+
 					self.PHYCLA[loop] = self.PLANK.phycla
 
 					self.ORN[loop] = self.PLANK.orn
@@ -923,15 +994,20 @@ class RQUAL_Class:
 					self.TN[loop] = self.PLANK.tn
 					self.TP[loop] = self.PLANK.tp
 
-					#	inflows (lb/ivld or kg/ivld):
-					self.PKIF1[loop] = self.PLANK.iphyto
-					self.PKIF2[loop] = self.PLANK.izoo
-					self.PKIF3[loop] = self.PLANK.iorn
-					self.PKIF4[loop] = self.PLANK.iorp
-					self.PKIF5[loop] = self.PLANK.iorc
-
 					#	outflows (convert to mass per interval (lb/ivld or kg/ivld))
 					conv = self.PLANK.conv
+
+					#	inflows (lb/ivld or kg/ivld):
+					self.PKIF1[loop] = self.PLANK.iphyto * conv
+					self.PKIF2[loop] = self.PLANK.izoo * conv
+					self.PKIF3[loop] = self.PLANK.iorn * conv
+					self.PKIF4[loop] = self.PLANK.iorp * conv
+					self.PKIF5[loop] = self.PLANK.iorc * conv
+					self.TPKIF_1[loop] = self.PLANK.itorn * conv
+					self.TPKIF_2[loop] = self.PLANK.itorp * conv
+					self.TPKIF_3[loop] = self.PLANK.itorc * conv
+					self.TPKIF_4[loop] = self.PLANK.itotn * conv
+					self.TPKIF_5[loop] = self.PLANK.itotp * conv
 
 					self.ROPHYT[loop] = self.PLANK.rophyt * conv
 					self.ROZOO[loop]  = self.PLANK.rozoo * conv
@@ -942,15 +1018,22 @@ class RQUAL_Class:
 					self.ROTORN[loop]  = self.PLANK.rotorn * conv
 					self.ROTORP[loop]  = self.PLANK.rotorp * conv
 					self.ROTORC[loop]  = self.PLANK.rotorc * conv
+					self.ROTN[loop]  = self.PLANK.rototn * conv
+					self.ROTP[loop]  = self.PLANK.rototp * conv
 
 					#	exit outflows:
 					if self.nexits > 1:
 						for i in range(self.nexits):
-							ts['PKCF2' + str(i + 1) + ' 1'][loop] = self.PLANK.ophyt[i] * conv
-							ts['PKCF2' + str(i + 1) + ' 2'][loop] = self.PLANK.ozoo[i] * conv
-							ts['PKCF2' + str(i + 1) + ' 3'][loop] = self.PLANK.oorn[i] * conv
-							ts['PKCF2' + str(i + 1) + ' 4'][loop] = self.PLANK.oorp[i] * conv
-							ts['PKCF2' + str(i + 1) + ' 5'][loop] = self.PLANK.oorc[i] * conv
+							ts['PKCF2_' + str(i + 1) + '1'][loop] = self.PLANK.ophyt[i] * conv
+							ts['PKCF2_' + str(i + 1) + '2'][loop] = self.PLANK.ozoo[i] * conv
+							ts['PKCF2_' + str(i + 1) + '3'][loop] = self.PLANK.oorn[i] * conv
+							ts['PKCF2_' + str(i + 1) + '4'][loop] = self.PLANK.oorp[i] * conv
+							ts['PKCF2_' + str(i + 1) + '5'][loop] = self.PLANK.oorc[i] * conv
+							ts['TPKCF2_' + str(i + 1) + '1'][loop] = self.PLANK.otorn[i] * conv
+							ts['TPKCF2_' + str(i + 1) + '2'][loop] = self.PLANK.otorp[i] * conv
+							ts['TPKCF2_' + str(i + 1) + '3'][loop] = self.PLANK.otorc[i] * conv
+							ts['TPKCF2_' + str(i + 1) + '4'][loop] = self.PLANK.ototn[i] * conv
+							ts['TPKCF2_' + str(i + 1) + '5'][loop] = self.PLANK.ototp[i] * conv
 
 					self.OXCF3_PHYT[loop] = self.PLANK.phydox * self.OXRX.conv  # flux terms
 					self.OXCF3_ZOO[loop] = self.PLANK.zoodox * self.OXRX.conv
@@ -962,7 +1045,7 @@ class RQUAL_Class:
 					self.NUCF4_PHYNO3[loop] = self.PLANK.phyno3 * self.NUTRX.conv
 					self.NUCF4_ZOONO3[loop] = self.PLANK.zoono3 * self.NUTRX.conv
 					self.NUCF4_BALNO3[loop] = self.PLANK.balno3 * self.NUTRX.conv
-					# self.NUCF4_TOTNO3[loop] = self.PLANK.tottam * conv
+					self.NUCF4_TOTNO3[loop] = self.PLANK.totno3 * conv
 					self.NUCF5_PHYTAM[loop] = self.PLANK.phytam * self.NUTRX.conv
 					self.NUCF5_ZOOTAM[loop] = self.PLANK.zootam * self.NUTRX.conv
 					self.NUCF5_BALTAM[loop] = self.PLANK.baltam * self.NUTRX.conv
@@ -971,6 +1054,33 @@ class RQUAL_Class:
 					self.NUCF7_ZOOPO4[loop] = self.PLANK.zoopo4 * self.NUTRX.conv
 					self.NUCF7_BALPO4[loop] = self.PLANK.balpo4 * self.NUTRX.conv
 					self.NUCF7_TOTPO4[loop] = self.PLANK.totpo4 * conv
+
+					self.PKCF5_SNKPHY[loop] = self.PLANK.snkphy * conv # flux terms
+					self.PKCF5_ZOOPHY[loop] = self.PLANK.zoophy * conv
+					self.PKCF5_DTHPHY[loop] = self.PLANK.dthphy * conv
+					self.PKCF5_GROPHY[loop] = self.PLANK.grophy * conv
+					self.PKCF5_TOTPHY[loop] = self.PLANK.totphy * conv
+					self.PKCF6_GROZOO[loop] = self.PLANK.grozoo * conv
+					self.PKCF6_DTHZOO[loop] = self.PLANK.dthzoo * conv
+					self.PKCF6_TOTZOO[loop] = self.PLANK.totzoo * conv
+					if self.PLANK.BALFG > 0:
+						self.PKCF7_GROBEN[loop] = self.PLANK.grobal[0]
+						self.PKCF7_DTHBEN[loop] = self.PLANK.dthbal[0]
+					self.PKCF8_SNKORN[loop] = self.PLANK.snkorn * conv
+					self.PKCF8_DTPORN[loop] = self.PLANK.phyorn * conv
+					self.PKCF8_DTZORN[loop] = self.PLANK.zooorn * conv
+					self.PKCF8_DTBORN[loop] = self.PLANK.balorn * conv
+					self.PKCF8_TOTORN[loop] = self.PLANK.totorn * conv
+					self.PKCF9_SNKORP[loop] = self.PLANK.snkorp * conv
+					self.PKCF9_DTPORP[loop] = self.PLANK.phyorp * conv
+					self.PKCF9_DTZORP[loop] = self.PLANK.zooorp * conv
+					self.PKCF9_DTBORP[loop] = self.PLANK.balorp * conv
+					self.PKCF9_TOTORP[loop] = self.PLANK.totorp * conv
+					self.PKCF10_SNKORC[loop] = self.PLANK.snkorc * conv
+					self.PKCF10_DTPORC[loop] = self.PLANK.phyorc * conv
+					self.PKCF10_DTZORC[loop] = self.PLANK.zooorc * conv
+					self.PKCF10_DTBORC[loop] = self.PLANK.balorc * conv
+					self.PKCF10_TOTORC[loop] = self.PLANK.totorc * conv
 
 					# PHCARB results:
 					if self.PHFG == 1:

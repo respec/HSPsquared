@@ -217,7 +217,9 @@ class RegressTest(object):
 
         # if volume in reach is going to zero, small concentration differences are not signficant
         if (activity == 'SEDTRN' and cons in ['SSEDCLAY', 'SSEDTOT']) or \
-                (activity == 'NUTRX' and cons in ['TAMCONCDIS', 'NH4CONCDIS', 'NH3CONCDIS', 'NO3CONCDIS', 'NO2CONCDIS', 'PO4CONCDIS']):
+                (activity == 'OXRX' and cons in ['BODCONC', 'DOXCONC']) or \
+                (activity == 'NUTRX' and cons in ['TAMCONCDIS', 'NH4CONCDIS', 'NH3CONCDIS', 'NO3CONCDIS', 'NO2CONCDIS', 'PO4CONCDIS']) or \
+                (activity == 'PLANK' and cons in ['PHYTO', 'PHYCLA', 'ZOO', 'CTOTORGCONC', 'POTBOD', 'NTOTCONC', 'PTOTCONC', 'NTOTORGCONC', 'PTOTORGCONC']):
             ts_vol_hsp2 = self.hsp2_data.get_time_series(operation, id, "VOL", "HYDR")
             ts_vol_hsp2 = self.fill_nan_and_null(ts_vol_hsp2)
             

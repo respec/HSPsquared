@@ -185,6 +185,19 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 			u[f'OSPO4_{i + 1}3'] = u['OSPO4_13']
 			u[f'OSPO4_{i + 1}4'] = u['OSPO4_14']
 
+		u = uci_plank['SAVE']
+		for i in range(nexits):
+			u[f'PKCF2_{i + 1}1'] = u['PKCF2_11']
+			u[f'PKCF2_{i + 1}2'] = u['PKCF2_12']
+			u[f'PKCF2_{i + 1}3'] = u['PKCF2_13']
+			u[f'PKCF2_{i + 1}4'] = u['PKCF2_14']
+			u[f'PKCF2_{i + 1}5'] = u['PKCF2_15']
+			u[f'TPKCF2_{i + 1}1'] = u['TPKCF2_11']
+			u[f'TPKCF2_{i + 1}2'] = u['TPKCF2_12']
+			u[f'TPKCF2_{i + 1}3'] = u['TPKCF2_13']
+			u[f'TPKCF2_{i + 1}4'] = u['TPKCF2_14']
+			u[f'TPKCF2_{i + 1}5'] = u['TPKCF2_15']
+
 	return errors, ERRMSGS
 
 
@@ -354,11 +367,11 @@ def expand_PLANK_masslinks(flags, uci, dat, recs):
 			rec['SGRPN'] = 'PLANK'
 
 			if dat.SGRPN == "ROFLOW":
-				rec['SMEMN'] = 'PKCF1'
+				rec['SMEMN'] = 'PKCF1_'
 				rec['SMEMSB1'] = str(i)   # species index
 				rec['SMEMSB2'] = ''
 			else:
-				rec['SMEMN'] = 'PKCF2'
+				rec['SMEMN'] = 'PKCF2_'
 				rec['SMEMSB1'] = dat.SMEMSB1  # exit number
 				rec['SMEMSB2'] = str(i)       # species index
 
