@@ -1637,18 +1637,18 @@ class PLANK_Class:
 		''' computes summaries of: total organic n, p, c; total n, p; potbod'''
 
 		# undefined summary concentrations:
-		torn   = -1.0e30
-		torp   = -1.0e30
-		torc   = -1.0e30
-		potbod = -1.0e30
-		tn     = -1.0e30
-		tp     = -1.0e30
+		torn   = 0.0
+		torp   = 0.0
+		torc   = 0.0
+		potbod = 0.0
+		tn     = 0.0
+		tp     = 0.0
 
 		if (self.vol <= 0):
 			return torn, torp, torc, potbod, tn, tp
 
 		# Calculate sums:
-		tval = 0.0
+		tval = bod / self.cvbo
 
 		if self.PHYFG == 1:
 			tval += phyto
@@ -1657,8 +1657,6 @@ class PLANK_Class:
 
 		torn   = orn + self.cvbn * tval
 		torp   = orp + self.cvbp * tval
-
-		tval += bod / self.cvbo
 		torc   = orc + self.cvbc * tval
 		potbod = bod
 
