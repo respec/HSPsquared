@@ -5,15 +5,23 @@ License: LGPL2
 
 from numpy import zeros, array
 from math import exp
-from hrchrq import sink
+from HSP2.RQUTIL import sink
+from HSP2.utilities  import make_numba_dict
 
-def oxrx(general, ui, ts):
+ERRMSGS=('Placeholder')
+
+def oxrx(store, siminfo, uci, ts):
 	''' simulate primary do, bod balances'''
 	
-	delt60 = general['DELT'] / 60.0
-	nexits = general['nexits']
+	errors = zeros(len(ERRMSGS), dtype=int)
 
-	vol  = ui['VOL']
+	advectData = uci['advectData']
+	(nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = advectData
+
+	delt60 = siminfo['delt'] / 60  # delt60 - simulation time interval in hours
+
+	ui = make_numba_dict(uci)
+	nexits = int(ui['NEXITS'])
 	
 	# table-type ox-genparm
 	kbod20 = ui['KBOD20'] * delt60  # convert units from 1/hr to 1/ivl
@@ -22,11 +30,12 @@ def oxrx(general, ui, ts):
 	supsat = ui['SUPSAT']
 	
 	# table-type ox-init
-	dox   = ui['dox']
-	bod   = ui['bod']
-	satdo = ui['satdo']
+	dox   = ui['DOX']
+	bod   = ui['BOD']
+	satdo = ui['SATDO']
 	
 	# other required values
+	BENRFG = ui['BENRFG']	# via table-type benth-flag
 	REAMFG = ui['REAMFG']   # table-type ox-flags
 	elev   = ui['ELEV']     # table-type elev
 	
@@ -62,6 +71,8 @@ def oxrx(general, ui, ts):
 
 	odox = zeros(nexits)
 	odob = zeros(nexits)
+
+	return errors, ERRMSGS
 
 	#@jit(nopython = True)
 	''' simulate primary do, bod balances'''
@@ -167,3 +178,25 @@ def oxrx(general, ui, ts):
 		rbod = bod * vol
 		return dox, bod, satdo, rodo, robod, odo, obod
 	return oxrx
+
+def expand_OXRX_masslinks(flags, uci, dat, recs):
+	if flags['OXRX']:
+		for i in range(1, 2):
+			rec = {}
+			rec['MFACTOR'] = dat.MFACTOR
+			rec['SGRPN'] = 'OXRX'
+			if dat.SGRPN == "ROFLOW":
+				rec['SMEMN'] = 'OXCF1'
+				rec['SMEMSB1'] = str(i)
+				rec['SMEMSB2'] = '1'
+			else:
+				rec['SMEMN'] = 'OXCF2'
+				rec['SMEMSB1'] = dat.SMEMSB1  # first sub is exit number
+				rec['SMEMSB2'] = str(i)
+			
+			rec['TMEMN'] = 'OXIF'
+			rec['TMEMSB1'] = str(i)
+			rec['TMEMSB2'] = '1'
+			rec['SVOL'] = dat.SVOL
+			recs.append(rec)			
+    			

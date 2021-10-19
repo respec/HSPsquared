@@ -3,26 +3,50 @@ Author: Robert Heaphy, Ph.D.
 License: LGPL2
 '''
 
+from numpy import array, zeros, int64
 from math import log10, exp
+from HSP2.utilities import initm, make_numba_dict, hoursval, dayval
 
-def  plank(general, ui, ts):
+ERRMSGS=('Placeholder')
+
+def  plank(store, siminfo, uci, ts):
 	'''Simulate behavior of plankton populations and associated reactions'''
 
+	errors = zeros(len(ERRMSGS), dtype=int)
+
+	advectData = uci['advectData']
+	(nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = advectData
+
 	limit = ['', 'LIT', 'NON', 'TEM', 'NIT',' PO4', 'NONE', 'WAT']
-	simlen = general['SIMLEN']
-	delt60  = general['DELT'] / 60.0
+	delt60 = siminfo['delt'] / 60  # delt60 - simulation time interval in hours
+	simlen = siminfo['steps']
+	uunits = siminfo['units']
 	
+	ui = make_numba_dict(uci)
 	
 	# flags - table-type PLNK-FLAGS
-	PHYFG  = ui['PHYFG']
-	ZOOFG  = ui['ZOOFG']
-	BALFG  = ui['BALFG']
-	SDLTFG = ui['SDLTFG']
-	AMRFG  = ui['AMRFG']
-	DECFG  = ui['DECFG']
-	NSFG   = ui['NSFG']
-	ZFOOD  = ui['ZFOOD']
-	BNPFG  = ui['BNPFG']
+	PHYFG  = int(ui['PHYFG'])
+	ZOOFG  = int(ui['ZOOFG'])
+	BALFG  = int(ui['BALFG'])
+	SDLTFG = int(ui['SDLTFG'])
+	AMRFG  = int(ui['AMRFG'])
+	DECFG  = int(ui['DECFG'])
+	NSFG   = int(ui['NSFG'])
+	ZFOOD  = int(ui['ZFOOD'])
+	BNPFG  = int(ui['BNPFG'])
+
+	HTFG   = int(ui['HTFG'])
+	TAMFG  = int(ui['NH3FG'])
+	NO2FG  = int(ui['NO2FG'])
+	PO4FG  = int(ui['PO4FG'])
+
+	ADNHFG = int(ui['ADNHFG'])
+	ADPOFG = int(ui['ADPOFG'])
+
+	bpcntc = ui['BPCNTC']
+	cvbo  = ui['CVBO']
+	cvbpc  = ui['CVBPC']
+	cvbpn  = ui['CVBPN']
 	
 	if ZOOFG == 1 and PHYFG == 0:
 		pass # ERRMSG: error - zooplankton cannot be simulated without phytoplankton
@@ -33,14 +57,14 @@ def  plank(general, ui, ts):
 
 	if BALFG == 2:   # user has selected multiple species with more complex kinetics
 		# additional benthic algae flags - table-type BENAL-FLAG
-		numbal  = ui['NUMBAL']
-		BINVFG  = ui['BINVFG']
-		BFIXFG1 = ui['BFIXFG1'] 
-		BFIXFG2 = ui['BFIXFG2'] 
-		BFIXFG3 = ui['BFIXFG3'] 
-		BFIXFG4 = ui['BFIXFG4'] 
+		numbal  = int(ui['NUMBAL'])
+		BINVFG  = int(ui['BINVFG'])
+		BFIXFG1 = int(ui['BFIXFG1'])
+		BFIXFG2 = int(ui['BFIXFG2'])
+		BFIXFG3 = int(ui['BFIXFG3'])
+		BFIXFG4 = int(ui['BFIXFG4'])
 	else:
-		numbal = balfg          # single species or none
+		numbal = BALFG          # single species or none
 		
 	if HTFG == 0:     # fraction of surface exposed - table-type surf-exposed
 		cfsaex = ui['CFSAEX']
@@ -58,6 +82,9 @@ def  plank(general, ui, ts):
 	# compute derived conversion factors
 	cvbc   = bpcntc / 100.0
 	cvnrbo = nonref * cvbo
+
+	cvbp = (31.0 * bpcntc) / (1200.0 * cvbpc)
+	cvbn = 14.0 * cvbpn * cvbp / 31.0
 	cvpb   = 31.0 / (1000.0 * cvbp)
 	cvbcl  = 31.0 * ratclp / cvpb
 
@@ -129,21 +156,21 @@ def  plank(general, ui, ts):
 			cslof1 = zeros(numbal)
 			cslof2 = zeros(numbal)
 			grores = zeros(numbal)		
-			DO 55 I= 1, NUMBAL 
+			for i in range(numbal):
 				# species-specific growth parms - table type benal-grow
-				mbalgr[I] = ui['MBALGR']  * delt60
-				tcbalg[I] = ui['TCBALG']
-				cmmnb[I] =  ui['CMMNB']
-				cmmpb[I] =  ui['CMMPB']
-				cmmd1[I] =  ui['CMMD1']
-				cmmd2[I] =  ui['CMMD2']
-				cslit[I] =  ui['CSLIT']
+				mbalgr[i] = ui['MBALGR']  * delt60
+				tcbalg[i] = ui['TCBALG']
+				cmmnb[i] =  ui['CMMNB']
+				cmmpb[i] =  ui['CMMPB']
+				cmmd1[i] =  ui['CMMD1']
+				cmmd2[i] =  ui['CMMD2']
+				cslit[i] =  ui['CSLIT']
 				# species-specific resp and scour parms - table type benal-resscr
-				balr20[I] = ui['BALR20']  * delt60
-				tcbalr[I] = ui['TCBALR']
-				cslof1[I] = ui['CSLOF1']  * delt60
-				cslof2[I] = ui['CSLOF2']
-				grores[I] = ui['GRORES']
+				balr20[i] = ui['BALR20']  * delt60
+				tcbalr[i] = ui['TCBALR']
+				cslof1[i] = ui['CSLOF1']  * delt60
+				cslof2[i] = ui['CSLOF2']
+				grores[i] = ui['GRORES']
 
 			#  grazing and disturbance parms - table-type benal-graze
 			cremvl = ui['CREMVL']
@@ -153,13 +180,13 @@ def  plank(general, ui, ts):
 
 			cremvl = (cremvl / cvpb) / hrpyr * delt60
 
-			IF SDLTFG == 2:	# turbidity regression parms - table-type benal-light
+			if SDLTFG == 2:	# turbidity regression parms - table-type benal-light
 				ctrbq1 = ui['CTRBQ1']
 				ctrbq2 = ui['CTRBQ2']
 				cktrb1 = ui['CKTRB1']
 				cktrb2 = ui['CKTRB2']	
 
-			IF BINVFG == 3:      # monthly benthic invertebrate density - table-type mon-binv
+			if BINVFG == 3:      # monthly benthic invertebrate density - table-type mon-binv
 				binvm = ui['BINVM']
 
 		# table-type benal-riff1
@@ -183,105 +210,76 @@ def  plank(general, ui, ts):
 	# table-type plnk-init
 	phyto = ui['PHYTO']
 	zoo   = ui['ZOO']
-	benal = ui['BENAL']
+	#benal = ui['BENAL']
 	orn   = ui['ORN']
 	orp   = ui['ORP']
 	orc   = ui['ORC']
 
-
-	
 	# atmospheric deposition flags
-	PLADFG = array(ui['PLADFG'])   # six  PLADFG1 to PLADFG6;  table-type PLNK-AD-FLAGS
-	DO 30 J= 1, 3
-		if PLADFG(N) > 0:  # monthly flux must be read
-			PLAFXM[J] = array(ui[('PLAFXM',J)])
-			IF UUNITS == 1:     # convert from lb/ac.day to mg.ft3/l.ft2.ivl
-				PLAFXM[J] *= 0.3677 * DELT60 / 24.0
-			ELIF UUNITS == 2:	      # convert from kg/ha.day to mg.m3/l.m2.ivl
-				PLAFXM[J] *= 0.1 * DELT60 / 24.0
-	# Note: get PLAFX array from monthly (above), constant, or time series
-	# PLAFX is dimension (simlen, 3)
-	# same with PLADCN 
+	PLADFG = zeros(7)
+	for j in range(1,7):
+		PLADFG[j] = ui['PLADFG(' + str(j) + ')']
 
-	# compute atmospheric deposition influx; [N, P, C]
-	DO 10 I= 1, 3
-		PLADDR[I] = SAREA * PLADFX[I]          # dry deposition
-		PLADWT(I) = PREC * SAREA * PLADCN[I]   # wet deposition
-		PLADEP(I) = PLADDR(I) + PLADWT(I)	
-	
+	# variable initialization:
 	if PHYFG == 0:   # initialize fluxes of inactive constituent
 		rophyt = 0.0
-		do 60 i= 1, nexits
-			ophyt(i)= 0.0
-		phydox = 0.0
-		phybod = 0.0
-		phytam = 0.0
-		phyno3 = 0.0
-		phypo4 = 0.0
-		phyorn = 0.0
-		phyorp = 0.0
-		phyorc = 0.0
+		ophyt[:] = 0.0	#nexits
+		phydox = phybod = 0.0
+		phytam = phyno3 = phypo4 = 0.0
+		phyorn = phyorp = phyorc = 0.0
 		pyco2  = 0.0
-		dthphy = 0.0
-		grophy = 0.0
-		totphy = 0.0
+		dthphy = grophy = totphy = 0.0
+
+	ozoo = zeros(nexits)
 
 	if ZOOFG == 1:   # convert zoo to mg/l
-		zoo = zoo * zomass
+		zoo *= zomass
 	else:   #  zooplankton not simulated, but use default values
 		# initialize fluxes of inactive constituent
 		rozoo = 0.0
-		do 70 i= 1, nexits
-			ozoo(i) = 0.0
-		zoodox = 0.0
-		zoobod = 0.0
-		zootam = 0.0
-		zoono3 = 0.0
-		zoopo4 = 0.0
-		zooorn = 0.0
-		zooorp = 0.0
-		zooorc = 0.0
+		ozoo[:] = 0.0	#nexits
+		zoodox = zoobod = 0.0
+		zootam = zoono3 = zoopo4 = 0.0
+		zooorn = zooorp = zooorc = 0.0
 		zoophy = 0.0
 		zoco2  = 0.0
-		grozoo = 0.0
-		dthzoo = 0.0
-		totzoo = 0.0
+		grozoo = dthzoo = totzoo = 0.0
+
+	benal = zeros(numbal)
+	flxbal = zeros((4,5))
 
 	if numbal == 1:      # single species
-		benal(1) = rval(3)        # points to  table-type plnk-init above for rvals
+		benal[1] = ui['BENAL']       # points to  table-type plnk-init above for rvals
 	elif numbal >= 2:      # multiple species - table-type benal-init
-		benal = ???  # how to get multiples???
-	else                     # no benthic algae simulated
-		baldox = 0.0
-		balbod = 0.0
-		baltam = 0.0
-		balno3 = 0.0
-		balpo4 = 0.0
-		balorn = 0.0
-		balorp = 0.0
-		balorc = 0.0
+		for n in range(numbal):
+			str_ba = 'BENAL' + str(n+1)
+			benal[n] = ui[str_ba] 	# how to get multiples???
+	else:                     # no benthic algae simulated
+		baldox = balbod = 0.0
+		baltam = balno3 = balpo4 = 0.0
+		balorn = balorp = balorc = 0.0
 		baco2 = 0.0
-		do 75 i= 1, 3
-			do 73 j= 1, 4
-				flxbal(i,j)= 0.0
-			# 73       continue
-		# 75     continue
+		flxbal[1:4,1:5] = 0.0
 
 	# compute derived quantities
 	phycla = phyto * cvbcl
-	do 80 i= 1, numbal
-		balcla(i) = benal(i) * cvbcl
-	# 80   continue
+	balcla = zeros(4)
+	for i in range(numbal):
+		balcla[i] = benal[i] * cvbcl
+
+	lsnh4 = lspo4 = zeros(4)
+
 	if vol > 0.0:   # compute initial summary concentrations
-		do 90 i= 1, 3
-			lsnh4(i) = rsnh4(i) / vol
-			lspo4(i) = rspo4(i) / vol
-		# 90     continue
-		
-		torn,torp,torc,potbod,tn,tp = pksums (phyfg,zoofg,tamfg,no2fg,po4fg,adnhfg,adpofg,
-		cvbn,cvbp,cvbc,cvbo,cvnrbo,phyto,zoo,orn,orp,orc, no3,tam,no2,lsnh4(1),lsnh4(2),
-		lsnh4(3),po4,lspo4(1),lspo4(2),lspo4(3),bod,torn,torp,torc,potbod,tn,tp)
-	else    # undefined summary concentrations
+		for i in range(1, 4):
+			#lsnh4[i] = rsnh4[i] / vol		#LTI-need to address this NUTRX var.
+			#lspo4[i] = rspo4[i] / vol		#LTI-need to address this NUTRX var.
+			pass
+
+		(torn,torp,torc,potbod,tn,tp) = \
+			pksums (PHYFG,ZOOFG,TAMFG,NO2FG,PO4FG,ADNHFG,ADPOFG,
+					cvbn,cvbp,cvbc,cvbo,cvnrbo,phyto,zoo,orn,orp,orc,no3,tam,no2,lsnh4[1],lsnh4[2],
+					lsnh4[3],po4,lspo4[1],lspo4[2],lspo4[3],bod) #,torn,torp,torc,potbod,tn,tp)
+	else:    # undefined summary concentrations
 		torn   = -1.0e30
 		torp   = -1.0e30
 		torc   = -1.0e30
@@ -289,13 +287,40 @@ def  plank(general, ui, ts):
 		tn     = -1.0e30
 		tp     = -1.0e30
 
+	return errors, ERRMSGS
 
 	@jit(nopython = True)
-	def plank(dox, bod, iphyto, izoo, iorn, iorp, iorc, tw, wash, solrad, prec, sarea, advData):
+	def plank_run(dox, bod, iphyto, izoo, iorn, iorp, iorc, rsnh4, rspo4, tw, wash, solrad, prec, sarea, advData):
 		'''Simulate behavior of plankton populations and associated reactions'''
+
+		# update atmospheric deposition:
+		PLAFXM = zeros(4)
+
+		for j in range(1, 4):
+			n = 2*(j - 1) + 1
+			if PLADFG[n] > 0:  # monthly flux must be read
+				PLAFXM[j] = array(ui[('PLAFXM',j)])  #LTI-needs testing
+				if uunits == 1:     # convert from lb/ac.day to mg.ft3/l.ft2.ivl
+					PLAFXM[j] *= 0.3677 * DELT60 / 24.0
+				elif uunits == 2:	      # convert from kg/ha.day to mg.m3/l.m2.ivl
+					PLAFXM[j] *= 0.1 * DELT60 / 24.0
+		# Note: get PLAFX array from monthly (above), constant, or time series
+		# PLAFX is dimension (simlen, 3)
+		# same with PLADCN 
+
+		# compute atmospheric deposition influx; [N, P, C]
+		pladdr = pladwt = pladep = zeros(4)
+
+		for i in range(1,4):
+			n = 2 * (i - 1) + 1
+			pladdr[i] = SAREA * PLADFX[i]          # dry deposition
+			pladwt[i] = PREC * SAREA * PLADCN[i]   # wet deposition
+			pladep[i] = pladdr[i] + pladwt[i]	
+		
+
 		if PHYFG == 1:   # phytoplankton simulated
 			# advecvt phytoplankton
-			phyto, rophyt,ophyt =  advplk(iphyto,vols,srovol,vol,erovol,sovol, eovol,nexits,oref,mxstay,seed,delts,phyto,rophyt,ophyt)
+			phyto, rophyt,ophyt = advplk(iphyto,vols,srovol,vol,erovol,sovol, eovol,nexits,oref,mxstay,seed,delts,phyto,rophyt,ophyt)
 			phyto, snkphy = sink(vol,avdepe,physet, phyto,snkphy)
 			snkphy = -snkphy
 
@@ -303,19 +328,19 @@ def  plank(general, ui, ts):
 				zoo, rozoo,ozoo = advplk (izoo,vols,srovol,vol,erovol,sovol,eovol,nexits,oref,mxstay,seed,delts,zoo,rozoo,ozoo)
 		
 		# advect organic nitrogen
-		inorn = iorn + pladep(1)
+		inorn = iorn + pladep[1]
 		dor,roorn,oorn = advect (inorn, dor, roorn, oorn)
 		dor, snkorn = sink(vol, avdepe, refset, dor, snkorn)
 		snkorn = -snkorn
 
 		# advect organic phosphorus
-		inorp = iorp + pladep(2)
+		inorp = iorp + pladep[2]
 		orp, roorp, oorp = advect(inorp, orp, roorp, oorp)
 		orp, snkorp = sink(vol, avdepe, refset, orp, snkorp)
 		snkorp = -snkorp
 
 		# advect total organic carbon
-		inorc = iorc + pladep(3)
+		inorc = iorc + pladep[3]
 		orc, roorc, oorc = advect (inorc, orc, roorc, oorc)
 		orc, snkorc = sink (vol, avdepe, refset, orc, snkorc)
 		snkorc = -snkorc
@@ -334,8 +359,8 @@ def  plank(general, ui, ts):
 					i= 4
 
 				# calculate the adjusted velocity and depth for riffle sections
-				balvel = rifvel(i) * avvele
-				baldep = rifdep(i) * avdepe
+				balvel = rifvel[i] * avvele
+				baldep = rifdep[i] * avdepe
 			else:                      # use full depth and velocity
 				balvel = avvele
 				baldep = avdepe
@@ -350,7 +375,7 @@ def  plank(general, ui, ts):
 
 			inlit = 0.97 * cfsaex * solrad / delt * paradf
 			if SDLTFG == 1:		 # estimate contribution of sediment to light extinction
-				extsed = litsed * ssed(4)
+				extsed = litsed * ssed[4]
 			elif SDLTFG == 2:   # equations from dssamt for estimating the extinction coefficient based on discharge and turbidity
 				# estimate turbidity based on linear regression on flow
 				turb = ctrbq1 * ro**ctrbq2
@@ -372,17 +397,16 @@ def  plank(general, ui, ts):
 			phylit,ballit,cflit = litrch (inlit,extb,extcla,extsed,avdepe,baldep,phyfg,balfg,phylit,ballit,cflit)
 
 			if PHYFG == 1:   # simulate phytoplankton, phyrx only called here
-				call phyrx
-		 i               (phylit,tw,talgrl,talgrh,talgrm,malgr,cmmp,
-		 i                cmmnp,tamfg,amrfg,nsfg,cmmn,cmmlt,delt60,
-		 i                cflit,alr20,cvbpn,phfg,decfg,cvbpc,paldh,
-		 i                naldh,claldh,aldl,aldh,anaer,oxald,alnpr,
-		 i                cvbo,refr,cvnrbo,cvpb,cvbcl,limit,co2,
-		 i                nmingr,pmingr,cmingr,lmingr,nminc,
-		 m                po4,no3,tam,dox,orn,orp,orc,bod,phyto,
-		 o                limphy,pyco2,phycla,dophy,bodphy,tamphy,
-		 o                no3phy,po4phy,phdth,phgro,ornphy,orpphy,
-		 o                orcphy)
+				(po4,no3,tam,dox,orn,orp,orc,bod,phyto,limphy,pyco2,phycla,dophy,bodphy,tamphy,no3phy,po4phy,phdth,phgro,phyorn,phyorp,phyorc) \
+					= phyrx(phylit,tw,talgrl,talgrh,talgrm,malgr,cmmp, \
+		                cmmnp,tamfg,amrfg,nsfg,cmmn,cmmlt,delt60, \
+		                cflit,alr20,cvbpn,phfg,decfg,cvbpc,paldh, \
+		 				naldh,claldh,aldl,aldh,anaer,oxald,alnpr, \
+		 				cvbo,refr,cvnrbo,cvpb,cvbcl,limit,co2, \
+						nmingr,pmingr,cmingr,lmingr,nminc, \
+						po4,no3,tam,dox,orn,orp,orc,bod,phyto, \
+						limphy,pyco2,phycla,dophy,bodphy,tamphy, \
+						no3phy,po4phy,phdth,phgro,ornphy,orpphy,orcphy)
 
 				# compute associated fluxes
 				phydox = dophy *  vol
@@ -397,20 +421,20 @@ def  plank(general, ui, ts):
 				phyorc = orcphy * vol
 
 				if ZOOFG == 1:    # simulate zooplankton, zorx only called here
-					call zorx
-		 i                (zfil20,tczfil,tw,phyto,mzoeat,zexdel,cvpb,
-		 i                 zres20,tczres,anaer,zomass,tamfg,refr,
-		 i                 zfood,zd,oxzd,cvbn,cvbp,cvbc,cvnrbo,cvbo,
-		 m                 dox,bod,zoo,orn,orp,orc,tam,no3,po4,
-		 o                 zeat,zoco2,dozoo,bodzoo,nitzoo,po4zoo,
-		 o                 zgro,zdth,zorn,zorp,zorc)
+					(dox,bod,zoo,orn,orp,orc,tam,no3,po4,zeat,zco2,dozoo,zbod,znit,zpo4,zogr,zdth,zorn,zorp,zorc) \
+						= zorx(zfil20,tczfil,tw,phyto,mzoeat,zexdel,cvpb, \
+							zres20,tczres,anaer,zomass,tamfg,refr, \
+							zfood,zd,oxzd,cvbn,cvbp,cvbc,cvnrbo,cvbo, \
+							dox,bod,zoo,orn,orp,orc,tam,no3,po4, \
+							zeat,zoco2,dozoo,bodzoo,nitzoo,po4zoo, \
+							zgro,zdth,zorn,zorp,zorc)
 
 					# compute associated fluxes
 					zoodox = -dozoo * vol
 					zoobod = bodzoo * vol
 					if TAMFG != 0:   # ammonia on, so nitrogen excretion goes to ammonia
 						zootam = nitzoo * vol
-					else             # ammonia off, so nitrogen excretion goes to nitrate
+					else:             # ammonia off, so nitrogen excretion goes to nitrate
 						zoono3 = nitzoo * vol
 					zoopo4 = po4zoo * vol
 					zoophy = -zeat  * vol
@@ -428,18 +452,17 @@ def  plank(general, ui, ts):
 				totphy = snkphy + zoophy + dthphy + grophy
 
 			if BALFG == 1:     # simulate benthic algae
-				call balrx
-		 i               (ballit,tw,talgrl,talgrh,talgrm,malgr,cmmp,
-		 i                cmmnp,tamfg,amrfg,nsfg,cmmn,cmmlt,delt60,
-		 i                cflit,alr20,cvbpn,phfg,decfg,cvbpc,paldh,
-		 i                naldh,aldl,aldh,anaer,oxald,cfbalg,cfbalr,
-		 i                alnpr,cvbo,refr,cvnrbo,cvpb,mbal,depcor,
-		 i                limit,cvbcl,co2,nmingr,pmingr,cmingr,lmingr,
-		 i                nminc,
-		 m                po4,no3,tam,dox,orn,orp,orc,bod,benal(1),
-		 o                limbal(1),baco2,balcla(1),dobalg,bodbal,
-		 o                tambal,no3bal,po4bal,bgro(1),bdth(1),ornbal,
-		 o                orpbal,orcbal)
+				(po4,no3,tam,dox,orn,orp,orc,bod,benal,limbal,baco2,balcla,dobalg,bodbal,tambal,no3bal,po4bal,balgro,bdth,ornbal,orpbla,orcbal) \
+				 = balrx(ballit,tw,talgrl,talgrh,talgrm,malgr,cmmp, \
+		                cmmnp,tamfg,amrfg,nsfg,cmmn,cmmlt,delt60, \
+		                cflit,alr20,cvbpn,phfg,decfg,cvbpc,paldh, \
+						naldh,aldl,aldh,anaer,oxald,cfbalg,cfbalr, \
+						alnpr,cvbo,refr,cvnrbo,cvpb,mbal,depcor, \
+						limit,cvbcl,co2,nmingr,pmingr,cmingr,lmingr,nminc, \
+						po4,no3,tam,dox,orn,orp,orc,bod,benal[1], \
+						limbal[1],baco2,balcla[1],dobalg,bodbal, \
+						tambal,no3bal,po4bal,bgro[1],bdth[1],ornbal, \
+						orpbal,orcbal)
 
 				#compute associated fluxes
 				baldox = dobalg * vol
@@ -450,20 +473,22 @@ def  plank(general, ui, ts):
 				balorn = ornbal * vol
 				balorp = orpbal * vol
 				balorc = orcbal * vol
-				grobal(1) = bgro(1)
-				dthbal(1) = -bdth(1)
+				grobal[1] = bgro[1]
+				dthbal[1] = -bdth[1]
 			elif BALFG == 2:   # simulate enhanced benthic algae equations from dssamt
 				# then perform reactions, balrx2 only called here
-				
-				
-				po4,no3,tam,dox,orn,orp,orc,bod,benal, limbal,baco2,balcla,dobalg,bodbal,tambal,
-				no3bal,po4bal,bgro,bdth,ornbal,orpbal, orcbal = balrx2 (ballit,tw,tamfg,nsfg,delt60,cvbpn,phfg,decfg,
-				cvbpc,alnpr,cvbo,refr,cvnrbo,cvpb,depcor,
-				limit,cvbcl,co2,numbal,mbalgr,cmmpb,cmmnb,
-				balr20,tcbalg,balvel,cmmv,bfixfg,cslit,cmmd1,
-				cmmd2,tcbalr,frrif,cremvl,cmmbi,binv,tcgraz,
-				cslof1,cslof2,minbal,fravl,bnpfg,campr,nmingr,
-				pmingr,cmingr,lmingr,nminc,nmaxfx,grores,
+				(po4,no3,tam,dox,orn,orp,orc,bod,benal,limbal,baco2,balcla,dobalg,bodbal,tambal,no3bal,po4bal,balgro,bdth,ornbal,orpbla,orcbal) \
+				 = balrx2 (ballit,tw,tamfg,nsfg,delt60,cvbpn,phfg,decfg, \
+							cvbpc,alnpr,cvbo,refr,cvnrbo,cvpb,depcor, \
+							limit,cvbcl,co2,numbal,mbalgr,cmmpb,cmmnb, \
+							balr20,tcbalg,balvel,cmmv,bfixfg,cslit,cmmd1, \
+							cmmd2,tcbalr,frrif,cremvl,cmmbi,binv,tcgraz, \
+							cslof1,cslof2,minbal,fravl,bnpfg,campr,nmingr, \
+							pmingr,cmingr,lmingr,nminc,nmaxfx,grores, \
+							po4,no3,tam,dox,orn,orp,orc,bod,benal[1], \
+							limbal[1],baco2,balcla[1],dobalg,bodbal, \
+							tambal,no3bal,po4bal,bgro[1],bdth[1],ornbal, \
+							orpbal,orcbal)
 
 				# compute associated fluxes
 				baldox = dobalg * vol
@@ -474,10 +499,10 @@ def  plank(general, ui, ts):
 				balorn = ornbal * vol
 				balorp = orpbal * vol
 				balorc = orcbal * vol
-				do 20 i= 1, numbal
-					grobal(i) = bgro(i)
-					dthbal(i) = -bdth(i)
-		else     # not enough water in reach/res to warrant simulation of quality processes
+				for i in range(numbal):
+					grobal[i] = bgro[i]
+					dthbal[i] = -bdth[i]
+		else:     # not enough water in reach/res to warrant simulation of quality processes
 			phyorn = 0.0
 			balorn = 0.0
 			zooorn = 0.0
@@ -508,7 +533,7 @@ def  plank(general, ui, ts):
 
 			if PHYFG == 1:  # water scarcity limits phytoplankton growth
 				limc  = 'WAT'
-				read (limc,1000) limphy
+				#read (limc,1000) limphy
 				phycla = phyto * cvbcl
 				grophy = 0.0
 				dthphy = 0.0
@@ -516,33 +541,33 @@ def  plank(general, ui, ts):
 				totphy= snkphy
 			if BALFG == 1:   # water scarcity limits benthic algae growth
 				limc = 'WAT'
-				read (limc,1000) limbal(1)
-				balcla(1) = benal(1) * cvbcl
-				grobal(1) = 0.0
-				dthbal(1) = 0.0
+				#read (limc,1000) limbal[1]
+				balcla[1] = benal[1] * cvbcl
+				grobal[1] = 0.0
+				dthbal[1] = 0.0
 			elif BALFG == 2: # water scarcity limits benthic algae growth
 				limc = 'WAT'
-				do 30 i= 1, numbal
-					read (limc,1000) limbal(i)
-					balcla(i) = benal(i) * cvbcl
-					grobal(i) = 0.0
-					dthbal(i) = 0.0
+				for i in range(numbal):
+					#read (limc,1000) limbal[i]
+					balcla[i] = benal[i] * cvbcl
+					grobal[i] = 0.0
+					dthbal[i] = 0.0
 			if ZOOFG == 1:    # water scarcity limits zooplankton growth
 				grozoo= 0.0
 				dthzoo= 0.0
 				totzoo= 0.0
 
 		if BALFG:   # store final benthic sums and fluxes in common block
-			tbenal(1) = 0.0
+			tbenal[1] = 0.0
 			grotba = 0.0
 			dthtba = 0.0
-			do 40 i= 1, numbal
-				flxbal(1,i) = grobal(i)
-				flxbal(2,i) = dthbal(i)
-				flxbal(3,i) = grobal(i) + dthbal(i)
-				tbenal(1)   = tbenal(1) + benal(i)
-				grotba      = grotba + grobal(i)
-			tbenal(2) = tbenal(1) * cvbcl
+			for i in range(numbal):
+				flxbal[1,i] = grobal[i]
+				flxbal[2,i] = dthbal[i]
+				flxbal[3,i] = grobal[i] + dthbal[i]
+				tbenal[1]   = tbenal[1] + benal[i]
+				grotba      = grotba + grobal[i]
+			tbenal[2] = tbenal[1] * cvbcl
 			tottba    = grotba + dthtba
 
 		# compute final process fluxes for oxygen, nutrients and organics
@@ -558,14 +583,14 @@ def  plank(general, ui, ts):
 
 		# compute summaries of total organics, total n and p, and potbod concentrations
 		if vol > 0.0:     # compute summary concentrations
-			do 45 i= 1, 3
-				lsnh4(i) = rsnh4(i) / vol
-				lspo4(i) = rspo4(i) / vol
+			for i in range(1, 4):
+				lsnh4[i] = rsnh4[i] / vol
+				lspo4[i] = rspo4[i] / vol
 
 			itorn,itorp,itorc,dumval,itotn,itotp = 	pksums (phyfg,zoofg,tamfg,no2fg,
 			po4fg,adnhfg,adpofg,cvbn,cvbp,cvbc,cvbo,cvnrbo,phyto,zoo,orn,orp,orc,
-			no3,tam,no2,lsnh4(1),lsnh4(2),lsnh4(3),po4, lspo4(1),lspo4(2),lspo4(3),
-			bod,itorn,itorp,itorc,dumval,itotn,itotp))
+			no3,tam,no2,lsnh4[1],lsnh4[2],lsnh4[3],po4, lspo4[1],lspo4[2],lspo4(3),
+			bod,itorn,itorp,itorc,dumval,itotn,itotp)
 		else:   #   undefined summary concentrations
 			torn   = -1.0e30
 			torp   = -1.0e30
@@ -575,37 +600,38 @@ def  plank(general, ui, ts):
 			tp     = -1.0e30
 
 		# total inflows
-		inno3 = ino3 + nuadep(1)
-		intam = itam + nuadep(2)
-		inpo4 = ipo4 + nuadep(3)
-		itorn,itorp,itorc,dumval,itotn,itotp) = pksums (phyfg,zoofg,tamfg,no2fg,
+		inno3 = ino3 + nuadep[1]
+		intam = itam + nuadep[2]
+		inpo4 = ipo4 + nuadep[3]
+		
+		(itorn,itorp,itorc,dumval,itotn,itotp) = pksums (phyfg,zoofg,tamfg,no2fg,
 		po4fg,adnhfg,adpofg,cvbn,cvbp,cvbc,cvbo,cvnrbo,iphyto,izoo,inorn,inorp,
-		inorc,inno3,intam,ino2,isnh4(1),isnh4(2),isnh4(3), inpo4,ispo4(1),
-		ispo4(2),ispo4(3),ibod, itorn,itorp,itorc,dumval,itotn,itotp)
+		inorc,inno3,intam,ino2,isnh4[1],isnh4[2],isnh4[3], inpo4,ispo4[1],
+		ispo4[2],ispo4[3],ibod, itorn,itorp,itorc,dumval,itotn,itotp)
 
 		# total outflows
-		rotorn,rotorp,rotorc,dumval,rototn,rototp = pksums (phyfg,zoofg,tamfg,no2fg,po4fg,
+		(rotorn,rotorp,rotorc,dumval,rototn,rototp) = pksums (phyfg,zoofg,tamfg,no2fg,po4fg,
 		adnhfg,adpofg,cvbn,cvbp,cvbc,cvbo,cvnrbo,rophyt,rozoo,roorn,roorp, roorc,rono3,
-		rotam,rono2,rosnh4(1),rosnh4(2),rosnh4(3),ropo4,rospo4(1),rospo4(2),rospo4(3),robod,
+		rotam,rono2,rosnh4[1],rosnh4[2],rosnh4[3],ropo4,rospo4[1],rospo4[2],rospo4[3],robod,
 		rotorn,rotorp,rotorc,dumval,rototn,rototp)
-
+		
 		if nexits > 1:   # outflows by exit
-			do 50 i= 1, nexits
-				otorn(i),otorp(i),otorc(i),dumval,ototn(i), ototp(i) 
-				=  pksums 
-				(phyfg,zoofg,
-				tamfg,no2fg,po4fg,adnhfg,adpofg,cvbn,cvbp,cvbc,cvbo,cvnrbo,ophyt(i),ozoo(i),
-				oorn(i),oorp(i),oorc(i),ono3(i),otam(i),ono2(i), osnh4(i,1),osnh4(i,2),
-				osnh4(i,3),opo4(i), ospo4(i,1),ospo4(i,2),ospo4(i,3),obod(i),otorn(i),
-				otorp(i),otorc(i),dumval,ototn(i),ototp(i))
+			for i in range(nexits):
+				otorn[i],otorp[i],otorc[i],dumval,ototn[i], ototp[i] \
+				= pksums(phyfg,zoofg,
+				tamfg,no2fg,po4fg,adnhfg,adpofg,cvbn,cvbp,cvbc,cvbo,cvnrbo,ophyt[i],ozoo[i],
+				oorn[i],oorp[i],oorc[i],ono3[i],otam[i],ono2[i], osnh4[i,1],osnh4[i,2],
+				osnh4[i,3],opo4[i], ospo4[i,1],ospo4[i,2],ospo4[i,3],obod[i])
+				#otorn[i],otorp[i],otorc[i],dumval,ototn[i],ototp[i])
 
 		# cbrb  added call to ammion to redistribute tam after algal influence
 		nh3,nh4 = ammion(tw, phval, tam, nh3, nh4)
+		
 		return (dox, bod, orn, orp, orc, torn, torp, torc, potbod, phyto, zoo, benal, 
 		 phycla, balcla, rophyto, rozoo, robenal, rophycla, robalcla, ophyto, ozoo, 
 		 obenal, ophycla, obalcla, binv, pladfx, pladcn)
 
-	return nutrx
+	return plank
 
 
 def advplk(iplank,vols,srovol,vol,erovol,sovol,eovol,nexits,oref,mxstay,seed,delts,plank,roplk,oplk):
@@ -1495,9 +1521,8 @@ def balrx2(ballit,tw,TAMFG,NSFG,delt60,cvbpn,PHFG,DECFG,cvbpc,alnpr,cvbo,refr,cv
 
 	# compute total biomass of all benthic algal types
 	sumba = 0.0
-	do 10 i= 1, numbal
-		sumba = sumba + benal(i)
-	# 10   continue
+	for i in range(numbal):
+		sumba = sumba + benal[i]
 	
 	# convert to umoles p/l
 	sumbal = (sumba / cvpb) * depcor * frrif
@@ -1514,12 +1539,12 @@ def balrx2(ballit,tw,TAMFG,NSFG,delt60,cvbpn,PHFG,DECFG,cvbpc,alnpr,cvbo,refr,cv
 		# convert benal to units of umoles phosphorus/l (bal) for
 		# internal calculations, and adjust for % riffle to which
 		# periphyton are limited
-		bal(i) = (benal(i) / cvpb) * depcor * frrif
+		bal[i] = (benal[i] / cvpb) * depcor * frrif
 
 		# compute unit growth and respiration rates
-		nfixfg,limbal(i),groba,resba = algro2 (ballit,po4,no3,tw,mbalgr(i),cmmpb(i),tamfg,tam,nsfg,cmmnb(i),balr20(i),
-		delt60,limit,tcbalg(i),balvel,cmmv,bfixfg(i),cslit(i),cmmd1(i),cmmd2(i),sumba,tcbalr(i),
-		nmingr,pmingr,lmingr,nmaxfx,grores(i), nfixfg,limbal(i),groba,resba)
+		nfixfg,limbal[i],groba,resba = algro2 (ballit,po4,no3,tw,mbalgr[i],cmmpb[i],tamfg,tam,nsfg,cmmnb[i],balr20[i],
+		delt60,limit,tcbalg[i],balvel,cmmv,bfixfg[i],cslit[i],cmmd1[i],cmmd2[i],sumba,tcbalr[i],
+		nmingr,pmingr,lmingr,nmaxfx,grores[i], nfixfg,limbal[i],groba,resba)
 
 		# calculate net growth rate of algae; grobal is expressed as
 		# umoles phosphorus per liter per interval; benthic algae growth
@@ -1527,21 +1552,21 @@ def balrx2(ballit,tw,TAMFG,NSFG,delt60,cvbpn,PHFG,DECFG,cvbpc,alnpr,cvbo,refr,cv
 		# duration of the subroutines subordinate to balrx; the output
 		# values for benthic algae are converted to either mg biomass per
 		# sq meter or mg chla per sq meter, whichever the user specifies
-		grobal(i) = (groba- resba) * bal(i)
+		grobal[i] = (groba- resba) * bal[i]
 
 		# track growth that affects water column available n concentrations
 		if NFIXFG != 1:     # algae are not fixing n, net growth affects concentrations
-			groban = grobal(i)
+			groban = grobal[i]
 		else:               # algae that are fixing n affect water column n through respiration only
-			groban = -resba * bal(i)
+			groban = -resba * bal[i]
 
 		# calculate cumulative net growth of algal types simulated so far
-		grotot = grotot + grobal(i)
+		grotot = grotot + grobal[i]
 
 		# calculate cumulative algal growth that affects available n
 		grtotn = grtotn + groban
 
-		if grobal(i) > 0.0 and grotot > 0.0:
+		if grobal[i] > 0.0 and grotot > 0.0:
 			# check that cumulative growth rate of algal types does not exceed
 			# limitations imposed by the availability of required nutrients;
 			# if so, reduce growth rate of last algal type
@@ -1554,43 +1579,43 @@ def balrx2(ballit,tw,TAMFG,NSFG,delt60,cvbpn,PHFG,DECFG,cvbpc,alnpr,cvbo,refr,cv
 			# compare nutrient-checked growth to original cumulative total,
 			if grotot < grotmp:
 				# adjust growth rate of last algal type
-				grobal(i) = grobal(i) - (grotmp - grotot)
+				grobal[i] = grobal[i] - (grotmp - grotot)
 				# track changes in growth that affect available n concentrations
 				if nfixfg != 1:     # n-fixation not occurring, all growth affects n
-					groban = grobal(i)
+					groban = grobal[i]
 				else:  # n-fixation is occurring, proportionately adjust respiration (groban)
 					groban = groban * grotot / grotmp
 
 		# calculate benthic algae removal
 		crem = cremvl * depcor * frrif
-		cslof1(i), cslof2(i), balvel, dthbal(i) = balrem (crem,sumba,sumbal,cmmbi,tcgraz,tw,binv,bal(i),
-		cslof1(i),cslof2(i),balvel, dthbal(i))
+		cslof1[i], cslof2[i], balvel, dthbal[i] = balrem (crem,sumba,sumbal,cmmbi,tcgraz,tw,binv,bal[i],
+		cslof1[i],cslof2[i],balvel, dthbal[i])
 
 		# add the net growth
-		bal(i) = bal(i) + grobal(i)
+		bal[i] = bal[i] + grobal[i]
 
 		balmin = minbal * depcor * frrif
-		if bal(i) < balmin and grobal(i) < 0.0:   # adjust net growth rate so that population does not fall below minimum level
-			grotm2 = grobal(i)      # set temporary variable for growth
-			grobal(i) = grobal(i) + (balmin- bal(i))
-			bal(i) = balmin
+		if bal[i] < balmin and grobal[i] < 0.0:   # adjust net growth rate so that population does not fall below minimum level
+			grotm2 = grobal[i]      # set temporary variable for growth
+			grobal[i] = grobal[i] + (balmin- bal[i])
+			bal[i] = balmin
 			# adjust growth that affects available n concentrations
 			if NFIXFG != 1:     # n-fixation not occurring, all growth affects n
-				groban = grobal(i)
+				groban = grobal[i]
 			else:                # n-fixation is occurring, proportionately adjust respiration (groban)
-				groban = groban * grobal(i) / grotm2
+				groban = groban * grobal[i] / grotm2
 
 		# subtract death/removal
-		bal(i) = bal(i) - dthbal(i)
-		if bal(i) < balmin:  # adjust death rate so that population does not drop below minimum level
-			dthbal(i) = dthbal(i) - (balmin- bal(i))
-			if dthbal(i) < 0.0:
-				dthbal(i) = 0.0
-			bal(i) = balmin
+		bal[i] = bal[i] - dthbal[i]
+		if bal[i] < balmin:  # adjust death rate so that population does not drop below minimum level
+			dthbal[i] = dthbal[i] - (balmin- bal[i])
+			if dthbal[i] < 0.0:
+				dthbal[i] = 0.0
+			bal[i] = balmin
 
 		# calculate total net growth and removal of all benthic algae types
-		sumgro = sumgro + grobal(i)
-		sumdth = sumdth + dthbal(i)
+		sumgro = sumgro + grobal[i]
+		sumdth = sumdth + dthbal[i]
 		sumgrn = sumgrn + groban
 		# update internal loop tracking variables for cumulative growth 
 		# to account for grochk and minimum biomass adjustments
@@ -1644,11 +1669,11 @@ def balrx2(ballit,tw,TAMFG,NSFG,delt60,cvbpn,PHFG,DECFG,cvbpc,alnpr,cvbo,refr,cv
 		no3bal = no3bal + avlnit
 
 	# convert biomass to units of mg biomass/m2 and ug chlorophyll a/m2
-	do 30 i = 1, numbal
-		benal(i)  = (bal(i) * cvpb) / (depcor * frrif)
-		balgro(i) = (grobal(i) *cvpb) / (depcor * frrif)
-		bdth(i)   =   (dthbal(i) *cvpb) /(depcor * frrif)
-		balcla(i) =  benal(i) * cvbcl
+	for i in range(numbal):
+		benal[i]  = (bal[i] * cvpb) / (depcor * frrif)
+		balgro[i] = (grobal[i] *cvpb) / (depcor * frrif)
+		bdth[i]   =   (dthbal[i] *cvpb) / (depcor * frrif)
+		balcla[i] =  benal[i] * cvbcl
 		# 30   continue
 
 	return  po4,no3,tam,dox,orn,orp,orc,bod,benal,limbal,baco2,balcla,dobalg,bodbal,tambal,no3bal,po4bal,balgro,bdth,balorn,balorp,balorc

@@ -124,6 +124,9 @@ def hydr(store, siminfo, uci, ts):
     if 'O'    in ts:  del ts['O']
     if 'OVOL' in ts:  del ts['OVOL']
 
+    # save initial outflow(s) from reach:
+    uci['PARAMETERS']['ROS'] = ui['ROS']
+    
     return errors, ERRMSGS
 
 
@@ -248,6 +251,9 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
     #rirdem = 0.0
     #rirsht = 0.0
     irrdem = 0.0
+
+    # store initial outflow from reach:
+    ui['ROS'] = ro
 
     # HYDR (except where noted)
     for step in range(steps):
