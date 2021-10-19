@@ -5,7 +5,7 @@ License: LGPL2
 
 
 from pandas import DataFrame, read_hdf
-from networkx import DiGraph, Graph, topological_sort, connected_components
+#from networkx import DiGraph, Graph, topological_sort, connected_components
 
 
 def graph_from_HDF5(hdfname):
