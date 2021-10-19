@@ -1,8 +1,7 @@
 # HSP2, Hydrologic Simulation Program Python (HSPsquared)
 
 HSPsquared or HSP2 is a Python version of [Hydrological Simulation Program - FORTRAN (HSPF)](https://www.epa.gov/ceam/hydrological-simulation-program-fortran-hspf).
-Currently it supports the major hydrology modules, and water quality modules are
-being developed.
+HSP2 currently supports all HSPF hydrology modules and major water quality modules. Support for specialty modules is currently in progress. See our [Release Notes](https://github.com/respec/HSPsquared/releases) for up-to-date details.
 
 Read our wiki for more information on our motivation and goals for HSP2:
 - [Wiki Home & HSP2 Goals](https://github.com/respec/HSPsquared/wiki)
@@ -11,34 +10,25 @@ Read our wiki for more information on our motivation and goals for HSP2:
 
 [Project slides (January 2017)](https://github.com/respec/HSPsquared/blob/archivePy2/Why%20HSP2%20(EAA).pdf) also provide helpful background.
 
-HSPsquared is copyrighted 2020 by RESPEC and released under the GNU Affero General
-Public License.
-
-
-**ANNOUNCEMENT**
-
-HSP2 code has been updated to Python 3 in April 2020. Legacy Python 2 code is available in our [`archivePy2`](https://github.com/respec/HSPsquared/tree/archivePy2) branch.
+HSPsquared is copyrighted 2020 by RESPEC and released under the GNU Affero General Public License.
 
 
 ## Repository Directories
 
-**[HSP2](HSP2)** contains the hydrology codes converted from HSPF and the main programs
-to run HSP2.
+**[HSP2](HSP2)** contains the hydrology and water quality code modules converted from HSPF, along with the main programs to run HSP2.
 
 **[HSP2notebooks](HSP2notebooks)** contains tutorials and useful Juptyer Notebooks.
 
-**[HSP2tools](HSP2tools)** contains supporting software modules such as the code to convert
-legacy WDM and UCI files to HDF5 files for HSP2, and to provide additional new
-and legacy capabilities.
+**[HSP2tools](HSP2tools)** contains supporting software modules such as the code to convert legacy WDM and UCI files to HDF5 files for HSP2, and to provide additional new and legacy capabilities.
 
-**[docs](docs)** contains relevant reference documentation. 
+**[docs](docs)** contains relevant reference documentation.
 
 **[tests](tests)** contains unit testing code for testing code conversion (`tests/convert/conversion_test.py`) and code performance.
 
 
-## Installation Instructions
+## Installation
 
-HSP2 is designed to work with Python 3.6, 3.7 and 3.8.
+HSP2 is designed to work with Python >3.6 (since April 2020). We **recommend Python 3.8**. Legacy Python 2 code is available in our [`archivePy2`](https://github.com/respec/HSPsquared/tree/archivePy2) branch.
 
 Follow these steps to install.
 
@@ -57,28 +47,24 @@ Place your copy of the HSPsquared folder in any convenient location on your comp
 Although HSP2 can be run from the default `base` environment created by Anaconda,
 it can be helpful to create a leaner custom environment.
 
-We have provided an [`environment.yml`](environment.yml) file, which lists all primary dependencies, to help. Create a `hsp2_py38` environment either with the **Import** button on [Anaconda Navigator's Environments tab](https://docs.anaconda.com/anaconda/navigator/overview/#environments-tab), or use this [Conda](https://conda.io/docs/) command in your terminal or console,  replacing `path/environment.yml` with the full file pathway to the `environment.yml` file in the local cloned repository. 
+We have provided an [`environment.yml`](environment.yml) file, which lists all primary dependencies, to help. Create a `hsp2_py38` environment either with the **Import** button on [Anaconda Navigator's Environments tab](https://docs.anaconda.com/anaconda/navigator/overview/#environments-tab), or use this [Conda](https://conda.io/docs/) command in your terminal or console,  replacing `path/environment.yml` with the full file pathway to the `environment.yml` file in the local cloned repository.
 
-```console
+```shell
 conda env create --file path/environment.yml
 ```
 To update your environment, either use Anaconda Navigator, or run the following command:
 
-```console
+```shell
 conda env update --file path/environment.yml --prune
 ```
 
 or
 
-```console
+```shell
 conda env create --file path/environment.yml --force
 ```
-NOTE 1: The [`environment_dev.yml`](environment_dev.yml) file provides an alternate environment that provides additional capabilities and newer libraries useful to the development team. It is tested to also work with the current HSP2 codebase and will likely serve as a preview of future updates to [`environment.yml`](environment.yml).
 
-NOTE 2: We recommend using [JupyterLab](https://jupyterlab.readthedocs.io/en/stable/) to run our tutorial [Juptyer](https://jupyter.org/index.html) Notebooks in the [HSP2notebooks](HSP2notebooks/) folder. The following JupyterLab [extensions](https://jupyterlab.readthedocs.io/en/stable/user/extensions.html) are useful (but not required):
-+ [jupyter-matplotlib](https://github.com/matplotlib/ipympl), an interactive widget.
-+ [`jupyterlab/toc`](https://github.com/jupyterlab/jupyterlab-toc), Table of Contents.
-+ [qgrid2](https://github.com/quantopian/qgrid), for interactive sorting, filtering, and editing DataFrames
+NOTE: The [`environment_dev.yml`](environment_dev.yml) file provides an alternate environment that provides additional capabilities and newer libraries useful to the development team. It is tested to also work with the current HSP2 codebase and will likely serve as a preview of future updates to [`environment.yml`](environment.yml).
 
 
 #### 4. Add your HSPsquared Path to Anaconda sites-packages
@@ -97,4 +83,7 @@ You should now be able to run the Tutorials and create your own Jupyter Notebook
 
 ## Getting Started
 
-We recommend looking over our [Understanding HSP2 Tutorial](HSP2notebooks/Tutorial1.md) then viewing or interactively running our [Introduction to HSP2 notebook](HSP2notebooks/Introduction.ipynb).
+We recommend looking over our [Understanding HSP2 Tutorial](HSP2notebooks/Tutorial1.md) then viewing or interactively running our [Introduction to HSP2 notebook](HSP2notebooks/Introduction.ipynb) Jupyter Notebook.
+
+We recommend using [JupyterLab](https://jupyterlab.readthedocs.io/en/stable/) to run our tutorial [Juptyer Notebooks](https://jupyter.org/index.html) in the [HSP2notebooks](HSP2notebooks/) folder, due to many additional built-in features and extensions. The following JupyterLab [extensions](https://jupyterlab.readthedocs.io/en/stable/user/extensions.html) are particularly useful:
+- [lckr-jupyterlab-variableinspector](https://github.com/lckr/jupyterlab-variableInspector)
