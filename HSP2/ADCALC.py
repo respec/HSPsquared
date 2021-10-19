@@ -3,7 +3,7 @@ Authors: Robert Heaphy, Ph.D. and Paul Duda
 License: LGPL2
 '''
 
-from numpy import zeros
+from numpy import zeros, array
 from numba import njit
 from HSP2.utilities import make_numba_dict
 
@@ -29,6 +29,7 @@ def adcalc(store, siminfo, uci, ts):
 	nexits = int(ui['NEXITS'])          # table type GEN-INFO
 	ui['simlen'] = siminfo['steps']
 	ui['delts'] = siminfo['delt'] * 60.0     # delts is the simulation interval in seconds
+	ui['uunits']  = siminfo['units']
 
 	# calculated timeseries for advect()
 	if 'SROVOL' not in ts:
@@ -67,13 +68,23 @@ def _adcalc_(ui, ts):
 	simlen = int(ui['simlen'])
 	nexits = int(ui['NEXITS'])
 	delts  = ui['delts']
+	uunits = ui['uunits']
+
+	# units conversion constants, 1 ACRE is 43560 sq ft. assumes input in acre-ft
+	VFACT = 43560.0
+	AFACT = 43560.0
+	if uunits == 2:
+		# si units conversion constants, 1 hectare is 10000 sq m, assumes area input in hectares, vol in Mm3
+		VFACT = 1.0e6
+		AFACT = 10000.0
+
 	# table ADCALC-DATA
 	if 'CRRAT' in ui:
 		crrat = ui['CRRAT']
 	else:
 		crrat = 1.5
 	if 'VOL' in ui:
-		vol = ui['VOL']
+		vol = ui['VOL'] * VFACT
 	else:
 		vol = 0.0
 
@@ -98,6 +109,8 @@ def _adcalc_(ui, ts):
 		for index in range(nexits):
 			ts['EOVOL' + str(index + 1)] = EOVOL[:, index]
 
+	ROS = ui['ROS']
+
 	# external time series
 	O = zeros((simlen, nexits))
 	if nexits > 1:
@@ -107,10 +120,10 @@ def _adcalc_(ui, ts):
 		O[:, 0] = ts['RO']
 
 	for loop in range(simlen):
-		vols = VOL[loop-1] * 43560  if loop > 0 else vol
+		vols = VOL[loop-1] * VFACT  if loop > 0 else vol
 
 		o  = O[loop]
-		os = O[loop-1] if loop > 0 else O[loop]
+		os = O[loop-1] if loop > 0 else array([ROS])
 		ro = 0.0
 		ros= 0.0
 		for index in range(nexits):
