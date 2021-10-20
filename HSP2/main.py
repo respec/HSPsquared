@@ -158,6 +158,10 @@ def main(hdfname, saveall=False, jupyterlab=True):
                             ui['FLAGS']['NUTFG'] = flags['NUTRX']
                             ui['FLAGS']['PLKFG'] = flags['PLANK']
                             ui['FLAGS']['PHFG'] = flags['PHCARB']
+                            if flags['CONS']:
+                                if 'PARAMETERS' in uci[(operation, 'CONS', segment)]:
+                                    if 'NCONS' in uci[(operation, 'CONS', segment)]['PARAMETERS']:
+                                        ui['PARAMETERS']['NCONS'] = uci[(operation, 'CONS', segment)]['PARAMETERS']['NCONS']
 
                             # OXRX module inputs:
                             ui_oxrx = uci[(operation, 'OXRX', segment)] 
@@ -201,7 +205,7 @@ def main(hdfname, saveall=False, jupyterlab=True):
                         if 'SAVE' in ui_oxrx:   save_timeseries(store,ts,ui_oxrx['SAVE'],siminfo,saveall,operation,segment,'OXRX',jupyterlab)
                         if 'SAVE' in ui_nutrx:   save_timeseries(store,ts,ui_nutrx['SAVE'],siminfo,saveall,operation,segment,'NUTRX',jupyterlab)
                         if 'SAVE' in ui_plank:   save_timeseries(store,ts,ui_plank['SAVE'],siminfo,saveall,operation,segment,'PLANK',jupyterlab)
-                        #if 'SAVE' in ui_phcarb:   save_timeseries(store,ts,ui_phcarb['SAVE'],siminfo,saveall,operation,segment,'PHCARB',jupyterlab)
+                        if 'SAVE' in ui_phcarb:   save_timeseries(store,ts,ui_phcarb['SAVE'],siminfo,saveall,operation,segment,'PHCARB',jupyterlab)
 
         msglist = msg(1, 'Done', final=True)
 
@@ -366,7 +370,7 @@ def get_flows(store, ts, flags, uci, segment, ddlinks, ddmasslinks, steps, msg):
                 # KLUDGE until remaining HSP2 modules are available.
                 if tmemn not in {'IVOL', 'ICON', 'IHEAT', 'ISED', 'ISED1', 'ISED2', 'ISED3', 
                                     'IDQAL', 'ISQAL1', 'ISQAL2', 'ISQAL3',
-                                    'OXIF', 'NUIF1', 'NUIF2', 'PKIF'}:
+                                    'OXIF', 'NUIF1', 'NUIF2', 'PKIF', 'PHIF'}:
                     continue
                 if (sgrpn == 'OFLOW' and smemn == 'OVOL') or (sgrpn == 'ROFLOW' and smemn == 'ROVOL'):
                     sgrpn = 'HYDR'
@@ -384,6 +388,8 @@ def get_flows(store, ts, flags, uci, segment, ddlinks, ddmasslinks, steps, msg):
                     sgrpn = 'NUTRX'
                 if (sgrpn == 'OFLOW' and smemn == 'PKCF2') or (sgrpn == 'ROFLOW' and smemn == 'PKCF1'):
                     sgrpn = 'PLANK'
+                if (sgrpn == 'OFLOW' and smemn == 'PHCF2') or (sgrpn == 'ROFLOW' and smemn == 'PHCF1'):
+                    sgrpn = 'PHCARB'
                 
                 if tmemn == 'ISED' or tmemn == 'ISQAL':
                     tmemn = tmemn + tmemsb1    # need to add sand, silt, clay subscript

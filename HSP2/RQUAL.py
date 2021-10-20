@@ -198,6 +198,11 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 			u[f'TPKCF2_{i + 1}4'] = u['TPKCF2_14']
 			u[f'TPKCF2_{i + 1}5'] = u['TPKCF2_15']
 
+		u = uci_phcarb['SAVE']
+		for i in range(nexits):
+			u[f'OTIC{i + 1}'] = u['OTIC1']
+			u[f'OCO2{i + 1}'] = u['OCO21']
+
 	return errors, ERRMSGS
 
 
@@ -211,10 +216,8 @@ def _rqual_run(siminfo_, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts):
 	RQUAL.simulate(ts)
 
 	# return error data:
-	#TO-DO! - return PHCARB errors once implemented
-	errors_PHCARB = zeros(2, dtype=np.int64)
+	return RQUAL.OXRX.errors, RQUAL.NUTRX.errors, RQUAL.PLANK.errors, RQUAL.PHCARB.errors
 
-	return RQUAL.OXRX.errors, RQUAL.NUTRX.errors, RQUAL.PLANK.errors, errors_PHCARB
 
 def _compile_errors(NUTFG, PLKFG, PHFG, err_oxrx, err_nutrx, err_plank, err_phcarb):
 
@@ -226,8 +229,7 @@ def _compile_errors(NUTFG, PLKFG, PHFG, err_oxrx, err_nutrx, err_plank, err_phca
 		if PLKFG == 1:
 			errlen_plk += len(err_plank)
 			if PHFG == 1:
-				#errlen_phc += len(RQUAL.PHCARB.errors)
-				pass
+				errlen_phc += len(err_phcarb)
 
 	errlen = errlen_oxr + errlen_ntr + errlen_plk + errlen_phc
 
@@ -393,13 +395,19 @@ def expand_PHCARB_masslinks(flags, uci, dat, recs):
 			rec['SGRPN'] = 'PHCARB'
 
 			if dat.SGRPN == "ROFLOW":
-				rec['SMEMN'] = 'PHCF1'
-				rec['SMEMSB1'] = str(i)   # species index
+				if i == 1:
+					rec['SMEMN'] = 'ROTIC'
+				elif i == 2:
+					rec['SMEMN'] = 'ROCO2'
+				rec['SMEMSB1'] = ''
 				rec['SMEMSB2'] = ''
 			else:
-				rec['SMEMN'] = 'PHCF2'
+				if i == 1:
+					rec['SMEMN'] = 'OTIC'
+				elif i == 2:
+					rec['SMEMN'] = 'OCO2'
 				rec['SMEMSB1'] = dat.SMEMSB1  # exit number
-				rec['SMEMSB2'] = str(i)       # species index
+				rec['SMEMSB2'] = ''       # species index
 
 			rec['TMEMN'] = 'PHIF'
 			rec['TMEMSB1'] = str(i)			# species index

@@ -351,4 +351,18 @@ def expand_timeseries_names(sgrp, smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmems
     if tmemn == 'PKIF':
         tmemn = 'PKIF' + tmemsb1                    # smemsb1 is species index
 
+    # PHCARB:
+    if smemn == 'PHCF1' and smemsb1 == 1:           # total outflow
+        smemn = 'ROTIC'
+    if smemn == 'PHCF1' and smemsb1 == 2:           # total outflow
+        smemn = 'ROCO2'
+
+    if smemn == 'PHCF2' and smemsb2 == 1:           # exit-specific outflow
+        smemn = 'OTIC' + smemsb1                    # smemsb1 is exit #, smemsb2 is species index
+    if smemn == 'PHCF2' and smemsb2 == 2:           # exit-specific outflow
+        smemn = 'OCO2' + smemsb1                    # smemsb1 is exit #, smemsb2 is species index
+
+    if tmemn == 'PHIF':
+        tmemn = 'PHIF' + tmemsb1                    # smemsb1 is species index
+
     return smemn, tmemn

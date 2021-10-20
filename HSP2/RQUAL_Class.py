@@ -7,13 +7,14 @@ from numba.experimental import jitclass
 from HSP2.OXRX_Class import OXRX_Class
 from HSP2.NUTRX_Class import NUTRX_Class
 from HSP2.PLANK_Class import PLANK_Class
-#from HSP2.PHCARB_Class import PHCARB_Class
+from HSP2.PHCARB_Class import PHCARB_Class
 from HSP2.utilities  import make_numba_dict, initm
 
 spec = [
 	('OXRX', OXRX_Class.class_type.instance_type),
 	('NUTRX', NUTRX_Class.class_type.instance_type),
 	('PLANK', PLANK_Class.class_type.instance_type),
+	('PHCARB', PHCARB_Class.class_type.instance_type),
 	('AFACT', nb.float64),
 	('ALK', nb.float64[:]),
 	('AVDEP', nb.float64[:]),
@@ -121,6 +122,13 @@ spec = [
 	('PHFG', nb.int32),
 	('PHYCLA', nb.float64[:]),
 	('PHYTO', nb.float64[:]),
+	('PHCF3_DECCO2', nb.float64[:]),
+	('PHCF3_PHYCO2', nb.float64[:]),
+	('PHCF3_ZOOCO2', nb.float64[:]),
+	('PHCF3_BGRCO2', nb.float64[:]),
+	('PHCF3_BRECO2', nb.float64[:]),
+	('PHCF3_INVCO2', nb.float64[:]),
+	('PHCF3_TOTCO2', nb.float64[:]),
 	('PKCF5_SNKPHY', nb.float64[:]),
 	('PKCF5_ZOOPHY', nb.float64[:]),
 	('PKCF5_DTHPHY', nb.float64[:]),
@@ -191,6 +199,7 @@ spec = [
 	('RTAM', nb.float64[:]),
 	('SAREA', nb.float64[:]),
 	('SATDO', nb.float64[:]),
+	('SATCO2', nb.float64[:]),
 	('SCRFAC', nb.float64[:]),
 	('SEDFG', nb.int32),
 	('simlen', nb.int32),
@@ -289,9 +298,6 @@ class RQUAL_Class:
 		
 		self.SEDFG = int(ui['SEDFG'])
 		self.LKFG = int(ui['LKFG'])
-
-		#TO-DO! - remove hardcode once PHCARB class is ready for testing
-		self.PHFG = 0
 
 		# get external time series
 		self.PREC  = ts['PREC']
@@ -676,14 +682,38 @@ class RQUAL_Class:
 					self.ITIC = zeros(simlen)
 					self.ICO2 = zeros(simlen)
 
-					if 'CON' in ts:		self.ALK = ts['CON']
-					if 'ITIC' in ts:	self.ITIC = ts['ITIC']
-					if 'ICO2' in ts:	self.CO2 = ts['ICO2']
+					if 'PHIF1' in ts:    self.ITIC = ts['PHIF1']  # optional input
+					if 'PHIF2' in ts:    self.ICO2 = ts['PHIF2']  # optional input
+
+					# PHCARBN - instantiate class:
+					self.PHCARB = PHCARB_Class(siminfo, self.nexits, self.vol, ui, ui_nutrx, ui_phcarb, ts)
+
+					if 'PHIF1' not in ts:
+						ts['PHIF1'] = zeros(simlen)
+					ts['ITIC'] = ts['PHIF1']
+					if 'PHIF2' not in ts:
+						ts['PHIF2'] = zeros(simlen)
+					ts['ICO2'] = ts['PHIF2']
+
+					if not 'ALKCON' in ts:
+						ts['ALKCON'] = zeros(simlen)
+					if 'CONS' + str(int(self.PHCARB.alkcon)) + '_CON' in ts:
+						self.ALK = ts['CONS' + str(int(self.PHCARB.alkcon)) + '_CON']
 
 					# preallocate output arrays for speed
 					self.PH     = ts['PH']    = zeros(simlen)            # state variable
 					self.TIC    = ts['TIC']   = zeros(simlen)            # state variable
 					self.CO2    = ts['CO2']   = zeros(simlen)            # state variable
+					self.SATCO2 = ts['SATCO2']= zeros(simlen)            # state variable
+
+					self.PHCF3_DECCO2 = ts['PHCF3_DECCO2'] = zeros(simlen)  # flux terms
+					self.PHCF3_PHYCO2 = ts['PHCF3_PHYCO2'] = zeros(simlen)
+					self.PHCF3_ZOOCO2 = ts['PHCF3_ZOOCO2'] = zeros(simlen)
+					self.PHCF3_BGRCO2 = ts['PHCF3_BGRCO2'] = zeros(simlen)
+					self.PHCF3_BRECO2 = ts['PHCF3_BRECO2'] = zeros(simlen)
+					self.PHCF3_INVCO2 = ts['PHCF3_INVCO2'] = zeros(simlen)
+					self.PHCF3_TOTCO2 = ts['PHCF3_TOTCO2'] = zeros(simlen)
+
 					self.ROTIC  = ts['ROTIC'] = zeros(simlen)            # reach total outflow
 					self.ROCO2  = ts['ROCO2'] = zeros(simlen)            # reach total outflow
 					self.OTIC   = zeros((simlen, nexits))  # outflow by exit
@@ -693,8 +723,6 @@ class RQUAL_Class:
 					for i in range(nexits):
 						ts['OTIC' + str(i + 1)] = zeros(simlen)
 						ts['OCO2' + str(i + 1)] = zeros(simlen)
-
-					#PHCARB = PHCARB_Class(siminfo, self.nexits, self.vol, ui, ui_phcarb, ts)
 
 		return
 
@@ -729,11 +757,9 @@ class RQUAL_Class:
 			idox = self.IDOX[loop]
 			ibod = self.IBOD[loop]
 
-			# define initial CO2 conentration value for NUTRX:	#TO-DO! - needs implementation
-			co2 = -999.0
-			#co2 = PHCARB.co2
-
-			# define initial pH concentration (for use in NUTRX):	#TO-DO! - needs implementation
+			# define initial CO2 concentration value for NUTRX:
+			# co2 = -999.0
+			# define initial pH concentration (for use in NUTRX):
 			phval = 7.0
 
 			#if PHFG == 1:
@@ -806,7 +832,7 @@ class RQUAL_Class:
 				if self.PLKFG == 1:
 					
 					co2 = 0.0
-					#if self.PHFG == 1: co2 = PHCARB.co2		#TO-DO!
+					if self.PHFG == 1: co2 = self.PHCARB.co2
 					
 					(self.OXRX, self.NUTRX) \
 						=	self.PLANK.simulate(tw, phval, co2, self.SSED4[loop], self.OXRX, self.NUTRX,
@@ -820,18 +846,16 @@ class RQUAL_Class:
 					baldox = self.PLANK.baldox
 					
 					#-------------------------------------------------------
-					# PHCARB - simulate: (TO-DO! - needs class implementation)
+					# PHCARB - simulate ph, carbon dioxide, total inorganic carbon, and alkalinity
 					#-------------------------------------------------------
 					if self.PHFG == 1:
-						#self.PHCARB.simulate()
+						self.PHCARB.simulate(tw, self.OXRX, self.NUTRX, self.PLANK,
+											 self.ITIC[loop], self.ICO2[loop], self.ALK[loop],
+											 avdepe, scrfac, depcor, advData)
 						
 						# update pH and CO2 concentration for use in NUTRX/PLANK:
-						#if ui_nutrx['PHFLAG'] == 1:
-						#	phval = PHCARB.ph
-						
-						#co2 = PHCARB.co2
-						i = 0
-						pass
+						phval = self.PHCARB.ph
+						co2 = self.PHCARB.co2
 
 
 				#self.NUTRX.update_mass()
@@ -856,9 +880,6 @@ class RQUAL_Class:
 			self.OXRX.rbod = self.OXRX.bod * self.vol			
 
 			#self.OXRX.adjust_dox(nitdox, denbod, phydox, zoodox, baldox)
-
-			# udate initial volume for next step:
-			#self.svol = self.vol
 
 			#-------------------------------------------------------
 			# Store time series results (all WQ modules):
@@ -994,7 +1015,6 @@ class RQUAL_Class:
 					self.TN[loop] = self.PLANK.tn
 					self.TP[loop] = self.PLANK.tp
 
-					#	outflows (convert to mass per interval (lb/ivld or kg/ivld))
 					conv = self.PLANK.conv
 
 					#	inflows (lb/ivld or kg/ivld):
@@ -1009,6 +1029,7 @@ class RQUAL_Class:
 					self.TPKIF_4[loop] = self.PLANK.itotn * conv
 					self.TPKIF_5[loop] = self.PLANK.itotp * conv
 
+					#	outflows (convert to mass per interval (lb/ivld or kg/ivld))
 					self.ROPHYT[loop] = self.PLANK.rophyt * conv
 					self.ROZOO[loop]  = self.PLANK.rozoo * conv
 					self.ROORN[loop]  = self.PLANK.roorn * conv
@@ -1084,6 +1105,33 @@ class RQUAL_Class:
 
 					# PHCARB results:
 					if self.PHFG == 1:
-						pass
+						self.TIC[loop] = self.PHCARB.tic
+						self.CO2[loop] = self.PHCARB.co2
+						self.PH[loop] = self.PHCARB.ph
+						self.SATCO2[loop] = self.PHCARB.satco2
+
+						conv = self.PHCARB.conv
+
+						#	inflows (lb/ivld or kg/ivld):
+						self.ITIC[loop] = self.PHCARB.itic * conv
+						self.ICO2[loop] = self.PHCARB.ico2 * conv
+
+						#	outflows (convert to mass per interval (lb/ivld or kg/ivld))
+						self.ROTIC[loop] = self.PHCARB.rotic * conv
+						self.ROCO2[loop] = self.PHCARB.roco2 * conv
+
+						#	exit outflows:
+						if self.nexits > 1:
+							for i in range(self.nexits):
+								ts['OTIC' + str(i + 1)][loop] = self.PHCARB.otic[i] * conv
+								ts['OCO2' + str(i + 1)][loop] = self.PHCARB.oco2[i] * conv
+
+						self.PHCF3_DECCO2[loop] = self.NUTRX.decco2 * conv  # flux terms
+						self.PHCF3_PHYCO2[loop] = self.PLANK.pyco2 * conv
+						self.PHCF3_ZOOCO2[loop] = self.PLANK.zoco2 * conv
+						self.PHCF3_BGRCO2[loop] = self.PLANK.baco2 * conv
+						self.PHCF3_BRECO2[loop] = self.PHCARB.benco2 * conv
+						self.PHCF3_INVCO2[loop] = self.PHCARB.invco2 * conv
+						self.PHCF3_TOTCO2[loop] = self.PHCARB.totco2 * conv
 			
 		return
