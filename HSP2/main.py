@@ -203,9 +203,9 @@ def main(hdfname, saveall=False, jupyterlab=True):
        
                     if (activity == 'RQUAL'):
                         if 'SAVE' in ui_oxrx:   save_timeseries(store,ts,ui_oxrx['SAVE'],siminfo,saveall,operation,segment,'OXRX',jupyterlab)
-                        if 'SAVE' in ui_nutrx:   save_timeseries(store,ts,ui_nutrx['SAVE'],siminfo,saveall,operation,segment,'NUTRX',jupyterlab)
-                        if 'SAVE' in ui_plank:   save_timeseries(store,ts,ui_plank['SAVE'],siminfo,saveall,operation,segment,'PLANK',jupyterlab)
-                        if 'SAVE' in ui_phcarb:   save_timeseries(store,ts,ui_phcarb['SAVE'],siminfo,saveall,operation,segment,'PHCARB',jupyterlab)
+                        if 'SAVE' in ui_nutrx and flags['NUTRX'] == 1:   save_timeseries(store,ts,ui_nutrx['SAVE'],siminfo,saveall,operation,segment,'NUTRX',jupyterlab)
+                        if 'SAVE' in ui_plank and flags['PLANK'] == 1:  save_timeseries(store,ts,ui_plank['SAVE'],siminfo,saveall,operation,segment,'PLANK',jupyterlab)
+                        if 'SAVE' in ui_phcarb and flags['PHCARB'] == 1:   save_timeseries(store,ts,ui_phcarb['SAVE'],siminfo,saveall,operation,segment,'PHCARB',jupyterlab)
 
         msglist = msg(1, 'Done', final=True)
 

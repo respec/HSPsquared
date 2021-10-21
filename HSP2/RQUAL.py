@@ -209,6 +209,10 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 @njit(cache=True)
 def _rqual_run(siminfo_, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts):
 
+	nutrx_errors = zeros((0), dtype=np.int64)
+	plank_errors = zeros((0), dtype=np.int64)
+	phcarb_errors = zeros((0), dtype=np.int64)
+
 	# initialize WQ simulation:
 	RQUAL = RQUAL_Class(siminfo_, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts)
 
@@ -216,7 +220,15 @@ def _rqual_run(siminfo_, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts):
 	RQUAL.simulate(ts)
 
 	# return error data:
-	return RQUAL.OXRX.errors, RQUAL.NUTRX.errors, RQUAL.PLANK.errors, RQUAL.PHCARB.errors
+	oxrx_errors = RQUAL.OXRX.errors
+	if RQUAL.NUTFG == 1:
+		nutrx_errors = RQUAL.NUTRX.errors
+	if RQUAL.PLKFG == 1:
+		plank_errors = RQUAL.PLANK.errors
+	if RQUAL.PHFG == 1:
+		phcarb_errors = RQUAL.PHCARB.errors
+
+	return oxrx_errors, nutrx_errors, plank_errors, phcarb_errors
 
 
 def _compile_errors(NUTFG, PLKFG, PHFG, err_oxrx, err_nutrx, err_plank, err_phcarb):
