@@ -757,14 +757,12 @@ class RQUAL_Class:
 			idox = self.IDOX[loop]
 			ibod = self.IBOD[loop]
 
-			# define initial CO2 concentration value for NUTRX:
-			# co2 = -999.0
 			# define initial pH concentration (for use in NUTRX):
-			phval = 7.0
-
-			#if PHFG == 1:
-			#	if PHFLAG == 1:
-			#		phval = PHCARB.ph
+			if self.NUTFG == 1:
+				if self.PHFG == 1 and self.NUTRX.PHFLAG == 1:
+					phval = self.PHCARB.ph
+				if self.NUTRX.PHFLAG == 2:
+					phval = self.NUTRX.phval
 
 			#-------------------------------------------------------
 			# OXRX - simulate do and bod balances:
