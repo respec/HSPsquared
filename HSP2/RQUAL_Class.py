@@ -57,9 +57,6 @@ spec = [
 	('NH4', nb.float64[:]),
 	('NO2', nb.float64[:]),
 	('NO3', nb.float64[:]),
-	('NUADCN', nb.float64[:]),
-	('NUADFG', nb.int32[:]),
-	('NUADFX', nb.float64[:]),
 	('NUCF4_NITNO3', nb.float64[:]),
 	('NUCF4_DENNO3', nb.float64[:]),
 	('NUCF4_BODNO3', nb.float64[:]),
@@ -763,8 +760,10 @@ class RQUAL_Class:
 					phval = self.PHCARB.ph
 				if self.NUTRX.PHFLAG == 2:
 					phval = self.NUTRX.phval
+				elif self.NUTRX.PHFLAG == 3:
+					phval = ts['PHVAL'][loop]
 
-			#-------------------------------------------------------
+				#-------------------------------------------------------
 			# OXRX - simulate do and bod balances:
 			#-------------------------------------------------------
 			self.OXRX.simulate(idox, ibod, wind_r, scrfac, avdepe, avvele, depcor, tw, advData)
@@ -814,10 +813,22 @@ class RQUAL_Class:
 				for j in range(1,4):
 					ispo4[4] += ispo4[j]
 
+				# compute atmospheric deposition influx
+				nuaddr = self.SAREA[loop] * ts['NUADFX1'][loop]  # dry deposition;
+				nuadwt = self.PREC[loop] * self.SAREA[loop] * ts['NUADCN1'][loop]  # wet deposition;
+				nuadep_no3 = nuaddr + nuadwt
+				nuaddr = self.SAREA[loop] * ts['NUADFX2'][loop]  # dry deposition;
+				nuadwt = self.PREC[loop] * self.SAREA[loop] * ts['NUADCN2'][loop]  # wet deposition;
+				nuadep_nh3 = nuaddr + nuadwt
+				nuaddr = self.SAREA[loop] * ts['NUADFX3'][loop]  # dry deposition;
+				nuadwt = self.PREC[loop] * self.SAREA[loop] * ts['NUADCN3'][loop]  # wet deposition;
+				nuadep_po4 = nuaddr + nuadwt
+
 				# simulate nutrients:
 				self.OXRX = self.NUTRX.simulate(loop, tw, wind, phval, self.OXRX, 
 								self.INO3[loop], self.INH4[loop], self.INO2[loop], self.IPO4[loop], isnh4, ispo4,
-								self.PREC[loop], self.SAREA[loop], scrfac, avdepe, depcor, depscr, rosed, osed, advData)
+								scrfac, avdepe, depcor, depscr, rosed, osed,
+								nuadep_no3, nuadep_nh3, nuadep_po4, advData)
 				
 
 				# update DO / BOD totals:
@@ -831,13 +842,28 @@ class RQUAL_Class:
 					
 					co2 = 0.0
 					if self.PHFG == 1: co2 = self.PHCARB.co2
-					
+
+					# compute atmospheric deposition influx
+					pladdr = self.SAREA[loop] * ts['PLADFX1'][loop]  # dry deposition;
+					pladwt = self.PREC[loop] * self.SAREA[loop] * ts['PLADCN1'][loop]  # wet deposition;
+					pladep_orn = pladdr + pladwt
+					pladdr = self.SAREA[loop] * ts['PLADFX2'][loop]  # dry deposition;
+					pladwt = self.PREC[loop] * self.SAREA[loop] * ts['PLADCN2'][loop]  # wet deposition;
+					pladep_orp = pladdr + pladwt
+					pladdr = self.SAREA[loop] * ts['PLADFX3'][loop]  # dry deposition;
+					pladwt = self.PREC[loop] * self.SAREA[loop] * ts['PLADCN3'][loop]  # wet deposition;
+					pladep_orc = pladdr + pladwt
+
+					# benthic invertebrates
+					binv = ts['BINV'][loop]
+
 					(self.OXRX, self.NUTRX) \
 						=	self.PLANK.simulate(tw, phval, co2, self.SSED4[loop], self.OXRX, self.NUTRX,
 										self.IPHYT[loop], self.IZOO[loop], 
 										self.IORN[loop], self.IORP[loop], self.IORC[loop], 
-										self.WASH[loop], self.SOLRAD[loop], self.PREC[loop], 
-										self.SAREA[loop], avdepe, avvele, depcor, ro, advData)
+										self.WASH[loop], self.SOLRAD[loop],
+										avdepe, avvele, depcor, ro, binv,
+										pladep_orn, pladep_orp, pladep_orc, advData)
 
 					phydox = self.PLANK.phydox
 					zoodox = self.PLANK.zoodox

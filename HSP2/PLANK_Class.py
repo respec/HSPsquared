@@ -35,9 +35,7 @@ spec = [
 	('balvel', nb.float64),
 	('benal', nb.float64[:]),
 	('BFIXFG', nb.int32[:]),
-	('binv', nb.float64),
 	('BINVFG', nb.int32),
-	('binvm', nb.float64),
 	('BNPFG', nb.int32),
 	('bpcntc', nb.float64),
 	('campr', nb.float64),
@@ -158,9 +156,6 @@ spec = [
 	('physet', nb.float64),
 	('phytam', nb.float64),
 	('phyto', nb.float64),
-	('PLADCN', nb.float64[:]),
-	('PLADFG', nb.int32[:]),
-	('PLADFX', nb.float64[:]),
 	('pmingr', nb.float64),
 	('potbod', nb.float64),
 	('pyco2', nb.float64),
@@ -440,7 +435,6 @@ class PLANK_Class:
 				#  grazing and disturbance parms - table-type benal-graze
 				self.cremvl = ui['CREMVL']
 				self.cmmbi  = ui['CMMBI']
-				self.binv   = ui['BINV']
 				self.tcgraz = ui['TCGRAZ']
 
 				hrpyr = 8760.0		#constant
@@ -451,9 +445,6 @@ class PLANK_Class:
 					self.ctrbq2 = ui['CTRBQ2']
 					self.cktrb1 = ui['CKTRB1']
 					self.cktrb2 = ui['CKTRB2']	
-
-				if self.BINVFG == 3:      # monthly benthic invertebrate density - table-type mon-binv
-					self.binvm = ui['BINVM']
 
 			# table-type benal-riff1
 			self.frrif  = ui['FRRIF']	
@@ -476,11 +467,6 @@ class PLANK_Class:
 		self.orn   = ui['ORN']
 		self.orp   = ui['ORP']
 		self.orc   = ui['ORC']
-
-		# atmospheric deposition flags
-		self.PLADFG = zeros(7, dtype=np.int32)
-		for j in range(1,7):
-			self.PLADFG[j] = int(ui['PLADFG(' + str(j) + ')'])
 
 		# variable initialization:
 		if self.PHYFG == 0:   # initialize fluxes of inactive constituent
@@ -547,7 +533,8 @@ class PLANK_Class:
 		return
 
 	def simulate(self, tw, phval, co2, tss, OXRX, NUTRX, iphyto, izoo, iorn, iorp, iorc, 
-					wash, solrad, prec, sarea, avdepe, avvele, depcor, ro, advData):
+					wash, solrad, avdepe, avvele, depcor, ro, binv,
+				 	pladep_orn, pladep_orp, pladep_orc, advData):
 		
 		''' '''
 
@@ -573,36 +560,6 @@ class PLANK_Class:
 		self.iorp = iorp / self.conv
 		self.iorc = iorc / self.conv
 
-		# update atmospheric deposition (TO-DO! - best approach is likely to handle in RQUAL and pass in PLAD* values for current step):
-		self.PLADFX = zeros(6)
-		self.PLADCN = zeros(6)
-
-		'''
-		for j in range(1, 4):
-			n = 2*(j - 1) + 1
-
-			if self.PLADFG[n] > 0:  # monthly flux must be read
-				#self.PLAFXM[j] = array(ui[('PLAFXM',j)])
-
-				if uunits == 1:     # convert from lb/ac.day to mg.ft3/l.ft2.ivl
-					self.PLAFXM[j] *= 0.3677 * self.delt60 / 24.0
-				elif uunits == 2:	      # convert from kg/ha.day to mg.m3/l.m2.ivl
-					self.PLAFXM[j] *= 0.1 * self.delt60 / 24.0
-		
-		# Note: get PLAFX array from monthly (above), constant, or time series
-		# PLAFX is dimension (simlen, 3)
-		# same with PLADCN 
-		'''
-
-		pladdr = zeros(4); pladwt = zeros(4); pladep = zeros(4)
-
-		for i in range(1,4):
-			n = 2 * (i - 1) + 1
-			pladdr[i] = sarea * self.PLADFX[i]          # dry deposition
-			pladwt[i] = prec * sarea * self.PLADCN[i]   # wet deposition
-			pladep[i] = pladdr[i] + pladwt[i]	
-
-
 		#-----------------------------------------------------------
 		#	advection:
 		#-----------------------------------------------------------
@@ -622,19 +579,19 @@ class PLANK_Class:
 									self.oref,self.mxstay,self.seed,self.delts,self.zoo)
 
 		# advect organic nitrogen
-		inorn = self.iorn + pladep[1]
+		inorn = self.iorn + pladep_orn
 		(self.orn,self.roorn,self.oorn) = advect (inorn, self.orn, nexits, self.svol, self.vol, srovol, erovol, sovol, eovol)
 		(self.orn, snkorn) = sink(self.vol, avdepe, self.refset, self.orn)
 		self.snkorn = -snkorn
 
 		# advect organic phosphorus
-		inorp = self.iorp + pladep[2]
+		inorp = self.iorp + pladep_orp
 		(self.orp, self.roorp, self.oorp) = advect(inorp, self.orp, nexits, self.svol, self.vol, srovol, erovol, sovol, eovol)
 		(self.orp, snkorp) = sink(self.vol, avdepe, self.refset, self.orp)
 		self.snkorp = -snkorp
 
 		# advect total organic carbon
-		inorc = self.iorc + pladep[3]
+		inorc = self.iorc + pladep_orc
 		(self.orc, self.roorc, self.oorc) = advect (inorc, self.orc, nexits, self.svol, self.vol, srovol, erovol, sovol, eovol)
 		(self.orc, snkorc) = sink(self.vol, avdepe, self.refset, self.orc)
 		self.snkorc = -snkorc
@@ -789,7 +746,7 @@ class PLANK_Class:
 								self.cvbpc,self.alnpr,self.cvbo,self.refr,self.cvnrbo,self.cvpb,depcor, \
 								self.cvbcl,co2,self.numbal,self.mbalgr,self.cmmpb,self.cmmnb, \
 								self.balr20,self.tcbalg,self.balvel,self.cmmv,self.BFIXFG,self.cslit,self.cmmd1, \
-								self.cmmd2,self.tcbalr,self.frrif,self.cremvl,self.cmmbi,self.binv,self.tcgraz, \
+								self.cmmd2,self.tcbalr,self.frrif,self.cremvl,self.cmmbi,binv,self.tcgraz, \
 								self.cslof1,self.cslof2,self.minbal,self.fravl,self.BNPFG,self.campr,self.nmingr, \
 								self.pmingr,self.cmingr,self.lmingr,self.nminc,self.nmaxfx,self.grores, \
 								po4,no3,tam,dox,self.orn,self.orp,self.orc,bod,self.benal)
@@ -803,7 +760,7 @@ class PLANK_Class:
 				self.balorn = ornbal * self.vol
 				self.balorp = orpbal * self.vol
 				self.balorc = orcbal * self.vol
-					
+
 				self.grobal = zeros(self.numbal)
 				self.dthbal = zeros(self.numbal)
 
@@ -916,11 +873,6 @@ class PLANK_Class:
 			self.potbod = -1.0e30
 			self.tn     = -1.0e30
 			self.tp     = -1.0e30
-
-		# total inflows:
-		inno3 = NUTRX.ino3 + NUTRX.nuadep[1]
-		intam = NUTRX.itam + NUTRX.nuadep[2]
-		inpo4 = NUTRX.ipo4 + NUTRX.nuadep[3]
 
 		(self.itorn, self.itorp, self.itorc, dumval, self.itotn, self.itotp) \
 			= self.pksums(NUTRX,self.iphyto,self.izoo,self.iorn,self.iorp,self.iorc,

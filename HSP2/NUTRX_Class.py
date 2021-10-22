@@ -79,13 +79,6 @@ spec = [
 	('no2', nb.float64),
 	('NO2FG', nb.int32),
 	('no3', nb.float64),
-	('nuaddr', nb.float64[:]),
-	('nuadep', nb.float64[:]),
-	('NUADCN', nb.float64[:,:]),
-	('NUADFG', nb.int32[:]),
-	('NUADFX', nb.float64[:,:]),
-	('nuadpm', nb.float64[:]),
-	('nuadwt', nb.float64[:]),
 	('nucf1', nb.float64[:]),
 	('nucf2', nb.float64[:,:]),
 	('nucf3', nb.float64[:,:]),
@@ -197,12 +190,6 @@ class NUTRX_Class:
 		self.SEDFG = int(ui_rq['SEDFG'])
 		self.BENRFG = int(ui_rq['BENRFG'])
 
-		# table-type nut-ad-flags
-		self.NUADFG = zeros(7, dtype=np.int32)
-
-		for j in range(1, 7):
-			self.NUADFG[j] = int(ui['NUADFG(' + str(j) + ')'])
-
 		# error handling:
 		if self.TAMFG == 0 and (self.AMVFG == 1 or self.ADNHFG == 1):
 			self.errors[0] += 1
@@ -217,55 +204,6 @@ class NUTRX_Class:
 		if (self.ADNHFG == 1 or self.ADPOFG == 1) and self.SEDFG == 0:
 			self.errors[2] += 1
 			# ERRMSG: sediment associated nh4 and/or po4 is being simulated,but sediment is not being simulated in section sedtrn
-
-		# atmospheric deposition - initialize time series:
-		self.NUADFX = zeros((self.simlen,4))
-		self.NUADCN = zeros((self.simlen,4))
-		
-		for j in range(1, 4):
-			if 'NUADFX' + str(j) in ts: self.NUADFX[:,j] = ts['NUADFX' + str(j)]
-			if 'NUADCN' + str(j) in ts: self.NUADCN[:,j] = ts['NUADCN' + str(j)]
-
-		'''
-		NUADFX = zeros(self.simlen)
-		NUADCN = zeros(self.simlen)
-
-		for j in range (1, 4):
-			n = (2 * j) - 1
-			nuadfg1 = self.NUADFG[n]
-			nuadfg2 = self.NUADFG[n+1]
-
-			# dry deposition:
-			if nuadfg1 > 0:
-				NUADFX = initm(siminfo, ui, nuadfg1, 'NUTRX_MONTHLY/NUADFX', 0.0)
-			elif nuadfg1 == -1:
-				NUADFX = ts['NUADFX' + str(j)]
-
-			# wet deposition:
-			if nuadfg2 > 0:
-				NUADCN = initm(siminfo, ui, nuadfg2, 'NUTRX_MONTHLY/NUADCN', 0.0)
-			elif nuadfg2 == -1:
-				NUADCN = ts['NUADCN' + str(j)]			
-		'''
-
-		'''
-		sf = 1.0
-
-		if self.uunits == 1:			# convert from lb/ac.day to mg.ft3/l.ft2.ivl
-			sf = 0.3677 * delt60 / 24.0
-		else:					# convert from kg/ha.day to mg.m3/l.m2.ivl	
-			sf = 0.1 * delt60 / 24.0	
-		'''
-
-		'''
-		# convert units to internal:
-		if self.NUADFG[1] > 0:
-			self.uafxm[:,1] = ui['NUADFXM1'] * sf
-		if self.NUADFG[2] > 0:
-			self.uafxm[:,2] = ui['NUADFXM2'] * sf
-		if self.NUADFG[3] > 0:
-			self.uafxm[:,3] = ui['NUADFXM3'] * sf
-		'''
 
 		# conversion factors - table-type conv-val1
 		self.cvbo   = ui['CVBO']
@@ -311,7 +249,6 @@ class NUTRX_Class:
 			self.phvalm = ui['PHVALM']
 
 		#self.nupm3 = zeros(7)
-		self.nuadpm = zeros(7)
 		self.rsnh4 = zeros(13)
 		self.rspo4 = zeros(13)
 
@@ -488,7 +425,8 @@ class NUTRX_Class:
 		return
 
 	def simulate(self, loop, tw, wind, phval, OXRX, ino3, itam, ino2, ipo4, isnh4, ispo4, 
-					prec, sarea, scrfac, avdepe, depcor, sed_depscr, sed_rosed, sed_osed, advectData):
+					scrfac, avdepe, depcor, sed_depscr, sed_rosed, sed_osed,
+				 	nuadep_no3, nuadep_nh3, nuadep_po4, advectData):
 		''' Determine primary inorganic nitrogen and phosphorus balances'''
 
 		# hydraulics:
@@ -505,37 +443,9 @@ class NUTRX_Class:
 		self.isnh4 = isnh4 / self.conv
 		self.ispo4 = ispo4 / self.conv
 
-		#compute atmospheric deposition influx (! - to be implemented)
-		self.nuadep = zeros(7)
-		self.nuaddr = zeros(7)
-		self.nuadwt = zeros(7)
-
-		'''  LTI - temporarily removed
-		for i in range(1,4):
-			n = 2*(i-1)+ 1
-			# dry deposition
-			if self.NUADFG[n] <= -1:
-				nuadfx = ts['nuadfx']
-				self.nuaddr[i] = sarea*nuadfx
-			elif self.NUADFG[n] >= 1:
-				nuaddr[i] = sarea*dayval(nuafxm[mon,i],nuafxm[nxtmon,i],day, ndays)
-			else:
-				self.nuaddr[i] = 0.0
-			# wet deposition
-			if self.NUADFG[n+1] <= -1:
-				nuadcn = ts['nuadcn']
-				nuadwt[n]= prec*sarea*nuadcn
-			elif self.NUADFG[n+1] >= 1:
-				nuadwt[i] = prec*sarea*dayval(nuacnm[mon,i],nuacnm[nxtmon,i],day,ndays)
-			else:
-				nuadwt[i] = 0.0
-
-			nuadep[i] = nuaddr[i] + nuadwt[i]
-		'''
-
 		# advect nitrate
 		self.tnuif[1] = self.ino3
-		inno3 = self.ino3 + self.nuadep[1]
+		inno3 = self.ino3 + nuadep_no3
 
 		self.no3, self.rono3, self.ono3 = \
 			advect(inno3, self.no3, nexits, self.svol, self.vol, srovol, erovol, sovol, eovol)
@@ -546,7 +456,7 @@ class NUTRX_Class:
 
 		# advect total ammonia:		
 		if self.TAMFG == 1:
-			intam = self.itam + self.nuadep[2]
+			intam = self.itam + nuadep_nh3
 
 			self.tam, self.rotam, self.otam = \
 				advect(intam, self.tam, nexits, self.svol, self.vol, srovol, erovol, sovol, eovol)
@@ -568,7 +478,7 @@ class NUTRX_Class:
 
 		# advect dissolved PO4:
 		if self.PO4FG == 1:
-			inpo4 = self.ipo4 + self.nuadep[3]
+			inpo4 = self.ipo4 + nuadep_po4
 			self.po4, self.ropo4, self.opo4 = advect(inpo4,self.po4, nexits, self.svol, self.vol, srovol, erovol, sovol, eovol)		
 
 		# sediment variables (require unit conversion):
