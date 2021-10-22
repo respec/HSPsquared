@@ -1,11 +1,11 @@
 ''' Copyright (c) 2020 by RESPEC, INC.
-Author: Robert Heaphy, Ph.D.
+Authors: Robert Heaphy, Ph.D. and Paul Duda
 License: LGPL2
 '''
 
 import logging
 import numpy as np
-from numpy import where, zeros, array, float64
+from numpy import where, zeros, array, float64, full
 from numba import types, njit
 from numba.typed import Dict
 
@@ -81,9 +81,23 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 		ts['SOVOL' + str(i + 1)] = SOVOL[:, i]
 		ts['EOVOL' + str(i + 1)] = EOVOL[:, i]
 
+	phval_init = 7.
+	tamfg = 0
+	phflag = 2
+	if 'NH3FG' in ui_nutrx:
+		tamfg = ui_nutrx['NH3FG']
+	if 'PHFLAG' in ui_nutrx:
+		phflag = ui_nutrx['PHFLAG']
+	if tamfg == 1:
+		if 'PHVAL' in ui_nutrx:
+			phval_init = ui_nutrx['PHVAL']
+	if 'PHVAL' not in ts:
+		ts['PHVAL'] = full(simlen, phval_init)
+	if phflag == 3:
+		ts['PHVAL'] = initm(siminfo, ui_nutrx, phflag, 'MONTHLY/PHVAL', phval_init)
+
 	#---------------------------------------------------------------------
 	#	input time series processing (atm. deposition, benthic inverts, etc.)
-	#		TO-DO! - needs testing
 	#---------------------------------------------------------------------
 	# NUTRX atmospheric deposition - initialize time series:
 	if NUTFG == 1:
@@ -91,11 +105,11 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 			n = (2 * j) - 1
 
 			# dry deposition:
-			nuadfg_dd = int(ui_nutrx['NUADFG(' + str(j) + ')'])
+			nuadfg_dd = int(ui_nutrx['NUADFG(' + str(n) + ')'])
 			NUADFX = zeros(simlen)
 
 			if nuadfg_dd > 0:
-				NUADFX = initm(siminfo, ui, nuadfg_dd, 'NUTRX_MONTHLY/NUADFX', 0.0)
+				NUADFX = initm(siminfo, ui_nutrx, nuadfg_dd, 'NUADFX' + str(j) + '_MONTHLY/NUADFX' + str(j), 0.0)
 			elif nuadfg_dd == -1:
 				if 'NUADFX' + str(j) in ts:
 					NUADFX = ts['NUADFX' + str(j)]
@@ -104,17 +118,25 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 			ts['NUADFX' + str(j)] = NUADFX
 
 			# wet deposition:
-			nuadfg_wd = int(ui_nutrx['NUADFG(' + str(j+1) + ')'])
+			nuadfg_wd = int(ui_nutrx['NUADFG(' + str(n+1) + ')'])
 			NUADCN = zeros(simlen)
 
 			if nuadfg_wd > 0:
-				NUADCN = initm(siminfo, ui, nuadfg_wd, 'NUTRX_MONTHLY/NUADCN', 0.0)
+				NUADCN = initm(siminfo, ui_nutrx, nuadfg_wd, 'NUADCN' + str(j) + '_MONTHLY/NUADCN' + str(j), 0.0)
 			elif nuadfg_wd == -1:
 				if 'NUADCN' + str(j) in ts:
 					NUADCN = ts['NUADCN' + str(j)]
 				else:
 					pass		#ERRMSG?
 			ts['NUADCN' + str(j)] = NUADCN
+
+			# convert units to internal
+			if uunits == 1:  # convert from lb/ac.day to mg.ft3/l.ft2.ivl
+				if 'NUADFX' + str(j) in ts:
+					ts['NUADFX' + str(j)] *= 0.3677 * delt60 / 24.0
+			else:  # convert from kg/ha.day to mg.m3/l.m2.ivl
+				if 'NUADFX' + str(j) in ts:
+					ts['NUADFX' + str(j)] *= 0.1 * delt60 / 24.0
 
 	if PLKFG == 1:		
 		# PLANK atmospheric deposition - initialize time series:
@@ -126,7 +148,7 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 			pladfg_dd = int(ui_plank['PLADFG(' + str(j) + ')'])
 
 			if pladfg_dd > 0:
-				PLADFX = initm(siminfo, ui, pladfg_dd, 'PLANK_MONTHLY/PLADFX', 0.0)
+				PLADFX = initm(siminfo, ui_plank, pladfg_dd, 'PLADFX' + str(j) + '_MONTHLY/PLADFX' + str(j), 0.0)
 			elif pladfg_dd == -1:
 				if 'PLADFX' + str(j) in ts:
 					PLADFX = ts['PLADFX' + str(j)]
@@ -136,10 +158,10 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 
 			# wet deposition:
 			PLADCN = zeros(simlen)
-			pladfg_wd = int(ui_plank['PLADFG(' + str(j+1) + ')'])
+			pladfg_wd = int(ui_plank['PLADFG(' + str(n+1) + ')'])
 
 			if pladfg_wd > 0:
-				PLADCN = initm(siminfo, ui, pladfg_wd, 'PLANK_MONTHLY/PLADCN', 0.0)
+				PLADCN = initm(siminfo, ui_plank, pladfg_wd, 'PLADCN' + str(j) + '_MONTHLY/PLADCN' + str(j), 0.0)
 			elif pladfg_wd == -1:
 				if 'PLADCN' + str(j) in ts:
 					PLADCN = ts['PLADCN' + str(j)]
@@ -147,8 +169,29 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 					pass		#ERRMSG?
 			ts['PLADCN' + str(j)] = PLADCN
 
-			# PLANK - benthic invertebrates:
-			ts['BINV'] = zeros(simlen)		# 	TO-DO! - needs implementation
+			# convert units to internal
+			if uunits == 1:  # convert from lb/ac.day to mg.ft3/l.ft2.ivl
+				if 'PLADFX' + str(j) in ts:
+					ts['PLADFX' + str(j)] *= 0.3677 * delt60 / 24.0
+			else:  # convert from kg/ha.day to mg.m3/l.m2.ivl
+				if 'PLADFX' + str(j) in ts:
+					ts['PLADFX' + str(j)] *= 0.1 * delt60 / 24.0
+
+		# PLANK - benthic invertebrates:
+		balfg = 0
+		binv_init = 0.0
+		binvfg = 2
+		if 'BALFG' in ui_plank:
+			balfg = ui_plank['BALFG']
+		if balfg == 2:  # user has selected multiple species with more complex kinetics
+			if 'BINV' in ui_plank:
+				binv_init = ui_plank['BINV']
+			if 'BINVFG' in ui_plank:
+				binvfg = ui_plank['BINVFG']
+		if 'BINV' not in ts:
+			ts['BINV'] = full(simlen, binv_init)
+		if balfg == 2 and binvfg == 3:
+			ts['BINV'] = initm(siminfo, ui_plank, binvfg, 'MONTHLY/BINV', binv_init)
 
 	#---------------------------------------------------------------------
 	# initialize & run integerated WQ simulation:
