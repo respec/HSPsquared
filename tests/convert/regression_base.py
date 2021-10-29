@@ -219,7 +219,8 @@ class RegressTest(object):
         if (activity == 'SEDTRN' and cons in ['SSEDCLAY', 'SSEDTOT']) or \
                 (activity == 'OXRX' and cons in ['BODCONC', 'DOXCONC']) or \
                 (activity == 'NUTRX' and cons in ['TAMCONCDIS', 'NH4CONCDIS', 'NH3CONCDIS', 'NO3CONCDIS', 'NO2CONCDIS', 'PO4CONCDIS']) or \
-                (activity == 'PLANK' and cons in ['PHYTO', 'PHYCLA', 'ZOO', 'CTOTORGCONC', 'POTBOD', 'NTOTCONC', 'PTOTCONC', 'NTOTORGCONC', 'PTOTORGCONC']):
+                (activity == 'PLANK' and cons in ['PHYTO', 'PHYCLA', 'ZOO', 'CTOTORGCONC', 'POTBOD', 'NTOTCONC', 'PTOTCONC', 'NTOTORGCONC', 'PTOTORGCONC']) or \
+                (activity == 'PHCARB' and cons in ['TICCONC', 'CO2CONC']):
             ts_vol_hsp2 = self.hsp2_data.get_time_series(operation, id, "VOL", "HYDR")
             ts_vol_hsp2 = self.fill_nan_and_null(ts_vol_hsp2)
             
