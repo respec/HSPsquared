@@ -4,14 +4,14 @@ from pandas.core.frame import DataFrame
 import HSP2tools
 import pandas as pd
 import os
-from typing import Union, Dict, Tuple, final
+from typing import Union, Dict, Tuple #, final
 
 #turns out that HDF5 is not threading safe, need to implement manual locking
 from threading import Lock
 
 class HDF5:
     
-    REQUIRES_MAPPING = ['GQUAL','CONS','IQUAL']
+    REQUIRES_MAPPING = ['GQUAL','CONS','IQUAL','PQUAL']
 
     def __init__(self, file_name:str) -> None:
         self.file_name = file_name
@@ -22,6 +22,7 @@ class HDF5:
         self.gqual_prefixes = self._read_gqual_mapping()
         self.cons_prefixes = self._read_cons_mapping()
         self.iqual_prefixes = self._read_iqual_mapping()
+        self.pqual_prefixes = self._read_pqual_mapping()
 
     def _read_nqual_mapping(self, key:str, target_col:str, nquals:int = 10) -> Dict[str,str]:
         """Some modules, like GQUAL, allow for number which corresponds to the consistent
@@ -32,7 +33,10 @@ class HDF5:
         for i in range(1,nquals):
             try:
                 with pd.HDFStore(self.file_name,'r') as store:
-                    df = pd.read_hdf(store,f'{key}{i}')
+                    if key.endswith('IQUAL') or key.endswith('PQUAL'):
+                        df = pd.read_hdf(store, f'{key}{i}'+'/FLAGS')
+                    else:
+                        df = pd.read_hdf(store,f'{key}{i}')
                     row = df.iloc[0]
                     gqid = row[target_col]
                     dict_mappings[gqid] = str(i)
@@ -48,9 +52,11 @@ class HDF5:
         return self._read_nqual_mapping(R'RCHRES/CONS/CONS','CONID', 7)
 
     def _read_iqual_mapping(self) -> Dict[str,str]:
-        """placeholder - for implementation similar to gqual - but for current test just assume 1"""
-        return {'':'1'}
-        
+        return self._read_nqual_mapping(R'IMPLND/IQUAL/IQUAL','QUALID', 10)
+
+    def _read_pqual_mapping(self) -> Dict[str,str]:
+        return self._read_nqual_mapping(R'PERLND/PQUAL/PQUAL','QUALID', 10)
+
     def _read_aliases_csv(self) -> Dict[Tuple[str,str,str],str]:
         datapath = os.path.join(HSP2tools.__path__[0], 'data', 'HBNAliases.csv')
         df = pd.read_csv(datapath)
@@ -64,15 +70,19 @@ class HDF5:
         constituent = constituent.upper()
         activity = activity.upper()
 
-        #We still need a special case for IMPLAND/IQUAL and PERLAND/PQUAL
         constituent_prefix = ''
         if activity in self.REQUIRES_MAPPING: 
             constituent_prefix = ''
             prefix_dict = getattr(self, f'{activity.lower()}_prefixes')
-            for key, value in prefix_dict.items(): 
-                if constituent.startswith(key): 
-                    constituent_prefix = f'{activity}{value}_'
-                    constituent = constituent.replace(key,'')   
+            for key, value in prefix_dict.items():
+                if activity == 'PQUAL' or activity == 'IQUAL':
+                    if constituent.endswith(key):
+                        constituent_prefix = f'{activity}{value}_'
+                        constituent = constituent.replace(key,'')
+                else:
+                    if constituent.startswith(key):
+                        constituent_prefix = f'{activity}{value}_'
+                        constituent = constituent.replace(key,'')
 
         key = (operation,id,activity)
         try:
