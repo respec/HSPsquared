@@ -330,26 +330,38 @@ def expand_timeseries_names(sgrp, smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmems
 
     if tmemn == 'NUIF1':
         tmemn = 'NUIF1_' + tmemsb1
+        if sgrp == "PQUAL" or sgrp == "IQUAL":  # could be from pqual or iqual
+            if smemsb1 == '':
+                smemsb1 = '1'
+            smemn = sgrp + smemsb1 + '_' + smemn
 
     # NUTRX - particulate species:
     if smemn == 'NUCF2':                            # total outflow
-        smemn = 'NUCF2_' + smemsb1 + smemsb2   # smemsb1 is sediment class
+        smemn = 'NUCF2_' + smemsb1 + smemsb2        # smemsb1 is sediment class
 
     if smemn == 'OSNH4' or smemn == 'OSPO4':        # exit-specific outflow
         smemn = smemn + '_' + smemsb1 + smemsb2     # smemsb1 is exit #, smemsb2 is sed class
 
     if tmemn == 'NUIF2':
         tmemn = 'NUIF2_' + tmemsb1 + tmemsb2
+        if sgrp == "PQUAL" or sgrp == "IQUAL":  # could be from pqual or iqual
+            if smemsb1 == '':
+                smemsb1 = '1'
+            smemn = sgrp + smemsb1 + '_' + smemn
 
     # PLANK:
     if smemn == 'PKCF1':                            # total outflow
-        smemn = 'PKCF1_' + smemsb1                   # smemsb1 is species index
+        smemn = 'PKCF1_' + smemsb1                  # smemsb1 is species index
 
     if smemn == 'PKCF2':                            # exit-specific outflow
         smemn = 'PKCF2_' + smemsb1 + smemsb2        # smemsb1 is exit #, smemsb2 is species index
 
     if tmemn == 'PKIF':
-        tmemn = 'PKIF' + tmemsb1                    # smemsb1 is species index
+        tmemn = 'PKIF' + tmemsb1                    # tmemsb1 is species index
+        if sgrp == "PQUAL" or sgrp == "IQUAL":      # could be from pqual or iqual
+            if smemsb1 == '':
+                smemsb1 = '1'
+            smemn = sgrp + smemsb1 + '_' + smemn
 
     # PHCARB:
     if smemn == 'PHCF1' and smemsb1 == 1:           # total outflow
@@ -363,6 +375,6 @@ def expand_timeseries_names(sgrp, smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmems
         smemn = 'OCO2' + smemsb1                    # smemsb1 is exit #, smemsb2 is species index
 
     if tmemn == 'PHIF':
-        tmemn = 'PHIF' + tmemsb1                    # smemsb1 is species index
+        tmemn = 'PHIF' + tmemsb1                    # tmemsb1 is species index
 
     return smemn, tmemn

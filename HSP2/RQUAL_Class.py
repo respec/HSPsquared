@@ -336,8 +336,16 @@ class RQUAL_Class:
 
 			# calculate scouring factor
 			if self.BENRFG == 1:
-				scrvel = ui['SCRVEL']	# table-type scour-parms
-				scrmul = ui['SCRMUL']	# table-type scour-parms
+				if 'SCRVEL' in ui:
+					scrvel = ui['SCRVEL']	# table-type scour-parms
+				else:
+					scrvel = 10.0
+					if self.uunits == 2:
+						scrvel = 3.05
+				if 'SCRMUL' in ui:
+					scrmul = ui['SCRMUL']	# table-type scour-parms
+				else:
+					scrmul = 2.0
 				
 				if self.AVVELE[t] > scrvel:
 					self.SCRFAC[t] = scrmul
@@ -737,7 +745,7 @@ class RQUAL_Class:
 
 			tw     = self.TW[loop]
 			if self.uunits == 1:
-				tw = (tw - 32.0) * (5.0 / 9.0)
+				tw = (tw - 32.0) * (0.5555)
 
 			wind = self.WIND[loop]
 			wind_r = wind
@@ -881,8 +889,7 @@ class RQUAL_Class:
 						phval = self.PHCARB.ph
 						co2 = self.PHCARB.co2
 
-
-				#self.NUTRX.update_mass()
+				self.NUTRX.update_mass()
 
 			#-------------------------------------------------------
 			# OXRX - finalize DO and calculate totals
@@ -902,8 +909,6 @@ class RQUAL_Class:
 			self.OXRX.dox = dox
 			self.OXRX.rdox = self.OXRX.dox * self.vol
 			self.OXRX.rbod = self.OXRX.bod * self.vol			
-
-			#self.OXRX.adjust_dox(nitdox, denbod, phydox, zoodox, baldox)
 
 			#-------------------------------------------------------
 			# Store time series results (all WQ modules):
@@ -1020,7 +1025,8 @@ class RQUAL_Class:
 				if self.PLKFG == 1:
 
 					self.PHYTO[loop] = self.PLANK.phyto
-					self.ZOO[loop] = self.PLANK.zoo / self.PLANK.zomass
+					if self.PLANK.ZOOFG:
+						self.ZOO[loop] = self.PLANK.zoo / self.PLANK.zomass
 					if self.PLANK.BALFG:
 						self.BENAL1[loop] = self.PLANK.benal[0]
 						self.TBENAL1[loop] = self.PLANK.tbenal[1]

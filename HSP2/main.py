@@ -153,7 +153,6 @@ def main(hdfname, saveall=False, jupyterlab=True):
                             ui['FLAGS']['HTFG'] = flags['HTRCH']
                             ui['FLAGS']['SEDFG'] = flags['SEDTRN']
                             ui['FLAGS']['GQFG'] = flags['GQUAL']
-                            ui['FLAGS']['GQALFG4'] = uci[(operation, 'GQUAL', segment)]['GQUAL1']['QALFG4']
                             ui['FLAGS']['OXFG'] = flags['OXFG']
                             ui['FLAGS']['NUTFG'] = flags['NUTRX']
                             ui['FLAGS']['PLKFG'] = flags['PLANK']
@@ -277,7 +276,11 @@ def get_uci(store):
                 uci[(op, module, id)][s] = vdict
         elif op == 'GENER':
             for row in store[path].itertuples():
-                start, stop = row.OPNID.split()
+                if len(row.OPNID.split()) == 1:
+                    start = int(row.OPNID)
+                    stop = start
+                else:
+                    start, stop = row.OPNID.split()
                 for i in range(int(start), int(stop)+1): ddgener[module][f'G{i:03d}'] = row[2]
     return opseq, ddlinks, ddmasslinks, ddext_sources, ddgener, uci, siminfo
 
@@ -435,7 +438,9 @@ def get_flows(store, ts, flags, uci, segment, ddlinks, ddmasslinks, steps, msg):
                     else:
                         ts[tmemn] = t
                 else:
-                    print('ERROR in FLOWS for', path)
+                    pass
+                    # print('ERROR in FLOWS for', path) # not necessarily an error to not find an operation
+                                                        # referenced in schematic, could be commented out
     return
 
 def get_gener_timeseries(ts: Dict, gener_instances: Dict, ddlinks: List) -> Dict:
@@ -444,16 +449,17 @@ def get_gener_timeseries(ts: Dict, gener_instances: Dict, ddlinks: List) -> Dict
     """
     for link in ddlinks:
         if link.SVOL == 'GENER':
-            gener = gener_instances[link.SVOLNO]
-            series = gener.get_ts()
-            if link.MFACTOR != 1:
-                series *= link.MFACTOR
-    
-            key = f'{link.TMEMN}{link.TMEMSB1} {link.TMEMSB2}'.rstrip()
-            if key in ts:
-                ts[key] = ts[key] + series
-            else:
-                ts[key] = series
+            if link.SVOLNO in gener_instances:
+                gener = gener_instances[link.SVOLNO]
+                series = gener.get_ts()
+                if link.MFACTOR != 1:
+                    series *= link.MFACTOR
+
+                key = f'{link.TMEMN}{link.TMEMSB1} {link.TMEMSB2}'.rstrip()
+                if key in ts:
+                    ts[key] = ts[key] + series
+                else:
+                    ts[key] = series
     return ts
 
 
