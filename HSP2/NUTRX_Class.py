@@ -708,12 +708,7 @@ class NUTRX_Class:
 			self.rsnh4[8]  = totnm2		# compute total bed ammonium
 			self.rsnh4[12] = totnm3      # compute total sediment-associated ammonium
 
-
 		self.svol = self.vol  # svol is volume at start of time step, update for next time thru
-
-		# update total nutrient masses (handle after PLANK):
-		#self.update_mass()
-
 
 		return OXRX
 

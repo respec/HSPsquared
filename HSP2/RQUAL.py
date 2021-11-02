@@ -369,7 +369,7 @@ def expand_NUTRX_masslinks(flags, uci, dat, recs):
 			recs.append(rec)
 
 		# particulate species (NH4, PO4):
-		for j in range(1,5):		# sediment type
+		for j in range(1,4):		# sediment type
 			
 			# adsorbed NH4:
 			if flags['TAMFG'] and flags['ADNHFG']:

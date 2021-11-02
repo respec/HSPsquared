@@ -102,10 +102,6 @@ class OXRX_Class:
 		else:						# Eng. conversion: (g/m3)*(ft3/ivld) --> [lb/ivld]
 			self.conv = 6.2428e-5
 
-		# gqual flags
-		self.GQFG = int(ui_rq['GQFG'])
-		self.GQALFG4 = int(ui_rq['GQALFG4'])
-
 		# table-type ox-genparm
 		self.kbod20 = ui['KBOD20'] * delt60	 # convert units from 1/hr to 1/ivl
 		self.tcbod	= ui['TCBOD']
@@ -155,6 +151,7 @@ class OXRX_Class:
 			self.tcginv = ui['TCGINV']
 			self.reak	= ui['REAK']
 			self.expred = ui['EXPRED']
+			self.exprev = ui['EXPREV']
 			
 		if self.BENRFG == 1:		  # benthic release parms - table-type ox-benparm
 			self.benod	= ui['BENOD'] * self.delt60	# convert units from 1/hr to 1/ivl
@@ -223,7 +220,6 @@ class OXRX_Class:
 				# adjust dissolved oxygen state variable to acount for oxygen lost to benthos, and compute concentration flux
 				self.doben = self.dox
 				self.dox   = self.dox - (self.benox * depcor)
-				self.doben = self.benox * depcor  
 				if self.dox >= 0.001:
 					self.doben = self.benox * depcor
 				else:
@@ -312,34 +308,3 @@ class OXRX_Class:
 		self.svol = self.vol  # svol is volume at start of time step, update for next time thru
 
 		return
-
-	#-------------------------------------------------------------------
-	# utility functions:
-	#-------------------------------------------------------------------
-	def adjust_dox(self, nitdox, denbod, phydox, zoodox, baldox):
-		# if dox exceeds user specified level of supersaturation, then release excess do to the atmosphere
-		
-		doxs = self.dox
-
-		if self.dox > self.supsat * self.satdo:
-			self.dox = self.supsat * self.satdo
-		
-		self.readox = self.readox + (self.dox - doxs) * self.vol
-		self.totdox = self.readox + self.boddox + self.bendox \
-					+ nitdox + phydox + zoodox + baldox
-		
-
-		# update dissolved totals and totals of nutrients
-		self.rdox = self.dox * self.vol
-		self.rbod = self.bod * self.vol
-		
-		return
-
-	'''
-	def update_totals(self, nitdox, denbod):
-
-		self.totdox = self.readox + self.boddox + self.bendox + nitdox
-		self.totbod = self.decbod + self.bnrbod + self.snkbod + denbod
-
-		return
-	'''
