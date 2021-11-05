@@ -964,17 +964,17 @@ class RQUAL_Class:
 				self.TNUCF1_4[loop] = self.NUTRX.tnucf1[4] * conv
 
 				if self.NUTRX.ADNHFG > 0:
-					self.SNH41[loop] = self.NUTRX.rsnh4[1]
-					self.SNH42[loop] = self.NUTRX.rsnh4[2]
-					self.SNH43[loop] = self.NUTRX.rsnh4[3]
+					self.SNH41[loop] = self.NUTRX.snh4[1] * 1.0e6
+					self.SNH42[loop] = self.NUTRX.snh4[2] * 1.0e6
+					self.SNH43[loop] = self.NUTRX.snh4[3] * 1.0e6
 					self.ROSNH41[loop] = self.NUTRX.rosnh4[1] * conv
 					self.ROSNH42[loop] = self.NUTRX.rosnh4[2] * conv
 					self.ROSNH43[loop] = self.NUTRX.rosnh4[3] * conv
 
 				if self.NUTRX.ADPOFG > 0:
-					self.SPO41[loop] = self.NUTRX.rspo4[1]
-					self.SPO42[loop] = self.NUTRX.rspo4[2]
-					self.SPO43[loop] = self.NUTRX.rspo4[3]
+					self.SPO41[loop] = self.NUTRX.spo4[1] * 1.0e6
+					self.SPO42[loop] = self.NUTRX.spo4[2] * 1.0e6
+					self.SPO43[loop] = self.NUTRX.spo4[3] * 1.0e6
 					self.ROSPO41[loop] = self.NUTRX.rospo4[1] * conv
 					self.ROSPO42[loop] = self.NUTRX.rospo4[2] * conv
 					self.ROSPO43[loop] = self.NUTRX.rospo4[3] * conv

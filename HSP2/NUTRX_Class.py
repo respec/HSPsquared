@@ -308,8 +308,8 @@ class NUTRX_Class:
 				
 			# adsorption parameters - table-type nut-adsparm
 			for i in range(1, 4):
-				self.adnhpm[i] = ui['ADNHPM(' + str(i) + ')']
-				self.adpopm[i] = ui['ADPOPM(' + str(i) + ')']
+				self.adnhpm[i] = ui['ADNHPM' + str(i)] / 1.0e6
+				self.adpopm[i] = ui['ADPOPM' + str(i)] / 1.0e6
 
 		# initial conditions - table-type nut-dinit
 		self.dnust = zeros(7); 		self.dnust2 = zeros(7)
@@ -769,7 +769,7 @@ class NUTRX_Class:
 					temp = dnut * adpm[j]  # new concentration
 
 					# quantity of material transferred
-					# adnut[j]= (temp - snut[j])*rsed[j]
+					adnut[j]= (temp - snut[j])*rsed[j]
 					snut[j] = temp
 
 					# accumulate total adsorption/desorption flux above bed
