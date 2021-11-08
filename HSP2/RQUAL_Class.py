@@ -57,6 +57,15 @@ spec = [
 	('NH4', nb.float64[:]),
 	('NO2', nb.float64[:]),
 	('NO3', nb.float64[:]),
+    ('NUADDR1', nb.float64[:]),
+	('NUADDR2', nb.float64[:]),
+	('NUADDR3', nb.float64[:]),
+    ('NUADWT1', nb.float64[:]),
+	('NUADWT2', nb.float64[:]),
+	('NUADWT3', nb.float64[:]),
+    ('NUADEP1', nb.float64[:]),
+	('NUADEP2', nb.float64[:]),
+	('NUADEP3', nb.float64[:]),
 	('NUCF4_NITNO3', nb.float64[:]),
 	('NUCF4_DENNO3', nb.float64[:]),
 	('NUCF4_BODNO3', nb.float64[:]),
@@ -156,6 +165,15 @@ spec = [
 	('PKIF3', nb.float64[:]),
 	('PKIF4', nb.float64[:]),
 	('PKIF5', nb.float64[:]),
+    ('PLADDR1', nb.float64[:]),
+	('PLADDR2', nb.float64[:]),
+	('PLADDR3', nb.float64[:]),
+    ('PLADWT1', nb.float64[:]),
+	('PLADWT2', nb.float64[:]),
+	('PLADWT3', nb.float64[:]),
+    ('PLADEP1', nb.float64[:]),
+	('PLADEP2', nb.float64[:]),
+	('PLADEP3', nb.float64[:]),
 	('PLKFG', nb.int32),
 	('PO4', nb.float64[:]),
 	('POTBOD', nb.float64[:]),
@@ -459,6 +477,16 @@ class RQUAL_Class:
 			self.TNUIF3  = ts['TNUIF3'] = zeros(simlen)  # total inflow
 			self.TNUIF4  = ts['TNUIF4'] = zeros(simlen)  # total inflow
 
+			self.NUADDR1 = ts['NUADDR1'] = zeros(simlen)
+			self.NUADDR2 = ts['NUADDR2'] = zeros(simlen)
+			self.NUADDR3 = ts['NUADDR3'] = zeros(simlen)
+			self.NUADWT1 = ts['NUADWT1'] = zeros(simlen)
+			self.NUADWT2 = ts['NUADWT2'] = zeros(simlen)
+			self.NUADWT3 = ts['NUADWT3'] = zeros(simlen)
+			self.NUADEP1 = ts['NUADEP1'] = zeros(simlen)
+			self.NUADEP2 = ts['NUADEP2'] = zeros(simlen)
+			self.NUADEP3 = ts['NUADEP3'] = zeros(simlen)
+
 			self.NUCF4_NITNO3 = ts['NUCF4_NITNO3'] = zeros(simlen)  # flux terms
 			self.NUCF4_DENNO3 = ts['NUCF4_DENNO3'] = zeros(simlen)
 			self.NUCF4_BODNO3 = ts['NUCF4_BODNO3'] = zeros(simlen)
@@ -651,6 +679,16 @@ class RQUAL_Class:
 				self.TPKIF_4  = ts['TPKIF_4'] = zeros(simlen)  # total inflow
 				self.TPKIF_5  = ts['TPKIF_5'] = zeros(simlen)  # total inflow
 
+				self.PLADDR1 = ts['PLADDR1'] = zeros(simlen)
+				self.PLADDR2 = ts['PLADDR2'] = zeros(simlen)
+				self.PLADDR3 = ts['PLADDR3'] = zeros(simlen)
+				self.PLADWT1 = ts['PLADWT1'] = zeros(simlen)
+				self.PLADWT2 = ts['PLADWT2'] = zeros(simlen)
+				self.PLADWT3 = ts['PLADWT3'] = zeros(simlen)
+				self.PLADEP1 = ts['PLADEP1'] = zeros(simlen)
+				self.PLADEP2 = ts['PLADEP2'] = zeros(simlen)
+				self.PLADEP3 = ts['PLADEP3'] = zeros(simlen)
+
 				#	outflows:
 				self.ROPHYT   = ts['PKCF1_1'] = zeros(simlen)  # total outflow
 				self.ROZOO    = ts['PKCF1_2']  = zeros(simlen)  # total outflow
@@ -822,15 +860,15 @@ class RQUAL_Class:
 					ispo4[4] += ispo4[j]
 
 				# compute atmospheric deposition influx
-				nuaddr = self.SAREA[loop] * ts['NUADFX1'][loop]  # dry deposition;
-				nuadwt = self.PREC[loop] * self.SAREA[loop] * ts['NUADCN1'][loop]  # wet deposition;
-				nuadep_no3 = nuaddr + nuadwt
-				nuaddr = self.SAREA[loop] * ts['NUADFX2'][loop]  # dry deposition;
-				nuadwt = self.PREC[loop] * self.SAREA[loop] * ts['NUADCN2'][loop]  # wet deposition;
-				nuadep_nh3 = nuaddr + nuadwt
-				nuaddr = self.SAREA[loop] * ts['NUADFX3'][loop]  # dry deposition;
-				nuadwt = self.PREC[loop] * self.SAREA[loop] * ts['NUADCN3'][loop]  # wet deposition;
-				nuadep_po4 = nuaddr + nuadwt
+				nuaddr1 = self.SAREA[loop] * ts['NUADFX1'][loop]  # dry deposition;
+				nuadwt1 = self.PREC[loop] * self.SAREA[loop] * ts['NUADCN1'][loop]  # wet deposition;
+				nuadep_no3 = nuaddr1 + nuadwt1
+				nuaddr2 = self.SAREA[loop] * ts['NUADFX2'][loop]  # dry deposition;
+				nuadwt2 = self.PREC[loop] * self.SAREA[loop] * ts['NUADCN2'][loop]  # wet deposition;
+				nuadep_nh3 = nuaddr2 + nuadwt2
+				nuaddr3 = self.SAREA[loop] * ts['NUADFX3'][loop]  # dry deposition;
+				nuadwt3 = self.PREC[loop] * self.SAREA[loop] * ts['NUADCN3'][loop]  # wet deposition;
+				nuadep_po4 = nuaddr3 + nuadwt3
 
 				# simulate nutrients:
 				self.OXRX = self.NUTRX.simulate(loop, tw, wind, phval, self.OXRX, 
@@ -852,15 +890,15 @@ class RQUAL_Class:
 					if self.PHFG == 1: co2 = self.PHCARB.co2
 
 					# compute atmospheric deposition influx
-					pladdr = self.SAREA[loop] * ts['PLADFX1'][loop]  # dry deposition;
-					pladwt = self.PREC[loop] * self.SAREA[loop] * ts['PLADCN1'][loop]  # wet deposition;
-					pladep_orn = pladdr + pladwt
-					pladdr = self.SAREA[loop] * ts['PLADFX2'][loop]  # dry deposition;
-					pladwt = self.PREC[loop] * self.SAREA[loop] * ts['PLADCN2'][loop]  # wet deposition;
-					pladep_orp = pladdr + pladwt
-					pladdr = self.SAREA[loop] * ts['PLADFX3'][loop]  # dry deposition;
-					pladwt = self.PREC[loop] * self.SAREA[loop] * ts['PLADCN3'][loop]  # wet deposition;
-					pladep_orc = pladdr + pladwt
+					pladdr1 = self.SAREA[loop] * ts['PLADFX1'][loop]  # dry deposition;
+					pladwt1 = self.PREC[loop] * self.SAREA[loop] * ts['PLADCN1'][loop]  # wet deposition;
+					pladep_orn = pladdr1 + pladwt1
+					pladdr2 = self.SAREA[loop] * ts['PLADFX2'][loop]  # dry deposition;
+					pladwt2 = self.PREC[loop] * self.SAREA[loop] * ts['PLADCN2'][loop]  # wet deposition;
+					pladep_orp = pladdr2 + pladwt2
+					pladdr3 = self.SAREA[loop] * ts['PLADFX3'][loop]  # dry deposition;
+					pladwt3 = self.PREC[loop] * self.SAREA[loop] * ts['PLADCN3'][loop]  # wet deposition;
+					pladep_orc = pladdr3 + pladwt3
 
 					# benthic invertebrates
 					binv = ts['BINV'][loop]
@@ -945,6 +983,16 @@ class RQUAL_Class:
 				self.PO4[loop] = self.NUTRX.po4
 				self.NH4[loop] = self.NUTRX.nh4
 				self.NH3[loop] = self.NUTRX.nh3
+
+				self.NUADDR1[loop] = nuaddr1
+				self.NUADDR2[loop] = nuaddr2
+				self.NUADDR3[loop] = nuaddr3
+				self.NUADWT1[loop] = nuadwt1
+				self.NUADWT2[loop] = nuadwt2
+				self.NUADWT3[loop] = nuadwt3
+				self.NUADEP1[loop] = nuadep_no3
+				self.NUADEP2[loop] = nuadep_nh3
+				self.NUADEP3[loop] = nuadep_po4
 
 				#	inflows (lb/ivld or kg/ivld):
 				conv = self.NUTRX.conv
@@ -1058,6 +1106,16 @@ class RQUAL_Class:
 					self.TPKIF_3[loop] = self.PLANK.itorc * conv
 					self.TPKIF_4[loop] = self.PLANK.itotn * conv
 					self.TPKIF_5[loop] = self.PLANK.itotp * conv
+
+					self.PLADDR1[loop] = pladdr1
+					self.PLADDR2[loop] = pladdr2
+					self.PLADDR3[loop] = pladdr3
+					self.PLADWT1[loop] = pladwt1
+					self.PLADWT2[loop] = pladwt2
+					self.PLADWT3[loop] = pladwt3
+					self.PLADEP1[loop] = pladep_orn
+					self.PLADEP2[loop] = pladep_orp
+					self.PLADEP3[loop] = pladep_orc
 
 					#	outflows (convert to mass per interval (lb/ivld or kg/ivld))
 					self.ROPHYT[loop] = self.PLANK.rophyt * conv
