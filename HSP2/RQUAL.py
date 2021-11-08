@@ -105,7 +105,7 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 			n = (2 * j) - 1
 
 			# dry deposition:
-			nuadfg_dd = int(ui_nutrx['NUADFG(' + str(n) + ')'])
+			nuadfg_dd = int(ui_nutrx['NUADFG' + str(n)])
 			NUADFX = zeros(simlen)
 
 			if nuadfg_dd > 0:
@@ -113,12 +113,14 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 			elif nuadfg_dd == -1:
 				if 'NUADFX' + str(j) in ts:
 					NUADFX = ts['NUADFX' + str(j)]
+				elif 'NUADFX' + str(j) + ' 1' in ts:
+					NUADFX = ts['NUADFX' + str(j) + ' 1']
 				else:
 					pass		#ERRMSG?
 			ts['NUADFX' + str(j)] = NUADFX
 
 			# wet deposition:
-			nuadfg_wd = int(ui_nutrx['NUADFG(' + str(n+1) + ')'])
+			nuadfg_wd = int(ui_nutrx['NUADFG' + str(n+1)])
 			NUADCN = zeros(simlen)
 
 			if nuadfg_wd > 0:
@@ -126,6 +128,8 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 			elif nuadfg_wd == -1:
 				if 'NUADCN' + str(j) in ts:
 					NUADCN = ts['NUADCN' + str(j)]
+				elif 'NUADCN' + str(j) + ' 1' in ts:
+					NUADCN = ts['NUADCN' + str(j) + ' 1']
 				else:
 					pass		#ERRMSG?
 			ts['NUADCN' + str(j)] = NUADCN
@@ -145,26 +149,30 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 
 			# dry deposition:
 			PLADFX = zeros(simlen)
-			pladfg_dd = int(ui_plank['PLADFG(' + str(j) + ')'])
+			pladfg_dd = int(ui_plank['PLADFG' + str(j)])
 
 			if pladfg_dd > 0:
 				PLADFX = initm(siminfo, ui_plank, pladfg_dd, 'PLADFX' + str(j) + '_MONTHLY/PLADFX' + str(j), 0.0)
 			elif pladfg_dd == -1:
 				if 'PLADFX' + str(j) in ts:
 					PLADFX = ts['PLADFX' + str(j)]
+				elif 'PLADFX' + str(j) + ' 1' in ts:
+					PLADFX = ts['PLADFX' + str(j) + ' 1']
 				else:
 					pass		#ERRMSG?
 			ts['PLADFX' + str(j)] = PLADFX
 
 			# wet deposition:
 			PLADCN = zeros(simlen)
-			pladfg_wd = int(ui_plank['PLADFG(' + str(n+1) + ')'])
+			pladfg_wd = int(ui_plank['PLADFG' + str(n+1)])
 
 			if pladfg_wd > 0:
 				PLADCN = initm(siminfo, ui_plank, pladfg_wd, 'PLADCN' + str(j) + '_MONTHLY/PLADCN' + str(j), 0.0)
 			elif pladfg_wd == -1:
 				if 'PLADCN' + str(j) in ts:
 					PLADCN = ts['PLADCN' + str(j)]
+				elif 'PLADCN' + str(j) + ' 1' in ts:
+					PLADCN = ts['PLADCN' + str(j) + ' 1']
 				else:
 					pass		#ERRMSG?
 			ts['PLADCN' + str(j)] = PLADCN
