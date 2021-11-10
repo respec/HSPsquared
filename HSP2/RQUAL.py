@@ -9,7 +9,7 @@ from numpy import where, zeros, array, float64, full
 from numba import types, njit
 from numba.typed import Dict
 
-from HSP2.utilities  import make_numba_dict, initm
+from HSP2.utilities  import make_numba_dict, initm, initmd
 from HSP2.RQUAL_Class import RQUAL_Class
 
 ERRMSGS_oxrx = ('OXRX: Warning -- SATDO is less than zero. This usually occurs when water temperature is very high (above ~66 deg. C). This usually indicates an error in input GATMP (or TW, if HTRCH is not being simulated).',)
@@ -39,7 +39,7 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 
 		if type(value) in {int, float}:
 			siminfo_[key] = float(value)
-	
+
 	# module flags:
 	ui = make_numba_dict(uci)
 
@@ -109,7 +109,7 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 			NUADFX = zeros(simlen)
 
 			if nuadfg_dd > 0:
-				NUADFX = initm(siminfo, ui_nutrx, nuadfg_dd, 'NUADFX' + str(j) + '_MONTHLY/NUADFX' + str(j), 0.0)
+				NUADFX = initmd(siminfo, store, 'MONTH-DATA/MONTHDATA' + str(nuadfg_dd), 0.0)
 			elif nuadfg_dd == -1:
 				if 'NUADFX' + str(j) in ts:
 					NUADFX = ts['NUADFX' + str(j)]
@@ -124,7 +124,7 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 			NUADCN = zeros(simlen)
 
 			if nuadfg_wd > 0:
-				NUADCN = initm(siminfo, ui_nutrx, nuadfg_wd, 'NUADCN' + str(j) + '_MONTHLY/NUADCN' + str(j), 0.0)
+				NUADCN = initmd(siminfo, store, 'MONTH-DATA/MONTHDATA' + str(nuadfg_wd), 0.0)
 			elif nuadfg_wd == -1:
 				if 'NUADCN' + str(j) in ts:
 					NUADCN = ts['NUADCN' + str(j)]
@@ -134,13 +134,21 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 					pass		#ERRMSG?
 			ts['NUADCN' + str(j)] = NUADCN
 
-			# convert units to internal
-			if uunits == 1:  # convert from lb/ac.day to mg.ft3/l.ft2.ivl
-				if 'NUADFX' + str(j) in ts:
-					ts['NUADFX' + str(j)] *= 0.3677 * delt60 / 24.0
-			else:  # convert from kg/ha.day to mg.m3/l.m2.ivl
-				if 'NUADFX' + str(j) in ts:
-					ts['NUADFX' + str(j)] *= 0.1 * delt60 / 24.0
+			if nuadfg_dd > 0:
+				# convert units to internal
+				if uunits == 1:  # convert from lb/ac.day to mg.ft3/l.ft2.ivl
+					if 'NUADFX' + str(j) in ts:
+						ts['NUADFX' + str(j)] *= 0.3677 * delt60 / 24.0
+				else:  # convert from kg/ha.day to mg.m3/l.m2.ivl
+					if 'NUADFX' + str(j) in ts:
+						ts['NUADFX' + str(j)] *= 0.1 * delt60 / 24.0
+			elif nuadfg_dd == -1:
+				if uunits == 1:  # convert from lb/ac.day to mg.ft3/l.ft2.ivl
+					if 'NUADFX' + str(j) in ts:
+						ts['NUADFX' + str(j)] *= 0.3677
+				else:  # convert from kg/ha.day to mg.m3/l.m2.ivl
+					if 'NUADFX' + str(j) in ts:
+						ts['NUADFX' + str(j)] *= 0.1
 
 	if PLKFG == 1:		
 		# PLANK atmospheric deposition - initialize time series:
@@ -152,7 +160,7 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 			pladfg_dd = int(ui_plank['PLADFG' + str(j)])
 
 			if pladfg_dd > 0:
-				PLADFX = initm(siminfo, ui_plank, pladfg_dd, 'PLADFX' + str(j) + '_MONTHLY/PLADFX' + str(j), 0.0)
+				PLADFX = initmd(siminfo, store, 'MONTH-DATA/MONTHDATA' + str(pladfg_dd), 0.0)
 			elif pladfg_dd == -1:
 				if 'PLADFX' + str(j) in ts:
 					PLADFX = ts['PLADFX' + str(j)]
@@ -167,7 +175,7 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 			pladfg_wd = int(ui_plank['PLADFG' + str(n+1)])
 
 			if pladfg_wd > 0:
-				PLADCN = initm(siminfo, ui_plank, pladfg_wd, 'PLADCN' + str(j) + '_MONTHLY/PLADCN' + str(j), 0.0)
+				PLADCN = initmd(siminfo, store, 'MONTH-DATA/MONTHDATA' + str(pladfg_wd), 0.0)
 			elif pladfg_wd == -1:
 				if 'PLADCN' + str(j) in ts:
 					PLADCN = ts['PLADCN' + str(j)]
@@ -177,13 +185,21 @@ def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 					pass		#ERRMSG?
 			ts['PLADCN' + str(j)] = PLADCN
 
-			# convert units to internal
-			if uunits == 1:  # convert from lb/ac.day to mg.ft3/l.ft2.ivl
-				if 'PLADFX' + str(j) in ts:
-					ts['PLADFX' + str(j)] *= 0.3677 * delt60 / 24.0
-			else:  # convert from kg/ha.day to mg.m3/l.m2.ivl
-				if 'PLADFX' + str(j) in ts:
-					ts['PLADFX' + str(j)] *= 0.1 * delt60 / 24.0
+			if pladfg_dd > 0:
+				# convert units to internal
+				if uunits == 1:  # convert from lb/ac.day to mg.ft3/l.ft2.ivl
+					if 'PLADFX' + str(j) in ts:
+						ts['PLADFX' + str(j)] *= 0.3677 * delt60 / 24.0
+				else:  # convert from kg/ha.day to mg.m3/l.m2.ivl
+					if 'PLADFX' + str(j) in ts:
+						ts['PLADFX' + str(j)] *= 0.1 * delt60 / 24.0
+			elif pladfg_dd == -1:
+				if uunits == 1:  # convert from lb/ac.day to mg.ft3/l.ft2.ivl
+					if 'PLADFX' + str(j) in ts:
+						ts['PLADFX' + str(j)] *= 0.3677
+				else:  # convert from kg/ha.day to mg.m3/l.m2.ivl
+					if 'PLADFX' + str(j) in ts:
+						ts['PLADFX' + str(j)] *= 0.1
 
 		# PLANK - benthic invertebrates:
 		balfg = 0

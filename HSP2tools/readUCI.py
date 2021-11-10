@@ -153,6 +153,7 @@ def readUCI(uciname, hdfname):
             if line[0:6] == 'PERLND':     operation(info, getlines(f),'PERLND')
             if line[0:6] == 'IMPLND':     operation(info, getlines(f),'IMPLND')
             if line[0:6] == 'RCHRES':     operation(info, getlines(f),'RCHRES')
+            if line[0:10] == 'MONTH-DATA': monthdata(info, getlines(f))
 
         colnames = ('AFACTR', 'MFACTOR', 'MLNO', 'SGRPN', 'SMEMN', 'SMEMSB',
          'SVOL', 'SVOLNO', 'TGRPN', 'TMEMN', 'TMEMSB', 'TRAN', 'TVOL',
@@ -635,3 +636,23 @@ def gener(info, lines):
             else:
                 d = parseD(line, parse['GENER',current_block])
                 lst.append(d)
+
+def monthdata(info, llines):
+    store, parse, path, *_ = info
+    header=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
+    lines = iter(llines)
+    for line in lines:
+        if line[2:12] == 'MONTH-DATA':
+            unit = line[12:].strip()
+            name = 'MONTHDATA' + unit
+            lst = []
+        elif line[2:5] == 'END':
+            dfftable = DataFrame(lst, columns=header[0:12])
+            dfftable.to_hdf(store, f'/MONTH-DATA/{name}', data_columns=True)
+        else:
+            vals = []
+            line = line.strip()
+            while line:
+                vals.append(float(line[:6]))
+                line = line[6:]
+            lst.append(vals)
