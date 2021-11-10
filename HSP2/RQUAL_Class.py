@@ -316,7 +316,11 @@ class RQUAL_Class:
 
 		# get external time series
 		self.PREC  = ts['PREC']
-		self.SAREA = ts['SAREA'] #dbg * self.AFACT
+		if self.uunits == 2:
+			self.PREC = self.PREC / 3.281
+		else:
+			self.PREC = self.PREC * .0833
+		self.SAREA = ts['SAREA'] * self.AFACT
 
 		self.RO = ts['RO']		
 		self.AVDEP = ts['AVDEP']
@@ -984,18 +988,18 @@ class RQUAL_Class:
 				self.NH4[loop] = self.NUTRX.nh4
 				self.NH3[loop] = self.NUTRX.nh3
 
-				self.NUADDR1[loop] = nuaddr1
-				self.NUADDR2[loop] = nuaddr2
-				self.NUADDR3[loop] = nuaddr3
-				self.NUADWT1[loop] = nuadwt1
-				self.NUADWT2[loop] = nuadwt2
-				self.NUADWT3[loop] = nuadwt3
-				self.NUADEP1[loop] = nuadep_no3
-				self.NUADEP2[loop] = nuadep_nh3
-				self.NUADEP3[loop] = nuadep_po4
+				conv = self.NUTRX.conv
+				self.NUADDR1[loop] = nuaddr1 * conv
+				self.NUADDR2[loop] = nuaddr2 * conv
+				self.NUADDR3[loop] = nuaddr3 * conv
+				self.NUADWT1[loop] = nuadwt1 * conv
+				self.NUADWT2[loop] = nuadwt2 * conv
+				self.NUADWT3[loop] = nuadwt3 * conv
+				self.NUADEP1[loop] = nuadep_no3 * conv
+				self.NUADEP2[loop] = nuadep_nh3 * conv
+				self.NUADEP3[loop] = nuadep_po4 * conv
 
 				#	inflows (lb/ivld or kg/ivld):
-				conv = self.NUTRX.conv
 				self.TNUIF1[loop] = self.NUTRX.tnuif[1] * conv
 				self.TNUIF2[loop] = self.NUTRX.tnuif[2] * conv
 				self.TNUIF3[loop] = self.NUTRX.tnuif[3] * conv
@@ -1107,15 +1111,15 @@ class RQUAL_Class:
 					self.TPKIF_4[loop] = self.PLANK.itotn * conv
 					self.TPKIF_5[loop] = self.PLANK.itotp * conv
 
-					self.PLADDR1[loop] = pladdr1
-					self.PLADDR2[loop] = pladdr2
-					self.PLADDR3[loop] = pladdr3
-					self.PLADWT1[loop] = pladwt1
-					self.PLADWT2[loop] = pladwt2
-					self.PLADWT3[loop] = pladwt3
-					self.PLADEP1[loop] = pladep_orn
-					self.PLADEP2[loop] = pladep_orp
-					self.PLADEP3[loop] = pladep_orc
+					self.PLADDR1[loop] = pladdr1 * conv
+					self.PLADDR2[loop] = pladdr2 * conv
+					self.PLADDR3[loop] = pladdr3 * conv
+					self.PLADWT1[loop] = pladwt1 * conv
+					self.PLADWT2[loop] = pladwt2 * conv
+					self.PLADWT3[loop] = pladwt3 * conv
+					self.PLADEP1[loop] = pladep_orn * conv
+					self.PLADEP2[loop] = pladep_orp * conv
+					self.PLADEP3[loop] = pladep_orc * conv
 
 					#	outflows (convert to mass per interval (lb/ivld or kg/ivld))
 					self.ROPHYT[loop] = self.PLANK.rophyt * conv
