@@ -188,6 +188,15 @@ def initm(siminfo, ui, flag, monthly, default):
         return full(siminfo['steps'], default)
 
 
+def initmd(siminfo, store, monthly, default):
+    ''' initialize timeseries from HSPF month data table'''
+    if monthly in store:
+        month = store[monthly].values[0]
+        return dayval(siminfo, list(month))
+    else:
+        return full(siminfo['steps'], default)
+
+
 def versions(import_list=[]):
     '''
     Versions of libraries required by HSP2
@@ -220,3 +229,161 @@ def versions(import_list=[]):
     data.extend([platform.platform(), platform.processor(),
       str(datetime.datetime.now())[0:19]])
     return pandas.DataFrame(data, index=names, columns=['version'])
+
+def get_timeseries(store, ext_sourcesdd, siminfo):
+    ''' makes timeseries for the current timestep and trucated to the sim interval'''
+    # explicit creation of Numba dictionary with signatures
+    ts = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
+    for row in ext_sourcesdd:
+        if row.SVOL == '*':
+            path = f'TIMESERIES/{row.SVOLNO}'
+            if path in store:
+                temp1 = store[path]
+            else:
+                print('Get Timeseries ERROR for', path)
+                continue
+        else:
+            temp1 = read_hdf(row.SVOL, path)
+
+        if row.MFACTOR != 1.0:
+            temp1 *= row.MFACTOR
+        t = transform(temp1, row.TMEMN, row.TRAN, siminfo)
+
+        # in some cases the subscript is irrelevant, like '1' or '1 1', and we can leave it off.
+        # there are other cases where it is needed to distinguish, such as ISED and '1' or '1 1'.
+        tname = f'{row.TMEMN}{row.TMEMSB}'
+        if row.TMEMN in {'GATMP', 'PREC', 'DTMPG', 'WINMOV', 'DSOLAR', 'SOLRAD', 'CLOUD', 'PETINP', 'IRRINP', 'POTEV', 'DEWTMP', 'WIND',
+                         'IVOL', 'IHEAT'}:
+            tname = f'{row.TMEMN}'
+        elif row.TMEMN == 'ISED':
+            if row.TMEMSB == '1 1' or row.TMEMSB == '1' or row.TMEMSB == '':
+                tname = 'ISED1'
+            else:
+                tname = 'ISED' + row.TMEMSB[0]
+        elif row.TMEMN in {'ICON', 'IDQAL', 'ISQAL'}:
+            tmemsb1 = '1'
+            tmemsb2 = '1'
+            if len(row.TMEMSB) > 0:
+                tmemsb1 = row.TMEMSB[0]
+            if len(row.TMEMSB) > 2:
+                tmemsb2 = row.TMEMSB[-1]
+            sname, tname = expand_timeseries_names('', '', '', '', row.TMEMN, tmemsb1, tmemsb2)
+
+        if tname in ts:
+            ts[tname] += t
+        else:
+            ts[tname]  = t
+    return ts
+
+def expand_timeseries_names(sgrp, smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmemsb2):
+    #special cases to expand timeseries names to resolve with output names in hdf5 file
+    if tmemn == 'ICON':
+        if tmemsb1 == '':
+            tmemn = 'CONS1_ICON'
+        else:
+            tmemn = 'CONS' + tmemsb1 + '_ICON'
+    if smemn == 'OCON':
+        if smemsb2 == '':
+            smemn = 'CONS1_OCON' + smemsb1
+        else:
+            smemn = 'CONS' + smemsb2 + '_OCON' + smemsb1
+    if smemn == 'ROCON':
+        if smemsb1 == '':
+            smemn = 'CONS1_ROCON'
+        else:
+            smemn = 'CONS' + smemsb1 + '_ROCON'
+
+    # GQUAL:
+    if tmemn == 'IDQAL':
+        if tmemsb1 == '':
+            tmemn = 'GQUAL1_IDQAL'
+        else:
+            tmemn = 'GQUAL' + tmemsb1 + '_IDQAL'
+    if tmemn == 'ISQAL1' or tmemn == 'ISQAL2' or tmemn == 'ISQAL3':
+        if tmemsb2 == '':
+            tmemn = 'GQUAL1_' + tmemn
+        else:
+            tmemn = 'GQUAL' + tmemsb2 + '_' + tmemn
+    if tmemn == 'ISQAL':
+        if tmemsb2 == '':
+            tmemn = 'GQUAL1_' + 'ISQAL' + tmemsb1
+        else:
+            tmemn = 'GQUAL' + tmemsb2 + '_' + 'ISQAL' + tmemsb1
+    if smemn == 'ODQAL':
+        smemn = 'GQUAL' + smemsb1 + '_ODQAL' + smemsb2  # smemsb2 is exit number
+    if smemn == 'OSQAL':
+        smemn = 'GQUAL' + smemsb1 + '_OSQAL' + smemsb2  # smemsb2 is ssc plus exit number
+    if smemn == 'RODQAL':
+        smemn = 'GQUAL' + smemsb1 + '_RODQAL'
+    if smemn == 'ROSQAL':
+        smemn = 'GQUAL' + smemsb2 + '_ROSQAL' + smemsb1  # smemsb1 is ssc
+
+    # OXRX:
+    if smemn == 'OXCF1':
+        smemn = 'OXCF1_' + smemsb1
+    if smemn == 'OXCF2':
+        smemn = 'OXCF2_' + smemsb1 + smemsb2   # smemsb1 is exit #
+    if tmemn == 'OXIF':
+        tmemn = 'OXIF' + tmemsb1
+        if sgrp == "PQUAL" or sgrp == "IQUAL":  # could be from pqual or iqual
+            if smemsb1 == '':
+                smemsb1 = '1'
+            smemn = sgrp + smemsb1 + '_' + smemn
+
+    # NUTRX - dissolved species:
+    if smemn == 'NUCF1':                            # total outflow
+        smemn = 'NUCF1_' + smemsb1
+
+    if smemn == 'NUCF9':                            # exit-specific outflow
+        smemn = 'NUCF9_' + smemsb1 + smemsb2        # smemsb1 is exit #
+
+    if tmemn == 'NUIF1':
+        tmemn = 'NUIF1_' + tmemsb1
+        if sgrp == "PQUAL" or sgrp == "IQUAL":  # could be from pqual or iqual
+            if smemsb1 == '':
+                smemsb1 = '1'
+            smemn = sgrp + smemsb1 + '_' + smemn
+
+    # NUTRX - particulate species:
+    if smemn == 'NUCF2':                            # total outflow
+        smemn = 'NUCF2_' + smemsb1 + smemsb2        # smemsb1 is sediment class
+
+    if smemn == 'OSNH4' or smemn == 'OSPO4':        # exit-specific outflow
+        smemn = smemn + '_' + smemsb1 + smemsb2     # smemsb1 is exit #, smemsb2 is sed class
+
+    if tmemn == 'NUIF2':
+        tmemn = 'NUIF2_' + tmemsb1 + tmemsb2
+        if sgrp == "PQUAL" or sgrp == "IQUAL":  # could be from pqual or iqual
+            if smemsb1 == '':
+                smemsb1 = '1'
+            smemn = sgrp + smemsb1 + '_' + smemn
+
+    # PLANK:
+    if smemn == 'PKCF1':                            # total outflow
+        smemn = 'PKCF1_' + smemsb1                  # smemsb1 is species index
+
+    if smemn == 'PKCF2':                            # exit-specific outflow
+        smemn = 'PKCF2_' + smemsb1 + smemsb2        # smemsb1 is exit #, smemsb2 is species index
+
+    if tmemn == 'PKIF':
+        tmemn = 'PKIF' + tmemsb1                    # tmemsb1 is species index
+        if sgrp == "PQUAL" or sgrp == "IQUAL":      # could be from pqual or iqual
+            if smemsb1 == '':
+                smemsb1 = '1'
+            smemn = sgrp + smemsb1 + '_' + smemn
+
+    # PHCARB:
+    if smemn == 'PHCF1' and smemsb1 == 1:           # total outflow
+        smemn = 'ROTIC'
+    if smemn == 'PHCF1' and smemsb1 == 2:           # total outflow
+        smemn = 'ROCO2'
+
+    if smemn == 'PHCF2' and smemsb2 == 1:           # exit-specific outflow
+        smemn = 'OTIC' + smemsb1                    # smemsb1 is exit #, smemsb2 is species index
+    if smemn == 'PHCF2' and smemsb2 == 2:           # exit-specific outflow
+        smemn = 'OCO2' + smemsb1                    # smemsb1 is exit #, smemsb2 is species index
+
+    if tmemn == 'PHIF':
+        tmemn = 'PHIF' + tmemsb1                    # tmemsb1 is species index
+
+    return smemn, tmemn

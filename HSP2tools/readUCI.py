@@ -103,7 +103,7 @@ skip = {
  ('RCHRES', 'BINARY-INFO')}
 
 
-ops = {'PERLND','IMPLND','RCHRES'}
+ops = {'PERLND', 'IMPLND', 'RCHRES', 'COPY', 'GENER'}
 conlike = {'CONS':'NCONS', 'PQUAL':'NQUAL', 'IQUAL':'NQUAL', 'GQUAL':'NQUAL'}
 def readUCI(uciname, hdfname):
     # create lookup dictionaries from 'ParseTable.csv' and 'rename.csv'
@@ -111,6 +111,7 @@ def readUCI(uciname, hdfname):
     defaults = {}
     cat = {}
     path = {}
+    hsp_paths = {}
     datapath = os.path.join(HSP2tools.__path__[0], 'data', 'ParseTable.csv')
     for row in read_csv(datapath).itertuples():
         parse[row.OP,row.TABLE].append((row.NAME, row.TYPE, row.START, row.STOP, row.DEFAULT))
@@ -119,6 +120,14 @@ def readUCI(uciname, hdfname):
 
         cat[row.OP,row.TABLE]  = row.CAT
         path[row.OP,row.TABLE] = row.SAVE
+
+        # store paths for checking defaults:
+        hsp_path = f'/{row.OP}/{row.SAVE}/{row.CAT}'
+        if not hsp_path in hsp_paths:
+            hsp_paths[hsp_path] = {}
+            
+        hsp_paths[hsp_path][row.NAME] = defaults[row.OP, row.SAVE, row.NAME]
+
     rename = {}
     extendlen = {}
     datapath = os.path.join(HSP2tools.__path__[0], 'data', 'rename.csv')
@@ -140,9 +149,11 @@ def readUCI(uciname, hdfname):
             if line[0:9] == 'MASS-LINK':   masslink(info, getlines(f))
             if line[0:7] == 'FTABLES':      ftables(info, getlines(f))
             if line[0:3] == 'EXT':              ext(info, getlines(f))
+            if line[0:5] == 'GENER':          gener(info, getlines(f))
             if line[0:6] == 'PERLND':     operation(info, getlines(f),'PERLND')
             if line[0:6] == 'IMPLND':     operation(info, getlines(f),'IMPLND')
             if line[0:6] == 'RCHRES':     operation(info, getlines(f),'RCHRES')
+            if line[0:10] == 'MONTH-DATA': monthdata(info, getlines(f))
 
         colnames = ('AFACTR', 'MFACTOR', 'MLNO', 'SGRPN', 'SMEMN', 'SMEMSB',
          'SVOL', 'SVOLNO', 'TGRPN', 'TMEMN', 'TMEMSB', 'TRAN', 'TVOL',
@@ -299,7 +310,7 @@ def readUCI(uciname, hdfname):
         path = '/RCHRES/HTRCH/PARAMETERS'
         if path in keys:
             df = read_hdf(store, path)
-            if 'ELEV' not in df.columns:  # didn't read HT-BED-PARM table
+            if 'MUDDEP' not in df.columns:  # didn't read HT-BED-PARM table
                 df['MUDDEP']= 0.33
                 df['TGRND'] = 59.0
                 df['KMUD']  = 50.0
@@ -309,9 +320,27 @@ def readUCI(uciname, hdfname):
         path = '/RCHRES/HTRCH/STATES'
         if path in keys:
             df = read_hdf(store, path)
-            if 'ELEV' not in df.columns:  # didn't read HEAT-INIT table
-                df['TW']    = 60.0
-                df['AIRTMP']= 60.0
+            #if 'TW' not in df.columns:  # didn't read HEAT-INIT table
+            #    df['TW']    = 60.0
+            #    df['AIRTMP']= 60.0
+
+        # apply defaults:
+        for path in hsp_paths:
+            if path in keys:
+                df = read_hdf(store, path)
+                dct_params = hsp_paths[path]
+
+                for par_name in dct_params:
+                    if par_name == 'CFOREA':
+                        ichk = 0
+
+                    if par_name not in df.columns:   # missing value in HDF5 path
+                        def_val = dct_params[par_name]
+                        if def_val != 'None':
+                            df[par_name] = def_val
+                
+                df.to_hdf(store, path, data_columns=True)
+
     return
 
 
@@ -585,3 +614,45 @@ def operation(info, llines, op):
         for name,value in savetable[op,activity].items():
             df[name] = int(value)
         df.to_hdf(store, f'{op}/{activity}/SAVE', data_columns=True)
+
+
+def copy(info, lines):
+    #placeholder - PRT - no sure I actually need to implement this method 
+    pass
+
+def gener(info, lines):
+    store, parse, path, *_ = info
+    lst = []
+    sub_blocks = ['OPCODE','PARM']
+    current_block  = ''
+    d = {}
+    for line in lines:
+            if line [2:5] == 'END':
+                df = DataFrame(lst, columns=d)
+                df.to_hdf(store, key=f'GENER/{current_block}', data_columns=True)
+                lst.clear()
+            elif any(s in line for s in sub_blocks):
+                current_block = [s for s in sub_blocks if s in line][0]
+            else:
+                d = parseD(line, parse['GENER',current_block])
+                lst.append(d)
+
+def monthdata(info, llines):
+    store, parse, path, *_ = info
+    header=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
+    lines = iter(llines)
+    for line in lines:
+        if line[2:12] == 'MONTH-DATA':
+            unit = line[12:].strip()
+            name = 'MONTHDATA' + unit
+            lst = []
+        elif line[2:5] == 'END':
+            dfftable = DataFrame(lst, columns=header[0:12])
+            dfftable.to_hdf(store, f'/MONTHDATA/{name}', data_columns=True)
+        else:
+            vals = []
+            line = line.strip()
+            while line:
+                vals.append(float(line[:6]))
+                line = line[6:]
+            lst.append(vals)
