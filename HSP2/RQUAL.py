@@ -1,261 +1,497 @@
 ''' Copyright (c) 2020 by RESPEC, INC.
-Author: Robert Heaphy, Ph.D.
+Authors: Robert Heaphy, Ph.D. and Paul Duda
 License: LGPL2
 '''
 
-from numpy import where
-from HRCHOXR import oxrx
-from HRCHNUT import nutrx
-from HRCHPLK import plank
-from HRCHPHC import phcarb
+import logging
+import numpy as np
+from numpy import where, zeros, array, float64, full
+from numba import types, njit
+from numba.typed import Dict
 
-UUNITS = 1
+from HSP2.utilities  import make_numba_dict, initm, initmd
+from HSP2.RQUAL_Class import RQUAL_Class
 
+ERRMSGS_oxrx = ('OXRX: Warning -- SATDO is less than zero. This usually occurs when water temperature is very high (above ~66 deg. C). This usually indicates an error in input GATMP (or TW, if HTRCH is not being simulated).',)
+ERRMSGS_nutrx = ('NUTRX: Error -- Inconsistent flags for NH4; TAM is not being simulated, but NH3 volatilization and/or NH4 adsorption are being simulated.',
+					'NUTRX: Error -- Inconsistent flags for PO4; PO4 is not being simulated, but PO4 adsorption is being simualted.',
+					'NUTRX: Error -- Sediment-associated NH4 and/or PO4 is being simulated, but sediment is not being simulated in module SEDTRN.',
+					'NUTRX: Error -- Inorganic nutrient mass stored in or leaving the reach non-zero, but is expected to be non-zero due to lack of suspended sediment mass.',
+					'NUTRX: Error -- Inorganic nutrient mass in bed is expected to be zero (due to the lack of bed sediments).')
+ERRMSGS_plank = ('PLANK: Error -- Zooplankton cannot be simulated without phytoplankton.',
+					'PLANK: Error -- Ammonia cannot be included in the N supply if it is not being simulated.',
+					'PLANK: Error -- Phosphate must be simulated if plankton are being simulated.')
+ERRMSGS_phcarb = ('PHCARB: Error -- Invalid CONS index specified for ALKCON (i.e., ALKCON > NCONS).',
+					'PHCARB: Error -- A satisfactory solution for pH has not been reached.')
 
-
-def RQUAL(general, ui, ts):
+def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 	''' Simulate constituents involved in biochemical transformations'''
 
-	simlen = general['SIMLEN']
-	
-	BENRFG = ui['BENFGX']   # table-type benth-flag
+	# simulation information:
+	delt60 = siminfo['delt'] / 60  # delt60 - simulation time interval in hours
+	simlen = siminfo['steps']
+	delts  = siminfo['delt'] * 60
+	uunits = siminfo['units']
 
-	# table type ACTIVITY
-	NUTFG = ui['NUTFG']
-	PLKFG = ui['PLKFG']
-	PHFG  = ui['PLKFG']
-	
-	# get external time series
-	PREC  = ts['PREC']
-	SAREA = ts['SAREA']
-	AVDEP = ts['AVDEP']
-	AVVEL = ts['AVVEL']
-	TW    = ts['TW'] 
-	if LKFG = 1:
-		WIND  = ts['WIND']
-	
-	nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL = ui['advectData']
-	
-	TW     = where(TW < -100.0, 20.0, TW)  # fix undefined temps if present
-	AVDEPE = where(UUNITS == 2, AVDEP * 3.28, AVDEP)  # convert to english units) in feet
-	AVVELE = where(UUNITS == 2, AVVEL * 3.28, AVVEL)  # convert to english units)
-	DEPCOR = where(avdepe > 0.0, 3.28084e-3 / AVDEPE, -1.e30)  # # define conversion factor from mg/m2 to mg/l
-	if BENRFG == 1: 
-		scrvel = ui['SCRVEL']   # table-type scour-parms
-		scrmul = ui['SCRMUL']   # table-type scour-parms
-		SCRFAC = where(AVVELE > scrvel, scrmul, 1.0)   # calculate scouring factor
-	
-	# use Closures to capture 'ui' data to minimize calling arguments.
-	#### OXRX  ####
-	
-	IDOX  = ts['IDOX']  # optional, input flow
-	IBOD  = ts['IBOD']  # optional, input flow	
-	
-	# preallocate storage for OXRX calculated results
-	DOX   = ts['DOX']   = zeros(simlen)   # concentration, state variable
-	BOD   = ts['BOD']   = zeros(simlen)   # concentration, state variable
-	SATDO = ts['SATDO'] = zeros(simlen)   # concentration, state variable
-	RODOX = ts['RODOX'] = zeros(simlen)             # reach outflow of DOX
-	ROBOD = ts['ROBOD'] = zeros(simlen)             # reach outflow of BOD
-	ODOX  = ts['ODOX']  = zeros((simlen, nexits))   # reach outflow per gate of DOX
-	OBOD  = ts['OBOD']  = zeros((simlen, nexits))   # reach outflow per gate of BOD
-	
-	oxrx = poxrx()  # returns Numba accelerated function in closure
-	
-	if NUTFG:
-		# get NUTRX specific time series
-		INO3 = ts['INO3']   # optional, input
-		INH3 = ts['INH3']   # optional, input
-		INO2 = ts['INO2']   # optional, input
-		IPO4 = ts['IPO4']   # optional, input
-		
-		NUAFX = setit()  # NUAFXM monthly, constant or time series
-		NUACN = setit()  # NUACNM monthly, constant or time series
-		
-		# preallocate storage for computed time series
-		NO3   = ts['NO3']   = zeros(simlen)   # concentration, state variable
-		NO2   = ts['NO2']   = zeros(simlen)   # concentration, state variable
-		NH3   = ts['NH3']   = zeros(simlen)   # concentration, state variable
-		PO4   = ts['PO4']   = zeros(simlen)   # concentration, state variable 
-		TAM   = ts['TAM']   = zeros(simlen)   # concentration, state variable
-		RONO3 = ts['RONO3'] = zeros(simlen)   # outflow
-		RONO2 = ts['RONO2'] = zeros(simlen)   # outflow
-		RONH3 = ts['RONH3'] = zeros(simlen)   # outflow
-		ROPO4 = ts['ROPO4'] = zeros(simlen)   # outflow
-		ONO3  = ts['ONO3']  = zeros((simlen, NEXITS))   # outflow
-		ONO2  = ts['ONO2']  = zeros((simlen, NEXITS))   # outflow
-		ONH3  = ts['ONH3']  = zeros((simlen, NEXITS))   # outflow
-		OPO4  = ts['OPO4']  = zeros((simlen, NEXITS))   # outflow
-		 
-		nutrx = pnutrx()  # returns Numba accelerated function in closure		
-		
-	if PLKFG:
-		# get PLANK specific time series
-		IPHYTO = ts['IPHYTO']   # optional
-		IZOO   = ts['IZOO']     # optional
-		IORN   = ts['IORN']     # optional
-		IORP   = ts['IORP']     # optional
-		IORC   = ts['IORC']     # optional
-		WASH   = ts['WASH']
-		SOLRAD = ts['SOLRAD']
-		 
-		# preallocate arrays for better performance
-		ORN    = ts['PKST3_ORN']    = zeros(simlen)  # state variable
-		ORP    = ts['PKST3_ORP']    = zeros(simlen)  # state variable
-		ORC    = ts['PKST3_ORC']    = zeros(simlen)  # state variable
-		TORN   = ts['PKST3_TORN']   = zeros(simlen)  # state variable
-		TORP   = ts['PKST3_TORP']   = zeros(simlen)  # state variable
-		TORC   = ts['PKST3_TORC']   = zeros(simlen)  # state variable
-		POTBOD = ts['PKST3_POTBOD'] = zeros(simlen)  # state variable
-		
-		PHYTO  = ts['PHYTO']        = zeros(simlen)  # concentration
-		ZOO    = ts['ZOO']          = zeros(simlen)  # concentration
-		BENAL  = ts['BENAL']        = zeros(simlen)  # concentration
-		PHYCLA = ts['PHYCLA']       = zeros(simlen)  # concentration
-		BALCLA = ts['BALCLA']       = zeros(simlen)  # concentration
-		
-		ROPHYTO  = ts['ROPHYTO']  = zeros(simlen)  # total outflow
-		ROZOO    = ts['ROZOO']    = zeros(simlen)  # total outflow
-		ROBENAL  = ts['ROBENAL']  = zeros(simlen)  # total outflow
-		ROPHYCLA = ts['ROPHYCLA'] = zeros(simlen)  # total outflow
-		ROBALCLA = ts['ROBALCLA'] = zeros(simlen)  # total outflow
-		
-		OPHYTO  = ts['OPHYTO']  = zeros((simlen, nexits)) # outflow by gate	
-		OZOO    = ts['OZOO']    = zeros((simlen, nexits)) # outflow by gate	 	
-		OBENAL  = ts['OBENAL']  = zeros((simlen, nexits)) # outflow by gate	 	
-		OPHYCLA = ts['OPHYCLA'] = zeros((simlen, nexits)) # outflow by gate	 	
-		OBALCLA = ts['OBALCLA'] = zeros((simlen, nexits)) # outflow by gate	 	
-		
-		BINV   = setit()   # ts (BINVFG==1), monthly (BINVFG)
-		PLADFX = setit()   # time series, monthly(PLAFXM)
-		PLADCN = setit()   # time series, monthly(PLAFXM)		
-		
-		plank = pplank()  # returns Numba accelerated function in closure
-	
-	if PHFG:
-		# get PHCARB() specific external time series
-		ALK  = ts['CON']    # ALCON only
-		ITIC = ts['ITIC']   # or zero if not present
-		ICO2 = ts['ICO2']   # or zero if not present
+	siminfo_ = Dict.empty(key_type=types.unicode_type, value_type=types.float64)
+	for key in set(siminfo.keys()):
+		value = siminfo[key]
 
-		
-		# preallocate output arrays for speed
-		PH     = ts['PH']    = zeros(simlen)            # state variable
-		TIC    = ts['TIC']   = zeros(simlen)            # state variable
-		CO2    = ts['CO2']   = zeros(simlen)            # state variable
-		ROTIC  = ts['ROTIC'] = zeros(simlen)            # reach total outflow
-		ROCO2  = ts['ROCO2'] = zeros(simlen)            # reach total outflow
-		OTIC   = ts['OTIC']  = zeros((simlen, nexits))  # outflow by exit
-		OCO2   = ts['OCO2']  = zeros((simlen, nexits))  # outflow by exit
-		TOTCO2 = ts['TOTCO2'] = zeros(simlen)            #  ??? computed, but not returned???			
+		if type(value) in {int, float}:
+			siminfo_[key] = float(value)
 
-		phcarb = pphcarb()  # returns Numba accelerated function in closure
-		
-	############## master simulation loop  #####################	
+	# module flags:
+	ui = make_numba_dict(uci)
+
+	NUTFG = int(ui['NUTFG'])
+	PLKFG = int(ui['PLKFG'])
+	PHFG  = int(ui['PHFG'])
+
+	# create numba dictionaries (empty if not simulated):
+	ui_oxrx = make_numba_dict(uci_oxrx)
+	ui_oxrx['errlen'] = len(ERRMSGS_oxrx)
+
+	ui_nutrx = Dict.empty(key_type=types.unicode_type, value_type=types.float64)
+	if NUTFG == 1:
+		ui_nutrx = make_numba_dict(uci_nutrx)
+		ui_nutrx['errlen'] = len(ERRMSGS_nutrx)
+
+	ui_plank = Dict.empty(key_type=types.unicode_type, value_type=types.float64)
+	if PLKFG == 1:
+		ui_plank = make_numba_dict(uci_plank)
+		ui_plank['errlen'] = len(ERRMSGS_plank)
+
+	ui_phcarb = Dict.empty(key_type=types.unicode_type, value_type=types.float64)
+	if PHFG == 1:
+		ui_phcarb = make_numba_dict(uci_phcarb)
+		ui_phcarb['errlen'] = len(ERRMSGS_phcarb)
+
+	# hydraulic results:
+	advectData = uci['advectData']
+	(nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = advectData
+
+	ui['nexits'] = nexits
+	ui['vol'] = vol
+
+	ts['VOL'] = VOL
+	ts['SROVOL'] = SROVOL
+	ts['EROVOL'] = EROVOL
+
+	for i in range(nexits):
+		ts['SOVOL' + str(i + 1)] = SOVOL[:, i]
+		ts['EOVOL' + str(i + 1)] = EOVOL[:, i]
+
+	phval_init = 7.
+	tamfg = 0
+	phflag = 2
+	if 'NH3FG' in ui_nutrx:
+		tamfg = ui_nutrx['NH3FG']
+	if 'PHFLAG' in ui_nutrx:
+		phflag = ui_nutrx['PHFLAG']
+	if tamfg == 1:
+		if 'PHVAL' in ui_nutrx:
+			phval_init = ui_nutrx['PHVAL']
+	if 'PHVAL' not in ts:
+		ts['PHVAL'] = full(simlen, phval_init)
+	if phflag == 3:
+		ts['PHVAL'] = initm(siminfo, ui_nutrx, phflag, 'MONTHLY/PHVAL', phval_init)
+
+	#---------------------------------------------------------------------
+	#	input time series processing (atm. deposition, benthic inverts, etc.)
+	#---------------------------------------------------------------------
+	# NUTRX atmospheric deposition - initialize time series:
+	if NUTFG == 1:
+		for j in range(1, 4):
+			n = (2 * j) - 1
+
+			# dry deposition:
+			nuadfg_dd = int(ui_nutrx['NUADFG' + str(n)])
+			NUADFX = zeros(simlen)
+
+			if nuadfg_dd > 0:
+				NUADFX = initmd(siminfo, store, 'MONTHDATA/MONTHDATA' + str(nuadfg_dd), 0.0)
+			elif nuadfg_dd == -1:
+				if 'NUADFX' + str(j) in ts:
+					NUADFX = ts['NUADFX' + str(j)]
+				elif 'NUADFX' + str(j) + ' 1' in ts:
+					NUADFX = ts['NUADFX' + str(j) + ' 1']
+				else:
+					pass		#ERRMSG?
+			ts['NUADFX' + str(j)] = NUADFX
+
+			# wet deposition:
+			nuadfg_wd = int(ui_nutrx['NUADFG' + str(n+1)])
+			NUADCN = zeros(simlen)
+
+			if nuadfg_wd > 0:
+				NUADCN = initmd(siminfo, store, 'MONTHDATA/MONTHDATA' + str(nuadfg_wd), 0.0)
+			elif nuadfg_wd == -1:
+				if 'NUADCN' + str(j) in ts:
+					NUADCN = ts['NUADCN' + str(j)]
+				elif 'NUADCN' + str(j) + ' 1' in ts:
+					NUADCN = ts['NUADCN' + str(j) + ' 1']
+				else:
+					pass		#ERRMSG?
+			ts['NUADCN' + str(j)] = NUADCN
+
+			if nuadfg_dd > 0:
+				# convert units to internal
+				if uunits == 1:  # convert from lb/ac.day to mg.ft3/l.ft2.ivl
+					if 'NUADFX' + str(j) in ts:
+						ts['NUADFX' + str(j)] *= 0.3677 * delt60 / 24.0
+				else:  # convert from kg/ha.day to mg.m3/l.m2.ivl
+					if 'NUADFX' + str(j) in ts:
+						ts['NUADFX' + str(j)] *= 0.1 * delt60 / 24.0
+			elif nuadfg_dd == -1:
+				if uunits == 1:  # convert from lb/ac.day to mg.ft3/l.ft2.ivl
+					if 'NUADFX' + str(j) in ts:
+						ts['NUADFX' + str(j)] *= 0.3677
+				else:  # convert from kg/ha.day to mg.m3/l.m2.ivl
+					if 'NUADFX' + str(j) in ts:
+						ts['NUADFX' + str(j)] *= 0.1
+
+	if PLKFG == 1:		
+		# PLANK atmospheric deposition - initialize time series:
+		for j in range(1, 4):
+			n = (2 * j) - 1
+
+			# dry deposition:
+			PLADFX = zeros(simlen)
+			pladfg_dd = int(ui_plank['PLADFG' + str(j)])
+
+			if pladfg_dd > 0:
+				PLADFX = initmd(siminfo, store, 'MONTHDATA/MONTHDATA' + str(pladfg_dd), 0.0)
+			elif pladfg_dd == -1:
+				if 'PLADFX' + str(j) in ts:
+					PLADFX = ts['PLADFX' + str(j)]
+				elif 'PLADFX' + str(j) + ' 1' in ts:
+					PLADFX = ts['PLADFX' + str(j) + ' 1']
+				else:
+					pass		#ERRMSG?
+			ts['PLADFX' + str(j)] = PLADFX
+
+			# wet deposition:
+			PLADCN = zeros(simlen)
+			pladfg_wd = int(ui_plank['PLADFG' + str(n+1)])
+
+			if pladfg_wd > 0:
+				PLADCN = initmd(siminfo, store, 'MONTHDATA/MONTHDATA' + str(pladfg_wd), 0.0)
+			elif pladfg_wd == -1:
+				if 'PLADCN' + str(j) in ts:
+					PLADCN = ts['PLADCN' + str(j)]
+				elif 'PLADCN' + str(j) + ' 1' in ts:
+					PLADCN = ts['PLADCN' + str(j) + ' 1']
+				else:
+					pass		#ERRMSG?
+			ts['PLADCN' + str(j)] = PLADCN
+
+			if pladfg_dd > 0:
+				# convert units to internal
+				if uunits == 1:  # convert from lb/ac.day to mg.ft3/l.ft2.ivl
+					if 'PLADFX' + str(j) in ts:
+						ts['PLADFX' + str(j)] *= 0.3677 * delt60 / 24.0
+				else:  # convert from kg/ha.day to mg.m3/l.m2.ivl
+					if 'PLADFX' + str(j) in ts:
+						ts['PLADFX' + str(j)] *= 0.1 * delt60 / 24.0
+			elif pladfg_dd == -1:
+				if uunits == 1:  # convert from lb/ac.day to mg.ft3/l.ft2.ivl
+					if 'PLADFX' + str(j) in ts:
+						ts['PLADFX' + str(j)] *= 0.3677
+				else:  # convert from kg/ha.day to mg.m3/l.m2.ivl
+					if 'PLADFX' + str(j) in ts:
+						ts['PLADFX' + str(j)] *= 0.1
+
+		# PLANK - benthic invertebrates:
+		balfg = 0
+		binv_init = 0.0
+		binvfg = 2
+		if 'BALFG' in ui_plank:
+			balfg = ui_plank['BALFG']
+		if balfg == 2:  # user has selected multiple species with more complex kinetics
+			if 'BINV' in ui_plank:
+				binv_init = ui_plank['BINV']
+			if 'BINVFG' in ui_plank:
+				binvfg = ui_plank['BINVFG']
+		if 'BINV' not in ts:
+			ts['BINV'] = full(simlen, binv_init)
+		if balfg == 2 and binvfg == 3:
+			ts['BINV'] = initm(siminfo, ui_plank, binvfg, 'MONTHLY/BINV', binv_init)
+
+	#---------------------------------------------------------------------
+	# initialize & run integerated WQ simulation:
+	#---------------------------------------------------------------------
+
+	(err_oxrx, err_nutrx, err_plank, err_phcarb) \
+		= _rqual_run(siminfo_, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts)
+
+	#---------------------------------------------------------------------
+	# compile errors & return:
+	#---------------------------------------------------------------------
+
+	(errors, ERRMSGS) = _compile_errors(NUTFG, PLKFG, PHFG, err_oxrx, err_nutrx, err_plank, err_phcarb)
+
+	# for multiple exits, modify save table as needed
+	if nexits > 1:
+		u = uci_oxrx['SAVE']
+		for i in range(nexits):
+			u[f'OXCF2_{i + 1}1'] = u['OXCF2_11']
+			u[f'OXCF2_{i + 1}2'] = u['OXCF2_12']
+
+		u = uci_nutrx['SAVE']
+		for i in range(nexits):
+			u[f'NUCF9_{i + 1}1'] = u['NUCF9_11']
+			u[f'NUCF9_{i + 1}2'] = u['NUCF9_12']
+			u[f'NUCF9_{i + 1}3'] = u['NUCF9_13']
+			u[f'NUCF9_{i + 1}4'] = u['NUCF9_14']
+			u[f'OSNH4_{i + 1}1'] = u['OSNH4_11']
+			u[f'OSNH4_{i + 1}2'] = u['OSNH4_12']
+			u[f'OSNH4_{i + 1}3'] = u['OSNH4_13']
+			u[f'OSNH4_{i + 1}4'] = u['OSNH4_14']
+			u[f'OSPO4_{i + 1}1'] = u['OSPO4_11']
+			u[f'OSPO4_{i + 1}2'] = u['OSPO4_12']
+			u[f'OSPO4_{i + 1}3'] = u['OSPO4_13']
+			u[f'OSPO4_{i + 1}4'] = u['OSPO4_14']
+
+		u = uci_plank['SAVE']
+		for i in range(nexits):
+			u[f'PKCF2_{i + 1}1'] = u['PKCF2_11']
+			u[f'PKCF2_{i + 1}2'] = u['PKCF2_12']
+			u[f'PKCF2_{i + 1}3'] = u['PKCF2_13']
+			u[f'PKCF2_{i + 1}4'] = u['PKCF2_14']
+			u[f'PKCF2_{i + 1}5'] = u['PKCF2_15']
+			u[f'TPKCF2_{i + 1}1'] = u['TPKCF2_11']
+			u[f'TPKCF2_{i + 1}2'] = u['TPKCF2_12']
+			u[f'TPKCF2_{i + 1}3'] = u['TPKCF2_13']
+			u[f'TPKCF2_{i + 1}4'] = u['TPKCF2_14']
+			u[f'TPKCF2_{i + 1}5'] = u['TPKCF2_15']
+
+		u = uci_phcarb['SAVE']
+		for i in range(nexits):
+			u[f'OTIC{i + 1}'] = u['OTIC1']
+			u[f'OCO2{i + 1}'] = u['OCO21']
+
+	return errors, ERRMSGS
 
 
-	for loop in range(simlen):
-		avdepe = AVDEPE[loop]
-		avvele = AVVELE[loop]
-		tw     = TW[loop]
-		depcor = DEPCOR[loop]
-		
-		advData = nexits, vol, VOL[loop], SROVOL[loop], EROVOL[loop], SOVOL[loop], EOVOL[loop]		
-		
-		# simulate primary do and bod balances
-		(dox, bod, satdo, rodo, robod, odo, 
-		obod) = oxrx(
-		IDOX[loop], IBOD[loop], WIND[loop], avdepe, avvele, tw, depcor, BENRFG, advData)   
-		
-		
-	
-		if NUTFG == 1:  # simulate primary inorganic nitrogen and phosphorus balances
-			(dox, bod, NO3[loop], NO2[loop], NH3[loop], PO4[loop], TAM[loop], RONO3[loop],
-			 RONO2[loop], RONH3[loop], ROPO4[loop], ONO3[loop], ONO2[loop], ONH3[loop],
-			 OPO4[loop]) = nutrx(
-			 dox, bod, tw, INO3[loop], INH3[loop], INO2[loop], IPO4[loop], NUAFX[loop],
-			 NUACN[loop], PREC[loop], SAREA[loop], advData) 
-			
-			if PLKFG == 1:    # simulate plankton populations and associated reactions
-				(dox, bod, ORN[loop], ORP[loop], ORC[loop], TORN[loop], TORP[loop],
-				 TORC[loop], POTBOD[loop], PHYTO[loop], ZOO[loop], BENAL[loop], 
-				 PHYCLA[loop], BALCLA[loop], ROPHYTO[loop], ROZOO[loop], ROBENAL[loop],
-				 ROPHYCLA[loop], ROBALCLA[loop], OPHYTO[loop], OZOO[loop], 
-				 OBENAL[loop], OPHYCLA[loop], OBALCLA[loop], BINV[loop], PLADFX[loop], 
-				 PLADCN[loop]) = plank(
-				 dox, bod, IPHYTO[loop], IZOO[loop], IORN[loop], IORP[loop], 
-				 IORC[loop], tw, WASH[loop], SOLRAD[loop], PREC[loop], SAREA[loop], advData)
-				
-				if PHFG == 1:   # simulate ph and carbon species
+@njit(cache=True)
+def _rqual_run(siminfo_, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts):
+
+	nutrx_errors = zeros((0), dtype=np.int64)
+	plank_errors = zeros((0), dtype=np.int64)
+	phcarb_errors = zeros((0), dtype=np.int64)
+
+	# initialize WQ simulation:
+	RQUAL = RQUAL_Class(siminfo_, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts)
+
+	# run WQ simulation:
+	RQUAL.simulate(ts)
+
+	# return error data:
+	oxrx_errors = RQUAL.OXRX.errors
+	if RQUAL.NUTFG == 1:
+		nutrx_errors = RQUAL.NUTRX.errors
+	if RQUAL.PLKFG == 1:
+		plank_errors = RQUAL.PLANK.errors
+	if RQUAL.PHFG == 1:
+		phcarb_errors = RQUAL.PHCARB.errors
+
+	return oxrx_errors, nutrx_errors, plank_errors, phcarb_errors
+
+
+def _compile_errors(NUTFG, PLKFG, PHFG, err_oxrx, err_nutrx, err_plank, err_phcarb):
+
+	errlen_oxr = len(err_oxrx)
+	errlen_ntr = 0;	errlen_plk = 0;	errlen_phc = 0
+
+	if NUTFG == 1: 
+		errlen_ntr = len(err_nutrx)
+		if PLKFG == 1:
+			errlen_plk += len(err_plank)
+			if PHFG == 1:
+				errlen_phc += len(err_phcarb)
+
+	errlen = errlen_oxr + errlen_ntr + errlen_plk + errlen_phc
+
+	errors = zeros(errlen, dtype=np.int64)
+	ERRMSGS = ()
+
+	ierr = -1
+	for i in range(errlen_oxr):
+		ierr += 1
+		errors[ierr] = err_oxrx[i]
+		ERRMSGS += (ERRMSGS_oxrx[i],)
+
+	for i in range(errlen_ntr):
+		ierr += 1
+		errors[ierr] = err_nutrx[i]
+		ERRMSGS += (ERRMSGS_nutrx[i],)
+
+	for i in range(errlen_plk):
+		ierr += 1
+		errors[ierr] = err_plank[i]
+		ERRMSGS += (ERRMSGS_plank[i],)
+
+	for i in range(errlen_phc):
+		ierr += 1
+		errors[ierr] = err_phcarb[i]
+		ERRMSGS += (ERRMSGS_phcarb[i],)
+
+	return errors, ERRMSGS
+
+
+#-------------------------------------------------------------------
+# mass links:
+#-------------------------------------------------------------------
+
+def expand_OXRX_masslinks(flags, uci, dat, recs):
+	if flags['OXRX']:
+		for i in range(1,3):
+			rec = {}
+			rec['MFACTOR'] = dat.MFACTOR
+			rec['SGRPN'] = 'OXRX'
+
+			if dat.SGRPN == "ROFLOW":
+				rec['SMEMN'] = 'OXCF1'
+				rec['SMEMSB1'] = str(i)		# species index
+				rec['SMEMSB2'] = ''
+			else:
+				rec['SMEMN'] = 'OXCF2'
+				rec['SMEMSB1'] = dat.SMEMSB1  # first sub is exit number
+				rec['SMEMSB2'] = str(i)		# species index	
 					
-					(dox, bod, PH[loop], TIC[loop], CO2[loop], ROTIC[loop],
-					 ROCO2[loop], OTIC[loop], OCO2[loop], TOTCO2[loop], 	
-					 ) = phcarb(
-					 dox, bod, ALK[loop], ITIC[loop], ICO2[loop], tw, avdepe, SCRFAC[loop],  advData)
+			rec['TMEMN'] = 'OXIF'
+			rec['TMEMSB1'] = str(i)		# species index
+			rec['TMEMSB2'] = '1'
+			rec['SVOL'] = dat.SVOL
+
+			recs.append(rec)
+
+	return recs
+
+def expand_NUTRX_masslinks(flags, uci, dat, recs):
 	
-			
-			# update totals of nutrients
-			rno3  = no3 * vol
-			rtam  = tam * vol
-			rno2  = no2 * vol
-			rpo4  = po4 * vol
-			rnh4  = nh4 * vol
-			rnh3  = nh3 * vol
-			rrno3 = no3 * vol
-			rrtam = tam * vol
-			if ADNHFG == 1:  
-				rrtam += rsnh4(4)  # add adsorbed suspended nh4 to dissolved
-			
-			rrno2 = no2 * vol
-			rrpo4 = po4 * vol
-			if ADPOFG == 1:  
-				rrpo4 += rspo4(4) # add adsorbed suspended po4 to dissolved
+	if flags['NUTRX']:
+		# dissolved species:
+		for i in range(1,5):
+			rec = {}
+			rec['MFACTOR'] = dat.MFACTOR
+			rec['SGRPN'] = 'NUTRX'
 
-		# check do level; if dox exceeds user specified level of supersaturation, then release excess do to the atmosphere
-		doxs = dox
-		if dox > supsat * satdo:
-			dox = supsat * satdo
-		readox = readox + (dox - doxs) * vol
-		totdox = readox + boddox + bendox + nitdox + phydox + zoodox + baldox
+			if dat.SGRPN == "ROFLOW":
+				rec['SMEMN'] = 'NUCF1'
+				rec['SMEMSB1'] = str(i)   # species index
+				rec['SMEMSB2'] = ''
+			else:
+				rec['SMEMN'] = 'NUCF9'
+				rec['SMEMSB1'] = dat.SMEMSB1  # exit number
+				rec['SMEMSB2'] = str(i)       # species index
+
+			rec['TMEMN'] = 'NUIF1'
+			rec['TMEMSB1'] = str(i)		# species index
+			rec['TMEMSB2'] = ''
+			rec['SVOL'] = dat.SVOL
+			recs.append(rec)
+
+		# particulate species (NH4, PO4):
+		for j in range(1,4):		# sediment type
+			
+			# adsorbed NH4:
+			if flags['TAMFG'] and flags['ADNHFG']:
+				rec = {}
+				rec['MFACTOR'] = dat.MFACTOR
+				rec['SGRPN'] = 'NUTRX'
+
+				if dat.SGRPN == "ROFLOW":
+					rec['SMEMN'] = 'NUCF2'
+					rec['SMEMSB1'] = str(j)   	# sediment type
+					rec['SMEMSB2'] = '1'		# NH4 index
+				else:
+					rec['SMEMN'] = 'OSNH4'
+					rec['SMEMSB1'] = dat.SMEMSB1  # exit number
+					rec['SMEMSB2'] = str(j)       # sediment type
+
+				rec['TMEMN'] = 'NUIF2'
+				rec['TMEMSB1'] = str(j)		# sediment type
+				rec['TMEMSB2'] = '1'		# NH4 index
+				rec['SVOL'] = dat.SVOL
+				recs.append(rec)
+
+			# adsorbed PO4:
+			if flags['PO4FG'] and flags['ADPOFG']:
+				rec = {}
+				rec['MFACTOR'] = dat.MFACTOR
+				rec['SGRPN'] = 'NUTRX'
+
+				if dat.SGRPN == "ROFLOW":
+					rec['SMEMN'] = 'NUCF2'
+					rec['SMEMSB1'] = str(j)   	# sediment type
+					rec['SMEMSB2'] = '2'		# PO4 index
+				else:
+					rec['SMEMN'] = 'OSPO4'
+					rec['SMEMSB1'] = dat.SMEMSB1  # exit number
+					rec['SMEMSB2'] = str(j)       # sediment type
+
+				rec['TMEMN'] = 'NUIF2'
+				rec['TMEMSB1'] = str(j)			# sediment type
+				rec['TMEMSB2'] = '2'
+				rec['SVOL'] = dat.SVOL
+				recs.append(rec)
+
+	return recs
+
+def expand_PLANK_masslinks(flags, uci, dat, recs):
+	if flags['PLANK']:
 		
-		# update dissolved totals and totals of nutrients
-		rdox = dox * vol
-		rbod = bod * vol
-	return
+		for i in range(1,6):
+			rec = {}
+			rec['MFACTOR'] = dat.MFACTOR
+			rec['SGRPN'] = 'PLANK'
 
+			if dat.SGRPN == "ROFLOW":
+				rec['SMEMN'] = 'PKCF1_'
+				rec['SMEMSB1'] = str(i)   # species index
+				rec['SMEMSB2'] = ''
+			else:
+				rec['SMEMN'] = 'PKCF2_'
+				rec['SMEMSB1'] = dat.SMEMSB1  # exit number
+				rec['SMEMSB2'] = str(i)       # species index
 
-#@jit(nopython=True)
-def benth (dox, anaer, BRCON, scrfac, depcor, conc):
-	''' simulate benthal release of constituent'''
-	# calculate benthal release of constituent; release is a step function of aerobic/anaerobic conditions, and stream velocity;
-	# scrfac, the scouring factor dependent on stream velocity and depcor, the conversion factor from mg/m2 to mg/l,
-	# both calculated in rqual; releas is expressed in mg/m2.ivl
-	releas = BRCON[0] * scrfac * depcor  if dox > anaer else BRCON[1] * scrfac * depcor
-	conc  += releas
-	return conc, releas
+			rec['TMEMN'] = 'PKIF'
+			rec['TMEMSB1'] = str(i)		#dat.TMEMSB1
+			rec['TMEMSB2'] = ''
+			rec['SVOL'] = dat.SVOL
+			recs.append(rec)
 
+	return recs
 
-#@jit(nopython=True)
-def decbal(TAMFG, PO4FG, decnit, decpo4, tam, no3, po4):
-	''' perform materials balance for transformation from organic to inorganic material by decay in reach water'''
-	if TAMFG:
-		tam += decnit   # add nitrogen transformed to inorganic nitrogen by biomass decomposition
-	else:
-		no3 += decnit   # add nitrogen transformed to inorganic nitrogen by biomass decomposition
-	if PO4FG:   # add phosphorus transformed to inorganic phosphorus by biomass decomposition to po4 state variable
-		po4 += decpo4
-	return tam, no3, po4
+def expand_PHCARB_masslinks(flags, uci, dat, recs):
+	
+	if flags['PHCARB']:
+		
+		for i in range(1,3):
+			rec = {}
+			rec['MFACTOR'] = dat.MFACTOR
+			rec['SGRPN'] = 'PHCARB'
 
+			if dat.SGRPN == "ROFLOW":
+				if i == 1:
+					rec['SMEMN'] = 'ROTIC'
+				elif i == 2:
+					rec['SMEMN'] = 'ROCO2'
+				rec['SMEMSB1'] = ''
+				rec['SMEMSB2'] = ''
+			else:
+				if i == 1:
+					rec['SMEMN'] = 'OTIC'
+				elif i == 2:
+					rec['SMEMN'] = 'OCO2'
+				rec['SMEMSB1'] = dat.SMEMSB1  # exit number
+				rec['SMEMSB2'] = ''       # species index
 
-#@jit(nopython=True)
-def sink (vol, avdepe, kset, conc, snkmat):
-	''' calculate quantity of material settling out of the control volume; determine the change in concentration as a result of sinking'''
-	if kset > 0.0 and avdepe > 0.17:
-		# calculate concentration change due to outgoing material; snkout is expressed in mass/liter/ivl; kset is expressed as ft/ivl and avdepe as feet
-		snkout = conc * (kset / avdepe)  if kset < avdepe else conc  # calculate portion of material which settles out of the control volume during time step; snkout is expressed as mass/liter.ivl; conc is the concentration of material in the control volume
-		conc  -= snkout        # calculate remaining concentration of material in the control volume
-		snkmat = snkout * vol    # find quantity of material that sinks out; units are  mass.ft3/l.ivl in english system, and mass.m3/l.ivl in metric system
-	else:
-		snkout = 0.0
-		snkmat = 0.0		
-	return conc, snkmat
+			rec['TMEMN'] = 'PHIF'
+			rec['TMEMSB1'] = str(i)			# species index
+			rec['TMEMSB2'] = ''
+			rec['SVOL'] = dat.SVOL
+			recs.append(rec)
+
+	return recs

@@ -1,11 +1,14 @@
 from struct import unpack
 from numpy import fromfile
+import pandas as pd
 from pandas import DataFrame
 from datetime import datetime, timedelta
 from collections import defaultdict
 
+from typing import Union
+
 class HBNOutput:
-    def __init__(self, file_name):
+    def __init__(self, file_name:str) -> None:
         self.data_frames = []
         self.file_name = file_name
         self.simulation_duration_count = 0
@@ -17,7 +20,7 @@ class HBNOutput:
 
         self.tcodes = {1: 'Minutely', 2: 'Hourly', 3: 'Daily', 4: 'Monthly', 5: 'Yearly'}
 
-    def read_data(self):
+    def read_data(self) -> None:
         """
         Reads ALL data from hbn_file and return them in DataFrame
 
@@ -98,7 +101,7 @@ class HBNOutput:
             self.summary.append((operation, activity, str(id), self.tcodes[tcode], str(df.shape), df.index[0], df.index[-1]))
             self.output_dictionary[dfname] = mapn[operation, id, activity]
 
-    def get_time_series(self, t_opn, t_opn_id, t_cons, t_activity, time_unit):
+    def get_time_series(self, t_opn:str, t_opn_id:int, t_cons:str, t_activity:str, time_unit:str) -> Union[pd.Series, None]:
         """
         get a single time series based on:
         1.      t_opn: RCHRES, IMPLND, PERLND
@@ -129,8 +132,9 @@ class HBNOutput:
 
         return None
 
+    #PRT - I think we'll deprecate this method
     @staticmethod
-    def save_time_series_to_file(file_name, time_series):
+    def save_time_series_to_file(file_name:str, time_series:pd.Series) -> None:
         with open(file_name, 'w+') as f:
             for row in range(len(time_series.index)):
                 dt = time_series.index[row]
