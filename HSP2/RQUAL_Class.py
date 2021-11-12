@@ -890,7 +890,7 @@ class RQUAL_Class:
 				#-------------------------------------------------------				
 				if self.PLKFG == 1:
 					
-					co2 = 0.0
+					co2 = -99999.0 # 0.0
 					if self.PHFG == 1: co2 = self.PHCARB.co2
 
 					# compute atmospheric deposition influx

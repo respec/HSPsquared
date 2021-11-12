@@ -798,7 +798,7 @@ class PLANK_Class:
 			self.balpo4 = 0.0
 
 			if self.PHYFG == 1:  # water scarcity limits phytoplankton growth
-				self.limphy  = 7  #'WAT'
+				self.limphy  = 1  #'WAT'
 				self.phycla = self.phyto * self.cvbcl
 				self.grophy = 0.0
 				self.dthphy = 0.0
@@ -806,7 +806,7 @@ class PLANK_Class:
 				self.totphy = self.snkphy
 
 			if self.BALFG > 0:   # water scarcity limits benthic algae growth
-				limc = 7  #'WAT'
+				limc = 1  #'WAT'
 				self.limbal = zeros(self.numbal, dtype=np.int32)
 				self.balcla = zeros(self.numbal)
 				self.grobal = zeros(self.numbal)
@@ -1008,19 +1008,19 @@ class PLANK_Class:
 					grol = (malgrt * light) / (cmmlt + light)
 					if grop < gron and grop < grol:
 						gro = grop
-						lim = 5  #'po4'
+						lim = 6  #'po4'
 					elif gron < grol:
 						gro = gron
-						lim = 4  #'nit'
+						lim = 5  #'nit'
 					else:
 						gro = grol
-						lim = 1  #'lit'
+						lim = 4  #'lit'
 					if gro < 0.000001 * delt60:
 						gro = 0.0
 
 					if gro > 0.95 * malgrt:
 						# there is no limiting factor to cause less than maximum growth rate
-						lim = 6  #'none'
+						lim = 7  #'none'
 
 					# adjust growth rate if control volume is not entirely	
 					# contained within the euphotic zone; e.g. if only one
@@ -1035,7 +1035,7 @@ class PLANK_Class:
 				lim = 2  #'non'
 		else:                    # no algal growth occurs; necessary light is not available
 			gro = 0.0
-			lim = 1  #'lit'
+			lim = 4  #'lit'
 
 		# calculate unit algal respiration rate; res is expressed in
 		# units of per interval; alr20 is the respiration rate at 20 degrees c
@@ -1068,6 +1068,13 @@ class PLANK_Class:
 				bal  = balmax
 		else:   # augment unit death rate to account for nutrient scarcity
 			ald = aldh
+			# check for overcrowding
+			balmax = mbal * depcor
+			if  bal < balmax:
+				slof = 0.0
+			else:
+				slof = bal - balmax
+				bal = balmax
 
 		if dox < anaer:    # conditions are anaerobic, augment unit death rate
 			ald += oxald

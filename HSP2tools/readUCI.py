@@ -648,7 +648,7 @@ def monthdata(info, llines):
             lst = []
         elif line[2:5] == 'END':
             dfftable = DataFrame(lst, columns=header[0:12])
-            dfftable.to_hdf(store, f'/MONTH-DATA/{name}', data_columns=True)
+            dfftable.to_hdf(store, f'/MONTHDATA/{name}', data_columns=True)
         else:
             vals = []
             line = line.strip()
