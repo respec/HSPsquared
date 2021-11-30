@@ -100,6 +100,7 @@ setup(
     url="http://www.respec.com/product/hydrologic-simulation-program-python-hsp%C2%B2/",
     packages=["HSP2", "HSP2tools"],
     include_package_data=True,
+    package_data={"HSP2tools": ["data/*"]},
     zip_safe=False,
     install_requires=install_requires,
     extras_require=extras_require,
