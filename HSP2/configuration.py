@@ -51,7 +51,7 @@ activities = {
   'IMPLND': {'ATEMP':atemp, 'SNOW':snow, 'IWATER':iwater, 'SOLIDS':solids,
      'IWTGAS':iwtgas, 'IQUAL':iqual},
   'RCHRES': {'HYDR':hydr, 'ADCALC':adcalc, 'CONS':cons, 'HTRCH':htrch,
-     'SEDTRN':sedtrn, 'GQUAL':gqual, 'OXRX':noop, 'NUTRX':noop, 'PLANK':noop, 'RQUAL':rqual,
+     'SEDTRN':sedtrn, 'RQUAL':rqual, 'GQUAL':gqual, 'OXRX':noop, 'NUTRX':noop, 'PLANK':noop,
      'PHCARB':noop}}
 
 def expand_masslinks(flags, uci, dat, recs):
