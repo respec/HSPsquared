@@ -11,6 +11,7 @@ from numba import types
 from numba.typed import Dict
 from collections import defaultdict
 from datetime import datetime as dt
+from copy import deepcopy
 import os
 from HSP2.utilities import transform, versions, get_timeseries, expand_timeseries_names
 from HSP2.configuration import activities, noop, expand_masslinks
@@ -45,6 +46,7 @@ def main(hdfname, saveall=False, jupyterlab=True):
 
         # main processing loop
         msg(1, f'Simulation Start: {start}, Stop: {stop}')
+        tscat = {}
         for _, operation, segment, delt in opseq.itertuples():
             msg(2, f'{operation} {segment} DELT(minutes): {delt}')
             siminfo['delt'] = delt
@@ -72,7 +74,7 @@ def main(hdfname, saveall=False, jupyterlab=True):
                         flags['PO4FG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['PO4FG']
                         flags['ADPOFG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['ADPOFG']
                     
-                    get_flows(store, ts, flags, uci, segment, ddlinks, ddmasslinks, siminfo['steps'], msg)
+                    get_flows(store, ts, tscat, flags, uci, segment, ddlinks, ddmasslinks, siminfo['steps'], msg)
 
                 for activity, function in activities[operation].items():
                     if function == noop: #or not flags[activity]:
@@ -206,6 +208,9 @@ def main(hdfname, saveall=False, jupyterlab=True):
                         if 'SAVE' in ui_plank and flags['PLANK'] == 1:  save_timeseries(store,ts,ui_plank['SAVE'],siminfo,saveall,operation,segment,'PLANK',jupyterlab)
                         if 'SAVE' in ui_phcarb and flags['PHCARB'] == 1:   save_timeseries(store,ts,ui_phcarb['SAVE'],siminfo,saveall,operation,segment,'PHCARB',jupyterlab)
 
+            # before going on to the next operation, save the ts dict for later use
+            tscat[segment] = ts
+
         msglist = msg(1, 'Done', final=True)
 
         df = DataFrame(msglist, columns=['logfile'])
@@ -321,7 +326,7 @@ def save_timeseries(store, ts, savedict, siminfo, saveall, operation, segment, a
     return
 
 
-def get_flows(store, ts, flags, uci, segment, ddlinks, ddmasslinks, steps, msg):
+def get_flows(store, ts, tscat, flags, uci, segment, ddlinks, ddmasslinks, steps, msg):
     # get inflows to this operation
     for x in ddlinks[segment]:
         mldata = ddmasslinks[x.MLNO]
@@ -404,15 +409,30 @@ def get_flows(store, ts, flags, uci, segment, ddlinks, ddmasslinks, steps, msg):
                 AFname = f'{x.SVOL}{x.SVOLNO}_AFACTR'
                 data = f'{smemn}{smemsb1}{smemsb2}'
 
-                if path in store:
-                    if data in store[path]:
-                        t = store[path][data].astype(float64).to_numpy()[0:steps]
-                    else:
-                        data = f'{smemn}'
+                foundts = False
+                if x.SVOLNO in tscat:
+                    # don't go back to h5 file, use in memory version
+                    if data in tscat[x.SVOLNO]:
+                        t = deepcopy(tscat[x.SVOLNO][data])
+                        foundts = True
+                    elif smemn in tscat[x.SVOLNO]:
+                        t = deepcopy(tscat[x.SVOLNO][smemn])
+                        foundts = True
+                if not foundts:
+                    # haven't found in our ts catalog in memory, look on h5 file
+                    if path in store:
                         if data in store[path]:
                             t = store[path][data].astype(float64).to_numpy()[0:steps]
+                            foundts = True
                         else:
-                            print('ERROR in FLOWS, cant resolve ', path + ' ' + smemn)
+                            data = f'{smemn}'
+                            if data in store[path]:
+                                t = store[path][data].astype(float64).to_numpy()[0:steps]
+                                foundts = True
+                            else:
+                                print('ERROR in FLOWS, cant resolve ', path + ' ' + smemn)
+
+                if foundts:
                     if MFname in ts and AFname in ts:
                         t *= ts[MFname][:steps] * ts[AFname][0:steps]
                         msg(4, f'MFACTOR modified by timeseries {MFname}')
