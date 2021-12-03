@@ -3,14 +3,15 @@ Author: Robert Heaphy, Ph.D.
 License: LGPL2
 General routines for HSP2 '''
 
-
+import pandas as pd
+import numpy as np
 from pandas import Series, date_range
 from pandas.tseries.offsets import Minute
 from numpy import zeros, full, tile, float64
 from numba import types
 from numba.typed import Dict
 
-from HSP2IO.protocols import Category, SupportsReadTS
+from HSP2IO.protocols import Category, SupportsReadTS, SupportsWriteTS
 
 
 flowtype = {
@@ -269,6 +270,46 @@ def get_timeseries(timeseries_inputs:SupportsReadTS, ext_sourcesdd, siminfo):
             ts[tname]  = t
     return ts
 
+def save_timeseries(timeseries:SupportsWriteTS, ts, savedict, siminfo, saveall, operation, segment, activity, jupyterlab=True):
+    # save computed timeseries (at computation DELT)
+    save = {k for k,v in savedict.items() if v or saveall}
+    df = pd.DataFrame(index=siminfo['tindex'])
+    if (operation == 'IMPLND' and activity == 'IQUAL') or (operation == 'PERLND' and activity == 'PQUAL'):
+        for y in save:
+            for z in set(ts.keys()):
+                if '/' + y in z:
+                    zrep = z.replace('/','_')
+                    zrep2 = zrep.replace(' ', '')
+                    df[zrep2] = ts[z]
+                if '_' + y in z:
+                    df[z] = ts[z]
+        df = df.astype(np.float32).sort_index(axis='columns')
+    elif (operation == 'RCHRES' and (activity == 'CONS' or activity == 'GQUAL')):
+        for y in save:
+            for z in set(ts.keys()):
+                if '_' + y in z:
+                    df[z] = ts[z]
+        for y in (save & set(ts.keys())):
+            df[y] = ts[y]
+        df = df.astype(np.float32).sort_index(axis='columns')
+    else:
+        for y in (save & set(ts.keys())):
+            df[y] = ts[y]
+        df = df.astype(np.float32).sort_index(axis='columns')
+    path = f'RESULTS/{operation}_{segment}/{activity}'
+    if not df.empty:
+        timeseries.write_timeseries(
+            data_frame=df,
+            category = Category.RESULTS,
+            operation=operation,
+            segment=segment,
+            activity=activity,
+            compress=jupyterlab
+        )
+    else:
+        print('Save DataFrame Empty for', path)
+    return
+
 def expand_timeseries_names(sgrp, smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmemsb2):
     #special cases to expand timeseries names to resolve with output names in hdf5 file
     if tmemn == 'ICON':
@@ -381,3 +422,22 @@ def expand_timeseries_names(sgrp, smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmems
         tmemn = 'PHIF' + tmemsb1                    # tmemsb1 is species index
 
     return smemn, tmemn
+
+def get_gener_timeseries(ts: Dict, gener_instances: Dict, ddlinks: List) -> Dict:
+    """
+    Uses links tables to load necessary TimeSeries from Gener class instances to TS dictionary
+    """
+    for link in ddlinks:
+        if link.SVOL == 'GENER':
+            if link.SVOLNO in gener_instances:
+                gener = gener_instances[link.SVOLNO]
+                series = gener.get_ts()
+                if link.MFACTOR != 1:
+                    series *= link.MFACTOR
+
+                key = f'{link.TMEMN}{link.TMEMSB1} {link.TMEMSB2}'.rstrip()
+                if key in ts:
+                    ts[key] = ts[key] + series
+                else:
+                    ts[key] = series
+    return ts

@@ -13,38 +13,19 @@ from collections import defaultdict
 from datetime import datetime as dt
 from copy import deepcopy
 import os
-from HSP2.utilities import transform, versions, get_timeseries, expand_timeseries_names
+from HSP2.utilities import versions, get_timeseries, expand_timeseries_names, save_timeseries, get_gener_timeseries
 from HSP2.configuration import activities, noop, expand_masslinks
 
-from HSP2IO.protocols import Category, SupportsReadTS, SupportsWriteTS, SupportsReadUCI
+from HSP2IO.io import IOManager
 
 from typing import List, Union
 
-def main(
-        io_all: Union[SupportsReadUCI, SupportsReadTS, SupportsWriteTS, None] = None,
-        io_uci: Union[SupportsReadUCI,None]=None, 
-        io_input: Union[SupportsReadTS,None]=None,
-        io_output: Union[SupportsReadTS,SupportsWriteTS,None]=None, 
-        saveall:bool=False, 
-        jupyterlab:bool=True) -> None:
+def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None:
     """Runs main HSP2 program.
 
     Parameters
     ----------
-    io_all: SupportsReadUCI, SupportsReadTS, SupportsWriteTS/None 
-        This parameter is intended to allow users with a single file that 
-        combined UCI, Input and Output a short cut to specify a single argument. 
-    io_uci: SupportsReadUCI/None (Default None)
-        A class implementing SupportReadUCI protocol, io_all used in place of 
-        this parameter if not specified.
-    io_input: SupportsReadUCI/None (Default None)
-        A class implementing SupportReadTS protocol, io_all used in place of 
-        this parameter if not specified. This parameter is where the input 
-        timeseries will be read from. 
-    io_output: SupportsReadUCI/None (Default None)
-        A class implementing SupportReadUCI protocol, io_all used in place of 
-        this parameter if not specified. This parameter is where the output 
-        timeseries will be written to and read from. 
+   
     saveall: Boolean - [optional] Default is False.
         Saves all calculated data ignoring SAVE tables.
     jupyterlab: Boolean - [optional] Default is True.
@@ -55,11 +36,9 @@ def main(
     
     """
 
-    if io_uci is None: io_uci = io_all
-    if io_input is None: io_input = io_all
-    if io_output is None: io_output = io_all
-            
-    store = io_input._store
+    #PRT - this is a bandaid to run the model while I implement IO Abstraction.
+    #Eventually all references to store will be removed
+    store = IOManager._io_output._store
     hdfname = './'
     if not os.path.exists(hdfname):
         raise FileNotFoundError(f'{hdfname} HDF5 File Not Found')
@@ -68,7 +47,7 @@ def main(
     msg(1, f'Processing started for file {hdfname}; saveall={saveall}')
 
     # read user control, parameters, states, and flags  from HDF5 file
-    uci_parameters = io_uci.read_uci()
+    uci_parameters = io_manager.read_uci()
     opseq, ddlinks, ddmasslinks, ddext_sources, ddgener, uci, siminfo = uci_parameters
     
     start, stop = siminfo['start'], siminfo['stop']
@@ -86,7 +65,7 @@ def main(
         siminfo['steps'] = len(siminfo['tindex'])
 
         if operation == 'COPY':
-            copy_instances[segment] = activities[operation](io_input, siminfo, ddext_sources[(operation,segment)]) 
+            copy_instances[segment] = activities[operation](io_manager, siminfo, ddext_sources[(operation,segment)]) 
         elif operation == 'GENER':
             try:
                 gener_instances[segment] = activities[operation](segment, copy_instances, gener_instances, ddlinks, ddgener) 
@@ -95,7 +74,7 @@ def main(
         else:
 
             # now conditionally execute all activity modules for the op, segment
-            ts = get_timeseries(io_input,ddext_sources[(operation,segment)],siminfo)
+            ts = get_timeseries(io_manager,ddext_sources[(operation,segment)],siminfo)
             ts = get_gener_timeseries(ts, gener_instances, ddlinks[segment])
             flags = uci[(operation, 'GENERAL', segment)]['ACTIVITY']
             if operation == 'RCHRES':
@@ -232,13 +211,13 @@ def main(
                     if errorcnt > 0:
                         msg(4, f'Error count {errorcnt}: {errormsg}')
                 if 'SAVE' in ui:
-                    save_timeseries(io_output,ts,ui['SAVE'],siminfo,saveall,operation,segment,activity,jupyterlab)
+                    save_timeseries(io_manager,ts,ui['SAVE'],siminfo,saveall,operation,segment,activity,jupyterlab)
     
                 if (activity == 'RQUAL'):
-                    if 'SAVE' in ui_oxrx:   save_timeseries(io_output,ts,ui_oxrx['SAVE'],siminfo,saveall,operation,segment,'OXRX',jupyterlab)
-                    if 'SAVE' in ui_nutrx and flags['NUTRX'] == 1:   save_timeseries(io_output,ts,ui_nutrx['SAVE'],siminfo,saveall,operation,segment,'NUTRX',jupyterlab)
-                    if 'SAVE' in ui_plank and flags['PLANK'] == 1:  save_timeseries(io_output,ts,ui_plank['SAVE'],siminfo,saveall,operation,segment,'PLANK',jupyterlab)
-                    if 'SAVE' in ui_phcarb and flags['PHCARB'] == 1:   save_timeseries(io_output,ts,ui_phcarb['SAVE'],siminfo,saveall,operation,segment,'PHCARB',jupyterlab)
+                    if 'SAVE' in ui_oxrx:   save_timeseries(io_manager,ts,ui_oxrx['SAVE'],siminfo,saveall,operation,segment,'OXRX',jupyterlab)
+                    if 'SAVE' in ui_nutrx and flags['NUTRX'] == 1:   save_timeseries(io_manager,ts,ui_nutrx['SAVE'],siminfo,saveall,operation,segment,'NUTRX',jupyterlab)
+                    if 'SAVE' in ui_plank and flags['PLANK'] == 1:  save_timeseries(io_manager,ts,ui_plank['SAVE'],siminfo,saveall,operation,segment,'PLANK',jupyterlab)
+                    if 'SAVE' in ui_phcarb and flags['PHCARB'] == 1:   save_timeseries(io_manager,ts,ui_phcarb['SAVE'],siminfo,saveall,operation,segment,'PHCARB',jupyterlab)
 
             # before going on to the next operation, save the ts dict for later use
             tscat[segment] = ts
@@ -269,51 +248,6 @@ def messages():
         mlist.append(m)
         return mlist
     return msg
-
-def save_timeseries(timeseries:SupportsWriteTS, ts, savedict, siminfo, saveall, operation, segment, activity, jupyterlab=True):
-    # save computed timeseries (at computation DELT)
-    save = {k for k,v in savedict.items() if v or saveall}
-    df = DataFrame(index=siminfo['tindex'])
-    if (operation == 'IMPLND' and activity == 'IQUAL') or (operation == 'PERLND' and activity == 'PQUAL'):
-        for y in save:
-            for z in set(ts.keys()):
-                if '/' + y in z:
-                    zrep = z.replace('/','_')
-                    zrep2 = zrep.replace(' ', '')
-                    df[zrep2] = ts[z]
-                if '_' + y in z:
-                    df[z] = ts[z]
-        df = df.astype(float32).sort_index(axis='columns')
-    elif (operation == 'RCHRES' and (activity == 'CONS' or activity == 'GQUAL')):
-        for y in save:
-            for z in set(ts.keys()):
-                if '_' + y in z:
-                    df[z] = ts[z]
-        for y in (save & set(ts.keys())):
-            df[y] = ts[y]
-        df = df.astype(float32).sort_index(axis='columns')
-    else:
-        for y in (save & set(ts.keys())):
-            df[y] = ts[y]
-        df = df.astype(float32).sort_index(axis='columns')
-    path = f'RESULTS/{operation}_{segment}/{activity}'
-    if not df.empty:
-        timeseries.write_timeseries(
-            data_frame=df,
-            category = Category.RESULTS,
-            operation=operation,
-            segment=segment,
-            activity=activity,
-            compress=jupyterlab
-        )
-        #if jupyterlab:
-        #    df.to_hdf(store, path, complib='blosc', complevel=9) # This is the official version
-        #else:
-        #    df.to_hdf(store, path, format='t', data_columns=True)  # show the columns in HDFView
-    else:
-        print('Save DataFrame Empty for', path)
-    return
-
 
 def get_flows(store, ts, tscat, flags, uci, segment, ddlinks, ddmasslinks, steps, msg):
     # get inflows to this operation
@@ -451,26 +385,6 @@ def get_flows(store, ts, tscat, flags, uci, segment, ddlinks, ddmasslinks, steps
                     # print('ERROR in FLOWS for', path) # not necessarily an error to not find an operation
                                                         # referenced in schematic, could be commented out
     return
-
-def get_gener_timeseries(ts: Dict, gener_instances: Dict, ddlinks: List) -> Dict:
-    """
-    Uses links tables to load necessary TimeSeries from Gener class instances to TS dictionary
-    """
-    for link in ddlinks:
-        if link.SVOL == 'GENER':
-            if link.SVOLNO in gener_instances:
-                gener = gener_instances[link.SVOLNO]
-                series = gener.get_ts()
-                if link.MFACTOR != 1:
-                    series *= link.MFACTOR
-
-                key = f'{link.TMEMN}{link.TMEMSB1} {link.TMEMSB2}'.rstrip()
-                if key in ts:
-                    ts[key] = ts[key] + series
-                else:
-                    ts[key] = series
-    return ts
-
 
 '''
 
