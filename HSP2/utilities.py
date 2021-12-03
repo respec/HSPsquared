@@ -10,7 +10,7 @@ from numpy import zeros, full, tile, float64
 from numba import types
 from numba.typed import Dict
 
-from HSP2IO.protocols import Category, ReadableTimeseries
+from HSP2IO.protocols import Category, SupportsReadTS
 
 
 flowtype = {
@@ -232,7 +232,7 @@ def versions(import_list=[]):
       str(datetime.datetime.now())[0:19]])
     return pandas.DataFrame(data, index=names, columns=['version'])
 
-def get_timeseries(timeseries_inputs:ReadableTimeseries, ext_sourcesdd, siminfo):
+def get_timeseries(timeseries_inputs:SupportsReadTS, ext_sourcesdd, siminfo):
     ''' makes timeseries for the current timestep and trucated to the sim interval'''
     # explicit creation of Numba dictionary with signatures
     ts = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])

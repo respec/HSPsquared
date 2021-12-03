@@ -82,7 +82,6 @@ class HDF5():
 			path = f'TIMESERIES/{segment}'
 		elif category == category.RESULTS:
 			path = f'RESULTS/{operation}_{segment}/{activity}'
-		print(f'Reading from: {path}')
 		return read_hdf(self._store, path)
 
 	def write_timeseries(self, 
@@ -101,7 +100,6 @@ class HDF5():
 		if 'compress' in kwargs:
 			if kwargs['compress']:
 				complevel = 9
-		print(f'writing to: {path}')
 		data_frame.to_hdf(self._store, path, format='t', data_columns=True, complevel=complevel)
 		#data_frame.to_hdf(self._store, path)
 
