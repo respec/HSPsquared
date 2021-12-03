@@ -10,6 +10,8 @@ from numpy import zeros, full, tile, float64
 from numba import types
 from numba.typed import Dict
 
+from HSP2IO.protocols import Category, ReadableTimeseries
+
 
 flowtype = {
   # EXTERNAL FLOWS
@@ -230,24 +232,16 @@ def versions(import_list=[]):
       str(datetime.datetime.now())[0:19]])
     return pandas.DataFrame(data, index=names, columns=['version'])
 
-def get_timeseries(store, ext_sourcesdd, siminfo):
+def get_timeseries(timeseries_inputs:ReadableTimeseries, ext_sourcesdd, siminfo):
     ''' makes timeseries for the current timestep and trucated to the sim interval'''
     # explicit creation of Numba dictionary with signatures
     ts = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
     for row in ext_sourcesdd:
-        if row.SVOL == '*':
-            path = f'TIMESERIES/{row.SVOLNO}'
-            if path in store:
-                temp1 = store[path]
-            else:
-                print('Get Timeseries ERROR for', path)
-                continue
-        else:
-            temp1 = read_hdf(row.SVOL, path)
+        data_frame = timeseries_inputs.read_timeseries(category=Category.INPUTS,segment=row.SVOLNO)
 
         if row.MFACTOR != 1.0:
-            temp1 *= row.MFACTOR
-        t = transform(temp1, row.TMEMN, row.TRAN, siminfo)
+            data_frame *= row.MFACTOR
+        t = transform(data_frame, row.TMEMN, row.TRAN, siminfo)
 
         # in some cases the subscript is irrelevant, like '1' or '1 1', and we can leave it off.
         # there are other cases where it is needed to distinguish, such as ISED and '1' or '1 1'.

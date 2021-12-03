@@ -1,9 +1,6 @@
-from numba import njit
 import numpy as np
 import pandas as pd
-from typing import Dict, List
-
-from HSP2.utilities import get_timeseries
+from typing import Dict
 
 class Gener():
     """
