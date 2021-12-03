@@ -16,43 +16,59 @@ import os
 from HSP2.utilities import transform, versions, get_timeseries, expand_timeseries_names
 from HSP2.configuration import activities, noop, expand_masslinks
 
-from HSP2IO.protocols import Category, ReadableUCI, WriteableTimeseries, ReadableTimeseries
+from HSP2IO.protocols import Category, SupportsReadTS, SupportsWriteTS, SupportsReadUCI
 
-from typing import List
+from typing import List, Union
 
-def main(uci: ReadableUCI, 
-        input_timeseries: ReadableTimeseries,
-        output_timeseries:WriteableTimeseries, 
+def main(
+        io_all: Union[SupportsReadUCI, SupportsReadTS, SupportsWriteTS, None] = None,
+        io_uci: Union[SupportsReadUCI,None]=None, 
+        io_input: Union[SupportsReadTS,None]=None,
+        io_output: Union[SupportsReadTS,SupportsWriteTS,None]=None, 
         saveall:bool=False, 
-        jupyterlab:bool=True,) -> None:
+        jupyterlab:bool=True) -> None:
     """Runs main HSP2 program.
 
     Parameters
     ----------
-    uci: ReadableUCI 
-        A class implementing ReadableUCI protocol
-    hdfname: str
-        HDF5 (path) filename used for both input and output.
-    saveall: Boolean
-        [optional] Default is False.
+    io_all: SupportsReadUCI, SupportsReadTS, SupportsWriteTS/None 
+        This parameter is intended to allow users with a single file that 
+        combined UCI, Input and Output a short cut to specify a single argument. 
+    io_uci: SupportsReadUCI/None (Default None)
+        A class implementing SupportReadUCI protocol, io_all used in place of 
+        this parameter if not specified.
+    io_input: SupportsReadUCI/None (Default None)
+        A class implementing SupportReadTS protocol, io_all used in place of 
+        this parameter if not specified. This parameter is where the input 
+        timeseries will be read from. 
+    io_output: SupportsReadUCI/None (Default None)
+        A class implementing SupportReadUCI protocol, io_all used in place of 
+        this parameter if not specified. This parameter is where the output 
+        timeseries will be written to and read from. 
+    saveall: Boolean - [optional] Default is False.
         Saves all calculated data ignoring SAVE tables.
-    
+    jupyterlab: Boolean - [optional] Default is True.
+        Flag for specific output behavior for  jupyter lab.
     Return
     ------------
     None
     
     """
 
+    if io_uci is None: io_uci = io_all
+    if io_input is None: io_input = io_all
+    if io_output is None: io_output = io_all
+            
+    store = io_input._store
     hdfname = './'
     if not os.path.exists(hdfname):
         raise FileNotFoundError(f'{hdfname} HDF5 File Not Found')
 
-    store = uci._store
     msg = messages()
     msg(1, f'Processing started for file {hdfname}; saveall={saveall}')
 
     # read user control, parameters, states, and flags  from HDF5 file
-    uci_parameters = uci.read_uci()
+    uci_parameters = io_uci.read_uci()
     opseq, ddlinks, ddmasslinks, ddext_sources, ddgener, uci, siminfo = uci_parameters
     
     start, stop = siminfo['start'], siminfo['stop']
@@ -70,7 +86,7 @@ def main(uci: ReadableUCI,
         siminfo['steps'] = len(siminfo['tindex'])
 
         if operation == 'COPY':
-            copy_instances[segment] = activities[operation](store, siminfo, ddext_sources[(operation,segment)]) 
+            copy_instances[segment] = activities[operation](io_input, siminfo, ddext_sources[(operation,segment)]) 
         elif operation == 'GENER':
             try:
                 gener_instances[segment] = activities[operation](segment, copy_instances, gener_instances, ddlinks, ddgener) 
@@ -79,7 +95,7 @@ def main(uci: ReadableUCI,
         else:
 
             # now conditionally execute all activity modules for the op, segment
-            ts = get_timeseries(input_timeseries,ddext_sources[(operation,segment)],siminfo)
+            ts = get_timeseries(io_input,ddext_sources[(operation,segment)],siminfo)
             ts = get_gener_timeseries(ts, gener_instances, ddlinks[segment])
             flags = uci[(operation, 'GENERAL', segment)]['ACTIVITY']
             if operation == 'RCHRES':
@@ -216,13 +232,13 @@ def main(uci: ReadableUCI,
                     if errorcnt > 0:
                         msg(4, f'Error count {errorcnt}: {errormsg}')
                 if 'SAVE' in ui:
-                    save_timeseries(output_timeseries,ts,ui['SAVE'],siminfo,saveall,operation,segment,activity,jupyterlab)
+                    save_timeseries(io_output,ts,ui['SAVE'],siminfo,saveall,operation,segment,activity,jupyterlab)
     
                 if (activity == 'RQUAL'):
-                    if 'SAVE' in ui_oxrx:   save_timeseries(output_timeseries,ts,ui_oxrx['SAVE'],siminfo,saveall,operation,segment,'OXRX',jupyterlab)
-                    if 'SAVE' in ui_nutrx and flags['NUTRX'] == 1:   save_timeseries(output_timeseries,ts,ui_nutrx['SAVE'],siminfo,saveall,operation,segment,'NUTRX',jupyterlab)
-                    if 'SAVE' in ui_plank and flags['PLANK'] == 1:  save_timeseries(output_timeseries,ts,ui_plank['SAVE'],siminfo,saveall,operation,segment,'PLANK',jupyterlab)
-                    if 'SAVE' in ui_phcarb and flags['PHCARB'] == 1:   save_timeseries(output_timeseries,ts,ui_phcarb['SAVE'],siminfo,saveall,operation,segment,'PHCARB',jupyterlab)
+                    if 'SAVE' in ui_oxrx:   save_timeseries(io_output,ts,ui_oxrx['SAVE'],siminfo,saveall,operation,segment,'OXRX',jupyterlab)
+                    if 'SAVE' in ui_nutrx and flags['NUTRX'] == 1:   save_timeseries(io_output,ts,ui_nutrx['SAVE'],siminfo,saveall,operation,segment,'NUTRX',jupyterlab)
+                    if 'SAVE' in ui_plank and flags['PLANK'] == 1:  save_timeseries(io_output,ts,ui_plank['SAVE'],siminfo,saveall,operation,segment,'PLANK',jupyterlab)
+                    if 'SAVE' in ui_phcarb and flags['PHCARB'] == 1:   save_timeseries(io_output,ts,ui_phcarb['SAVE'],siminfo,saveall,operation,segment,'PHCARB',jupyterlab)
 
             # before going on to the next operation, save the ts dict for later use
             tscat[segment] = ts
@@ -254,7 +270,7 @@ def messages():
         return mlist
     return msg
 
-def save_timeseries(timeseries:WriteableTimeseries, ts, savedict, siminfo, saveall, operation, segment, activity, jupyterlab=True):
+def save_timeseries(timeseries:SupportsWriteTS, ts, savedict, siminfo, saveall, operation, segment, activity, jupyterlab=True):
     # save computed timeseries (at computation DELT)
     save = {k for k,v in savedict.items() if v or saveall}
     df = DataFrame(index=siminfo['tindex'])

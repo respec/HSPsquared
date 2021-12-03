@@ -1,4 +1,4 @@
-from typing import Protocol, Dict, Any, List, Union
+from typing import Protocol, Dict, Any, List, Union, runtime_checkable
 from collections import defaultdict
 import pandas as pd
 import numpy as np
@@ -13,15 +13,18 @@ class Category(Enum):
 	RESULTS = 'RESULT'
 	INPUTS = 'INPUT'
 
-class ReadableUCI(Protocol):
+@runtime_checkable
+class SupportsReadUCI(Protocol):
 	def read_uci(self) -> UCITuple:
 		...
 
-class WriteableUCI(Protocol):
+@runtime_checkable
+class SupportsWritUCI(Protocol):
 	def write_uci(self, UCITuple) -> None:
 		...
 
-class ReadableTimeseries(Protocol):
+@runtime_checkable
+class SupportsReadTS(Protocol):
 	def read_timeseries(self,
 		category:Category,
 		operation:Union[str,None]=None, 
@@ -29,7 +32,8 @@ class ReadableTimeseries(Protocol):
 		activity:Union[str,None]=None) -> pd.DataFrame:
 		...	
 
-class WriteableTimeseries(Protocol):
+@runtime_checkable
+class SupportsWriteTS(Protocol):
 
 	def write_timeseries(self, 
 		data_frame:pd.DataFrame, 
