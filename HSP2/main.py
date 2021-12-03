@@ -16,7 +16,7 @@ import os
 from HSP2.utilities import versions, get_timeseries, expand_timeseries_names, save_timeseries, get_gener_timeseries
 from HSP2.configuration import activities, noop, expand_masslinks
 
-from HSP2IO.io import IOManager
+from HSP2IO.io import IOManager, SupportsReadTS, Category
 
 from typing import List, Union
 
@@ -38,7 +38,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
 
     #PRT - this is a bandaid to run the model while I implement IO Abstraction.
     #Eventually all references to store will be removed
-    store = IOManager._io_output._store
+    store = io_manager._output._store
     hdfname = './'
     if not os.path.exists(hdfname):
         raise FileNotFoundError(f'{hdfname} HDF5 File Not Found')
@@ -85,7 +85,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                     flags['PO4FG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['PO4FG']
                     flags['ADPOFG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['ADPOFG']
                 
-                get_flows(store, ts, tscat, flags, uci, segment, ddlinks, ddmasslinks, siminfo['steps'], msg)
+                get_flows(io_manager, ts, flags, uci, segment, ddlinks, ddmasslinks, siminfo['steps'], msg)
 
             for activity, function in activities[operation].items():
                 if function == noop: #or not flags[activity]:
@@ -219,9 +219,6 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                     if 'SAVE' in ui_plank and flags['PLANK'] == 1:  save_timeseries(io_manager,ts,ui_plank['SAVE'],siminfo,saveall,operation,segment,'PLANK',jupyterlab)
                     if 'SAVE' in ui_phcarb and flags['PHCARB'] == 1:   save_timeseries(io_manager,ts,ui_phcarb['SAVE'],siminfo,saveall,operation,segment,'PHCARB',jupyterlab)
 
-            # before going on to the next operation, save the ts dict for later use
-            tscat[segment] = ts
-
     msglist = msg(1, 'Done', final=True)
 
     df = DataFrame(msglist, columns=['logfile'])
@@ -249,7 +246,7 @@ def messages():
         return mlist
     return msg
 
-def get_flows(store, ts, tscat, flags, uci, segment, ddlinks, ddmasslinks, steps, msg):
+def get_flows(io_manager:SupportsReadTS, ts, flags, uci, segment, ddlinks, ddmasslinks, steps, msg):
     # get inflows to this operation
     for x in ddlinks[segment]:
         mldata = ddmasslinks[x.MLNO]
@@ -332,58 +329,37 @@ def get_flows(store, ts, tscat, flags, uci, segment, ddlinks, ddmasslinks, steps
                 AFname = f'{x.SVOL}{x.SVOLNO}_AFACTR'
                 data = f'{smemn}{smemsb1}{smemsb2}'
 
-                foundts = False
-                if x.SVOLNO in tscat:
-                    # don't go back to h5 file, use in memory version
-                    if data in tscat[x.SVOLNO]:
-                        t = deepcopy(tscat[x.SVOLNO][data])
-                        foundts = True
-                    elif smemn in tscat[x.SVOLNO]:
-                        t = deepcopy(tscat[x.SVOLNO][smemn])
-                        foundts = True
-                if not foundts:
-                    # haven't found in our ts catalog in memory, look on h5 file
-                    if path in store:
-                        if data in store[path]:
-                            t = store[path][data].astype(float64).to_numpy()[0:steps]
-                            foundts = True
-                        else:
-                            data = f'{smemn}'
-                            if data in store[path]:
-                                t = store[path][data].astype(float64).to_numpy()[0:steps]
-                                foundts = True
-                            else:
-                                print('ERROR in FLOWS, cant resolve ', path + ' ' + smemn)
-
-                if foundts:
-                    if MFname in ts and AFname in ts:
-                        t *= ts[MFname][:steps] * ts[AFname][0:steps]
-                        msg(4, f'MFACTOR modified by timeseries {MFname}')
-                        msg(4, f'AFACTR modified by timeseries {AFname}')
-                    elif MFname in ts:
-                        t *= afactr * ts[MFname][0:steps]
-                        msg(4, f'MFACTOR modified by timeseries {MFname}')
-                    elif AFname in ts:
-                        t *= mfactor * ts[AFname][0:steps]
-                        msg(4, f'AFACTR modified by timeseries {AFname}')
-                    else:
-                        t *= factor
-
-                    # if poht to iheat, imprecision in hspf conversion factor requires a slight adjustment
-                    if (smemn == 'POHT' or smemn == 'SOHT') and tmemn == 'IHEAT':
-                       t *= 0.998553
-                    if (smemn == 'PODOXM' or smemn == 'SODOXM') and tmemn == 'OXIF1':
-                       t *= 1.000565
-
-                    # ??? ISSUE: can fetched data be at different frequency - don't know how to transform.
-                    if tmemn in ts:
-                        ts[tmemn] += t
-                    else:
-                        ts[tmemn] = t
+                data_frame = io_manager.read_timeseries(Category.RESULTS,x.SVOL,x.SVOLNO, sgrpn)
+                try:
+                    if data in data_frame.columns: t = data_frame[data].astype(float64).to_numpy()[0:steps]
+                    else: t = data_frame[smemn].astype(float64).to_numpy()[0:steps]
+                except KeyError:
+                    print('ERROR in FLOWS, cant resolve ', path + ' ' + smemn)
+                
+                if MFname in ts and AFname in ts:
+                    t *= ts[MFname][:steps] * ts[AFname][0:steps]
+                    msg(4, f'MFACTOR modified by timeseries {MFname}')
+                    msg(4, f'AFACTR modified by timeseries {AFname}')
+                elif MFname in ts:
+                    t *= afactr * ts[MFname][0:steps]
+                    msg(4, f'MFACTOR modified by timeseries {MFname}')
+                elif AFname in ts:
+                    t *= mfactor * ts[AFname][0:steps]
+                    msg(4, f'AFACTR modified by timeseries {AFname}')
                 else:
-                    pass
-                    # print('ERROR in FLOWS for', path) # not necessarily an error to not find an operation
-                                                        # referenced in schematic, could be commented out
+                    t *= factor
+
+                # if poht to iheat, imprecision in hspf conversion factor requires a slight adjustment
+                if (smemn == 'POHT' or smemn == 'SOHT') and tmemn == 'IHEAT':
+                    t *= 0.998553
+                if (smemn == 'PODOXM' or smemn == 'SODOXM') and tmemn == 'OXIF1':
+                    t *= 1.000565
+
+                # ??? ISSUE: can fetched data be at different frequency - don't know how to transform.
+                if tmemn in ts:
+                    ts[tmemn] += t
+                else:
+                    ts[tmemn] = t
     return
 
 '''

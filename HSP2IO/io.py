@@ -1,6 +1,6 @@
 import pandas as pd
 from pandas.core.frame import DataFrame
-from protocols import UCITuple, Category, SupportsReadUCI, SupportsReadTS, SupportsWriteTS
+from HSP2IO.protocols import UCITuple, Category, SupportsReadUCI, SupportsReadTS, SupportsWriteTS
 from typing import Union
 
 class IOManager:
@@ -27,39 +27,41 @@ class IOManager:
 			timeseries will be written to and read from. 
 		"""
 
-		self.io_input = io_input if io_uci is None else io_all
-		self.io_output = io_output if io_uci is None else io_all
-		self.io_uci = io_uci if io_uci is None else io_all
+		self._input = io_all if io_input is None else io_input
+		self._output = io_all if io_input is None else io_output
+		self._uci = io_all if io_uci is None else io_uci
 
 		self._in_memory = {} 
 
-	def read_uci(self) -> UCITuple:
-		self.io_uci.read_uci()
+	def read_uci(self, *args, **kwargs) -> UCITuple:
+		return self._uci.read_uci()
 
-	def write_ts(self,
+	def write_timeseries(self,
 			data_frame:pd.DataFrame, 
 			category:Category,
 			operation:Union[str,None]=None, 
 			segment:Union[str,None]=None, 
-			activity:Union[str,None]=None) -> None:
+			activity:Union[str,None]=None,
+			*args, **kwargs) -> None:
 		key = (category, operation, segment, activity)
-		self.io_output.write_timeseries(data_frame, category, operation, segment, activity)
+		self._output.write_timeseries(data_frame, category, operation, segment, activity)
 		self._in_memory[key] = data_frame
 
-	def read_ts(self,
+	def read_timeseries(self,
 			category:Category,
 			operation:Union[str,None]=None, 
 			segment:Union[str,None]=None, 
-			activity:Union[str,None]=None) -> pd.DataFrame:
+			activity:Union[str,None]=None,
+			*args, **kwargs) -> pd.DataFrame:
 		data_frame = self._get_in_memory(category, operation, segment, activity)
-		if data_frame: return data_frame
+		if data_frame is not None: return data_frame
 		if category == Category.INPUTS: 
-			data_frame = self.io_input.read_timeseries(category, operation, segment, activity)
+			data_frame = self._input.read_timeseries(category, operation, segment, activity)
 			key = (category, operation, segment, activity)
 			self._in_memory[key] = data_frame
 			return data_frame
 		if category == Category.RESULTS:
-			return self.io_output.read_timeseries(category, operation, segment, activity)
+			return self._output.read_timeseries(category, operation, segment, activity)
 		return pd.DataFrame
 
 	def _get_in_memory(self, 

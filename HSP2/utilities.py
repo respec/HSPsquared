@@ -12,6 +12,7 @@ from numba import types
 from numba.typed import Dict
 
 from HSP2IO.protocols import Category, SupportsReadTS, SupportsWriteTS
+from typing import List
 
 
 flowtype = {
@@ -270,7 +271,7 @@ def get_timeseries(timeseries_inputs:SupportsReadTS, ext_sourcesdd, siminfo):
             ts[tname]  = t
     return ts
 
-def save_timeseries(timeseries:SupportsWriteTS, ts, savedict, siminfo, saveall, operation, segment, activity, jupyterlab=True):
+def save_timeseries(timeseries:SupportsWriteTS, ts, savedict, siminfo, saveall, operation, segment, activity, compress=True):
     # save computed timeseries (at computation DELT)
     save = {k for k,v in savedict.items() if v or saveall}
     df = pd.DataFrame(index=siminfo['tindex'])
@@ -304,7 +305,7 @@ def save_timeseries(timeseries:SupportsWriteTS, ts, savedict, siminfo, saveall, 
             operation=operation,
             segment=segment,
             activity=activity,
-            compress=jupyterlab
+            compress=compress
         )
     else:
         print('Save DataFrame Empty for', path)
