@@ -25,7 +25,7 @@ class SupportsWritUCI(Protocol):
 
 @runtime_checkable
 class SupportsReadTS(Protocol):
-	def read_timeseries(self,
+	def read_ts(self,
 		category:Category,
 		operation:Union[str,None]=None, 
 		segment:Union[str,None]=None, 
@@ -35,7 +35,7 @@ class SupportsReadTS(Protocol):
 @runtime_checkable
 class SupportsWriteTS(Protocol):
 
-	def write_timeseries(self, 
+	def write_ts(self, 
 		data_frame:pd.DataFrame, 
 		category:Category,
 		operation:Union[str,None]=None, 

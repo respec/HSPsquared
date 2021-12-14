@@ -239,7 +239,7 @@ def get_timeseries(timeseries_inputs:SupportsReadTS, ext_sourcesdd, siminfo):
     # explicit creation of Numba dictionary with signatures
     ts = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
     for row in ext_sourcesdd:
-        data_frame = timeseries_inputs.read_timeseries(category=Category.INPUTS,segment=row.SVOLNO)
+        data_frame = timeseries_inputs.read_ts(category=Category.INPUTS,segment=row.SVOLNO)
 
         if row.MFACTOR != 1.0:
             data_frame *= row.MFACTOR
@@ -299,7 +299,7 @@ def save_timeseries(timeseries:SupportsWriteTS, ts, savedict, siminfo, saveall, 
         df = df.astype(np.float32).sort_index(axis='columns')
     path = f'RESULTS/{operation}_{segment}/{activity}'
     if not df.empty:
-        timeseries.write_timeseries(
+        timeseries.write_ts(
             data_frame=df,
             category = Category.RESULTS,
             operation=operation,
