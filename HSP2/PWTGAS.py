@@ -25,7 +25,7 @@ MFACTA = 0.2266
 MFACTB = 0.
 
 
-def pwtgas(store, siminfo, uci, ts):
+def pwtgas(io_manager, siminfo, uci, ts):
     ''' Estimate water temperature, dissolved oxygen, and carbon dioxide in the outflows
     from a pervious landsegment. calculate associated fluxes through exit gates'''
     simlen = siminfo['steps']

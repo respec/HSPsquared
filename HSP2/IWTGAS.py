@@ -30,7 +30,7 @@ PCFLX2 = IGCF1(2,LEV) * MFACTA
 PCFLX3 = IGCF1(3,LEV) * MFACTA
 '''
 
-def iwtgas(store, siminfo, uci, ts):
+def iwtgas(io_manager, siminfo, uci, ts):
 	''' Estimate water temperature, dissolved oxygen, and carbon dioxide in the outflows
 	from a impervious land segment. calculate associated fluxes through exit gate'''
 

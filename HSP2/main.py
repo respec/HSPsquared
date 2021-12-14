@@ -202,9 +202,9 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                 ############ calls activity function like snow() ##############
                 if operation not in ['COPY','GENER']:
                     if (activity != 'RQUAL'):
-                        errors, errmessages = function(store, siminfo, ui, ts)
+                        errors, errmessages = function(io_manager, siminfo, ui, ts)
                     else:                    
-                        errors, errmessages = function(store, siminfo, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts)
+                        errors, errmessages = function(io_manager, siminfo, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts)
                 ###############################################################
 
                 for errorcnt, errormsg in zip(errors, errmessages):
@@ -329,7 +329,7 @@ def get_flows(io_manager:SupportsReadTS, ts, flags, uci, segment, ddlinks, ddmas
                 AFname = f'{x.SVOL}{x.SVOLNO}_AFACTR'
                 data = f'{smemn}{smemsb1}{smemsb2}'
 
-                data_frame = io_manager.read_timeseries(Category.RESULTS,x.SVOL,x.SVOLNO, sgrpn)
+                data_frame = io_manager.read_ts(Category.RESULTS,x.SVOL,x.SVOLNO, sgrpn)
                 try:
                     if data in data_frame.columns: t = data_frame[data].astype(float64).to_numpy()[0:steps]
                     else: t = data_frame[smemn].astype(float64).to_numpy()[0:steps]

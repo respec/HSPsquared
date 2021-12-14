@@ -29,7 +29,7 @@ from HSP2.utilities  import make_numba_dict, initm
 
 ERRMSG = []
 
-def cons(store, siminfo, uci, ts):
+def cons(io_manager, siminfo, uci, ts):
 	''' Simulate behavior of conservative constituents; calculate concentration 
 	of conservative constituents after advection'''
 

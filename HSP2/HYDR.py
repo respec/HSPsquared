@@ -30,7 +30,7 @@ TOLERANCE = 0.001   # newton method max loops
 MAXLOOPS  = 100     # newton method exit tolerance
 
 
-def hydr(store, siminfo, uci, ts):
+def hydr(io_manager, siminfo, uci, ts):
     ''' find the state of the reach/reservoir at the end of the time interval
     and the outflows during the interval
 
@@ -40,6 +40,9 @@ def hydr(store, siminfo, uci, ts):
        ui is a dictionary with RID specific HSPF UCI like data
        ts is a dictionary with RID specific timeseries'''
 
+#PRT - temp work around while implementing IO abstraction
+    store = io_manager._input._store
+    
     steps   = siminfo['steps']                # number of simulation points
     uunits  = siminfo['units']
     nexits  = int(uci['PARAMETERS']['NEXITS'])
