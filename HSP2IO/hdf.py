@@ -72,7 +72,7 @@ class HDF5():
 					for i in range(int(start), int(stop)+1): ddgener[module][f'G{i:03d}'] = row[2]
 		return (opseq, ddlinks, ddmasslinks, ddext_sources, ddgener, uci, siminfo)
 
-	def read_timeseries(self, 
+	def read_ts(self, 
 			category:Category,
 			operation:Union[str,None]=None, 
 			segment:Union[str,None]=None, 
@@ -84,7 +84,7 @@ class HDF5():
 			path = f'RESULTS/{operation}_{segment}/{activity}'
 		return read_hdf(self._store, path)
 
-	def write_timeseries(self, 
+	def write_ts(self, 
 			data_frame:pd.DataFrame, 
 			category: Category,
 			operation:str, 

@@ -41,7 +41,7 @@ class IOManager:
 	def read_uci(self, *args, **kwargs) -> UCITuple:
 		return self._uci.read_uci()
 
-	def write_timeseries(self,
+	def write_ts(self,
 			data_frame:pd.DataFrame, 
 			category:Category,
 			operation:Union[str,None]=None, 
@@ -49,10 +49,10 @@ class IOManager:
 			activity:Union[str,None]=None,
 			*args, **kwargs) -> None:
 		key = (category, operation, segment, activity)
-		self._output.write_timeseries(data_frame, category, operation, segment, activity)
+		self._output.write_ts(data_frame, category, operation, segment, activity)
 		self._in_memory[key] = data_frame.copy(deep=True)
 
-	def read_timeseries(self,
+	def read_ts(self,
 			category:Category,
 			operation:Union[str,None]=None, 
 			segment:Union[str,None]=None, 
@@ -62,12 +62,12 @@ class IOManager:
 		if data_frame is not None: 
 			return data_frame
 		if category == Category.INPUTS: 
-			data_frame = self._input.read_timeseries(category, operation, segment, activity)
+			data_frame = self._input.read_ts(category, operation, segment, activity)
 			key = (category, operation, segment, activity)
 			self._in_memory[key] = data_frame.copy(deep=True)
 			return data_frame
 		if category == Category.RESULTS:
-			return self._output.read_timeseries(category, operation, segment, activity)
+			return self._output.read_ts(category, operation, segment, activity)
 		return pd.DataFrame
 
 	def _get_in_memory(self, 
