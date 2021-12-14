@@ -28,10 +28,15 @@ class IOManager:
 		"""
 
 		self._input = io_all if io_input is None else io_input
-		self._output = io_all if io_input is None else io_output
+		self._output = io_all if io_output is None else io_output
 		self._uci = io_all if io_uci is None else io_uci
 
 		self._in_memory = {} 
+
+	def __def__(self):
+		del(self._input)
+		del(self._output)
+		del(self._uci)
 
 	def read_uci(self, *args, **kwargs) -> UCITuple:
 		return self._uci.read_uci()
@@ -45,7 +50,7 @@ class IOManager:
 			*args, **kwargs) -> None:
 		key = (category, operation, segment, activity)
 		self._output.write_timeseries(data_frame, category, operation, segment, activity)
-		self._in_memory[key] = data_frame
+		self._in_memory[key] = data_frame.copy(deep=True)
 
 	def read_timeseries(self,
 			category:Category,
@@ -54,11 +59,12 @@ class IOManager:
 			activity:Union[str,None]=None,
 			*args, **kwargs) -> pd.DataFrame:
 		data_frame = self._get_in_memory(category, operation, segment, activity)
-		if data_frame is not None: return data_frame
+		if data_frame is not None: 
+			return data_frame
 		if category == Category.INPUTS: 
 			data_frame = self._input.read_timeseries(category, operation, segment, activity)
 			key = (category, operation, segment, activity)
-			self._in_memory[key] = data_frame
+			self._in_memory[key] = data_frame.copy(deep=True)
 			return data_frame
 		if category == Category.RESULTS:
 			return self._output.read_timeseries(category, operation, segment, activity)
@@ -71,6 +77,6 @@ class IOManager:
 			activity:Union[str,None]=None) -> Union[pd.DataFrame, None]:
 		key = (category, operation, segment, activity)
 		try:
-			return self._in_memory[key]
+			return self._in_memory[key].copy(deep=True)
 		except KeyError:
 			return None
