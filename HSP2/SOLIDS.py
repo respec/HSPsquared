@@ -14,7 +14,7 @@ MFACTA = 1.0  # english units
 ERRMSG = []
 
 
-def solids(store, siminfo, uci, ts):
+def solids(io_manager, siminfo, uci, ts):
 	'''Accumulate and remove solids from the impervious land segment'''
 
 	simlen = siminfo['steps']

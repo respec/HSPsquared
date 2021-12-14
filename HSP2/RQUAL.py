@@ -24,8 +24,11 @@ ERRMSGS_plank = ('PLANK: Error -- Zooplankton cannot be simulated without phytop
 ERRMSGS_phcarb = ('PHCARB: Error -- Invalid CONS index specified for ALKCON (i.e., ALKCON > NCONS).',
 					'PHCARB: Error -- A satisfactory solution for pH has not been reached.')
 
-def rqual(store, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
+def rqual(io_manager, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
 	''' Simulate constituents involved in biochemical transformations'''
+
+	#PRT - temp work around while implementing IO abstraction
+	store = io_manager._input._store
 
 	# simulation information:
 	delt60 = siminfo['delt'] / 60  # delt60 - simulation time interval in hours

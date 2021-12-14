@@ -80,6 +80,9 @@ class HDF5():
 		path = ''
 		if category == category.INPUTS:
 			path = f'TIMESERIES/{segment}'
+			#special cases for constant input timeseries
+			if operation in ['LAPSE','SEASONS','Saturated_Vapor_Pressure','SATURATED_VAPOR_PRESSURE']:
+				path = f'TIMESERIES/{operation}_Table'
 		elif category == category.RESULTS:
 			path = f'RESULTS/{operation}_{segment}/{activity}'
 		return read_hdf(self._store, path)

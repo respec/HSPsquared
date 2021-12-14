@@ -24,7 +24,7 @@ ERRMSGS =('PWATER: Sum of irrtgt in not one',             #ERRMSG0
           'PWATER: High Water Table code not implemented', #ERRMSG9
           )
 
-def pwater(store, siminfo, uci, ts):
+def pwater(io_manager, siminfo, uci, ts):
     ''' PERLND WATER module
     CALL: pwater(store, general, ui, ts)
        store is the Pandas/PyTable open store

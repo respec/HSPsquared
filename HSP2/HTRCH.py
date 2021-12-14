@@ -36,7 +36,7 @@ mlapse = [0.0019, 0.0019, 0.0019, 0.0019, 0.0019, 0.0019, 0.0021, 0.0022, 0.0023
 
 ERRMSGS =('HTRCH: Water temperature is above 66 C (150 F) -- In most cases, this indicates an instability in advection','')     #ERRMSG0
 
-def htrch(store, siminfo, uci, ts):
+def htrch(io_manager, siminfo, uci, ts):
 	'''Simulate heat exchange and water temperature'''
 
 	advectData = uci['advectData']
