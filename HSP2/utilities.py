@@ -35,6 +35,20 @@ flowtype = {
   'QPREC','QBED',                                                       #HTRCH
   }
 
+# These are hardcoded series in HSPF that are used various modules
+# Rather than have them become a IO requirement, carry them over as 
+# hard coded variables for the time being.   
+LAPSE = Series([0.0035, 0.0035, 0.0035, 0.0035, 0.0035, 0.0035, 0.0037,
+ 0.0040, 0.0041, 0.0043, 0.0046, 0.0047, 0.0048, 0.0049, 0.0050, 0.0050,
+ 0.0048, 0.0046, 0.0044, 0.0042, 0.0040, 0.0038, 0.0037, 0.0036])
+
+SEASONS = Series([0,0,0,1,1,1,1,1,1,0,0,0]).astype(bool)
+
+SVP = Series([1.005, 1.005, 1.005, 1.005, 1.005, 1.005, 1.005, 1.005, 1.005,
+ 1.005, 1.01, 1.01, 1.015, 1.02, 1.03, 1.04, 1.06, 1.08, 1.1, 1.29, 1.66,
+ 2.13, 2.74,3.49, 4.40, 5.55,6.87, 8.36, 10.1,12.2,14.6, 17.5, 20.9, 24.8,
+ 29.3, 34.6, 40.7, 47.7, 55.7, 64.9]).to_numpy()
+
 
 def make_numba_dict(uci):
     '''

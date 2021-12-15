@@ -6,7 +6,7 @@ Conversion of HSPF HPERAIR.FOR module. '''
 
 from numba import njit
 from numpy import empty, zeros, int64
-from HSP2.utilities import hoursval, make_numba_dict
+from HSP2.utilities import hoursval, make_numba_dict, LAPSE
 
 from HSP2IO.protocols import SupportsReadTS, Category
 
@@ -16,7 +16,7 @@ ERRMSGS = ()
 def atemp(io_manager:SupportsReadTS, siminfo, uci, ts):
     ''' high level driver for air temperature module'''
 
-    ts['LAPSE'] = hoursval(siminfo, io_manager.read_ts(Category.INPUTS, 'LAPSE'), lapselike=True)
+    ts['LAPSE'] = hoursval(siminfo, LAPSE, lapselike=True)
 
     ui = make_numba_dict(uci)   # Note: all values coverted to float automatically
     ui['k']      = siminfo['delt']  * 0.000833        # convert to in/timestep

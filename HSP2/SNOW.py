@@ -16,7 +16,7 @@ pack, pakin, pakdif not saved since trival recalulation from saved data
 from numpy import zeros, ones, full, nan, int64
 from math import sqrt, floor
 from numba import njit
-from HSP2.utilities import hourflag, monthval, hoursval, make_numba_dict, initm
+from HSP2.utilities import hourflag, monthval, hoursval, make_numba_dict, initm, SEASONS, SVP
 
 from HSP2IO.protocols import SupportsReadTS, Category
 
@@ -35,11 +35,8 @@ def snow(io_manager:SupportsReadTS, siminfo, uci, ts):
     steps   = siminfo['steps']                # number of simulation timesteps
     UUNITS  = siminfo['units']
 
-    ts['SVP']     = io_manager.read_ts(Category.INPUTS, 'Saturated_Vapor_Pressure').to_numpy()
-    ts['SEASONS'] = monthval(siminfo, io_manager.read_ts(Category.INPUTS, 'SEASONS'))
-
-    #ts['SVP']     = store['TIMESERIES/Saturated_Vapor_Pressure_Table'].to_numpy()
-    #ts['SEASONS'] = monthval(siminfo, store['TIMESERIES/SEASONS_Table'])
+    ts['SVP'] = SVP
+    ts['SEASONS'] = monthval(siminfo, SEASONS)
 
     cloudfg = 'CLOUD' in ts
 
