@@ -55,6 +55,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
     ddgener = uci_obj.ddgener
     uci = uci_obj.uci
     siminfo = uci_obj.siminfo 
+    ftables = uci_obj.ftables
 
     start, stop = siminfo['start'], siminfo['stop']
 
@@ -207,7 +208,9 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
 
                 ############ calls activity function like snow() ##############
                 if operation not in ['COPY','GENER']:
-                    if (activity != 'RQUAL'):
+                    if (activity == 'HYDR'):
+                        errors, errmessages = function(io_manager, siminfo, ui, ts, ftables)
+                    elif (activity != 'RQUAL'):
                         errors, errmessages = function(io_manager, siminfo, ui, ts)
                     else:                    
                         errors, errmessages = function(io_manager, siminfo, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts)

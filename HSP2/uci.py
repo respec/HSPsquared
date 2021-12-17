@@ -1,4 +1,5 @@
 from collections import defaultdict
+from pandas import DataFrame
 
 class UCI():
 
@@ -9,7 +10,8 @@ class UCI():
 		self.ddext_sources = defaultdict(list)
 		self.ddgener = defaultdict(dict)
 		self.siminfo = {}
-		self.opseq = defaultdict(dict)
+		self.opseq = DataFrame()
+		self.ftables = {}
 
 
 

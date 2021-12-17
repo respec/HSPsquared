@@ -30,7 +30,7 @@ TOLERANCE = 0.001   # newton method max loops
 MAXLOOPS  = 100     # newton method exit tolerance
 
 
-def hydr(io_manager, siminfo, uci, ts):
+def hydr(io_manager, siminfo, uci, ts, ftables):
     ''' find the state of the reach/reservoir at the end of the time interval
     and the outflows during the interval
 
@@ -40,9 +40,6 @@ def hydr(io_manager, siminfo, uci, ts):
        ui is a dictionary with RID specific HSPF UCI like data
        ts is a dictionary with RID specific timeseries'''
 
-#PRT - temp work around while implementing IO abstraction
-    store = io_manager._input._store
-    
     steps   = siminfo['steps']                # number of simulation points
     uunits  = siminfo['units']
     nexits  = int(uci['PARAMETERS']['NEXITS'])
@@ -98,7 +95,8 @@ def hydr(io_manager, siminfo, uci, ts):
     ts['CONVF'] = initm(siminfo, uci, 'VCONFG', 'MONTHLY_CONVF', 1.0)
 
     # extract key columns of specified FTable for faster access (1d vs. 2d)
-    rchtab = store[f"FTABLES/{uci['PARAMETERS']['FTBUCI']}"]
+    rchtab = ftables[f"{uci['PARAMETERS']['FTBUCI']}"]
+    #rchtab = store[f"FTABLES/{uci['PARAMETERS']['FTBUCI']}"]
     ts['volumeFT'] = rchtab['Volume'].to_numpy() * VFACT
     ts['depthFT']  = rchtab['Depth'].to_numpy()
     ts['sareaFT']  = rchtab['Area'].to_numpy()   * AFACT
