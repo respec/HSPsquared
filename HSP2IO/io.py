@@ -1,7 +1,9 @@
 import pandas as pd
 from pandas.core.frame import DataFrame
-from HSP2IO.protocols import UCITuple, Category, SupportsReadUCI, SupportsReadTS, SupportsWriteTS
+from HSP2IO.protocols import Category, SupportsReadUCI, SupportsReadTS, SupportsWriteTS, SupportsWriteLog
 from typing import Union
+
+from HSP2.uci import UCI
 
 class IOManager:
 	"""Management class for IO operations needed to execute the HSP2 model"""
@@ -10,7 +12,8 @@ class IOManager:
 			io_all: Union[SupportsReadUCI, SupportsReadTS, SupportsWriteTS, None] = None,
 			io_uci: Union[SupportsReadUCI,None]=None, 
 			io_input: Union[SupportsReadTS,None]=None,
-			io_output: Union[SupportsReadTS,SupportsWriteTS,None]=None) -> None:
+			io_output: Union[SupportsReadTS,SupportsWriteTS,None]=None,
+			io_log: Union[SupportsWriteLog,None]=None,) -> None:
 		""" io_all: SupportsReadUCI, SupportsReadTS, SupportsWriteTS/None 
 			This parameter is intended to allow users with a single file that 
 			combined UCI, Input and Output a short cut to specify a single argument. 
@@ -38,7 +41,7 @@ class IOManager:
 		del(self._output)
 		del(self._uci)
 
-	def read_uci(self, *args, **kwargs) -> UCITuple:
+	def read_uci(self, *args, **kwargs) -> UCI:
 		return self._uci.read_uci()
 
 	def write_ts(self,

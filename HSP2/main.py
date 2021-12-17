@@ -46,10 +46,16 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
     msg = messages()
     msg(1, f'Processing started for file {hdfname}; saveall={saveall}')
 
-    # read user control, parameters, states, and flags  from HDF5 file
-    uci_parameters = io_manager.read_uci()
-    opseq, ddlinks, ddmasslinks, ddext_sources, ddgener, uci, siminfo = uci_parameters
-    
+    # read user control, parameters, states, and flags uci and map to local variables
+    uci_obj = io_manager.read_uci()
+    opseq = uci_obj.opseq
+    ddlinks = uci_obj.ddlinks
+    ddmasslinks = uci_obj.ddmasslinks
+    ddext_sources = uci_obj.ddext_sources
+    ddgener = uci_obj.ddgener
+    uci = uci_obj.uci
+    siminfo = uci_obj.siminfo 
+
     start, stop = siminfo['start'], siminfo['stop']
 
     copy_instances = {}
