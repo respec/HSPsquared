@@ -24,11 +24,8 @@ ERRMSGS_plank = ('PLANK: Error -- Zooplankton cannot be simulated without phytop
 ERRMSGS_phcarb = ('PHCARB: Error -- Invalid CONS index specified for ALKCON (i.e., ALKCON > NCONS).',
 					'PHCARB: Error -- A satisfactory solution for pH has not been reached.')
 
-def rqual(io_manager, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts):
+def rqual(io_manager, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts, monthdata):
 	''' Simulate constituents involved in biochemical transformations'''
-
-	#PRT - temp work around while implementing IO abstraction
-	store = io_manager._input._store
 
 	# simulation information:
 	delt60 = siminfo['delt'] / 60  # delt60 - simulation time interval in hours
@@ -112,7 +109,7 @@ def rqual(io_manager, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, 
 			NUADFX = zeros(simlen)
 
 			if nuadfg_dd > 0:
-				NUADFX = initmd(siminfo, store, 'MONTHDATA/MONTHDATA' + str(nuadfg_dd), 0.0)
+				NUADFX = initmd(siminfo, monthdata, 'MONTHDATA/MONTHDATA' + str(nuadfg_dd), 0.0)
 			elif nuadfg_dd == -1:
 				if 'NUADFX' + str(j) in ts:
 					NUADFX = ts['NUADFX' + str(j)]
@@ -127,7 +124,7 @@ def rqual(io_manager, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, 
 			NUADCN = zeros(simlen)
 
 			if nuadfg_wd > 0:
-				NUADCN = initmd(siminfo, store, 'MONTHDATA/MONTHDATA' + str(nuadfg_wd), 0.0)
+				NUADCN = initmd(siminfo, monthdata, 'MONTHDATA/MONTHDATA' + str(nuadfg_wd), 0.0)
 			elif nuadfg_wd == -1:
 				if 'NUADCN' + str(j) in ts:
 					NUADCN = ts['NUADCN' + str(j)]
@@ -163,7 +160,7 @@ def rqual(io_manager, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, 
 			pladfg_dd = int(ui_plank['PLADFG' + str(j)])
 
 			if pladfg_dd > 0:
-				PLADFX = initmd(siminfo, store, 'MONTHDATA/MONTHDATA' + str(pladfg_dd), 0.0)
+				PLADFX = initmd(siminfo, monthdata, 'MONTHDATA/MONTHDATA' + str(pladfg_dd), 0.0)
 			elif pladfg_dd == -1:
 				if 'PLADFX' + str(j) in ts:
 					PLADFX = ts['PLADFX' + str(j)]
@@ -178,7 +175,7 @@ def rqual(io_manager, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, 
 			pladfg_wd = int(ui_plank['PLADFG' + str(n+1)])
 
 			if pladfg_wd > 0:
-				PLADCN = initmd(siminfo, store, 'MONTHDATA/MONTHDATA' + str(pladfg_wd), 0.0)
+				PLADCN = initmd(siminfo, monthdata, 'MONTHDATA/MONTHDATA' + str(pladfg_wd), 0.0)
 			elif pladfg_wd == -1:
 				if 'PLADCN' + str(j) in ts:
 					PLADCN = ts['PLADCN' + str(j)]
