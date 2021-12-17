@@ -206,10 +206,10 @@ def initm(siminfo, ui, flag, monthly, default):
         return full(siminfo['steps'], default)
 
 
-def initmd(siminfo, store, monthly, default):
+def initmd(siminfo, monthdata, monthly, default):
     ''' initialize timeseries from HSPF month data table'''
-    if monthly in store:
-        month = store[monthly].values[0]
+    if monthly in monthdata:
+        month = monthdata[monthly].values[0]
         return dayval(siminfo, list(month))
     else:
         return full(siminfo['steps'], default)

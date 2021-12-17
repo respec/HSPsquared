@@ -56,6 +56,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
     uci = uci_obj.uci
     siminfo = uci_obj.siminfo 
     ftables = uci_obj.ftables
+    monthdata = uci_obj.monthdata
 
     start, stop = siminfo['start'], siminfo['stop']
 
@@ -213,7 +214,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                     elif (activity != 'RQUAL'):
                         errors, errmessages = function(io_manager, siminfo, ui, ts)
                     else:                    
-                        errors, errmessages = function(io_manager, siminfo, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts)
+                        errors, errmessages = function(io_manager, siminfo, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts, monthdata)
                 ###############################################################
 
                 for errorcnt, errormsg in zip(errors, errmessages):

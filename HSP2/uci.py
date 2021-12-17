@@ -12,7 +12,7 @@ class UCI():
 		self.siminfo = {}
 		self.opseq = DataFrame()
 		self.ftables = {}
-
+		self.monthdata = None
 
 
 
