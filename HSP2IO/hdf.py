@@ -102,3 +102,10 @@ class HDF5():
 		data_frame.to_hdf(self._store, path, format='t', data_columns=True, complevel=complevel)
 		#data_frame.to_hdf(self._store, path)
 
+	def write_log(self, hsp2_log:pd.DataFrame) -> None:
+		hsp2_log.to_hdf(self._store, 'RUN_INFO/LOGFILE', data_columns=True, format='t')
+
+	def write_versioning(self, versioning:pd.DataFrame) -> None:
+		versioning.to_hdf(self._store, 'RUN_INFO/VERSIONS', data_columns=True, format='t')
+
+

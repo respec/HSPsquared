@@ -41,4 +41,10 @@ class SupportsWriteTS(Protocol):
 		activity:Union[str,None]=None) -> None:
 		...
 
-### Potentially need to add get_flows method as well
+class SupportsWriteLogging(Protocol):
+	
+	def write_log(self, hsp2_log:pd.DataFrame) -> None:
+		...
+
+	def write_versioning(self, versions:pd.DataFrame) -> None:
+		...

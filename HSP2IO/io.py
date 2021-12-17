@@ -1,6 +1,6 @@
 import pandas as pd
 from pandas.core.frame import DataFrame
-from HSP2IO.protocols import Category, SupportsReadUCI, SupportsReadTS, SupportsWriteTS, SupportsWriteLog
+from HSP2IO.protocols import Category, SupportsReadUCI, SupportsReadTS, SupportsWriteTS, SupportsWriteLogging
 from typing import Union
 
 from HSP2.uci import UCI
@@ -13,7 +13,7 @@ class IOManager:
 			io_uci: Union[SupportsReadUCI,None]=None, 
 			io_input: Union[SupportsReadTS,None]=None,
 			io_output: Union[SupportsReadTS,SupportsWriteTS,None]=None,
-			io_log: Union[SupportsWriteLog,None]=None,) -> None:
+			io_log: Union[SupportsWriteLogging,None]=None,) -> None:
 		""" io_all: SupportsReadUCI, SupportsReadTS, SupportsWriteTS/None 
 			This parameter is intended to allow users with a single file that 
 			combined UCI, Input and Output a short cut to specify a single argument. 
@@ -28,11 +28,16 @@ class IOManager:
 			A class implementing SupportReadUCI protocol, io_all used in place of 
 			this parameter if not specified. This parameter is where the output 
 			timeseries will be written to and read from. 
+		io_log: SupportsWriteLogging/None (Default None)
+			A class implementing SupportWriteLogging protocol, io_all used in place
+			of this parameter if not specified. This parameter is where logging and 
+			versioning information will be output.
 		"""
 
 		self._input = io_all if io_input is None else io_input
 		self._output = io_all if io_output is None else io_output
 		self._uci = io_all if io_uci is None else io_uci
+		self._log = io_all if io_log is None else io_log
 
 		self._in_memory = {} 
 
@@ -40,6 +45,7 @@ class IOManager:
 		del(self._input)
 		del(self._output)
 		del(self._uci)
+		del(self._log)
 
 	def read_uci(self, *args, **kwargs) -> UCI:
 		return self._uci.read_uci()
@@ -72,6 +78,12 @@ class IOManager:
 		if category == Category.RESULTS:
 			return self._output.read_ts(category, operation, segment, activity)
 		return pd.DataFrame
+
+	def write_log(self, data_frame)-> None:
+		if self._log: self._log.write_log(data_frame)
+
+	def write_versioning(self, data_frame)-> None:
+		if self._log: self._log.write_versioning(data_frame)	
 
 	def _get_in_memory(self, 
 			category:Category,

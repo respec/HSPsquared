@@ -232,11 +232,11 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
     msglist = msg(1, 'Done', final=True)
 
     df = DataFrame(msglist, columns=['logfile'])
-    df.to_hdf(store, 'RUN_INFO/LOGFILE', data_columns=True, format='t')
+    io_manager.write_log(df)
 
     if jupyterlab:
         df = versions(['jupyterlab', 'notebook'])
-        df.to_hdf(store, 'RUN_INFO/VERSIONS', data_columns=True, format='t')
+        io_manager.write_versioning(df)
         print('\n\n', df)
     return
 
