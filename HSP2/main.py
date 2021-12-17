@@ -5,20 +5,14 @@ License: LGPL2
 
 from re import S
 from numpy import float64, float32
-from pandas import HDFStore, Timestamp, read_hdf, DataFrame, date_range
+from pandas import DataFrame, date_range
 from pandas.tseries.offsets import Minute
-from numba import types
-from numba.typed import Dict
-from collections import defaultdict
 from datetime import datetime as dt
-from copy import deepcopy
 import os
 from HSP2.utilities import versions, get_timeseries, expand_timeseries_names, save_timeseries, get_gener_timeseries
 from HSP2.configuration import activities, noop, expand_masslinks
 
 from HSP2IO.io import IOManager, SupportsReadTS, Category
-
-from typing import List, Union
 
 def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None:
     """Runs main HSP2 program.
