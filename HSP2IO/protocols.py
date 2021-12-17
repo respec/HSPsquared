@@ -3,10 +3,8 @@ from collections import defaultdict
 import pandas as pd
 import numpy as np
 from enum import Enum
+from HSP2.uci import UCI
 
-
-UCITuple = [defaultdict(dict), defaultdict(list), defaultdict(list),
-	defaultdict(list), defaultdict(dict), dict, int] 
 TimeSeriesDict = Dict[str,np.float64]
 
 class Category(Enum):
@@ -15,12 +13,12 @@ class Category(Enum):
 
 @runtime_checkable
 class SupportsReadUCI(Protocol):
-	def read_uci(self) -> UCITuple:
+	def read_uci(self) -> UCI:
 		...
 
 @runtime_checkable
-class SupportsWritUCI(Protocol):
-	def write_uci(self, UCITuple) -> None:
+class SupportsWriteUCI(Protocol):
+	def write_uci(self, UCI) -> None:
 		...
 
 @runtime_checkable

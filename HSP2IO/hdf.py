@@ -1,10 +1,10 @@
 import pandas as pd
 from pandas.io.pytables import read_hdf
-from HSP2IO.protocols import UCITuple, Category
+from HSP2IO.protocols import Category
 from collections import defaultdict
 from typing import Union, Any
 
-
+from HSP2.uci import UCI
 
 class HDF5():
 
@@ -16,7 +16,7 @@ class HDF5():
 	def __del__(self):
 		self._store.close()
 
-	def read_uci(self) -> UCITuple:
+	def read_uci(self) -> UCI:
 		"""Read UCI related tables
 		
 		Parameters: None
@@ -24,44 +24,38 @@ class HDF5():
 		Returns: UCITuple
 
 		"""
-		uci = defaultdict(dict)
-		ddlinks = defaultdict(list)
-		ddmasslinks = defaultdict(list)
-		ddext_sources = defaultdict(list)
-		ddgener =defaultdict(dict)
-		siminfo = {}
-		opseq = 0
+		uci = UCI()
 
-		for path in self._store.keys():   # finds ALL data sets into HDF5 file
+		for path in self._store.keys():   # finds ALL data sets into HDF6 file
 			op, module, *other = path[1:].split(sep='/', maxsplit=3)
 			s = '_'.join(other)
 			if op == 'CONTROL':
 				if module =='GLOBAL':
 					temp = self._store[path].to_dict()['Info']
-					siminfo['start'] = pd.Timestamp(temp['Start'])
-					siminfo['stop']  = pd.Timestamp(temp['Stop'])
-					siminfo['units'] = 1
+					uci.siminfo['start'] = pd.Timestamp(temp['Start'])
+					uci.siminfo['stop']  = pd.Timestamp(temp['Stop'])
+					uci.siminfo['units'] = 1
 					if 'Units' in temp:
 						if int(temp['Units']):
-							siminfo['units'] = int(temp['Units'])
+							uci.siminfo['units'] = int(temp['Units'])
 				elif module == 'LINKS':
 					for row in self._store[path].fillna('').itertuples():
 						if row.TVOLNO != '':
-							ddlinks[f'{row.TVOLNO}'].append(row)
+							uci.ddlinks[f'{row.TVOLNO}'].append(row)
 						else:
-							ddlinks[f'{row.TOPFST}'].append(row)
+							uci.ddlinks[f'{row.TOPFST}'].append(row)
 
 				elif module == 'MASS_LINKS':
 					for row in self._store[path].replace('na','').itertuples():
-						ddmasslinks[row.MLNO].append(row)
+						uci.ddmasslinks[row.MLNO].append(row)
 				elif module == 'EXT_SOURCES':
 					for row in self._store[path].replace('na','').itertuples():
-						ddext_sources[(row.TVOL, row.TVOLNO)].append(row)
+						uci.ddext_sources[(row.TVOL, row.TVOLNO)].append(row)
 				elif module == 'OP_SEQUENCE':
-					opseq = self._store[path]
+					uci.opseq = self._store[path]
 			elif op in {'PERLND', 'IMPLND', 'RCHRES'}:
 				for id, vdict in self._store[path].to_dict('index').items():
-					uci[(op, module, id)][s] = vdict
+					uci.uci[(op, module, id)][s] = vdict
 			elif op == 'GENER':
 				for row in self._store[path].itertuples():
 					if len(row.OPNID.split()) == 1:
@@ -69,8 +63,8 @@ class HDF5():
 						stop = start
 					else:
 						start, stop = row.OPNID.split()
-					for i in range(int(start), int(stop)+1): ddgener[module][f'G{i:03d}'] = row[2]
-		return (opseq, ddlinks, ddmasslinks, ddext_sources, ddgener, uci, siminfo)
+					for i in range(int(start), int(stop)+1): uci.ddgener[module][f'G{i:03d}'] = row[2]
+		return uci
 
 	def read_ts(self, 
 			category:Category,
