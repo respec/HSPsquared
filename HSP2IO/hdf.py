@@ -64,6 +64,8 @@ class HDF5():
 					else:
 						start, stop = row.OPNID.split()
 					for i in range(int(start), int(stop)+1): uci.ddgener[module][f'G{i:03d}'] = row[2]
+			elif op == 'FTABLES':
+				uci.ftables[module] = self._store[path]
 		return uci
 
 	def read_ts(self, 
