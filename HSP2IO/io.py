@@ -9,35 +9,40 @@ class IOManager:
 	"""Management class for IO operations needed to execute the HSP2 model"""
 
 	def __init__(self,
-			io_all: Union[SupportsReadUCI, SupportsReadTS, SupportsWriteTS, None] = None,
-			io_uci: Union[SupportsReadUCI,None]=None, 
-			io_input: Union[SupportsReadTS,None]=None,
-			io_output: Union[SupportsReadTS,SupportsWriteTS,None]=None,
-			io_log: Union[SupportsWriteLogging,None]=None,) -> None:
-		""" io_all: SupportsReadUCI, SupportsReadTS, SupportsWriteTS/None 
-			This parameter is intended to allow users with a single file that 
-			combined UCI, Input and Output a short cut to specify a single argument. 
-		io_uci: SupportsReadUCI/None (Default None)
-			A class implementing SupportReadUCI protocol, io_all used in place of 
-			this parameter if not specified.
-		io_input: SupportsReadUCI/None (Default None)
-			A class implementing SupportReadTS protocol, io_all used in place of 
-			this parameter if not specified. This parameter is where the input 
-			timeseries will be read from. 
-		io_output: SupportsReadUCI/None (Default None)
-			A class implementing SupportReadUCI protocol, io_all used in place of 
-			this parameter if not specified. This parameter is where the output 
-			timeseries will be written to and read from. 
-		io_log: SupportsWriteLogging/None (Default None)
-			A class implementing SupportWriteLogging protocol, io_all used in place
-			of this parameter if not specified. This parameter is where logging and 
-			versioning information will be output.
+			io_combined: Union[SupportsReadUCI, SupportsReadTS, SupportsWriteTS, None] = None,
+			uci: Union[SupportsReadUCI,None]=None, 
+			input: Union[SupportsReadTS,None]=None,
+			output: Union[SupportsReadTS,SupportsWriteTS,None]=None,
+			log: Union[SupportsWriteLogging,None]=None,) -> None:
+		""" io_combined: SupportsReadUCI & SupportsReadTS & SupportsWriteTS & SupportsWriteLogging / None 
+			Intended to allow users with a object that combines protocols for 
+			UCI, Input, Output and Log a shortcut where only a 
+			single argument needs to be provided. If UCI, Input, Output and/or 
+			Log are not specified this argument will be used as the default.   
+		uci: SupportsReadUCI/None (Default None)
+			A class instance implementing the SupportReadUCI protocol. 
+			This class acts as the data source for UCI information. 
+			The argument io_combined be used in place by default if this argument is not specified.
+		input: SupportsReadUCI/None (Default None)
+			A class instance implementing SupportReadTS protocol. 
+			This class acts as the data source for any input timeseries.  
+			The argument io_combined be used in place by default if this argument is not specified.
+		output: SupportsWriteTS & SupportsReadTS / None (Default None)
+			A class implementing SupportsWriteTS & SupportReadTS protocol
+			This class acts as the location for outputing result timeseries as 
+			well as the data source should those result timeseries be needed for 
+			inputs into a model modules.  
+			The argument io_combined be used in place by default if this argument is not specified.
+		log: SupportsWriteLogging/None (Default None)
+			A class implementing SupportWriteLogging protocol. This class
+			This class acts as the location to output logging information.
+			The argument io_combined be used in place by default if this argument is not specified.
 		"""
 
-		self._input = io_all if io_input is None else io_input
-		self._output = io_all if io_output is None else io_output
-		self._uci = io_all if io_uci is None else io_uci
-		self._log = io_all if io_log is None else io_log
+		self._input = io_combined if input is None else input
+		self._output = io_combined if output is None else output
+		self._uci = io_combined if uci is None else uci
+		self._log = io_combined if log is None else log
 
 		self._in_memory = {} 
 
