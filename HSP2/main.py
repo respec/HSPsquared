@@ -30,9 +30,6 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
     
     """
 
-    #PRT - this is a bandaid to run the model while I implement IO Abstraction.
-    #Eventually all references to store will be removed
-    store = io_manager._output._store
     hdfname = './'
     if not os.path.exists(hdfname):
         raise FileNotFoundError(f'{hdfname} HDF5 File Not Found')
