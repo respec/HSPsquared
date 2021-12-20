@@ -46,7 +46,7 @@ class IOManager:
 
 		self._in_memory = {} 
 
-	def __def__(self):
+	def __del__(self):
 		del(self._input)
 		del(self._output)
 		del(self._uci)

@@ -41,6 +41,7 @@ class SupportsWriteTS(Protocol):
 		activity:Union[str,None]=None) -> None:
 		...
 
+@runtime_checkable
 class SupportsWriteLogging(Protocol):
 	
 	def write_log(self, hsp2_log:pd.DataFrame) -> None:
