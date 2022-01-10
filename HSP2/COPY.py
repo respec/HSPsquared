@@ -2,6 +2,8 @@ from HSP2.utilities import get_timeseries
 import pandas as pd
 from typing import List, Dict
 
+from HSP2IO.protocols import SupportsReadTS
+
 class Copy():
     """
     Partial implementation of the COPY module. 
@@ -10,12 +12,12 @@ class Copy():
     This functionality is not currently implemented, presently only loading from EXT SOURCES
     """
 
-    def __init__(self, store: pd.HDFStore, sim_info: Dict, ext_sources: List) -> None:
+    def __init__(self, io:SupportsReadTS, sim_info: Dict, ext_sources: List) -> None:
         self._ts = {}
         self._ts['MEAN'] = {}
         self._ts['POINT'] = {}
 
-        ts = get_timeseries(store, ext_sources, sim_info)
+        ts = get_timeseries(io, ext_sources, sim_info)
         for source in ext_sources:
             themn = source.TMEMN
             themsb = source.TMEMSB

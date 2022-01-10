@@ -3,12 +3,16 @@ Author: Robert Heaphy, Ph.D.
 License: LGPL2
 General routines for HSP2 '''
 
-
+import pandas as pd
+import numpy as np
 from pandas import Series, date_range
 from pandas.tseries.offsets import Minute
 from numpy import zeros, full, tile, float64
 from numba import types
 from numba.typed import Dict
+
+from HSP2IO.protocols import Category, SupportsReadTS, SupportsWriteTS
+from typing import List
 
 
 flowtype = {
@@ -30,6 +34,20 @@ flowtype = {
   'IHEAT','HTEXCH','ROHEAT','QTOTAL','QSOLAR','QLONGW','QEVAP','QCON',  #HTRCH
   'QPREC','QBED',                                                       #HTRCH
   }
+
+# These are hardcoded series in HSPF that are used various modules
+# Rather than have them become a IO requirement, carry them over as 
+# hard coded variables for the time being.   
+LAPSE = Series([0.0035, 0.0035, 0.0035, 0.0035, 0.0035, 0.0035, 0.0037,
+ 0.0040, 0.0041, 0.0043, 0.0046, 0.0047, 0.0048, 0.0049, 0.0050, 0.0050,
+ 0.0048, 0.0046, 0.0044, 0.0042, 0.0040, 0.0038, 0.0037, 0.0036])
+
+SEASONS = Series([0,0,0,1,1,1,1,1,1,0,0,0]).astype(bool)
+
+SVP = Series([1.005, 1.005, 1.005, 1.005, 1.005, 1.005, 1.005, 1.005, 1.005,
+ 1.005, 1.01, 1.01, 1.015, 1.02, 1.03, 1.04, 1.06, 1.08, 1.1, 1.29, 1.66,
+ 2.13, 2.74,3.49, 4.40, 5.55,6.87, 8.36, 10.1,12.2,14.6, 17.5, 20.9, 24.8,
+ 29.3, 34.6, 40.7, 47.7, 55.7, 64.9]).to_numpy()
 
 
 def make_numba_dict(uci):
@@ -188,10 +206,10 @@ def initm(siminfo, ui, flag, monthly, default):
         return full(siminfo['steps'], default)
 
 
-def initmd(siminfo, store, monthly, default):
+def initmd(siminfo, monthdata, monthly, default):
     ''' initialize timeseries from HSPF month data table'''
-    if monthly in store:
-        month = store[monthly].values[0]
+    if monthly in monthdata:
+        month = monthdata[monthly].values[0]
         return dayval(siminfo, list(month))
     else:
         return full(siminfo['steps'], default)
@@ -230,24 +248,16 @@ def versions(import_list=[]):
       str(datetime.datetime.now())[0:19]])
     return pandas.DataFrame(data, index=names, columns=['version'])
 
-def get_timeseries(store, ext_sourcesdd, siminfo):
+def get_timeseries(timeseries_inputs:SupportsReadTS, ext_sourcesdd, siminfo):
     ''' makes timeseries for the current timestep and trucated to the sim interval'''
     # explicit creation of Numba dictionary with signatures
     ts = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
     for row in ext_sourcesdd:
-        if row.SVOL == '*':
-            path = f'TIMESERIES/{row.SVOLNO}'
-            if path in store:
-                temp1 = store[path]
-            else:
-                print('Get Timeseries ERROR for', path)
-                continue
-        else:
-            temp1 = read_hdf(row.SVOL, path)
+        data_frame = timeseries_inputs.read_ts(category=Category.INPUTS,segment=row.SVOLNO)
 
         if row.MFACTOR != 1.0:
-            temp1 *= row.MFACTOR
-        t = transform(temp1, row.TMEMN, row.TRAN, siminfo)
+            data_frame *= row.MFACTOR
+        t = transform(data_frame, row.TMEMN, row.TRAN, siminfo)
 
         # in some cases the subscript is irrelevant, like '1' or '1 1', and we can leave it off.
         # there are other cases where it is needed to distinguish, such as ISED and '1' or '1 1'.
@@ -274,6 +284,46 @@ def get_timeseries(store, ext_sourcesdd, siminfo):
         else:
             ts[tname]  = t
     return ts
+
+def save_timeseries(timeseries:SupportsWriteTS, ts, savedict, siminfo, saveall, operation, segment, activity, compress=True):
+    # save computed timeseries (at computation DELT)
+    save = {k for k,v in savedict.items() if v or saveall}
+    df = pd.DataFrame(index=siminfo['tindex'])
+    if (operation == 'IMPLND' and activity == 'IQUAL') or (operation == 'PERLND' and activity == 'PQUAL'):
+        for y in save:
+            for z in set(ts.keys()):
+                if '/' + y in z:
+                    zrep = z.replace('/','_')
+                    zrep2 = zrep.replace(' ', '')
+                    df[zrep2] = ts[z]
+                if '_' + y in z:
+                    df[z] = ts[z]
+        df = df.astype(np.float32).sort_index(axis='columns')
+    elif (operation == 'RCHRES' and (activity == 'CONS' or activity == 'GQUAL')):
+        for y in save:
+            for z in set(ts.keys()):
+                if '_' + y in z:
+                    df[z] = ts[z]
+        for y in (save & set(ts.keys())):
+            df[y] = ts[y]
+        df = df.astype(np.float32).sort_index(axis='columns')
+    else:
+        for y in (save & set(ts.keys())):
+            df[y] = ts[y]
+        df = df.astype(np.float32).sort_index(axis='columns')
+    path = f'RESULTS/{operation}_{segment}/{activity}'
+    if not df.empty:
+        timeseries.write_ts(
+            data_frame=df,
+            category = Category.RESULTS,
+            operation=operation,
+            segment=segment,
+            activity=activity,
+            compress=compress
+        )
+    else:
+        print('Save DataFrame Empty for', path)
+    return
 
 def expand_timeseries_names(sgrp, smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmemsb2):
     #special cases to expand timeseries names to resolve with output names in hdf5 file
@@ -387,3 +437,22 @@ def expand_timeseries_names(sgrp, smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmems
         tmemn = 'PHIF' + tmemsb1                    # tmemsb1 is species index
 
     return smemn, tmemn
+
+def get_gener_timeseries(ts: Dict, gener_instances: Dict, ddlinks: List) -> Dict:
+    """
+    Uses links tables to load necessary TimeSeries from Gener class instances to TS dictionary
+    """
+    for link in ddlinks:
+        if link.SVOL == 'GENER':
+            if link.SVOLNO in gener_instances:
+                gener = gener_instances[link.SVOLNO]
+                series = gener.get_ts()
+                if link.MFACTOR != 1:
+                    series *= link.MFACTOR
+
+                key = f'{link.TMEMN}{link.TMEMSB1} {link.TMEMSB2}'.rstrip()
+                if key in ts:
+                    ts[key] = ts[key] + series
+                else:
+                    ts[key] = series
+    return ts

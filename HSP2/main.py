@@ -5,221 +5,230 @@ License: LGPL2
 
 from re import S
 from numpy import float64, float32
-from pandas import HDFStore, Timestamp, read_hdf, DataFrame, date_range
+from pandas import DataFrame, date_range
 from pandas.tseries.offsets import Minute
-from numba import types
-from numba.typed import Dict
-from collections import defaultdict
 from datetime import datetime as dt
-from copy import deepcopy
 import os
-from HSP2.utilities import transform, versions, get_timeseries, expand_timeseries_names
+from HSP2.utilities import versions, get_timeseries, expand_timeseries_names, save_timeseries, get_gener_timeseries
 from HSP2.configuration import activities, noop, expand_masslinks
 
-from typing import List
+from HSP2IO.io import IOManager, SupportsReadTS, Category
 
-def main(hdfname, saveall=False, jupyterlab=True):
+def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None:
     """Runs main HSP2 program.
 
     Parameters
     ----------
-    hdfname: str
-        HDF5 (path) filename used for both input and output.
-    saveall: Boolean
-        [optional] Default is False.
+   
+    saveall: Boolean - [optional] Default is False.
         Saves all calculated data ignoring SAVE tables.
+    jupyterlab: Boolean - [optional] Default is True.
+        Flag for specific output behavior for  jupyter lab.
+    Return
+    ------------
+    None
+    
     """
 
+    hdfname = './'
     if not os.path.exists(hdfname):
         raise FileNotFoundError(f'{hdfname} HDF5 File Not Found')
 
-    with HDFStore(hdfname, 'a') as store:
-        msg = messages()
-        msg(1, f'Processing started for file {hdfname}; saveall={saveall}')
+    msg = messages()
+    msg(1, f'Processing started for file {hdfname}; saveall={saveall}')
 
-        # read user control, parameters, states, and flags  from HDF5 file
-        opseq, ddlinks, ddmasslinks, ddext_sources, ddgener, uci, siminfo = get_uci(store)
-        start, stop = siminfo['start'], siminfo['stop']
+    # read user control, parameters, states, and flags uci and map to local variables
+    uci_obj = io_manager.read_uci()
+    opseq = uci_obj.opseq
+    ddlinks = uci_obj.ddlinks
+    ddmasslinks = uci_obj.ddmasslinks
+    ddext_sources = uci_obj.ddext_sources
+    ddgener = uci_obj.ddgener
+    uci = uci_obj.uci
+    siminfo = uci_obj.siminfo 
+    ftables = uci_obj.ftables
+    monthdata = uci_obj.monthdata
 
-        copy_instances = {}
-        gener_instances = {}
+    start, stop = siminfo['start'], siminfo['stop']
 
-        # main processing loop
-        msg(1, f'Simulation Start: {start}, Stop: {stop}')
-        tscat = {}
-        for _, operation, segment, delt in opseq.itertuples():
-            msg(2, f'{operation} {segment} DELT(minutes): {delt}')
-            siminfo['delt'] = delt
-            siminfo['tindex'] = date_range(start, stop, freq=Minute(delt))[1:]
-            siminfo['steps'] = len(siminfo['tindex'])
+    copy_instances = {}
+    gener_instances = {}
 
-            if operation == 'COPY':
-                copy_instances[segment] = activities[operation](store, siminfo, ddext_sources[(operation,segment)]) 
-            elif operation == 'GENER':
-                try:
-                    gener_instances[segment] = activities[operation](segment, copy_instances, gener_instances, ddlinks, ddgener) 
-                except NotImplementedError as e:
-                    print(f"GENER '{segment}' encountered unsupported feature during initialization and may not function correctly. Unsupported feature: '{e}'")
-            else:
+    # main processing loop
+    msg(1, f'Simulation Start: {start}, Stop: {stop}')
+    tscat = {}
+    for _, operation, segment, delt in opseq.itertuples():
+        msg(2, f'{operation} {segment} DELT(minutes): {delt}')
+        siminfo['delt'] = delt
+        siminfo['tindex'] = date_range(start, stop, freq=Minute(delt))[1:]
+        siminfo['steps'] = len(siminfo['tindex'])
 
-                # now conditionally execute all activity modules for the op, segment
-                ts = get_timeseries(store,ddext_sources[(operation,segment)],siminfo)
-                ts = get_gener_timeseries(ts, gener_instances, ddlinks[segment])
-                flags = uci[(operation, 'GENERAL', segment)]['ACTIVITY']
+        if operation == 'COPY':
+            copy_instances[segment] = activities[operation](io_manager, siminfo, ddext_sources[(operation,segment)]) 
+        elif operation == 'GENER':
+            try:
+                gener_instances[segment] = activities[operation](segment, copy_instances, gener_instances, ddlinks, ddgener) 
+            except NotImplementedError as e:
+                print(f"GENER '{segment}' encountered unsupported feature during initialization and may not function correctly. Unsupported feature: '{e}'")
+        else:
+
+            # now conditionally execute all activity modules for the op, segment
+            ts = get_timeseries(io_manager,ddext_sources[(operation,segment)],siminfo)
+            ts = get_gener_timeseries(ts, gener_instances, ddlinks[segment])
+            flags = uci[(operation, 'GENERAL', segment)]['ACTIVITY']
+            if operation == 'RCHRES':
+                # Add nutrient adsorption flags:
+                if flags['NUTRX'] == 1:
+                    flags['TAMFG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['NH3FG']
+                    flags['ADNHFG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['ADNHFG']
+                    flags['PO4FG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['PO4FG']
+                    flags['ADPOFG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['ADPOFG']
+                
+                get_flows(io_manager, ts, flags, uci, segment, ddlinks, ddmasslinks, siminfo['steps'], msg)
+
+            for activity, function in activities[operation].items():
+                if function == noop: #or not flags[activity]:
+                    continue
+
+                if (activity in flags) and (not flags[activity]):
+                    continue
+
+                msg(3, f'{activity}')
+
+                ui = uci[(operation, activity, segment)]   # ui is a dictionary
+                if operation == 'PERLND' and activity == 'SEDMNT':
+                    # special exception here to make CSNOFG available
+                    ui['PARAMETERS']['CSNOFG'] = uci[(operation, 'PWATER', segment)]['PARAMETERS']['CSNOFG']
+                if operation == 'PERLND' and activity == 'PSTEMP':
+                    # special exception here to make AIRTFG available
+                    ui['PARAMETERS']['AIRTFG'] = flags['ATEMP']
+                if operation == 'PERLND' and activity == 'PWTGAS':
+                    # special exception here to make CSNOFG available
+                    ui['PARAMETERS']['CSNOFG'] = uci[(operation, 'PWATER', segment)]['PARAMETERS']['CSNOFG']
                 if operation == 'RCHRES':
-                    # Add nutrient adsorption flags:
-                    if flags['NUTRX'] == 1:
-                        flags['TAMFG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['NH3FG']
-                        flags['ADNHFG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['ADNHFG']
-                        flags['PO4FG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['PO4FG']
-                        flags['ADPOFG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['ADPOFG']
+                    if not 'PARAMETERS' in ui:
+                        ui['PARAMETERS'] = {}
+                    ui['PARAMETERS']['NEXITS'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['NEXITS']
+                    if activity == 'ADCALC':
+                        ui['PARAMETERS']['ADFG'] = flags['ADCALC']
+                        ui['PARAMETERS']['KS']   = uci[(operation, 'HYDR', segment)]['PARAMETERS']['KS']
+                        ui['PARAMETERS']['VOL']  = uci[(operation, 'HYDR', segment)]['STATES']['VOL']
+                        ui['PARAMETERS']['ROS']  = uci[(operation, 'HYDR', segment)]['PARAMETERS']['ROS'] 
+                    if activity == 'HTRCH':
+                        ui['PARAMETERS']['ADFG'] = flags['ADCALC']
+                        ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
+                        # ui['STATES']['VOL'] = uci[(operation, 'HYDR', segment)]['STATES']['VOL']
+                    if activity == 'CONS':
+                        ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
+                    if activity == 'SEDTRN':
+                        ui['PARAMETERS']['ADFG'] = flags['ADCALC']
+                        ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
+                        # ui['STATES']['VOL'] = uci[(operation, 'HYDR', segment)]['STATES']['VOL']
+                        ui['PARAMETERS']['HTFG'] = flags['HTRCH']
+                        ui['PARAMETERS']['AUX3FG'] = 0
+                        if flags['HYDR']:
+                            ui['PARAMETERS']['LEN'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LEN']
+                            ui['PARAMETERS']['DELTH'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['DELTH']
+                            ui['PARAMETERS']['DB50'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['DB50']
+                            ui['PARAMETERS']['AUX3FG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['AUX3FG']
+                    if activity == 'GQUAL':
+                        ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
+                        ui['PARAMETERS']['HTFG'] = flags['HTRCH']
+                        ui['PARAMETERS']['SEDFG'] = flags['SEDTRN']
+                        # ui['PARAMETERS']['REAMFG'] = uci[(operation, 'OXRX', segment)]['PARAMETERS']['REAMFG']
+                        ui['PARAMETERS']['HYDRFG'] = flags['HYDR']
+                        if flags['HYDR']:
+                            ui['PARAMETERS']['LKFG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LKFG']
+                            ui['PARAMETERS']['AUX1FG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['AUX1FG']
+                            ui['PARAMETERS']['AUX2FG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['AUX2FG']
+                            ui['PARAMETERS']['LEN'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LEN']
+                            ui['PARAMETERS']['DELTH'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['DELTH']
+                        if flags['OXRX']:
+                            ui['PARAMETERS']['LKFG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LKFG']
+                            ui['PARAMETERS']['CFOREA'] = uci[(operation, 'OXRX', segment)]['PARAMETERS']['CFOREA']
+                        if flags['SEDTRN']:
+                            ui['PARAMETERS']['SSED1'] = uci[(operation, 'SEDTRN', segment)]['STATES']['SSED1']
+                            ui['PARAMETERS']['SSED2'] = uci[(operation, 'SEDTRN', segment)]['STATES']['SSED2']
+                            ui['PARAMETERS']['SSED3'] = uci[(operation, 'SEDTRN', segment)]['STATES']['SSED3']
+                        if flags['HTRCH']:
+                            ui['PARAMETERS']['CFSAEX'] = uci[(operation, 'HTRCH', segment)]['PARAMETERS']['CFSAEX']
+                        elif flags['PLANK']:
+                            if 'CFSAEX' in uci[(operation, 'PLANK', segment)]['PARAMETERS']:
+                                ui['PARAMETERS']['CFSAEX'] = uci[(operation, 'PLANK', segment)]['PARAMETERS']['CFSAEX']
                     
-                    get_flows(store, ts, tscat, flags, uci, segment, ddlinks, ddmasslinks, siminfo['steps'], msg)
+                    if activity == 'RQUAL':
+                        # RQUAL inputs:
+                        ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
+                        if flags['HYDR']:
+                            ui['PARAMETERS']['LKFG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LKFG']
 
-                for activity, function in activities[operation].items():
-                    if function == noop: #or not flags[activity]:
-                        continue
+                        ui['FLAGS']['HTFG'] = flags['HTRCH']
+                        ui['FLAGS']['SEDFG'] = flags['SEDTRN']
+                        ui['FLAGS']['GQFG'] = flags['GQUAL']
+                        ui['FLAGS']['OXFG'] = flags['OXFG']
+                        ui['FLAGS']['NUTFG'] = flags['NUTRX']
+                        ui['FLAGS']['PLKFG'] = flags['PLANK']
+                        ui['FLAGS']['PHFG'] = flags['PHCARB']
+                        if flags['CONS']:
+                            if 'PARAMETERS' in uci[(operation, 'CONS', segment)]:
+                                if 'NCONS' in uci[(operation, 'CONS', segment)]['PARAMETERS']:
+                                    ui['PARAMETERS']['NCONS'] = uci[(operation, 'CONS', segment)]['PARAMETERS']['NCONS']
 
-                    if (activity in flags) and (not flags[activity]):
-                        continue
-
-                    msg(3, f'{activity}')
-
-                    ui = uci[(operation, activity, segment)]   # ui is a dictionary
-                    if operation == 'PERLND' and activity == 'SEDMNT':
-                        # special exception here to make CSNOFG available
-                        ui['PARAMETERS']['CSNOFG'] = uci[(operation, 'PWATER', segment)]['PARAMETERS']['CSNOFG']
-                    if operation == 'PERLND' and activity == 'PSTEMP':
-                        # special exception here to make AIRTFG available
-                        ui['PARAMETERS']['AIRTFG'] = flags['ATEMP']
-                    if operation == 'PERLND' and activity == 'PWTGAS':
-                        # special exception here to make CSNOFG available
-                        ui['PARAMETERS']['CSNOFG'] = uci[(operation, 'PWATER', segment)]['PARAMETERS']['CSNOFG']
-                    if operation == 'RCHRES':
-                        if not 'PARAMETERS' in ui:
-                            ui['PARAMETERS'] = {}
-                        ui['PARAMETERS']['NEXITS'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['NEXITS']
-                        if activity == 'ADCALC':
-                            ui['PARAMETERS']['ADFG'] = flags['ADCALC']
-                            ui['PARAMETERS']['KS']   = uci[(operation, 'HYDR', segment)]['PARAMETERS']['KS']
-                            ui['PARAMETERS']['VOL']  = uci[(operation, 'HYDR', segment)]['STATES']['VOL']
-                            ui['PARAMETERS']['ROS']  = uci[(operation, 'HYDR', segment)]['PARAMETERS']['ROS'] 
-                        if activity == 'HTRCH':
-                            ui['PARAMETERS']['ADFG'] = flags['ADCALC']
-                            ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
-                            # ui['STATES']['VOL'] = uci[(operation, 'HYDR', segment)]['STATES']['VOL']
-                        if activity == 'CONS':
-                            ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
-                        if activity == 'SEDTRN':
-                            ui['PARAMETERS']['ADFG'] = flags['ADCALC']
-                            ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
-                            # ui['STATES']['VOL'] = uci[(operation, 'HYDR', segment)]['STATES']['VOL']
-                            ui['PARAMETERS']['HTFG'] = flags['HTRCH']
-                            ui['PARAMETERS']['AUX3FG'] = 0
-                            if flags['HYDR']:
-                                ui['PARAMETERS']['LEN'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LEN']
-                                ui['PARAMETERS']['DELTH'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['DELTH']
-                                ui['PARAMETERS']['DB50'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['DB50']
-                                ui['PARAMETERS']['AUX3FG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['AUX3FG']
-                        if activity == 'GQUAL':
-                            ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
-                            ui['PARAMETERS']['HTFG'] = flags['HTRCH']
-                            ui['PARAMETERS']['SEDFG'] = flags['SEDTRN']
-                            # ui['PARAMETERS']['REAMFG'] = uci[(operation, 'OXRX', segment)]['PARAMETERS']['REAMFG']
-                            ui['PARAMETERS']['HYDRFG'] = flags['HYDR']
-                            if flags['HYDR']:
-                                ui['PARAMETERS']['LKFG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LKFG']
-                                ui['PARAMETERS']['AUX1FG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['AUX1FG']
-                                ui['PARAMETERS']['AUX2FG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['AUX2FG']
-                                ui['PARAMETERS']['LEN'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LEN']
-                                ui['PARAMETERS']['DELTH'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['DELTH']
-                            if flags['OXRX']:
-                                ui['PARAMETERS']['LKFG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LKFG']
-                                ui['PARAMETERS']['CFOREA'] = uci[(operation, 'OXRX', segment)]['PARAMETERS']['CFOREA']
-                            if flags['SEDTRN']:
-                                ui['PARAMETERS']['SSED1'] = uci[(operation, 'SEDTRN', segment)]['STATES']['SSED1']
-                                ui['PARAMETERS']['SSED2'] = uci[(operation, 'SEDTRN', segment)]['STATES']['SSED2']
-                                ui['PARAMETERS']['SSED3'] = uci[(operation, 'SEDTRN', segment)]['STATES']['SSED3']
-                            if flags['HTRCH']:
-                                ui['PARAMETERS']['CFSAEX'] = uci[(operation, 'HTRCH', segment)]['PARAMETERS']['CFSAEX']
-                            elif flags['PLANK']:
-                                if 'CFSAEX' in uci[(operation, 'PLANK', segment)]['PARAMETERS']:
-                                    ui['PARAMETERS']['CFSAEX'] = uci[(operation, 'PLANK', segment)]['PARAMETERS']['CFSAEX']
+                        # OXRX module inputs:
+                        ui_oxrx = uci[(operation, 'OXRX', segment)] 
                         
-                        if activity == 'RQUAL':
-                            # RQUAL inputs:
-                            ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
-                            if flags['HYDR']:
-                                ui['PARAMETERS']['LKFG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LKFG']
+                        if flags['HYDR']:
+                            ui_oxrx['PARAMETERS']['LEN'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LEN']
+                            ui_oxrx['PARAMETERS']['DELTH'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['DELTH']
+                        
+                        if flags['HTRCH']:
+                            ui_oxrx['PARAMETERS']['ELEV'] = uci[(operation, 'HTRCH', segment)]['PARAMETERS']['ELEV']
 
-                            ui['FLAGS']['HTFG'] = flags['HTRCH']
-                            ui['FLAGS']['SEDFG'] = flags['SEDTRN']
-                            ui['FLAGS']['GQFG'] = flags['GQUAL']
-                            ui['FLAGS']['OXFG'] = flags['OXFG']
-                            ui['FLAGS']['NUTFG'] = flags['NUTRX']
-                            ui['FLAGS']['PLKFG'] = flags['PLANK']
-                            ui['FLAGS']['PHFG'] = flags['PHCARB']
-                            if flags['CONS']:
-                                if 'PARAMETERS' in uci[(operation, 'CONS', segment)]:
-                                    if 'NCONS' in uci[(operation, 'CONS', segment)]['PARAMETERS']:
-                                        ui['PARAMETERS']['NCONS'] = uci[(operation, 'CONS', segment)]['PARAMETERS']['NCONS']
+                        if flags['SEDTRN']:
+                            ui['PARAMETERS']['SSED1'] = uci[(operation, 'SEDTRN', segment)]['STATES']['SSED1']
+                            ui['PARAMETERS']['SSED2'] = uci[(operation, 'SEDTRN', segment)]['STATES']['SSED2']
+                            ui['PARAMETERS']['SSED3'] = uci[(operation, 'SEDTRN', segment)]['STATES']['SSED3']
 
-                            # OXRX module inputs:
-                            ui_oxrx = uci[(operation, 'OXRX', segment)] 
-                            
-                            if flags['HYDR']:
-                                ui_oxrx['PARAMETERS']['LEN'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LEN']
-                                ui_oxrx['PARAMETERS']['DELTH'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['DELTH']
-                            
-                            if flags['HTRCH']:
-                                ui_oxrx['PARAMETERS']['ELEV'] = uci[(operation, 'HTRCH', segment)]['PARAMETERS']['ELEV']
+                        # PLANK module inputs:
+                        if flags['HTRCH']:
+                            ui['PARAMETERS']['CFSAEX'] = uci[(operation, 'HTRCH', segment)]['PARAMETERS']['CFSAEX']
 
-                            if flags['SEDTRN']:
-                                ui['PARAMETERS']['SSED1'] = uci[(operation, 'SEDTRN', segment)]['STATES']['SSED1']
-                                ui['PARAMETERS']['SSED2'] = uci[(operation, 'SEDTRN', segment)]['STATES']['SSED2']
-                                ui['PARAMETERS']['SSED3'] = uci[(operation, 'SEDTRN', segment)]['STATES']['SSED3']
+                        # NUTRX, PLANK, PHCARB module inputs:
+                        ui_nutrx = uci[(operation, 'NUTRX', segment)] 
+                        ui_plank = uci[(operation, 'PLANK', segment)] 
+                        ui_phcarb = uci[(operation, 'PHCARB', segment)] 
 
-                            # PLANK module inputs:
-                            if flags['HTRCH']:
-                                ui['PARAMETERS']['CFSAEX'] = uci[(operation, 'HTRCH', segment)]['PARAMETERS']['CFSAEX']
+                ############ calls activity function like snow() ##############
+                if operation not in ['COPY','GENER']:
+                    if (activity == 'HYDR'):
+                        errors, errmessages = function(io_manager, siminfo, ui, ts, ftables)
+                    elif (activity != 'RQUAL'):
+                        errors, errmessages = function(io_manager, siminfo, ui, ts)
+                    else:                    
+                        errors, errmessages = function(io_manager, siminfo, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts, monthdata)
+                ###############################################################
 
-                            # NUTRX, PLANK, PHCARB module inputs:
-                            ui_nutrx = uci[(operation, 'NUTRX', segment)] 
-                            ui_plank = uci[(operation, 'PLANK', segment)] 
-                            ui_phcarb = uci[(operation, 'PHCARB', segment)] 
+                for errorcnt, errormsg in zip(errors, errmessages):
+                    if errorcnt > 0:
+                        msg(4, f'Error count {errorcnt}: {errormsg}')
+                if 'SAVE' in ui:
+                    save_timeseries(io_manager,ts,ui['SAVE'],siminfo,saveall,operation,segment,activity,jupyterlab)
+    
+                if (activity == 'RQUAL'):
+                    if 'SAVE' in ui_oxrx:   save_timeseries(io_manager,ts,ui_oxrx['SAVE'],siminfo,saveall,operation,segment,'OXRX',jupyterlab)
+                    if 'SAVE' in ui_nutrx and flags['NUTRX'] == 1:   save_timeseries(io_manager,ts,ui_nutrx['SAVE'],siminfo,saveall,operation,segment,'NUTRX',jupyterlab)
+                    if 'SAVE' in ui_plank and flags['PLANK'] == 1:  save_timeseries(io_manager,ts,ui_plank['SAVE'],siminfo,saveall,operation,segment,'PLANK',jupyterlab)
+                    if 'SAVE' in ui_phcarb and flags['PHCARB'] == 1:   save_timeseries(io_manager,ts,ui_phcarb['SAVE'],siminfo,saveall,operation,segment,'PHCARB',jupyterlab)
 
-                    ############ calls activity function like snow() ##############
-                    if operation not in ['COPY','GENER']:
-                        if (activity != 'RQUAL'):
-                            errors, errmessages = function(store, siminfo, ui, ts)
-                        else:                    
-                            errors, errmessages = function(store, siminfo, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts)
-                    ###############################################################
+    msglist = msg(1, 'Done', final=True)
 
-                    for errorcnt, errormsg in zip(errors, errmessages):
-                        if errorcnt > 0:
-                            msg(4, f'Error count {errorcnt}: {errormsg}')
-                    if 'SAVE' in ui:
-                        save_timeseries(store,ts,ui['SAVE'],siminfo,saveall,operation,segment,activity,jupyterlab)
-       
-                    if (activity == 'RQUAL'):
-                        if 'SAVE' in ui_oxrx:   save_timeseries(store,ts,ui_oxrx['SAVE'],siminfo,saveall,operation,segment,'OXRX',jupyterlab)
-                        if 'SAVE' in ui_nutrx and flags['NUTRX'] == 1:   save_timeseries(store,ts,ui_nutrx['SAVE'],siminfo,saveall,operation,segment,'NUTRX',jupyterlab)
-                        if 'SAVE' in ui_plank and flags['PLANK'] == 1:  save_timeseries(store,ts,ui_plank['SAVE'],siminfo,saveall,operation,segment,'PLANK',jupyterlab)
-                        if 'SAVE' in ui_phcarb and flags['PHCARB'] == 1:   save_timeseries(store,ts,ui_phcarb['SAVE'],siminfo,saveall,operation,segment,'PHCARB',jupyterlab)
+    df = DataFrame(msglist, columns=['logfile'])
+    io_manager.write_log(df)
 
-            # before going on to the next operation, save the ts dict for later use
-            tscat[segment] = ts
-
-        msglist = msg(1, 'Done', final=True)
-
-        df = DataFrame(msglist, columns=['logfile'])
-        df.to_hdf(store, 'RUN_INFO/LOGFILE', data_columns=True, format='t')
-
-        if jupyterlab:
-            df = versions(['jupyterlab', 'notebook'])
-            df.to_hdf(store, 'RUN_INFO/VERSIONS', data_columns=True, format='t')
-            print('\n\n', df)
+    if jupyterlab:
+        df = versions(['jupyterlab', 'notebook'])
+        io_manager.write_versioning(df)
+        print('\n\n', df)
     return
 
 def messages():
@@ -238,95 +247,7 @@ def messages():
         return mlist
     return msg
 
-
-def get_uci(store):
-    # read user control and user data from HDF5 file
-    uci = defaultdict(dict)
-    ddlinks = defaultdict(list)
-    ddmasslinks = defaultdict(list)
-    ddext_sources = defaultdict(list)
-    ddgener =defaultdict(dict)
-    siminfo = {}
-    opseq = 0
-
-    for path in store.keys():   # finds ALL data sets into HDF5 file
-        op, module, *other = path[1:].split(sep='/', maxsplit=3)
-        s = '_'.join(other)
-        if op == 'CONTROL':
-            if module =='GLOBAL':
-                temp = store[path].to_dict()['Info']
-                siminfo['start'] = Timestamp(temp['Start'])
-                siminfo['stop']  = Timestamp(temp['Stop'])
-                siminfo['units'] = 1
-                if 'Units' in temp:
-                    if int(temp['Units']):
-                        siminfo['units'] = int(temp['Units'])
-            elif module == 'LINKS':
-                for row in store[path].fillna('').itertuples():
-                    if row.TVOLNO != '':
-                        ddlinks[f'{row.TVOLNO}'].append(row)
-                    else:
-                        ddlinks[f'{row.TOPFST}'].append(row)
-
-            elif module == 'MASS_LINKS':
-                for row in store[path].replace('na','').itertuples():
-                    ddmasslinks[row.MLNO].append(row)
-            elif module == 'EXT_SOURCES':
-                for row in store[path].replace('na','').itertuples():
-                    ddext_sources[(row.TVOL, row.TVOLNO)].append(row)
-            elif module == 'OP_SEQUENCE':
-                opseq = store[path]
-        elif op in {'PERLND', 'IMPLND', 'RCHRES'}:
-            for id, vdict in store[path].to_dict('index').items():
-                uci[(op, module, id)][s] = vdict
-        elif op == 'GENER':
-            for row in store[path].itertuples():
-                if len(row.OPNID.split()) == 1:
-                    start = int(row.OPNID)
-                    stop = start
-                else:
-                    start, stop = row.OPNID.split()
-                for i in range(int(start), int(stop)+1): ddgener[module][f'G{i:03d}'] = row[2]
-    return opseq, ddlinks, ddmasslinks, ddext_sources, ddgener, uci, siminfo
-
-def save_timeseries(store, ts, savedict, siminfo, saveall, operation, segment, activity, jupyterlab=True):
-    # save computed timeseries (at computation DELT)
-    save = {k for k,v in savedict.items() if v or saveall}
-    df = DataFrame(index=siminfo['tindex'])
-    if (operation == 'IMPLND' and activity == 'IQUAL') or (operation == 'PERLND' and activity == 'PQUAL'):
-        for y in save:
-            for z in set(ts.keys()):
-                if '/' + y in z:
-                    zrep = z.replace('/','_')
-                    zrep2 = zrep.replace(' ', '')
-                    df[zrep2] = ts[z]
-                if '_' + y in z:
-                    df[z] = ts[z]
-        df = df.astype(float32).sort_index(axis='columns')
-    elif (operation == 'RCHRES' and (activity == 'CONS' or activity == 'GQUAL')):
-        for y in save:
-            for z in set(ts.keys()):
-                if '_' + y in z:
-                    df[z] = ts[z]
-        for y in (save & set(ts.keys())):
-            df[y] = ts[y]
-        df = df.astype(float32).sort_index(axis='columns')
-    else:
-        for y in (save & set(ts.keys())):
-            df[y] = ts[y]
-        df = df.astype(float32).sort_index(axis='columns')
-    path = f'RESULTS/{operation}_{segment}/{activity}'
-    if not df.empty:
-        if jupyterlab:
-            df.to_hdf(store, path, complib='blosc', complevel=9) # This is the official version
-        else:
-            df.to_hdf(store, path, format='t', data_columns=True)  # show the columns in HDFView
-    else:
-        print('Save DataFrame Empty for', path)
-    return
-
-
-def get_flows(store, ts, tscat, flags, uci, segment, ddlinks, ddmasslinks, steps, msg):
+def get_flows(io_manager:SupportsReadTS, ts, flags, uci, segment, ddlinks, ddmasslinks, steps, msg):
     # get inflows to this operation
     for x in ddlinks[segment]:
         mldata = ddmasslinks[x.MLNO]
@@ -409,30 +330,11 @@ def get_flows(store, ts, tscat, flags, uci, segment, ddlinks, ddmasslinks, steps
                 AFname = f'{x.SVOL}{x.SVOLNO}_AFACTR'
                 data = f'{smemn}{smemsb1}{smemsb2}'
 
-                foundts = False
-                if x.SVOLNO in tscat:
-                    # don't go back to h5 file, use in memory version
-                    if data in tscat[x.SVOLNO]:
-                        t = deepcopy(tscat[x.SVOLNO][data])
-                        foundts = True
-                    elif smemn in tscat[x.SVOLNO]:
-                        t = deepcopy(tscat[x.SVOLNO][smemn])
-                        foundts = True
-                if not foundts:
-                    # haven't found in our ts catalog in memory, look on h5 file
-                    if path in store:
-                        if data in store[path]:
-                            t = store[path][data].astype(float64).to_numpy()[0:steps]
-                            foundts = True
-                        else:
-                            data = f'{smemn}'
-                            if data in store[path]:
-                                t = store[path][data].astype(float64).to_numpy()[0:steps]
-                                foundts = True
-                            else:
-                                print('ERROR in FLOWS, cant resolve ', path + ' ' + smemn)
-
-                if foundts:
+                data_frame = io_manager.read_ts(Category.RESULTS,x.SVOL,x.SVOLNO, sgrpn)
+                try:
+                    if data in data_frame.columns: t = data_frame[data].astype(float64).to_numpy()[0:steps]
+                    else: t = data_frame[smemn].astype(float64).to_numpy()[0:steps]
+                    
                     if MFname in ts and AFname in ts:
                         t *= ts[MFname][:steps] * ts[AFname][0:steps]
                         msg(4, f'MFACTOR modified by timeseries {MFname}')
@@ -448,40 +350,20 @@ def get_flows(store, ts, tscat, flags, uci, segment, ddlinks, ddmasslinks, steps
 
                     # if poht to iheat, imprecision in hspf conversion factor requires a slight adjustment
                     if (smemn == 'POHT' or smemn == 'SOHT') and tmemn == 'IHEAT':
-                       t *= 0.998553
+                        t *= 0.998553
                     if (smemn == 'PODOXM' or smemn == 'SODOXM') and tmemn == 'OXIF1':
-                       t *= 1.000565
+                        t *= 1.000565
 
                     # ??? ISSUE: can fetched data be at different frequency - don't know how to transform.
                     if tmemn in ts:
                         ts[tmemn] += t
                     else:
                         ts[tmemn] = t
-                else:
-                    pass
-                    # print('ERROR in FLOWS for', path) # not necessarily an error to not find an operation
-                                                        # referenced in schematic, could be commented out
+
+                except KeyError:
+                    print('ERROR in FLOWS, cant resolve ', path + ' ' + smemn)
+                
     return
-
-def get_gener_timeseries(ts: Dict, gener_instances: Dict, ddlinks: List) -> Dict:
-    """
-    Uses links tables to load necessary TimeSeries from Gener class instances to TS dictionary
-    """
-    for link in ddlinks:
-        if link.SVOL == 'GENER':
-            if link.SVOLNO in gener_instances:
-                gener = gener_instances[link.SVOLNO]
-                series = gener.get_ts()
-                if link.MFACTOR != 1:
-                    series *= link.MFACTOR
-
-                key = f'{link.TMEMN}{link.TMEMSB1} {link.TMEMSB2}'.rstrip()
-                if key in ts:
-                    ts[key] = ts[key] + series
-                else:
-                    ts[key] = series
-    return ts
-
 
 '''
 

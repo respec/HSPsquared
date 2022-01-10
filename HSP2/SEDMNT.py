@@ -18,7 +18,7 @@ MFACTA = 1.0
 PDETS= DETS*MFACTA # convert dimensional variables to external units
 '''
 
-def sedmnt(store, siminfo, uci, ts):
+def sedmnt(io_manager, siminfo, uci, ts):
 	''' Produce and remove sediment from the land surface'''
 
 	simlen = siminfo['steps']
