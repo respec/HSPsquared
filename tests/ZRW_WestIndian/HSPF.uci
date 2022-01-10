@@ -16,7 +16,7 @@ FILES
 <FILE>  <UN#>***<----FILE NAME------------------------------------------------->
 MESSU      24   HSPF.ECH
            25   HSPF.OUT
-WDM1       26   MET4.WDM
+WDM1       26   Met4.WDM
 WDM2       27   HSPF.WDM
 WDM3       28   ZUMBROSCEN.WDM
 BINO       92   HSPF.HBN

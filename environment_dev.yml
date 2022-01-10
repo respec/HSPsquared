@@ -47,3 +47,4 @@ dependencies:
       # See https://github.com/jupyterlab/jupyterlab-hdf5/issues/42#issuecomment-801786628
     # - jupyterlab_hdf  # https://github.com/jupyterlab/jupyterlab-hdf5
     # - hdf5plugin  # https://github.com/jupyterlab/jupyterlab-hdf5#compression-filters
+    - mando
