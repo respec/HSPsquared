@@ -3,9 +3,18 @@ import re
 import shlex
 import sys
 
-from HSP2 import __version__
+# from HSP2 import __version__
 
 from setuptools import setup
+
+def get_version(fname):
+    with open(fname) as fp:
+        for line in fp.readlines():
+            if "__version__" in line:
+                __version__ = line.split(" ")[2].rstrip()
+    return __version__
+
+__version__ = get_version('HSP2/__init__.py')
 
 if sys.argv[-1] == "publish":
     os.system(shlex.quote("cleanpy ."))
@@ -98,7 +107,7 @@ setup(
     author="RESPEC, Inc",
     author_email="",
     url="http://www.respec.com/product/hydrologic-simulation-program-python-hsp%C2%B2/",
-    packages=["HSP2", "HSP2tools"],
+    packages=["HSP2", "HSP2tools", "HSP2IO"],
     include_package_data=True,
     package_data={"HSP2tools": ["data/*"]},
     zip_safe=False,
