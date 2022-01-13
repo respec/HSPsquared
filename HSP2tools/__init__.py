@@ -11,4 +11,4 @@ from HSP2tools.graph   import HDF5_isconnected, component_list, color_graph
 
 
 import HSP2
-# __version__ = HSP2.__version__
+__version__ = HSP2.__version__
