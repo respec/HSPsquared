@@ -8,7 +8,7 @@ from HSP2IO.io import IOManager
 
 
 @mando.command(doctype="numpy")
-def run(hdfname, saveall=False, jupyterlab=False):
+def run(hdfname, saveall=True, jupyterlab=False):
     """Run a HSPsquared model.
 
     Parameters
