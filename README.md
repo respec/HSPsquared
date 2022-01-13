@@ -122,17 +122,6 @@ To install from the current local directory using pip:
 pip install .
 ```
 
-To install from the current local directory using the "dev" dependencies:
-
-```shell
-pip install .[dev]
-```
-
-To install an editable version from the current local directory using pip:
-```shell
-pip install -e .
-```
-
 #### 5. Run HSP2 from the Command Line
 
 The pip installed 'hsp2' command has help created from the function docstrings in HSP2tools/HSP2_CLI.py.
