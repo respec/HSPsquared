@@ -3,6 +3,8 @@ import mando
 from HSP2.main import main as hsp2main
 from HSP2tools.readUCI import readUCI
 from HSP2tools.readWDM import readWDM
+from HSP2IO.hdf import HDF5
+from HSP2IO.io import IOManager
 
 
 @mando.command(doctype="numpy")
@@ -19,7 +21,9 @@ def run(hdfname, saveall=False, jupyterlab=False):
     jupyterlab: bool
         Jupyterlab
     """
-    hsp2main(hdfname, saveall=saveall, jupyterlab=jupyterlab)
+    hdf5_instance = HDF5(hdfname)
+    io_manager = IOManager(hdf5_instance)
+    hsp2main(io_manager, saveall=saveall, jupyterlab=jupyterlab)
 
 
 @mando.command(doctype="numpy")
