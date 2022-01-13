@@ -68,9 +68,9 @@ def process_env_yaml(fname, dev=False):
 
 install_requires = process_env_yaml("environment.yml")
 print(install_requires)
-# extras_require = {
-#     "dev": process_env_yaml("environment_dev.yml", dev=True) + ["cleanpy", "twine"]
-# }
+extras_require = {
+    "dev": process_env_yaml("environment_dev.yml", dev=True) + ["cleanpy", "twine"]
+}
 
 setup(
     name="HSPsquared",
@@ -103,7 +103,7 @@ setup(
     package_data={"HSP2tools": ["data/*"]},
     zip_safe=False,
     install_requires=install_requires,
-    # extras_require=extras_require,
+    extras_require=extras_require,
     entry_points={"console_scripts": ["hsp2=HSP2tools.HSP2_CLI:main"]},
     test_suite="tests",
     python_requires=">3.6",
