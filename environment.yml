@@ -12,11 +12,11 @@ dependencies:
   # Running HSP2
   - python =3.8*
   - scipy   # Scipy also installs numpy
-  - pandas =1.2.*  # Pandas installs most scientific Python modules, such as Numpy, etc.
-  - numba =0.53.1
-  - numpy =1.20.*  # for compatibility with numba version <0.53
-  - hdf5 =1.10.6    # latest compatible with both versions of PyTables & h5py below
-  - pytables =3.6.1
+  - pandas ==1.2.*  # Pandas installs most scientific Python modules, such as Numpy, etc.
+  - numba ==0.53.1
+  - numpy ==1.20.*  # for compatibility with numba version <0.53
+  # - hdf5 ==1.10.6    # latest compatible with both versions of PyTables & h5py below - doesn't work with setup.py
+  - pytables ==3.6.1
   - h5py >=3.1
   - hdf5plugin  # HDF5 compression filters for h5py & jupyterlab_hdf
   - mando  # for Python CLI app in HSP2tools/HSP2_CLI.py; hasn't been updated since 2017 and doesn't support Python 3.9: https://github.com/rubik/mando
@@ -24,7 +24,7 @@ dependencies:
   # Interactivity & Visualization via Jupyter Notebooks (optional, but required for tutorials)
   - jupyterlab >=3.0.14  # also installs classic Jupyter notbook
   - nodejs    # required for many JupyterLab extensions
-  - nb_conda  # Conda environment & package access extension from within Jupyter
+  # - nb_conda  # Conda environment & package access extension from within Jupyter
   # HoloViz, https://holoviz.org
   - hvplot  # hvPlot installs most HoloViz libs, including matplotlib
   - ipywidgets  # Required for HoloViz interactivity in Jupyter notebooks
