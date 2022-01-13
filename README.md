@@ -26,11 +26,11 @@ HSPsquared is copyrighted 2020 by RESPEC and released under the GNU Affero Gener
 **[tests](tests)** contains unit testing code for testing code conversion (`tests/convert/conversion_test.py`) and code performance.
 
 
-## Installation
+## Installation with Anaconda
 
 HSP2 is designed to work with Python >3.6 (since April 2020). We **recommend Python 3.8**. Legacy Python 2 code is available in our [`archivePy2`](https://github.com/respec/HSPsquared/tree/archivePy2) branch.
 
-Follow these steps to install.
+Follow these steps to install using Anaconda.
 
 #### 1. Install the Anaconda Python Distribution
 
@@ -79,6 +79,72 @@ conda-develop /path/to/module/
 ```
 
 You should now be able to run the Tutorials and create your own Jupyter Notebooks!
+
+
+
+## Installation with Pip
+
+Follow these steps to install using Pip. 
+
+#### 1. Install Python and Pip
+
+HSP2 is designed to work with Python >3.6 (since April 2020). We **recommend Python 3.8**. Legacy Python 2 code is available in our [`archivePy2`](https://github.com/respec/HSPsquared/tree/archivePy2) branch.
+
+Instructions for downloading Python to your computer based on your operating system can be found in [this helpful wiki](https://wiki.python.org/moin/BeginnersGuide/Download).
+
+`pip` is the [package installer for Python](https://packaging.python.org/en/latest/guides/tool-recommendations/). Check to see if `pip` is installed by running the following in the command line:
+
+```shell
+pip help
+```
+
+If you get an error, you will need to [install pip](https://pip.pypa.io/en/stable/installation/). Otherwise, both Python and pip are on your machine. 
+
+#### 2. Clone or Download this HSPsquared repository
+
+From this Github site, click on the green "Code" dropdown button near the upper right. Select to either Open in GitHub Desktop (i.e. git clone) or "Download ZIP". We recommend using GitHub Desktop, to most easily receive updates.
+
+Place your copy of the HSPsquared folder in any convenient location on your computer.
+
+
+#### 3. Create a new Environment for HSP2 Modeling (optional)
+
+Although HSP2 can be run from the default environment in Python,
+it can be helpful to create a leaner custom environment. The [`venv`]([venv — Creation of virtual environments — Python 3.9.9 documentation](https://docs.python.org/3.9/library/venv.html)) package can be used to manage Python environments. The documentation linked above will show you how to create and activate a new environment for running HSP2. 
+
+#### 4. Pip install HSP2 
+
+Navigate to your copy of the HSPsquared folder on your computer in the command line.
+
+To install from the current local directory using pip:
+
+```shell
+pip install .
+```
+
+#### 5. Run HSP2 from the Command Line
+
+The pip installed 'hsp2' command has help created from the function docstrings in HSP2tools/HSP2_CLI.py.
+
+Use the help to learn how to use the model and each sub-command:
+
+```shell
+hsp2 --help
+```
+```shell
+hsp2 import_uci --help
+```
+```shell
+hsp2 run --help
+```
+
+Intended workflow from the command line:
+```
+hsp2 import_uci import_test.uci new_model.h5
+hsp2 run new_model.h5
+```
+
+
 
 
 ## Getting Started
