@@ -4,7 +4,7 @@ import shlex
 import sys
 from setuptools import setup
 
-exec(open('HSP2/_version.py').read())
+exec(open('./_version.py').read())
 
 if sys.argv[-1] == "publish":
     os.system(shlex.quote("cleanpy ."))
