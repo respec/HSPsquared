@@ -36,7 +36,7 @@ def process_env_yaml(fname, dev=False):
                 # Shouldn't have interactivity, development tools, conda, pip,
                 # or python as a dependency.
                 if dev is True:
-                    if words[0] in ["conda", "conda-build", "pip", "python", "pip:"]:
+                    if words[0] in ["conda", "conda-build", "hdf5", "nb_conda" "pip", "python", "pip:"]:
                         continue
                 else:
                     if words[0] in [
