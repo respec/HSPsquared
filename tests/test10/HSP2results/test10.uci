@@ -11,7 +11,7 @@ END GLOBAL
 
 FILES      
 <FILE>  <UN#>***<----FILE NAME------------------------------------------------->
-WDM        21   test.wdm
+WDM        21   test10.wdm
 MESSU      22   test10.ech
            01   test10.out
            66   test10.d66
