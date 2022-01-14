@@ -22,7 +22,7 @@ ERRMSGS =('GQUAL: one or more gquals are sediment-associated, but section sedtrn
 		  'GQUAL: the value of sdfg is 1, but timeseries SSED4 is not available as input',                #ERRMSG10
 		  'GQUAL: the value of phytfg is 1, but timeseries PHYTO is not available as input')              #ERRMSG11
 
-def gqual(store, siminfo, uci, ts):
+def gqual(io_manager, siminfo, uci, ts):
 	''' Simulate the behavior of a generalized quality constituent'''
 
 	errors = zeros(len(ERRMSGS)).astype(int64)

@@ -21,7 +21,7 @@ UNDEFINED: sliqsp
 
 ERRMSGS =('IQUAL: A constituent must be associated with overland flow in order to receive atmospheric deposition inputs','')     #ERRMSG0
 
-def iqual(store, siminfo, uci, ts):
+def iqual(io_manager, siminfo, uci, ts):
 	''' Simulate washoff of quality constituents (other than solids, Heat, dox, and co2)
 	using simple relationships with solids And/or water yield'''
 

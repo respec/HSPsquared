@@ -16,7 +16,7 @@ ERRMSGS =  ('IWATER: IROUTE Newton Method did not converge',    #ERRMSG0
   )
 
 
-def iwater(store, siminfo, uci, ts):
+def iwater(io_manager, siminfo, uci, ts):
     ''' Driver for IMPLND IWATER code. CALL: iwater(store, general, ui, ts)
        store is the Pandas/PyTable open store
        general is a dictionary with simulation info (OP_SEQUENCE for example)

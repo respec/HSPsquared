@@ -20,7 +20,7 @@ ERRMSG = ['SLTMP temperature less than -100C',   # MSG0
 MINTMP = -100
 MAXTMP = 100
 
-def pstemp(store, siminfo, uci, ts):
+def pstemp(io_manager, siminfo, uci, ts):
 	'''Estimate soil temperatures in a pervious land segment'''
 	simlen = siminfo['steps']
 	

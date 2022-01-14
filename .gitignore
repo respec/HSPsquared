@@ -53,6 +53,9 @@ stats.dat
 *.tmp*
 tests/_LargeFileStash
 
+# Temporary files
+_TutorialData/
+
 # Specific files
 run.py
 tests/GLWACSO/HSP2results/hspp007.hdf
