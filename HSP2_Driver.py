@@ -43,7 +43,13 @@ if file_ext.upper() == "WDM":
 
 if file_ext.upper() == ".H5":
     from HSP2.main import main
-    main(filename, saveall=True, jupyterlab=False)
+    from HSP2IO.hdf import HDF5
+    from HSP2IO.io import IOManager
+
+    hdf5_instance = HDF5(filename)
+    io_manager = IOManager(hdf5_instance)
+
+    main(io_manager, saveall=True, jupyterlab=False)
     # main('test.h5', saveall=True)
 
 
