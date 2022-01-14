@@ -17,7 +17,7 @@ ERRMSGS =('SEDTRN: Warning -- bed storage of sediment size fraction sand is empt
           'SEDTRN: Simulation of sediment requires all 3 "auxiliary flags" (AUX1FG, etc) in section HYDR must be turned on', #ERRMSG5
           'SEDTRN: When specifying the initial composition of the bed, the fraction of sand, silt, and clay must sum to a value close to 1.0.')  #ERRMSG6
 
-def sedtrn(store, siminfo, uci, ts):
+def sedtrn(io_manager, siminfo, uci, ts):
 	''' Simulate behavior of inorganic sediment'''
 
 	# simlen = siminfo['steps']

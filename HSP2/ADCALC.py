@@ -18,7 +18,7 @@ ADFLAG == 2  loop simplification as elif
 '''
 ERRMSG = []
 
-def adcalc(store, siminfo, uci, ts):
+def adcalc(io_manager, siminfo, uci, ts):
 	'''Prepare to simulate advection of fully entrained constituents'''
 
 	errorsV = zeros(len(ERRMSG), dtype=int)

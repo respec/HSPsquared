@@ -24,7 +24,7 @@ CFACTA = 2.7548E-04
 PFACTA = 1.0
 
 
-def pqual(store, siminfo, uci, ts):
+def pqual(io_manager, siminfo, uci, ts):
 	''' Simulate quality constituents (other than sediment, heat, dox, and co2)
 	using simple relationships with sediment and water yield'''
 
