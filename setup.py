@@ -51,6 +51,8 @@ def process_env_yaml(fname, dev=False):
                         "jupyter-lsp-python",
                         "jupyterlab-lsp",
                         "pip:",
+                        "hdf5",
+                        "nb_conda",
                     ]:
                         continue
 
