@@ -159,10 +159,10 @@ def readUCI(uciname, hdfname):
          'SVOL', 'SVOLNO', 'TGRPN', 'TMEMN', 'TMEMSB', 'TRAN', 'TVOL',
          'TVOLNO', 'COMMENTS')
         if not ( (net is None) and (sc is None) ):
-         linkage = concat((net, sc), ignore_index=True, sort=True)
-          for cname in colnames:
-               if cname not in linkage.columns:
-                   linkage[cname] = ''
+            linkage = concat((net, sc), ignore_index=True, sort=True)
+            for cname in colnames:
+                if cname not in linkage.columns:
+                    linkage[cname] = ''
             linkage = linkage.sort_values(by=['TVOLNO']).replace('na','')
             linkage.to_hdf(store, '/CONTROL/LINKS', data_columns=True)
 
