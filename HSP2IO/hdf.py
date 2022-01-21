@@ -82,12 +82,15 @@ class HDF5():
 			operation:Union[str,None]=None, 
 			segment:Union[str,None]=None, 
 			activity:Union[str,None]=None) -> pd.DataFrame:
-		path = ''
-		if category == category.INPUTS:
-			path = f'TIMESERIES/{segment}'
-		elif category == category.RESULTS:
-			path = f'RESULTS/{operation}_{segment}/{activity}'
-		return read_hdf(self._store, path)
+		try:
+			path = ''
+			if category == category.INPUTS:
+				path = f'TIMESERIES/{segment}'
+			elif category == category.RESULTS:
+				path = f'RESULTS/{operation}_{segment}/{activity}'
+			return read_hdf(self._store, path)
+		except KeyError:
+			return pd.DataFrame()
 
 	def write_ts(self, 
 			data_frame:pd.DataFrame, 
