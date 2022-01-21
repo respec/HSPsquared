@@ -16,6 +16,12 @@ class HDF5():
 	def __del__(self):
 		self._store.close()
 
+	def __enter__(self):
+		return self
+
+	def __exit__(self, exc_type, exc_value, trace):
+		self.__del__()
+
 	def read_uci(self) -> UCI:
 		"""Read UCI related tables
 		
