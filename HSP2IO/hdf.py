@@ -26,7 +26,7 @@ class HDF5():
 		"""
 		uci = UCI()
 
-		for path in self._store.keys():   # finds ALL data sets into HDF6 file
+		for path in self._store.keys():   # finds ALL data sets into HDF5 file
 			op, module, *other = path[1:].split(sep='/', maxsplit=3)
 			s = '_'.join(other)
 			if op == 'CONTROL':
