@@ -52,7 +52,7 @@ def import_uci(ucifile, h5file):
     files_end = uci.index("END FILES")
 
     for nline in uci[files_start: files_end+1]:
-        if nline[:10].strip() == "WDM":
+        if (nline[:10].strip())[:3] == "WDM":
             readWDM(nline[16:].strip(), h5file)
 
 
