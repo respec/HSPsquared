@@ -93,6 +93,9 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                 if (activity in flags) and (not flags[activity]):
                     continue
 
+                if (activity == 'RQUAL') and (not flags['OXFG']) and (not flags['NUTFG']) and (not flags['PLKFG']) and (not flags['PHFG']):
+                    continue
+
                 msg(3, f'{activity}')
 
                 ui = uci[(operation, activity, segment)]   # ui is a dictionary
@@ -322,6 +325,8 @@ def get_flows(io_manager:SupportsReadTS, ts, flags, uci, segment, ddlinks, ddmas
                 
                 if tmemn == 'ISED' or tmemn == 'ISQAL':
                     tmemn = tmemn + tmemsb1    # need to add sand, silt, clay subscript
+                if (sgrpn == 'HYDR' and smemn == 'OVOL') or (sgrpn == 'HTRCH' and smemn == 'OHEAT'):
+                    smemsb2 = ''
 
                 smemn, tmemn = expand_timeseries_names(sgrpn, smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmemsb2)
 
