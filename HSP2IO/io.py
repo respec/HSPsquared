@@ -1,7 +1,7 @@
 import pandas as pd
 from pandas.core.frame import DataFrame
 from HSP2IO.protocols import Category, SupportsReadUCI, SupportsReadTS, SupportsWriteTS, SupportsWriteLogging
-from typing import Union
+from typing import Union, List
 
 from HSP2.uci import UCI
 
@@ -56,15 +56,21 @@ class IOManager:
 		return self._uci.read_uci()
 
 	def write_ts(self,
-			data_frame:pd.DataFrame, 
+			data_frame:pd.DataFrame,
+			save_columns: List[str], 
 			category:Category,
 			operation:Union[str,None]=None, 
 			segment:Union[str,None]=None, 
 			activity:Union[str,None]=None,
 			*args, **kwargs) -> None:
 		key = (category, operation, segment, activity)
-		self._output.write_ts(data_frame, category, operation, segment, activity)
 		self._in_memory[key] = data_frame.copy(deep=True)
+		
+		drop_columns = [c for c in data_frame.columns if c not in save_columns ] 
+		if drop_columns:
+			data_frame = data_frame.drop(columns=drop_columns)
+
+		self._output.write_ts(data_frame, category, operation, segment, activity)
 
 	def read_ts(self,
 			category:Category,
