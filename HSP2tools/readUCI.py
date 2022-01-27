@@ -158,12 +158,13 @@ def readUCI(uciname, hdfname):
         colnames = ('AFACTR', 'MFACTOR', 'MLNO', 'SGRPN', 'SMEMN', 'SMEMSB',
          'SVOL', 'SVOLNO', 'TGRPN', 'TMEMN', 'TMEMSB', 'TRAN', 'TVOL',
          'TVOLNO', 'COMMENTS')
-        linkage = concat((net, sc), ignore_index=True, sort=True)
-        for cname in colnames:
-            if cname not in linkage.columns:
-                linkage[cname] = ''
-        linkage = linkage.sort_values(by=['TVOLNO']).replace('na','')
-        linkage.to_hdf(store, '/CONTROL/LINKS', data_columns=True)
+        if not ( (net is None) and (sc is None) ):
+            linkage = concat((net, sc), ignore_index=True, sort=True)
+            for cname in colnames:
+                if cname not in linkage.columns:
+                    linkage[cname] = ''
+            linkage = linkage.sort_values(by=['TVOLNO']).replace('na','')
+            linkage.to_hdf(store, '/CONTROL/LINKS', data_columns=True)
 
         Lapse.to_hdf(store, 'TIMESERIES/LAPSE_Table')
         Seasons.to_hdf(store, 'TIMESERIES/SEASONS_Table')
