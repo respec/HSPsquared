@@ -307,8 +307,11 @@ def save_timeseries(timeseries:SupportsWriteTS, ts, savedict, siminfo, saveall, 
         for y in (savedict.keys() & set(ts.keys())):
             df[y] = ts[y]
     df = df.astype(np.float32).sort_index(axis='columns')
-    
-    save_columns = [key for key,value in savedict.items() if value or saveall]
+
+    if saveall:
+        save_columns = df.columns
+    else:
+        save_columns = [key for key,value in savedict.items() if value or saveall]
 
     if not df.empty:
         timeseries.write_ts(
