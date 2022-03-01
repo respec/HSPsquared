@@ -93,7 +93,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                 if (activity in flags) and (not flags[activity]):
                     continue
 
-                if (activity == 'RQUAL') and (not flags['OXFG']) and (not flags['NUTFG']) and (not flags['PLKFG']) and (not flags['PHFG']):
+                if (activity == 'RQUAL') and (not flags['OXRX']) and (not flags['NUTRX']) and (not flags['PLANK']) and (not flags['PHCARB']):
                     continue
 
                 msg(3, f'{activity}')
