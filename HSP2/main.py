@@ -96,6 +96,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                 msg(3, f'{activity}')
 
                 ui = uci[(operation, activity, segment)]   # ui is a dictionary
+
                 if operation == 'PERLND' and activity == 'SEDMNT':
                     # special exception here to make CSNOFG available
                     ui['PARAMETERS']['CSNOFG'] = uci[(operation, 'PWATER', segment)]['PARAMETERS']['CSNOFG']
@@ -162,10 +163,16 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                         if flags['HYDR']:
                             ui['PARAMETERS']['LKFG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LKFG']
 
+                        print(flags)
+                        if 'FLAGS' in ui:
+                            print(*ui['FLAGS'], sep = "\n")
+                        else:
+                            print("Did not find FLAGS in UCI block... initializing")
+                            ui['FLAGS'] = {}
                         ui['FLAGS']['HTFG'] = flags['HTRCH']
                         ui['FLAGS']['SEDFG'] = flags['SEDTRN']
                         ui['FLAGS']['GQFG'] = flags['GQUAL']
-                        ui['FLAGS']['OXFG'] = flags['OXFG']
+                        ui['FLAGS']['OXFG'] = flags['OXRX']
                         ui['FLAGS']['NUTFG'] = flags['NUTRX']
                         ui['FLAGS']['PLKFG'] = flags['PLANK']
                         ui['FLAGS']['PHFG'] = flags['PHCARB']
@@ -204,8 +211,13 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                         errors, errmessages = function(io_manager, siminfo, ui, ts, ftables)
                     elif (activity != 'RQUAL'):
                         errors, errmessages = function(io_manager, siminfo, ui, ts)
-                    else:                    
-                        errors, errmessages = function(io_manager, siminfo, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts, monthdata)
+                    else:
+                        rq_fg = ui['FLAGS'].values()
+                        rq_ifg = sum([int(i) for i in rq_fg])
+                        print("RQUAL Flags requested: ", rq_fg)
+                        print("RQUAL Flags summed: ", rq_ifg)
+                        if (rq_ifg > 1):
+                            errors, errmessages = function(io_manager, siminfo, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts, monthdata)
                 ###############################################################
 
                 for errorcnt, errormsg in zip(errors, errmessages):
