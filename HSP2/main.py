@@ -208,6 +208,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                     elif (activity != 'RQUAL'):
                         errors, errmessages = function(io_manager, siminfo, ui, ts)
                     else:
+                        # is RQUAL enabled? If so, there will be more than 1 FLAGS
                         rq_fg = ui['FLAGS'].values()
                         rq_ifg = sum([int(i) for i in rq_fg])
                         if (rq_ifg > 1):
