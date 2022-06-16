@@ -162,12 +162,8 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                         ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
                         if flags['HYDR']:
                             ui['PARAMETERS']['LKFG'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LKFG']
-
-                        print(flags)
-                        if 'FLAGS' in ui:
-                            print(*ui['FLAGS'], sep = "\n")
-                        else:
-                            print("Did not find FLAGS in UCI block... initializing")
+                        # initialize FLAGS holder - happens when no RQUAL
+                        if 'FLAGS' not in ui:
                             ui['FLAGS'] = {}
                         ui['FLAGS']['HTFG'] = flags['HTRCH']
                         ui['FLAGS']['SEDFG'] = flags['SEDTRN']
