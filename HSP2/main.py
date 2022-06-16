@@ -172,7 +172,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                         ui['FLAGS']['HTFG'] = flags['HTRCH']
                         ui['FLAGS']['SEDFG'] = flags['SEDTRN']
                         ui['FLAGS']['GQFG'] = flags['GQUAL']
-                        ui['FLAGS']['OXFG'] = flags['OXRX']
+                        ui['FLAGS']['OXFG'] = flags['OXFG']
                         ui['FLAGS']['NUTFG'] = flags['NUTRX']
                         ui['FLAGS']['PLKFG'] = flags['PLANK']
                         ui['FLAGS']['PHFG'] = flags['PHCARB']
@@ -214,8 +214,6 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                     else:
                         rq_fg = ui['FLAGS'].values()
                         rq_ifg = sum([int(i) for i in rq_fg])
-                        print("RQUAL Flags requested: ", rq_fg)
-                        print("RQUAL Flags summed: ", rq_ifg)
                         if (rq_ifg > 1):
                             errors, errmessages = function(io_manager, siminfo, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts, monthdata)
                 ###############################################################
