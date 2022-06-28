@@ -16,6 +16,12 @@ class HDF5():
 	def __del__(self):
 		self._store.close()
 
+	def __enter__(self):
+		return self
+
+	def __exit__(self, exc_type, exc_value, trace):
+		self.__del__()
+
 	def read_uci(self) -> UCI:
 		"""Read UCI related tables
 		
@@ -26,7 +32,7 @@ class HDF5():
 		"""
 		uci = UCI()
 
-		for path in self._store.keys():   # finds ALL data sets into HDF6 file
+		for path in self._store.keys():   # finds ALL data sets into HDF5 file
 			op, module, *other = path[1:].split(sep='/', maxsplit=3)
 			s = '_'.join(other)
 			if op == 'CONTROL':
@@ -76,12 +82,15 @@ class HDF5():
 			operation:Union[str,None]=None, 
 			segment:Union[str,None]=None, 
 			activity:Union[str,None]=None) -> pd.DataFrame:
-		path = ''
-		if category == category.INPUTS:
-			path = f'TIMESERIES/{segment}'
-		elif category == category.RESULTS:
-			path = f'RESULTS/{operation}_{segment}/{activity}'
-		return read_hdf(self._store, path)
+		try:
+			path = ''
+			if category == category.INPUTS:
+				path = f'TIMESERIES/{segment}'
+			elif category == category.RESULTS:
+				path = f'RESULTS/{operation}_{segment}/{activity}'
+			return read_hdf(self._store, path)
+		except KeyError:
+			return pd.DataFrame()
 
 	def write_ts(self, 
 			data_frame:pd.DataFrame, 
