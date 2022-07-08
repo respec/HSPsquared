@@ -341,6 +341,18 @@ def readUCI(uciname, hdfname):
                             df[par_name] = def_val
                 
                 df.to_hdf(store, path, data_columns=True)
+            else:
+                if path[-6:] == "STATES":
+                    # need to add states if it doesn't already exist to save initial state variables
+                    # such as the case where entire IWAT-STATE1 table is being defaulted
+                    for column in df.columns:  # clear out existing data frame columns
+                        df = df.drop([column], axis=1)
+                    dct_params = hsp_paths[path]
+                    for par_name in dct_params:
+                        def_val = dct_params[par_name]
+                        if def_val != 'None':
+                            df[par_name] = def_val
+                    df.to_hdf(store, path, data_columns=True)
 
     return
 
