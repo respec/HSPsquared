@@ -331,6 +331,7 @@ def readUCI(uciname, hdfname):
                 df = read_hdf(store, path)
                 dct_params = hsp_paths[path]
 
+                new_columns = {}
                 for par_name in dct_params:
                     if par_name == 'CFOREA':
                         ichk = 0
@@ -338,9 +339,13 @@ def readUCI(uciname, hdfname):
                     if par_name not in df.columns:   # missing value in HDF5 path
                         def_val = dct_params[par_name]
                         if def_val != 'None':
-                            df[par_name] = def_val
-                
-                df.to_hdf(store, path, data_columns=True)
+                            # df[par_name] = def_val
+                            new_columns[par_name] = def_val
+
+                new_columns = DataFrame(new_columns, index=df.index)
+                df1 = concat([df, new_columns], axis=1)
+
+                df1.to_hdf(store, path, data_columns=True)
             else:
                 if path[-6:] == "STATES":
                     # need to add states if it doesn't already exist to save initial state variables
