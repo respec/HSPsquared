@@ -116,7 +116,10 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                         ui['PARAMETERS']['ADFG'] = flags['ADCALC']
                         ui['PARAMETERS']['KS']   = uci[(operation, 'HYDR', segment)]['PARAMETERS']['KS']
                         ui['PARAMETERS']['VOL']  = uci[(operation, 'HYDR', segment)]['STATES']['VOL']
-                        ui['PARAMETERS']['ROS']  = uci[(operation, 'HYDR', segment)]['PARAMETERS']['ROS'] 
+                        ui['PARAMETERS']['ROS']  = uci[(operation, 'HYDR', segment)]['PARAMETERS']['ROS']
+                        nexits = uci[(operation, 'HYDR', segment)]['PARAMETERS']['NEXITS']
+                        for index in range(nexits):
+                            ui['PARAMETERS']['OS' + str(index + 1)] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['OS'+ str(index + 1)]
                     if activity == 'HTRCH':
                         ui['PARAMETERS']['ADFG'] = flags['ADCALC']
                         ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']

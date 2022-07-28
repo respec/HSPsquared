@@ -127,6 +127,8 @@ def hydr(io_manager, siminfo, uci, ts, ftables):
 
     # save initial outflow(s) from reach:
     uci['PARAMETERS']['ROS'] = ui['ROS']
+    for i in range(nexits):
+        uci['PARAMETERS']['OS'+str(i+1)] = ui['OS'+str(i+1)]
     
     return errors, ERRMSGS
 
@@ -255,6 +257,8 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
 
     # store initial outflow from reach:
     ui['ROS'] = ro
+    for index in range(nexits):
+        ui['OS' + str(index + 1)] = o[index]
 
     # HYDR (except where noted)
     for step in range(steps):

@@ -110,6 +110,9 @@ def _adcalc_(ui, ts):
 			ts['EOVOL' + str(index + 1)] = EOVOL[:, index]
 
 	ROS = ui['ROS']
+	OS  = zeros(nexits)
+	for index in range(nexits):
+		OS[index] = ui['OS' + str(index + 1)]
 
 	# external time series
 	O = zeros((simlen, nexits))
@@ -123,7 +126,7 @@ def _adcalc_(ui, ts):
 		vols = VOL[loop-1] * VFACT  if loop > 0 else vol
 
 		o  = O[loop]
-		os = O[loop-1] if loop > 0 else array([ROS])
+		os = O[loop-1] if loop > 0 else OS
 		ro = 0.0
 		ros= 0.0
 		for index in range(nexits):
