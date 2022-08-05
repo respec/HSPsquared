@@ -35,7 +35,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
         raise FileNotFoundError(f'{hdfname} HDF5 File Not Found')
 
     msg = messages()
-    msg(1, f'Processing started for file {hdfname}; saveall={saveall}')
+    msg(1, f'(specl) Processing started for file {hdfname}; saveall={saveall}')
 
     # read user control, parameters, states, and flags uci and map to local variables
     uci_obj = io_manager.read_uci()
