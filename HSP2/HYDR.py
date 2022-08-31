@@ -18,6 +18,7 @@ from math import sqrt, log10
 from numba import njit
 from numba.typed import List
 from HSP2.utilities import initm, make_numba_dict
+from HSP2.SPECL import specl, _specl_
 
 
 ERRMSGS =('HYDR: SOLVE equations are indeterminate',             #ERRMSG0
@@ -258,11 +259,17 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
 
     # HYDR (except where noted)
     for step in range(steps):
+        print('\n', 'step: ', step, ' of: ', steps, ' steps')
         convf  = CONVF[step]
         outdgt[:] = OUTDGT[step, :]
         colind[:] = COLIND[step, :]
         roseff = ro
         oseff[:] = o[:]
+
+        print('Trying specl')
+        test_param = array([10, 15, 20, step])
+        specl_test = specl(test_param)
+        print(specl_test)
 
         # vols, sas variables and their initializations  not needed.
         if irexit >= 0:             # irrigation exit is set, zero based number
