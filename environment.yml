@@ -22,7 +22,7 @@ dependencies:
   - mando  # for Python CLI app in HSP2tools/HSP2_CLI.py; hasn't been updated since 2017 and doesn't support Python 3.9: https://github.com/rubik/mando
 
   # Interactivity & Visualization via Jupyter Notebooks (optional, but required for tutorials)
-  - jupyterlab >=3.0.14  # also installs classic Jupyter notbook
+  - jupyterlab =3.0.*  # also installs classic Jupyter notbook
   - ipympl  # jupyter-matplotlib, https://github.com/matplotlib/ipympl
   - nodejs    # required for many JupyterLab extensions
   - nb_conda  # Conda environment & package access extension from within Jupyter
@@ -40,6 +40,6 @@ dependencies:
   # https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#using-pip-in-an-environment
   - pip:
     # Optional, but recommended for tutorials
-    - lckr-jupyterlab-variableinspector  # https://github.com/lckr/jupyterlab-variableInspector
-    - jupyterlab_hdf  # Explore HDF5 files in JupyterLab. Requires an additional step to install.
+    # - lckr-jupyterlab-variableinspector  # https://github.com/lckr/jupyterlab-variableInspector
+    # - jupyterlab_hdf  # Explore HDF5 files in JupyterLab. Requires an additional step to install.
         # Installation instructions: https://github.com/jupyterlab/jupyterlab-hdf5#installation
