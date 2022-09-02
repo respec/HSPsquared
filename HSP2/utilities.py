@@ -270,6 +270,8 @@ def get_timeseries(timeseries_inputs:SupportsReadTS, ext_sourcesdd, siminfo):
                 tname = 'ISED1'
             else:
                 tname = 'ISED' + row.TMEMSB[0]
+        elif row.TMEMN == 'NUIF1':
+            tname = row.TMEMN + '_' + row.TMEMSB[0]
         elif row.TMEMN in {'ICON', 'IDQAL', 'ISQAL'}:
             tmemsb1 = '1'
             tmemsb2 = '1'
