@@ -47,6 +47,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
     uci = uci_obj.uci
     siminfo = uci_obj.siminfo 
     ftables = uci_obj.ftables
+    specactions = uci_obj.specactions
     monthdata = uci_obj.monthdata
 
     start, stop = siminfo['start'], siminfo['stop']
