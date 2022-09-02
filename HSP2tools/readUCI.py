@@ -481,6 +481,7 @@ def specactions(info, llines):
             sa_actions.append(d.copy())
     if sa_actions:
         dfftable = DataFrame(sa_actions, columns=head_actions).replace('na','')
+        print("Found special actions, storing")
         dfftable.to_hdf(store, f'/SPEC-ACTIONS/ACTIONS', data_columns=True)
 
 def ext(info, lines):
