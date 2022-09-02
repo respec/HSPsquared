@@ -154,6 +154,7 @@ def readUCI(uciname, hdfname):
             if line[0:6] == 'IMPLND':     operation(info, getlines(f),'IMPLND')
             if line[0:6] == 'RCHRES':     operation(info, getlines(f),'RCHRES')
             if line[0:10] == 'MONTH-DATA': monthdata(info, getlines(f))
+            if line[0:12] == 'SPEC-ACTIONS':      specactions(info, getlines(f))
 
         colnames = ('AFACTR', 'MFACTOR', 'MLNO', 'SGRPN', 'SMEMN', 'SMEMSB',
          'SVOL', 'SVOLNO', 'TGRPN', 'TMEMN', 'TMEMSB', 'TRAN', 'TVOL',
@@ -446,6 +447,45 @@ def ftables(info, llines):
         else:
             lst.append(parseD(line, parse['FTABLES','FTABLE']))
 
+
+def specactions(info, llines):
+    store, parse, path, *_ = info
+    lines = iter(llines)
+    sa_actions = [] # referred to as "classic" in old HSPF code comments 
+    head_actions = ['OPERATION','RANGE','DC','DS','YR','MO','DA','HR','MN','D','T','VARI', 'S1','S2','AC','VALUE','TC','TS','NUM']
+    sa_mult = []
+    head_mult = []
+    sa_uvquan = []
+    head_uvquan = []
+    sa_conditional = []
+    head_conditional = []
+    sa_distrb = []
+    head_distrb = []
+    sa_uvname = []
+    head_uvname = []
+    in_if = 0 # are we in an if block?
+    for line in lines:
+        if line[2:4] == 'MULT':
+            sa_mult.append(line)
+        if line[2:6] == 'UVQUAN':
+            sa_mult.append(line)
+        if line[2:11] == 'CONDITIONAL':
+            sa_mult.append(line)
+        if line[2:6] == 'DISTRB':
+            sa_mult.append(line)
+        if line[2:6] == 'UVNAME':
+            sa_mult.append(line)
+        elif line[2:5] == 'END':
+            dfftable = DataFrame(sa_actions, columns=head_actions)
+            dfftable.to_hdf(store, f'/SPEC-ACTIONS/ACTIONS', data_columns=True)
+        else:
+            # ACTIONS block 
+            d = parseD(line, parse['SPEC-ACTIONS','na'])
+            unit = int(line[8:])
+            name = f'FT{unit:03d}'
+            rows,cols = next(lines).split()
+            lst = []
+            lst.append(parseD(line, parse['FTABLES','FTABLE']))
 
 def ext(info, lines):
     store, parse, path, *_ = info
