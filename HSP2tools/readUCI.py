@@ -475,17 +475,13 @@ def specactions(info, llines):
             sa_mult.append(line)
         if line[2:6] == 'UVNAME':
             sa_mult.append(line)
-        elif line[2:5] == 'END':
-            dfftable = DataFrame(sa_actions, columns=head_actions)
-            dfftable.to_hdf(store, f'/SPEC-ACTIONS/ACTIONS', data_columns=True)
         else:
             # ACTIONS block 
             d = parseD(line, parse['SPEC-ACTIONS','na'])
-            unit = int(line[8:])
-            name = f'FT{unit:03d}'
-            rows,cols = next(lines).split()
-            lst = []
-            lst.append(parseD(line, parse['FTABLES','FTABLE']))
+            sa_actions.append(d.copy())
+    if sa_actions:
+        dfftable = DataFrame(sa_actions, columns=head_actions).replace('na','')
+        dfftable.to_hdf(store, f'/SPEC-ACTIONS/ACTIONS', data_columns=True)
 
 def ext(info, lines):
     store, parse, path, *_ = info
