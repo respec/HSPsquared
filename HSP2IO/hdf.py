@@ -72,6 +72,8 @@ class HDF5():
 					for i in range(int(start), int(stop)+1): uci.ddgener[module][f'G{i:03d}'] = row[2]
 			elif op == 'FTABLES':
 				uci.ftables[module] = self._store[path]
+			elif op == 'SPEC-ACTIONS':
+				uci.specactions[module] = self._store[path]
 			elif op == 'MONTHDATA':
 				if not uci.monthdata: uci.monthdata = {}
 				uci.monthdata[f'{op}/{module}'] = self._store[path]
