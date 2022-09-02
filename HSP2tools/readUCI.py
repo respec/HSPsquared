@@ -141,6 +141,7 @@ def readUCI(uciname, hdfname):
         info = (store, parse, path, defaults, cat, rename, extendlen)
 
         f = reader(uciname)
+        print("Reading UCI")
         for line in f:
             if line[0:6] == 'GLOBAL':       global_(info, getlines(f))
             if line[0:3] == 'OPN':              opn(info, getlines(f))
