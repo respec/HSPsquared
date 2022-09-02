@@ -141,7 +141,6 @@ def readUCI(uciname, hdfname):
         info = (store, parse, path, defaults, cat, rename, extendlen)
 
         f = reader(uciname)
-        print("Reading UCI")
         for line in f:
             if line[0:6] == 'GLOBAL':       global_(info, getlines(f))
             if line[0:3] == 'OPN':              opn(info, getlines(f))
@@ -155,7 +154,7 @@ def readUCI(uciname, hdfname):
             if line[0:6] == 'IMPLND':     operation(info, getlines(f),'IMPLND')
             if line[0:6] == 'RCHRES':     operation(info, getlines(f),'RCHRES')
             if line[0:10] == 'MONTH-DATA': monthdata(info, getlines(f))
-            if line[0:12] == 'SPEC-ACTIONS':      specactions(info, getlines(f))
+            if line[0:12] == 'SPEC-ACTIONS':  specactions(info, getlines(f))
 
         colnames = ('AFACTR', 'MFACTOR', 'MLNO', 'SGRPN', 'SMEMN', 'SMEMSB',
          'SVOL', 'SVOLNO', 'TGRPN', 'TMEMN', 'TMEMSB', 'TRAN', 'TVOL',
@@ -452,7 +451,6 @@ def ftables(info, llines):
 def specactions(info, llines):
     store, parse, path, *_ = info
     lines = iter(llines)
-    print("Called function specactions()")
     sa_actions = [] # referred to as "classic" in old HSPF code comments 
     head_actions = ['OPERATION','RANGE','DC','DS','YR','MO','DA','HR','MN','D','T','VARI', 'S1','S2','AC','VALUE','TC','TS','NUM']
     sa_mult = []
@@ -483,7 +481,6 @@ def specactions(info, llines):
             sa_actions.append(d.copy())
     if sa_actions:
         dfftable = DataFrame(sa_actions, columns=head_actions).replace('na','')
-        print("Found special actions, storing")
         dfftable.to_hdf(store, f'/SPEC-ACTIONS/ACTIONS', data_columns=True)
 
 def ext(info, lines):
