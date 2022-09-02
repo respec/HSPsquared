@@ -31,15 +31,16 @@ TOLERANCE = 0.001   # newton method max loops
 MAXLOOPS  = 100     # newton method exit tolerance
 
 
-def hydr(io_manager, siminfo, uci, ts, ftables):
+def hydr(io_manager, siminfo, uci, ts, ftables, specactions):
     ''' find the state of the reach/reservoir at the end of the time interval
     and the outflows during the interval
 
-    CALL: hydr(store, general, ui, ts)
+    CALL: hydr(store, general, ui, ts, specactions)
        store is the Pandas/PyTable open store
        general is a dictionary with simulation level infor (OP_SEQUENCE for example)
        ui is a dictionary with RID specific HSPF UCI like data
-       ts is a dictionary with RID specific timeseries'''
+       ts is a dictionary with RID specific timeseries
+       specactions is a dictionary with all special actions'''
 
     steps   = siminfo['steps']                # number of simulation points
     uunits  = siminfo['units']
@@ -119,8 +120,10 @@ def hydr(io_manager, siminfo, uci, ts, ftables):
         Olabels.append(f'O{i+1}')
         OVOLlabels.append(f'OVOL{i+1}')
 
+    sa = make_numba_dict(specactions) # Note: all values coverted to float automatically
     ###########################################################################
-    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels)                  # run reaches simulation code
+    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels, sa)                  # run reaches simulation code
+#    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels)                  # run reaches simulation code
     ###########################################################################
 
     if 'O'    in ts:  del ts['O']
@@ -133,7 +136,7 @@ def hydr(io_manager, siminfo, uci, ts, ftables):
 
 
 @njit(cache=True)
-def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
+def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, sa):
     errors = zeros(int(ui['errlen'])).astype(int64)
 
     steps  = int(ui['steps'])            # number of simulation steps
@@ -267,9 +270,12 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
         oseff[:] = o[:]
 
         print('Trying specl')
-        test_param = array([10, 15, 20, step])
-        specl_test = specl(test_param)
-        print(specl_test)
+#        state = ts[:,step - 1]
+        io_manager = [1,2,3] # dummy, should this be passed because SA needs to be able to access all?
+        siminfo = [1,2,3] # dummy, should this be passed because SA needs to be able to access all?
+        ts_save = ts['VOL'][step - 1] # save before calling specl()
+        specl(io_manager, siminfo, ui, ts, step, sa)
+        print([ts_save, ts['VOL'][step - 1] ])
 
         # vols, sas variables and their initializations  not needed.
         if irexit >= 0:             # irrigation exit is set, zero based number
