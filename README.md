@@ -51,10 +51,12 @@ HSP2 is designed to work with Python 3.7, 3.8, and 3.9.
 We presently **recommend Python 3.8**. 
 
 We provide two options to installing HSP2, yet strongly recommend option 1.
-1. [Install with conda](#install-with-conda)
-2. [Install with pip](#install-with-pip)
+1. [Install Option 1 using `conda`](#install-option-1-using-conda)
+2. [Install Option 2 using `pip`](#install-option-2-using-pip)
 
-## Install with Conda
+Install using only one of these options.
+
+## Install Option 1 using `conda`
 
 Follow these steps to install using the [conda](https://docs.conda.io/en/latest/) package manager.
 
@@ -111,9 +113,12 @@ You should now be able to run the Tutorials and create your own Jupyter Notebook
 
 
 
-## Install with Pip
+## Install Option 2 using `pip`
 
-Follow these steps to install using `pip`, the [Package Installer for Python](https://packaging.python.org/en/latest/guides/tool-recommendations/). 
+Installing HSP2 using `pip`, the [Package Installer for Python](https://packaging.python.org/en/latest/guides/tool-recommendations/), is an alternative method to installing with `conda`. 
+
+**WARNING**: If you followed [Install Option 1 using `conda`](#install-option-1-using-conda), then DO NOT also install using `pip`. Your install is complete and you can ignore all installatino steps below.
+
 
 ### 1. Install Python and Pip
 
