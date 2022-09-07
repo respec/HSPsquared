@@ -136,7 +136,7 @@ def hydr(io_manager, siminfo, uci, ts, ftables, specactions):
 
 
 @njit(cache=True)
-def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, sa):
+def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, specactions):
     errors = zeros(int(ui['errlen'])).astype(int64)
 
     steps  = int(ui['steps'])            # number of simulation steps
@@ -274,7 +274,8 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, sa):
         io_manager = [1,2,3] # dummy, should this be passed because SA needs to be able to access all?
         siminfo = [1,2,3] # dummy, should this be passed because SA needs to be able to access all?
         ts_save = ts['VOL'][step - 1] # save before calling specl()
-        specl(io_manager, siminfo, ui, ts, step, sa)
+        # specl(io_manager, siminfo, ui, ts, step, sa)
+        specl(ui, ts, step, specactions)
         print([ts_save, ts['VOL'][step - 1] ])
 
         # vols, sas variables and their initializations  not needed.
@@ -616,3 +617,4 @@ def expand_HYDR_masslinks(flags, uci, dat, recs):
         rec['SVOL'] = dat.SVOL
         recs.append(rec)
     return recs
+    
