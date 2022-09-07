@@ -12,27 +12,24 @@ CALL: specl(io_manager, siminfo, uci, ts, state, specl_actions)
 from numba import njit
 
 @njit
-def specl(io_manager, siminfo, uci, ts, step, specl_actions):
-#def specl(test_param):
+# def specl(io_manager, siminfo, uci, ts, step, specl_actions):
+def specl(uci, ts, step, specactions):
 
     print('Made it to specl()')
-    ts['VOL'][step - 1] = ts['VOL'][step - 1] * 5.0
-    # run _specl_()
-    ###########################################################################
-#    test_run = _specl_(test_param)
-    ###########################################################################
-
+    ts = _specl_(uci, ts, step, specactions)
+    
     # return errors, ERRMSGS
- #   return test_run
+    # return ts
 
 
 
 # def _specl_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
 @njit
-def _specl_(test_param):
+def _specl_(uci, ts, step, specactions):
     
     print('Made it to _specl_()')
-    paramx2 = test_param * 2
+    ts['VOL'][step - 1] = ts['VOL'][step - 1] * 5.0
 
     # return errors
-    return paramx2
+    # return ts
+    
