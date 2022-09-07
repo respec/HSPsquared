@@ -48,6 +48,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
     siminfo = uci_obj.siminfo 
     ftables = uci_obj.ftables
     monthdata = uci_obj.monthdata
+    specactions = {} # placeholder till added to uci parser
 
     start, stop = siminfo['start'], siminfo['stop']
 
@@ -204,7 +205,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                 ############ calls activity function like snow() ##############
                 if operation not in ['COPY','GENER']:
                     if (activity == 'HYDR'):
-                        errors, errmessages = function(io_manager, siminfo, ui, ts, ftables)
+                        errors, errmessages = function(io_manager, siminfo, ui, ts, ftables, specactions)
                     elif (activity != 'RQUAL'):
                         errors, errmessages = function(io_manager, siminfo, ui, ts)
                     else:                    
