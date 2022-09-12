@@ -28,7 +28,8 @@ def specl(uci, ts, step, specactions):
 def _specl_(uci, ts, step, specactions):
     
     print('Made it to _specl_()')
-    ts['VOL'][step - 1] = ts['VOL'][step - 1] * 5.0
+    # ts['VOL'][step - 1] = ts['VOL'][step - 1] * 5.0
+    ts['VOL'][step - 1] = ts['VOL'][step - 1] - specactions['TEST_WD']
 
     # return errors
     # return ts
