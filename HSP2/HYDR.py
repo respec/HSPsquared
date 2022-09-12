@@ -120,9 +120,9 @@ def hydr(io_manager, siminfo, uci, ts, ftables, specactions):
         Olabels.append(f'O{i+1}')
         OVOLlabels.append(f'OVOL{i+1}')
 
-    sa = make_numba_dict(specactions) # Note: all values coverted to float automatically
+    specactions = make_numba_dict(specactions) # Note: all values coverted to float automatically
     ###########################################################################
-    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels, sa)                  # run reaches simulation code
+    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels, specactions)                  # run reaches simulation code
 #    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels)                  # run reaches simulation code
     ###########################################################################
 
@@ -271,10 +271,12 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, specactio
 
         print('Trying specl')
 #        state = ts[:,step - 1]
-        io_manager = [1,2,3] # dummy, should this be passed because SA needs to be able to access all?
-        siminfo = [1,2,3] # dummy, should this be passed because SA needs to be able to access all?
+        # io_manager = [1,2,3] # dummy, should this be passed because SA needs to be able to access all?
+        # siminfo = [1,2,3] # dummy, should this be passed because SA needs to be able to access all?
         ts_save = ts['VOL'][step - 1] # save before calling specl()
         # specl(io_manager, siminfo, ui, ts, step, sa)
+        test_withdrawal = 10
+        specactions['TEST_WD'] = test_withdrawal      
         specl(ui, ts, step, specactions)
         print([ts_save, ts['VOL'][step - 1] ])
 
