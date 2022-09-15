@@ -274,11 +274,19 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, specactio
         # io_manager = [1,2,3] # dummy, should this be passed because SA needs to be able to access all?
         # siminfo = [1,2,3] # dummy, should this be passed because SA needs to be able to access all?
         ts_save = ts['VOL'][step - 1] # save before calling specl()
-        # specl(io_manager, siminfo, ui, ts, step, sa)
+        # specl(io_manager, siminfo, ui, ts, step, sa)      
+        
+        print(outdgt)
+
+        # testing specactions withdrawal
         test_withdrawal = 10
-        specactions['TEST_WD'] = test_withdrawal      
+        specactions['test_wd'] = test_withdrawal
+        # specactions['outdgt'] = outdgt
+
         specl(ui, ts, step, specactions)
-        print([ts_save, ts['VOL'][step - 1] ])
+        # print([ts_save, ts['VOL'][step - 1] ])
+        print([ts_save, ts['VOL'][step]])
+
 
         # vols, sas variables and their initializations  not needed.
         if irexit >= 0:             # irrigation exit is set, zero based number
