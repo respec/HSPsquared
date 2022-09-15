@@ -49,7 +49,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
     ftables = uci_obj.ftables
     monthdata = uci_obj.monthdata
     specactions = {} # placeholder till added to uci parser
-
+    
     start, stop = siminfo['start'], siminfo['stop']
 
     copy_instances = {}

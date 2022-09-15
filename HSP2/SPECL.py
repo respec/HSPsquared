@@ -13,10 +13,10 @@ from numba import njit
 
 @njit
 # def specl(io_manager, siminfo, uci, ts, step, specl_actions):
-def specl(uci, ts, step, specactions):
+def specl(ui, ts, step, specactions):
 
     print('Made it to specl()')
-    ts = _specl_(uci, ts, step, specactions)
+    ts = _specl_(ui, ts, step, specactions)
     
     # return errors, ERRMSGS
     # return ts
@@ -25,12 +25,14 @@ def specl(uci, ts, step, specactions):
 
 # def _specl_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
 @njit
-def _specl_(uci, ts, step, specactions):
+def _specl_(ui, ts, step, specactions):
     
     print('Made it to _specl_()')
     # ts['VOL'][step - 1] = ts['VOL'][step - 1] * 5.0
-    ts['VOL'][step - 1] = ts['VOL'][step - 1] - specactions['TEST_WD']
+    # ts['VOL'][step - 1] = ts['VOL'][step - 1] - specactions['test_wd']
+    ts['VOL'][step] = ts['VOL'][step - 1] - specactions['test_wd']
 
+    # print(specactions['outdgt'])
     # return errors
     # return ts
     
