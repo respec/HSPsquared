@@ -72,6 +72,7 @@ def hydr(io_manager, siminfo, uci, ts, ftables, specactions):
 
     # OUTDGT timeseries might come in as OUTDGT, OUTDGT0, etc. otherwise UCI default
     names = list(sorted([n for n in ts if n.startswith('OUTDG')], reverse=True))
+    print(names)
     df = DataFrame()
     for i,c in enumerate(ODGTF):
         df[i] = ts[names.pop()][0:steps] if c > 0 else zeros(steps)
@@ -263,30 +264,41 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, specactio
     # HYDR (except where noted)
     for step in range(steps):
         print('\n', 'step: ', step, ' of: ', steps, ' steps')
+        
+        # ------------------------------------------------------------------------
+        print('Trying specl')
+#        state = ts[:,step - 1]
+        # io_manager = [1,2,3] # dummy, should this be passed because SA needs to be able to access all?
+        # siminfo = [1,2,3] # dummy, should this be passed because SA needs to be able to access all?
+        # ts_save = ts['VOL'][step - 1] # save before calling specl()
+        # specl(io_manager, siminfo, ui, ts, step, sa)      
+        OUTDGT2_save = ts['OUTDGT2'][step - 1] # save before calling specl()
+        OUTDGT1_save = ts['OUTDGT1'][step - 1] 
+        # print(ts.keys())
+
+        # print(outdgt)
+        print(OUTDGT[step, :])
+
+        # testing specactions withdrawal
+        # test_withdrawal = 10
+        # specactions['test_wd'] = test_withdrawal
+        # specactions['outdgt'] = outdgt
+
+        specl(ui, ts, step, specactions)
+        # print([ts_save, ts['VOL'][step - 1] ])
+        print([OUTDGT2_save, ts['OUTDGT2'][step - 1] ])
+        print([OUTDGT1_save, ts['OUTDGT1'][step - 1] ])
+
+        # print(outdgt)
+        # ------------------------------------------------------------------------
+        
         convf  = CONVF[step]
         outdgt[:] = OUTDGT[step, :]
         colind[:] = COLIND[step, :]
         roseff = ro
         oseff[:] = o[:]
 
-        print('Trying specl')
-#        state = ts[:,step - 1]
-        # io_manager = [1,2,3] # dummy, should this be passed because SA needs to be able to access all?
-        # siminfo = [1,2,3] # dummy, should this be passed because SA needs to be able to access all?
-        ts_save = ts['VOL'][step - 1] # save before calling specl()
-        # specl(io_manager, siminfo, ui, ts, step, sa)      
-        
-        print(outdgt)
-
-        # testing specactions withdrawal
-        test_withdrawal = 10
-        specactions['test_wd'] = test_withdrawal
-        # specactions['outdgt'] = outdgt
-
-        specl(ui, ts, step, specactions)
-        # print([ts_save, ts['VOL'][step - 1] ])
-        print([ts_save, ts['VOL'][step]])
-
+        print(outdgt[:])
 
         # vols, sas variables and their initializations  not needed.
         if irexit >= 0:             # irrigation exit is set, zero based number

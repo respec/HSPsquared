@@ -30,8 +30,9 @@ def _specl_(ui, ts, step, specactions):
     print('Made it to _specl_()')
     # ts['VOL'][step - 1] = ts['VOL'][step - 1] * 5.0
     # ts['VOL'][step - 1] = ts['VOL'][step - 1] - specactions['test_wd']
-    ts['VOL'][step] = ts['VOL'][step - 1] - specactions['test_wd']
 
+    # ts['OUTDGT'][step - 1] = ts['OUTDGT'][step - 1]  - specactions['test_wd']
+    ts['OUTDGT2'][step - 1] = 99
     # print(specactions['outdgt'])
     # return errors
     # return ts
