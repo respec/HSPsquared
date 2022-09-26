@@ -452,7 +452,7 @@ def specactions(info, llines):
     store, parse, path, *_ = info
     lines = iter(llines)
     sa_actions = [] # referred to as "classic" in old HSPF code comments 
-    head_actions = ['OPERATION','RANGE','DC','DS','YR','MO','DA','HR','MN','D','T','VARI', 'S1','S2','AC','VALUE','TC','TS','NUM']
+    head_actions = ['OPERATION','RANGE1','RANGE2','DC','DS','YR','MO','DA','HR','MN','D','T','VARI', 'S1','S2','AC','VALUE','TC','TS','NUM']
     sa_mult = []
     head_mult = []
     sa_uvquan = []
