@@ -474,7 +474,7 @@ def specactions(info, llines):
             sa_conditional.append(line)
         elif line[2:8] == 'DISTRB':
             sa_distrb.append(line)
-        elif line[2:7] == 'UVNAME':
+        elif line[2:8] == 'UVNAME':
             sa_uvname.append(line)
         else:
             # ACTIONS block 
