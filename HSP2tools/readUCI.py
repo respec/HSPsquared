@@ -452,7 +452,7 @@ def specactions(info, llines):
     store, parse, path, *_ = info
     lines = iter(llines)
     sa_actions = [] # referred to as "classic" in old HSPF code comments 
-    head_actions = ['OPERATION','RANGE1','RANGE2','DC','DS','YR','MO','DA','HR','MN','D','T','VARI', 'S1','S2','AC','VALUE','TC','TS','NUM']
+    head_actions = ['OPERATION','RANGE1','RANGE2','DC','DS','YR','MO','DA','HR','MN','D','T','VARI', 'S1','S2','AC','VALUE','TC','TS','NUM', 'IN_IF', 'IF_INDEX']
     sa_mult = []
     head_mult = []
     sa_uvquan = []
@@ -463,7 +463,10 @@ def specactions(info, llines):
     head_distrb = []
     sa_uvname = []
     head_uvname = []
-    in_if = 0 # are we in an if block?
+    sa_if = []
+    head_if = []
+    in_if = False # are we in an if block?
+    if_index = -1
     for line in lines:
         print('SPECL Line lead', line[2:8])
         if line[2:5] == 'MULT':
@@ -476,10 +479,16 @@ def specactions(info, llines):
             sa_distrb.append(line)
         elif line[2:8] == 'UVNAME':
             sa_uvname.append(line)
+        elif line[0:2] == 'IF':
+            sa_if.append(line)
+            in_if = True
+            if_index = len(sa_if)
         else:
             # ACTIONS block 
             print('ACTIONS line found', line[2:8])
             d = parseD(line, parse['SPEC-ACTIONS','ACTIONS'])
+            d.append(in_if)
+            d.append(if_index)
             print("parsed as ", d)
             sa_actions.append(d.copy())
     if sa_actions:
