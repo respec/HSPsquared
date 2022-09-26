@@ -72,7 +72,7 @@ class HDF5():
 					for i in range(int(start), int(stop)+1): uci.ddgener[module][f'G{i:03d}'] = row[2]
 			elif op == 'FTABLES':
 				uci.ftables[module] = self._store[path]
-			elif op == 'SPEC-ACTIONS':
+			elif op == 'SPEC_ACTIONS':
 				print("Trying to access the special actions. Did it get parsed? ")
 				print(self._store[path])
 				uci.specactions[module] = self._store[path]
