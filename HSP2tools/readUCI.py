@@ -465,7 +465,7 @@ def specactions(info, llines):
     head_uvname = []
     in_if = 0 # are we in an if block?
     for line in lines:
-        print('SPECL Line lead', line[2:7])
+        print('SPECL Line lead', line[3:8])
         if line[2:5] == 'MULT':
             sa_mult.append(line)
         if line[2:7] == 'UVQUAN':
@@ -483,7 +483,7 @@ def specactions(info, llines):
     if sa_actions:
         dfftable = DataFrame(sa_actions, columns=head_actions).replace('na','')
         dfftable.to_hdf(store, f'/SPEC_ACTIONS/ACTIONS', data_columns=True)
-
+  
 def ext(info, lines):
     store, parse, path, *_ = info
     lst = []
