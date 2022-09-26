@@ -487,8 +487,8 @@ def specactions(info, llines):
             # ACTIONS block 
             print('ACTIONS line found', line[2:8])
             d = parseD(line, parse['SPEC-ACTIONS','ACTIONS'])
-            d.append(in_if)
-            d.append(if_index)
+            d['IN_IF'] = in_if
+            d['IF_INDEX'] = if_index
             print("parsed as ", d)
             sa_actions.append(d.copy())
     if sa_actions:
