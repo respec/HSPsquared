@@ -481,7 +481,7 @@ def specactions(info, llines):
             sa_actions.append(d.copy())
     if sa_actions:
         dfftable = DataFrame(sa_actions, columns=head_actions).replace('na','')
-        dfftable.to_hdf(store, f'/SPEC-ACTIONS/ACTIONS', data_columns=True)
+        dfftable.to_hdf(store, f'/SPEC_ACTIONS/ACTIONS', data_columns=True)
 
 def ext(info, lines):
     store, parse, path, *_ = info
