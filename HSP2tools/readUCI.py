@@ -479,7 +479,7 @@ def specactions(info, llines):
         else:
             # ACTIONS block 
             print('ACTIONS line found', line[2:8])
-            d = parseD(line, parse['SPEC-ACTIONS','na'])
+            d = parseD(line, parse['SPEC-ACTIONS','ACTIONS'])
             print("parsed as ", d)
             sa_actions.append(d.copy())
     if sa_actions:
