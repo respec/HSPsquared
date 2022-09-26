@@ -465,6 +465,7 @@ def specactions(info, llines):
     head_uvname = []
     in_if = 0 # are we in an if block?
     for line in lines:
+        print('SPECL Line lead', line[2:7])
         if line[2:5] == 'MULT':
             sa_mult.append(line)
         if line[2:7] == 'UVQUAN':
