@@ -465,15 +465,15 @@ def specactions(info, llines):
     head_uvname = []
     in_if = 0 # are we in an if block?
     for line in lines:
-        if line[2:4] == 'MULT':
+        if line[2:5] == 'MULT':
             sa_mult.append(line)
-        if line[2:6] == 'UVQUAN':
+        if line[2:7] == 'UVQUAN':
             sa_mult.append(line)
         if line[2:11] == 'CONDITIONAL':
             sa_mult.append(line)
-        if line[2:6] == 'DISTRB':
+        if line[2:7] == 'DISTRB':
             sa_mult.append(line)
-        if line[2:6] == 'UVNAME':
+        if line[2:7] == 'UVNAME':
             sa_mult.append(line)
         else:
             # ACTIONS block 
