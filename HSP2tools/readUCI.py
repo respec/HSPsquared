@@ -478,7 +478,9 @@ def specactions(info, llines):
             sa_mult.append(line)
         else:
             # ACTIONS block 
+            print('ACTIONS line found', line[2:8])
             d = parseD(line, parse['SPEC-ACTIONS','na'])
+            print("parsed as ", d)
             sa_actions.append(d.copy())
     if sa_actions:
         dfftable = DataFrame(sa_actions, columns=head_actions).replace('na','')
