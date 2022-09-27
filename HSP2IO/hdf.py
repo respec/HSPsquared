@@ -73,8 +73,6 @@ class HDF5():
 			elif op == 'FTABLES':
 				uci.ftables[module] = self._store[path]
 			elif op == 'SPEC_ACTIONS':
-				print("Trying to access the special actions. Did it get parsed? ")
-				print(self._store[path])
 				uci.specactions[module] = self._store[path]
 			elif op == 'MONTHDATA':
 				if not uci.monthdata: uci.monthdata = {}

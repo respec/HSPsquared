@@ -453,9 +453,11 @@ def specactions(info, llines):
     lines = iter(llines)
     # Notes:
     # - Only "classic" special actions are handled here. 
+    # - Other type of SA are recognized by the parser, but not stored in hdf5
     # - The CURLVL code is a place-holder. This has not been thought through.
     #   - Each type of actions "head_[action type]" should include an "CURLVL" 
     #     column to match with conditional expression if applicable
+    #   - The value of CURLVL matches with an expression
     sa_actions = [] # referred to as "classic" in old HSPF code comments 
     head_actions = ['OPERATION','RANGE1','RANGE2','DC','DS','YR','MO','DA','HR','MN','D','T','VARI', 'S1','S2','AC','VALUE','TC','TS','NUM', 'CURLVL']
     sa_mult = []
@@ -473,7 +475,6 @@ def specactions(info, llines):
     in_if = False # are we in an if block?
     curlvl = 0
     for line in lines:
-        print('SPECL Line lead', line[2:8])
         if line[2:5] == 'MULT':
             sa_mult.append(line)
         elif line[2:8] == 'UVQUAN':
@@ -493,7 +494,6 @@ def specactions(info, llines):
             curlvl = curlvl - 1
         else:
             # ACTIONS block 
-            print('ACTIONS line found', line[2:8])
             d = parseD(line, parse['SPEC-ACTIONS','ACTIONS'])
             d['CURLVL'] = curlvl
             sa_actions.append(d.copy())
