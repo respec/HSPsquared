@@ -451,8 +451,13 @@ def ftables(info, llines):
 def specactions(info, llines):
     store, parse, path, *_ = info
     lines = iter(llines)
+    # Notes:
+    # - Only "classic" special actions are handled here. 
+    # - The CURLVL code is a place-holder. This has not been thought through.
+    #   - Each type of actions "head_[action type]" should include an "CURLVL" 
+    #     column to match with conditional expression if applicable
     sa_actions = [] # referred to as "classic" in old HSPF code comments 
-    head_actions = ['OPERATION','RANGE1','RANGE2','DC','DS','YR','MO','DA','HR','MN','D','T','VARI', 'S1','S2','AC','VALUE','TC','TS','NUM', 'IN_IF', 'IF_INDEX']
+    head_actions = ['OPERATION','RANGE1','RANGE2','DC','DS','YR','MO','DA','HR','MN','D','T','VARI', 'S1','S2','AC','VALUE','TC','TS','NUM', 'CURLVL']
     sa_mult = []
     head_mult = []
     sa_uvquan = []
@@ -466,7 +471,7 @@ def specactions(info, llines):
     sa_if = []
     head_if = []
     in_if = False # are we in an if block?
-    if_index = -1
+    curlvl = 0
     for line in lines:
         print('SPECL Line lead', line[2:8])
         if line[2:5] == 'MULT':
@@ -479,17 +484,18 @@ def specactions(info, llines):
             sa_distrb.append(line)
         elif line[2:8] == 'UVNAME':
             sa_uvname.append(line)
+        # This CURLVL code is a place-holder. This has not been thought through.
         elif line[0:2] == 'IF':
             sa_if.append(line)
-            in_if = True
-            if_index = len(sa_if)
+            curlvl = len(sa_if)
+        elif line[0:7] == 'END IF':
+            sa_if.append(line)
+            curlvl = curlvl - 1
         else:
             # ACTIONS block 
             print('ACTIONS line found', line[2:8])
             d = parseD(line, parse['SPEC-ACTIONS','ACTIONS'])
-            d['IN_IF'] = in_if
-            d['IF_INDEX'] = if_index
-            print("parsed as ", d)
+            d['CURLVL'] = curlvl
             sa_actions.append(d.copy())
     if sa_actions:
         dfftable = DataFrame(sa_actions, columns=head_actions).replace('na','')
