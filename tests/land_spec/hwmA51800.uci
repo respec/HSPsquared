@@ -1,0 +1,524 @@
+RUN
+ 
+GLOBAL
+  A51800     hwm | P5 | p532cal_06 | VA,SUFFOLK
+  START       1984/ 1/ 1        END    2005/12/31
+  RUN INTERP OUTPUT LEVEL    0    0
+  RESUME     0 RUN     1                   UNIT SYSTEM     1
+END GLOBAL
+
+FILES
+<FILE>  <UN#>***<----FILE NAME------------------------------------------------->
+WDM1       21   met_A51800.wdm
+WDM2       22   prad_A51800.wdm
+WDM4       24   hwmA51800.wdm
+MESSU      25   hwmA51800.ech
+           26   hwmA51800.out
+END FILES
+
+OPN SEQUENCE
+    INGRP              INDELT 01:00
+      PERLND       1
+    END INGRP
+END OPN SEQUENCE
+
+SPEC-ACTIONS
+
+***Distribution Line
+***kwrd><ds<ct> tc  ts <dff>  <frc><frc><frc><frc><frc><frc><frc><frc><frc><frc>
+  DISTRB  1  10 DY   1 SHIFT    .10  .10  .10  .10  .10  .10  .10  .10  .10  .10
+  DISTRB  2  10 DY   3 SHIFT    .10  .10  .10  .10  .10  .10  .10  .10  .10  .10
+
+***User-Defined Variable Quantity Line
+*** kwd  varnam optyp  opn  vari  s1 s2 s3 tp multiply  lc ls ac as agfn ***
+  <****> <----> <----> <-> <----><-><-><-><-><--------> <><-> <><-> <--> ***
+  UVQUAN prec   PERLND   1 PREC             3                 DY  1 SUM
+
+*** UVNAMES
+*** kwd   varnam ct  vari  s1 s2 s3  frac oper     vari  s1 s2 s3  frac oper
+  <****>  <----><-> <----><-><-><-> <---> <-->    <----><-><-><-> <---> <-->
+  UVNAME  FNO3    2 SNO3              0.5 QUAN    UNO3              0.5 QUAN
+  UVNAME  FNH3    2 SAMAD             0.5 QUAN    UAMAD             0.5 QUAN
+  UVNAME  FORN    2 SORGN             0.5 QUAN    UORGN             0.5 QUAN
+  UVNAME  FPO4    2 SP4AD             0.5 QUAN    UP4AD             0.5 QUAN
+  UVNAME  FORP    2 SORGP             0.5 QUAN    UORGP             0.5 QUAN
+  UVNAME  MNO3    2 SNO3              0.3 QUAN    UNO3              0.7 QUAN
+  UVNAME  MNH3    2 SAMAD             0.3 QUAN    UAMAD             0.7 QUAN
+  UVNAME  MORN    2 SORGN             0.3 QUAN    UORGN             0.7 QUAN
+  UVNAME  MPO4    2 SP4AD             0.3 QUAN    UP4AD             0.7 QUAN
+  UVNAME  MORP    2 SORGP             0.3 QUAN    UORGP             0.7 QUAN
+  UVNAME  LEGUME  2 UAMAD             0.5 QUAN    LAMAD             0.5 QUAN
+
+*** ACTIONS
+***optyp range dc ds yr  mo da hr mn d t   vari  s1 s2 s3 ac  value    tc ts num
+  <****><-><--><><-><--><-><-><-><-><><>  <----><-><-><-><-><--------> <> <-><->
+
+***Action Lines for fertilizer
+IF (prec < 0.1) THEN
+  PERLND  1    DY  11984  1  1 12    2 3  FNO3           +=         0.         
+  PERLND  1    DY  11984  2  1 12    2 3  FNO3           +=   0.090044
+  PERLND  1    DY  11984  3  1 12    2 3  FNO3           +=   1.917460
+  PERLND  1    DY  11984  4  1 12    2 3  FNO3           +=   2.733176
+  PERLND  1    DY  11984  5  1 12    2 3  FNO3           +=  0.123E-06
+  PERLND  1    DY  11984  6  1 12    2 3  FNO3           +=   6.302083
+  PERLND  1    DY  11984  7  1 12    2 3  FNO3           +=   0.207089
+***Action Lines for Adjusting Refractory Storage
+*** commented out for testing
+***  PERLND  1         1984  1  1         3  SPRON          -=         0. YR   1 22
+***  PERLND  1         1984  1  1         3  UPRON          -=   38.97500 YR   1 22
+***  PERLND  1         1984  1  1         3  LPRON          -=   10.92700 YR   1 22
+***  PERLND  1         1984  1  1         3  APRON          -=   6.131000 YR   1 22
+
+END SPEC-ACTIONS
+
+PERLND
+  ACTIVITY
+    #    # ATMP SNOW PWAT  SED  PST  PWG PQAL MSTL PEST NITR PHOS TRAC   ***
+    1         1    1    1    1    1    1    0    1    0    1    1    0
+  END ACTIVITY
+
+  PRINT-INFO
+    #    # ATMP SNOW PWAT  SED  PST  PWG PQAL MSTL PEST NITR PHOS TRAC PIVL***PY
+    1         5    5    5    5    5    5    0    5    0    5    5    0    0   12
+  END PRINT-INFO
+
+  GEN-INFO
+    #    #      NAME          NBLKS  UCI   IN  OUT ENGL METR  ***
+    1      A51800 hwm             1    1    1    1   26    0
+  END GEN-INFO
+
+  ATEMP-DAT
+    #    #     ELDAT    AIRTMP ***
+    1             0.   23.1476                                                  
+  END ATEMP-DAT
+
+  ICE-FLAG
+    #    # ICFG  ***
+    1         1
+  END ICE-FLAG
+
+  SNOW-PARM1
+    #    #       LAT      ELEV     SHADE    SNOWCF    COVIND  ***
+    1       36.69108     55.78      0.05       1.3      1.08                    
+  END SNOW-PARM1
+
+  SNOW-PARM2
+    #    #     RDCSN     TSNOW    SNOEVP    CCFACT    MWATER    MGMELT  ***
+    1           0.12       32.      0.13       0.5      0.03      0.03          
+  END SNOW-PARM2
+
+  SNOW-INIT1
+    #    # PACK-SNOW  PACK-ICE PACK-WATR    RDENPF      DULL    PAKTMP  ***
+    1             0.        0.        0.      0.15      100.       30.          
+  END SNOW-INIT1
+
+  SNOW-INIT2
+    #    #    COVINX    XLNMLT    SKYCLR  ***
+    1           1.08        0.       0.9                                        
+  END SNOW-INIT2
+
+  PWAT-PARM1
+    #    # CSNO RTOP UZFG  VCS  VUZ  VNN VIFW VIRC  VLE  ***
+    1         1    1    0    1    1    1    0    0    1
+  END PWAT-PARM1
+
+  PWAT-PARM2
+    #*** #    FOREST      LZSN    INFILT      LSUR     SLSUR     KVARY      AGWR
+    1             0.        8.  0.017857      461.     0.014  0.10E-05  0.920000
+  END PWAT-PARM2
+
+  PWAT-PARM3
+    #*** #    PETMAX    PETMIN    INFEXP    INFILD    DEEPFR   BASETPR    AGWETP
+    1            40.       35.        2.        2.        0.        0.  0.050000
+  END PWAT-PARM3
+
+  PWAT-PARM4
+    #    #     CEPSC      UZSN      NSUR     INTFW       IRC     LZETP  ***
+    1                      0.7                  2.  0.435477                    
+  END PWAT-PARM4
+
+  MON-INTERCEP
+    #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
+    1      .067 .065 .062  .06 .064 .085 .138  .15 .146 .109 .087 .077          
+  END MON-INTERCEP
+
+  MON-UZSN
+    #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
+    1      .672 .672 .672 .672 .672 .7841.064 1.12 1.12 .896 .784 .728          
+  END MON-UZSN
+
+  MON-MANNING
+    #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
+    1     .2028.2028.1971.2103.2804.3505.3692.3594.3262.2283.2085.2028          
+  END MON-MANNING
+
+  MON-LZETPARM
+    #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
+    1      .232 .221 .208   .2 .218 .312 .547   .6 .582 .416 .322 .276          
+  END MON-LZETPARM
+
+  PWAT-STATE1
+    #*** #      CEPS      SURS       UZS      IFWS       LZS      AGWS      GWVS
+    1                                0.7                  5.        1.        0.
+  END PWAT-STATE1
+
+  SED-PARM1
+    # -  #  CRV VSIV SDOP  ***
+    1         1    0    1
+  END SED-PARM1
+
+  SED-PARM2
+    # -  #      SMPF      KRER      JRER     AFFIX     COVER      NVSI  ***
+    1             1.  1.394872        2.   0.07675            30.57534          
+  END SED-PARM2
+
+  SED-PARM3
+    # -  #      KSER      JSER      KGER      JGER  ***
+    1       6.974359        2.        0.        4.                              
+  END SED-PARM3
+
+  MON-COVER
+    # -  #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
+    1     .0618.0618.0557.1392.2285.3906.6657.7618.8416.7424.6945.0618          
+  END MON-COVER
+
+  MON-NVSI
+    # -  #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
+    1        .1   .1   .1   .1   .1   .1   .1   .1   .1   .1   .1   .1          
+  END MON-NVSI
+
+  SED-STOR
+    # -  #      DETS                                  ***
+    1             0.                                                            
+  END SED-STOR
+
+  PSTEMP-PARM1
+    # -  # SLTV ULTV LGTV TSOP  ***
+    1         1    1    1    1
+  END PSTEMP-PARM1
+
+  PSTEMP-PARM2
+    # -  #      ASLT      BSLT     ULTP1     ULTP2     LGTP1     LGTP2***
+    1             0.        1.        0.        0.        0.        0.          
+  END PSTEMP-PARM2
+
+  MON-ASLT
+    #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
+    1     35.5837.1440.4945.0949.4653.6255.76 54.651.5446.0841.5536.97          
+  END MON-ASLT
+
+  MON-BSLT
+    #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
+    1        .5   .5   .5   .5   .5   .5   .5   .5   .5   .5   .5   .5          
+  END MON-BSLT
+
+  MON-ULTP1
+    #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
+    1     38.4541.2547.2755.5763.4370.9274.7772.6767.1757.3449.1940.94          
+  END MON-ULTP1
+
+  MON-ULTP2
+    #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
+    1        .1   .1   .1   .1   .1   .1   .1   .1   .1   .1   .1   .1          
+  END MON-ULTP2
+
+  MON-LGTP1
+    #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
+    1     46.5145.4146.5749.0952.7956.0359.0160.4159.74 57.253.27 49.9          
+  END MON-LGTP1
+
+  PSTEMP-TEMPS
+    #    #     AIRTC     SLTMP     ULTMP     LGTMP  ***
+    1            32.       32.       32.       50.                              
+  END PSTEMP-TEMPS
+
+  PWT-PARM1
+    #    #  IDV  ICV  GDV  GCV  ***
+    1         1    0    1    0
+  END PWT-PARM1
+
+  PWT-PARM2
+    #    #      ELEV     IDOXP     ICO2P     ADOXP     ACO2P  ***
+    1          55.78        0.        0.        0.        0.                    
+  END PWT-PARM2
+
+  MON-IFWDOX
+    #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
+    1      12.7 12.7 11.2  9.7  7.4  6.6  6.2  6.2  7.5  8.4  9.4 11.6          
+  END MON-IFWDOX
+
+  MON-GRNDDOX
+    #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
+    1       10.  10.  10.  10.  7.5  5.5   5.   5.  6.5  7.5   9.  10.          
+  END MON-GRNDDOX
+
+  PWT-TEMPS
+    # -  #     SOTMP     IOTMP     AOTMP***
+    1            33.       40.       55.                                        
+  END PWT-TEMPS
+
+  PWT-GASES
+    #    #     SODOX     SOCO2     IODOX     IOCO2     AODOX     AOCO2  ***
+    1           14.5        0.      12.7        0.       10.        0.          
+  END PWT-GASES
+
+  MST-PARM
+    #    #     SLMPF      ULPF      LLPF***
+    1             1.        1.        1.                                        
+  END MST-PARM
+
+  SOIL-DATA
+    # -  # SURFDEP   UPDEP   LODEP GRNDDEP  SURFBD    UPBD    LOBD  GRNDBD   ***
+    1          0.4 11.5631 93.9878     60. 80.0514 89.2348 80.7519 82.6256      
+  END SOIL-DATA
+
+  NIT-FLAGS
+    # -  # VNUT FORA ITMX BNUM CNUM NUPT FIXN AMVO ALPN VNPR ***
+    1         1    1  100    1    1    1    0    1    0    1
+  END NIT-FLAGS
+
+  NIT-AD-FLAGS
+    # -  # NSFNSC NUFNUC  HSFHSC HUFHUC  OSFOSC OUFOUC ***
+    1        0  0  -1  0    0  0  -1  0    0  0   0  0
+  END NIT-AD-FLAGS
+
+  NIT-FSTGEN
+    #    #  NO3  NH4  PLN KDSA KADA KIMN  KAM KDNI  KNI KIMA***
+    1        .8   .2 1.07 1.05 1.05 1.07 1.07 1.07 1.05 1.07                    
+  END NIT-FSTGEN
+
+  NIT-FSTPM
+    #*** #     KDSAM     KADAM     KIMNI       KAM      KDNI       KNI     KIMAM
+    1                           0.136278  0.014445        0.   9.91688  0.136278
+  END NIT-FSTPM
+
+  NIT-ORGPM
+    # -  #      KLON      KRON     KONLR     THNLR  ***
+    1        0.20357  1.157812    0.0001      1.07                              
+  END NIT-ORGPM
+
+  NIT-AMVOLAT
+    # -  #     SKVOL     UKVOL     LKVOL     AKVOL     THVOL    TRFVOL ***
+    1            0.5       0.1        0.        0.      1.07       20.          
+  END NIT-AMVOLAT
+
+  NIT-CMAX
+    #    #     CMAX                                ***
+    1          5000.                                                            
+  END NIT-CMAX
+
+  NIT-SVALPM
+    #    #      XFIX        K1        N1***
+    1             1.        1.       1.5                                        
+  END NIT-SVALPM
+
+  MON-NITUPT
+    #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC ***
+    1                                                                           
+  END MON-NITUPT
+
+  SOIL-DATA2
+    #    #    SWILTP    UWILTP    LWILTP    AWILTP ***
+    1           0.01      0.01      0.01       0.1                              
+  END SOIL-DATA2
+
+  CROP-DATES
+    # -  # NCRP    PM1PD1  HM1HD1    PM2PD2  HM2HD2    PM3PD3  HM3HD3  ***
+    1         1      1  1   12 31      0  0    0  0      0  0    0  0
+  END CROP-DATES
+
+  NIT-YIELD
+    # -  #    NUTTGT    NMXRAT ***
+    1           105.        1.                                                  
+  END NIT-YIELD
+
+  MON-NUPT-FR1
+    # -  #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC ***
+    1       .01  .04  .09 .115 .135 .145  .15  .14 .095  .05 .025 .005          
+  END MON-NUPT-FR1
+
+  MON-NUPT-FR2
+    # -  #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC ***
+    1       .01  .01  .01  .01  .01  .01  .01  .01  .01  .01  .01  .01          
+  END MON-NUPT-FR2
+
+  NIT-UPIMCSAT
+    # -  #     CSUNI     CSUAM     CSINI     CSIAM ***
+    1                                                                           
+  END NIT-UPIMCSAT
+
+  MON-NITUPNI
+    #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
+    1                                                                           
+  END MON-NITUPNI
+
+  MON-NITUPAM
+    #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
+    1                                                                           
+  END MON-NITUPAM
+
+  MON-NITIMNI
+    #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
+    1                                                                           
+  END MON-NITIMNI
+
+  MON-NITIMAM
+    #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
+    1                                                                           
+  END MON-NITIMAM
+
+  MON-NITIMAM
+    #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
+    1                                                                           
+  END MON-NITIMAM
+
+  MON-NITIMAM
+    #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
+    1                                                                           
+  END MON-NITIMAM
+
+  MON-NITIMAM
+    #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
+    1                                                                           
+  END MON-NITIMAM
+
+  MON-NPRETBG
+    #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
+    1       .01  .01 .005.0005.0001.0001.0001.0001.0005  .01  .02  .02          
+  END MON-NPRETBG
+
+  MON-NITAGUTF
+    #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
+    1                                                                           
+  END MON-NITAGUTF
+
+  MON-NPRETAG
+    #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
+    1                                                                           
+  END MON-NPRETAG
+
+  MON-NPRETFLI
+    #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
+    1                                                                           
+  END MON-NPRETFLI
+
+  NIT-STOR1
+    #    #      ORGN      AMAD      AMSU       NO3      PLTN     RORGN***
+    1         3.1555        1.      0.03       0.3        0.       50.          
+  END NIT-STOR1
+
+  NIT-STOR2
+    #    #     IAMSU      INO3     ISLON     ISRON    AGPLTN    LITTRN***
+    1             0.        0.        0.        0.                              
+  END NIT-STOR2
+
+  PHOS-FLAGS
+    #    # VPUT FORP ITMX BMUM CNUM PUPT ***
+    1         1    1  100    1    1    1
+  END PHOS-FLAGS
+
+  PHOS-AD-FLAGS
+    # -  # PSFPSC PUFPUC  OSFOSC OUFOUC ***
+    1        0  0   0  0    0  0   0  0
+  END PHOS-AD-FLAGS
+
+  PHOS-FSTGEN
+    #    #     THPLP    THKDSP    THKADP    THKIMP     THKMP           ***
+    1           1.07      1.05      1.05      1.07      1.07                    
+  END PHOS-FSTGEN
+
+  PHOS-FSTPM
+    #    #      KDSP      KADP      KIMP       KMP                   ***
+    1             0.        0.      0.05     0.005                              
+  END PHOS-FSTPM
+
+  PHOS-CMAX
+    #    #      CMAX                         ***
+    1            50.                                                            
+  END PHOS-CMAX
+
+  PHOS-SVALPM
+    #    #      XFIX        K1        N1***
+    1           100.        5.       1.5                                        
+  END PHOS-SVALPM
+
+  MON-PHOSUPT
+    #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC ***
+    1                                                                           
+  END MON-PHOSUPT
+
+  PHOS-YIELD
+    #    #    PUPTGT    PMXRAT ***
+    1            25.       1.5                                                  
+  END PHOS-YIELD
+
+  MON-PUPT-FR1
+    # -  #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC ***
+    1       .01  .04  .09 .115 .135 .145  .15  .14 .095  .05 .025 .005          
+  END MON-PUPT-FR1
+
+  MON-PUPT-FR2
+    # -  #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC ***
+    1       .01  .01  .01  .01  .01  .01  .01  .01  .01  .01  .01  .01          
+  END MON-PUPT-FR2
+
+  PHOS-STOR1
+    #    #      ORGP      P4AD      P4SU      PLTP            ***
+    1            15.        1.        0.        0.                              
+  END PHOS-STOR1
+
+END PERLND
+
+EXT SOURCES
+<-Volume-> <Member> SsysSgap<--Mult-->Tran <-Target vols> <-Grp> <-Member->***
+<Name>   # <Name> # tem strg<-factor->strg <Name>   #   #        <Name> # #***
+*** METEOROLOGY
+WDM1  1000 EVAP     ENGL         1.082SAME PERLND   1     EXTNL  PETINP
+WDM1  1001 DEWP     ENGL              SAME PERLND   1     EXTNL  DTMPG
+WDM1  1002 WNDH     ENGL              SAME PERLND   1     EXTNL  WINMOV
+WDM1  1003 RADH     ENGL              SAME PERLND   1     EXTNL  SOLRAD
+WDM1  1004 ATMP     ENGL              SAME PERLND   1     EXTNL  GATMP
+
+*** PRECIPITATION AND ATMOSPHERIC DEPOSITION LOADS
+WDM2  2000 HPRC     ENGL              SAME PERLND   1     EXTNL  PREC
+WDM2  2001 NO23     ENGL              DIV  PERLND   1     EXTNL  NIADFX 1 2
+WDM2  2002 NH4A     ENGL              DIV  PERLND   1     EXTNL  NIADFX 2 2
+WDM2  2003 NO3D     ENGL              DIV  PERLND   1     EXTNL  NIADFX 1 2
+WDM2  2004 NH4D     ENGL              DIV  PERLND   1     EXTNL  NIADFX 2 2
+END EXT SOURCES
+
+EXT TARGETS
+<-Volume-> <-Grp> <-Member-><--Mult-->Tran <-Volume-> <Member> Tsys Tgap Amd ***
+<Name>   #        <Name> # #<-factor->strg <Name>   # <Name> #  tem strg strg***
+PERLND   1 PWATER SURO                SAME WDM4   111 SURO     ENGL      REPL
+PERLND   1 PWATER IFWO                SAME WDM4   211 IFWO     ENGL      REPL
+PERLND   1 PWATER AGWO                SAME WDM4   411 AGWO     ENGL      REPL
+PERLND   1 SEDMNT SOSED  1            SAME WDM4   121 SEDM     ENGL      REPL
+PERLND   1 PWTGAS SOHT                SAME WDM4   131 SOHT     ENGL      REPL
+PERLND   1 PWTGAS IOHT                SAME WDM4   231 IOHT     ENGL      REPL
+PERLND   1 PWTGAS AOHT                SAME WDM4   431 AOHT     ENGL      REPL
+PERLND   1 PWTGAS SODOXM              SAME WDM4   132 SDOX     ENGL      REPL
+PERLND   1 PWTGAS IODOXM              SAME WDM4   232 IDOX     ENGL      REPL
+PERLND   1 PWTGAS AODOXM              SAME WDM4   432 ADOX     ENGL      REPL
+PERLND   1 NITR   SEDN   2            SAME WDM4   142 DNH3     ENGL      REPL
+PERLND   1 NITR   TSAMS  1            SAME WDM4   144 SNH3     ENGL      REPL
+PERLND   1 NITR   TSAMS  5            SAME WDM4   244 INH3     ENGL      REPL
+PERLND   1 NITR   SSAMS  3            SAME WDM4   444 ANH3     ENGL      REPL
+PERLND   1 NITR   TSNO3  1            SAME WDM4   145 SNO3     ENGL      REPL
+PERLND   1 NITR   TSNO3  5            SAME WDM4   245 INO3     ENGL      REPL
+PERLND   1 NITR   SSNO3  3            SAME WDM4   445 ANO3     ENGL      REPL
+PERLND   1 NITR   SEDN   1            SAME WDM4   141 DLON     ENGL      REPL
+PERLND   1 NITR   TSSLN  1            SAME WDM4   146 SLON     ENGL      REPL
+PERLND   1 NITR   TSSLN  5            SAME WDM4   246 ILON     ENGL      REPL
+PERLND   1 NITR   SSSLN  3            SAME WDM4   446 ALON     ENGL      REPL
+PERLND   1 NITR   SEDN   3            SAME WDM4   143 DRON     ENGL      REPL
+PERLND   1 NITR   TSSRN  1            SAME WDM4   147 SRON     ENGL      REPL
+PERLND   1 NITR   TSSRN  5            SAME WDM4   247 IRON     ENGL      REPL
+PERLND   1 NITR   SSSRN  3            SAME WDM4   447 ARON     ENGL      REPL
+PERLND   1 PHOS   SEDP   2            SAME WDM4   152 DPO4     ENGL      REPL
+PERLND   1 PHOS   TSP4S  1            SAME WDM4   153 SPO4     ENGL      REPL
+PERLND   1 PHOS   TSP4S  5            SAME WDM4   253 IPO4     ENGL      REPL
+PERLND   1 PHOS   SSP4S  3            SAME WDM4   453 APO4     ENGL      REPL
+END EXT TARGETS
+
+END RUN
