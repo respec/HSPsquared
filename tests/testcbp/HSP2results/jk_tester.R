@@ -21,20 +21,28 @@ content.df <- h5ls(h5_file_name,all=TRUE)
 colnames(content.df)
 
 # investigating TIMESERIES group
-# ts_group.df <- content.df[grep("TIMESERIES", content.df$group), ]
-# ts_group.df <- content.df[grep("TIMESERIES/TS", content.df$group), ]
-# ts_group.df[1:20,]
-# tail(ts_group.df)
-# length(ts_group.df[,1])
-# # h5read(h5_file_name, "/TIMESERIES/TS011/table")[1:10,]
+ts_group.df <- content.df[grep("TIMESERIES", content.df$group), ]
+ts_group.df <- content.df[grep("TIMESERIES/TS", content.df$group), ]
+ts_group.df <- content.df[grep("values", content.df$name), ]
+ts_group.df[1:20,]
+tail(ts_group.df)
+length(ts_group.df[,1])
+# h5read(h5_file_name, "/TIMESERIES/TS011/table")[1:10,]
+# TS_table <- h5read(h5_file_name, "/TIMESERIES/TS011/table")
+TS_table <- h5read(h5_file_name, "/TIMESERIES/TS011/table")
+# TS_table <- h5read(h5_file_name, "/TIMESERIES/RCHRES_R001/table")
+TS_table[1:10,]
+tail(TS_table)
 
 # investigating RESULTS group
 # ts_group.df <- content.df[grep("RESULTS/RCHRES_R001/HYDR", content.df$group), ]
 # ts_group.df[1:20,]
 # tail(ts_group.df)
 # length(ts_group.df[,1])
-HYDR_table <- h5read(h5_file_name, "RESULTS/RCHRES_R001/HYDR/table")
-HYDR_table[1:10,]
-tail(HYDR_table)
-length(HYDR_table[,1])
-write.csv(HYDR_table, "HYDR_table_v3.csv")
+
+# helpful printouts
+# HYDR_table <- h5read(h5_file_name, "RESULTS/RCHRES_R001/HYDR/table")
+# HYDR_table[1:10,]
+# tail(HYDR_table)
+# length(HYDR_table[,1])
+# write.csv(HYDR_table, "HYDR_table_vsetOUTDGT.csv")
