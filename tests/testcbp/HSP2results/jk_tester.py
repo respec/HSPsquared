@@ -30,21 +30,21 @@ print("Running jk_tester.py")
 
 ################################
 
-# import h5py
-# filename = "test10.h5"
+import h5py
+filename = "PL3_5250_0001.h5" 
 
-# with h5py.File(filename, "r") as f:
-#     # Print all root level object names (aka keys) 
-#     # these can be group or dataset names 
-#     print("Keys: %s" % f.keys())
+with h5py.File(filename, "r") as f:
+    # Print all root level object names (aka keys) 
+    # these can be group or dataset names 
+    print("Keys: %s" % f.keys())
 
 # from HSP2 import versions, main as run
 # from HSP2tools import read_UCI, read_WDM
 
 ################################################################
-from pandas import read_hdf
+# from pandas import read_hdf
 
-HBN = 'PL3_5250_0001.h5'
-read_hdf(HBN,'PL3_5250_0001')
+# HBN = 'PL3_5250_0001.h5'
+# read_hdf(HBN,'PL3_5250_0001')
 
 
