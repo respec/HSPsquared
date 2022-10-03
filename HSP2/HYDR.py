@@ -72,10 +72,15 @@ def hydr(io_manager, siminfo, uci, ts, ftables, specactions):
 
     # OUTDGT timeseries might come in as OUTDGT, OUTDGT0, etc. otherwise UCI default
     names = list(sorted([n for n in ts if n.startswith('OUTDG')], reverse=True))
+    print(names)
     df = DataFrame()
     for i,c in enumerate(ODGTF):
         df[i] = ts[names.pop()][0:steps] if c > 0 else zeros(steps)
     OUTDGT = df.to_numpy()
+
+    # List all names in ts, for jk testing purposes only
+    # ts_names = list(sorted([n for n in ts], reverse=True))
+    # print(ts_names)
 
     # generic SAVE table doesn't know nexits for output flows and rates
     if nexits > 1:
@@ -112,6 +117,10 @@ def hydr(io_manager, siminfo, uci, ts, ftables, specactions):
     ui['nrows']  = rchtab.shape[0]
     ui['nodfv']  = any(ODFVF)
     ui['uunits'] = uunits
+
+    # List all names in ui, for jk testing purposes only
+    # ui_names = list(sorted([n for n in ui], reverse=True))
+    # print(ui_names)
 
     # Numba can't do 'O' + str(i) stuff yet, so do it here. Also need new style lists
     Olabels = List()
@@ -263,30 +272,34 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, specactio
     # HYDR (except where noted)
     for step in range(steps):
         print('\n', 'step: ', step, ' of: ', steps, ' steps')
+
+        # ------------------------------------------------------------------------
+        print('Trying specl')   
+        # OUTDGT2_save = ts['OUTDGT2'][step - 1] # save before calling specl()
+        # OUTDGT1_save = ts['OUTDGT1'][step - 1] 
+        print("OUTDGT[step, :]", OUTDGT[step, :])
+        print("ro", ro)
+
+        # call specl
+        specl(ui, ts, step, specactions)
+        print("ts['OUTDGT2'][step]", ts['OUTDGT2'][step])
+        print("ts['OUTDGT1'][step]", ts['OUTDGT1'][step])
+        print("OUTDGT[step, :]", OUTDGT[step, :])
+
+        # set OUTDGT using the values in the ts object which were set inside specl()
+        OUTDGT[step, :] = [ts['OUTDGT1'][step], ts['OUTDGT2'][step], 0.0]
+        print("OUTDGT[step, :]", OUTDGT[step, :])
+        # ------------------------------------------------------------------------
+        
         convf  = CONVF[step]
         outdgt[:] = OUTDGT[step, :]
         colind[:] = COLIND[step, :]
         roseff = ro
         oseff[:] = o[:]
 
-        print('Trying specl')
-#        state = ts[:,step - 1]
-        # io_manager = [1,2,3] # dummy, should this be passed because SA needs to be able to access all?
-        # siminfo = [1,2,3] # dummy, should this be passed because SA needs to be able to access all?
-        ts_save = ts['VOL'][step - 1] # save before calling specl()
-        # specl(io_manager, siminfo, ui, ts, step, sa)      
-        
-        print(outdgt)
-
-        # testing specactions withdrawal
-        test_withdrawal = 10
-        specactions['test_wd'] = test_withdrawal
-        # specactions['outdgt'] = outdgt
-
-        specl(ui, ts, step, specactions)
-        # print([ts_save, ts['VOL'][step - 1] ])
-        print([ts_save, ts['VOL'][step]])
-
+        # jk test prints
+        print("roseff", roseff)
+        print("outdgt[:]", outdgt[:])
 
         # vols, sas variables and their initializations  not needed.
         if irexit >= 0:             # irrigation exit is set, zero based number
