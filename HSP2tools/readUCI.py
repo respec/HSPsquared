@@ -459,7 +459,7 @@ def specactions(info, llines):
     #     column to match with conditional expression if applicable
     #   - The value of CURLVL matches with an expression
     sa_actions = [] # referred to as "classic" in old HSPF code comments 
-    head_actions = ['OPERATION','RANGE1','RANGE2','DC','DS','YR','MO','DA','HR','MN','D','T','VARI', 'S1','S2','AC','VALUE','TC','TS','NUM', 'CURLVL']
+    head_actions = ['OPTYP','RANGE1','RANGE2','DC','DS','YR','MO','DA','HR','MN','D','T','VARI', 'S1','S2','AC','VALUE','TC','TS','NUM', 'CURLVL']
     sa_mult = []
     head_mult = []
     sa_uvquan = []
