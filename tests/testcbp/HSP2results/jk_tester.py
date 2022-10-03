@@ -31,7 +31,7 @@ print("Running jk_tester.py")
 ################################
 
 import h5py
-filename = "PL3_5250_0001.h5"
+filename = "PL3_5250_0001.h5" 
 
 with h5py.File(filename, "r") as f:
     # Print all root level object names (aka keys) 

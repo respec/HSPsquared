@@ -278,6 +278,9 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, specactio
 
         # print(outdgt)
         print(OUTDGT[step, :])
+        print(ro)
+        ro = 99
+        print(ro)
 
         # testing specactions withdrawal
         # test_withdrawal = 10
@@ -298,6 +301,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, specactio
         roseff = ro
         oseff[:] = o[:]
 
+        print(roseff)
         print(outdgt[:])
 
         # vols, sas variables and their initializations  not needed.
