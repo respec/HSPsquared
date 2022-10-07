@@ -78,6 +78,23 @@ def hydr(io_manager, siminfo, uci, ts, ftables, specactions):
         df[i] = ts[names.pop()][0:steps] if c > 0 else zeros(steps)
     OUTDGT = df.to_numpy()
 
+    print(OUTDGT)
+
+    # OUTDGT replacement testing
+    # OUTDGT = ts[names][0:steps]
+    xkeys = ['OUTDGT1', 'OUTDGT2']
+    # xvalues = list(map(ts.get, xkeys))
+    xvalues = array(ts['OUTDGT1'],ts['OUTDGT2'])
+    # xvalues = array(map(ts.get, xkeys))
+    # xvalues = list(map(ts.get, names))
+    # print(names)
+    print(xvalues)
+    # print(xvalues.shape)
+    # print(xvalues[0][0])
+    # xvalues[0][0] = xvalues[0][0] * 2
+    # print("ts['OUTDGT1']", ts['OUTDGT1'][0])
+    # print("ts['OUTDGT2']", ts['OUTDGT2'][0])
+
     # List all names in ts, for jk testing purposes only
     # ts_names = list(sorted([n for n in ts], reverse=True))
     # print(ts_names)
@@ -271,24 +288,24 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, specactio
 
     # HYDR (except where noted)
     for step in range(steps):
-        print('\n', 'step: ', step, ' of: ', steps, ' steps')
+        # print('\n', 'step: ', step, ' of: ', steps, ' steps')
 
         # ------------------------------------------------------------------------
-        print('Trying specl')   
+        # print('Trying specl')   
         # OUTDGT2_save = ts['OUTDGT2'][step - 1] # save before calling specl()
         # OUTDGT1_save = ts['OUTDGT1'][step - 1] 
-        print("OUTDGT[step, :]", OUTDGT[step, :])
-        print("ro", ro)
+        # print("OUTDGT[step, :]", OUTDGT[step, :])
+        # print("ro", ro)
 
         # call specl
         specl(ui, ts, step, specactions)
-        print("ts['OUTDGT2'][step]", ts['OUTDGT2'][step])
-        print("ts['OUTDGT1'][step]", ts['OUTDGT1'][step])
-        print("OUTDGT[step, :]", OUTDGT[step, :])
+        # print("ts['OUTDGT2'][step]", ts['OUTDGT2'][step])
+        # print("ts['OUTDGT1'][step]", ts['OUTDGT1'][step])
+        # print("OUTDGT[step, :]", OUTDGT[step, :])
 
         # set OUTDGT using the values in the ts object which were set inside specl()
         OUTDGT[step, :] = [ts['OUTDGT1'][step], ts['OUTDGT2'][step], 0.0]
-        print("OUTDGT[step, :]", OUTDGT[step, :])
+        # print("OUTDGT[step, :]", OUTDGT[step, :])
         # ------------------------------------------------------------------------
         
         convf  = CONVF[step]
@@ -298,8 +315,8 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, specactio
         oseff[:] = o[:]
 
         # jk test prints
-        print("roseff", roseff)
-        print("outdgt[:]", outdgt[:])
+        # print("roseff", roseff)
+        # print("outdgt[:]", outdgt[:])
 
         # vols, sas variables and their initializations  not needed.
         if irexit >= 0:             # irrigation exit is set, zero based number
