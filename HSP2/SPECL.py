@@ -15,7 +15,7 @@ from numba import njit
 # def specl(io_manager, siminfo, uci, ts, step, specl_actions):
 def specl(ui, ts, step, specactions):
 
-    print('Made it to specl()')
+    # print('Made it to specl()')
     ts = _specl_(ui, ts, step, specactions)
     
     # return errors, ERRMSGS
@@ -27,7 +27,7 @@ def specl(ui, ts, step, specactions):
 @njit
 def _specl_(ui, ts, step, specactions):
     
-    print('Made it to _specl_()')
+    # print('Made it to _specl_()')
     # ts['VOL'][step - 1] = ts['VOL'][step - 1] * 5.0
     # ts['VOL'][step - 1] = ts['VOL'][step - 1] - specactions['test_wd']
 
@@ -35,7 +35,9 @@ def _specl_(ui, ts, step, specactions):
     # ts['OUTDGT2'][step - 1] = 99
     # ts['OUTDGT2'][step - 1] = ts['OUTDGT2'][step - 1]
     # ts['OUTDGT2'][step] = ts['OUTDGT2'][step - 1] + 99
+    
     ts['OUTDGT2'][step] = 99
+    # ts['OUTDGT2'][step, :] = 99 # this resulted in errors
 
     # print(specactions['outdgt'])
     # return errors
