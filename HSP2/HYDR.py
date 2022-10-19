@@ -18,6 +18,7 @@ from math import sqrt, log10
 from numba import njit
 from numba.typed import List
 from HSP2.utilities import initm, make_numba_dict
+from HSP2.SPECL import specl, _specl_
 
 
 ERRMSGS =('HYDR: SOLVE equations are indeterminate',             #ERRMSG0
@@ -30,15 +31,16 @@ TOLERANCE = 0.001   # newton method max loops
 MAXLOOPS  = 100     # newton method exit tolerance
 
 
-def hydr(io_manager, siminfo, uci, ts, ftables):
+def hydr(io_manager, siminfo, uci, ts, ftables, specactions):
     ''' find the state of the reach/reservoir at the end of the time interval
     and the outflows during the interval
 
-    CALL: hydr(store, general, ui, ts)
+    CALL: hydr(store, general, ui, ts, specactions)
        store is the Pandas/PyTable open store
        general is a dictionary with simulation level infor (OP_SEQUENCE for example)
        ui is a dictionary with RID specific HSPF UCI like data
-       ts is a dictionary with RID specific timeseries'''
+       ts is a dictionary with RID specific timeseries
+       specactions is a dictionary with all special actions'''
 
     steps   = siminfo['steps']                # number of simulation points
     uunits  = siminfo['units']
@@ -70,10 +72,32 @@ def hydr(io_manager, siminfo, uci, ts, ftables):
 
     # OUTDGT timeseries might come in as OUTDGT, OUTDGT0, etc. otherwise UCI default
     names = list(sorted([n for n in ts if n.startswith('OUTDG')], reverse=True))
+    print(names)
     df = DataFrame()
     for i,c in enumerate(ODGTF):
         df[i] = ts[names.pop()][0:steps] if c > 0 else zeros(steps)
     OUTDGT = df.to_numpy()
+
+    print(OUTDGT)
+
+    # OUTDGT replacement testing
+    # OUTDGT = ts[names][0:steps]
+    xkeys = ['OUTDGT1', 'OUTDGT2']
+    # xvalues = list(map(ts.get, xkeys))
+    xvalues = array(ts['OUTDGT1'],ts['OUTDGT2'])
+    # xvalues = array(map(ts.get, xkeys))
+    # xvalues = list(map(ts.get, names))
+    # print(names)
+    print(xvalues)
+    # print(xvalues.shape)
+    # print(xvalues[0][0])
+    # xvalues[0][0] = xvalues[0][0] * 2
+    # print("ts['OUTDGT1']", ts['OUTDGT1'][0])
+    # print("ts['OUTDGT2']", ts['OUTDGT2'][0])
+
+    # List all names in ts, for jk testing purposes only
+    # ts_names = list(sorted([n for n in ts], reverse=True))
+    # print(ts_names)
 
     # generic SAVE table doesn't know nexits for output flows and rates
     if nexits > 1:
@@ -111,6 +135,10 @@ def hydr(io_manager, siminfo, uci, ts, ftables):
     ui['nodfv']  = any(ODFVF)
     ui['uunits'] = uunits
 
+    # List all names in ui, for jk testing purposes only
+    # ui_names = list(sorted([n for n in ui], reverse=True))
+    # print(ui_names)
+
     # Numba can't do 'O' + str(i) stuff yet, so do it here. Also need new style lists
     Olabels = List()
     OVOLlabels = List()
@@ -118,8 +146,10 @@ def hydr(io_manager, siminfo, uci, ts, ftables):
         Olabels.append(f'O{i+1}')
         OVOLlabels.append(f'OVOL{i+1}')
 
+    specactions = make_numba_dict(specactions) # Note: all values coverted to float automatically
     ###########################################################################
-    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels)                  # run reaches simulation code
+    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels, specactions)                  # run reaches simulation code
+#    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels)                  # run reaches simulation code
     ###########################################################################
 
     if 'O'    in ts:  del ts['O']
@@ -134,7 +164,7 @@ def hydr(io_manager, siminfo, uci, ts, ftables):
 
 
 @njit(cache=True)
-def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
+def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, specactions):
     errors = zeros(int(ui['errlen'])).astype(int64)
 
     steps  = int(ui['steps'])            # number of simulation steps
@@ -262,11 +292,35 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
 
     # HYDR (except where noted)
     for step in range(steps):
+        # print('\n', 'step: ', step, ' of: ', steps, ' steps')
+
+        # ------------------------------------------------------------------------
+        # print('Trying specl')   
+        # OUTDGT2_save = ts['OUTDGT2'][step - 1] # save before calling specl()
+        # OUTDGT1_save = ts['OUTDGT1'][step - 1] 
+        # print("OUTDGT[step, :]", OUTDGT[step, :])
+        # print("ro", ro)
+
+        # call specl
+        specl(ui, ts, step, specactions)
+        # print("ts['OUTDGT2'][step]", ts['OUTDGT2'][step])
+        # print("ts['OUTDGT1'][step]", ts['OUTDGT1'][step])
+        # print("OUTDGT[step, :]", OUTDGT[step, :])
+
+        # set OUTDGT using the values in the ts object which were set inside specl()
+        OUTDGT[step, :] = [ts['OUTDGT1'][step], ts['OUTDGT2'][step], 0.0]
+        # print("OUTDGT[step, :]", OUTDGT[step, :])
+        # ------------------------------------------------------------------------
+        
         convf  = CONVF[step]
         outdgt[:] = OUTDGT[step, :]
         colind[:] = COLIND[step, :]
         roseff = ro
         oseff[:] = o[:]
+
+        # jk test prints
+        # print("roseff", roseff)
+        # print("outdgt[:]", outdgt[:])
 
         # vols, sas variables and their initializations  not needed.
         if irexit >= 0:             # irrigation exit is set, zero based number
@@ -607,3 +661,4 @@ def expand_HYDR_masslinks(flags, uci, dat, recs):
         rec['SVOL'] = dat.SVOL
         recs.append(rec)
     return recs
+    
