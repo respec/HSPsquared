@@ -35,7 +35,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
         raise FileNotFoundError(f'{hdfname} HDF5 File Not Found')
 
     msg = messages()
-    msg(1, f'Processing started for file {hdfname}; saveall={saveall}')
+    msg(1, f'(specl v0.1) Processing started for file {hdfname}; saveall={saveall}')
 
     # read user control, parameters, states, and flags uci and map to local variables
     uci_obj = io_manager.read_uci()
@@ -49,7 +49,8 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
     ftables = uci_obj.ftables
     specactions = uci_obj.specactions
     monthdata = uci_obj.monthdata
-
+    specactions = {} # placeholder till added to uci parser
+    
     start, stop = siminfo['start'], siminfo['stop']
 
     copy_instances = {}
@@ -208,7 +209,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                 ############ calls activity function like snow() ##############
                 if operation not in ['COPY','GENER']:
                     if (activity == 'HYDR'):
-                        errors, errmessages = function(io_manager, siminfo, ui, ts, ftables)
+                        errors, errmessages = function(io_manager, siminfo, ui, ts, ftables, specactions)
                     elif (activity != 'RQUAL'):
                         errors, errmessages = function(io_manager, siminfo, ui, ts)
                     else:                    

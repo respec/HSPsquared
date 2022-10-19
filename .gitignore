@@ -63,3 +63,5 @@ tests/GLWACSO/HSPFresults/hspf006.HBN
 tests/GLWACSO/HSP2results/hspp007.uci
 tests/test_report_conversion.html
 tests/land_spec/hwmA51800.h5
+tests/testcbp/HSP2results/PL3_5250_0001.h5
+tests/testcbp/HSP2results/*.csv
