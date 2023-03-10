@@ -1,0 +1,576 @@
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 1984/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                2.595E+04      61.9      61.9      17.1 1.251E+03      16.6 1.517E+03 9.656E-03 2.140E+04
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                3.110E-04 1.875E-07      207.
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                3.696E+05 4.789E+03 3.387E+03 3.572E+05 5.845E+04      0.00 2.988E+05
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.001   3.865E+05
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 1985/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                2.618E+04      62.0      62.0      17.2 1.258E+03      16.7 1.526E+03 1.136E-02 2.159E+04
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                3.659E-04 2.595E-07      245.
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                2.716E+05 3.447E+03 2.723E+03 2.721E+05 5.831E+04      0.00 2.137E+05
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.001   3.010E+05
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 1986/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                2.652E+04      62.2      62.2      17.2 1.269E+03      16.8 1.539E+03 2.903E-02 2.187E+04
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                9.346E-04 1.693E-06      635.
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                2.281E+05 2.966E+03 2.409E+03 2.284E+05 5.680E+04      0.00 1.716E+05
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.001   2.573E+05
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 1987/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                2.654E+04      62.3      62.3      17.2 1.270E+03      16.8 1.540E+03 2.954E-02 2.189E+04
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                9.509E-04 1.752E-06      647.
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                3.836E+05 4.236E+03 3.161E+03 3.847E+05 5.560E+04      0.00 3.291E+05
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.001   4.144E+05
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 1988/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                2.586E+04      61.8      61.8      17.1 1.249E+03      16.6 1.514E+03 1.005E-02 2.133E+04
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                3.236E-04 2.029E-07      214.
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                2.904E+05 3.737E+03 3.091E+03 2.918E+05 6.252E+04      0.00 2.292E+05
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.001   3.207E+05
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 1989/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                2.607E+04      62.0      62.0      17.1 1.255E+03      16.7 1.521E+03 9.693E-03 2.150E+04
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                3.122E-04 1.889E-07      208.
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                4.187E+05 5.513E+03 3.588E+03 4.205E+05 5.916E+04      0.00 3.613E+05
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.001   4.501E+05
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 1990/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                2.802E+04      63.2      63.2      17.5 1.317E+03      17.1 1.597E+03     0.110 2.311E+04
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                3.540E-03 2.429E-05 2.546E+03
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                4.173E+05 5.730E+03 3.828E+03 4.172E+05 6.250E+04      0.00 3.547E+05
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.001   4.491E+05
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 1991/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                1.938E+04      57.1      57.1      15.7 1.019E+03      15.2 1.235E+03 1.310E-02 1.599E+04
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                4.249E-04 3.499E-07      209.
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                2.516E+05 2.407E+03 2.351E+03 2.603E+05 6.491E+04      0.00 1.954E+05
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.001   2.820E+05
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 1992/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                2.696E+04      62.5      62.5      17.3 1.284E+03      16.9 1.556E+03 5.040E-02 2.224E+04
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                1.622E-03 5.097E-06 1.121E+03
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                3.786E+05 5.282E+03 3.547E+03 3.728E+05 6.212E+04      0.00 3.107E+05
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.001   4.033E+05
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 1993/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                2.639E+04      62.2      62.2      17.2 1.265E+03      16.7 1.534E+03 2.253E-02 2.177E+04
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                7.253E-04 1.019E-06      490.
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                6.265E+05 5.062E+03 2.955E+03 6.291E+05 7.031E+04      0.00 5.588E+05
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.001   6.585E+05
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 1994/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                2.577E+04      61.8      61.8      17.1 1.246E+03      16.6 1.510E+03 1.041E-02 2.125E+04
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                3.354E-04 2.180E-07      221.
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                6.019E+05 5.279E+03 3.401E+03 6.044E+05 6.472E+04      0.00 5.397E+05
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.001   6.335E+05
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 1995/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                2.655E+04      62.3      62.3      17.2 1.271E+03      16.8 1.540E+03 3.057E-02 2.190E+04
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                9.842E-04 1.877E-06      670.
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                3.650E+05 4.645E+03 3.596E+03 3.652E+05 6.012E+04      0.00 3.051E+05
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.001   3.954E+05
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 1996/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                2.641E+04      62.2      62.2      17.2 1.266E+03      16.8 1.535E+03 2.425E-02 2.179E+04
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                7.807E-04 1.181E-06      528.
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                8.515E+05 7.801E+03 3.710E+03 8.557E+05 6.443E+04      0.00 7.913E+05
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.001   8.858E+05
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 1997/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                2.661E+04      62.3      62.3      17.3 1.272E+03      16.8 1.542E+03 3.344E-02 2.195E+04
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                1.076E-03 2.245E-06      734.
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                4.086E+05 4.119E+03 2.769E+03 4.098E+05 6.392E+04      0.00 3.459E+05
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.001   4.392E+05
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 1998/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                2.040E+03      26.5      26.5      10.2      165.      9.08      200. 3.989E-02 1.683E+03
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                1.341E-03 3.483E-06      67.1
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                6.106E+05 4.650E+03 3.020E+03 6.368E+05 6.235E+04      0.00 5.744E+05
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.001   6.418E+05
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 1999/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                2.621E+04      62.0      62.0      17.2 1.260E+03      16.7 1.527E+03 1.362E-02 2.162E+04
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                4.386E-04 3.728E-07      295.
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                3.267E+05 3.735E+03 2.484E+03 3.038E+05 6.576E+04      0.00 2.381E+05
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.001   3.325E+05
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 2000/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                2.625E+04      62.1      62.1      17.2 1.261E+03      16.7 1.528E+03 1.561E-02 2.165E+04
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                5.026E-04 4.896E-07      338.
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                3.502E+05 4.846E+03 3.709E+03 3.513E+05 6.149E+04      0.00 2.898E+05
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.001   3.812E+05
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 2001/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                1.092E+04      48.3      48.3      14.7      614.      14.0      744. 9.271E-03 9.012E+03
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                3.024E-04 1.772E-07      83.6
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                2.865E+05 4.134E+03 3.480E+03 3.025E+05 6.631E+04      0.00 2.362E+05
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.001   3.169E+05
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 2002/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                2.667E+04      62.3      62.3      17.3 1.274E+03      16.8 1.545E+03 3.637E-02 2.200E+04
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                1.171E-03 2.656E-06      800.
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                2.438E+05 3.984E+03 3.183E+03 2.289E+05 6.548E+04      0.00 1.634E+05
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.002   2.587E+05
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 2003/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                2.655E+04      62.3      62.3      17.2 1.270E+03      16.8 1.540E+03 3.050E-02 2.190E+04
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                9.819E-04 1.868E-06      668.
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                1.071E+06 8.512E+03 3.852E+03 1.076E+06 6.087E+04      0.00 1.015E+06
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.001   1.106E+06
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 2004/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                2.629E+04      62.1      62.1      17.2 1.262E+03      16.7 1.530E+03 1.783E-02 2.169E+04
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                5.740E-04 6.385E-07      387.
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                4.527E+05 4.946E+03 3.624E+03 4.543E+05 6.564E+04      0.00 3.887E+05
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.001   4.842E+05
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 2005/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                2.649E+04      62.2      62.2      17.2 1.269E+03      16.8 1.538E+03 2.773E-02 2.185E+04
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                8.926E-04 1.544E-06      606.
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                4.876E+05 5.235E+03 3.697E+03 4.889E+05 6.087E+04      0.00 4.281E+05
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.001   5.191E+05
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 2006/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                2.632E+04      62.1      62.1      17.2 1.263E+03      16.7 1.531E+03 1.528E-02 2.171E+04
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                4.921E-04 4.693E-07      332.
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                4.200E+05 5.565E+03 3.930E+03 4.218E+05      3.25      0.00 4.218E+05
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.001   4.520E+05
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 2007/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                2.621E+04      62.0      62.0      17.2 1.260E+03      16.7 1.527E+03 1.010E-02 2.162E+04
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                3.252E-04 2.049E-07      218.
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                2.828E+05 3.512E+03 3.484E+03 2.829E+05      0.00      0.00 2.829E+05
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.002   3.126E+05
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 2008/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                2.628E+04      62.1      62.1      17.2 1.262E+03      16.7 1.529E+03 1.323E-02 2.167E+04
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                4.261E-04 3.519E-07      287.
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                3.956E+05 5.600E+03 3.911E+03 3.973E+05      0.00      0.00 3.973E+05
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.001   4.275E+05
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 2009/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                2.703E+04      62.6      62.6      17.3 1.286E+03      16.9 1.559E+03 5.035E-02 2.230E+04
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                1.620E-03 5.086E-06 1.123E+03
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                4.327E+05 5.931E+03 3.785E+03 4.341E+05      0.00      0.00 4.341E+05
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.001   4.649E+05
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 2010/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                2.619E+04      62.0      62.0      17.2 1.259E+03      16.7 1.526E+03 8.880E-03 2.160E+04
+
+                                   PUSTAR      PTAU   OUTFLOW
+                                     FT/S    LB/FT2     FT3/S
+                                2.859E-04 1.584E-07      192.
+
+   FLUXES                           TOTAL    PRECIP      EVAP     TOTAL    INDIVIDUAL GATE OUTFLOWS
+                                   INFLOW                LOSS   OUTFLOW         1         2         3
+     VOLUMES  (AC-FT)                IVOL    PRSUPY     VOLEV     ROVOL                OVOL
+                                4.632E+05 4.760E+03 3.927E+03 4.649E+05      0.00      0.00 4.649E+05
+
+   BALANCE                      % ERROR IN    AC-FT
+                                 -0.001   4.950E+05
+1
+
+ REACH/MIXED-RESERVOIR NO.   1                           PL3_5250_0001                      REPORT FOR PRINTOUT YEAR ENDING 2011/12
+
+ *** HYDR ***
+
+   STATE VARIABLES                    VOL       DEP     STAGE     AVDEP      TWID      HRAD     SAREA     AVVEL    AVSECT
+     ENTIRE REACH:                  AC-FT        FT        FT        FT        FT        FT     ACRES      FT/S       FT2
+                                2.650E+04      62.2      62.2      17.2 1.269E+03      16.8 1.538E+03 2.454E-02 2.186E+04

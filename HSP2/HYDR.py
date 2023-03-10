@@ -222,7 +222,6 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
 
     zeroindex = fndrow(0.0, volumeFT)                                           #$1126-1127
     topvolume = volumeFT[-1]
-
     vol = ui['VOL'] * VFACT   # hydr-init, initial volume of water
     if vol >= topvolume:
         errors[1] += 1      # ERRMSG1: extrapolation of rchtab will take place
