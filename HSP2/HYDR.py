@@ -81,27 +81,6 @@ def hydr(io_manager, siminfo, uci, ts, ftables, specactions):
         df[i] = ts[names.pop()][0:steps] if c > 0 else zeros(steps)
     OUTDGT = df.to_numpy()
 
-    print(OUTDGT)
-
-    # OUTDGT replacement testing
-    # OUTDGT = ts[names][0:steps]
-    xkeys = ['OUTDGT1', 'OUTDGT2']
-    # xvalues = list(map(ts.get, xkeys))
-    xvalues = array(ts['OUTDGT1'],ts['OUTDGT2'])
-    # xvalues = array(map(ts.get, xkeys))
-    # xvalues = list(map(ts.get, names))
-    # print(names)
-    print(xvalues)
-    # print(xvalues.shape)
-    # print(xvalues[0][0])
-    # xvalues[0][0] = xvalues[0][0] * 2
-    # print("ts['OUTDGT1']", ts['OUTDGT1'][0])
-    # print("ts['OUTDGT2']", ts['OUTDGT2'][0])
-
-    # List all names in ts, for jk testing purposes only
-    # ts_names = list(sorted([n for n in ts], reverse=True))
-    # print(ts_names)
-
     # generic SAVE table doesn't know nexits for output flows and rates
     if nexits > 1:
         u = uci['SAVE']
