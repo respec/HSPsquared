@@ -140,7 +140,7 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state, hsp2_local_py):
     if (hsp2_local_py != False):
         from hsp2_local_py import state_step_hydr
     else:
-        HSP2.state_fn_defaults import state_step_hydr
+        from HSP2.state_fn_defaults import state_step_hydr
     state_ix, dict_ix, ts_ix = state['state_ix'], state['dict_ix'], state['ts_ix']
     state_paths = state['state_paths']
     # initialize the hydr paths in case they don't already reside here
