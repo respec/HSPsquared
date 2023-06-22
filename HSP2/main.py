@@ -71,6 +71,8 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
     state_paths, state_ix, dict_ix, ts_ix = init_state_dicts()
     # Now, load any OM components if present, and store variables on objects 
     hsp2_local_py = load_dynamics(io_manager, siminfo)
+    # initialize state for hydr
+    hydr_init_ix(state_ix, state_paths, domain)
     print("siminfo", siminfo)
     # now put all of these Dicts into the state Dict 
     state['state_paths'], state['state_ix'], state['dict_ix'], state['ts_ix'] = state_paths, state_ix, dict_ix, ts_ix

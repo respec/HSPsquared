@@ -48,7 +48,6 @@ def get_op_state_path(operation, id, activity = ''):
     return op_path
 
 
-@njit
 def get_state_ix(state_ix, state_paths, var_path):
     """
     Find the integer key of a variable name in state_ix 
@@ -70,7 +69,6 @@ def get_ix_path(state_paths, var_ix):
             return spath 
     return False
 
-@njit
 def set_state(state_ix, state_paths, var_path, default_value = 0.0, debug = False):
     """
     Given an hdf5 style path to a variable, set the value 
@@ -100,7 +98,6 @@ def set_dict_state(state_ix, dict_ix, state_paths, var_path, default_value = {})
     return var_ix
 
 
-@njit
 def append_state(state_ix, var_value):
     """
     Add a new variable on the end of the state_ix Dict
@@ -113,6 +110,16 @@ def append_state(state_ix, var_value):
     state_ix[val_ix] = var_value
     return val_ix
 
+def hydr_init_ix(state_ix, state_paths, domain):
+    # get a list of keys for all hydr state variables
+    hydr_state = ["DEP","IVOL","O1","O2","O3","OVOL1","OVOL2","OVOL3","PRSUPY","RO","ROVOL","SAREA","TAU","USTAR","VOL","VOLEV"]
+    hydr_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
+    for i in hydr_state:
+        #var_path = f'{domain}/{i}'
+        var_path = domain + "/" + i
+        hydr_ix[i] = set_state(state_ix, state_paths, var_path, 0.0)
+    return hydr_ix    
+    
 @njit
 def hydr_get_ix(state_ix, state_paths, domain):
     # get a list of keys for all hydr state variables
@@ -121,7 +128,7 @@ def hydr_get_ix(state_ix, state_paths, domain):
     for i in hydr_state:
         #var_path = f'{domain}/{i}'
         var_path = domain + "/" + i
-        hydr_ix[i] = set_state(state_ix, state_paths, var_path, 0.0)
+        hydr_ix[i] = state_paths[var_path]
     return hydr_ix    
 
 # function to dynamically load module, based on "Using imp module" in https://www.tutorialspoint.com/How-I-can-dynamically-import-Python-module#
