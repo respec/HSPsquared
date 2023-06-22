@@ -148,10 +148,16 @@ def hydr(io_manager, siminfo, uci, ts, ftables, specactions):
     for i in range(nexits):
         Olabels.append(f'O{i+1}')
         OVOLlabels.append(f'OVOL{i+1}')
-
+    
+    # must split dicts out of state Dict since numba cannot handle mixed-type nested Dicts
+    # state_info is some generic things about the simulation 
+    state_info = Dict.empty(key_type=types.unicode_type, value_type=types.unicode_type)
+    state_info['operation'], state_info['segment'], state_info['function'], state_info['domain'] = state['operation'], state['segment'], state['function'], state['domain']
+    # specactions - special actions code TBD
     specactions = make_numba_dict(state['specactions']) # Note: all values coverted to float automatically
+    state_ix, dict_ix, ts_ix = state['state_ix'], state['dict_ix'], state['ts_ix']
     ###########################################################################
-    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix)                  # run reaches simulation code
+    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, specactions)                  # run reaches simulation code
 #    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels)                  # run reaches simulation code
     ###########################################################################
 
@@ -167,7 +173,7 @@ def hydr(io_manager, siminfo, uci, ts, ftables, specactions):
 
 
 @njit(cache=True)
-def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, specactions):
+def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, specactions):
     errors = zeros(int(ui['errlen'])).astype(int64)
 
     steps  = int(ui['steps'])            # number of simulation steps
