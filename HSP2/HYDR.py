@@ -328,7 +328,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
             outdgt[:] = [ state_ix[o1_ix], state_ix[o2_ix], state_ix[o3_ix] ]
             # IVOL is writeable. 
             # Note: we must convert IVOL to the units expected in _hydr_ 
-            # maybe routines should do tis, and this is not needed (but pass VFACT in state)
+            # maybe routines should do this, and this is not needed (but pass VFACT in state)
             IVOL[step] = state_ix[ivol_ix] * VFACT
 
         # vols, sas variables and their initializations  not needed.

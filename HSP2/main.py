@@ -75,6 +75,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
     # now put all of these Dicts into the state Dict 
     state['state_paths'], state['state_ix'], state['dict_ix'], state['ts_ix'] = state_paths, state_ix, dict_ix, ts_ix
     # finally stash specactions in state, these are not domain (segment) dependent so do it in advance
+    state['hsp2_local_py'] = hsp2_local_py # stash the specaction dict in state
     state['specactions'] = specactions # stash the specaction dict in state
     state['state_step_hydr'] = siminfo['state_step_hydr'] # copy this setting to pass to function
     #######################################################################################

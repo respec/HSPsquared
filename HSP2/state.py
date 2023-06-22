@@ -170,7 +170,7 @@ def load_dynamics(io_manager, siminfo):
     (fbase, fext) = os.path.splitext(hdf5_path)
     # see if there is a code module with custom python 
     print("Looking for custom python code ", (fbase + ".py"))
-    print("calling dynamic_module_import(",fbase, local_path + "/" + fbase + ".py", ", 'hsp2_local_py')")
+    #print("calling dynamic_module_import(",fbase, local_path + "/" + fbase + ".py", ", 'hsp2_local_py')")
     hsp2_local_py = dynamic_module_import(fbase, local_path + "/" + fbase + ".py", "hsp2_local_py")
     print("dir(hsp2_local_py) = ", dir(hsp2_local_py))
     if 'state_step_hydr' in dir(hsp2_local_py):
