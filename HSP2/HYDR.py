@@ -18,6 +18,7 @@ from math import sqrt, log10
 from numba import njit
 from numba.typed import List
 from HSP2.utilities import initm, make_numba_dict
+from HSP2.state import *
 from HSP2.SPECL import specl, _specl_
 
 
@@ -40,7 +41,9 @@ def hydr(io_manager, siminfo, uci, ts, ftables, specactions):
        general is a dictionary with simulation level infor (OP_SEQUENCE for example)
        ui is a dictionary with RID specific HSPF UCI like data
        ts is a dictionary with RID specific timeseries
-       specactions is a dictionary with all special actions'''
+       state is a dictionary that contains all dynamic code dictionaries such as: 
+       - specactions is a dictionary with all special actions
+    '''
 
     steps   = siminfo['steps']                # number of simulation points
     uunits  = siminfo['units']
@@ -146,9 +149,9 @@ def hydr(io_manager, siminfo, uci, ts, ftables, specactions):
         Olabels.append(f'O{i+1}')
         OVOLlabels.append(f'OVOL{i+1}')
 
-    specactions = make_numba_dict(specactions) # Note: all values coverted to float automatically
+    specactions = make_numba_dict(state['specactions']) # Note: all values coverted to float automatically
     ###########################################################################
-    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels, specactions)                  # run reaches simulation code
+    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix)                  # run reaches simulation code
 #    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels)                  # run reaches simulation code
     ###########################################################################
 
