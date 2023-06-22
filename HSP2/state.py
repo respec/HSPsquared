@@ -11,8 +11,7 @@ import sys
 
 def init_state_dicts():
     """
-    We should get really good at using docstrings...
-    Agree. they are dope.
+    This contains the base dictionaries used to pass model state amongst modules and custom code plugins
     """
     state_paths = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
     state_ix = Dict.empty(key_type=types.int64, value_type=types.float64)
@@ -20,18 +19,6 @@ def init_state_dicts():
     ts_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:])
     return state_paths, state_ix, dict_ix, ts_ix
 
-def init_sim_dicts():
-    """
-    We should get really good at using docstrings...
-    Agree. they are dope.
-    """
-    op_tokens = Dict.empty(key_type=types.int64, value_type=types.i8[:])
-    state_paths = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
-    state_ix = Dict.empty(key_type=types.int64, value_type=types.float64)
-    dict_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:,:])
-    ts_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:])
-    model_object_cache = {} # this does not need to be a special Dict as it is not used in numba 
-    return op_tokens, state_paths, state_ix, dict_ix, ts_ix, model_object_cache
 
 def find_state_path(state_paths, parent_path, varname):
     """
@@ -42,11 +29,17 @@ def find_state_path(state_paths, parent_path, varname):
     return var_path
 
 def op_path_name(operation, id):
+    """
+    Used to generate hdf5 operation name in a central fashion to avoid naming convention slip-ups
+    """
     tid = str(id).zfill(3)
     path_name = f'{operation}_{operation[0]}{tid}'
     return path_name
 
 def get_op_state_path(operation, id, activity = ''):
+    """
+    Used to generate hdf5 paths in a central fashion to avoid naming convention slip-ups
+    """
     op_name = op_path_name(operation, id) 
     if activity == '':
         op_path = f'/STATE/{op_name}'
