@@ -131,7 +131,8 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
     # must split dicts out of state Dict since numba cannot handle mixed-type nested Dicts
     # state_info is some generic things about the simulation 
     state_info = Dict.empty(key_type=types.unicode_type, value_type=types.unicode_type)
-    state_info['operation'], state_info['segment'], state_info['function'], state_info['domain'] = state['operation'], state['segment'], state['function'], state['domain']
+    state_info['operation'], state_info['segment'], state_info['function'] = state['operation'], state['segment'], state['function']
+    state_info['domain'], state_info['state_step_hydr'] = state['domain'], state['state_step_hydr']
     # specactions - special actions code TBD
     specactions = make_numba_dict(state['specactions']) # Note: all values coverted to float automatically
     state_ix, dict_ix, ts_ix = state['state_ix'], state['dict_ix'], state['ts_ix']
@@ -308,7 +309,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
         oseff[:] = o[:]
         
         # Execute dynamic code if enabled
-        if (siminfo['state_step_hydr'] == 1):
+        if (state_info['state_step_hydr'] == 'enabled'):
             state_step_hydr(state_ix, dict_ix, ts_ix, hydr_ix, step)
 
         # vols, sas variables and their initializations  not needed.

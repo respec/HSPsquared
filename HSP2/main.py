@@ -66,7 +66,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
     siminfo['delt'] = delt
     siminfo['tindex'] = date_range(start, stop, freq=Minute(delt))[1:]
     siminfo['steps'] = len(siminfo['tindex'])
-    siminfo['state_step_hydr'] = False
+    siminfo['state_step_hydr'] = 'disabled'
     # Set up Things in state that will be used in all modular activitis like SPECL
     state_paths, state_ix, dict_ix, ts_ix = init_state_dicts()
     # Now, load any OM components if present, and store variables on objects 
@@ -75,6 +75,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
     state['state_paths'], state['state_ix'], state['dict_ix'], state['ts_ix'] = state_paths, state_ix, dict_ix, ts_ix
     # finally stash specactions in state, these are not domain (segment) dependent so do it in advance
     state['specactions'] = specactions # stash the specaction dict in state
+    state['state_step_hydr'] = siminfo['state_step_hydr'] # copy this setting to pass to function
     #######################################################################################
     
     # main processing loop
