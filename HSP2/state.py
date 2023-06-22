@@ -177,5 +177,5 @@ def load_dynamics(io_manager, siminfo):
         siminfo['state_step_hydr'] = 'enabled' 
     else:
         print("state_step_hydr function not defined. Using default")
-        from HSP2.state_fn_defaults import state_step_hydr
+        return False
     return hsp2_local_py
