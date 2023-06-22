@@ -137,6 +137,8 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state, hsp2_local_py):
     # specactions - special actions code TBD
     specactions = make_numba_dict(state['specactions']) # Note: all values coverted to float automatically
     hsp2_local_py = load_dynamics(io_manager, siminfo)
+    # initialize the hydr paths in case they don't already reside here
+    hydr_init_ix(state_ix, state_paths, state['domain'])
     from hsp2_local_py import state_step_hydr
     print("hsp2_local_py", hsp2_local_py)
     state_ix, dict_ix, ts_ix = state['state_ix'], state['dict_ix'], state['ts_ix']
