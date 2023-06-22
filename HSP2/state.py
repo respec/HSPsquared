@@ -151,7 +151,7 @@ def dynamic_module_import(local_name, local_path, module_name):
     return module
 
 
-def load_dynamics(io_manager, siminfo, state_paths, state_ix, dict_ix, ts_ix):
+def load_dynamics(io_manager, siminfo):
     local_path = os.getcwd()
     print("Path:", local_path)
     # try this

@@ -135,10 +135,12 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state, hsp2_local_py):
     state_info['domain'], state_info['state_step_hydr'] = state['domain'], state['state_step_hydr']
     # specactions - special actions code TBD
     specactions = make_numba_dict(state['specactions']) # Note: all values coverted to float automatically
+    hsp2_local_py = load_dynamics(io_manager, siminfo)
+    print("hsp2_local_py", hsp2_local_py)
     state_ix, dict_ix, ts_ix = state['state_ix'], state['dict_ix'], state['ts_ix']
     state_paths = state['state_paths']
     ###########################################################################
-    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, hsp2_local_py, specactions)                  # run reaches simulation code
+    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, specactions)                  # run reaches simulation code
 #    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels)                  # run reaches simulation code
     ###########################################################################
 
@@ -154,7 +156,7 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state, hsp2_local_py):
 
 
 @njit(cache=True)
-def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, hsp2_local_py, specactions):
+def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, specactions):
     errors = zeros(int(ui['errlen'])).astype(int64)
 
     steps  = int(ui['steps'])            # number of simulation steps
@@ -314,7 +316,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
         print("state_info", state_info)
         if (state_info['state_step_hydr'] == 'enabled'):
             print("calling state_step_hydr()")
-            hsp2_local_py.state_step_hydr(state_ix, dict_ix, ts_ix, hydr_ix, step)
+            state_step_hydr(state_ix, dict_ix, ts_ix, hydr_ix, step)
 
         # vols, sas variables and their initializations  not needed.
         if irexit >= 0:             # irrigation exit is set, zero based number
