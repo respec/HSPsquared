@@ -326,10 +326,10 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
         colind[:] = COLIND[step, :]
         roseff = ro
         oseff[:] = o[:]
-
-        # jk test prints
-        # print("roseff", roseff)
-        # print("outdgt[:]", outdgt[:])
+        
+        # Execute dynamic code if enabled
+        if (siminfo['state_step_hydr'] == 1):
+            state_step_hydr(state_ix, dict_ix, ts_ix, hydr_ix, step)
 
         # vols, sas variables and their initializations  not needed.
         if irexit >= 0:             # irrigation exit is set, zero based number
