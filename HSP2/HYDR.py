@@ -291,10 +291,12 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
     # other initial vars
     rovol = 0.0
     volev = 0.0
-    ctr = 0
     IVOL0   = ts['IVOL']                   # the actual inflow in simulation native units 
     # prepare for dynamic state
     hydr_ix = hydr_get_ix(state_ix, state_paths, state_info['domain'])
+    # these are integer placeholders faster than calling the array look each timestep
+    o1_ix, o2_ix, o3_ix, ivol_ix = hydr_ix['O1'], hydr_ix['O2'], hydr_ix['O3'], hydr_ix['IVOL']
+    ro_ix, rovol_ix, volev_ix, vol_ix = hydr_ix['RO'], hydr_ix['ROVOL'], hydr_ix['VOLEV'], hydr_ix['VOL']
     # HYDR (except where noted)
     for step in range(steps):
         # call specl
@@ -321,6 +323,13 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
         # Execute dynamic code if enabled
         if (state_info['state_step_hydr'] == 'enabled'):
             state_step_hydr(state_ix, dict_ix, ts_ix, hydr_ix, step)
+            # Do write-backs for editable STATE variables
+            # OUTDGT is writeable
+            outdgt[:] = [ state_ix[o1_ix], state_ix[o2_ix], state_ix[o3_ix] ]
+            # IVOL is writeable. 
+            # Note: we must convert IVOL to the units expected in _hydr_ 
+            # maybe routines should do tis, and this is not needed (but pass VFACT in state)
+            IVOL[step] = state_ix[ivol_ix] * VFACT
 
         # vols, sas variables and their initializations  not needed.
         if irexit >= 0:             # irrigation exit is set, zero based number
