@@ -123,7 +123,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                 # give shortcut to state path for the upcoming function 
                 state['operation'] = operation # Context for dynamic executables.
                 state['segment'] = segment # Context for dynamic executables.
-                state['function'] = function # Context for dynamic executables.
+                state['function'] = str(function) # Context for dynamic executables.
                 state['domain'] = "/STATE/" + operation + "_" + segment + "/" + activity 
 
                 ui = uci[(operation, activity, segment)]   # ui is a dictionary
