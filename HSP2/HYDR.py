@@ -288,6 +288,11 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
     for index in range(nexits):
         ui['OS' + str(index + 1)] = o[index]
 
+    # other initial vars
+    rovol = 0.0
+    volev = 0.0
+    ctr = 0
+    IVOL0   = ts['IVOL']                   # the actual inflow in simulation native units 
     # prepare for dynamic state
     hydr_ix = hydr_get_ix(state_ix, state_paths, state_info['domain'])
     # HYDR (except where noted)
@@ -305,6 +310,13 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
         colind[:] = COLIND[step, :]
         roseff = ro
         oseff[:] = o[:]
+        
+        # set state_ix with value of local state variables and/or needed vars
+        # Note: we pass IVOL0, not IVOL here since IVOL has been converted to different units
+        state_ix[o1_ix], state_ix[o2_ix], state_ix[o3_ix] = outdgt[0], outdgt[1], outdgt[2]
+        state_ix[ro_ix], state_ix[rovol_ix] = ro, rovol
+        state_ix[vol_ix], state_ix[ivol_ix] = vol, IVOL0[step]
+        state_ix[volev_ix] = volev
         
         # Execute dynamic code if enabled
         if (state_info['state_step_hydr'] == 'enabled'):
