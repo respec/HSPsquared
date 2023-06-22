@@ -140,6 +140,7 @@ def dynamic_module_import(local_name, local_path, module_name):
             print("local_spec = ", local_spec)
             module = importlib.util.module_from_spec(local_spec)
             sys.modules[local_spec.name] = module
+            sys.modules[module_name] = module
             local_spec.loader.exec_module(module)
     except Exception as e:
         print(e)
