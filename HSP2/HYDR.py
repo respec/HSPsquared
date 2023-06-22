@@ -19,6 +19,7 @@ from numba import njit
 from numba.typed import List
 from HSP2.utilities import initm, make_numba_dict
 from HSP2.state import *
+from HSP2.state_fn_defaults import *
 from HSP2.SPECL import specl, _specl_
 
 
@@ -317,7 +318,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
         print("state_info", state_info)
         if (state_info['state_step_hydr'] == 'enabled'):
             print("calling state_step_hydr()")
-            state_step_hydr(state_ix, dict_ix, ts_ix, hydr_ix, step)
+            hsp2_local_py.state_step_hydr(state_ix, dict_ix, ts_ix, hydr_ix, step)
 
         # vols, sas variables and their initializations  not needed.
         if irexit >= 0:             # irrigation exit is set, zero based number
