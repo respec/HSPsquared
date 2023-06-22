@@ -307,7 +307,6 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
         # Execute dynamic code if enabled
         print("state_info", state_info)
         if (state_info['state_step_hydr'] == 'enabled'):
-            print("calling state_step_hydr()")
             state_step_hydr(state_ix, dict_ix, ts_ix, hydr_ix, step)
 
         # vols, sas variables and their initializations  not needed.
