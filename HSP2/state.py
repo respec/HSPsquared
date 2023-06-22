@@ -167,4 +167,4 @@ def load_dynamics(io_manager, siminfo, state_paths, state_ix, dict_ix, ts_ix):
     else:
         print("state_step_hydr function not defined. Using default")
         from HSP2.state_fn_defaults import state_step_hydr
-    return
+    return hsp2_local_py

@@ -32,7 +32,7 @@ TOLERANCE = 0.001   # newton method max loops
 MAXLOOPS  = 100     # newton method exit tolerance
 
 
-def hydr(io_manager, siminfo, uci, ts, ftables, state):
+def hydr(io_manager, siminfo, uci, ts, ftables, state, hsp2_local_py):
     ''' find the state of the reach/reservoir at the end of the time interval
     and the outflows during the interval
 
@@ -138,7 +138,7 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
     state_ix, dict_ix, ts_ix = state['state_ix'], state['dict_ix'], state['ts_ix']
     state_paths = state['state_paths']
     ###########################################################################
-    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, specactions)                  # run reaches simulation code
+    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, hsp2_local_py, specactions)                  # run reaches simulation code
 #    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels)                  # run reaches simulation code
     ###########################################################################
 
@@ -154,7 +154,7 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
 
 
 @njit(cache=True)
-def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, specactions):
+def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, hsp2_local_py, specactions):
     errors = zeros(int(ui['errlen'])).astype(int64)
 
     steps  = int(ui['steps'])            # number of simulation steps
@@ -312,7 +312,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
         print("state_info", state_info)
         if (state_info['state_step_hydr'] == 'enabled'):
             print("calling state_step_hydr()")
-            state_step_hydr(state_ix, dict_ix, ts_ix, hydr_ix, step)
+            hsp2_local_py.state_step_hydr(state_ix, dict_ix, ts_ix, hydr_ix, step)
 
         # vols, sas variables and their initializations  not needed.
         if irexit >= 0:             # irrigation exit is set, zero based number
