@@ -161,7 +161,7 @@ def load_dynamics(io_manager, siminfo, state_paths, state_ix, dict_ix, ts_ix):
     print("Looking for custom python code ", (fbase + ".py"))
     print("calling dynamic_module_import(",fbase, local_path + "/" + fbase + ".py", ", 'hsp2_local_py')")
     hsp2_local_py = dynamic_module_import(fbase, local_path + "/" + fbase + ".py", "hsp2_local_py")
-    print("dir(hsp2_local_py) = ", dir(hsp2_local_py))
+    print("dir(hsp2_local_py) = ", dir(hsp2_local_py['sys']))
     if 'state_step_hydr' in dir(hsp2_local_py):
         siminfo['state_step_hydr'] = 'enabled' 
     else:
