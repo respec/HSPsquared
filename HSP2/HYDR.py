@@ -288,21 +288,9 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
     hydr_ix = hydr_get_ix(state_ix, state_paths, state_info['domain'])
     # HYDR (except where noted)
     for step in range(steps):
-        # print('\n', 'step: ', step, ' of: ', steps, ' steps')
-
-        # ------------------------------------------------------------------------
-        # print('Trying specl')   
-        # OUTDGT2_save = ts['OUTDGT2'][step - 1] # save before calling specl()
-        # OUTDGT1_save = ts['OUTDGT1'][step - 1] 
-        # print("OUTDGT[step, :]", OUTDGT[step, :])
-        # print("ro", ro)
-
         # call specl
         specl(ui, ts, step, specactions)
-        # print("ts['OUTDGT2'][step]", ts['OUTDGT2'][step])
-        # print("ts['OUTDGT1'][step]", ts['OUTDGT1'][step])
-        # print("OUTDGT[step, :]", OUTDGT[step, :])
-
+        
         # set OUTDGT using the values in the ts object which were set inside specl()
         OUTDGT[step, :] = [ts['OUTDGT1'][step], ts['OUTDGT2'][step], 0.0]
         # print("OUTDGT[step, :]", OUTDGT[step, :])
@@ -318,7 +306,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
         print("state_info", state_info)
         if (state_info['state_step_hydr'] == 'enabled'):
             print("calling state_step_hydr()")
-            hsp2_local_py.state_step_hydr(state_ix, dict_ix, ts_ix, hydr_ix, step)
+            state_step_hydr(state_ix, dict_ix, ts_ix, hydr_ix, step)
 
         # vols, sas variables and their initializations  not needed.
         if irexit >= 0:             # irrigation exit is set, zero based number
