@@ -48,6 +48,7 @@ def get_op_state_path(operation, id, activity = ''):
     return op_path
 
 
+@njit
 def get_state_ix(state_ix, state_paths, var_path):
     """
     Find the integer key of a variable name in state_ix 
@@ -69,6 +70,7 @@ def get_ix_path(state_paths, var_ix):
             return spath 
     return False
 
+@njit
 def set_state(state_ix, state_paths, var_path, default_value = 0.0, debug = False):
     """
     Given an hdf5 style path to a variable, set the value 
@@ -98,6 +100,7 @@ def set_dict_state(state_ix, dict_ix, state_paths, var_path, default_value = {})
     return var_ix
 
 
+@njit
 def append_state(state_ix, var_value):
     """
     Add a new variable on the end of the state_ix Dict
