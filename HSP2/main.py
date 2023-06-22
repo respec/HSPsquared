@@ -239,7 +239,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                 ############ calls activity function like snow() ##############
                 if operation not in ['COPY','GENER']:
                     if (activity == 'HYDR'):
-                        errors, errmessages = function(io_manager, siminfo, ui, ts, ftables, state, hsp2_local_py)
+                        errors, errmessages = function(io_manager, siminfo, ui, ts, ftables, state)
                     elif (activity != 'RQUAL'):
                         errors, errmessages = function(io_manager, siminfo, ui, ts)
                     else:                    
