@@ -284,7 +284,6 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
         ui['OS' + str(index + 1)] = o[index]
 
     # prepare for dynamic state
-    print("Dir() in _hydr_", dir())
     hydr_ix = hydr_get_ix(state_ix, state_paths, state_info['domain'])
     # HYDR (except where noted)
     for step in range(steps):
