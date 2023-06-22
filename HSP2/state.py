@@ -149,3 +149,18 @@ def dynamic_module_import(local_name, local_path, module_name):
     #    print(e)
     #return load_module, load_class
     return module
+
+
+def load_dynamics(io_manager, siminfo, state_paths, state_ix, dict_ix, ts_ix):
+    local_path = os.getcwd()
+    print("Path:", local_path)
+    # try this
+    hdf5_path = io_manager._input.file_path
+    (fbase, fext) = os.path.splitext(hdf5_path)
+    # see if there is a code module with custom python 
+    print("Looking for custom python code ", (fbase + ".py"))
+    print("calling dynamic_module_import(",fbase, local_path + "/" + fbase + ".py", ", 'hsp2_local_py')")
+    hsp2_local_py = dynamic_module_import(fbase, local_path + "/" + fbase + ".py", "hsp2_local_py")
+    if 'state_step_hydr' in dir(hsp2_local_py):
+        siminfo['state_step_hydr'] = True 
+    return
