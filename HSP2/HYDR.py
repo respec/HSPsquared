@@ -32,7 +32,7 @@ TOLERANCE = 0.001   # newton method max loops
 MAXLOOPS  = 100     # newton method exit tolerance
 
 
-def hydr(io_manager, siminfo, uci, ts, ftables, specactions):
+def hydr(io_manager, siminfo, uci, ts, ftables, state):
     ''' find the state of the reach/reservoir at the end of the time interval
     and the outflows during the interval
 
