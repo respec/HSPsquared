@@ -11,6 +11,7 @@ from datetime import datetime as dt
 import os
 from HSP2.utilities import versions, get_timeseries, expand_timeseries_names, save_timeseries, get_gener_timeseries
 from HSP2.configuration import activities, noop, expand_masslinks
+from HSP2.state import *
 
 from HSP2IO.io import IOManager, SupportsReadTS, Category
 
@@ -56,6 +57,12 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
     copy_instances = {}
     gener_instances = {}
 
+    #######################################################################################
+    # initilize STATE dicts
+    #######################################################################################
+    delt = uci_obj.opseq.INDELT_minutes[0] # get initial value for STATE objects
+    #######################################################################################
+    
     # main processing loop
     msg(1, f'Simulation Start: {start}, Stop: {stop}')
     tscat = {}
