@@ -132,8 +132,6 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
     state_info = Dict.empty(key_type=types.unicode_type, value_type=types.unicode_type)
     state_info['operation'], state_info['segment'], state_info['function'] = state['operation'], state['segment'], state['function']
     state_info['domain'], state_info['state_step_hydr'] = state['domain'], state['state_step_hydr']
-    # specactions - special actions code TBD
-    specactions = make_numba_dict(state['specactions']) # Note: all values coverted to float automatically
     # disabled for testing
     '''
     hsp2_local_py = state['hsp2_local_py']
@@ -148,6 +146,14 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
     state_paths = state['state_paths']
     # initialize the hydr paths in case they don't already reside here
     hydr_init_ix(state_ix, state_paths, state['domain'])
+    
+    ###########################################################################
+    # specactions - special actions code TBD
+    ###########################################################################
+    specactions = make_numba_dict(state['specactions']) # Note: all values coverted to float automatically
+    
+    ###########################################################################
+    # Do the simulation with _hydr_()
     ###########################################################################
     #errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, specactions, state_step_hydr) # run reaches simulation code
     errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, specactions) # run reaches simulation code
