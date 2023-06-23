@@ -135,6 +135,8 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
     state_info['domain'], state_info['state_step_hydr'] = state['domain'], state['state_step_hydr']
     # specactions - special actions code TBD
     specactions = make_numba_dict(state['specactions']) # Note: all values coverted to float automatically
+    # disabled for testing
+    '''
     hsp2_local_py = state['hsp2_local_py']
     # It appears necessary to load this here, instead of from main.py, otherwise,
     # _hydr_() does not recognize the function state_step_hydr()? 
@@ -142,12 +144,14 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
         from hsp2_local_py import state_step_hydr
     else:
         from HSP2.state_fn_defaults import state_step_hydr
+    '''
     state_ix, dict_ix, ts_ix = state['state_ix'], state['dict_ix'], state['ts_ix']
     state_paths = state['state_paths']
     # initialize the hydr paths in case they don't already reside here
     hydr_init_ix(state_ix, state_paths, state['domain'])
     ###########################################################################
-    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, specactions, state_step_hydr) # run reaches simulation code
+    #errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, specactions, state_step_hydr) # run reaches simulation code
+    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, specactions) # run reaches simulation code
 #    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels)                  # run reaches simulation code
     ###########################################################################
 
@@ -321,6 +325,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
         state_ix[volev_ix] = volev
         
         # Execute dynamic code if enabled
+        '''
         if (state_info['state_step_hydr'] == 'enabled'):
             state_step_hydr(state_ix, dict_ix, ts_ix, hydr_ix, step)
             # Do write-backs for editable STATE variables
@@ -330,7 +335,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
             # Note: we must convert IVOL to the units expected in _hydr_ 
             # maybe routines should do this, and this is not needed (but pass VFACT in state)
             IVOL[step] = state_ix[ivol_ix] * VFACT
-
+        '''
         # vols, sas variables and their initializations  not needed.
         if irexit >= 0:             # irrigation exit is set, zero based number
             if rirwdl > 0.0:  # equivalent to OVOL for the irrigation exit
