@@ -70,7 +70,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
     # Set up Things in state that will be used in all modular activitis like SPECL
     state_paths, state_ix, dict_ix, ts_ix = init_state_dicts()
     # Now, load any OM components if present, and store variables on objects 
-    hsp2_local_py = load_dynamics(io_manager, siminfo)
+    #hsp2_local_py = load_dynamics(io_manager, siminfo)
     #state['hsp2_local_py'] = hsp2_local_py # stash the specaction dict in state
     # initialize state for hydr
     # now put all of these Dicts into the state Dict 
