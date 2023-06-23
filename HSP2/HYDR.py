@@ -19,7 +19,6 @@ from numba import njit
 from numba.typed import List
 from HSP2.utilities import initm, make_numba_dict
 from HSP2.state import *
-from HSP2.state_fn_defaults import *
 from HSP2.SPECL import specl, _specl_
 
 
@@ -137,7 +136,8 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
     # specactions - special actions code TBD
     specactions = make_numba_dict(state['specactions']) # Note: all values coverted to float automatically
     hsp2_local_py = state['hsp2_local_py']
-    #hsp2_local_py = load_dynamics(io_manager, siminfo)
+    # It appears necessary to load this here, instead of from main.py, otherwise,
+    # _hydr_() does not recognize the function state_step_hydr()? 
     if (hsp2_local_py != False):
         from hsp2_local_py import state_step_hydr
     else:
@@ -322,7 +322,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
         
         # Execute dynamic code if enabled
         if (state_info['state_step_hydr'] == 'enabled'):
-            #state_step_hydr(state_ix, dict_ix, ts_ix, hydr_ix, step)
+            state_step_hydr(state_ix, dict_ix, ts_ix, hydr_ix, step)
             # Do write-backs for editable STATE variables
             # OUTDGT is writeable
             outdgt[:] = [ state_ix[o1_ix], state_ix[o2_ix], state_ix[o3_ix] ]
