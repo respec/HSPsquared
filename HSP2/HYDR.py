@@ -173,7 +173,7 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
 
 @njit(cache=True)
 #def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, specactions, state_step_hydr):
-def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, specactions):
+def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, specactions):
     errors = zeros(int(ui['errlen'])).astype(int64)
 
     steps  = int(ui['steps'])            # number of simulation steps
