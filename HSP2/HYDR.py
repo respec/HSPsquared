@@ -321,13 +321,12 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
         oseff[:] = o[:]
         
         # disable for testing
-        '''
         # set state_ix with value of local state variables and/or needed vars
         # Note: we pass IVOL0, not IVOL here since IVOL has been converted to different units
         state_ix[o1_ix], state_ix[o2_ix], state_ix[o3_ix], state_ix[ro_ix], state_ix[rovol_ix] = outdgt[0], outdgt[1], outdgt[2], ro, rovol
         state_ix[vol_ix], state_ix[ivol_ix] = vol, IVOL0[step]
         state_ix[volev_ix] = volev
-        
+        '''
         # Execute dynamic code if enabled
         if (state_info['state_step_hydr'] == 'enabled'):
             state_step_hydr(state_ix, dict_ix, ts_ix, hydr_ix, step)
