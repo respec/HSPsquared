@@ -75,7 +75,6 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
 
     # OUTDGT timeseries might come in as OUTDGT, OUTDGT0, etc. otherwise UCI default
     names = list(sorted([n for n in ts if n.startswith('OUTDG')], reverse=True))
-    print(names)
     df = DataFrame()
     for i,c in enumerate(ODGTF):
         df[i] = ts[names.pop()][0:steps] if c > 0 else zeros(steps)
