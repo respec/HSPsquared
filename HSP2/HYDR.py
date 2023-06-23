@@ -326,7 +326,6 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
         state_ix[o1_ix], state_ix[o2_ix], state_ix[o3_ix], state_ix[ro_ix], state_ix[rovol_ix] = outdgt[0], outdgt[1], outdgt[2], ro, rovol
         state_ix[vol_ix], state_ix[ivol_ix] = vol, IVOL0[step]
         state_ix[volev_ix] = volev
-        '''
         # Execute dynamic code if enabled
         if (state_info['state_step_hydr'] == 'enabled'):
             state_step_hydr(state_ix, dict_ix, ts_ix, hydr_ix, step)
@@ -337,7 +336,6 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
             # Note: we must convert IVOL to the units expected in _hydr_ 
             # maybe routines should do this, and this is not needed (but pass VFACT in state)
             IVOL[step] = state_ix[ivol_ix] * VFACT
-        '''
         # vols, sas variables and their initializations  not needed.
         if irexit >= 0:             # irrigation exit is set, zero based number
             if rirwdl > 0.0:  # equivalent to OVOL for the irrigation exit
