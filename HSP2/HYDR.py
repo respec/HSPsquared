@@ -12,7 +12,7 @@ Conversion of no category version of HSPF HRCHHYD.FOR into Python'''
 '''
 
 
-from numpy import zeros, any, full, nan, array, int64
+from numpy import zeros, any, full, nan, array, int64, arange
 from pandas import DataFrame
 from math import sqrt, log10
 from numba import njit
@@ -305,7 +305,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
     o1_ix, o2_ix, o3_ix, ivol_ix = hydr_ix['O1'], hydr_ix['O2'], hydr_ix['O3'], hydr_ix['IVOL']
     ro_ix, rovol_ix, volev_ix, vol_ix = hydr_ix['RO'], hydr_ix['ROVOL'], hydr_ix['VOLEV'], hydr_ix['VOL']
     # handle varying length outdgt
-    out_ix = array(numpy.arange(nexits))
+    out_ix = array(arange(nexits))
     if nexits > 0:
         out_ix[0] = o1_ix
     if nexits > 1:
