@@ -129,7 +129,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                 state['segment'] = segment # Context for dynamic executables.
                 state['function'] = str(function) # Context for dynamic executables.
                 state['domain'] = "/STATE/" + operation + "_" + segment + "/" + activity 
-                print("STATE set for modeling")
+                
                 ui = uci[(operation, activity, segment)]   # ui is a dictionary
                 if operation == 'PERLND' and activity == 'SEDMNT':
                     # special exception here to make CSNOFG available
