@@ -309,12 +309,6 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
     for step in range(steps):
         # call specl
         specl(ui, ts, step, specactions)
-        
-        # set OUTDGT using the values in the ts object which were set inside specl()
-        OUTDGT[step, :] = [ts['OUTDGT1'][step], ts['OUTDGT2'][step], 0.0]
-        # print("OUTDGT[step, :]", OUTDGT[step, :])
-        # ------------------------------------------------------------------------
-        
         convf  = CONVF[step]
         outdgt[:] = OUTDGT[step, :]
         colind[:] = COLIND[step, :]
