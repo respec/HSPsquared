@@ -317,35 +317,30 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
     for step in range(steps):
         # call specl
         specl(ui, ts, step, specactions)
-        print("post-specl state_ix:", state_ix)
         convf  = CONVF[step]
         outdgt[:] = OUTDGT[step, :]
         colind[:] = COLIND[step, :]
         roseff = ro
         oseff[:] = o[:]
-        
-        print("pre state_ix:", state_ix)
-        # disable for testing
         # set state_ix with value of local state variables and/or needed vars
         # Note: we pass IVOL0, not IVOL here since IVOL has been converted to different units
         state_ix[ro_ix], state_ix[rovol_ix] = ro, rovol
-        print("pre outdgt:", outdgt)
-        print("pre out_ix:", out_ix)
         di = 0
         for oi in out_ix:
-            outdgt[di] = state_ix[oi]
+            state_ix[oi] = outdgt[di] 
             di += 1
-        print("post outdgt:", outdgt)
         state_ix[vol_ix], state_ix[ivol_ix] = vol, IVOL0[step]
         state_ix[volev_ix] = volev
-        print("state_ix", state_ix)
-        print("state_info", state_info)
         # Execute dynamic code if enabled
         if (state_info['state_step_hydr'] == 'enabled'):
             state_step_hydr(state_info, state_ix, dict_ix, ts_ix, hydr_ix, step)
             # Do write-backs for editable STATE variables
             # OUTDGT is writeable
             outdgt[:] = [ state_ix[o1_ix], state_ix[o2_ix], state_ix[o3_ix] ]
+            di = 0
+            for oi in out_ix:
+                outdgt[di] = state_ix[oi]
+                di += 1
             # IVOL is writeable. 
             # Note: we must convert IVOL to the units expected in _hydr_ 
             # maybe routines should do this, and this is not needed (but pass VFACT in state)
