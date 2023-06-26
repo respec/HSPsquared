@@ -301,6 +301,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
     IVOL0   = ts['IVOL']                   # the actual inflow in simulation native units 
     # prepare for dynamic state
     hydr_ix = hydr_get_ix(state_ix, state_paths, state_info['domain'])
+    print("hydr_ix", hydr_ix)
     # these are integer placeholders faster than calling the array look each timestep
     o1_ix, o2_ix, o3_ix, ivol_ix = hydr_ix['O1'], hydr_ix['O2'], hydr_ix['O3'], hydr_ix['IVOL']
     ro_ix, rovol_ix, volev_ix, vol_ix = hydr_ix['RO'], hydr_ix['ROVOL'], hydr_ix['VOLEV'], hydr_ix['VOL']
