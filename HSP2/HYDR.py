@@ -312,7 +312,6 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
         out_ix[1] = o2_ix
     if nexits > 2:
         out_ix[2] = o3_ix
-    print("hydr_ix", hydr_ix)
     # HYDR (except where noted)
     for step in range(steps):
         # call specl
@@ -326,9 +325,8 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
         # Note: we pass IVOL0, not IVOL here since IVOL has been converted to different units
         state_ix[ro_ix], state_ix[rovol_ix] = ro, rovol
         di = 0
-        for oi in out_ix:
-            state_ix[oi] = outdgt[di] 
-            di += 1
+        for oi in nexits:
+            outdgt[oi] = state_ix[out_ix[oi]]
         state_ix[vol_ix], state_ix[ivol_ix] = vol, IVOL0[step]
         state_ix[volev_ix] = volev
         # Execute dynamic code if enabled
@@ -337,10 +335,8 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
             # Do write-backs for editable STATE variables
             # OUTDGT is writeable
             outdgt[:] = [ state_ix[o1_ix], state_ix[o2_ix], state_ix[o3_ix] ]
-            di = 0
-            for oi in out_ix:
-                outdgt[di] = state_ix[oi]
-                di += 1
+            for oi in nexits:
+                outdgt[oi] = state_ix[out_ix[oi]]
             # IVOL is writeable. 
             # Note: we must convert IVOL to the units expected in _hydr_ 
             # maybe routines should do this, and this is not needed (but pass VFACT in state)
