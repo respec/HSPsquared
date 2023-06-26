@@ -13,11 +13,15 @@ def init_state_dicts():
     """
     This contains the base dictionaries used to pass model state amongst modules and custom code plugins
     """
+    state = {} # shared state Dictionary, contains numba-ready Dicts 
     state_paths = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
     state_ix = Dict.empty(key_type=types.int64, value_type=types.float64)
     dict_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:,:])
     ts_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:])
-    return state_paths, state_ix, dict_ix, ts_ix
+    # initialize state for hydr
+    # now put all of these Dicts into the state Dict 
+    state['state_paths'], state['state_ix'], state['dict_ix'], state['ts_ix'] = state_paths, state_ix, dict_ix, ts_ix
+    return state
 
 
 def find_state_path(state_paths, parent_path, varname):
