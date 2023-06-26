@@ -316,9 +316,9 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
     # HYDR (except where noted)
     for step in range(steps):
         # call specl
+        print("prespecl state_ix:", state_ix)
         specl(ui, ts, step, specactions)
         convf  = CONVF[step]
-        print("pre state_ix:", state_ix)
         outdgt[:] = OUTDGT[step, :]
         colind[:] = COLIND[step, :]
         roseff = ro
