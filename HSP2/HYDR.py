@@ -322,6 +322,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
         state_ix[vol_ix], state_ix[ivol_ix] = vol, IVOL0[step]
         state_ix[volev_ix] = volev
         print("state_ix", state_ix)
+        print("state_info", state_info)
         # Execute dynamic code if enabled
         if (state_info['state_step_hydr'] == 'enabled'):
             state_step_hydr(state_info, state_ix, dict_ix, ts_ix, hydr_ix, step)
