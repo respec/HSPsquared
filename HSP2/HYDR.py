@@ -328,7 +328,10 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
         # Note: we pass IVOL0, not IVOL here since IVOL has been converted to different units
         state_ix[ro_ix], state_ix[rovol_ix] = ro, rovol
         print("pre outdgt:", outdgt)
-        outdgt[:] = state_ix[out_ix]
+        di = 0
+        for oi in out_ix:
+            outdgt[di] = state_ix[oi]
+            di += 1
         print("post outdgt:", outdgt)
         state_ix[vol_ix], state_ix[ivol_ix] = vol, IVOL0[step]
         state_ix[volev_ix] = volev
