@@ -306,7 +306,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
     ro_ix, rovol_ix, volev_ix, vol_ix = hydr_ix['RO'], hydr_ix['ROVOL'], hydr_ix['VOLEV'], hydr_ix['VOL']
     # handle varying length outdgt
     numout = OUTDGT[0,:].size
-    out_ix = []
+    out_ix = arange(numout)
     if numout > 0:
         out_ix[0] = o1_ix
     if numout > 1:
