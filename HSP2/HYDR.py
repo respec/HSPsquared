@@ -301,10 +301,18 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
     IVOL0   = ts['IVOL']                   # the actual inflow in simulation native units 
     # prepare for dynamic state
     hydr_ix = hydr_get_ix(state_ix, state_paths, state_info['domain'])
-    print("hydr_ix", hydr_ix)
     # these are integer placeholders faster than calling the array look each timestep
     o1_ix, o2_ix, o3_ix, ivol_ix = hydr_ix['O1'], hydr_ix['O2'], hydr_ix['O3'], hydr_ix['IVOL']
     ro_ix, rovol_ix, volev_ix, vol_ix = hydr_ix['RO'], hydr_ix['ROVOL'], hydr_ix['VOLEV'], hydr_ix['VOL']
+    # handle varying length outdgt
+    numout = length(outdgt)
+    if numout > 0:
+        out_ix[0] = o1_ix
+    if numout > 1:
+        out_ix[1] = o2_ix
+    if numout > 2:
+        out_ix[2] = o3_ix
+    print("hydr_ix", hydr_ix)
     # HYDR (except where noted)
     for step in range(steps):
         # call specl
@@ -318,7 +326,10 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
         # disable for testing
         # set state_ix with value of local state variables and/or needed vars
         # Note: we pass IVOL0, not IVOL here since IVOL has been converted to different units
-        state_ix[o1_ix], state_ix[o2_ix], state_ix[o3_ix], state_ix[ro_ix], state_ix[rovol_ix] = outdgt[0], outdgt[1], outdgt[2], ro, rovol
+        state_ix[ro_ix], state_ix[rovol_ix] = ro, rovol
+        print("pre outdgt:", outdgt)
+        outdgt[:] = state_ix[out_ix]
+        print("post outdgt:", outdgt)
         state_ix[vol_ix], state_ix[ivol_ix] = vol, IVOL0[step]
         state_ix[volev_ix] = volev
         print("state_ix", state_ix)
