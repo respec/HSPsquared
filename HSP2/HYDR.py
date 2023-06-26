@@ -325,8 +325,8 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
         # Note: we pass IVOL0, not IVOL here since IVOL has been converted to different units
         state_ix[ro_ix], state_ix[rovol_ix] = ro, rovol
         di = 0
-        for oi in nexits:
-            outdgt[oi] = state_ix[out_ix[oi]]
+        for oi in range(nexits):
+            state_ix[out_ix[oi]] = outdgt[oi] 
         state_ix[vol_ix], state_ix[ivol_ix] = vol, IVOL0[step]
         state_ix[volev_ix] = volev
         # Execute dynamic code if enabled
@@ -335,7 +335,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
             # Do write-backs for editable STATE variables
             # OUTDGT is writeable
             outdgt[:] = [ state_ix[o1_ix], state_ix[o2_ix], state_ix[o3_ix] ]
-            for oi in nexits:
+            for oi in range(nexits):
                 outdgt[oi] = state_ix[out_ix[oi]]
             # IVOL is writeable. 
             # Note: we must convert IVOL to the units expected in _hydr_ 
