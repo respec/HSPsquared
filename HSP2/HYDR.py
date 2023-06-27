@@ -130,7 +130,7 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
     # must split dicts out of state Dict since numba cannot handle mixed-type nested Dicts
     # state_info is some generic things about the simulation 
     state_info = Dict.empty(key_type=types.unicode_type, value_type=types.unicode_type)
-    state_info['operation'], state_info['segment'], state_info['function'] = state['operation'], state['segment'], state['function']
+    state_info['operation'], state_info['segment'], state_info['activity'] = state['operation'], state['segment'], state['activity']
     state_info['domain'], state_info['state_step_hydr'] = state['domain'], state['state_step_hydr']
     hsp2_local_py = state['hsp2_local_py']
     # It appears necessary to load this here, instead of from main.py, otherwise,
