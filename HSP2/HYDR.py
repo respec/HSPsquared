@@ -334,7 +334,6 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
             state_step_hydr(state_info, state_ix, dict_ix, ts_ix, hydr_ix, step)
             # Do write-backs for editable STATE variables
             # OUTDGT is writeable
-            outdgt[:] = [ state_ix[o1_ix], state_ix[o2_ix], state_ix[o3_ix] ]
             for oi in range(nexits):
                 outdgt[oi] = state_ix[out_ix[oi]]
             # IVOL is writeable. 
