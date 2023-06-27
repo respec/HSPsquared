@@ -19,7 +19,7 @@ from numba import njit
 from numba.typed import List
 from HSP2.utilities import initm, make_numba_dict
 from HSP2.state import *
-from HSP2.SPECL import specl, _specl_
+from HSP2.SPECL import specl
 
 
 ERRMSGS =('HYDR: SOLVE equations are indeterminate',             #ERRMSG0
