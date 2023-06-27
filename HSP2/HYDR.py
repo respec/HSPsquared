@@ -314,7 +314,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
     # HYDR (except where noted)
     for step in range(steps):
         # call specl
-        specl(ui, ts, step, state_info, state_ix, specactions)
+        specl(ui, ts, step, state_info, state_paths, state_ix, specactions)
         convf  = CONVF[step]
         outdgt[:] = OUTDGT[step, :]
         colind[:] = COLIND[step, :]
