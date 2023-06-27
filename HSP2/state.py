@@ -151,32 +151,23 @@ def dynamic_module_import(local_name, local_path, module_name):
         # load_module dynamically loads the module
         # the parameters are pointer, path and description of the module 
         if (local_spec != False):
-            print("local_spec = ", local_spec)
             module = importlib.util.module_from_spec(local_spec)
             sys.modules[local_spec.name] = module
             sys.modules[module_name] = module
             local_spec.loader.exec_module(module)
     except Exception as e:
         print(e)
-    #try:
-    #    load_class = imp.load_module("{}.{}".format(module_name, class_name), file_pointer, file_path, description)
-    #except Exception as e:
-    #    print(e)
-    #return load_module, load_class
     return module
 
 
 def load_dynamics(io_manager, siminfo):
     local_path = os.getcwd()
-    print("Path:", local_path)
     # try this
     hdf5_path = io_manager._input.file_path
     (fbase, fext) = os.path.splitext(hdf5_path)
     # see if there is a code module with custom python 
     print("Looking for custom python code ", (fbase + ".py"))
-    #print("calling dynamic_module_import(",fbase, local_path + "/" + fbase + ".py", ", 'hsp2_local_py')")
     hsp2_local_py = dynamic_module_import(fbase, local_path + "/" + fbase + ".py", "hsp2_local_py")
-    print("dir(hsp2_local_py) = ", dir(hsp2_local_py))
     if 'state_step_hydr' in dir(hsp2_local_py):
         siminfo['state_step_hydr'] = 'enabled' 
     else:
