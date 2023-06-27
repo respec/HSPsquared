@@ -13,7 +13,7 @@ from numba import njit
 
 @njit
 # def specl(io_manager, siminfo, uci, ts, step, specl_actions):
-def specl(ui, ts, step, state_info, state_ix, specactions):
+def specl(ui, ts, step, state_info, state_paths, state_ix, specactions):
 
     # print('Made it to specl()')
     ts = _specl_(ui, ts, step, specactions)
@@ -25,6 +25,6 @@ def specl(ui, ts, step, state_info, state_ix, specactions):
 
 # def _specl_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
 @njit
-def _specl_(ui, ts, step, state_info, state_ix, specactions):
+def _specl_(ui, ts, step, state_info, state_paths, state_ix, specactions):
     return
     

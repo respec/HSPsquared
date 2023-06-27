@@ -330,7 +330,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
         state_ix[volev_ix] = volev
         # Execute dynamic code if enabled
         if (state_info['state_step_hydr'] == 'enabled'):
-            state_step_hydr(state_info, state_ix, dict_ix, ts_ix, hydr_ix, step)
+            state_step_hydr(state_info, state_paths, state_ix, dict_ix, ts_ix, hydr_ix, step)
             # Do write-backs for editable STATE variables
             # OUTDGT is writeable
             for oi in range(nexits):
