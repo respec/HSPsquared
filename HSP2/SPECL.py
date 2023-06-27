@@ -16,7 +16,7 @@ from numba import njit
 def specl(ui, ts, step, state_info, state_paths, state_ix, specactions):
 
     # print('Made it to specl()')
-    ts = _specl_(ui, ts, step, specactions)
+    _specl_(ui, ts, step, state_info, state_paths, state_ix, specactions)
     
     # return errors, ERRMSGS
     # return ts
