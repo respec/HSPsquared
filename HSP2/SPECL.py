@@ -12,19 +12,7 @@ CALL: specl(io_manager, siminfo, uci, ts, state, specl_actions)
 from numba import njit
 
 @njit
-# def specl(io_manager, siminfo, uci, ts, step, specl_actions):
 def specl(ui, ts, step, state_info, state_paths, state_ix, specactions):
-
-    # print('Made it to specl()')
-    _specl_(ui, ts, step, state_info, state_paths, state_ix, specactions)
-    
-    # return errors, ERRMSGS
-    # return ts
-
-
-
-# def _specl_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
-@njit
-def _specl_(ui, ts, step, state_info, state_paths, state_ix, specactions):
+    # ther eis no need for _specl_ because this code must already be njit
     return
     
