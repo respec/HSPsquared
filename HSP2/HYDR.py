@@ -12,7 +12,7 @@ Conversion of no category version of HSPF HRCHHYD.FOR into Python'''
 '''
 
 
-from numpy import zeros, any, full, nan, array, int64
+from numpy import zeros, any, full, nan, array, int64, arange
 from pandas import DataFrame
 from math import sqrt, log10
 from numba import njit
@@ -75,7 +75,6 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
 
     # OUTDGT timeseries might come in as OUTDGT, OUTDGT0, etc. otherwise UCI default
     names = list(sorted([n for n in ts if n.startswith('OUTDG')], reverse=True))
-    print(names)
     df = DataFrame()
     for i,c in enumerate(ODGTF):
         df[i] = ts[names.pop()][0:steps] if c > 0 else zeros(steps)
@@ -131,10 +130,8 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
     # must split dicts out of state Dict since numba cannot handle mixed-type nested Dicts
     # state_info is some generic things about the simulation 
     state_info = Dict.empty(key_type=types.unicode_type, value_type=types.unicode_type)
-    state_info['operation'], state_info['segment'], state_info['function'] = state['operation'], state['segment'], state['function']
+    state_info['operation'], state_info['segment'], state_info['activity'] = state['operation'], state['segment'], state['activity']
     state_info['domain'], state_info['state_step_hydr'] = state['domain'], state['state_step_hydr']
-    # specactions - special actions code TBD
-    specactions = make_numba_dict(state['specactions']) # Note: all values coverted to float automatically
     hsp2_local_py = state['hsp2_local_py']
     # It appears necessary to load this here, instead of from main.py, otherwise,
     # _hydr_() does not recognize the function state_step_hydr()? 
@@ -146,9 +143,16 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
     state_paths = state['state_paths']
     # initialize the hydr paths in case they don't already reside here
     hydr_init_ix(state_ix, state_paths, state['domain'])
+    
+    ###########################################################################
+    # specactions - special actions code TBD
+    ###########################################################################
+    specactions = make_numba_dict(state['specactions']) # Note: all values coverted to float automatically
+    
+    ###########################################################################
+    # Do the simulation with _hydr_()
     ###########################################################################
     errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, specactions, state_step_hydr) # run reaches simulation code
-#    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels)                  # run reaches simulation code
     ###########################################################################
 
     if 'O'    in ts:  del ts['O']
@@ -163,6 +167,7 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
 
 
 @njit(cache=True)
+#def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, specactions, state_step_hydr):
 def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, specactions, state_step_hydr):
     errors = zeros(int(ui['errlen'])).astype(int64)
 
@@ -298,39 +303,42 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
     # these are integer placeholders faster than calling the array look each timestep
     o1_ix, o2_ix, o3_ix, ivol_ix = hydr_ix['O1'], hydr_ix['O2'], hydr_ix['O3'], hydr_ix['IVOL']
     ro_ix, rovol_ix, volev_ix, vol_ix = hydr_ix['RO'], hydr_ix['ROVOL'], hydr_ix['VOLEV'], hydr_ix['VOL']
+    # handle varying length outdgt
+    out_ix = arange(nexits)
+    if nexits > 0:
+        out_ix[0] = o1_ix
+    if nexits > 1:
+        out_ix[1] = o2_ix
+    if nexits > 2:
+        out_ix[2] = o3_ix
     # HYDR (except where noted)
     for step in range(steps):
         # call specl
-        specl(ui, ts, step, specactions)
-        
-        # set OUTDGT using the values in the ts object which were set inside specl()
-        OUTDGT[step, :] = [ts['OUTDGT1'][step], ts['OUTDGT2'][step], 0.0]
-        # print("OUTDGT[step, :]", OUTDGT[step, :])
-        # ------------------------------------------------------------------------
-        
+        specl(ui, ts, step, state_info, state_ix, specactions)
         convf  = CONVF[step]
         outdgt[:] = OUTDGT[step, :]
         colind[:] = COLIND[step, :]
         roseff = ro
         oseff[:] = o[:]
-        
         # set state_ix with value of local state variables and/or needed vars
         # Note: we pass IVOL0, not IVOL here since IVOL has been converted to different units
-        state_ix[o1_ix], state_ix[o2_ix], state_ix[o3_ix], state_ix[ro_ix], state_ix[rovol_ix] = outdgt[0], outdgt[1], outdgt[2], ro, rovol
+        state_ix[ro_ix], state_ix[rovol_ix] = ro, rovol
+        di = 0
+        for oi in range(nexits):
+            state_ix[out_ix[oi]] = outdgt[oi] 
         state_ix[vol_ix], state_ix[ivol_ix] = vol, IVOL0[step]
         state_ix[volev_ix] = volev
-        
         # Execute dynamic code if enabled
         if (state_info['state_step_hydr'] == 'enabled'):
-            state_step_hydr(state_ix, dict_ix, ts_ix, hydr_ix, step)
+            state_step_hydr(state_info, state_ix, dict_ix, ts_ix, hydr_ix, step)
             # Do write-backs for editable STATE variables
             # OUTDGT is writeable
-            outdgt[:] = [ state_ix[o1_ix], state_ix[o2_ix], state_ix[o3_ix] ]
+            for oi in range(nexits):
+                outdgt[oi] = state_ix[out_ix[oi]]
             # IVOL is writeable. 
             # Note: we must convert IVOL to the units expected in _hydr_ 
             # maybe routines should do this, and this is not needed (but pass VFACT in state)
             IVOL[step] = state_ix[ivol_ix] * VFACT
-
         # vols, sas variables and their initializations  not needed.
         if irexit >= 0:             # irrigation exit is set, zero based number
             if rirwdl > 0.0:  # equivalent to OVOL for the irrigation exit

@@ -2,8 +2,5 @@
 from numba import int8, float32, njit, types, typed # import the types
 
 @njit
-def state_step_hydr(state_ix, dict_ix, ts_ix, hydr_ix, step):
-    fn_defined = False
-    if step <= 1:
-        print("standard state_step_hydr() called")
+def state_step_hydr(state_info, state_ix, dict_ix, ts_ix, hydr_ix, step):
     return

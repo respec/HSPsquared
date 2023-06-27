@@ -61,23 +61,24 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
     # initilize STATE dicts
     #######################################################################################
     # Add crucial simulation info for dynamic operation support
-    state = {} # shared state Dictionary, contains numba-ready Dicts 
     delt = uci_obj.opseq.INDELT_minutes[0] # get initial value for STATE objects
     siminfo['delt'] = delt
     siminfo['tindex'] = date_range(start, stop, freq=Minute(delt))[1:]
     siminfo['steps'] = len(siminfo['tindex'])
-    siminfo['state_step_hydr'] = 'disabled'
     # Set up Things in state that will be used in all modular activitis like SPECL
-    state_paths, state_ix, dict_ix, ts_ix = init_state_dicts()
-    # Now, load any OM components if present, and store variables on objects 
+    state = init_state_dicts()
+    
+    #######################################################################################
+    # Add support for dynamic functins to operate on STATE
+    #######################################################################################    
+    siminfo['state_step_hydr'] = 'disabled'
+    # Now, load any dynamic components if present, and store variables on objects 
     hsp2_local_py = load_dynamics(io_manager, siminfo)
+    # if a local file with state_step_hydr() was found in load_dynamics(), we add it to state 
+    state['state_step_hydr'] = siminfo['state_step_hydr'] # copy this setting to pass to function
     state['hsp2_local_py'] = hsp2_local_py # stash the specaction dict in state
-    # initialize state for hydr
-    # now put all of these Dicts into the state Dict 
-    state['state_paths'], state['state_ix'], state['dict_ix'], state['ts_ix'] = state_paths, state_ix, dict_ix, ts_ix
     # finally stash specactions in state, these are not domain (segment) dependent so do it in advance
     state['specactions'] = specactions # stash the specaction dict in state
-    state['state_step_hydr'] = siminfo['state_step_hydr'] # copy this setting to pass to function
     #######################################################################################
     
     # main processing loop
@@ -123,12 +124,13 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                     continue
 
                 msg(3, f'{activity}')
+                # Context for dynamic executables.
+                state['operation'] = operation 
+                state['segment'] = segment # 
+                state['activity'] = activity
                 # give shortcut to state path for the upcoming function 
-                state['operation'] = operation # Context for dynamic executables.
-                state['segment'] = segment # Context for dynamic executables.
-                state['function'] = str(function) # Context for dynamic executables.
                 state['domain'] = "/STATE/" + operation + "_" + segment + "/" + activity 
-
+                
                 ui = uci[(operation, activity, segment)]   # ui is a dictionary
                 if operation == 'PERLND' and activity == 'SEDMNT':
                     # special exception here to make CSNOFG available
