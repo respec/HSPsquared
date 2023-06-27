@@ -21,7 +21,6 @@ from HSP2.utilities import initm, make_numba_dict
 from HSP2.state import *
 from HSP2.SPECL import specl
 
-
 ERRMSGS =('HYDR: SOLVE equations are indeterminate',             #ERRMSG0
           'HYDR: extrapolation of rchtab will take place',       #ERRMSG1
           'HYDR: SOLVE trapped with an oscillating condition',   #ERRMSG2
@@ -36,7 +35,7 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
     ''' find the state of the reach/reservoir at the end of the time interval
     and the outflows during the interval
 
-    CALL: hydr(store, general, ui, ts, specactions)
+    CALL: hydr(store, general, ui, ts)
        store is the Pandas/PyTable open store
        general is a dictionary with simulation level infor (OP_SEQUENCE for example)
        ui is a dictionary with RID specific HSPF UCI like data
@@ -116,10 +115,6 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
     ui['nodfv']  = any(ODFVF)
     ui['uunits'] = uunits
 
-    # List all names in ui, for jk testing purposes only
-    # ui_names = list(sorted([n for n in ui], reverse=True))
-    # print(ui_names)
-
     # Numba can't do 'O' + str(i) stuff yet, so do it here. Also need new style lists
     Olabels = List()
     OVOLlabels = List()
@@ -160,8 +155,6 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
 
     # save initial outflow(s) from reach:
     uci['PARAMETERS']['ROS'] = ui['ROS']
-    for i in range(nexits):
-        uci['PARAMETERS']['OS'+str(i+1)] = ui['OS'+str(i+1)]
     
     return errors, ERRMSGS
 
@@ -291,8 +284,6 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
 
     # store initial outflow from reach:
     ui['ROS'] = ro
-    for index in range(nexits):
-        ui['OS' + str(index + 1)] = o[index]
 
     # other initial vars
     rovol = 0.0
@@ -320,6 +311,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
         colind[:] = COLIND[step, :]
         roseff = ro
         oseff[:] = o[:]
+        
         # set state_ix with value of local state variables and/or needed vars
         # Note: we pass IVOL0, not IVOL here since IVOL has been converted to different units
         state_ix[ro_ix], state_ix[rovol_ix] = ro, rovol
@@ -339,6 +331,7 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
             # Note: we must convert IVOL to the units expected in _hydr_ 
             # maybe routines should do this, and this is not needed (but pass VFACT in state)
             IVOL[step] = state_ix[ivol_ix] * VFACT
+        
         # vols, sas variables and their initializations  not needed.
         if irexit >= 0:             # irrigation exit is set, zero based number
             if rirwdl > 0.0:  # equivalent to OVOL for the irrigation exit
@@ -678,4 +671,3 @@ def expand_HYDR_masslinks(flags, uci, dat, recs):
         rec['SVOL'] = dat.SVOL
         recs.append(rec)
     return recs
-    
