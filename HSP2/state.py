@@ -114,6 +114,27 @@ def append_state(state_ix, var_value):
     state_ix[val_ix] = var_value
     return val_ix
 
+def state_context_hsp2(state, operation, segment, activity):
+    state['operation'] = operation 
+    state['segment'] = segment # 
+    state['activity'] = activity
+    # give shortcut to state path for the upcoming function 
+    state['domain'] = "/STATE/" + operation + "_" + segment + "/" + activity 
+
+def state_siminfo_hsp2(uci_obj, siminfo):
+    # Add crucial simulation info for dynamic operation support
+    delt = uci_obj.opseq.INDELT_minutes[0] # get initial value for STATE objects
+    siminfo['delt'] = delt
+    siminfo['tindex'] = date_range(start, stop, freq=Minute(delt))[1:]
+    siminfo['steps'] = len(siminfo['tindex'])
+
+def state_load_dynamics_hsp2(state, io_manager, siminfo):
+    # Load any dynamic components if present, and store variables on objects 
+    hsp2_local_py = load_dynamics(io_manager, siminfo)
+    # if a local file with state_step_hydr() was found in load_dynamics(), we add it to state 
+    state['state_step_hydr'] = siminfo['state_step_hydr'] # enabled or disabled 
+    state['hsp2_local_py'] = hsp2_local_py # Stores the actual function in state
+
 def hydr_init_ix(state_ix, state_paths, domain):
     # get a list of keys for all hydr state variables
     hydr_state = ["DEP","IVOL","O1","O2","O3","OVOL1","OVOL2","OVOL3","PRSUPY","RO","ROVOL","SAREA","TAU","USTAR","VOL","VOLEV"]
@@ -168,6 +189,7 @@ def load_dynamics(io_manager, siminfo):
     # see if there is a code module with custom python 
     print("Looking for custom python code ", (fbase + ".py"))
     hsp2_local_py = dynamic_module_import(fbase, local_path + "/" + fbase + ".py", "hsp2_local_py")
+    siminfo['state_step_hydr'] = 'disabled'
     if 'state_step_hydr' in dir(hsp2_local_py):
         siminfo['state_step_hydr'] = 'enabled' 
     else:

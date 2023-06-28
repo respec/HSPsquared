@@ -60,24 +60,13 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
     #######################################################################################
     # initilize STATE dicts
     #######################################################################################
-    # Add crucial simulation info for dynamic operation support
-    delt = uci_obj.opseq.INDELT_minutes[0] # get initial value for STATE objects
-    siminfo['delt'] = delt
-    siminfo['tindex'] = date_range(start, stop, freq=Minute(delt))[1:]
-    siminfo['steps'] = len(siminfo['tindex'])
     # Set up Things in state that will be used in all modular activitis like SPECL
     state = init_state_dicts()
-    
-    #######################################################################################
+    state_siminfo_hsp2(uci_obj, siminfo)
     # Add support for dynamic functins to operate on STATE
-    #######################################################################################    
-    siminfo['state_step_hydr'] = 'disabled'
-    # Now, load any dynamic components if present, and store variables on objects 
-    hsp2_local_py = load_dynamics(io_manager, siminfo)
-    # if a local file with state_step_hydr() was found in load_dynamics(), we add it to state 
-    state['state_step_hydr'] = siminfo['state_step_hydr'] # copy this setting to pass to function
-    state['hsp2_local_py'] = hsp2_local_py # stash the specaction dict in state
-    # finally stash specactions in state, these are not domain (segment) dependent so do it in advance
+    # - Load any dynamic components if present, and store variables on objects 
+    state_load_dynamics_hsp2(state, io_manager, siminfo)
+    # - finally stash specactions in state, not domain (segment) dependent so do it once
     state['specactions'] = specactions # stash the specaction dict in state
     #######################################################################################
     
@@ -124,12 +113,8 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                     continue
 
                 msg(3, f'{activity}')
-                # Context for dynamic executables.
-                state['operation'] = operation 
-                state['segment'] = segment # 
-                state['activity'] = activity
-                # give shortcut to state path for the upcoming function 
-                state['domain'] = "/STATE/" + operation + "_" + segment + "/" + activity 
+                # Set context for dynamic executables.
+                state_context_hsp2(state, operation, segment, activity)
                 
                 ui = uci[(operation, activity, segment)]   # ui is a dictionary
                 if operation == 'PERLND' and activity == 'SEDMNT':
