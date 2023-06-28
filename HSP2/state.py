@@ -126,7 +126,7 @@ def state_siminfo_hsp2(uci_obj, siminfo):
     # Add crucial simulation info for dynamic operation support
     delt = uci_obj.opseq.INDELT_minutes[0] # get initial value for STATE objects
     siminfo['delt'] = delt
-    siminfo['tindex'] = date_range(start, stop, freq=Minute(delt))[1:]
+    siminfo['tindex'] = date_range(siminfo['start'], siminfo['stop'], freq=Minute(delt))[1:]
     siminfo['steps'] = len(siminfo['tindex'])
 
 def state_load_dynamics_hsp2(state, io_manager, siminfo):
