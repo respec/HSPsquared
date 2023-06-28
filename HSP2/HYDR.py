@@ -258,10 +258,8 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
 
     # HYDR (except where noted)
     for step in range(steps):
-
         # call specl
         errors_specl = specl(ui, ts, step, specactions)
-
         convf  = CONVF[step]
         outdgt[:] = OUTDGT[step, :]
         colind[:] = COLIND[step, :]
