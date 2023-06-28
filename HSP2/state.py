@@ -3,6 +3,7 @@
 import numpy as np
 import time
 from pandas import DataFrame, date_range
+from pandas.tseries.offsets import Minute
 from numba.typed import Dict
 from numpy import zeros
 from numba import int8, float32, njit, types, typed # import the types
