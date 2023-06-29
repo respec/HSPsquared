@@ -12,13 +12,15 @@ Conversion of no category version of HSPF HRCHHYD.FOR into Python'''
 '''
 
 
-from numpy import zeros, any, full, nan, array, int64
+from numpy import zeros, any, full, nan, array, int64, arange
 from pandas import DataFrame
 from math import sqrt, log10
 from numba import njit
 from numba.typed import List
 from HSP2.utilities import initm, make_numba_dict
+from HSP2.state import *
 from HSP2.SPECL import specl
+
 
 ERRMSGS =('HYDR: SOLVE equations are indeterminate',             #ERRMSG0
           'HYDR: extrapolation of rchtab will take place',       #ERRMSG1
@@ -30,15 +32,18 @@ TOLERANCE = 0.001   # newton method max loops
 MAXLOOPS  = 100     # newton method exit tolerance
 
 
-def hydr(io_manager, siminfo, uci, ts, ftables, specactions):
+def hydr(io_manager, siminfo, uci, ts, ftables, state):
     ''' find the state of the reach/reservoir at the end of the time interval
     and the outflows during the interval
 
-    CALL: hydr(store, general, ui, ts)
+    CALL: hydr(store, general, ui, ts, specactions)
        store is the Pandas/PyTable open store
        general is a dictionary with simulation level infor (OP_SEQUENCE for example)
        ui is a dictionary with RID specific HSPF UCI like data
-       ts is a dictionary with RID specific timeseries'''
+       ts is a dictionary with RID specific timeseries
+       state is a dictionary that contains all dynamic code dictionaries such as: 
+       - specactions is a dictionary with all special actions
+    '''
 
     steps   = siminfo['steps']                # number of simulation points
     uunits  = siminfo['units']
@@ -111,15 +116,43 @@ def hydr(io_manager, siminfo, uci, ts, ftables, specactions):
     ui['nodfv']  = any(ODFVF)
     ui['uunits'] = uunits
 
+    # List all names in ui, for jk testing purposes only
+    # ui_names = list(sorted([n for n in ui], reverse=True))
+    # print(ui_names)
+
     # Numba can't do 'O' + str(i) stuff yet, so do it here. Also need new style lists
     Olabels = List()
     OVOLlabels = List()
     for i in range(nexits):
         Olabels.append(f'O{i+1}')
         OVOLlabels.append(f'OVOL{i+1}')
-
+    
+    # must split dicts out of state Dict since numba cannot handle mixed-type nested Dicts
+    # state_info is some generic things about the simulation 
+    state_info = Dict.empty(key_type=types.unicode_type, value_type=types.unicode_type)
+    state_info['operation'], state_info['segment'], state_info['activity'] = state['operation'], state['segment'], state['activity']
+    state_info['domain'], state_info['state_step_hydr'] = state['domain'], state['state_step_hydr']
+    hsp2_local_py = state['hsp2_local_py']
+    # It appears necessary to load this here, instead of from main.py, otherwise,
+    # _hydr_() does not recognize the function state_step_hydr()? 
+    if (hsp2_local_py != False):
+        from hsp2_local_py import state_step_hydr
+    else:
+        from HSP2.state_fn_defaults import state_step_hydr
+    state_ix, dict_ix, ts_ix = state['state_ix'], state['dict_ix'], state['ts_ix']
+    state_paths = state['state_paths']
+    # initialize the hydr paths in case they don't already reside here
+    hydr_init_ix(state_ix, state_paths, state['domain'])
+    
     ###########################################################################
-    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels)                  # run reaches simulation code
+    # specactions - special actions code TBD
+    ###########################################################################
+    specactions = make_numba_dict(state['specactions']) # Note: all values coverted to float automatically
+    
+    ###########################################################################
+    # Do the simulation with _hydr_()
+    ###########################################################################
+    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, specactions, state_step_hydr) # run reaches simulation code
     ###########################################################################
 
     if 'O'    in ts:  del ts['O']
@@ -129,11 +162,12 @@ def hydr(io_manager, siminfo, uci, ts, ftables, specactions):
     uci['PARAMETERS']['ROS'] = ui['ROS']
     for i in range(nexits):
         uci['PARAMETERS']['OS'+str(i+1)] = ui['OS'+str(i+1)]
+    
     return errors, ERRMSGS
 
 
 @njit(cache=True)
-def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
+def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, specactions, state_step_hydr):
     errors = zeros(int(ui['errlen'])).astype(int64)
 
     steps  = int(ui['steps'])            # number of simulation steps
@@ -259,16 +293,51 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
     for index in range(nexits):
         ui['OS' + str(index + 1)] = o[index]
 
+    # other initial vars
+    rovol = 0.0
+    volev = 0.0
+    IVOL0   = ts['IVOL']                   # the actual inflow in simulation native units 
+    # prepare for dynamic state
+    hydr_ix = hydr_get_ix(state_ix, state_paths, state_info['domain'])
+    # these are integer placeholders faster than calling the array look each timestep
+    o1_ix, o2_ix, o3_ix, ivol_ix = hydr_ix['O1'], hydr_ix['O2'], hydr_ix['O3'], hydr_ix['IVOL']
+    ro_ix, rovol_ix, volev_ix, vol_ix = hydr_ix['RO'], hydr_ix['ROVOL'], hydr_ix['VOLEV'], hydr_ix['VOL']
+    # handle varying length outdgt
+    out_ix = arange(nexits)
+    if nexits > 0:
+        out_ix[0] = o1_ix
+    if nexits > 1:
+        out_ix[1] = o2_ix
+    if nexits > 2:
+        out_ix[2] = o3_ix
     # HYDR (except where noted)
     for step in range(steps):
         # call specl
-        #specl(ui, ts, step, specactions)
+        specl(ui, ts, step, state_info, state_paths, state_ix, specactions)
         convf  = CONVF[step]
         outdgt[:] = OUTDGT[step, :]
         colind[:] = COLIND[step, :]
         roseff = ro
         oseff[:] = o[:]
-
+        # set state_ix with value of local state variables and/or needed vars
+        # Note: we pass IVOL0, not IVOL here since IVOL has been converted to different units
+        state_ix[ro_ix], state_ix[rovol_ix] = ro, rovol
+        di = 0
+        for oi in range(nexits):
+            state_ix[out_ix[oi]] = outdgt[oi] 
+        state_ix[vol_ix], state_ix[ivol_ix] = vol, IVOL0[step]
+        state_ix[volev_ix] = volev
+        # Execute dynamic code if enabled
+        if (state_info['state_step_hydr'] == 'enabled'):
+            state_step_hydr(state_info, state_paths, state_ix, dict_ix, ts_ix, hydr_ix, step)
+            # Do write-backs for editable STATE variables
+            # OUTDGT is writeable
+            for oi in range(nexits):
+                outdgt[oi] = state_ix[out_ix[oi]]
+            # IVOL is writeable. 
+            # Note: we must convert IVOL to the units expected in _hydr_ 
+            # maybe routines should do this, and this is not needed (but pass VFACT in state)
+            IVOL[step] = state_ix[ivol_ix] * VFACT
         # vols, sas variables and their initializations  not needed.
         if irexit >= 0:             # irrigation exit is set, zero based number
             if rirwdl > 0.0:  # equivalent to OVOL for the irrigation exit
@@ -608,3 +677,4 @@ def expand_HYDR_masslinks(flags, uci, dat, recs):
         rec['SVOL'] = dat.SVOL
         recs.append(rec)
     return recs
+    
