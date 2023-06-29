@@ -18,7 +18,7 @@ from math import sqrt, log10
 from numba import njit
 from numba.typed import List
 from HSP2.utilities import initm, make_numba_dict
-from HSP2.SPECL import specl, _specl_
+from HSP2.SPECL import specl
 
 ERRMSGS =('HYDR: SOLVE equations are indeterminate',             #ERRMSG0
           'HYDR: extrapolation of rchtab will take place',       #ERRMSG1
@@ -30,7 +30,7 @@ TOLERANCE = 0.001   # newton method max loops
 MAXLOOPS  = 100     # newton method exit tolerance
 
 
-def hydr(io_manager, siminfo, uci, ts, ftables):
+def hydr(io_manager, siminfo, uci, ts, ftables, specactions):
     ''' find the state of the reach/reservoir at the end of the time interval
     and the outflows during the interval
 
@@ -127,7 +127,8 @@ def hydr(io_manager, siminfo, uci, ts, ftables):
 
     # save initial outflow(s) from reach:
     uci['PARAMETERS']['ROS'] = ui['ROS']
-    
+    for i in range(nexits):
+        uci['PARAMETERS']['OS'+str(i+1)] = ui['OS'+str(i+1)]
     return errors, ERRMSGS
 
 
@@ -255,11 +256,13 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels):
 
     # store initial outflow from reach:
     ui['ROS'] = ro
+    for index in range(nexits):
+        ui['OS' + str(index + 1)] = o[index]
 
     # HYDR (except where noted)
     for step in range(steps):
         # call specl
-        errors_specl = specl(ui, ts, step, specactions)
+        #specl(ui, ts, step, specactions)
         convf  = CONVF[step]
         outdgt[:] = OUTDGT[step, :]
         colind[:] = COLIND[step, :]
