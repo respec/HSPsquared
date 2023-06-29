@@ -127,7 +127,6 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
         Olabels.append(f'O{i+1}')
         OVOLlabels.append(f'OVOL{i+1}')
     
-    # must split dicts out of state Dict since numba cannot handle mixed-type nested Dicts
     # state_info is some generic things about the simulation 
     state_info = Dict.empty(key_type=types.unicode_type, value_type=types.unicode_type)
     state_info['operation'], state_info['segment'], state_info['activity'] = state['operation'], state['segment'], state['activity']
@@ -139,6 +138,7 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
         from hsp2_local_py import state_step_hydr
     else:
         from HSP2.state_fn_defaults import state_step_hydr
+    # must split dicts out of state Dict since numba cannot handle mixed-type nested Dicts
     state_ix, dict_ix, ts_ix = state['state_ix'], state['dict_ix'], state['ts_ix']
     state_paths = state['state_paths']
     # initialize the hydr paths in case they don't already reside here
