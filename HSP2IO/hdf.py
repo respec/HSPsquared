@@ -31,7 +31,6 @@ class HDF5():
 
 		"""
 		uci = UCI()
-		print("Called read_uci()")
 		for path in self._store.keys():   # finds ALL data sets into HDF5 file
 			op, module, *other = path[1:].split(sep='/', maxsplit=3)
 			s = '_'.join(other)
