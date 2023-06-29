@@ -11,15 +11,4 @@ from numba import njit
 
 @njit
 def specl(ui, ts, step, specactions):
-
-    errors_specl = _specl_(ui, ts, step, specactions)
-    
-    return errors_specl
-
-
-@njit
-def _specl_(ui, ts, step, specactions):
-    # todo determine best way to do error handling in specl
-    errors_specl = zeros(int(1)).astype(int64)
-
-    return errors_specl    
+    return
