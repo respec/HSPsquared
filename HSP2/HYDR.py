@@ -116,10 +116,6 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
     ui['nodfv']  = any(ODFVF)
     ui['uunits'] = uunits
 
-    # List all names in ui, for jk testing purposes only
-    # ui_names = list(sorted([n for n in ui], reverse=True))
-    # print(ui_names)
-
     # Numba can't do 'O' + str(i) stuff yet, so do it here. Also need new style lists
     Olabels = List()
     OVOLlabels = List()

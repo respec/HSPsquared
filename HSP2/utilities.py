@@ -280,6 +280,8 @@ def get_timeseries(timeseries_inputs:SupportsReadTS, ext_sourcesdd, siminfo):
             if len(row.TMEMSB) > 2:
                 tmemsb2 = row.TMEMSB[-1]
             sname, tname = expand_timeseries_names('', '', '', '', row.TMEMN, tmemsb1, tmemsb2)
+        # elif row.TMEMN == 'PKIF':
+        #     tname = row.TMEMN + row.TMEMSB[0]
 
         if tname in ts:
             ts[tname] += t
@@ -442,7 +444,7 @@ def expand_timeseries_names(sgrp, smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmems
 
     return smemn, tmemn
 
-def get_gener_timeseries(ts: Dict, gener_instances: Dict, ddlinks: List) -> Dict:
+def get_gener_timeseries(ts: Dict, gener_instances: Dict, ddlinks: List, ddmasslinks) -> Dict:
     """
     Uses links tables to load necessary TimeSeries from Gener class instances to TS dictionary
     """
@@ -451,12 +453,41 @@ def get_gener_timeseries(ts: Dict, gener_instances: Dict, ddlinks: List) -> Dict
             if link.SVOLNO in gener_instances:
                 gener = gener_instances[link.SVOLNO]
                 series = gener.get_ts()
-                if link.MFACTOR != 1:
+                if type(link.MFACTOR) == float and link.MFACTOR != 1:
                     series *= link.MFACTOR
 
                 key = f'{link.TMEMN}{link.TMEMSB1} {link.TMEMSB2}'.rstrip()
-                if key in ts:
-                    ts[key] = ts[key] + series
+                if key != '':
+                    if key in ts:
+                        ts[key] = ts[key] + series
+                    else:
+                        ts[key] = series
                 else:
-                    ts[key] = series
+                    # have to use ML
+                    mldata = ddmasslinks[link.MLNO]
+                    for dat in mldata:
+                        mfactor = dat.MFACTOR
+                        sgrpn = dat.SGRPN
+                        smemn = dat.SMEMN
+                        smemsb1 = dat.SMEMSB1
+                        smemsb2 = dat.SMEMSB2
+                        tmemn = dat.TMEMN
+                        tmemsb1 = dat.TMEMSB1
+                        tmemsb2 = dat.TMEMSB2
+
+                        afactr = link.AFACTR
+                        factor = afactr * mfactor
+
+                        # may need to do something in here for special cases like in get_flows
+
+                        smemn, tmemn = expand_timeseries_names(sgrpn, smemn, smemsb1, smemsb2, tmemn, tmemsb1,
+                                                               tmemsb2)
+
+                        t = series * factor
+
+                        if tmemn in ts:
+                            ts[tmemn] += t
+                        else:
+                            ts[tmemn] = t
+
     return ts
