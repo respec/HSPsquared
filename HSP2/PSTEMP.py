@@ -119,8 +119,8 @@ def _pstemp_(ui, ts):
 
 	if uunits != 2:
 		if TSOPFG == 1:
-			ULTP1= (ULTP1 - 32.0) * 0.555
-			LGTP1= (LGTP1 - 32.0) * 0.555
+			ULTP1= (ULTP1 - 32.0) * 0.5555 # trying to match HSPF precision here
+			LGTP1= (LGTP1 - 32.0) * 0.5555
 		else:
 			ULTP2=  0.555 * ULTP2
 			LGTP2 = 0.555 * LGTP2

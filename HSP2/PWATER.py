@@ -516,7 +516,7 @@ def _pwater_(ui, ts):
         elif agws > 1.0e-20:
             agwo = kgw * agws  # enough water to have outflow
 
-        if agwo < 0.0:
+        if agwo < 1.0e-12:   # beyond simgle precision math, HSPF will have zero
             agwo = 0.0
 
         # no remaining water - this should happen only with hwtfg=1 it may
@@ -595,9 +595,9 @@ def _pwater_(ui, ts):
 
             if abs(kvary) > 0.0:
                 gwvs -= agwet   # update variable storage
-                if gwvs < -0.02:
-                    errors[5] += 1.0   # ERRMSG5: GWVS < -0.02, set to zero
-                    gwvs = 0.0
+                # if gwvs < -0.02:   # this check is commented out in HSPF v12+
+                #     errors[5] += 1.0   # ERRMSG5: GWVS < -0.02, set to zero
+                #     gwvs = 0.0
             taet   += agwet
             rempet -= agwet
 

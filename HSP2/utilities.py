@@ -280,8 +280,8 @@ def get_timeseries(timeseries_inputs:SupportsReadTS, ext_sourcesdd, siminfo):
             if len(row.TMEMSB) > 2:
                 tmemsb2 = row.TMEMSB[-1]
             sname, tname = expand_timeseries_names('', '', '', '', row.TMEMN, tmemsb1, tmemsb2)
-        # elif row.TMEMN == 'PKIF':
-        #     tname = row.TMEMN + row.TMEMSB[0]
+        elif row.TMEMN == 'PKIF':
+            tname = row.TMEMN + row.TMEMSB[0]
 
         if tname in ts:
             ts[tname] += t
