@@ -206,6 +206,20 @@ def initm(siminfo, ui, flag, monthly, default):
         return full(siminfo['steps'], default)
 
 
+def initmdiv(siminfo, ui, flag, monthly1, monthly2, default1, default2):
+    ''' initialize timeseries with HSPF interpolation of monthly array or with fixed value'''
+    # special case for 'ACQOP' divided by 'SQOLIM'
+    if flag and monthly1 and monthly2 in ui:
+        month1 = list(ui[monthly1].values())
+        month2 = list(ui[monthly2].values())
+        month = zeros(12)
+        for m in range(0, 12):
+            month[m] = month1[m] / month2[m]
+        return dayval(siminfo, list(month))
+    else:
+        return full(siminfo['steps'], default1 / default2)
+
+
 def initmd(siminfo, monthdata, monthly, default):
     ''' initialize timeseries from HSPF month data table'''
     if monthly in monthdata:
