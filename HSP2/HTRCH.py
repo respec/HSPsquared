@@ -287,7 +287,7 @@ def _htrch_(ui, ts):
 		# calculate heat transfer rates for water surface; units are kcal/m2.ivl
 
 		# get quantity of precipitation and convert ft/ivl to m/ivl,
-		prec = PREC[loop] / 12.0
+		prec = PREC[loop] * 0.0833  # / 12.0 to match HSPF precision
 		if prec > 0.0:
 			if uunits == 1:
 				mprec = prec /3.2808
