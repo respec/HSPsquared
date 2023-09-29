@@ -17,12 +17,14 @@ from PyQt5.QtWidgets import QFileDialog, QApplication
 application = QApplication(sys.argv)
 
 if command_line == '':
-    file_filter = "Run HDF5 (*.h5);;" \
+    file_filter = "Run HDF5 (*.h5) Full Output;;" \
+                  "Run HDF5 (*.h5) Light Output;;" \
                   "Import UCI to HDF5 (*.uci);;" \
                   "Import WDM to HDF5 (*.wdm)"
     filename, filetype = QFileDialog.getOpenFileName(None, 'HSP2 Open File...', '', file_filter)
 else:
     filename = command_line
+    filetype = ''
 
 file_ext = filename[-3:]
 dir_name = os.path.dirname(filename)
@@ -49,7 +51,10 @@ if file_ext.upper() == ".H5":
     hdf5_instance = HDF5(filename)
     io_manager = IOManager(hdf5_instance)
 
-    main(io_manager, saveall=True, jupyterlab=False)
+    SaveLevel = True
+    if 'Light' in filetype:
+        SaveLevel = False
+    main(io_manager, saveall=SaveLevel, jupyterlab=False)
     # main('test.h5', saveall=True)
 
 
