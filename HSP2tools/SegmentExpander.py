@@ -46,7 +46,69 @@ with HDFStore(h5name, mode = 'a') as store:
                             df.loc[newind, 'SVOLNO'] = newid
         df = df.sort_index().reset_index(drop=True)
 
-with HDFStore(newh5name, mode='a') as newstore:
-    df.to_hdf(newstore, path, data_columns=True, append=True)
+    with HDFStore(newh5name, mode='a') as newstore:
+        df.to_hdf(newstore, path, data_columns=True, append=True)
+
+        for xkey in keys:
+            if xkey == '/CONTROL/LINKS':
+                pass  # already did this one
+            elif xkey == '/CONTROL/EXT_SOURCES':
+                df = read_hdf(store, xkey)
+                for i, dfdata in df.iterrows():
+                    # update any instance of the old ids
+                    if dfdata['TVOLNO'] in d:
+                        oldid = dfdata['TVOLNO']
+                        l = d[oldid]
+                        ind = 0
+                        for newid in l:
+                            ind += 1
+                            if ind == 1:
+                                # update this one in place
+                                df.loc[i, 'TVOLNO'] = newid
+                            else:
+                                # need to add record to df
+                                newind = i + (ind / 100)
+                                df.loc[newind] = dfdata
+                                df.loc[newind, 'TVOLNO'] = newid
+                df = df.sort_index().reset_index(drop=True)
+                df.to_hdf(newstore, xkey, data_columns=True, append=True)
+            elif xkey == '/CONTROL/OP_SEQUENCE':
+                df = read_hdf(store, xkey)
+                for i, dfdata in df.iterrows():
+                    # update any instance of the old ids
+                    if dfdata['SEGMENT'] in d:
+                        oldid = dfdata['SEGMENT']
+                        l = d[oldid]
+                        ind = 0
+                        for newid in l:
+                            ind += 1
+                            if ind == 1:
+                                # update this one in place
+                                df.loc[i, 'SEGMENT'] = newid
+                            else:
+                                # need to add record to df
+                                newind = i + (ind / 100)
+                                df.loc[newind] = dfdata
+                                df.loc[newind, 'SEGMENT'] = newid
+                    else:
+                        # could remove unused P/I ids here?
+                        pass
+                df = df.sort_index().reset_index(drop=True)
+                df.to_hdf(newstore, xkey, data_columns=True, append=True)
+            elif xkey.startswith('/PERLND') or xkey.startswith('/IMPLND'):
+                df = read_hdf(store, xkey)
+                for i, dfdata in df.iterrows():
+                    # update any instance of the old ids
+                    if i in d:
+                        l = d[i]
+                        for newid in l:
+                            df.loc[newid] = dfdata
+                # df = df.sort_index().reset_index(drop=True)
+                df.to_hdf(newstore, xkey, data_columns=True, append=True)
+            else:
+                # transfer the rest of the tables directly to the new store
+                df = read_hdf(store, xkey)
+                df.to_hdf(newstore, xkey, data_columns=True, append=True)
+
 
 print(f'runtime: {datetime.now() - start}')
