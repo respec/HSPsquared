@@ -70,6 +70,11 @@ with HDFStore(h5name, mode = 'a') as store:
                                 newind = i + (ind / 100)
                                 df.loc[newind] = dfdata
                                 df.loc[newind, 'TVOLNO'] = newid
+                    else:
+                        # remove unused P/I ids from ext src block
+                        oldid = dfdata['TVOLNO']
+                        if (oldid.startswith('P') or oldid.startswith('I')) and len(oldid) < 5:
+                            df = df.drop(i)
                 df = df.sort_index().reset_index(drop=True)
                 df.to_hdf(newstore, xkey, data_columns=True, append=True)
             elif xkey == '/CONTROL/OP_SEQUENCE':
@@ -91,8 +96,10 @@ with HDFStore(h5name, mode = 'a') as store:
                                 df.loc[newind] = dfdata
                                 df.loc[newind, 'SEGMENT'] = newid
                     else:
-                        # could remove unused P/I ids here?
-                        pass
+                        # remove unused P/I ids from opn seq block
+                        oldid = dfdata['SEGMENT']
+                        if (oldid.startswith('P') or oldid.startswith('I')) and len(oldid) < 5:
+                            df = df.drop(i)
                 df = df.sort_index().reset_index(drop=True)
                 df.to_hdf(newstore, xkey, data_columns=True, append=True)
             elif xkey.startswith('/PERLND') or xkey.startswith('/IMPLND'):
@@ -103,7 +110,11 @@ with HDFStore(h5name, mode = 'a') as store:
                         l = d[i]
                         for newid in l:
                             df.loc[newid] = dfdata
-                # df = df.sort_index().reset_index(drop=True)
+                # remove unused P/I ids from this table
+                for i, dfdata in df.iterrows():
+                    oldid = i
+                    if (oldid.startswith('P') or oldid.startswith('I')) and len(oldid) < 5:
+                        df = df.drop(i)
                 df.to_hdf(newstore, xkey, data_columns=True, append=True)
             else:
                 # transfer the rest of the tables directly to the new store
