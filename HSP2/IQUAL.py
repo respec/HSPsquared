@@ -30,7 +30,7 @@ def iqual(io_manager, siminfo, uci, ts):
 	nquals = 1
 	if 'PARAMETERS' in uci:
 		if 'NQUAL' in uci['PARAMETERS']:
-			nquals = uci['PARAMETERS']['NQUAL']
+			nquals = int(uci['PARAMETERS']['NQUAL'])
 	constituents = []
 	for index in range(nquals):
 		iqual = str(index + 1)
