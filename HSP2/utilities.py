@@ -273,30 +273,7 @@ def get_timeseries(timeseries_inputs:SupportsReadTS, ext_sourcesdd, siminfo):
             data_frame *= row.MFACTOR
         t = transform(data_frame, row.TMEMN, row.TRAN, siminfo)
 
-        # in some cases the subscript is irrelevant, like '1' or '1 1', and we can leave it off.
-        # there are other cases where it is needed to distinguish, such as ISED and '1' or '1 1'.
-        tname = f'{row.TMEMN}{row.TMEMSB}'
-        if row.TMEMN in {'GATMP', 'PREC', 'DTMPG', 'WINMOV', 'DSOLAR', 'SOLRAD', 'CLOUD', 'PETINP', 'IRRINP', 'POTEV', 'DEWTMP', 'WIND',
-                         'IVOL', 'IHEAT'}:
-            tname = f'{row.TMEMN}'
-        elif row.TMEMN == 'ISED':
-            if row.TMEMSB == '1 1' or row.TMEMSB == '1' or row.TMEMSB == '':
-                tname = 'ISED1'
-            else:
-                tname = 'ISED' + row.TMEMSB[0]
-        elif row.TMEMN == 'NUIF1':
-            tname = row.TMEMN + '_' + row.TMEMSB[0]
-        elif row.TMEMN in {'ICON', 'IDQAL', 'ISQAL'}:
-            tmemsb1 = '1'
-            tmemsb2 = '1'
-            if len(row.TMEMSB) > 0:
-                tmemsb1 = row.TMEMSB[0]
-            if len(row.TMEMSB) > 2:
-                tmemsb2 = row.TMEMSB[-1]
-            sname, tname = expand_timeseries_names('', '', '', '', row.TMEMN, tmemsb1, tmemsb2)
-        elif row.TMEMN == 'PKIF':
-            tname = row.TMEMN + row.TMEMSB[0]
-
+        tname = clean_name(row.TMEMN,row.TMEMSB)
         if tname in ts:
             ts[tname] += t
         else:
@@ -466,12 +443,13 @@ def get_gener_timeseries(ts: Dict, gener_instances: Dict, ddlinks: List, ddmassl
         if link.SVOL == 'GENER':
             if link.SVOLNO in gener_instances:
                 gener = gener_instances[link.SVOLNO]
-                series = gener.get_ts()
+                series = zeros(len(gener.ts_output)) + gener.ts_output
                 if type(link.MFACTOR) == float and link.MFACTOR != 1:
                     series *= link.MFACTOR
 
                 key = f'{link.TMEMN}{link.TMEMSB1} {link.TMEMSB2}'.rstrip()
                 if key != '':
+                    key = clean_name(link.TMEMN,link.TMEMSB1 + link.TMEMSB2)
                     if key in ts:
                         ts[key] = ts[key] + series
                     else:
@@ -505,3 +483,37 @@ def get_gener_timeseries(ts: Dict, gener_instances: Dict, ddlinks: List, ddmassl
                             ts[tmemn] = t
 
     return ts
+
+def clean_name (TMEMN,TMEMSB):
+    # in some cases the subscript is irrelevant, like '1' or '1 1', and we can leave it off.
+    # there are other cases where it is needed to distinguish, such as ISED and '1' or '1 1'.
+    tname = f'{TMEMN}{TMEMSB}'
+    if TMEMN in {'GATMP', 'PREC', 'DTMPG', 'WINMOV', 'DSOLAR', 'SOLRAD', 'CLOUD', 'PETINP', 'IRRINP', 'POTEV',
+                     'DEWTMP', 'WIND',
+                     'IVOL', 'IHEAT'}:
+        tname = f'{TMEMN}'
+    elif TMEMN == 'ISED':
+        if TMEMSB == '1 1' or TMEMSB == '1' or TMEMSB == '':
+            tname = 'ISED1'
+        else:
+            tname = 'ISED' + TMEMSB[0]
+    elif TMEMN == 'NUIF1':
+        if len(TMEMSB) > 0:
+            tname = TMEMN + '_' + TMEMSB[0]
+        else:
+            tname = TMEMN + '_1'
+    elif TMEMN in {'ICON', 'IDQAL', 'ISQAL'}:
+        tmemsb1 = '1'
+        tmemsb2 = '1'
+        if len(TMEMSB) > 0:
+            tmemsb1 = TMEMSB[0]
+        if len(TMEMSB) > 2:
+            tmemsb2 = TMEMSB[-1]
+        sname, tname = expand_timeseries_names('', '', '', '', TMEMN, tmemsb1, tmemsb2)
+    elif TMEMN == 'PKIF':
+        if len(TMEMSB) > 0:
+            tname = TMEMN + TMEMSB[0]
+        else:
+            tname = TMEMN + '1'
+
+    return tname
