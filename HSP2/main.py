@@ -11,6 +11,7 @@ from datetime import datetime as dt
 import os
 from HSP2.utilities import versions, get_timeseries, expand_timeseries_names, save_timeseries, get_gener_timeseries
 from HSP2.configuration import activities, noop, expand_masslinks
+from HSP2.state import *
 
 from HSP2IO.io import IOManager, SupportsReadTS, Category
 
@@ -47,13 +48,28 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
     uci = uci_obj.uci
     siminfo = uci_obj.siminfo 
     ftables = uci_obj.ftables
+    specactions = uci_obj.specactions
     monthdata = uci_obj.monthdata
-
+    specactions = {} # placeholder till added to uci parser
+    
     start, stop = siminfo['start'], siminfo['stop']
 
     copy_instances = {}
     gener_instances = {}
 
+    #######################################################################################
+    # initilize STATE dicts
+    #######################################################################################
+    # Set up Things in state that will be used in all modular activitis like SPECL
+    state = init_state_dicts()
+    state_siminfo_hsp2(uci_obj, siminfo)
+    # Add support for dynamic functins to operate on STATE
+    # - Load any dynamic components if present, and store variables on objects 
+    state_load_dynamics_hsp2(state, io_manager, siminfo)
+    # - finally stash specactions in state, not domain (segment) dependent so do it once
+    state['specactions'] = specactions # stash the specaction dict in state
+    #######################################################################################
+    
     # main processing loop
     msg(1, f'Simulation Start: {start}, Stop: {stop}')
     tscat = {}
@@ -67,14 +83,14 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
             copy_instances[segment] = activities[operation](io_manager, siminfo, ddext_sources[(operation,segment)]) 
         elif operation == 'GENER':
             try:
-                gener_instances[segment] = activities[operation](segment, copy_instances, gener_instances, ddlinks, ddgener) 
+                gener_instances[segment] = activities[operation](segment, siminfo, copy_instances, gener_instances, ddlinks, ddgener)
             except NotImplementedError as e:
                 print(f"GENER '{segment}' encountered unsupported feature during initialization and may not function correctly. Unsupported feature: '{e}'")
         else:
 
             # now conditionally execute all activity modules for the op, segment
             ts = get_timeseries(io_manager,ddext_sources[(operation,segment)],siminfo)
-            ts = get_gener_timeseries(ts, gener_instances, ddlinks[segment])
+            ts = get_gener_timeseries(ts, gener_instances, ddlinks[segment],ddmasslinks)
             flags = uci[(operation, 'GENERAL', segment)]['ACTIVITY']
             if operation == 'RCHRES':
                 # Add nutrient adsorption flags:
@@ -97,7 +113,9 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                     continue
 
                 msg(3, f'{activity}')
-
+                # Set context for dynamic executables.
+                state_context_hsp2(state, operation, segment, activity)
+                
                 ui = uci[(operation, activity, segment)]   # ui is a dictionary
                 if operation == 'PERLND' and activity == 'SEDMNT':
                     # special exception here to make CSNOFG available
@@ -116,7 +134,10 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                         ui['PARAMETERS']['ADFG'] = flags['ADCALC']
                         ui['PARAMETERS']['KS']   = uci[(operation, 'HYDR', segment)]['PARAMETERS']['KS']
                         ui['PARAMETERS']['VOL']  = uci[(operation, 'HYDR', segment)]['STATES']['VOL']
-                        ui['PARAMETERS']['ROS']  = uci[(operation, 'HYDR', segment)]['PARAMETERS']['ROS'] 
+                        ui['PARAMETERS']['ROS']  = uci[(operation, 'HYDR', segment)]['PARAMETERS']['ROS']
+                        nexits = uci[(operation, 'HYDR', segment)]['PARAMETERS']['NEXITS']
+                        for index in range(nexits):
+                            ui['PARAMETERS']['OS' + str(index + 1)] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['OS'+ str(index + 1)]
                     if activity == 'HTRCH':
                         ui['PARAMETERS']['ADFG'] = flags['ADCALC']
                         ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
@@ -204,7 +225,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                 ############ calls activity function like snow() ##############
                 if operation not in ['COPY','GENER']:
                     if (activity == 'HYDR'):
-                        errors, errmessages = function(io_manager, siminfo, ui, ts, ftables)
+                        errors, errmessages = function(io_manager, siminfo, ui, ts, ftables, state)
                     elif (activity != 'RQUAL'):
                         errors, errmessages = function(io_manager, siminfo, ui, ts)
                     else:                    
@@ -253,121 +274,122 @@ def messages():
 def get_flows(io_manager:SupportsReadTS, ts, flags, uci, segment, ddlinks, ddmasslinks, steps, msg):
     # get inflows to this operation
     for x in ddlinks[segment]:
-        mldata = ddmasslinks[x.MLNO]
-        for dat in mldata:
-            recs = []
-            if x.MLNO == '':  # Data from NETWORK part of Links table
-                rec = {}
-                rec['MFACTOR'] = x.MFACTOR
-                rec['SGRPN'] = x.SGRPN
-                rec['SMEMN'] = x.SMEMN
-                rec['SMEMSB1'] = x.SMEMSB1
-                rec['SMEMSB2'] = x.SMEMSB2
-                rec['TMEMN'] = x.TMEMN
-                rec['TMEMSB1'] = x.TMEMSB1
-                rec['TMEMSB2'] = x.TMEMSB2
-                rec['SVOL'] = x.SVOL
-                recs.append(rec)
-            else:  # Data from SCHEMATIC part of Links table
-                if dat.SMEMN != '':
+        if x.SVOL != 'GENER':   # gener already handled in get_gener_timeseries
+            mldata = ddmasslinks[x.MLNO]
+            for dat in mldata:
+                recs = []
+                if x.MLNO == '':  # Data from NETWORK part of Links table
                     rec = {}
-                    rec['MFACTOR'] = dat.MFACTOR
-                    rec['SGRPN'] = dat.SGRPN
-                    rec['SMEMN'] = dat.SMEMN
-                    rec['SMEMSB1'] = dat.SMEMSB1
-                    rec['SMEMSB2'] = dat.SMEMSB2
-                    rec['TMEMN'] = dat.TMEMN
-                    rec['TMEMSB1'] = dat.TMEMSB1
-                    rec['TMEMSB2'] = dat.TMEMSB2
-                    rec['SVOL'] = dat.SVOL
+                    rec['MFACTOR'] = x.MFACTOR
+                    rec['SGRPN'] = x.SGRPN
+                    rec['SMEMN'] = x.SMEMN
+                    rec['SMEMSB1'] = x.SMEMSB1
+                    rec['SMEMSB2'] = x.SMEMSB2
+                    rec['TMEMN'] = x.TMEMN
+                    rec['TMEMSB1'] = x.TMEMSB1
+                    rec['TMEMSB2'] = x.TMEMSB2
+                    rec['SVOL'] = x.SVOL
                     recs.append(rec)
-                else:
-                    # this is the kind that needs to be expanded
-                    if dat.SGRPN == "ROFLOW" or dat.SGRPN == "OFLOW":
-                        recs = expand_masslinks(flags,uci,dat,recs)
-
-            for rec in recs:
-                mfactor = rec['MFACTOR']
-                sgrpn   = rec['SGRPN']
-                smemn   = rec['SMEMN']
-                smemsb1 = rec['SMEMSB1']
-                smemsb2 = rec['SMEMSB2']
-                tmemn   = rec['TMEMN']
-                tmemsb1 = rec['TMEMSB1']
-                tmemsb2 = rec['TMEMSB2']
-
-                afactr = x.AFACTR
-                factor = afactr * mfactor
-
-                # KLUDGE until remaining HSP2 modules are available.
-                if tmemn not in {'IVOL', 'ICON', 'IHEAT', 'ISED', 'ISED1', 'ISED2', 'ISED3', 
-                                    'IDQAL', 'ISQAL1', 'ISQAL2', 'ISQAL3',
-                                    'OXIF', 'NUIF1', 'NUIF2', 'PKIF', 'PHIF'}:
-                    continue
-                if (sgrpn == 'OFLOW' and smemn == 'OVOL') or (sgrpn == 'ROFLOW' and smemn == 'ROVOL'):
-                    sgrpn = 'HYDR'
-                if (sgrpn == 'OFLOW' and smemn == 'OHEAT') or (sgrpn == 'ROFLOW' and smemn == 'ROHEAT'):
-                    sgrpn = 'HTRCH'
-                if (sgrpn == 'OFLOW' and smemn == 'OSED') or (sgrpn == 'ROFLOW' and smemn == 'ROSED'):
-                    sgrpn = 'SEDTRN'
-                if (sgrpn == 'OFLOW' and smemn == 'ODQAL') or (sgrpn == 'ROFLOW' and smemn == 'RODQAL'):
-                    sgrpn = 'GQUAL'
-                if (sgrpn == 'OFLOW' and smemn == 'OSQAL') or (sgrpn == 'ROFLOW' and smemn == 'ROSQAL'):
-                    sgrpn = 'GQUAL'
-                if (sgrpn == 'OFLOW' and smemn == 'OXCF2') or (sgrpn == 'ROFLOW' and smemn == 'OXCF1'):
-                    sgrpn = 'OXRX'
-                if (sgrpn == 'OFLOW' and (smemn == 'NUCF9' or smemn == 'OSNH4' or smemn == 'OSPO4')) or (sgrpn == 'ROFLOW' and (smemn == 'NUCF1' or smemn == 'NUFCF2')):
-                    sgrpn = 'NUTRX'
-                if (sgrpn == 'OFLOW' and smemn == 'PKCF2') or (sgrpn == 'ROFLOW' and smemn == 'PKCF1'):
-                    sgrpn = 'PLANK'
-                if (sgrpn == 'OFLOW' and smemn == 'PHCF2') or (sgrpn == 'ROFLOW' and smemn == 'PHCF1'):
-                    sgrpn = 'PHCARB'
-                
-                if tmemn == 'ISED' or tmemn == 'ISQAL':
-                    tmemn = tmemn + tmemsb1    # need to add sand, silt, clay subscript
-                if (sgrpn == 'HYDR' and smemn == 'OVOL') or (sgrpn == 'HTRCH' and smemn == 'OHEAT'):
-                    smemsb2 = ''
-
-                smemn, tmemn = expand_timeseries_names(sgrpn, smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmemsb2)
-
-                path = f'RESULTS/{x.SVOL}_{x.SVOLNO}/{sgrpn}'
-                MFname = f'{x.SVOL}{x.SVOLNO}_MFACTOR'
-                AFname = f'{x.SVOL}{x.SVOLNO}_AFACTR'
-                data = f'{smemn}{smemsb1}{smemsb2}'
-
-                data_frame = io_manager.read_ts(Category.RESULTS,x.SVOL,x.SVOLNO, sgrpn)
-                try:
-                    if data in data_frame.columns: t = data_frame[data].astype(float64).to_numpy()[0:steps]
-                    else: t = data_frame[smemn].astype(float64).to_numpy()[0:steps]
-                    
-                    if MFname in ts and AFname in ts:
-                        t *= ts[MFname][:steps] * ts[AFname][0:steps]
-                        msg(4, f'MFACTOR modified by timeseries {MFname}')
-                        msg(4, f'AFACTR modified by timeseries {AFname}')
-                    elif MFname in ts:
-                        t *= afactr * ts[MFname][0:steps]
-                        msg(4, f'MFACTOR modified by timeseries {MFname}')
-                    elif AFname in ts:
-                        t *= mfactor * ts[AFname][0:steps]
-                        msg(4, f'AFACTR modified by timeseries {AFname}')
+                else:  # Data from SCHEMATIC part of Links table
+                    if dat.SMEMN != '':
+                        rec = {}
+                        rec['MFACTOR'] = dat.MFACTOR
+                        rec['SGRPN'] = dat.SGRPN
+                        rec['SMEMN'] = dat.SMEMN
+                        rec['SMEMSB1'] = dat.SMEMSB1
+                        rec['SMEMSB2'] = dat.SMEMSB2
+                        rec['TMEMN'] = dat.TMEMN
+                        rec['TMEMSB1'] = dat.TMEMSB1
+                        rec['TMEMSB2'] = dat.TMEMSB2
+                        rec['SVOL'] = dat.SVOL
+                        recs.append(rec)
                     else:
-                        t *= factor
+                        # this is the kind that needs to be expanded
+                        if dat.SGRPN == "ROFLOW" or dat.SGRPN == "OFLOW":
+                            recs = expand_masslinks(flags,uci,dat,recs)
 
-                    # if poht to iheat, imprecision in hspf conversion factor requires a slight adjustment
-                    if (smemn == 'POHT' or smemn == 'SOHT') and tmemn == 'IHEAT':
-                        t *= 0.998553
-                    if (smemn == 'PODOXM' or smemn == 'SODOXM') and tmemn == 'OXIF1':
-                        t *= 1.000565
+                for rec in recs:
+                    mfactor = rec['MFACTOR']
+                    sgrpn   = rec['SGRPN']
+                    smemn   = rec['SMEMN']
+                    smemsb1 = rec['SMEMSB1']
+                    smemsb2 = rec['SMEMSB2']
+                    tmemn   = rec['TMEMN']
+                    tmemsb1 = rec['TMEMSB1']
+                    tmemsb2 = rec['TMEMSB2']
 
-                    # ??? ISSUE: can fetched data be at different frequency - don't know how to transform.
-                    if tmemn in ts:
-                        ts[tmemn] += t
-                    else:
-                        ts[tmemn] = t
+                    afactr = x.AFACTR
+                    factor = afactr * mfactor
 
-                except KeyError:
-                    print('ERROR in FLOWS, cant resolve ', path + ' ' + smemn)
-                
+                    # KLUDGE until remaining HSP2 modules are available.
+                    if tmemn not in {'IVOL', 'ICON', 'IHEAT', 'ISED', 'ISED1', 'ISED2', 'ISED3',
+                                        'IDQAL', 'ISQAL1', 'ISQAL2', 'ISQAL3',
+                                        'OXIF', 'NUIF1', 'NUIF2', 'PKIF', 'PHIF'}:
+                        continue
+                    if (sgrpn == 'OFLOW' and smemn == 'OVOL') or (sgrpn == 'ROFLOW' and smemn == 'ROVOL'):
+                        sgrpn = 'HYDR'
+                    if (sgrpn == 'OFLOW' and smemn == 'OHEAT') or (sgrpn == 'ROFLOW' and smemn == 'ROHEAT'):
+                        sgrpn = 'HTRCH'
+                    if (sgrpn == 'OFLOW' and smemn == 'OSED') or (sgrpn == 'ROFLOW' and smemn == 'ROSED'):
+                        sgrpn = 'SEDTRN'
+                    if (sgrpn == 'OFLOW' and smemn == 'ODQAL') or (sgrpn == 'ROFLOW' and smemn == 'RODQAL'):
+                        sgrpn = 'GQUAL'
+                    if (sgrpn == 'OFLOW' and smemn == 'OSQAL') or (sgrpn == 'ROFLOW' and smemn == 'ROSQAL'):
+                        sgrpn = 'GQUAL'
+                    if (sgrpn == 'OFLOW' and smemn == 'OXCF2') or (sgrpn == 'ROFLOW' and smemn == 'OXCF1'):
+                        sgrpn = 'OXRX'
+                    if (sgrpn == 'OFLOW' and (smemn == 'NUCF9' or smemn == 'OSNH4' or smemn == 'OSPO4')) or (sgrpn == 'ROFLOW' and (smemn == 'NUCF1' or smemn == 'NUFCF2')):
+                        sgrpn = 'NUTRX'
+                    if (sgrpn == 'OFLOW' and smemn == 'PKCF2') or (sgrpn == 'ROFLOW' and smemn == 'PKCF1'):
+                        sgrpn = 'PLANK'
+                    if (sgrpn == 'OFLOW' and smemn == 'PHCF2') or (sgrpn == 'ROFLOW' and smemn == 'PHCF1'):
+                        sgrpn = 'PHCARB'
+
+                    if tmemn == 'ISED' or tmemn == 'ISQAL':
+                        tmemn = tmemn + tmemsb1    # need to add sand, silt, clay subscript
+                    if (sgrpn == 'HYDR' and smemn == 'OVOL') or (sgrpn == 'HTRCH' and smemn == 'OHEAT'):
+                        smemsb2 = ''
+
+                    smemn, tmemn = expand_timeseries_names(sgrpn, smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmemsb2)
+
+                    path = f'RESULTS/{x.SVOL}_{x.SVOLNO}/{sgrpn}'
+                    MFname = f'{x.SVOL}{x.SVOLNO}_MFACTOR'
+                    AFname = f'{x.SVOL}{x.SVOLNO}_AFACTR'
+                    data = f'{smemn}{smemsb1}{smemsb2}'
+
+                    data_frame = io_manager.read_ts(Category.RESULTS,x.SVOL,x.SVOLNO, sgrpn)
+                    try:
+                        if data in data_frame.columns: t = data_frame[data].astype(float64).to_numpy()[0:steps]
+                        else: t = data_frame[smemn].astype(float64).to_numpy()[0:steps]
+
+                        if MFname in ts and AFname in ts:
+                            t *= ts[MFname][:steps] * ts[AFname][0:steps]
+                            msg(4, f'MFACTOR modified by timeseries {MFname}')
+                            msg(4, f'AFACTR modified by timeseries {AFname}')
+                        elif MFname in ts:
+                            t *= afactr * ts[MFname][0:steps]
+                            msg(4, f'MFACTOR modified by timeseries {MFname}')
+                        elif AFname in ts:
+                            t *= mfactor * ts[AFname][0:steps]
+                            msg(4, f'AFACTR modified by timeseries {AFname}')
+                        else:
+                            t *= factor
+
+                        # if poht to iheat, imprecision in hspf conversion factor requires a slight adjustment
+                        if (smemn == 'POHT' or smemn == 'SOHT') and tmemn == 'IHEAT':
+                            t *= 0.998553
+                        if (smemn == 'PODOXM' or smemn == 'SODOXM') and tmemn == 'OXIF1':
+                            t *= 1.000565
+
+                        # ??? ISSUE: can fetched data be at different frequency - don't know how to transform.
+                        if tmemn in ts:
+                            ts[tmemn] += t
+                        else:
+                            ts[tmemn] = t
+
+                    except KeyError:
+                        print('ERROR in FLOWS, cant resolve ', path + ' ' + smemn)
+
     return
 
 '''

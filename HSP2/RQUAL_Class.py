@@ -793,7 +793,7 @@ class RQUAL_Class:
 			wind_r = wind
 			if self.LKFG == 0:	wind_r = 0
 
-			depcor = self.DEPCOR[loop]			
+			depcor = self.DEPCOR[loop]
 
 			svol = self.vol
 			self.svol = svol
@@ -1000,10 +1000,10 @@ class RQUAL_Class:
 				self.NUADEP3[loop] = nuadep_po4 * conv
 
 				#	inflows (lb/ivld or kg/ivld):
-				self.TNUIF1[loop] = self.NUTRX.tnuif[1] * conv
-				self.TNUIF2[loop] = self.NUTRX.tnuif[2] * conv
-				self.TNUIF3[loop] = self.NUTRX.tnuif[3] * conv
-				self.TNUIF4[loop] = self.NUTRX.tnuif[4] * conv
+				self.TNUIF1[loop] = (self.NUTRX.tnuif[1] * conv) + self.NUADEP1[loop]  # no3
+				self.TNUIF2[loop] = (self.NUTRX.tnuif[2] * conv) + self.NUADEP2[loop]  # tam
+				self.TNUIF3[loop] = (self.NUTRX.tnuif[3] * conv)
+				self.TNUIF4[loop] = (self.NUTRX.tnuif[4] * conv) + self.NUADEP3[loop]  # po4
 
 				#	outflows (convert to mass per interval (lb/ivld or kg/ivld))
 				self.RONO3[loop] = self.NUTRX.rono3 * conv
@@ -1099,18 +1099,6 @@ class RQUAL_Class:
 
 					conv = self.PLANK.conv
 
-					#	inflows (lb/ivld or kg/ivld):
-					self.PKIF1[loop] = self.PLANK.iphyto * conv
-					self.PKIF2[loop] = self.PLANK.izoo * conv
-					self.PKIF3[loop] = self.PLANK.iorn * conv
-					self.PKIF4[loop] = self.PLANK.iorp * conv
-					self.PKIF5[loop] = self.PLANK.iorc * conv
-					self.TPKIF_1[loop] = self.PLANK.itorn * conv
-					self.TPKIF_2[loop] = self.PLANK.itorp * conv
-					self.TPKIF_3[loop] = self.PLANK.itorc * conv
-					self.TPKIF_4[loop] = self.PLANK.itotn * conv
-					self.TPKIF_5[loop] = self.PLANK.itotp * conv
-
 					self.PLADDR1[loop] = pladdr1 * conv
 					self.PLADDR2[loop] = pladdr2 * conv
 					self.PLADDR3[loop] = pladdr3 * conv
@@ -1120,6 +1108,18 @@ class RQUAL_Class:
 					self.PLADEP1[loop] = pladep_orn * conv
 					self.PLADEP2[loop] = pladep_orp * conv
 					self.PLADEP3[loop] = pladep_orc * conv
+
+					#	inflows (lb/ivld or kg/ivld):
+					self.PKIF1[loop] = self.PLANK.iphyto * conv
+					self.PKIF2[loop] = self.PLANK.izoo * conv
+					self.PKIF3[loop] = self.PLANK.iorn * conv
+					self.PKIF4[loop] = self.PLANK.iorp * conv
+					self.PKIF5[loop] = self.PLANK.iorc * conv
+					self.TPKIF_1[loop] = (self.PLANK.itorn * conv) + self.PLADEP1[loop]
+					self.TPKIF_2[loop] = (self.PLANK.itorp * conv) + self.PLADEP2[loop]
+					self.TPKIF_3[loop] = (self.PLANK.itorc * conv) + self.PLADEP3[loop]
+					self.TPKIF_4[loop] = (self.PLANK.itotn * conv) + self.PLADEP1[loop] + self.NUADEP1[loop] + self.NUADEP2[loop]
+					self.TPKIF_5[loop] = (self.PLANK.itotp * conv) + self.PLADEP2[loop] + self.NUADEP3[loop]  # po4
 
 					#	outflows (convert to mass per interval (lb/ivld or kg/ivld))
 					self.ROPHYT[loop] = self.PLANK.rophyt * conv

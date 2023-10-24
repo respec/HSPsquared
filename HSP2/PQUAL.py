@@ -7,7 +7,7 @@ Conversion of HSPF HPERQUA.FOR module into Python'''
 from math import exp
 from numpy import zeros, where, full, float64, int64
 from numba import njit
-from HSP2.utilities import initm, make_numba_dict, hourflag
+from HSP2.utilities import initm, make_numba_dict, hourflag, initmdiv
 
 ''' DESIGN NOTES
 Each constituent will be in its own subdirectory in the HDF5 file.
@@ -33,7 +33,7 @@ def pqual(io_manager, siminfo, uci, ts):
 	nquals = 1
 	if 'PARAMETERS' in uci:
 		if 'NQUAL' in uci['PARAMETERS']:
-			nquals = uci['PARAMETERS']['NQUAL']
+			nquals = int(uci['PARAMETERS']['NQUAL'])
 	constituents = []
 	for index in range(nquals):
 		pqual = str(index + 1)
@@ -80,6 +80,10 @@ def pqual(io_manager, siminfo, uci, ts):
 		ts['SQOLIM' + str(index)] = initm(siminfo, uci, ui_flags['VQOFG'], 'PQUAL' + str(index) + '_MONTHLY/SQOLIM', ui_parms['SQOLIM'])
 		ts['IOQCP' + str(index)] = initm(siminfo, uci, ui_flags['VIQCFG'], 'PQUAL' + str(index) + '_MONTHLY/IOQC', ui_parms['IOQC'])
 		ts['AOQCP' + str(index)] = initm(siminfo, uci, ui_flags['VAQCFG'], 'PQUAL' + str(index) + '_MONTHLY/AOQC', ui_parms['AOQC'])
+
+		ts['REMQOP' + str(index)] = initmdiv(siminfo, uci, ui_flags['VQOFG'], 'PQUAL' + str(index) + '_MONTHLY/ACQOP',
+											 'PQUAL' + str(index) + '_MONTHLY/SQOLIM', ui_parms['ACQOP'],
+											 ui_parms['SQOLIM'])
 
 		pqadfgf = 0
 		pqadfgc = 0
@@ -204,6 +208,7 @@ def _pqual_(ui, ts):
 		POTFS  = ts['POTFS' + str(index)]
 		ACQOP  = ts['ACQOP' + str(index)]
 		SQOLIM = ts['SQOLIM' + str(index)]
+		REMQOP = ts['REMQOP' + str(index)]
 		IOQCP  = ts['IOQCP' + str(index)]
 		AOQCP  = ts['AOQCP' + str(index)]
 		PQADFX = ts['PQADFX' + str(index)]
@@ -226,6 +231,7 @@ def _pqual_(ui, ts):
 			potfs  = POTFS[loop]
 			acqop  = ACQOP[loop]
 			sqolim = SQOLIM[loop]
+			remqop = REMQOP[loop]
 			ioqc   = IOQCP[loop]
 			aoqc   = AOQCP[loop]
 			iliqc  = ILIQC[loop]
@@ -272,7 +278,7 @@ def _pqual_(ui, ts):
 				# qualof()
 				''' Simulate accumulation of a quality constituent on the land surface and its removal by a constant unit rate and by overland flow'''	
 				if dayfg:
-					remqop = acqop / sqolim
+					# remqop = acqop / sqolim
 
 					if QSOFG == 1:
 						# update storage due to accumulation and removal which occurs independent of runoff - units are qty/acre

@@ -154,6 +154,7 @@ def readUCI(uciname, hdfname):
             if line[0:6] == 'IMPLND':     operation(info, getlines(f),'IMPLND')
             if line[0:6] == 'RCHRES':     operation(info, getlines(f),'RCHRES')
             if line[0:10] == 'MONTH-DATA': monthdata(info, getlines(f))
+            if line[0:12] == 'SPEC-ACTIONS':  specactions(info, getlines(f))
 
         colnames = ('AFACTR', 'MFACTOR', 'MLNO', 'SGRPN', 'SMEMN', 'SMEMSB',
          'SVOL', 'SVOLNO', 'TGRPN', 'TMEMN', 'TMEMSB', 'TRAN', 'TVOL',
@@ -331,6 +332,7 @@ def readUCI(uciname, hdfname):
                 df = read_hdf(store, path)
                 dct_params = hsp_paths[path]
 
+                new_columns = {}
                 for par_name in dct_params:
                     if par_name == 'CFOREA':
                         ichk = 0
@@ -338,9 +340,25 @@ def readUCI(uciname, hdfname):
                     if par_name not in df.columns:   # missing value in HDF5 path
                         def_val = dct_params[par_name]
                         if def_val != 'None':
+                            # df[par_name] = def_val
+                            new_columns[par_name] = def_val
+
+                new_columns = DataFrame(new_columns, index=df.index)
+                df1 = concat([df, new_columns], axis=1)
+
+                df1.to_hdf(store, path, data_columns=True)
+            else:
+                if path[-6:] == "STATES":
+                    # need to add states if it doesn't already exist to save initial state variables
+                    # such as the case where entire IWAT-STATE1 table is being defaulted
+                    for column in df.columns:  # clear out existing data frame columns
+                        df = df.drop([column], axis=1)
+                    dct_params = hsp_paths[path]
+                    for par_name in dct_params:
+                        def_val = dct_params[par_name]
+                        if def_val != 'None':
                             df[par_name] = def_val
-                
-                df.to_hdf(store, path, data_columns=True)
+                    df.to_hdf(store, path, data_columns=True)
 
     return
 
@@ -435,6 +453,59 @@ def ftables(info, llines):
             lst.append(parseD(line, parse['FTABLES','FTABLE']))
 
 
+def specactions(info, llines):
+    store, parse, path, *_ = info
+    lines = iter(llines)
+    # Notes:
+    # - Only "classic" special actions are handled here. 
+    # - Other type of SA are recognized by the parser, but not stored in hdf5
+    # - The CURLVL code is a place-holder. This has not been thought through.
+    #   - Each type of actions "head_[action type]" should include an "CURLVL" 
+    #     column to match with conditional expression if applicable
+    #   - The value of CURLVL matches with an expression
+    sa_actions = [] # referred to as "classic" in old HSPF code comments 
+    head_actions = ['OPTYP','RANGE1','RANGE2','DC','DS','YR','MO','DA','HR','MN','D','T','VARI', 'S1','S2','AC','VALUE','TC','TS','NUM', 'CURLVL']
+    sa_mult = []
+    head_mult = []
+    sa_uvquan = []
+    head_uvquan = []
+    sa_conditional = []
+    head_conditional = []
+    sa_distrb = []
+    head_distrb = []
+    sa_uvname = []
+    head_uvname = []
+    sa_if = []
+    head_if = []
+    in_if = False # are we in an if block?
+    curlvl = 0
+    for line in lines:
+        if line[2:5] == 'MULT':
+            sa_mult.append(line)
+        elif line[2:8] == 'UVQUAN':
+            sa_uvquan.append(line)
+        elif line[2:13] == 'CONDITIONAL':
+            sa_conditional.append(line)
+        elif line[2:8] == 'DISTRB':
+            sa_distrb.append(line)
+        elif line[2:8] == 'UVNAME':
+            sa_uvname.append(line)
+        # This CURLVL code is a place-holder. This has not been thought through.
+        elif line[0:2] == 'IF':
+            sa_if.append(line)
+            curlvl = len(sa_if)
+        elif line[0:7] == 'END IF':
+            sa_if.append(line)
+            curlvl = curlvl - 1
+        else:
+            # ACTIONS block 
+            d = parseD(line, parse['SPEC-ACTIONS','ACTIONS'])
+            d['CURLVL'] = curlvl
+            sa_actions.append(d.copy())
+    if sa_actions:
+        dfftable = DataFrame(sa_actions, columns=head_actions).replace('na','')
+        dfftable.to_hdf(store, f'/SPEC_ACTIONS/ACTIONS', data_columns=True)
+  
 def ext(info, lines):
     store, parse, path, *_ = info
     lst = []

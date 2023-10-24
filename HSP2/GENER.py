@@ -1,14 +1,15 @@
 import numpy as np
 import pandas as pd
-from typing import Dict
+from numpy import zeros
+from numba.typed import Dict
 
 class Gener():
     """
     Partial implementation of the GENER module. 
-    Currently supports OPCODES 1-7, 9-23, & 25-26
+    Currently supports OPCODES 1-7, 9-26
     """
 
-    def __init__(self, segment: str, copies: Dict, geners: Dict, ddlinks: Dict, ddgener: Dict) -> None:
+    def __init__(self, segment: str, siminfo: Dict, copies: Dict, geners: Dict, ddlinks: Dict, ddgener: Dict) -> None:
         self.ts_input_1 = pd.Series() # type: pd.Series
         self. ts_input_2 = pd.Series() # type: pd.Series
         self.ts_output = pd.Series()  # type: pd.Series
@@ -19,6 +20,12 @@ class Gener():
         if self.opcode in [9,10,11,24,25,26]:
             self.k = ddgener['PARM'][segment]
 
+        # special case for k as constant case 24
+        if self.opcode == 24:
+            start, stop, steps = siminfo['start'], siminfo['stop'], siminfo['steps']
+            ts = zeros(steps)
+            self.ts_input_1 = ts
+
         for link in ddlinks[segment]:
             ts = pd.Series()
             if link.SVOL == 'COPY': 
@@ -26,9 +33,13 @@ class Gener():
                 ts = copy.get_ts(link.SMEMN,link.SMEMSB1)
                 if link.MFACTOR != 1: ts *= link.MFACTOR
             elif link.SVOL == 'GENER':
-                gener = geners[link.SVOLNO]
-                ts = gener.get_ts()
-                if link.MFACTOR != 1: ts *= link.MFACTOR
+                if link.SVOLNO in geners:
+                    gener = geners[link.SVOLNO]
+                    ts = gener.get_ts()
+                    if link.MFACTOR != 1: ts *= link.MFACTOR
+                else:
+                    raise NotImplementedError(
+                        f"Invalid SVOL. This GENER operation does not exist. '{link.SVOLNO}'")
             else:
                 raise NotImplementedError(f"Invalid SVOL. GENER module does not currently support reading TimeSeries for '{link.SVOL}'")
                 
@@ -135,9 +146,8 @@ class Gener():
         return ts_out
 
     def _opcode24(self) -> pd.Series:
-        #skip for now 
-        #would need to figure out timeseries length component
-        raise NotImplementedError("GENER OPCODE 24 is not currently supported")
+        # ts_input_1 is all zeros, just add k to it
+        return np.add(self.ts_input_1, self.k)
 
     def _opcode25(self) -> pd.Series:
         return np.maximum(self.ts_input_1, self.k)

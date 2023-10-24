@@ -31,7 +31,6 @@ class HDF5():
 
 		"""
 		uci = UCI()
-
 		for path in self._store.keys():   # finds ALL data sets into HDF5 file
 			op, module, *other = path[1:].split(sep='/', maxsplit=3)
 			s = '_'.join(other)
@@ -72,6 +71,8 @@ class HDF5():
 					for i in range(int(start), int(stop)+1): uci.ddgener[module][f'G{i:03d}'] = row[2]
 			elif op == 'FTABLES':
 				uci.ftables[module] = self._store[path]
+			elif op == 'SPEC_ACTIONS':
+				uci.specactions[module] = self._store[path]
 			elif op == 'MONTHDATA':
 				if not uci.monthdata: uci.monthdata = {}
 				uci.monthdata[f'{op}/{module}'] = self._store[path]
