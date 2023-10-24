@@ -7,7 +7,7 @@ Conversion of HSPF HIMPQUA.FOR module into Python'''
 from math import exp
 from numpy import zeros, where, full, float64, int64
 from numba import njit
-from HSP2.utilities import initm, make_numba_dict, hourflag
+from HSP2.utilities import initm, make_numba_dict, hourflag, initmdiv
 
 
 ''' DESIGN NOTES
@@ -30,7 +30,7 @@ def iqual(io_manager, siminfo, uci, ts):
 	nquals = 1
 	if 'PARAMETERS' in uci:
 		if 'NQUAL' in uci['PARAMETERS']:
-			nquals = uci['PARAMETERS']['NQUAL']
+			nquals = int(uci['PARAMETERS']['NQUAL'])
 	constituents = []
 	for index in range(nquals):
 		iqual = str(index + 1)
@@ -69,6 +69,10 @@ def iqual(io_manager, siminfo, uci, ts):
 		ts['POTFW' + str(index)] = initm(siminfo, uci, ui_flags['VPFWFG'], 'IQUAL' + str(index) + '_MONTHLY/POTFW', ui_parms['POTFW'])
 		ts['ACQOP' + str(index)] = initm(siminfo, uci, ui_flags['VQOFG'], 'IQUAL' + str(index) + '_MONTHLY/ACQOP', ui_parms['ACQOP'])
 		ts['SQOLIM' + str(index)] = initm(siminfo, uci, ui_flags['VQOFG'], 'IQUAL' + str(index) + '_MONTHLY/SQOLIM', ui_parms['SQOLIM'])
+
+		ts['REMQOP' + str(index)] = initmdiv(siminfo, uci, ui_flags['VQOFG'], 'IQUAL' + str(index) + '_MONTHLY/ACQOP',
+											 'IQUAL' + str(index) + '_MONTHLY/SQOLIM', ui_parms['ACQOP'],
+											 ui_parms['SQOLIM'])
 
 		iqadfgf = 0
 		iqadfgc = 0
@@ -169,6 +173,7 @@ def _iqual_(ui, ts):
 		POTFW  = ts['POTFW'  + str(index)]
 		ACQOP  = ts['ACQOP'  + str(index)]
 		SQOLIM = ts['SQOLIM' + str(index)]
+		REMQOP = ts['REMQOP' + str(index)]
 		IQADFX = ts['IQADFX' + str(index)]
 		IQADCN = ts['IQADCN' + str(index)]
 
@@ -218,7 +223,7 @@ def _iqual_(ui, ts):
 					# washof ()
 					''' Simulate accumulation of a quality constituent on the land surface and its removal using a constant unit rate and by direct washoff by overland flow'''
 					if dayfg == 1:
-						remqop = acqop / SQOLIM[loop]
+						remqop = REMQOP[loop]
 						if QSOFG == 1 :   #update storage due to accumulation and removal which occurs independent of runoff - units are qty/acre
 							sqo = acqop + sqo * (1.0 - remqop)
 

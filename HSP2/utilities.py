@@ -206,6 +206,20 @@ def initm(siminfo, ui, flag, monthly, default):
         return full(siminfo['steps'], default)
 
 
+def initmdiv(siminfo, ui, flag, monthly1, monthly2, default1, default2):
+    ''' initialize timeseries with HSPF interpolation of monthly array or with fixed value'''
+    # special case for 'ACQOP' divided by 'SQOLIM'
+    if flag and monthly1 and monthly2 in ui:
+        month1 = list(ui[monthly1].values())
+        month2 = list(ui[monthly2].values())
+        month = zeros(12)
+        for m in range(0, 12):
+            month[m] = month1[m] / month2[m]
+        return dayval(siminfo, list(month))
+    else:
+        return full(siminfo['steps'], default1 / default2)
+
+
 def initmd(siminfo, monthdata, monthly, default):
     ''' initialize timeseries from HSPF month data table'''
     if monthly in monthdata:
@@ -259,26 +273,7 @@ def get_timeseries(timeseries_inputs:SupportsReadTS, ext_sourcesdd, siminfo):
             data_frame *= row.MFACTOR
         t = transform(data_frame, row.TMEMN, row.TRAN, siminfo)
 
-        # in some cases the subscript is irrelevant, like '1' or '1 1', and we can leave it off.
-        # there are other cases where it is needed to distinguish, such as ISED and '1' or '1 1'.
-        tname = f'{row.TMEMN}{row.TMEMSB}'
-        if row.TMEMN in {'GATMP', 'PREC', 'DTMPG', 'WINMOV', 'DSOLAR', 'SOLRAD', 'CLOUD', 'PETINP', 'IRRINP', 'POTEV', 'DEWTMP', 'WIND',
-                         'IVOL', 'IHEAT'}:
-            tname = f'{row.TMEMN}'
-        elif row.TMEMN == 'ISED':
-            if row.TMEMSB == '1 1' or row.TMEMSB == '1' or row.TMEMSB == '':
-                tname = 'ISED1'
-            else:
-                tname = 'ISED' + row.TMEMSB[0]
-        elif row.TMEMN in {'ICON', 'IDQAL', 'ISQAL'}:
-            tmemsb1 = '1'
-            tmemsb2 = '1'
-            if len(row.TMEMSB) > 0:
-                tmemsb1 = row.TMEMSB[0]
-            if len(row.TMEMSB) > 2:
-                tmemsb2 = row.TMEMSB[-1]
-            sname, tname = expand_timeseries_names('', '', '', '', row.TMEMN, tmemsb1, tmemsb2)
-
+        tname = clean_name(row.TMEMN,row.TMEMSB)
         if tname in ts:
             ts[tname] += t
         else:
@@ -440,7 +435,7 @@ def expand_timeseries_names(sgrp, smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmems
 
     return smemn, tmemn
 
-def get_gener_timeseries(ts: Dict, gener_instances: Dict, ddlinks: List) -> Dict:
+def get_gener_timeseries(ts: Dict, gener_instances: Dict, ddlinks: List, ddmasslinks) -> Dict:
     """
     Uses links tables to load necessary TimeSeries from Gener class instances to TS dictionary
     """
@@ -448,13 +443,77 @@ def get_gener_timeseries(ts: Dict, gener_instances: Dict, ddlinks: List) -> Dict
         if link.SVOL == 'GENER':
             if link.SVOLNO in gener_instances:
                 gener = gener_instances[link.SVOLNO]
-                series = gener.get_ts()
-                if link.MFACTOR != 1:
+                series = zeros(len(gener.ts_output)) + gener.ts_output
+                if type(link.MFACTOR) == float and link.MFACTOR != 1:
                     series *= link.MFACTOR
 
                 key = f'{link.TMEMN}{link.TMEMSB1} {link.TMEMSB2}'.rstrip()
-                if key in ts:
-                    ts[key] = ts[key] + series
+                if key != '':
+                    key = clean_name(link.TMEMN,link.TMEMSB1 + link.TMEMSB2)
+                    if key in ts:
+                        ts[key] = ts[key] + series
+                    else:
+                        ts[key] = series
                 else:
-                    ts[key] = series
+                    # have to use ML
+                    mldata = ddmasslinks[link.MLNO]
+                    for dat in mldata:
+                        mfactor = dat.MFACTOR
+                        sgrpn = dat.SGRPN
+                        smemn = dat.SMEMN
+                        smemsb1 = dat.SMEMSB1
+                        smemsb2 = dat.SMEMSB2
+                        tmemn = dat.TMEMN
+                        tmemsb1 = dat.TMEMSB1
+                        tmemsb2 = dat.TMEMSB2
+
+                        afactr = link.AFACTR
+                        factor = afactr * mfactor
+
+                        # may need to do something in here for special cases like in get_flows
+
+                        smemn, tmemn = expand_timeseries_names(sgrpn, smemn, smemsb1, smemsb2, tmemn, tmemsb1,
+                                                               tmemsb2)
+
+                        t = series * factor
+
+                        if tmemn in ts:
+                            ts[tmemn] += t
+                        else:
+                            ts[tmemn] = t
+
     return ts
+
+def clean_name (TMEMN,TMEMSB):
+    # in some cases the subscript is irrelevant, like '1' or '1 1', and we can leave it off.
+    # there are other cases where it is needed to distinguish, such as ISED and '1' or '1 1'.
+    tname = f'{TMEMN}{TMEMSB}'
+    if TMEMN in {'GATMP', 'PREC', 'DTMPG', 'WINMOV', 'DSOLAR', 'SOLRAD', 'CLOUD', 'PETINP', 'IRRINP', 'POTEV',
+                     'DEWTMP', 'WIND',
+                     'IVOL', 'IHEAT'}:
+        tname = f'{TMEMN}'
+    elif TMEMN == 'ISED':
+        if TMEMSB == '1 1' or TMEMSB == '1' or TMEMSB == '':
+            tname = 'ISED1'
+        else:
+            tname = 'ISED' + TMEMSB[0]
+    elif TMEMN == 'NUIF1':
+        if len(TMEMSB) > 0:
+            tname = TMEMN + '_' + TMEMSB[0]
+        else:
+            tname = TMEMN + '_1'
+    elif TMEMN in {'ICON', 'IDQAL', 'ISQAL'}:
+        tmemsb1 = '1'
+        tmemsb2 = '1'
+        if len(TMEMSB) > 0:
+            tmemsb1 = TMEMSB[0]
+        if len(TMEMSB) > 2:
+            tmemsb2 = TMEMSB[-1]
+        sname, tname = expand_timeseries_names('', '', '', '', TMEMN, tmemsb1, tmemsb2)
+    elif TMEMN == 'PKIF':
+        if len(TMEMSB) > 0:
+            tname = TMEMN + TMEMSB[0]
+        else:
+            tname = TMEMN + '1'
+
+    return tname
