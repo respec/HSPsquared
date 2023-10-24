@@ -166,7 +166,7 @@ def dynamic_module_import(local_name, local_path, module_name):
     module = False
     local_spec = False
     try:
-        print ("Looking for local_name, local_path", local_name, local_path)
+        # print ("Looking for local_name, local_path", local_name, local_path)
         local_spec = importlib.util.spec_from_file_location(local_name, local_path)
     except ImportError:
         print ("Imported module {} not found".format(local_name))
@@ -178,8 +178,10 @@ def dynamic_module_import(local_name, local_path, module_name):
             sys.modules[local_spec.name] = module
             sys.modules[module_name] = module
             local_spec.loader.exec_module(module)
+            print("Imported custom module {}".format(local_path))
     except Exception as e:
-        print(e)
+        # print(e)  this isn't really an exception, it's legit to have no custom python code
+        pass
     return module
 
 
@@ -189,12 +191,13 @@ def load_dynamics(io_manager, siminfo):
     hdf5_path = io_manager._input.file_path
     (fbase, fext) = os.path.splitext(hdf5_path)
     # see if there is a code module with custom python 
-    print("Looking for custom python code ", (fbase + ".py"))
-    hsp2_local_py = dynamic_module_import(fbase, local_path + "/" + fbase + ".py", "hsp2_local_py")
+    # print("Looking for SPECL with custom python code ", (fbase + ".py"))
+    hsp2_local_py = dynamic_module_import(fbase, fbase + ".py", "hsp2_local_py")
     siminfo['state_step_hydr'] = 'disabled'
     if 'state_step_hydr' in dir(hsp2_local_py):
-        siminfo['state_step_hydr'] = 'enabled' 
+        siminfo['state_step_hydr'] = 'enabled'
+        print("state_step_hydr function defined, using custom python code")
     else:
-        print("state_step_hydr function not defined. Using default")
+        # print("state_step_hydr function not defined. Using default")
         return False
     return hsp2_local_py
