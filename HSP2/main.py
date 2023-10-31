@@ -83,9 +83,12 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
             copy_instances[segment] = activities[operation](io_manager, siminfo, ddext_sources[(operation,segment)]) 
         elif operation == 'GENER':
             try:
-                gener_instances[segment] = activities[operation](segment, siminfo, copy_instances, gener_instances, ddlinks, ddgener)
+                ts = get_timeseries(io_manager, ddext_sources[(operation, segment)], siminfo)
+                ts = get_gener_timeseries(ts, gener_instances, ddlinks[segment], ddmasslinks)
+                get_flows(io_manager, ts, {}, uci, segment, ddlinks, ddmasslinks, siminfo['steps'], msg)
+                gener_instances[segment] = activities[operation](segment, siminfo, copy_instances, gener_instances, ddlinks, ddmasslinks, ts, ddgener)
             except NotImplementedError as e:
-                print(f"GENER '{segment}' encountered unsupported feature during initialization and may not function correctly. Unsupported feature: '{e}'")
+                print(f"GENER '{segment}' may not function correctly. '{e}'")
         else:
 
             # now conditionally execute all activity modules for the op, segment
@@ -324,7 +327,8 @@ def get_flows(io_manager:SupportsReadTS, ts, flags, uci, segment, ddlinks, ddmas
                     # KLUDGE until remaining HSP2 modules are available.
                     if tmemn not in {'IVOL', 'ICON', 'IHEAT', 'ISED', 'ISED1', 'ISED2', 'ISED3',
                                         'IDQAL', 'ISQAL1', 'ISQAL2', 'ISQAL3',
-                                        'OXIF', 'NUIF1', 'NUIF2', 'PKIF', 'PHIF'}:
+                                        'OXIF', 'NUIF1', 'NUIF2', 'PKIF', 'PHIF',
+                                        'ONE', 'TWO'}:
                         continue
                     if (sgrpn == 'OFLOW' and smemn == 'OVOL') or (sgrpn == 'ROFLOW' and smemn == 'ROVOL'):
                         sgrpn = 'HYDR'
