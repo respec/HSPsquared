@@ -62,6 +62,7 @@ class IOManager:
 			operation:Union[str,None]=None, 
 			segment:Union[str,None]=None, 
 			activity:Union[str,None]=None,
+		    outstep:int=2,
 			*args, **kwargs) -> None:
 		key = (category, operation, segment, activity)
 		self._in_memory[key] = data_frame.copy(deep=True)
@@ -70,6 +71,21 @@ class IOManager:
 		if drop_columns:
 			data_frame = data_frame.drop(columns=drop_columns)
 
+		if outstep == 3:
+			# change time step of output to daily
+			sumdf1 = data_frame.resample('D',kind='timestamp',origin='start').sum()
+			lastdf2 = data_frame.resample('D', kind='timestamp', origin='start').last()
+			data_frame= pd.merge(lastdf2.add_suffix('_last'), sumdf1.add_suffix('_sum'), left_index=True, right_index=True)
+		elif outstep == 4:
+			# change to monthly
+			sumdf1 = data_frame.resample('M',kind='timestamp',origin='start').sum()
+			lastdf2 = data_frame.resample('M', kind='timestamp', origin='start').last()
+			data_frame = pd.merge(lastdf2.add_suffix('_last'), sumdf1.add_suffix('_sum'), left_index=True, right_index=True)
+		elif outstep == 5:
+			# change to annual
+			sumdf1 = data_frame.resample('Y',kind='timestamp',origin='start').sum()
+			lastdf2 = data_frame.resample('Y', kind='timestamp', origin='start').last()
+			data_frame = pd.merge(lastdf2.add_suffix('_last'), sumdf1.add_suffix('_sum'), left_index=True, right_index=True)
 		self._output.write_ts(data_frame, category, operation, segment, activity)
 
 	def read_ts(self,

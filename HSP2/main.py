@@ -238,14 +238,30 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                 for errorcnt, errormsg in zip(errors, errmessages):
                     if errorcnt > 0:
                         msg(4, f'Error count {errorcnt}: {errormsg}')
+
+                # default to hourly output
+                outstep = 2
+                outstep_oxrx = 2
+                outstep_nutrx = 2
+                outstep_plank = 2
+                outstep_phcarb = 2
+                if 'BINOUT' in uci[(operation, 'GENERAL', segment)]:
+                    if activity in uci[(operation, 'GENERAL', segment)]['BINOUT']:
+                        outstep = uci[(operation, 'GENERAL', segment)]['BINOUT'][activity]
+                    elif activity == 'RQUAL':
+                        outstep_oxrx = uci[(operation, 'GENERAL', segment)]['BINOUT']['OXRX']
+                        outstep_nutrx = uci[(operation, 'GENERAL', segment)]['BINOUT']['NUTRX']
+                        outstep_plank = uci[(operation, 'GENERAL', segment)]['BINOUT']['PLANK']
+                        outstep_phcarb = uci[(operation, 'GENERAL', segment)]['BINOUT']['PHCARB']
+
                 if 'SAVE' in ui:
-                    save_timeseries(io_manager,ts,ui['SAVE'],siminfo,saveall,operation,segment,activity,jupyterlab)
+                    save_timeseries(io_manager,ts,ui['SAVE'],siminfo,saveall,operation,segment,activity,jupyterlab,outstep)
     
                 if (activity == 'RQUAL'):
-                    if 'SAVE' in ui_oxrx:   save_timeseries(io_manager,ts,ui_oxrx['SAVE'],siminfo,saveall,operation,segment,'OXRX',jupyterlab)
-                    if 'SAVE' in ui_nutrx and flags['NUTRX'] == 1:   save_timeseries(io_manager,ts,ui_nutrx['SAVE'],siminfo,saveall,operation,segment,'NUTRX',jupyterlab)
-                    if 'SAVE' in ui_plank and flags['PLANK'] == 1:  save_timeseries(io_manager,ts,ui_plank['SAVE'],siminfo,saveall,operation,segment,'PLANK',jupyterlab)
-                    if 'SAVE' in ui_phcarb and flags['PHCARB'] == 1:   save_timeseries(io_manager,ts,ui_phcarb['SAVE'],siminfo,saveall,operation,segment,'PHCARB',jupyterlab)
+                    if 'SAVE' in ui_oxrx:   save_timeseries(io_manager,ts,ui_oxrx['SAVE'],siminfo,saveall,operation,segment,'OXRX',jupyterlab,outstep_oxrx)
+                    if 'SAVE' in ui_nutrx and flags['NUTRX'] == 1:   save_timeseries(io_manager,ts,ui_nutrx['SAVE'],siminfo,saveall,operation,segment,'NUTRX',jupyterlab,outstep_nutrx)
+                    if 'SAVE' in ui_plank and flags['PLANK'] == 1:  save_timeseries(io_manager,ts,ui_plank['SAVE'],siminfo,saveall,operation,segment,'PLANK',jupyterlab,outstep_plank)
+                    if 'SAVE' in ui_phcarb and flags['PHCARB'] == 1:   save_timeseries(io_manager,ts,ui_phcarb['SAVE'],siminfo,saveall,operation,segment,'PHCARB',jupyterlab,outstep_phcarb)
 
     msglist = msg(1, 'Done', final=True)
 
