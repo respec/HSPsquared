@@ -544,6 +544,7 @@ def operation(info, llines, op):
         tokens = line.split()
         if len(tokens) == 1:
             table = tokens[0]
+            print(table)
             if dcat[op,table] == 'EXTENDED':
                 rows = {}
                 extended_line = 0
@@ -582,7 +583,7 @@ def operation(info, llines, op):
             counter.add(path)
             if cat == 'SKIP':
                 continue
-            if cat in {'PARAMETERS', 'STATES', 'FLAGS', 'ACTIVITY','INFO'}:
+            if cat in {'PARAMETERS', 'STATES', 'FLAGS', 'ACTIVITY', 'INFO', 'BINOUT'}:
                 df = concat([temp[1] for temp in history[path,cat]], axis='columns', sort=False)
                 df = fix_df(df, op, path, ddfaults, valid)
                 if cat == 'ACTIVITY' and op == 'PERLND':
