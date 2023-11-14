@@ -1,90 +1,16 @@
-import os
-import re
-import shlex
-import sys
-
 from setuptools import setup
 
-exec(open("./_version.py").read())
+version = (
+    open("./_version.py").read().strip().replace("__version__ = ", "").replace("'", "")
+)
 
-if sys.argv[-1] == "publish":
-    os.system(shlex.quote("cleanpy ."))
-    os.system(shlex.quote("python setup.py sdist"))
-    os.system(shlex.quote(f"twine upload dist/HSPsquared-{__version__}.tar.gz"))
-    sys.exit()
 
 README = open("./README.md").read()
 
-pypi_map = {"jupyter-lsp-python": "python-lsp-server[all]"}
-
-
-def process_env_yaml(fname, dev=False):
-    yaml_lines = []
-    with open("environment.yml") as fp:
-        collect = False
-        for line in fp.readlines():
-            # Handle comments
-            line = line.split("#")[0].rstrip()
-
-            # Handle blank lines
-            if not line.strip():
-                continue
-
-            line = line.strip(" -").replace(" ", "")
-
-            if collect is True:
-                words = re.split("=|<|>", line)
-                # Shouldn't have interactivity, development tools, conda, pip,
-                # or python as a dependency.
-                if dev is True:
-                    if words[0] in [
-                        "conda",
-                        "conda-build",
-                        "hdf5",
-                        "nb_conda" "pip",
-                        "python",
-                        "pip:",
-                    ]:
-                        continue
-                else:
-                    if words[0] in [
-                        "jupyterlab",
-                        "ipywidgets",
-                        "matplotlib",
-                        "conda",
-                        "conda-build",
-                        "pip",
-                        "python",
-                        "lckr-jupyterlab-variableinspector",
-                        "jupyter-lsp-python",
-                        "jupyterlab-lsp",
-                        "pip:",
-                        "hdf5",
-                        "nb_conda",
-                    ]:
-                        continue
-
-                # On PyPI pytables is tables.
-                if words[0] == "pytables":
-                    line = line.replace("pytables", "tables")
-
-                yaml_lines.append(line)
-
-            if line.rstrip() == "dependencies:":
-                collect = True
-    yaml_lines = [pypi_map.get(i, i) for i in yaml_lines]
-    return yaml_lines
-
-
-install_requires = process_env_yaml("environment.yml")
-
-extras_require = {
-    "dev": process_env_yaml("environment_dev.yml", dev=True) + ["cleanpy", "twine"]
-}
 
 setup(
-    name="hsp2",
-    version=__version__,
+    name="HSPsquared",
+    version=version,
     description="Hydrological Simulation Program - Python",
     long_description=README,
     classifiers=[
@@ -113,8 +39,8 @@ setup(
     include_package_data=True,
     package_data={"HSP2tools": ["data/*"]},
     zip_safe=False,
-    install_requires=install_requires,
-    extras_require=extras_require,
+    install_requires=["numpy", "pandas", "numba"],
+    # extras_require=extras_require,
     entry_points={"console_scripts": ["hsp2=HSP2tools.HSP2_CLI:main"]},
     test_suite="tests",
     python_requires=">3.6",

@@ -42,10 +42,11 @@ def pwater(io_manager, siminfo, uci, ts):
         if name not in ts:
             ts[name] = zeros(steps)
 
-    # insure defined, but not usable accidently
-    for name in ('AIRTMP','PACKI','PETINP','PREC','RAINF','SNOCOV','WYIELD'):
-        if name not in ts:
-            ts[name] = full(steps, nan)
+    CSNOFG = int(uci.get('CSNOFG', 0))
+    if CSNOFG:
+        for name in ('AIRTMP','PACKI','RAINF','SNOCOV','WYIELD'):
+            if name not in ts:
+                ts[name] = full(steps, nan)
 
     # Replace fixed parameters with time series if not already present
     for name in ('AGWRC','DEEPFR','INFILT','KVARY','LZSN','PETMIN','PETMAX'):
@@ -54,6 +55,10 @@ def pwater(io_manager, siminfo, uci, ts):
 
     # process optional monthly arrays to return interpolated data or constant array
     u = uci['PARAMETERS']
+    
+    # make CSNOFG available to other sections
+    u['CSNOFG'] = CSNOFG
+    
     if 'VLEFG' in u:
         flag = (u['VLEFG'] == 1) or (u['VLEFG'] == 3)
 
@@ -85,12 +90,6 @@ def pwater(io_manager, siminfo, uci, ts):
 
     # kludge to make ICEFG available from SNOW to PWATER
     ui['ICEFG']  = siminfo['ICEFG'] if 'ICEFG' in siminfo else 0.0
-
-    CSNOFG = 0
-    if 'CSNOFG' in ui:
-        CSNOFG = int(ui['CSNOFG'])
-    # make CSNOFG available to other sections
-    u['CSNOFG'] = CSNOFG
 
     ############################################################################
     errors = _pwater_(ui, ts)      # traditional HSPF HPERWAT
@@ -140,7 +139,6 @@ def _pwater_(ui, ts):
     ts['PERO']   = PERO   = zeros(steps)
     ts['PERS']   = PERS   = zeros(steps)
     ts['PET']    = PET    = zeros(steps)
-    ts['PETADJ'] = PETADJ = zeros(steps)
     ts['SUPY']   = SUPY   = zeros(steps)
     ts['SURI']   = SURI   = zeros(steps)
     ts['SURO']   = SURO   = zeros(steps)
@@ -156,24 +154,13 @@ def _pwater_(ui, ts):
     irrcep = 0.0   # ????
     #irdraw = zeros(3)
 
-    CSNOFG = 0
-    ICEFG = 0
-    IFFCFG = 1
-    IFRDFG = 0
-    RTOPFG = 0
-    UZFG = 0
-    VLEFG = 0
-
-    if 'ICEFG' in ui:
-        ICEFG = int(ui['ICEFG'])
-
-    if 'CSNOFG' in ui:
-        CSNOFG = int(ui['CSNOFG'])
-        IFFCFG = int(ui['IFFCFG'])
-        IFRDFG = int(ui['IFRDFG'])
-        RTOPFG = int(ui['RTOPFG'])
-        UZFG   = int(ui['UZFG'])
-        VLEFG  = int(ui['VLEFG'])
+    CSNOFG = int(ui.get('CSNOFG', 0))
+    ICEFG = int(ui.get('ICEFG', 0))
+    IFFCFG = int(ui.get('IFFCFG', 1))
+    IFRDFG = int(ui.get('IFRDFG', 0))
+    RTOPFG = int(ui.get('RTOPFG', 0))
+    UZFG = int(ui.get('UZFG', 0))
+    VLEFG = int(ui.get('VLEFG', 0))
 
     agwetp = ui['AGWETP']
     agws   = ui['AGWS']
@@ -208,7 +195,6 @@ def _pwater_(ui, ts):
 
     AGWLI  = ts['AGWLI']
     AGWRC  = ts['AGWRC']
-    AIRTMP = ts['AIRTMP']
     CEPSC  = ts['CEPSC']
     DEEPFR = ts['DEEPFR']
     IFWLI  = ts['IFWLI']
@@ -216,22 +202,15 @@ def _pwater_(ui, ts):
     INTFW  = ts['INTFW']
     IRC    = ts['IRC']
     KVARY  = ts['KVARY']
-    LGTMP  = ts['LGTMP']
     LZETP  = ts['LZETP']
     LZLI   = ts['LZLI']
     LZSN   = ts['LZSN']
     NSUR   = ts['NSUR']
-    PACKI  = ts['PACKI']
     PETINP = ts['PETINP']
-    PETMAX = ts['PETMAX']
-    PETMIN = ts['PETMIN']
     PREC   = ts['PREC']
-    RAINF  = ts['RAINF']
-    SNOCOV = ts['SNOCOV']
     SURLI  = ts['SURLI']
     UZLI   = ts['UZLI']
     UZSN   = ts['UZSN']
-    WYIELD = ts['WYIELD']
 
     if uunits == 2:
         CEPSC = CEPSC * 0.0394 # / 25.4
@@ -239,9 +218,22 @@ def _pwater_(ui, ts):
         INFILT= INFILT * 0.0394  # / 25.4
         KVARY = KVARY / 0.0394
         LZSN  = LZSN * 0.0394  # / 25.4
-        PETMAX = (ts['PETMAX'] * 9./5.) + 32.
-        PETMIN = (ts['PETMIN'] * 9./5.) + 32.
-        WYIELD = WYIELD * 0.0394  # / 25.4
+        
+    if CSNOFG:
+        AIRTMP = ts['AIRTMP'] # atemp # opt
+        LGTMP  = ts['LGTMP'] # opt sno only
+        PACKI  = ts['PACKI']
+        PETMAX = ts['PETMAX'] # input parameter # opt
+        PETMIN = ts['PETMIN'] # input parameter # opt
+        SNOCOV = ts['SNOCOV'] # snow # opt
+        RAINF  = ts['RAINF']  # snow # opt
+        WYIELD = ts['WYIELD'] # snow # opt
+        PETADJ = ts['PETADJ'] = zeros(steps)
+        
+        if uunits == 2:
+            WYIELD = WYIELD * 0.0394 # / 25.4        ???  take to inches
+            PETMAX = (PETMAX * 9./5.) + 32.
+            PETMIN = (PETMIN * 9./5.) + 32.
 
     # initialize  variables
     kgwV = 1.0 - AGWRC**(delt60/24.0)    # groundwater recession parameter
