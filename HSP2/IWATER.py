@@ -46,7 +46,7 @@ def iwater(io_manager, siminfo, uci, ts):
                 ts[name] = full(steps, uci['PARAMETERS'][name], dtype=float64)
 
     # process optional monthly arrays to return interpolated data or constant array
-    u = uci.get('PARAMETERS', [])
+    u = uci.get('PARAMETERS', {})
     if 'VRSFG' in u:
         ts['RETSC'] = initm(siminfo, uci, u['VRSFG'], 'MONTHLY_RETSC', u['RETSC'])
         ts['NSUR']  = initm(siminfo, uci, u['VNNFG'], 'MONTHLY_NSUR',  u['NSUR'])
