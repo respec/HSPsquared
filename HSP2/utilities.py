@@ -365,6 +365,8 @@ def expand_timeseries_names(sgrp, smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmems
         smemn = 'GQUAL' + smemsb1 + '_RODQAL'
     if smemn == 'ROSQAL':
         smemn = 'GQUAL' + smemsb2 + '_ROSQAL' + smemsb1  # smemsb1 is ssc
+    if smemn == 'RSQAL':
+        smemn = 'GQUAL' + smemsb2 + '_RSQAL' + smemsb1
 
     # OXRX:
     if smemn == 'OXCF1':

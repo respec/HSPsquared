@@ -294,22 +294,22 @@ def get_flows(io_manager:SupportsReadTS, ts, flags, uci, segment, ddlinks, ddmas
     # get inflows to this operation
     for x in ddlinks[segment]:
         if x.SVOL != 'GENER':   # gener already handled in get_gener_timeseries
-            mldata = ddmasslinks[x.MLNO]
-            for dat in mldata:
-                recs = []
-                if x.MLNO == '':  # Data from NETWORK part of Links table
-                    rec = {}
-                    rec['MFACTOR'] = x.MFACTOR
-                    rec['SGRPN'] = x.SGRPN
-                    rec['SMEMN'] = x.SMEMN
-                    rec['SMEMSB1'] = x.SMEMSB1
-                    rec['SMEMSB2'] = x.SMEMSB2
-                    rec['TMEMN'] = x.TMEMN
-                    rec['TMEMSB1'] = x.TMEMSB1
-                    rec['TMEMSB2'] = x.TMEMSB2
-                    rec['SVOL'] = x.SVOL
-                    recs.append(rec)
-                else:  # Data from SCHEMATIC part of Links table
+            recs = []
+            if x.MLNO == '':  # Data from NETWORK part of Links table
+                rec = {}
+                rec['MFACTOR'] = x.MFACTOR
+                rec['SGRPN'] = x.SGRPN
+                rec['SMEMN'] = x.SMEMN
+                rec['SMEMSB1'] = x.SMEMSB1
+                rec['SMEMSB2'] = x.SMEMSB2
+                rec['TMEMN'] = x.TMEMN
+                rec['TMEMSB1'] = x.TMEMSB1
+                rec['TMEMSB2'] = x.TMEMSB2
+                rec['SVOL'] = x.SVOL
+                recs.append(rec)
+            else: # Data from SCHEMATIC part of Links table
+                mldata = ddmasslinks[x.MLNO]
+                for dat in mldata:
                     if dat.SMEMN != '':
                         rec = {}
                         rec['MFACTOR'] = dat.MFACTOR
@@ -327,88 +327,93 @@ def get_flows(io_manager:SupportsReadTS, ts, flags, uci, segment, ddlinks, ddmas
                         if dat.SGRPN == "ROFLOW" or dat.SGRPN == "OFLOW":
                             recs = expand_masslinks(flags,uci,dat,recs)
 
-                for rec in recs:
-                    mfactor = rec['MFACTOR']
-                    sgrpn   = rec['SGRPN']
-                    smemn   = rec['SMEMN']
-                    smemsb1 = rec['SMEMSB1']
-                    smemsb2 = rec['SMEMSB2']
-                    tmemn   = rec['TMEMN']
-                    tmemsb1 = rec['TMEMSB1']
-                    tmemsb2 = rec['TMEMSB2']
+            for rec in recs:
+                mfactor = rec['MFACTOR']
+                sgrpn   = rec['SGRPN']
+                smemn   = rec['SMEMN']
+                smemsb1 = rec['SMEMSB1']
+                smemsb2 = rec['SMEMSB2']
+                tmemn   = rec['TMEMN']
+                tmemsb1 = rec['TMEMSB1']
+                tmemsb2 = rec['TMEMSB2']
 
+                if x.AFACTR != '':
                     afactr = x.AFACTR
                     factor = afactr * mfactor
+                else:
+                    factor = mfactor
 
-                    # KLUDGE until remaining HSP2 modules are available.
-                    if tmemn not in {'IVOL', 'ICON', 'IHEAT', 'ISED', 'ISED1', 'ISED2', 'ISED3',
-                                        'IDQAL', 'ISQAL1', 'ISQAL2', 'ISQAL3',
-                                        'OXIF', 'NUIF1', 'NUIF2', 'PKIF', 'PHIF',
-                                        'ONE', 'TWO'}:
-                        continue
-                    if (sgrpn == 'OFLOW' and smemn == 'OVOL') or (sgrpn == 'ROFLOW' and smemn == 'ROVOL'):
-                        sgrpn = 'HYDR'
-                    if (sgrpn == 'OFLOW' and smemn == 'OHEAT') or (sgrpn == 'ROFLOW' and smemn == 'ROHEAT'):
-                        sgrpn = 'HTRCH'
-                    if (sgrpn == 'OFLOW' and smemn == 'OSED') or (sgrpn == 'ROFLOW' and smemn == 'ROSED'):
-                        sgrpn = 'SEDTRN'
-                    if (sgrpn == 'OFLOW' and smemn == 'ODQAL') or (sgrpn == 'ROFLOW' and smemn == 'RODQAL'):
-                        sgrpn = 'GQUAL'
-                    if (sgrpn == 'OFLOW' and smemn == 'OSQAL') or (sgrpn == 'ROFLOW' and smemn == 'ROSQAL'):
-                        sgrpn = 'GQUAL'
-                    if (sgrpn == 'OFLOW' and smemn == 'OXCF2') or (sgrpn == 'ROFLOW' and smemn == 'OXCF1'):
-                        sgrpn = 'OXRX'
-                    if (sgrpn == 'OFLOW' and (smemn == 'NUCF9' or smemn == 'OSNH4' or smemn == 'OSPO4')) or (sgrpn == 'ROFLOW' and (smemn == 'NUCF1' or smemn == 'NUFCF2')):
-                        sgrpn = 'NUTRX'
-                    if (sgrpn == 'OFLOW' and smemn == 'PKCF2') or (sgrpn == 'ROFLOW' and smemn == 'PKCF1'):
-                        sgrpn = 'PLANK'
-                    if (sgrpn == 'OFLOW' and smemn == 'PHCF2') or (sgrpn == 'ROFLOW' and smemn == 'PHCF1'):
-                        sgrpn = 'PHCARB'
+                # KLUDGE until remaining HSP2 modules are available.
+                if tmemn not in {'IVOL', 'ICON', 'IHEAT', 'ISED', 'ISED1', 'ISED2', 'ISED3',
+                                    'IDQAL', 'ISQAL1', 'ISQAL2', 'ISQAL3',
+                                    'OXIF', 'NUIF1', 'NUIF2', 'PKIF', 'PHIF',
+                                    'ONE', 'TWO'}:
+                    continue
+                if (sgrpn == 'OFLOW' and smemn == 'OVOL') or (sgrpn == 'ROFLOW' and smemn == 'ROVOL'):
+                    sgrpn = 'HYDR'
+                if (sgrpn == 'OFLOW' and smemn == 'OHEAT') or (sgrpn == 'ROFLOW' and smemn == 'ROHEAT'):
+                    sgrpn = 'HTRCH'
+                if (sgrpn == 'OFLOW' and smemn == 'OSED') or (sgrpn == 'ROFLOW' and smemn == 'ROSED'):
+                    sgrpn = 'SEDTRN'
+                if (sgrpn == 'OFLOW' and smemn == 'ODQAL') or (sgrpn == 'ROFLOW' and smemn == 'RODQAL'):
+                    sgrpn = 'GQUAL'
+                if (sgrpn == 'OFLOW' and smemn == 'OSQAL') or (sgrpn == 'ROFLOW' and smemn == 'ROSQAL'):
+                    sgrpn = 'GQUAL'
+                if (sgrpn == 'OFLOW' and smemn == 'OXCF2') or (sgrpn == 'ROFLOW' and smemn == 'OXCF1'):
+                    sgrpn = 'OXRX'
+                if (sgrpn == 'OFLOW' and (smemn == 'NUCF9' or smemn == 'OSNH4' or smemn == 'OSPO4')) or (sgrpn == 'ROFLOW' and (smemn == 'NUCF1' or smemn == 'NUFCF2')):
+                    sgrpn = 'NUTRX'
+                if (sgrpn == 'OFLOW' and smemn == 'PKCF2') or (sgrpn == 'ROFLOW' and smemn == 'PKCF1'):
+                    sgrpn = 'PLANK'
+                if (sgrpn == 'OFLOW' and smemn == 'PHCF2') or (sgrpn == 'ROFLOW' and smemn == 'PHCF1'):
+                    sgrpn = 'PHCARB'
 
-                    if tmemn == 'ISED' or tmemn == 'ISQAL':
-                        tmemn = tmemn + tmemsb1    # need to add sand, silt, clay subscript
-                    if (sgrpn == 'HYDR' and smemn == 'OVOL') or (sgrpn == 'HTRCH' and smemn == 'OHEAT'):
-                        smemsb2 = ''
+                if tmemn == 'ISED' or tmemn == 'ISQAL':
+                    tmemn = tmemn + tmemsb1    # need to add sand, silt, clay subscript
+                if (sgrpn == 'HYDR' and smemn == 'OVOL') or (sgrpn == 'HTRCH' and smemn == 'OHEAT'):
+                    smemsb2 = ''
+                if sgrpn == 'GQUAL' and smemsb2 == '':
+                    smemsb2 = '1'
 
-                    smemn, tmemn = expand_timeseries_names(sgrpn, smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmemsb2)
+                smemn, tmemn = expand_timeseries_names(sgrpn, smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmemsb2)
 
-                    path = f'RESULTS/{x.SVOL}_{x.SVOLNO}/{sgrpn}'
-                    MFname = f'{x.SVOL}{x.SVOLNO}_MFACTOR'
-                    AFname = f'{x.SVOL}{x.SVOLNO}_AFACTR'
-                    data = f'{smemn}{smemsb1}{smemsb2}'
+                path = f'RESULTS/{x.SVOL}_{x.SVOLNO}/{sgrpn}'
+                MFname = f'{x.SVOL}{x.SVOLNO}_MFACTOR'
+                AFname = f'{x.SVOL}{x.SVOLNO}_AFACTR'
+                data = f'{smemn}{smemsb1}{smemsb2}'
 
-                    data_frame = io_manager.read_ts(Category.RESULTS,x.SVOL,x.SVOLNO, sgrpn)
-                    try:
-                        if data in data_frame.columns: t = data_frame[data].astype(float64).to_numpy()[0:steps]
-                        else: t = data_frame[smemn].astype(float64).to_numpy()[0:steps]
+                data_frame = io_manager.read_ts(Category.RESULTS,x.SVOL,x.SVOLNO, sgrpn)
+                try:
+                    if data in data_frame.columns: t = data_frame[data].astype(float64).to_numpy()[0:steps]
+                    else: t = data_frame[smemn].astype(float64).to_numpy()[0:steps]
 
-                        if MFname in ts and AFname in ts:
-                            t *= ts[MFname][:steps] * ts[AFname][0:steps]
-                            msg(4, f'MFACTOR modified by timeseries {MFname}')
-                            msg(4, f'AFACTR modified by timeseries {AFname}')
-                        elif MFname in ts:
-                            t *= afactr * ts[MFname][0:steps]
-                            msg(4, f'MFACTOR modified by timeseries {MFname}')
-                        elif AFname in ts:
-                            t *= mfactor * ts[AFname][0:steps]
-                            msg(4, f'AFACTR modified by timeseries {AFname}')
-                        else:
-                            t *= factor
+                    if MFname in ts and AFname in ts:
+                        t *= ts[MFname][:steps] * ts[AFname][0:steps]
+                        msg(4, f'MFACTOR modified by timeseries {MFname}')
+                        msg(4, f'AFACTR modified by timeseries {AFname}')
+                    elif MFname in ts:
+                        t *= afactr * ts[MFname][0:steps]
+                        msg(4, f'MFACTOR modified by timeseries {MFname}')
+                    elif AFname in ts:
+                        t *= mfactor * ts[AFname][0:steps]
+                        msg(4, f'AFACTR modified by timeseries {AFname}')
+                    else:
+                        t *= factor
 
-                        # if poht to iheat, imprecision in hspf conversion factor requires a slight adjustment
-                        if (smemn == 'POHT' or smemn == 'SOHT') and tmemn == 'IHEAT':
-                            t *= 0.998553
-                        if (smemn == 'PODOXM' or smemn == 'SODOXM') and tmemn == 'OXIF1':
-                            t *= 1.000565
+                    # if poht to iheat, imprecision in hspf conversion factor requires a slight adjustment
+                    if (smemn == 'POHT' or smemn == 'SOHT') and tmemn == 'IHEAT':
+                        t *= 0.998553
+                    if (smemn == 'PODOXM' or smemn == 'SODOXM') and tmemn == 'OXIF1':
+                        t *= 1.000565
 
-                        # ??? ISSUE: can fetched data be at different frequency - don't know how to transform.
-                        if tmemn in ts:
-                            ts[tmemn] += t
-                        else:
-                            ts[tmemn] = t
+                    # ??? ISSUE: can fetched data be at different frequency - don't know how to transform.
+                    if tmemn in ts:
+                        ts[tmemn] += t
+                    else:
+                        ts[tmemn] = t
 
-                    except KeyError:
-                        print('ERROR in FLOWS, cant resolve ', path + ' ' + smemn)
+                except KeyError:
+                    print('ERROR in FLOWS, cant resolve ', path + ' ' + smemn)
 
     return
 
