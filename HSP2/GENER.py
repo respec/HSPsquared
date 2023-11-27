@@ -73,6 +73,11 @@ class Gener():
                     else:
                         raise AttributeError(f"No attribute {link.TGRPN}{link.THEMN} to assign TimeSeries. Should be either 'INPUTONE' or 'INPUTTWO'")
 
+        if self.opcode in [16,17,18,19,20,21,22,23]:
+            # need to have 2 input timeseries for these
+            if self.ts_input_1.size == 0 or self.ts_input_2.size == 0:
+                raise NotImplementedError(f"Need 2 input timeseries for this gener '{link.SVOLNO}'")
+
         self._execute_gener()
 
     def get_ts(self) -> pd.Series:
