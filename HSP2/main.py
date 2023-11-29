@@ -66,6 +66,14 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
     # Add support for dynamic functins to operate on STATE
     # - Load any dynamic components if present, and store variables on objects 
     state_load_dynamics_hsp2(state, io_manager, siminfo)
+    # Iterate through all segments and add crucial paths to state 
+    # before loading dynamic components that may reference them
+    for _, operation, segment, delt in opseq.itertuples():
+        for activity, function in activities[operation].items():
+            if activity == 'HYDR':
+                state_context_hsp2(state, operation, segment, activity)
+                print("Init HYDR state context for domain", state['domain'])
+                hydr_init_ix(state['state_ix'], state['state_paths'], state['domain'])
     # - finally stash specactions in state, not domain (segment) dependent so do it once
     state['specactions'] = specactions # stash the specaction dict in state
     #######################################################################################
