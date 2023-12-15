@@ -94,7 +94,8 @@ class HBNOutput:
             dfname = f'{operation}_{activity}_{id:03d}_{tcode}'
             if self.simulation_duration_count == 0:
                 self.simulation_duration_count = len(times)
-            df = DataFrame(rows, index=times, columns=mapn[operation, id, activity]).sort_index('index')
+            # df = DataFrame(rows, index=times, columns=mapn[operation, id, activity]).sort_index('index')
+            df = DataFrame(rows, index=times, columns=mapn[operation, id, activity]).sort_index()
             self.data_frames.append(df)
 
             self.summaryindx.append(dfname)
