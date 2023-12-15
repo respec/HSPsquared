@@ -108,17 +108,31 @@ class RegressTest(object):
     def make_html_comp_row(self, con:str, no_data_hsp2:bool, 
             no_data_hspf:bool, match:bool, diff:float) -> str:
         """populates each constituents rows"""
-        if no_data_hsp2 or no_data_hspf:
-            html = f'<tr><td>-</td><td>{con}</td><td>NA</td><td>NA</td><td>'
-            html += f'{"Not in HSP2" if no_data_hsp2 else ""}<br>'
-            html += f'{"Not in HSPF" if no_data_hspf else ""}'
-            html += f'</td></tr>\n'
-        else:
-            if match:
-                match_symbol = f'<span style="font-weight:bold;color:green">&#10003;</span>'
+        diffsOnly= False
+        eliminateNotIns = True
+        html = ''
+        if diffsOnly:
+            if no_data_hsp2 or no_data_hspf:
+                pass
             else:
-                match_symbol = f'<span style="font-weight:bold;color:red">X</span>'
-            html = f'<tr><td>-</td><td>{con}</td><td>{diff}</td><td>{match_symbol}</td><td></td></tr>\n'
+                if match:
+                    pass
+                else:
+                    match_symbol = f'<span style="font-weight:bold;color:red">X</span>'
+                    html = f'<tr><td>-</td><td>{con}</td><td>{diff}</td><td>{match_symbol}</td><td></td></tr>\n'
+        else:
+            if no_data_hsp2 or no_data_hspf:
+                if not eliminateNotIns:
+                    html = f'<tr><td>-</td><td>{con}</td><td>NA</td><td>NA</td><td>'
+                    html += f'{"Not in HSP2" if no_data_hsp2 else ""}<br>'
+                    html += f'{"Not in HSPF" if no_data_hspf else ""}'
+                    html += f'</td></tr>\n'
+            else:
+                if match:
+                    match_symbol = f'<span style="font-weight:bold;color:green">&#10003;</span>'
+                else:
+                    match_symbol = f'<span style="font-weight:bold;color:red">X</span>'
+                html = f'<tr><td>-</td><td>{con}</td><td>{diff}</td><td>{match_symbol}</td><td></td></tr>\n'
         return html 
 
     def write_html(self, file:str, html:str) -> None:
@@ -164,7 +178,7 @@ class RegressTest(object):
             if len(ts_hspf.shape) > 1:
                 ts_hspf = ts_hspf.iloc[:,0]
            
-            tolerance = 1e-2
+            tolerance = 1e-2  # may want to change default to max(abs(ts_hsp2.values.min()), abs(ts_hsp2.values.max())) * 1e-3
             # if heat related term, compute special tolerance
             if constituent == 'IHEAT' or constituent == 'ROHEAT' or constituent.startswith('OHEAT') or \
                 constituent == 'QSOLAR' or constituent == 'QLONGW' or constituent == 'QEVAP' or \
