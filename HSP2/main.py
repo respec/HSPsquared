@@ -31,7 +31,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
     
     """
 
-    hdfname = './'
+    hdfname = io_manager._input.file_path
     if not os.path.exists(hdfname):
         raise FileNotFoundError(f'{hdfname} HDF5 File Not Found')
 
