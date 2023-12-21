@@ -17,7 +17,7 @@ class ModelObject:
     model_object_cache = {} # Shared with actual objects, keyed by their path 
     model_exec_list = {} # Shared with actual objects, keyed by their path 
     
-    def __init__(self, name, container = False):
+    def __init__(self, name, container = False, model_props = []):
         self.name = name
         self.container = container # will be a link to another object
         self.log_path = "" # Ex: "/RESULTS/RCHRES_001/SPECL" 
@@ -148,13 +148,11 @@ class ModelObject:
     def find_var_path(self, var_name, local_only = False):
         # check local inputs for name
         if var_name in self.inputs.keys():
-            #print("Found", var_name, "on ", self.name, "path=", self.inputs[var_name])
             return self.inputs[var_name]
         if local_only:
             return False # we are limiting the scope, so just return
         # check parent for name
         if not (self.container == False):
-            #print(self.name,"looking to parent", self.container.name, "for", var_name)
             return self.container.find_var_path(var_name)
         # check for root state vars STATE + var_name
         if ("/STATE/" + var_name) in self.state_paths.keys():
@@ -164,27 +162,21 @@ class ModelObject:
         if var_name in self.state_paths.keys():
             #return self.state_paths[var_name]
             return var_name
-        #print(self.name, "could not find", var_name)
         return False
     
     def constant_or_path(self, keyname, keyval, trust = False):
-        #print("Called constant_or_path with", keyname, " = ", keyval)
         if is_float_digit(keyval):
             # we are given a constant value, not a variable reference 
-            #print("Creating constant ", keyname, " = ", keyval)
             k = ModelConstant(keyname, self, float(keyval))
             kix = k.ix
         else:
-            #print("Adding input ", keyname, " = ", keyval)
             kix = self.add_input(keyname, keyval, 2, trust)
         return kix
     
     def register_path(self):
         # initialize the path variable if not already set
-        #print(self.name,"called register_path()")
         if self.state_path == '':
             self.make_paths()
-        #print("Setting ", self.name, "state to", self.default_value)
         self.ix = set_state(self.state_ix, self.state_paths, self.state_path, self.default_value)
         # store object in model_object_cache
         if not (self.state_path in self.model_object_cache.keys()):
@@ -192,7 +184,6 @@ class ModelObject:
         # this should check to see if this object has a parent, and if so, register the name on the parent 
         # default is as a child object. 
         if not (self.container == False):
-            #print("Adding", self.name,"as input to", self.container.name)
             # since this is a request to actually create a new path, we instruct trust = True as last argument
             return self.container.add_input(self.name, self.state_path, 1, True)
         return self.ix

@@ -75,6 +75,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                 hydr_init_ix(state['state_ix'], state['state_paths'], state['domain'])
     # - finally stash specactions in state, not domain (segment) dependent so do it once
     state['specactions'] = specactions # stash the specaction dict in state
+    state_load_dynamics_om(state, io_manager, siminfo)
     #######################################################################################
     # main processing loop
     msg(1, f'Simulation Start: {start}, Stop: {stop}')

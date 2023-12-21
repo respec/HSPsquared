@@ -130,6 +130,10 @@ def state_siminfo_hsp2(uci_obj, siminfo):
     siminfo['tindex'] = date_range(siminfo['start'], siminfo['stop'], freq=Minute(delt))[1:]
     siminfo['steps'] = len(siminfo['tindex'])
 
+def state_load_hdf5_components(io_manager, siminfo, op_tokens, state_paths, state_ix, dict_ix, ts_ix, model_object_cache):
+    # Implement population of model_object_cache etc from components in a hdf5 such as Special ACTIONS
+    return
+
 def state_load_dynamics_hsp2(state, io_manager, siminfo):
     # Load any dynamic components if present, and store variables on objects 
     hsp2_local_py = load_dynamics(io_manager, siminfo)

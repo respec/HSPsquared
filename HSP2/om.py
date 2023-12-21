@@ -53,12 +53,12 @@ def is_float_digit(n: str) -> bool:
         return False
 
 from HSP2.om_model_object import *
-from HSP2.om_sim_timer import *
-from HSP2.om_equation import *
+#from HSP2.om_sim_timer import *
+#from HSP2.om_equation import *
 from HSP2.om_model_linkage import *
-from HSP2.om_data_matrix import *
-from HSP2.om_model_broadcast import *
-from HSP2.om_simple_channel import *
+#from HSP2.om_data_matrix import *
+#from HSP2.om_model_broadcast import *
+#from HSP2.om_simple_channel import *
 from HSP2.utilities import versions, get_timeseries, expand_timeseries_names, save_timeseries, get_gener_timeseries
 
 def init_om_dicts():
@@ -381,16 +381,7 @@ def model_class_loader(model_name, model_props, container = False):
           model_object = DataMatrix(model_props.get('name'), container, model_props)
           
       elif object_class == 'ModelLinkage':
-          right_path = ''
-          link_type = False
-          left_path = False
-          if 'right_path' in model_props.keys():
-            right_path = model_props['right_path']
-          if 'link_type' in model_props.keys():
-            link_type = model_props['link_type']
-          if 'left_path' in model_props.keys():
-            left_path = model_props['left_path']
-          model_object = ModelLinkage(model_props.get('name'), container, right_path, link_type, left_path)
+          model_object = ModelLinkage(model_props.get('name'), container, model_props)
       else:
           print("Loading", model_props.get('name'), "with object_class", object_class,"as ModelObject")
           model_object = ModelObject(model_props.get('name'), container)
