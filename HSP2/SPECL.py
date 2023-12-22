@@ -10,6 +10,18 @@ CALL: specl(io_manager, siminfo, uci, ts, state, specl_actions)
 '''
 
 from numba import njit
+import h5py
+
+def specl_load_actions(state, io_manager, siminfo)
+    for speca in state['specactions']['ACTIONS'].items():
+        
+
+def state_load_dynamics_specl(state, io_manager, siminfo):
+    specl_load_actions(state, io_manager, siminfo)
+    # others defined below, like:
+    # specl_load_uvnames(state, io_manager, siminfo)
+    # ...
+    return
 
 @njit
 def specl(ui, ts, step, state_info, state_paths, state_ix, specactions):

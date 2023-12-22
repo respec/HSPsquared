@@ -53,7 +53,7 @@ def is_float_digit(n: str) -> bool:
         return False
 
 from HSP2.om_model_object import *
-#from HSP2.om_sim_timer import *
+from HSP2.om_sim_timer import *
 #from HSP2.om_equation import *
 from HSP2.om_model_linkage import *
 #from HSP2.om_data_matrix import *
@@ -251,27 +251,31 @@ def load_om_components(io_manager, siminfo, op_tokens, state_paths, state_ix, di
         state['state_step_om'] = 'enabled' 
     return
 
-def state_load_dynamics_om(state, io_manager, siminfo):
-    # this function will check to see if any of the multiple paths to loading
-    # dynamic operational model objects has been supplied for the model.
-    # - function "om_init_model": This function can be defined in the [model h5 base].py file containing things to be done early in the model loading, like setting up model objects.  This file will already have been loaded by the state module, and will be present in the module variable hsp2_local_py (we should rename to state_local_py?)
-    # - model objects defined in file named '[model h5 base].json -- this will populate an array of object definitions that will be loadable by "model_loader_recursive()"
-    # Grab globals from state for easy handling
-    op_tokens, model_object_cache = init_om_dicts()
-    state_paths, state_ix, dict_ix, ts_ix = state['state_paths'], state['state_ix'], state['dict_ix'], state['ts_ix']
-    # set globals on ModelObject
-    ModelObject.op_tokens, ModelObject.state_paths, ModelObject.state_ix, ModelObject.dict_ix, ModelObject.model_object_cache = (op_tokens, state_paths, state_ix, dict_ix, model_object_cache)
-    # Create the base that everything is added to.
-    # this object does nothing except host the rest.
-    model_root_object = ModelObject("") 
-    # set up the timer as the first element 
-    timer = SimTimer('timer', model_root_object, siminfo)
-    # Opening JSON file
-    # load the json data from a pre-generated json file on github
-    
-    local_path = os.getcwd()
-    print("Path:", local_path)
-    # try this
+def state_load_json(state, io_manager, siminfo):
+    # - model objects defined in file named '[model h5 base].json -- this will populate an array of object definitions that will 
+    #   be loadable by "model_loader_recursive()"
+    model_data = {}
+    # JSON file would be in same path as hdf5
+    hdf5_path = io_manager._input.file_path
+    print("Looking for custom om json ", fjson)
+    (fbase, fext) = os.path.splitext(hdf5_path)
+    # see if there is custom json
+    fjson = fbase + ".json"
+    if (os.path.isfile(fjson)):
+        print("Found local json file", fjson)
+        jfile = open(fjson)
+        model_data = json.load(jfile)
+    state['model_data'] = model_data
+    return
+
+def state_load_om_python(state, io_manager, siminfo):
+    # Look for a [hdf5 file base].py file with specific named functions
+    # - function "om_init_model": This function can be defined in the [model h5 base].py file containing things to be done 
+    #   early in the model loading, like setting up model objects.  This file will already have been loaded by the state module, 
+    #   and will be present in the module variable hsp2_local_py (we should rename to state_local_py?)
+    # - this file may also contain other dynamically redefined functions such as state_step_hydr()
+    #   which can contain code that is executed every timestep inside the _hydr_() function
+    #   and can literally supply hooks for any desired user customizable code
     hdf5_path = io_manager._input.file_path
     (fbase, fext) = os.path.splitext(hdf5_path)
     # see if there is a code module with custom python 
@@ -279,24 +283,41 @@ def state_load_dynamics_om(state, io_manager, siminfo):
     hsp2_local_py = state['hsp2_local_py']
     # Load a function from code if it exists 
     if 'om_init_model' in dir(hsp2_local_py):
-        hsp2_local_py.om_init_model(io_manager, siminfo, op_tokens, state_paths, state_ix, dict_ix, ts_ix, model_object_cache)
+        hsp2_local_py.om_init_model(io_manager, siminfo, state['op_tokens'], state['state_paths'], state['state_ix'], state['dict_ix'], state['ts_ix'], state['model_object_cache'])
     
-    # see if there is custom json
-    fjson = fbase + ".json"
-    print("Looking for custom om json ", fjson)
-    model_data = {}
-    if (os.path.isfile(fjson)):
-        print("Found local json file", fjson)
-        jfile = open(fjson)
-        model_data = json.load(jfile)
-    # now parse this json/dict into model objects
-    model_loader_recursive(model_data, model_root_object)
+
+def state_load_dynamics_om(state, io_manager, siminfo):
+    # this function will check to see if any of the multiple paths to loading
+    # dynamic operational model objects has been supplied for the model.
+    # Grab globals from state for easy handling
+    op_tokens, model_object_cache = init_om_dicts()
+    state_paths, state_ix, dict_ix, ts_ix = state['state_paths'], state['state_ix'], state['dict_ix'], state['ts_ix']
+    # set globals on ModelObject
+    ModelObject.op_tokens, ModelObject.state_paths, ModelObject.state_ix, ModelObject.dict_ix, ModelObject.model_object_cache = (
+        op_tokens, state_paths, state_ix, dict_ix, model_object_cache
+    )
+    # load dynamic coding libraries if defined by user
+    # note: this used to be inside this function, I think that the loaded module should be no problem 
+    #       occuring within this function call, since this function is also called from another runtime engine
+    #       but if things fail post develop-specact-1 pull requests we may investigate here
+    state_load_om_python(state, io_manager, siminfo)
+    
+    # Create the base that everything is added to. this object does nothing except host the rest.
+    model_root_object = ModelObject("") 
+    # set up the timer as the first element 
+    timer = SimTimer('timer', model_root_object, siminfo)
+    
+    # now instantiate and link objects
+    # state['model_data'] has alread been prepopulated from json, .py files, hdf5, etc.
+    model_loader_recursive(state['model_data'], model_root_object)
     print("Loaded objects & paths: insures all paths are valid, connects models as inputs")
     model_path_loader(model_object_cache)
     # len() will be 1 if we only have a simtimer, but > 1 if we have a river being added
-    print("Tokenizing models")
     model_exec_list = []
+    # put all objects in token form for fast runtime execution and sort according to dependency order
+    print("Tokenizing models")
     model_tokenizer_recursive(model_root_object, model_object_cache, model_exec_list)
+    # model_exec_list is the ordered list of component operations
     print("model_exec_list:", model_exec_list)
     # This is used to stash the model_exec_list -- is this used?
     op_tokens[0] = np.asarray(model_exec_list, dtype="i8") 

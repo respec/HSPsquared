@@ -30,6 +30,13 @@ class SpecialAction(ModelObject):
         # this puts the tokens into the global simulation queue 
         # can be customized by subclasses to add multiple lines if needed.
         super().add_op_tokens()
+    
+    @staticmethod
+    def hdf5_load_all(hdf_source):
+       specla=hdf_source['/SPEC_ACTIONS/ACTIONS/table']
+       for idx, x in np.ndenumerate(specla):
+       print(x[1].decode("utf-8"),x[2].decode("utf-8"), x[13].decode("utf-8"), x[16].decode("utf-8"), x[17])
+
 
 # njit functions for runtime
 
