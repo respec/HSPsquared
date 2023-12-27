@@ -43,11 +43,11 @@ class SpecialAction(ModelObject):
         if (prop_name == 'VALUE') and (self.ac == '/='):
             if (prop_val == 0) or (prop_val == None):
                 raise Exception("Error: in properties passed to "+ self.name + " AC must be non-zero or non-Null .  Object creation halted. Path to object with error is " + self.state_path)
+        if (prop_name == 'AC'):
+           self.handle_ac(prop_val)
         return prop_val
     
-    def tokenize(self):
-        # call parent method to set basic ops common to all 
-        super().tokenize() # sets self.ops = op_type, op_ix
+    def handle_ac(self, ac):
         # cop_code 0: =/eq, 1: </lt, 2: >/gt, 3: <=/le, 4: >=/ge, 5: <>/ne 
         cop_codes = {
             '=': 1,
@@ -76,10 +76,15 @@ class SpecialAction(ModelObject):
                raise Exception("Error: in "+ self.name + " AC (" + self.ac + ") not supported.  Object creation halted. Path to object with error is " + self.state_path)
             ac = self.ac
         else:
-            # this will fail catastriphically if the requested function is not supported
+            # this will fail catastrophically if the requested function is not supported
             # which is a good thing
             ac = cop_codes[self.ac]
-        self.ops = self.ops + [self.inputs_ix['op1'], ac, self.op2_ix]
+        self.opid = ac
+
+    def tokenize(self):
+        # call parent method to set basic ops common to all 
+        super().tokenize() # sets self.ops = op_type, op_ix
+        self.ops = self.ops + [self.inputs_ix['op1'], self.opid, self.op2_ix]
         # @tbd: check if time ops have been set and tokenize accordingly
         print("Specl", self.name, "tokens", self.ops)
     
@@ -98,7 +103,7 @@ class SpecialAction(ModelObject):
 # njit functions for runtime
 
 @njit
-def step_saction(op, state_ix, dict_ix, step):
+def step_special_action(op, state_ix, dict_ix, step):
     ix = op[1] # ID of this op
     # these indices must be adjusted to reflect the number of common op tokens
     # SpecialAction has:
