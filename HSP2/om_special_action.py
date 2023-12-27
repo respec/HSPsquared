@@ -50,12 +50,36 @@ class SpecialAction(ModelObject):
         super().tokenize() # sets self.ops = op_type, op_ix
         # cop_code 0: =/eq, 1: </lt, 2: >/gt, 3: <=/le, 4: >=/ge, 5: <>/ne 
         cop_codes = {
-            '+=': 0,
-            '-=': 1,
-            '*=': 2,
-            '/=': 3
+            '=': 1,
+            '+=': 2,
+            '-=': 3,
+            '*=': 4,
+            '/=': 5,
+            'MIN': 6
         }
-        self.ops = self.ops + [self.inputs_ix['op1'], cop_codes[self.ac], self.op2_ix]
+        # From HSPF UCI docs:
+        # 1 = T= A 
+        # 2 += T= T+ A
+        # 3 -= T= T- A 
+        # 4 *= T= T*A
+        # 5 /= T= T/A 
+        # 6 MIN T= Min(T,A)
+        # 7 MAX T= Max(T,A) 
+        # 8 ABS T= Abs(A)
+        # 9 INT T= Int(A) 
+        # 10 ^= T= T^A
+        # 11 LN T= Ln(A) 
+        # 12 LOG T= Log10(A)
+        # 13 MOD T= Mod(T,A)
+        if !is_float_digit(self.ac):
+            if !(self in cop_codes.values())
+               raise Exception("Error: in "+ self.name + " AC (" + self.ac + ") not supported.  Object creation halted. Path to object with error is " + self.state_path)
+            ac = self.ac
+        else:
+            # this will fail catastriphically if the requested function is not supported
+            # which is a good thing
+            ac = cop_codes[self.ac]
+        self.ops = self.ops + [self.inputs_ix['op1'], ac, self.op2_ix]
         # @tbd: check if time ops have been set and tokenize accordingly
         print("Specl", self.name, "tokens", self.ops)
     
@@ -88,16 +112,18 @@ def step_saction(op, state_ix, dict_ix, step):
     ix1 = op[2] # ID of source of data and destination of data
     sop = op[3]
     ix2 = op[4]
-    if sop == 0:
-      result = state_ix[ix1] + state_ix[ix2]
     if sop == 1:
-      result = state_ix[ix1] - state_ix[ix2]
+      result = state_ix[ix2]
     if sop == 2:
-      result = state_ix[ix1] * state_ix[ix2]
+      result = state_ix[ix1] + state_ix[ix2]
     if sop == 3:
+      result = state_ix[ix1] - state_ix[ix2]
+    if sop == 4:
+      result = state_ix[ix1] * state_ix[ix2]
+    if sop == 5:
       result = state_ix[ix1] / state_ix[ix2]
     # set value in target
-    # tbd: handle this with a link?
+    # tbd: handle this with a model linkage? cons: this makes a loop since the ix1 is source and destination
     state_ix[ix1] = result
     return result
 
