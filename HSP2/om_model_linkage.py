@@ -37,8 +37,7 @@ class ModelLinkage(ModelObject):
         self.add_input(self.right_path, self.right_path)
     
     def handle_prop(self, model_props, prop_name, strict = False, default_value = None ):
-        # this checks to see if the prop is in dict with value form, or just a value 
-        # strict = True causes an exception if property is missing from model_props dict 
+        # parent method handles most cases, but subclass handles special situations.
         prop_val = super().handle_prop(model_props, prop_name, strict, default_value)
         if ( (prop_name == 'right_value') and (prop_val == None) or (prop_val == '')):
             raise Exception("right_path cannot be empty.  Object creation halted. Path to object with error is " + self.state_path)

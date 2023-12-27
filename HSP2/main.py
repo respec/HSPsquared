@@ -13,6 +13,7 @@ from HSP2.utilities import versions, get_timeseries, expand_timeseries_names, sa
 from HSP2.configuration import activities, noop, expand_masslinks
 from HSP2.state import *
 from HSP2.om import *
+from HSP2.SPECL import *
 
 from HSP2IO.io import IOManager, SupportsReadTS, Category
 
@@ -51,9 +52,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
     ftables = uci_obj.ftables
     specactions = uci_obj.specactions
     monthdata = uci_obj.monthdata
-    print("Special Actions", specactions)
-    keysList = list(specactions['ACTIONS'].keys())
-    print(keysList)
+    
     start, stop = siminfo['start'], siminfo['stop']
 
     copy_instances = {}
@@ -78,7 +77,10 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                 hydr_init_ix(state['state_ix'], state['state_paths'], state['domain'])
     # - finally stash specactions in state, not domain (segment) dependent so do it once
     state['specactions'] = specactions # stash the specaction dict in state
+    state_load_dynamics_specl(state, io_manager, siminfo)
     state_load_dynamics_om(state, io_manager, siminfo)
+    # finalize all dynamically loaded components and prepare to run the model
+    state_om_model_run_prep(state, io_manager, siminfo)
     #######################################################################################
     # main processing loop
     msg(1, f'Simulation Start: {start}, Stop: {stop}')

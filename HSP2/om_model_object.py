@@ -34,16 +34,8 @@ class ModelObject:
         self.default_value = 0.0
         self.ops = []
         self.optype = 0 # 0 - shell object, 1 - equation, 2 - datamatrix, 3 - input/ModelLinkage, 4 - broadcastChannel, 5 - SimTimer, 6 - Conditional, 7 - ModelConstant (numeric), 8 - matrix accessor, 9 - MicroWatershedModel, 10 - MicroWatershedNetwork, 11 - ModelTimeseries, 12 - ModelRegister, 13 - SimpleChannel, 14 - SimpleImpoundment
-        # this is replaceable. to replace state_path/re-register the index :
-        # - remove the old PATH from state_paths: del state_paths[self.state_path]
-        # you should never create an object without knowing its container, but if you do
-        # you can TRY to do the following:
-        # - set this objects new path based on containment and call:
-        #         [my_object].make_paths()
-        # - add this manually to state_paths:
-        #   state_paths[[my_object].state_path] = [my_object].ix 
-        # - call [my_object].register_path()   
         self.register_path()
+        self.parse_model_props(model_props)
     
     @staticmethod
     def required_properties():

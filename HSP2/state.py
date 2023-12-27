@@ -23,6 +23,8 @@ def init_state_dicts():
     # initialize state for hydr
     # now put all of these Dicts into the state Dict 
     state['state_paths'], state['state_ix'], state['dict_ix'], state['ts_ix'] = state_paths, state_ix, dict_ix, ts_ix
+    # add a generic place to stash model_data for dynamic components
+    state['model_data'] = {}
     return state
 
 
@@ -122,6 +124,7 @@ def state_context_hsp2(state, operation, segment, activity):
     state['activity'] = activity
     # give shortcut to state path for the upcoming function 
     state['domain'] = "/STATE/" + operation + "_" + segment + "/" + activity 
+    state['model_data'] = {}
 
 def state_siminfo_hsp2(uci_obj, siminfo):
     # Add crucial simulation info for dynamic operation support

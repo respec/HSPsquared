@@ -52,10 +52,12 @@ def is_float_digit(n: str) -> bool:
     except ValueError:
         return False
 
+# Import Code Classes
 from HSP2.om_model_object import *
 from HSP2.om_sim_timer import *
 #from HSP2.om_equation import *
 from HSP2.om_model_linkage import *
+from HSP2.om_special_action import *
 #from HSP2.om_data_matrix import *
 #from HSP2.om_model_broadcast import *
 #from HSP2.om_simple_channel import *
@@ -69,202 +71,23 @@ def init_om_dicts():
     model_object_cache = {} # this does not need to be a special Dict as it is not used in numba 
     return op_tokens, model_object_cache
 
-# This is deprecated but kept to support legacy demo code 
-# Function is not splot between 2 functions:
-# - init_state_dicts() (from state.py) 
-# - init_om_dicts() from om.py 
-def init_sim_dicts():
-    """
-    We should get really good at using docstrings...
-    Agree. they are dope.
-    """
-    op_tokens = Dict.empty(key_type=types.int64, value_type=types.i8[:])
-    state_paths = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
-    state_ix = Dict.empty(key_type=types.int64, value_type=types.float64)
-    dict_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:,:])
-    ts_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:])
-    model_object_cache = {} # this does not need to be a special Dict as it is not used in numba 
-    return op_tokens, state_paths, state_ix, dict_ix, ts_ix, model_object_cache
 
-
-def load_sim_dicts(siminfo, op_tokens, state_paths, state_ix, dict_ix, ts_ix, model_object_cache):
-    # by setting the state_parhs, opt_tokens, state_ix etc on the abstract class ModelObject
-    # all objects that we create share this as a global referenced variable.  
-    # this may be a good thing or it may be bad?  For now, we leverage this to reduce settings props
-    # but at some point we move all prop setting into a function and this maybe doesn't seem so desirable
-    # since there could be some unintended consequences if we actually *wanted* them to have separate copies
-    # tho since the idea is that they are global registries, maybe that is not a valid concern.
-    ModelObject.op_tokens, ModelObject.state_paths, ModelObject.state_ix, ModelObject.dict_ix, ModelObject.model_object_cache = (op_tokens, state_paths, state_ix, dict_ix, model_object_cache)
-    # set up the timer as the first element 
-    timer = SimTimer('timer', False, siminfo)
-    #timer.add_op_tokens()
-    river = ModelObject('RCHRES_R001')
-    # upon object creation river gets added to state with path "/STATE/RCHRES_R001"
-    river.add_input("Qin", f'{river.state_path}/HYDR/IVOL', 2)
-    # alternative, using TIMESERIES: 
-    # river.add_input("Qin", "/TIMESERIES/TS011", 3)
-    # river.add_input("ps_mgd", "/TIMESERIES/TS3000", 3)
-    river.add_op_tokens() # formally adds this to the simulation
-    
-    # now add a simple table 
-    data_table = np.asarray([ [ 0.0, 5.0, 10.0], [10.0, 15.0, 20.0], [20.0, 25.0, 30.0], [30.0, 35.0, 40.0] ], dtype= "float32")
-    dm = DataMatrix('dm', river, data_table)
-    dm.add_op_tokens()
-    # 2d lookup
-    dma = DataMatrixLookup('dma', river, dm.state_path, 2, 17.5, 1, 6.8, 1, 0.0)
-    dma.add_op_tokens()
-    # 1.5d lookup
-    #dma = DataMatrixLookup('dma', river, dm.state_path, 3, 17.5, 1, 1, 1, 0.0)
-    #dma.add_op_tokens()
-    
-    facility = ModelObject('facility', river)
-    
-    Qintake = Equation('Qintake', facility, "Qin * 1.0")
-    Qintake.add_op_tokens()
-    # a flowby
-    flowby = Equation('flowby', facility, "Qintake * 0.9")
-    flowby.add_op_tokens()
-    # add a withdrawal equation 
-    # we use "3.0 + 0.0" because the equation parser fails on a single factor (number of variable)
-    # so we have to tweak that.  However, we need to handle constants separately, and also if we see a 
-    # single variable equation (such as Qup = Qhydr) we need to rewrite that to a input anyhow for speed
-    wd_mgd = Equation('wd_mgd', facility, "3.0 + 0.0")
-    wd_mgd.add_op_tokens() 
-    # Runit - unit area runoff
-    Runit = Equation('Runit', facility, "Qin / 592.717")
-    Runit.add_op_tokens()
-    # add local subwatersheds to test scalability
-    """
-    for k in range(10):
-        subshed_name = 'sw' + str(k)
-        upstream_name = 'sw' + str(k-1)
-        Qout_eqn = str(25*random.random()) + " * Runit "
-        if k > 0:
-            Qout_eqn = Qout_eqn + " + " + upstream_name + "_Qout"
-        Qout_ss = Equation(subshed_name + "_Qout", facility, eqn)
-        Qout_ss.add_op_tokens()
-    # now add the output of the final tributary to the inflow to this one
-    Qtotal = Equation("Qtotal", facility, "Qin + " + Qout_ss.name)
-    Qtotal.tokenize()
-    """
-    # add random ops to test scalability
-    # add a series of rando equations 
-    """
-    c=["flowby", "wd_mgd", "Qintake"]
-    for k in range(10000):
-        eqn = str(25*random.random()) + " * " + c[round((2*random.random()))]
-        newq = Equation('eq' + str(k), facility, eqn)
-        newq.add_op_tokens()
-    """
-    # now connect the wd_mgd back to the river with a direct link.  
-    # This is not how we'll do it for most simulations as there may be multiple inputs but will do for now
-    hydr = ModelObject('HYDR', river)
-    hydr.add_op_tokens()
-    O1 = ModelLinkage('O1', hydr, wd_mgd.state_path, 2)
-    O1.add_op_tokens()
-    
-    return
-
-
-def load_om_components(io_manager, siminfo, op_tokens, state_paths, state_ix, dict_ix, ts_ix, model_object_cache):
-    # set up OM base dcits
-    op_tokens, model_object_cache = init_om_dicts()
-    # set globals on ModelObject
-    ModelObject.op_tokens, ModelObject.state_paths, ModelObject.state_ix, ModelObject.dict_ix, ModelObject.model_object_cache = (op_tokens, state_paths, state_ix, dict_ix, model_object_cache)
-    # Create the base that everything is added to.
-    # this object does nothing except host the rest.
-    # it has no name so that all paths can be relative to it.
-    model_root_object = ModelObject("") 
-    # set up the timer as the first element 
-    timer = SimTimer('timer', model_root_object, siminfo)
-    #timer.add_op_tokens()
-    #print("siminfo:", siminfo)
-    #river = ModelObject('RCHRES_R001')
-    # upon object creation river gets added to state with path "/STATE/RCHRES_R001"
-    #river.add_input("Qivol", f'{river.state_path}/HYDR/IVOL', 2, True)
-    # a json NHD from R parser
-    # Opening JSON file
-    # load the json data from a pre-generated json file on github
-    
-    # this allows this function to be called without an hdf5
-    if io_manager != False:
-        # try this
-        local_path = os.getcwd()
-        print("Path:", local_path)
-        (fbase, fext) = os.path.splitext(hdf5_path)
-        # see if there is a code module with custom python 
-        print("Looking for custom python code ", (fbase + ".py"))
-        print("calling dynamic_module_import(",fbase, local_path + "/" + fbase + ".py", ", 'hsp2_local_py')")
-        hsp2_local_py = dynamic_module_import(fbase, local_path + "/" + fbase + ".py", "hsp2_local_py")
-        # Load a function from code if it exists 
-        if 'om_init_model' in dir(hsp2_local_py):
-            hsp2_local_py.om_init_model(io_manager, siminfo, op_tokens, state_paths, state_ix, dict_ix, ts_ix, model_object_cache)
-        if 'om_step_hydr' in dir(hsp2_local_py):
-            siminfo['om_step_hydr'] = True 
-        if 'state_step_hydr' in dir(hsp2_local_py):
-            siminfo['state_step_hydr'] = True 
-        
-        # see if there is custom json
-        fjson = fbase + ".json"
-        model_data = {}
-        if (os.path.isfile(fjson)):
-            print("Found local json file", fjson)
-            jfile = open(fjson)
-            model_data = json.load(jfile)
-        #print("Loaded json with keys:", model_data.keys())
-        print("hdf5_path=", hdf5_path)
-    # Opening JSON file from remote url
-    # json_url = "https://raw.githubusercontent.com/HARPgroup/vahydro/master/R/modeling/nhd/nhd_simple_8566737.json"
-    #jraw =  requests.get(json_url, verify=False)
-    #model_json = jraw.content.decode('utf-8')
-    # returns JSON object as Dict
-    # returns JSON object as Dict
-    #model_exec_list = np.asarray([])
-    #container = False 
-    # call it!
-    model_loader_recursive(model_data, model_root_object)
-    print("Loaded the following objects & paths")
-    print("Insuring all paths are valid, and connecting models as inputs")
-    model_path_loader(model_object_cache)
-    # len() will be 1 if we only have a simtimer, but > 1 if we have a river being added
-    print("Tokenizing models")
-    model_exec_list = []
-    model_tokenizer_recursive(model_root_object, model_object_cache, model_exec_list)
-    #print("model_exec_list:", model_exec_list)
-    # This is used to stash the model_exec_list -- is this used?
-    op_tokens[0] = np.asarray(model_exec_list, dtype="i8")
-    ivol_state_path = '/STATE/RCHRES_R001' + "/IVOLin"
-    if (ivol_state_path in state_paths):
-        ivol_ix = state_paths[ivol_state_path]
-        #print("IVOLin found. state_paths = ", ivol_ix)
-        print("IVOLin op_tokens ", op_tokens[ivol_ix])
-        print("IVOLin state_ix = ", state_ix[ivol_ix])
-    else:
-        print("Could not find",ivol_state_path)
-        #print("Could not find",ivol_state_path,"in", state_paths)
-    return
-    # the resulting set of objects is returned.
-    state['model_object_cache'] = model_object_cache
-    state['op_tokens'] = op_tokens
-    state['state_step_om'] = 'disabled'
-    if len(op_tokens) > 1:
-        state['state_step_om'] = 'enabled' 
-    return
-
-def state_load_json(state, io_manager, siminfo):
+def state_load_om_json(state, io_manager, siminfo):
     # - model objects defined in file named '[model h5 base].json -- this will populate an array of object definitions that will 
     #   be loadable by "model_loader_recursive()"
-    model_data = {}
+    model_data = state['model_data']
     # JSON file would be in same path as hdf5
     hdf5_path = io_manager._input.file_path
-    print("Looking for custom om json ", fjson)
     (fbase, fext) = os.path.splitext(hdf5_path)
     # see if there is custom json
     fjson = fbase + ".json"
+    print("Looking for custom om json ", fjson)
     if (os.path.isfile(fjson)):
         print("Found local json file", fjson)
         jfile = open(fjson)
-        model_data = json.load(jfile)
+        json_data = json.load(jfile)
+        # dict.update() combines the arg dict with the base
+        model_data.update(json_data)
     state['model_data'] = model_data
     return
 
@@ -283,7 +106,7 @@ def state_load_om_python(state, io_manager, siminfo):
     hsp2_local_py = state['hsp2_local_py']
     # Load a function from code if it exists 
     if 'om_init_model' in dir(hsp2_local_py):
-        hsp2_local_py.om_init_model(io_manager, siminfo, state['op_tokens'], state['state_paths'], state['state_ix'], state['dict_ix'], state['ts_ix'], state['model_object_cache'])
+        hsp2_local_py.om_init_model(io_manager, siminfo, state['op_tokenModelObject.model_object_caches'], state['state_paths'], state['state_ix'], state['dict_ix'], state['ts_ix'], state['model_object_cache'])
     
 
 def state_load_dynamics_om(state, io_manager, siminfo):
@@ -292,16 +115,21 @@ def state_load_dynamics_om(state, io_manager, siminfo):
     # Grab globals from state for easy handling
     op_tokens, model_object_cache = init_om_dicts()
     state_paths, state_ix, dict_ix, ts_ix = state['state_paths'], state['state_ix'], state['dict_ix'], state['ts_ix']
-    # set globals on ModelObject
+    # set globals on ModelObject, this makes them persistent throughout all subsequent object instantiation and use
     ModelObject.op_tokens, ModelObject.state_paths, ModelObject.state_ix, ModelObject.dict_ix, ModelObject.model_object_cache = (
         op_tokens, state_paths, state_ix, dict_ix, model_object_cache
     )
+    state['op_tokens'], state['model_object_cache'] = op_tokens, model_object_cache 
     # load dynamic coding libraries if defined by user
     # note: this used to be inside this function, I think that the loaded module should be no problem 
     #       occuring within this function call, since this function is also called from another runtime engine
     #       but if things fail post develop-specact-1 pull requests we may investigate here
+    # also, it may be that this should be loaded elsewhere?
     state_load_om_python(state, io_manager, siminfo)
-    
+    state_load_om_json(state, io_manager, siminfo)
+    return
+
+def state_om_model_run_prep(state, io_manager, siminfo):
     # Create the base that everything is added to. this object does nothing except host the rest.
     model_root_object = ModelObject("") 
     # set up the timer as the first element 
@@ -311,6 +139,12 @@ def state_load_dynamics_om(state, io_manager, siminfo):
     # state['model_data'] has alread been prepopulated from json, .py files, hdf5, etc.
     model_loader_recursive(state['model_data'], model_root_object)
     print("Loaded objects & paths: insures all paths are valid, connects models as inputs")
+    # both state['model_object_cache'] and the model_object_cache property of the ModelObject class def 
+    # will hold a global repo for this data this may be redundant?  They DO point to the same datset?
+    # since this is a function that accepts state as an argument and these were both set in state_load_dynamics_om
+    # we can assume they are there and functioning
+    model_object_cache = state['model_object_cache']
+    op_tokens = state['op_tokens']
     model_path_loader(model_object_cache)
     # len() will be 1 if we only have a simtimer, but > 1 if we have a river being added
     model_exec_list = []
@@ -400,9 +234,10 @@ def model_class_loader(model_name, model_props, container = False):
               return False
           # create it
           model_object = DataMatrix(model_props.get('name'), container, model_props)
-          
       elif object_class == 'ModelLinkage':
           model_object = ModelLinkage(model_props.get('name'), container, model_props)
+      elif object_class == 'SpecialAction':
+          model_object = SpecialAction(model_props.get('name'), container, model_props)
       else:
           print("Loading", model_props.get('name'), "with object_class", object_class,"as ModelObject")
           model_object = ModelObject(model_props.get('name'), container)
@@ -570,8 +405,10 @@ def pre_step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
             pass
         elif op_tokens[i][0] == 5:
             pass
-        elif op_tokens[i][0] == 11:
-            pre_step_register(op_tokens[i], state_ix, dict_ix)
+        elif op_tokens[i][0] == 12:
+            # register type data (like broadcast accumulators) 
+            # disabled till broadcasts are defined pre_step_register(op_tokens[i], state_ix, dict_ix)
+            pass
     return
 
 @njit 
@@ -594,7 +431,7 @@ def step_one(op_tokens, ops, state_ix, dict_ix, ts_ix, step, debug = 0):
     if debug == 1:
         print("DEBUG: Operator ID", ops[1], "is op type", ops[0])
     if ops[0] == 1:
-        state_ix[ops[1]] = step_equation(ops, state_ix)
+        pass #state_ix[ops[1]] = step_equation(ops, state_ix)
     elif ops[0] == 2:
         # todo: this should be moved into a single function, 
         # with the conforming name step_matrix(op_tokens, ops, state_ix, dict_ix)
@@ -604,12 +441,12 @@ def step_one(op_tokens, ops, state_ix, dict_ix, ts_ix, step, debug = 0):
             # this insures a matrix with variables in it is up to date 
             # only need to do this if the matrix data and matrix config are on same object
             # otherwise, the matrix data is an input and has already been evaluated
-            state_ix[ops[1]] = exec_tbl_values(ops, state_ix, dict_ix)
+            pass# state_ix[ops[1]] = exec_tbl_values(ops, state_ix, dict_ix)
         if (ops[3] > 0):
             # this evaluates a single value from a matrix if the matrix is configured to do so.
             if debug == 1:
                 print("DEBUG: Calling exec_tbl_eval", ops)
-            state_ix[ops[1]] = exec_tbl_eval(op_tokens, ops, state_ix, dict_ix)
+            pass# state_ix[ops[1]] = exec_tbl_eval(op_tokens, ops, state_ix, dict_ix)
     elif ops[0] == 3:
         step_model_link(ops, state_ix, ts_ix, step)
     elif ops[0] == 4:
@@ -619,10 +456,10 @@ def step_one(op_tokens, ops, state_ix, dict_ix, ts_ix, step, debug = 0):
     elif ops[0] == 9:
         val = 0 
     elif ops[0] == 13:
-        step_simple_channel(ops, state_ix, dict_ix, step)
+        pass #step_simple_channel(ops, state_ix, dict_ix, step)
     # Op 100 is Basic ACTION in Special Actions
     elif ops[0] == 100:
-        state_ix[ops[1]] = step_saction(ops, state_ix, dict_ix)
+        pass # state_ix[ops[1]] = step_saction(ops, state_ix, dict_ix)
     return 
 
 
