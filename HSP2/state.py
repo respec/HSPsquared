@@ -119,12 +119,12 @@ def append_state(state_ix, var_value):
     return val_ix
 
 def state_context_hsp2(state, operation, segment, activity):
+    # this establishes domain info so that a module can know its paths
     state['operation'] = operation 
     state['segment'] = segment # 
     state['activity'] = activity
     # give shortcut to state path for the upcoming function 
     state['domain'] = "/STATE/" + operation + "_" + segment + "/" + activity 
-    state['model_data'] = {}
 
 def state_siminfo_hsp2(uci_obj, siminfo):
     # Add crucial simulation info for dynamic operation support
