@@ -31,8 +31,11 @@ class SpecialAction(ModelObject):
         self.vari = self.handle_prop(model_props, 'VARI')
         self.op2_val = self.handle_prop(model_props, 'VALUE')
         self.op2_ix = self.constant_or_path('op_val', self.op2_val) # constant values must be added to STATE and thus are referenced by their state_ix number
-        # now add the module state value that we are operating on (the target) as an input, so that this gets executed AFTER this is set initially
+        # now add the state value that we are operating on (the target) as an input, so that this gets executed AFTER this is set initially
         self.add_input('op1', ('/STATE/' + self.op_type + '_' + self.op_type[0] + str(self.range1).zfill(3) + "/" + self.vari ), 2, True )
+        # @tbd: support time enable/disable
+        #       - check if time ops have been set and add as inputs like "year", or "month", etc could give explicit path /STATE/year ...
+        #       - add the time values to match as constants i.e. self.constant_or_path()
     
     def handle_prop(self, model_props, prop_name, strict = False, default_value = None ):
         # Insure all values are legal ex: no DIV by Zero
@@ -53,6 +56,7 @@ class SpecialAction(ModelObject):
             '/=': 3
         }
         self.ops = self.ops + [self.inputs_ix['op1'], cop_codes[self.ac], self.op2_ix]
+        # @tbd: check if time ops have been set and tokenize accordingly
         print("Specl", self.name, "tokens", self.ops)
     
     def add_op_tokens(self):
@@ -70,14 +74,17 @@ class SpecialAction(ModelObject):
 # njit functions for runtime
 
 @njit
-def step_saction(op, state_ix, dict_ix):
-    print("specal", op)
+def step_saction(op, state_ix, dict_ix, step):
     ix = op[1] # ID of this op
     # these indices must be adjusted to reflect the number of common op tokens
     # SpecialAction has:
     # - type of condition (+=, -=, ...)
     # - operand 1 (left side)
     # - operand 2 (right side) 
+    # @tbd: check if time ops have been set and enable/disable accordingly
+    #     - 2 ops will be added for each time matching switch, the state_ix of the time element (year, month, ...) and the state_ix of the constant to match
+    #     - matching should be as simple as if (state_ix[tix1] <> state_ix[vtix1]): return state_ix[ix1] (don't modify the value)
+    # 
     ix1 = op[2] # ID of source of data and destination of data
     sop = op[3]
     ix2 = op[4]

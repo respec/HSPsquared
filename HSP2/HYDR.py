@@ -134,7 +134,7 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
     # state_info is some generic things about the simulation - must be numba safe, so we don't just pass the whole state which is not
     state_info = Dict.empty(key_type=types.unicode_type, value_type=types.unicode_type)
     state_info['operation'], state_info['segment'], state_info['activity'] = state['operation'], state['segment'], state['activity']
-    state_info['domain'], state_info['state_step_hydr'] = state['domain'], state['state_step_hydr']
+    state_info['domain'], state_info['state_step_hydr'], state_info['state_step_om'] = state['domain'], state['state_step_hydr'], state['state_step_om']
     hsp2_local_py = state['hsp2_local_py']
     # It appears necessary to load this here, instead of from main.py, otherwise,
     # _hydr_() does not recognize the function state_step_hydr()? 
@@ -147,6 +147,7 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
     state_paths = state['state_paths']
     # initialize the hydr paths in case they don't already reside here
     hydr_init_ix(state_ix, state_paths, state['domain'])
+    
     
     ###########################################################################
     # OM - load the tokens to pass in.
