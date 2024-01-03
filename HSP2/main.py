@@ -59,22 +59,23 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
     gener_instances = {}
 
     #######################################################################################
-    # initilize STATE dicts
+    # initialize STATE dicts
     #######################################################################################
-    # Set up Things in state that will be used in all modular activitis like SPECL
+    # Set up Things in state that will be used in all modular activities like SPECL
     state = init_state_dicts()
     state_siminfo_hsp2(uci_obj, siminfo)
-    # Add support for dynamic functins to operate on STATE
+    # Add support for dynamic functions to operate on STATE
     # - Load any dynamic components if present, and store variables on objects 
     state_load_dynamics_hsp2(state, io_manager, siminfo)
     # Iterate through all segments and add crucial paths to state 
     # before loading dynamic components that may reference them
     for _, operation, segment, delt in opseq.itertuples():
-        for activity, function in activities[operation].items():
-            if activity == 'HYDR':
-                state_context_hsp2(state, operation, segment, activity)
-                print("Init HYDR state context for domain", state['domain'])
-                hydr_init_ix(state['state_ix'], state['state_paths'], state['domain'])
+        if operation != 'GENER' and operation != 'COPY':
+            for activity, function in activities[operation].items():
+                if activity == 'HYDR':
+                    state_context_hsp2(state, operation, segment, activity)
+                    print("Init HYDR state context for domain", state['domain'])
+                    hydr_init_ix(state['state_ix'], state['state_paths'], state['domain'])
     # - finally stash specactions in state, not domain (segment) dependent so do it once
     state['specactions'] = specactions # stash the specaction dict in state
     state_load_dynamics_specl(state, io_manager, siminfo)
@@ -82,6 +83,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
     # finalize all dynamically loaded components and prepare to run the model
     state_om_model_run_prep(state, io_manager, siminfo)
     #######################################################################################
+
     # main processing loop
     msg(1, f'Simulation Start: {start}, Stop: {stop}')
     tscat = {}
