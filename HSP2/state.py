@@ -23,6 +23,8 @@ def init_state_dicts():
     # initialize state for hydr
     # now put all of these Dicts into the state Dict 
     state['state_paths'], state['state_ix'], state['dict_ix'], state['ts_ix'] = state_paths, state_ix, dict_ix, ts_ix
+    # add a generic place to stash model_data for dynamic components
+    state['model_data'] = {}
     return state
 
 
@@ -117,6 +119,7 @@ def append_state(state_ix, var_value):
     return val_ix
 
 def state_context_hsp2(state, operation, segment, activity):
+    # this establishes domain info so that a module can know its paths
     state['operation'] = operation 
     state['segment'] = segment # 
     state['activity'] = activity
@@ -129,6 +132,10 @@ def state_siminfo_hsp2(uci_obj, siminfo):
     siminfo['delt'] = delt
     siminfo['tindex'] = date_range(siminfo['start'], siminfo['stop'], freq=Minute(delt))[1:]
     siminfo['steps'] = len(siminfo['tindex'])
+
+def state_load_hdf5_components(io_manager, siminfo, op_tokens, state_paths, state_ix, dict_ix, ts_ix, model_object_cache):
+    # Implement population of model_object_cache etc from components in a hdf5 such as Special ACTIONS
+    return
 
 def state_load_dynamics_hsp2(state, io_manager, siminfo):
     # Load any dynamic components if present, and store variables on objects 
@@ -201,3 +208,4 @@ def load_dynamics(io_manager, siminfo):
         # print("state_step_hydr function not defined. Using default")
         return False
     return hsp2_local_py
+
