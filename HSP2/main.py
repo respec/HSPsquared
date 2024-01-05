@@ -78,8 +78,8 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                     hydr_init_ix(state['state_ix'], state['state_paths'], state['domain'])
     # - finally stash specactions in state, not domain (segment) dependent so do it once
     state['specactions'] = specactions # stash the specaction dict in state
-    state_load_dynamics_specl(state, io_manager, siminfo)
-    state_load_dynamics_om(state, io_manager, siminfo)
+    state_load_dynamics_specl(state, io_manager, siminfo)   # traditional special actions
+    state_load_dynamics_om(state, io_manager, siminfo)      # operational model for custom python
     # finalize all dynamically loaded components and prepare to run the model
     state_om_model_run_prep(state, io_manager, siminfo)
     #######################################################################################
@@ -130,7 +130,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                     continue
 
                 msg(3, f'{activity}')
-                # Set context for dynamic executables.
+                # Set context for dynamic executables and special actions
                 state_context_hsp2(state, operation, segment, activity)
                 
                 ui = uci[(operation, activity, segment)]   # ui is a dictionary

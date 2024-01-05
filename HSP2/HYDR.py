@@ -18,6 +18,8 @@ from math import sqrt, log10
 from numba import njit
 from numba.typed import List
 from HSP2.utilities import initm, make_numba_dict
+
+# the following imports added by rb to handle dynamic code and special actions
 from HSP2.state import *
 from HSP2.SPECL import specl
 from HSP2.om import *
@@ -44,7 +46,7 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
     ''' find the state of the reach/reservoir at the end of the time interval
     and the outflows during the interval
 
-    CALL: hydr(store, general, ui, ts, specactions)
+    CALL: hydr(store, general, ui, ts, state)
        store is the Pandas/PyTable open store
        general is a dictionary with simulation level infor (OP_SEQUENCE for example)
        ui is a dictionary with RID specific HSPF UCI like data
@@ -130,8 +132,12 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
     for i in range(nexits):
         Olabels.append(f'O{i+1}')
         OVOLlabels.append(f'OVOL{i+1}')
-    
-    # state_info is some generic things about the simulation - must be numba safe, so we don't just pass the whole state which is not
+
+    #######################################################################################
+    # the following section (1 of 3) added to HYDR by rb to handle dynamic code and special actions
+    #######################################################################################
+    # state_info is some generic things about the simulation
+    # must be numba safe, so we don't just pass the whole state which is not
     state_info = Dict.empty(key_type=types.unicode_type, value_type=types.unicode_type)
     state_info['operation'], state_info['segment'], state_info['activity'] = state['operation'], state['segment'], state['activity']
     state_info['domain'], state_info['state_step_hydr'], state_info['state_step_om'] = state['domain'], state['state_step_hydr'], state['state_step_om']
@@ -147,18 +153,12 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
     state_paths = state['state_paths']
     # initialize the hydr paths in case they don't already reside here
     hydr_init_ix(state_ix, state_paths, state['domain'])
-    
-    
-    ###########################################################################
-    # OM - load the tokens to pass in.
-    ###########################################################################
     op_tokens = state['op_tokens']
+    #######################################################################################
 
-    ###########################################################################
-    # Do the simulation with _hydr_()
-    ###########################################################################
-    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, state_step_hydr, op_tokens) # run reaches simulation code
-    ###########################################################################
+    # Do the simulation with _hydr_   (ie run reaches simulation code)
+    errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels,
+                    state_info, state_paths, state_ix, dict_ix, ts_ix, state_step_hydr, op_tokens)
 
     if 'O'    in ts:  del ts['O']
     if 'OVOL' in ts:  del ts['OVOL']
@@ -301,8 +301,11 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
     # other initial vars
     rovol = 0.0
     volev = 0.0
-    IVOL0   = ts['IVOL']                   # the actual inflow in simulation native units 
-    # prepare for dynamic state
+    IVOL0   = ts['IVOL']                   # the actual inflow in simulation native units
+
+    #######################################################################################
+    # the following section (2 of 3) added by rb to HYDR, this one to prepare for dynamic state including special actions
+    #######################################################################################
     hydr_ix = hydr_get_ix(state_ix, state_paths, state_info['domain'])
     # these are integer placeholders faster than calling the array look each timestep
     o1_ix, o2_ix, o3_ix, ivol_ix = hydr_ix['O1'], hydr_ix['O2'], hydr_ix['O3'], hydr_ix['IVOL']
@@ -315,14 +318,19 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
         out_ix[1] = o2_ix
     if nexits > 2:
         out_ix[2] = o3_ix
+    #######################################################################################
+
     # HYDR (except where noted)
     for step in range(steps):
-        # call specl
         convf  = CONVF[step]
         outdgt[:] = OUTDGT[step, :]
         colind[:] = COLIND[step, :]
         roseff = ro
         oseff[:] = o[:]
+
+        #######################################################################################
+        # the following section (3 of 3) added by rb to accommodate dynamic code, operations models, and special actions
+        #######################################################################################
         # set state_ix with value of local state variables and/or needed vars
         # Note: we pass IVOL0, not IVOL here since IVOL has been converted to different units
         state_ix[ro_ix], state_ix[rovol_ix] = ro, rovol
@@ -331,24 +339,19 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
             state_ix[out_ix[oi]] = outdgt[oi] 
         state_ix[vol_ix], state_ix[ivol_ix] = vol, IVOL0[step]
         state_ix[volev_ix] = volev
-        # *****************************************
-        # Execute dynamic code if enabled
         # - these if statements may be irrelevant if default functions simply return
         #   when no objects are defined.
         if (state_info['state_step_om'] == 'enabled'):
             pre_step_model(op_tokens[0], op_tokens, state_ix, dict_ix, ts_ix, step)
         if (state_info['state_step_hydr'] == 'enabled'):
             state_step_hydr(state_info, state_paths, state_ix, dict_ix, ts_ix, hydr_ix, step)
-        # Execute dynamic code if enabled
         if (state_info['state_step_om'] == 'enabled'):
             #print("trying to execute state_step_om()")
             # op_tokens[0] contains the model exec list.  Later we may amend this
             # perhaps even storing a domain specific exec list under domain/exec_list?
-            step_model(op_tokens[0], op_tokens, state_ix, dict_ix, ts_ix, step)
-        # Execute dynamic code if enabled
+            step_model(op_tokens[0], op_tokens, state_ix, dict_ix, ts_ix, step)   # traditional 'ACTIONS' done in here
         if ( (state_info['state_step_hydr'] == 'enabled')
-            or (state_info['state_step_om'] == 'enabled')
-        ):
+            or (state_info['state_step_om'] == 'enabled') ):
             # Do write-backs for editable STATE variables
             # OUTDGT is writeable
             for oi in range(nexits):
@@ -358,7 +361,8 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
             # maybe routines should do this, and this is not needed (but pass VFACT in state)
             IVOL[step] = state_ix[ivol_ix] * VFACT
         # End dynamic code step()
-        # *****************************************
+        #######################################################################################
+
         # vols, sas variables and their initializations  not needed.
         if irexit >= 0:             # irrigation exit is set, zero based number
             if rirwdl > 0.0:  # equivalent to OVOL for the irrigation exit
