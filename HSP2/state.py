@@ -124,7 +124,7 @@ def state_context_hsp2(state, operation, segment, activity):
     state['segment'] = segment # 
     state['activity'] = activity
     # give shortcut to state path for the upcoming function 
-    state['domain'] = "/STATE/" + operation + "_" + segment + "/" + activity 
+    state['domain'] = "/STATE/" + operation + "_" + segment # + "/" + activity
 
 def state_siminfo_hsp2(uci_obj, siminfo):
     # Add crucial simulation info for dynamic operation support
