@@ -2,7 +2,7 @@
 Notes:
   - code for parsing UCI SPEC-ACTIONS is in HSP2tools/readUCI.py
   - code for object classes that transform parsed data into OP codes for OM and STATE support
-    is in this directory tree as om_special_[action type].py, 
+    is in this directory tree as om_special_[action type].py,
     - Ex: om_special_action.py contains object support and runtime functions for classic ACTIONS
 '''
 
@@ -29,7 +29,12 @@ def specl_load_actions(state, io_manager, siminfo):
             state['model_data'][opname]['name'] = opname
             for ik in speca.keys():
                 #print("looking for speca key ", ik)
-                state['model_data'][opname][ik] = speca.to_dict()[ik][ix]
+                state['model_data'][opname][ik] = speca.to_dict()[ik][ix]   # add subscripts?
+                if ik == 'VARI':
+                    if len(speca.to_dict()['S1'][ix]) > 0:
+                        state['model_data'][opname][ik] += speca.to_dict()['S1'][ix]
+                    if len(speca.to_dict()['S2'][ix]) > 0:
+                        state['model_data'][opname][ik] += speca.to_dict()['S2'][ix]
             state['model_data'][opname]['object_class'] = 'SpecialAction'
             #print("model_data", ix, " = ", state['model_data'][opname])
     return

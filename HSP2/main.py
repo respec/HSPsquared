@@ -76,6 +76,9 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                     state_context_hsp2(state, operation, segment, activity)
                     print("Init HYDR state context for domain", state['domain'])
                     hydr_init_ix(state['state_ix'], state['state_paths'], state['domain'])
+                elif activity == 'SEDTRN':
+                    state_context_hsp2(state, operation, segment, activity)
+                    sedtrn_init_ix(state['state_ix'], state['state_paths'], state['domain'])
     # - finally stash specactions in state, not domain (segment) dependent so do it once
     state['specactions'] = specactions # stash the specaction dict in state
     state_load_dynamics_specl(state, io_manager, siminfo)   # traditional special actions
@@ -243,6 +246,8 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                 if operation not in ['COPY','GENER']:
                     if (activity == 'HYDR'):
                         errors, errmessages = function(io_manager, siminfo, ui, ts, ftables, state)
+                    elif (activity == 'SEDTRN'):
+                        errors, errmessages = function(io_manager, siminfo, ui, ts, state)
                     elif (activity != 'RQUAL'):
                         errors, errmessages = function(io_manager, siminfo, ui, ts)
                     else:                    

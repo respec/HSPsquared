@@ -124,7 +124,7 @@ def state_context_hsp2(state, operation, segment, activity):
     state['segment'] = segment # 
     state['activity'] = activity
     # give shortcut to state path for the upcoming function 
-    state['domain'] = "/STATE/" + operation + "_" + segment # + "/" + activity
+    state['domain'] = "/STATE/" + operation + "_" + segment # + "/" + activity   # may want to comment out activity?
 
 def state_siminfo_hsp2(uci_obj, siminfo):
     # Add crucial simulation info for dynamic operation support
@@ -152,7 +152,17 @@ def hydr_init_ix(state_ix, state_paths, domain):
         #var_path = f'{domain}/{i}'
         var_path = domain + "/" + i
         hydr_ix[i] = set_state(state_ix, state_paths, var_path, 0.0)
-    return hydr_ix    
+    return hydr_ix
+
+def sedtrn_init_ix(state_ix, state_paths, domain):
+    # get a list of keys for all sedtrn state variables
+    sedtrn_state = ["RSED4","RSED5","RSED6"]
+    sedtrn_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
+    for i in sedtrn_state:
+        #var_path = f'{domain}/{i}'
+        var_path = domain + "/" + i
+        sedtrn_ix[i] = set_state(state_ix, state_paths, var_path, 0.0)
+    return sedtrn_ix
     
 @njit
 def hydr_get_ix(state_ix, state_paths, domain):
@@ -164,6 +174,15 @@ def hydr_get_ix(state_ix, state_paths, domain):
         var_path = domain + "/" + i
         hydr_ix[i] = state_paths[var_path]
     return hydr_ix    
+
+def sedtrn_get_ix(state_ix, state_paths, domain):
+    # get a list of keys for all sedtrn state variables
+    sedtrn_state = ["RSED4", "RSED5", "RSED6"]
+    sedtrn_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
+    for i in sedtrn_state:
+        var_path = domain + "/" + i
+        sedtrn_ix[i] = state_paths[var_path]
+    return sedtrn_ix
 
 # function to dynamically load module, based on "Using imp module" in https://www.tutorialspoint.com/How-I-can-dynamically-import-Python-module#
 #def dynamic_module_import(module_name, class_name):
