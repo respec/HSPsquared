@@ -52,10 +52,16 @@ class SpecialAction(ModelObject):
            self.handle_ac(prop_val)
         if (prop_name == 'when'):
            # when to perform this?  timestamp or time-step index
-           # TODO: find the timestep matching the date supplied for now we just do 0, 
-           #       does SimTimer or oter HSP2 code have a way of translating date or Unix timestamp to step?
            prop_val = 0
-        if (prop_name == 'NUM') and (pop_val == ''):
+           si = ModelObject.model_object_cache['/STATE/timer']
+           if len(model_props['YR']) > 0:
+               # translate date to equivalent model step
+               datestring = model_props['YR'] + '-' + model_props['MO'] + '-' + \
+                            model_props['DA'] + ' ' + model_props['HR'] + ':' + \
+                            model_props['MN'] + ':00'
+               if datestring in si.model_props_parsed['tindex']:
+                   prop_val = si.model_props_parsed['tindex'].get_loc(datestring)
+        if (prop_name == 'NUM') and (prop_val == ''):
             prop_val = default_value
         return prop_val
     
@@ -135,13 +141,13 @@ def step_special_action(op, state_ix, dict_ix, step):
     sop = op[3]
     ix2 = op[4]
     tix = op[5] # which slot is the time comparison in?
-    if (step < state_ix[tix]):
+    if (tix in state_ix and step < state_ix[tix]):
         return
     ctr_ix = op[6] # id of the counter variable
     num_ix = op[7] # max times to complete
     num_done = state_ix[ctr_ix]
     num = state_ix[num_ix] # num to complete
-    if (num_done >= num):
+    if (tix in state_ix and num_done >= num):
        return
     else:
         if sop == 1:
