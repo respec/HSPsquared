@@ -142,13 +142,13 @@ def step_special_action(op, state_ix, dict_ix, step):
     ix2 = op[4]
     tix = op[5] # which slot is the time comparison in?
     if (tix in state_ix and step < state_ix[tix]):
-        return
+        return False
     ctr_ix = op[6] # id of the counter variable
     num_ix = op[7] # max times to complete
     num_done = state_ix[ctr_ix]
     num = state_ix[num_ix] # num to complete
     if (tix in state_ix and num_done >= num):
-       return
+       return False
     else:
         if sop == 1:
             result = state_ix[ix2]
