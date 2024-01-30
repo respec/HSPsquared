@@ -34,9 +34,9 @@ for k in range(1000):
     speca = SpecialAction('specl' + str(k), facility, {'OPTYP': 'RCHRES', 'RANGE1': 1, 'RANGE2':'', 'AC':'+=', 'VARI':'IVOL', 'VALUE':10.0, 'YR':'2000', 'DA':'1', 'MO':'1', 'HR':'1','MN':''})
 
 # adjust op_tokens length to insure capacity
-op_tokens = ModelObject.make_op_tokens(len(model_object_cache)
+op_tokens = ModelObject.make_op_tokens(len(model_object_cache))
+model_loader_recursive(model_data, model_root_object) 
 # Parse, load and order all objects
-model_loader_recursive(state['model_data'], model_root_object) # this throws a syntax error, but if it is omitted, the whole thing fails.
 model_path_loader(ModelObject.model_object_cache)
 model_exec_list = []
 model_touch_list = []
