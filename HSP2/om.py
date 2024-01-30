@@ -434,7 +434,7 @@ def iterate_models(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, steps, 
     checksum = 0.0
     for step in range(steps):
         pre_step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step)
-        step_model_test(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step, dstep)
+        step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step)
     #print("Steps completed", step)
     return checksum
 

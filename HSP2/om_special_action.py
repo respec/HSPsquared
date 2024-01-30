@@ -24,7 +24,6 @@ class SpecialAction(ModelObject):
         # - action(operation) to perform = AC
         # - operand2, a numeric value for simple ACTION = [VALUE]
         # note: [op_abbrev] is *maybe* the first letter of the OPTYP?  Not a very good idea to have a coded convention like that
-        print("Creating ACTION with props", model_props) 
         self.op_type = self.handle_prop(model_props, 'OPTYP')
         self.range1 = self.handle_prop(model_props, 'RANGE1')
         self.range2 = self.handle_prop(model_props, 'RANGE2')
@@ -108,7 +107,6 @@ class SpecialAction(ModelObject):
         super().tokenize() # sets self.ops = op_type, op_ix
         self.ops = self.ops + [self.inputs_ix['op1'], self.opid, self.op2_ix, self.timer_ix, self.ctr_ix, self.num]
         # @tbd: check if time ops have been set and tokenize accordingly
-        print("Specl", self.name, "tokens", self.ops)
     
     def add_op_tokens(self):
         # this puts the tokens into the global simulation queue 
