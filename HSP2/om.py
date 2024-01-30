@@ -12,7 +12,7 @@ import pandas as pd
 import numpy as np
 import time
 from numba.typed import Dict
-from numpy import zeros
+from numpy import zeros, int32
 from numba import int8, float32, njit, types, typed # import the types
 import random # this is only used for a demo so may be deprecated
 from HSP2.state import *
@@ -61,13 +61,16 @@ from HSP2.om_special_action import *
 #from HSP2.om_data_matrix import *
 #from HSP2.om_model_broadcast import *
 #from HSP2.om_simple_channel import *
+#from HSP2.om_impoundment import *
 from HSP2.utilities import versions, get_timeseries, expand_timeseries_names, save_timeseries, get_gener_timeseries
 
 def init_om_dicts():
     """
     The base dictionaries used to store model object info 
     """
-    op_tokens = Dict.empty(key_type=types.int64, value_type=types.i8[:])
+    op_tokens = ModelObject.make_op_tokens() # this is just to start, layer it is resized to the object needs
+    # Was
+    #op_tokens = Dict.empty(key_type=types.int64, value_type=types.i8[:])
     model_object_cache = {} # this does not need to be a special Dict as it is not used in numba 
     return op_tokens, model_object_cache
 
@@ -106,7 +109,7 @@ def state_load_om_python(state, io_manager, siminfo):
     hsp2_local_py = state['hsp2_local_py']
     # Load a function from code if it exists 
     if 'om_init_model' in dir(hsp2_local_py):
-        hsp2_local_py.om_init_model(io_manager, siminfo, state['op_tokenModelObject.model_object_caches'], state['state_paths'], state['state_ix'], state['dict_ix'], state['ts_ix'], state['model_object_cache'])
+        hsp2_local_py.om_init_model(io_manager, siminfo, state['op_tokens'], state['state_paths'], state['state_ix'], state['dict_ix'], state['ts_ix'], state['model_object_cache'])
     
 
 def state_load_dynamics_om(state, io_manager, siminfo):
@@ -116,8 +119,8 @@ def state_load_dynamics_om(state, io_manager, siminfo):
     op_tokens, model_object_cache = init_om_dicts()
     state_paths, state_ix, dict_ix, ts_ix = state['state_paths'], state['state_ix'], state['dict_ix'], state['ts_ix']
     # set globals on ModelObject, this makes them persistent throughout all subsequent object instantiation and use
-    ModelObject.op_tokens, ModelObject.state_paths, ModelObject.state_ix, ModelObject.dict_ix, ModelObject.model_object_cache = (
-        op_tokens, state_paths, state_ix, dict_ix, model_object_cache
+    ModelObject.op_tokens, ModelObject.state_paths, ModelObject.state_ix, ModelObject.dict_ix, ModelObject.model_object_cache, ModelObject.ts_ix = (
+        op_tokens, state_paths, state_ix, dict_ix, model_object_cache, ts_ix
     )
     state['op_tokens'], state['model_object_cache'] = op_tokens, model_object_cache 
     # load dynamic coding libraries if defined by user
@@ -125,6 +128,7 @@ def state_load_dynamics_om(state, io_manager, siminfo):
     #       occuring within this function call, since this function is also called from another runtime engine
     #       but if things fail post develop-specact-1 pull requests we may investigate here
     # also, it may be that this should be loaded elsewhere?
+    # comment state_load_om_python() to disable dynamic python
     state_load_om_python(state, io_manager, siminfo)
     state_load_om_json(state, io_manager, siminfo)
     return
@@ -152,12 +156,12 @@ def state_om_model_run_prep(state, io_manager, siminfo):
     print("Tokenizing models")
     model_tokenizer_recursive(model_root_object, model_object_cache, model_exec_list)
     # model_exec_list is the ordered list of component operations
-    print("model_exec_list:", model_exec_list)
-    # This is used to stash the model_exec_list -- is this used?
-    op_tokens[0] = np.asarray(model_exec_list, dtype="i8") 
+    print("op_tokens has", len(model_object_cache),"elements")
+    #print("model_exec_list(", len(model_exec_list),"items):", model_exec_list)
+    # This is used to stash the model_exec_list in the dict_ix, this might be slow, need to verify.
     # the resulting set of objects is returned.
     state['model_object_cache'] = model_object_cache
-    state['op_tokens'] = op_tokens
+    state['model_exec_list'] = np.asarray(model_exec_list, dtype="i8") 
     state['state_step_om'] = 'disabled'
     if len(op_tokens) > 0:
         state['state_step_om'] = 'enabled' 
@@ -191,22 +195,12 @@ def model_class_loader(model_name, model_props, container = False):
       #       for attributes to pass in. 
       #       ".get()" will return NoValue if it does not exist or the value. 
       if object_class == 'Equation':
-          eqn = model_props.get('equation')
-          if type(eqn) is str:
-              eqn_str = eqn
-          else:
-              if eqn == None:
-                  # try for equation stored as normal propcode
-                  eqn_str = model_props.get('value')
-              else:
-                  eqn_str = eqn.get('value')
-          if eqn_str == None:
-              raise Exception("Equation object", model_name, "does not have a valid equation string. Halting. ")
-              return False
-          model_object = Equation(model_props.get('name'), container, eqn_str )
+          model_object = Equation(model_props.get('name'), container, model_props )
           #remove_used_keys(model_props, 
       elif object_class == 'SimpleChannel':
           model_object = SimpleChannel(model_props.get('name'), container, model_props )
+      elif object_class == 'Impoundment':
+          model_object = Impoundment(model_props.get('name'), container, model_props )
       elif object_class == 'Constant':
           model_object = ModelConstant(model_props.get('name'), container, model_props.get('value') )
       elif ( object_class.lower() == 'datamatrix'):
@@ -219,7 +213,6 @@ def model_class_loader(model_name, model_props, container = False):
           model_object = DataMatrix(model_props.get('name'), container, model_props)
       elif object_class == 'ModelBroadcast':
           # add a matrix with the data, then add a matrix accessor for each required variable 
-          #print("Loading ModelBroadcast class ")
           has_props = ModelBroadcast.check_properties(model_props)
           if has_props == False:
               print("ModelBroadcast object must have", ModelBroadcast.required_properties())
@@ -239,8 +232,8 @@ def model_class_loader(model_name, model_props, container = False):
       elif object_class == 'SpecialAction':
           model_object = SpecialAction(model_props.get('name'), container, model_props)
       else:
-          print("Loading", model_props.get('name'), "with object_class", object_class,"as ModelObject")
-          model_object = ModelObject(model_props.get('name'), container)
+          #print("Loading", model_props.get('name'), "with object_class", object_class,"as ModelObject")
+          model_object = ModelObject(model_props.get('name'), container, model_props)
     # one way to insure no class attributes get parsed as sub-comps is:
     # model_object.remove_used_keys() 
     if len(model_object.model_props_parsed) == 0:
@@ -269,11 +262,11 @@ def model_class_translate(model_props, object_class):
         model_props['object_class'] = 'SimpleChannel'
         print("Handling USGSChannelGeomObject_sub as SimpleChannel")
     if object_class == 'hydroImpoundment':
-        model_props['object_class'] = 'SimpleImpoundment'
-        print("Handling hydroImpoundment as SimpleImpoundment")
+        model_props['object_class'] = 'Impoundment'
+        print("Handling hydroImpoundment as Impoundment")
     if object_class == 'hydroImpSmall':
-        model_props['object_class'] = 'SimpleImpoundment'
-        print("Handling hydroImpSmall as SimpleImpoundment")
+        model_props['object_class'] = 'Impoundment'
+        print("Handling hydroImpSmall as Impoundment")
 
 def model_loader_recursive(model_data, container):
     k_list = model_data.keys()
@@ -336,6 +329,7 @@ def model_tokenizer_recursive(model_object, model_object_cache, model_exec_list,
             that are sending to that broadcast? 
             - Or is it better to let it as it is, 
     """
+    #print("Handling", model_object.name, " ", model_object.state_path)
     if model_object.ix in model_exec_list:
         return
     if model_object.ix in model_touch_list:
@@ -372,8 +366,59 @@ def model_tokenizer_recursive(model_object, model_object_cache, model_exec_list,
             return
     # now after tokenizing all inputs this should be OK to tokenize
     model_object.add_op_tokens()
-    model_exec_list.append(model_object.ix)
+    if model_object.optype in ModelObject.runnables:
+        model_exec_list.append(model_object.ix)
 
+
+def model_order_recursive(model_object, model_object_cache, model_exec_list, model_touch_list = []):
+    """
+    Given a root model_object, trace the inputs to load things in order
+    Store this order in model_exec_list
+    Note: All ordering is as-needed organic, except Broadcasts
+          - read from children is completed after all other inputs 
+          - read from parent is completed before all other inputs 
+          - could this be accomplished by more sophisticated handling of read 
+            broadcasts?  
+            - When loading a read broadcast, can we iterate through items 
+            that are sending to that broadcast? 
+            - Or is it better to let it as it is, 
+    """
+    if model_object.ix in model_exec_list:
+        return
+    if model_object.ix in model_touch_list:
+        #print("Already touched", model_object.name, model_object.ix, model_object.state_path)
+        return
+    # record as having been called, and will ultimately return, to prevent recursions
+    model_touch_list.append(model_object.ix)
+    k_list = model_object.inputs.keys()
+    input_names = dict.fromkeys(k_list , 1)
+    if type(input_names) is not dict:
+        return 
+    # isolate broadcasts, and sort out -- what happens if an equation references a broadcast var?
+    # is this a limitation of treating all children as inputs? 
+    # alternative, leave broadcasts organic, but load children first?
+    # children first, then local sub-comps is old method? old method:
+    #   - read parent broadcasts
+    #   - get inputs (essentially, linked vars)
+    #   - send child broadcasts (will send current step parent reads, last step local proc data)
+    #   - execute children
+    #   - execute local sub-comps
+    for input_name in input_names:
+        #print("Checking input", input_name)
+        input_path = model_object.inputs[input_name]
+        if input_path in model_object_cache.keys():
+            input_object = model_object_cache[input_path]
+            model_order_recursive(input_object, model_object_cache, model_exec_list, model_touch_list)
+        else:
+            if input_path in model_object.state_paths.keys():
+                # this is a valid state reference without an object 
+                # thus, it is likely part of internals that are manually added 
+                # which should be fine.  tho perhaps we should have an object for these too.
+                continue
+            print("Problem loading input", input_name, "input_path", input_path, "not in model_object_cache.keys()")
+            return
+    # now after loading input dependencies, add this to list
+    model_exec_list.append(model_object.ix)
 
 def save_object_ts(io_manager, siminfo, op_tokens, ts_ix, ts):
     # Decide on using from utilities.py:
@@ -385,42 +430,30 @@ def save_object_ts(io_manager, siminfo, op_tokens, ts_ix, ts):
     return
 
 @njit
-def iterate_models(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, steps):
+def iterate_models(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, steps, dstep = -1):
     checksum = 0.0
     for step in range(steps):
         pre_step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step)
-        step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step)
+        step_model_test(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step, dstep)
+    #print("Steps completed", step)
     return checksum
 
 @njit
 def pre_step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
     for i in model_exec_list:
-        if op_tokens[i][0] == 1:
-            pass
-        elif op_tokens[i][0] == 2:
-            pass
-        elif op_tokens[i][0] == 3:
-            pass
-        elif op_tokens[i][0] == 4:
-            pass
-        elif op_tokens[i][0] == 5:
-            pass
-        elif op_tokens[i][0] == 12:
+        if op_tokens[i][0] == 12:
             # register type data (like broadcast accumulators) 
-            # disabled till broadcasts are defined pre_step_register(op_tokens[i], state_ix, dict_ix)
-            pass
+            pass#pre_step_register(op_tokens[i], state_ix, dict_ix)
     return
 
-@njit 
+@njit
 def step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
     val = 0
     for i in model_exec_list:
         step_one(op_tokens, op_tokens[i], state_ix, dict_ix, ts_ix, step, 0)
     return 
 
-@njit 
-def post_step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
-    return 
+
 
 @njit
 def step_one(op_tokens, ops, state_ix, dict_ix, ts_ix, step, debug = 0):
@@ -431,7 +464,7 @@ def step_one(op_tokens, ops, state_ix, dict_ix, ts_ix, step, debug = 0):
     if debug == 1:
         print("DEBUG: Operator ID", ops[1], "is op type", ops[0])
     if ops[0] == 1:
-        pass #state_ix[ops[1]] = step_equation(ops, state_ix)
+        pass #step_equation(ops, state_ix)
     elif ops[0] == 2:
         # todo: this should be moved into a single function, 
         # with the conforming name step_matrix(op_tokens, ops, state_ix, dict_ix)
@@ -441,12 +474,12 @@ def step_one(op_tokens, ops, state_ix, dict_ix, ts_ix, step, debug = 0):
             # this insures a matrix with variables in it is up to date 
             # only need to do this if the matrix data and matrix config are on same object
             # otherwise, the matrix data is an input and has already been evaluated
-            pass# state_ix[ops[1]] = exec_tbl_values(ops, state_ix, dict_ix)
+            pass #exec_tbl_values(ops, state_ix, dict_ix)
         if (ops[3] > 0):
             # this evaluates a single value from a matrix if the matrix is configured to do so.
             if debug == 1:
                 print("DEBUG: Calling exec_tbl_eval", ops)
-            pass# state_ix[ops[1]] = exec_tbl_eval(op_tokens, ops, state_ix, dict_ix)
+            pass #exec_tbl_eval(op_tokens, ops, state_ix, dict_ix)
     elif ops[0] == 3:
         step_model_link(ops, state_ix, ts_ix, step)
     elif ops[0] == 4:
@@ -459,11 +492,67 @@ def step_one(op_tokens, ops, state_ix, dict_ix, ts_ix, step, debug = 0):
         pass #step_simple_channel(ops, state_ix, dict_ix, step)
     # Op 100 is Basic ACTION in Special Actions
     elif ops[0] == 100:
-        result = step_special_action(ops, state_ix, dict_ix, step)
-        if result:
-            state_ix[ops[1]] = result
+        step_special_action(ops, state_ix, dict_ix, step)
     return 
 
+@njit
+def step_model_test(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step, debug_step = -1):
+    val = 0
+    for i in model_exec_list:
+        ops = op_tokens[i]
+        if (step == debug_step):
+            print("Exec'ing step ", step, " model ID", i)
+        # op_tokens is passed in for ops like matrices that have lookups from other 
+        # locations.  All others rely only on ops 
+        # todo: decide if all step_[class() functions should set value in state_ix instead of returning value?
+        val = 0
+        if ops[0] == 1:
+            step_equation(ops, state_ix)
+        elif ops[0] == 2:
+            # todo: this should be moved into a single function, 
+            # with the conforming name step_matrix(op_tokens, ops, state_ix, dict_ix)
+            if (ops[1] == ops[2]):
+                # this insures a matrix with variables in it is up to date 
+                # only need to do this if the matrix data and matrix config are on same object
+                # otherwise, the matrix data is an input and has already been evaluated
+                state_ix[ops[1]] = exec_tbl_values(ops, state_ix, dict_ix)
+            if (ops[3] > 0):
+                # this evaluates a single value from a matrix if the matrix is configured to do so.
+                state_ix[ops[1]] = exec_tbl_eval(op_tokens, ops, state_ix, dict_ix)
+        elif ops[0] == 3:
+            step_model_link(ops, state_ix, ts_ix, step)
+            continue
+        elif ops[0] == 5:
+            step_sim_timer(ops, state_ix, dict_ix, ts_ix, step)
+        elif ops[0] == 9:
+            continue
+        elif ops[0] == 13:
+            step_simple_channel(ops, state_ix, dict_ix, step)
+        # Op 100 is Basic ACTION in Special Actions
+        elif ops[0] == 100:
+            step_special_action(ops, state_ix, dict_ix, step)
+    return 
+
+@njit
+def step_model_pcode(model_exec_list, op_tokens, state_info, state_paths, state_ix, dict_ix, ts_ix, step):
+    '''
+    This routine includes support for dynamically loaded python code which is powerful but slow
+    This is not yet implemented anywhere, just an idea. But in theory it would allow easy switching between
+    the faster runtime without dynamic code if the user did not request it.
+    At minimum, this could be used to more efficiently enable/disable this feature for testing by simply calling
+    a separate routine.
+    - to do so we would need to add state_paths to the variables passed to step_model which should be OK?
+    '''
+    hydr_ix = hydr_get_ix(state_ix, state_paths, state_info['domain']) # could be done more efficiently, once per model run
+    state_step_hydr(state_info, state_paths, state_ix, dict_ix, ts_ix, hydr_ix, step)
+    val = 0
+    for i in model_exec_list:
+        step_one(op_tokens, op_tokens[i], state_ix, dict_ix, ts_ix, step, 0)
+    return 
+
+@njit
+def post_step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
+    return 
 
 @njit 
 def test_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
@@ -474,3 +563,48 @@ def test_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
         print(op_tokens[i])
         step_one(op_tokens, op_tokens[i], state_ix, dict_ix, ts_ix, step, 0)
     return 
+
+def step_object(thisobject, step):
+    # this calls the step for a given model object and timestep
+    # this is a workaround since the object method ModelObject.step() fails to find the step_one() function ?
+    step_one(thisobject.op_tokens, thisobject.op_tokens[thisobject.ix], thisobject.state_ix, thisobject.dict_ix, thisobject.ts_ix, step)
+
+
+@njit
+def pre_step_test(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
+    for i in model_exec_list:
+        ops = op_tokens[i]
+    #for i in model_exec_list:
+    #    op = op_tokens[i]
+        if ops[0] == 12:
+            # register type data (like broadcast accumulators) 
+            pre_step_register(ops, state_ix, dict_ix)
+            continue
+        #elif ops[0] == 1:
+        #    # register type data (like broadcast accumulators) 
+        #    continue
+    return
+
+@njit
+def test_perf(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
+#    for i in model_exec_list:
+#        ops = op_tokens[i]
+    for ops in op_tokens:
+        #step_one(op_tokens, ops, state_ix, dict_ix, ts_ix, step)
+        continue
+    return
+
+@njit
+def iterate_perf(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, steps, debug_step = -1):
+    checksum = 0.0
+    for step in range(steps):
+        pre_step_test(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step)
+        step_model_test(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step, debug_step)
+    #print("Steps completed", step)
+    return checksum
+
+def time_perf(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, steps):
+    start = time.time()       
+    iterate_perf(model_exec_list, op_tokens,  state_ix, dict_ix, ts_ix, steps)
+    end = time.time()
+    print(len(model_exec_list), "components iterated over", siminfo['steps'], "time steps took" , end - start, "seconds")
