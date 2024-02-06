@@ -19,6 +19,7 @@ class ModelObject:
     model_exec_list = {} # Shared with actual objects, keyed by their path 
     max_token_length = 64 # limit on complexity of tokenized objects since op_tokens must be fixed dimensions for numba
     runnables = [1,2,5,6,8,9,10,11,12,13,14,15, 100] # runnable components important for optimization
+    ops_data_type = 'ndarray' # options are ndarray or Dict - Dict appears slower, but unsure of the cause, so keep as option.
     
     def __init__(self, name, container = False, model_props = {}):
         self.name = name
@@ -55,7 +56,10 @@ class ModelObject:
     
     @staticmethod
     def make_op_tokens(num_ops = 5000):
-        op_tokens = int32(zeros((num_ops,64))) # was Dict.empty(key_type=types.int64, value_type=types.i8[:])
+        if (ModelObject.ops_data_type == 'ndarray'):
+            op_tokens = int32(zeros((num_ops,64))) # was Dict.empty(key_type=types.int64, value_type=types.i8[:])
+        else:
+            op_tokens = Dict.empty(key_type=types.int64, value_type=types.i8[:])
         return op_tokens
     
     @staticmethod
@@ -73,9 +77,18 @@ class ModelObject:
         rmeo = np.asarray(rmeo, dtype="i8") 
         return rmeo
     
-    def format_ops(self):
-        ops = pad(self.ops,(0,self.max_token_length))[0:self.max_token_length]
+    @staticmethod
+    def model_format_ops(ops):
+        if (ModelObject.ops_data_type == 'ndarray'):
+            ops = pad(ops,(0,ModelObject.max_token_length))[0:ModelObject.max_token_length]
+        else:
+            ops = np.asarray(ops, dtype="i8")
         return ops
+    
+    def format_ops(self):
+        # this can be sub-classed if needed, but should not be since it is based on the ops_data_type
+        # See ModelObject.model_format_ops()
+        return ModelObject.model_format_ops(self.ops)
     
     @classmethod
     def check_properties(cls, model_props):
@@ -325,7 +338,6 @@ class ModelObject:
         if len(self.ops) > self.max_token_length:
             raise Exception("op tokens cannot exceed max length of" + self.max_token_length + "(" + self.state_path + "). ")
         self.op_tokens[self.ix] = self.format_ops()
-        #self.op_tokens[self.ix] = np.asarray(self.ops, dtype="i8")
     
     def step(self, step):
         # this tests the model for a single timestep.

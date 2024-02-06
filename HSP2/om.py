@@ -148,22 +148,25 @@ def state_om_model_run_prep(state, io_manager, siminfo):
     # since this is a function that accepts state as an argument and these were both set in state_load_dynamics_om
     # we can assume they are there and functioning
     model_object_cache = state['model_object_cache']
-    op_tokens = state['op_tokens']
     model_path_loader(model_object_cache)
     # len() will be 1 if we only have a simtimer, but > 1 if we have a river being added
     model_exec_list = []
     # put all objects in token form for fast runtime execution and sort according to dependency order
     print("Tokenizing models")
+    ModelObject.op_tokens = ModelObject.make_op_tokens(max(ModelObject.state_ix.keys()) + 1)
     model_tokenizer_recursive(model_root_object, model_object_cache, model_exec_list)
+    op_tokens = ModelObject.op_tokens
+    print("op_tokens has", len(op_tokens),"elements")
     # model_exec_list is the ordered list of component operations
-    print("op_tokens has", len(model_object_cache),"elements")
     #print("model_exec_list(", len(model_exec_list),"items):", model_exec_list)
     # This is used to stash the model_exec_list in the dict_ix, this might be slow, need to verify.
     # the resulting set of objects is returned.
+    state['state_step_om'] = 'disabled'
     state['model_object_cache'] = model_object_cache
     state['model_exec_list'] = np.asarray(model_exec_list, dtype="i8") 
-    state['state_step_om'] = 'disabled'
-    state['state_ix'] = np.asarray(list(state['state_ix'].values()), dtype="float32")
+    if ModelObject.ops_data_type == 'ndarray':
+        state['state_ix'] = np.asarray(list(state['state_ix'].values()), dtype="float32")
+    state['op_tokens'] = op_tokens 
     if len(op_tokens) > 0:
         state['state_step_om'] = 'enabled' 
     return
@@ -449,7 +452,6 @@ def pre_step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
 
 @njit
 def step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
-    val = 0
     for i in model_exec_list:
         step_one(op_tokens, op_tokens[i], state_ix, dict_ix, ts_ix, step, 0)
     return 

@@ -151,14 +151,16 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
     # must split dicts out of state Dict since numba cannot handle mixed-type nested Dicts
     state_ix, dict_ix, ts_ix = state['state_ix'], state['dict_ix'], state['ts_ix']
     state_paths = state['state_paths']
+    model_exec_list = state['model_exec_list'] # order of special actions and other dynamic ops
     # initialize the hydr paths in case they don't already reside here
     hydr_init_ix(state_ix, state_paths, state['domain'])
     op_tokens = state['op_tokens']
+    print("state_ix is type", type(state_ix))
     #######################################################################################
 
     # Do the simulation with _hydr_   (ie run reaches simulation code)
     errors = _hydr_(ui, ts, COLIND, OUTDGT, rchtab, funct, Olabels, OVOLlabels,
-                    state_info, state_paths, state_ix, dict_ix, ts_ix, state_step_hydr, op_tokens)
+                    state_info, state_paths, state_ix, dict_ix, ts_ix, state_step_hydr, op_tokens, model_exec_list)
 
     if 'O'    in ts:  del ts['O']
     if 'OVOL' in ts:  del ts['OVOL']
@@ -172,7 +174,7 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
 
 
 @njit(cache=True)
-def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, state_step_hydr, op_tokens):
+def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, state_step_hydr, op_tokens, model_exec_list):
     errors = zeros(int(ui['errlen'])).astype(int64)
 
     steps  = int(ui['steps'])            # number of simulation steps
@@ -342,14 +344,14 @@ def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_inf
         # - these if statements may be irrelevant if default functions simply return
         #   when no objects are defined.
         if (state_info['state_step_om'] == 'enabled'):
-            pre_step_model(op_tokens[0], op_tokens, state_ix, dict_ix, ts_ix, step)
+            pre_step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step)
         if (state_info['state_step_hydr'] == 'enabled'):
             state_step_hydr(state_info, state_paths, state_ix, dict_ix, ts_ix, hydr_ix, step)
         if (state_info['state_step_om'] == 'enabled'):
             #print("trying to execute state_step_om()")
-            # op_tokens[0] contains the model exec list.  Later we may amend this
-            # perhaps even storing a domain specific exec list under domain/exec_list?
-            step_model(op_tokens[0], op_tokens, state_ix, dict_ix, ts_ix, step)   # traditional 'ACTIONS' done in here
+            # model_exec_list contains the model exec list in dependency order
+            # now these are all executed at once, but we need to make them only for domain end points
+            step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step)   # traditional 'ACTIONS' done in here
         if ( (state_info['state_step_hydr'] == 'enabled')
             or (state_info['state_step_om'] == 'enabled') ):
             # Do write-backs for editable STATE variables

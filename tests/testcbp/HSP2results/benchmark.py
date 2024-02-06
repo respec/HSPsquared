@@ -34,7 +34,7 @@ for k in range(1000):
     speca = SpecialAction('specl' + str(k), facility, {'OPTYP': 'RCHRES', 'RANGE1': 1, 'RANGE2':'', 'AC':'+=', 'VARI':'IVOL', 'VALUE':10.0, 'YR':'2000', 'DA':'1', 'MO':'1', 'HR':'1','MN':''})
 
 # adjust op_tokens length to insure capacity
-op_tokens = ModelObject.make_op_tokens(len(model_object_cache))
+op_tokens = ModelObject.op_tokens = ModelObject.make_op_tokens(max(ModelObject.state_ix.keys()) + 1)
 model_loader_recursive(model_data, model_root_object) 
 # Parse, load and order all objects
 model_path_loader(ModelObject.model_object_cache)
@@ -43,7 +43,7 @@ model_touch_list = []
 # put all objects in token form for fast runtime execution and sort according to dependency order
 print("Tokenizing models")
 model_tokenizer_recursive(model_root_object, ModelObject.model_object_cache, model_exec_list, model_touch_list )
-
+op_tokens = ModelObject.op_tokens 
 model_exec_list = np.asarray(model_exec_list, dtype="i8") 
 # the resulting set of objects is returned.
 state['model_object_cache'] = ModelObject.model_object_cache
@@ -55,5 +55,17 @@ state['state_step_om'] = 'disabled'
 start = time.time()
 iterate_models(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, siminfo['steps'], -1)
 end = time.time()
-print(len(model_exec_list), "components iterated over", siminfo['steps'], "time steps took" , end - start, "seconds")
+print(len(model_exec_list), "components iterated over state_ix", siminfo['steps'], "time steps took" , end - start, "seconds")
+
+
+# test with np.array state 
+#np_state_ix = np.asarray(list(state_ix.values()), dtype="float32")
+np_state_ix = zeros(max(state_ix.keys()) + 1, dtype="float32")
+for ix, iv in state_ix.items():
+    np_state_ix[ix] = iv
+
+start = time.time()
+iterate_models(model_exec_list, op_tokens, np_state_ix, dict_ix, ts_ix, siminfo['steps'], -1)
+end = time.time()
+print(len(model_exec_list), "components iterated over np_state_ix", siminfo['steps'], "time steps took" , end - start, "seconds")
 
