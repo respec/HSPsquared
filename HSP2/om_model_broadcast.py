@@ -44,7 +44,7 @@ class ModelBroadcast(ModelObject):
         # parent method handles most cases, but subclass handles special situations.
         if ( prop_name == 'broadcast_params'):
             prop_val = model_props.get(prop_name)
-            print("broadcast params from model_props = ", prop_val)
+            #print("broadcast params from model_props = ", prop_val)
             if type(prop_val) == list: # this doesn't work, but nothing gets passed in like this? Except broadcast params, but they are handled in the sub-class
                 prop_val = prop_val
             elif type(prop_val) == dict:
@@ -204,15 +204,16 @@ class ModelRegister(ModelConstant):
         return req_props
 
 # njit functions for runtime
-@njit(cache=True)
-def pre_step_register(op, state_ix, dict_ix):
+@njit
+def pre_step_register(op, state_ix):
     ix = op[1]
     #print("Resetting register", ix,"to zero")
     state_ix[ix] = 0.0
+    return
 
-@njit(cache=True)
+@njit
 def pre_step_broadcast(op, state_ix, dict_ix):
     ix = op[1]
     dix = op[2]
-    # broadcasts do not need to act, as they are now handled as MdelLinkage
+    # broadcasts do not need to act, as they are now handled as ModelLinkage
     # with type = accumulate

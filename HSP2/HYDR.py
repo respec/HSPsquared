@@ -155,7 +155,6 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
     # initialize the hydr paths in case they don't already reside here
     hydr_init_ix(state_ix, state_paths, state['domain'])
     op_tokens = state['op_tokens']
-    print("state_ix is type", type(state_ix))
     #######################################################################################
 
     # Do the simulation with _hydr_   (ie run reaches simulation code)
@@ -173,7 +172,7 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
     return errors, ERRMSGS
 
 
-@njit(cache=True)
+@njit
 def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, state_step_hydr, op_tokens, model_exec_list):
     errors = zeros(int(ui['errlen'])).astype(int64)
 
