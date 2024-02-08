@@ -170,9 +170,6 @@ def state_om_model_run_prep(state, io_manager, siminfo):
     ModelObject.op_tokens = ModelObject.make_op_tokens(max(ModelObject.state_ix.keys()) + 1)
     model_tokenizer_recursive(model_root_object, model_object_cache, model_exec_list)
     op_tokens = ModelObject.op_tokens
-    print("op_tokens has", len(op_tokens),"elements")
-    print("op_tokens is type", type(op_tokens))
-    print("state_ix is type", type(state_ix))
     # model_exec_list is the ordered list of component operations
     #print("model_exec_list(", len(model_exec_list),"items):", model_exec_list)
     # This is used to stash the model_exec_list in the dict_ix, this might be slow, need to verify.
@@ -190,6 +187,9 @@ def state_om_model_run_prep(state, io_manager, siminfo):
     state['op_tokens'] = op_tokens 
     if len(op_tokens) > 0:
         state['state_step_om'] = 'enabled' 
+    print("op_tokens is type", type(op_tokens))
+    print("state_ix is type", type(state['state_ix']))
+    print("op_tokens has", len(op_tokens),"elements, with ", len(model_exec_list),"executable elements")
     return
 
 # model class reader
