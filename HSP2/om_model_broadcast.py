@@ -143,18 +143,6 @@ class ModelBroadcast(ModelObject):
             hub_object = self.model_object_cache[channel_path]
         return hub_object
     
-    def insure_register(self, var_name, default_value, register_container):
-        # we send with local_only = True so it won't go upstream 
-        register_path = register_container.find_var_path(var_name, True)
-        if register_path == False:
-            # create a register as a placeholder for the data at the hub path 
-            # in case there are no senders
-            #print("Creating a register for data for hub ", register_container.name, "(", register_container.state_path, ")", " var name ",var_name)
-            var_register = ModelRegister(var_name, register_container, default_value)
-        else:
-            var_register = self.model_object_cache[register_path]
-        return var_register
-    
     def tokenize(self):
         # call parent method to set basic ops common to all 
         super().tokenize()
@@ -186,30 +174,6 @@ class ModelBroadcast(ModelObject):
         # can be customized by subclasses to add multiple lines if needed.
         super().add_op_tokens()
 
-
-"""
-The class ModelRegister is for storing push values.
-Behavior is to zero each timestep.  This could be amended later.
-Maybe combined with stack behavior?  Or accumulator?
-"""
-class ModelRegister(ModelConstant):
-    def __init__(self, name, container = False, value = 0.0, state_path = False):
-        super(ModelRegister, self).__init__(name, container, value, state_path)
-        self.optype = 12 # 
-        # self.state_ix[self.ix] = self.default_value
-    
-    def required_properties():
-        req_props = super(ModelConstant, ModelConstant).required_properties()
-        req_props.extend(['value'])
-        return req_props
-
-# njit functions for runtime
-@njit
-def pre_step_register(op, state_ix):
-    ix = op[1]
-    #print("Resetting register", ix,"to zero")
-    state_ix[ix] = 0.0
-    return
 
 @njit
 def pre_step_broadcast(op, state_ix, dict_ix):
