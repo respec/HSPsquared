@@ -8,9 +8,6 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master", "develop", "develop-specact", "develop-specact-speed-eq" ]
-runs:
-  using: 'node20'
-  main: 'main.js'
 
 permissions:
   contents: read
@@ -18,6 +15,10 @@ permissions:
 
 jobs:
   build:
+
+  runs:
+    using: 'node20'
+    main: 'main.js'
 
     runs-on: ubuntu-latest
 
