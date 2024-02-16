@@ -292,6 +292,11 @@ def model_class_translate(model_props, object_class):
     if object_class == 'hydroImpSmall':
         model_props['object_class'] = 'Impoundment'
         print("Handling hydroImpSmall as Impoundment")
+    # now handle disabled classes - this is temporary to prevent having to comment and uncomment
+    disabled_classes = {'SimpleChannel', 'Impoundment', 'DataMatrix', 'dataMatrix'}
+    if model_props['object_class'] in disabled_classes:
+        print("Disabling class", model_props['object_class'], 'rendering as ModelObject')
+        model_props['object_class'] = 'ModelObject'
 
 def model_loader_recursive(model_data, container):
     k_list = model_data.keys()

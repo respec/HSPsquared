@@ -32,6 +32,8 @@ for k in range(1000):
     newq = ModelConstant('con' + str(k), facility, conval)
     speca = SpecialAction('specl' + str(k), facility, {'OPTYP': 'RCHRES', 'RANGE1': 1, 'RANGE2':'', 'AC':'+=', 'VARI':'IVOL', 'VALUE':10.0, 'YR':'2000', 'DA':'1', 'MO':'1', 'HR':'1','MN':''})
 
+# create a register to test TS
+ts1 = facility.insure_register('/TIMESERIES/facility/con1', 0.0, facility)
 # do all linking and tokenizing, 2nd arg "io_manager" is False as we do not have an hdf5 here
 # set ops_data_type = Dict to test the Dict performance for state_ix
 # override ops_data_type for testing:

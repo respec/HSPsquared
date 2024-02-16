@@ -323,14 +323,15 @@ class ModelObject:
         #   or a variable data and should handle them accordingly  
         return True
     
-    def insure_register(self, var_name, default_value, register_container):
+    def insure_register(self, var_name, default_value, register_container, register_path = False):
         # we send with local_only = True so it won't go upstream 
-        register_path = register_container.find_var_path(var_name, True)
         if register_path == False:
+            register_path = register_container.find_var_path(var_name, True)
+        if (register_path == False) or (register_path not in self.model_object_cache.keys()):
             # create a register as a placeholder for the data at the hub path 
-            # in case there are no senders
+            # in case there are no senders, or in the case of a timeseries logger, we need to register it so that its path can be set to hold data
             #print("Creating a register for data for hub ", register_container.name, "(", register_container.state_path, ")", " var name ",var_name)
-            var_register = ModelRegister(var_name, register_container, default_value)
+            var_register = ModelRegister(var_name, register_container, default_value, register_path)
         else:
             var_register = self.model_object_cache[register_path]
         return var_register
@@ -425,3 +426,15 @@ def pre_step_register(op, state_ix):
 def exec_model_object( op, state_ix, dict_ix):
     ix = op[1]
     return 0.0
+
+
+# njit functions for end of model run
+@njit
+def finish_model_object(op_token, state_ix, ts_ix):
+    return
+
+
+@njit
+def finish_register(op_token, state_ix, ts_ix):
+    # todo: push the values of ts_ix back to the hdf5? or does this happen in larger simulation as it is external to OM?
+    return
