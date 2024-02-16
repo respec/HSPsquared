@@ -2,7 +2,7 @@ RUN
  
 GLOBAL
   PL3_5250_0 riv | P5 | hsp2_2022  | Occoquan
-  START       2001/01/01        END    2020/12/31
+  START       2001/01/01        END    2001/12/31
   RUN INTERP OUTPUT LEVEL    1    1
   RESUME     0 RUN     1                   UNIT SYSTEM     1
 END GLOBAL
@@ -225,49 +225,6 @@ PLTGEN
 END PLTGEN
 
 SPEC-ACTIONS
-*** ACTIONS
-***optyp range dc ds yr  mo da hr mn d t   vari  s1 s2 s3 ac  value    tc ts num
-  <****><-><--><><-><--><-><-><-><-><><>  <----><-><-><-><-><--------> <> <-><->
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           +=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           -=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           +=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           -=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           +=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           -=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           +=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           -=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           +=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           -=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           +=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           -=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           +=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           -=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           +=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           -=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           +=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           -=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           +=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           -=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           +=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           -=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           +=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           -=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           +=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           -=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           +=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           -=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           +=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           -=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           +=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           -=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           +=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           -=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           +=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           -=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           +=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           -=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           +=         10.        
-  RCHRES  1    DY  11984  1  1 12    2 3  IVOL           -=         10.        
 END SPEC-ACTIONS
 
 END RUN

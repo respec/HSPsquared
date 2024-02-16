@@ -7,17 +7,21 @@ from HSP2.state import *
 from HSP2.om import *
 from pandas import Series, DataFrame, concat, HDFStore, set_option, to_numeric
 from pandas import Timestamp, Timedelta, read_hdf, read_csv
+from numpy import pad
 
 class ModelObject:
     state_ix = {} # Shared Dict with the numerical state of each object 
     state_paths = {} # Shared Dict with the hdf5 path of each object 
     dict_ix = {} # Shared Dict with the hdf5 path of each object 
     ts_ix = {} # Shared Dict with the hdf5 path of each object 
-    op_tokens = {} # Shared Dict with the tokenized representation of each object 
+    op_tokens = {} # Shared Dict with the tokenized representation of each object, will be turned into array of ints
     model_object_cache = {} # Shared with actual objects, keyed by their path 
     model_exec_list = {} # Shared with actual objects, keyed by their path 
+    max_token_length = 64 # limit on complexity of tokenized objects since op_tokens must be fixed dimensions for numba
+    runnables = [1,2,5,6,8,9,10,11,12,13,14,15, 100] # runnable components important for optimization
+    ops_data_type = 'ndarray' # options are ndarray or Dict - Dict appears slower, but unsure of the cause, so keep as option.
     
-    def __init__(self, name, container = False, model_props = []):
+    def __init__(self, name, container = False, model_props = {}):
         self.name = name
         self.container = container # will be a link to another object
         self.log_path = "" # Ex: "/RESULTS/RCHRES_001/SPECL" 
@@ -33,8 +37,12 @@ class ModelObject:
         self.paths_found = False # this should be False at start
         self.default_value = 0.0
         self.ops = []
-        self.optype = 0 # 0 - shell object, 1 - equation, 2 - datamatrix, 3 - input/ModelLinkage, 4 - broadcastChannel, 5 - SimTimer, 6 - Conditional, 7 - ModelConstant (numeric), 8 - matrix accessor, 9 - MicroWatershedModel, 10 - MicroWatershedNetwork, 11 - ModelTimeseries, 12 - ModelRegister, 13 - SimpleChannel, 14 - SimpleImpoundment
-        self.register_path()
+        self.optype = 0 # OpTypes are as follows:
+        #                 0 - model object, 1 - equation, 2 - datamatrix, 3 - input/ModelLinkage, 
+        #                 4 - broadcastChannel, 5 - SimTimer, 6 - Conditional, 7 - ModelConstant (numeric), 
+        #                 8 - matrix accessor, 9 - MicroWatershedModel, 10 - MicroWatershedNetwork, 11 - ModelTimeseries, 
+        #                 12 - ModelRegister, 13 - SimpleChannel, 14 - SimpleImpoundment, 15 - FlowBy
+        self.register_path() # note this registers the path AND stores the object in model_object_cache 
         self.parse_model_props(model_props)
     
     @staticmethod
@@ -45,6 +53,42 @@ class ModelObject:
         # req_props = super(DataMatrix, DataMatrix).required_properties()
         req_props = ['name']
         return req_props
+    
+    @staticmethod
+    def make_op_tokens(num_ops = 5000):
+        if (ModelObject.ops_data_type == 'ndarray'):
+            op_tokens = int32(zeros((num_ops,64))) # was Dict.empty(key_type=types.int64, value_type=types.i8[:])
+        else:
+            op_tokens = Dict.empty(key_type=types.int64, value_type=types.i8[:])
+        return op_tokens
+    
+    @staticmethod
+    def runnable_op_list(op_tokens, meo):
+        # only return those objects that do something at runtime
+        rmeo = []
+        run_ops = {}
+        for ops in ModelObject.op_tokens:
+            if ops[0] in ModelObject.runnables:
+                run_ops[ops[1]] = ops
+                print("Found runnable", ops[1], "type", ops[0])
+        for ix in meo:
+            if ix in run_ops.keys():
+                rmeo.append(ix)
+        rmeo = np.asarray(rmeo, dtype="i8") 
+        return rmeo
+    
+    @staticmethod
+    def model_format_ops(ops):
+        if (ModelObject.ops_data_type == 'ndarray'):
+            ops = pad(ops,(0,ModelObject.max_token_length))[0:ModelObject.max_token_length]
+        else:
+            ops = np.asarray(ops, dtype="i8")
+        return ops
+    
+    def format_ops(self):
+        # this can be sub-classed if needed, but should not be since it is based on the ops_data_type
+        # See ModelObject.model_format_ops()
+        return ModelObject.model_format_ops(self.ops)
     
     @classmethod
     def check_properties(cls, model_props):
@@ -57,22 +101,35 @@ class ModelObject:
             return False 
         return True
     
+    def handle_inputs(self, model_props):
+        if 'inputs' in model_props.keys():
+            for i_pair in model_props['inputs']:
+                i_name = i_pair[0]
+                i_target = i_pair[1]
+                i_target.replace("[parent]", self.container.state_path)
+                self.add_input(i_name, i_target)
+    
     def handle_prop(self, model_props, prop_name, strict = False, default_value = None ):
         # this checks to see if the prop is in dict with value form, or just a value 
         # strict = True causes an exception if property is missing from model_props dict 
         prop_val = model_props.get(prop_name)
-        if type(prop_val) == list:
-            prop_val = prop_val.get('value')
+        if type(prop_val) == list: # this doesn't work, but nothing gets passed in like this? Except broadcast params, but they are handled in the sub-class
+            prop_val = prop_val
         elif type(prop_val) == dict:
             prop_val = prop_val.get('value')
         if strict and (prop_val == None):
             raise Exception("Cannot find property " + prop_name + " in properties passed to "+ self.name + " and strict = True.  Object creation halted. Path to object with error is " + self.state_path)
+        if (prop_val == None) and not (default_value == None):
+            prop_val = default_value
         return prop_val
     
     def parse_model_props(self, model_props, strict = False ):
         # sub-classes will allow an create argument "model_props" and handle them here.
+        #  - subclasses should insure that they call super().parse_model_props() or include all code below
         # see also: handle_prop(), which will be called y parse_model_props 
         #           for all attributes supported by the class
+        # this base object only handles inputs
+        self.handle_inputs(model_props)
         self.model_props_parsed = model_props
         return True
     
@@ -96,14 +153,14 @@ class ModelObject:
     def make_paths(self, base_path = False):
         if base_path == False: # we are NOT forcing paths
             if not (self.container == False):
-                self.state_path = self.container.state_path + "/" + self.name
-                self.attribute_path = self.container.attribute_path + "/" + self.name
+                self.state_path = self.container.state_path + "/" + str(self.name)
+                self.attribute_path = self.container.attribute_path + "/" + str(self.name)
             elif self.name == "":
                 self.state_path = "/STATE" 
                 self.attribute_path = "/OBJECTS" 
             else:
-                self.state_path = "/STATE/" + self.name
-                self.attribute_path = "/OBJECTS/" + self.name
+                self.state_path = "/STATE/" + str(self.name)
+                self.attribute_path = "/OBJECTS/" + str(self.name)
         else:
             # base_path is a Dict with state_path and attribute_path set 
             self.state_path = base_path['STATE'] + self.name
@@ -212,6 +269,10 @@ class ModelObject:
                 var_path = found_path
         self.inputs[var_name] = var_path
         self.inputs_ix[var_name] = var_ix
+        # Should we create a register for the input to be reported here?
+        # i.e., if we have an input named Qin on RCHRES_R001, shouldn't we be able 
+        # to find the data in /STATE/RCHRES_R001/Qin ???  It is redundant data and writing
+        # but matches a complete data model and prevents stale data?
         return self.inputs_ix[var_name]
     
     def add_object_input(self, var_name, var_object, link_type = 1):
@@ -221,14 +282,18 @@ class ModelObject:
         self.inputs_ix[var_name] = var_object.ix
         return self.inputs_ix[var_name]
     
-    def create_parent_var(self, parent_var_name, source_object):
+    def create_parent_var(self, parent_var_name, source):
         # see decision points: https://github.com/HARPgroup/HSPsquared/issues/78
         # This is used when an object sets an additional property on its parent
         # Like in simple_channel sets [channel prop name]_Qout on its parent 
         # Generally, this should have 2 components.  
         # 1 - a state variable on the child (this could be an implicit sub-comp, or a constant sub-comp, the child handles the setup of this) see constant_or_path()
         # 2 - an input link 
-        self.container.add_object_input(parent_var_name, source_object, 1)
+        # the beauty of this is that the parent object and any of it's children will find the variable "[source_object]_varname"
+        if type(source) == str:
+            self.container.add_input(parent_var_name, source, 1, False)
+        elif isinstance(source, ModelObject):
+            self.container.add_object_input(parent_var_name, source, 1)
     
     def insure_path(self, var_path):
         # if this path can be found in the hdf5 make sure that it is registered in state
@@ -269,8 +334,10 @@ class ModelObject:
         # can be customized by subclasses to add multiple lines if needed.
         if self.ops == []:
             self.tokenize()
-        #print(self.name, "tokens", self.ops)
-        self.op_tokens[self.ix] = np.asarray(self.ops, dtype="i8")
+        #print(self.state_path, "tokens", self.ops)
+        if len(self.ops) > self.max_token_length:
+            raise Exception("op tokens cannot exceed max length of" + self.max_token_length + "(" + self.state_path + "). ")
+        self.op_tokens[self.ix] = self.format_ops()
     
     def step(self, step):
         # this tests the model for a single timestep.

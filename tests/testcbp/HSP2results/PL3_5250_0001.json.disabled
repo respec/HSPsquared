@@ -1,0 +1,18 @@
+{
+    "RCHRES_R001": {
+        "name": "RCHRES_R001",
+        "object_class": "ModelObject",
+        "drainage_area_sqmi": {
+            "name": "drainage_area_sqmi",
+            "object_class": "Constant",
+            "value": 99.95
+        },
+        "IVOLin": {
+            "name": "IVOLin",
+            "object_class": "ModelLinkage",
+            "right_path": "/STATE/RCHRES_R001/IVOL",
+            "link_type": 2
+        }
+    }
+}
+
