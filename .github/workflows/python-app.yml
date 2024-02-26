@@ -34,3 +34,4 @@ jobs:
     - name: Test with pytest 
       run: |
         pytest tests/ptest/test_sysexit.py
+        pytest tests/testcbp/benchmark.py
