@@ -1,4 +1,5 @@
 # bare bones tester
+# tests special actions and constants.
 import os
 os.chdir("C:/usr/local/home/git/HSPsquared")
 from HSP2.main import *
