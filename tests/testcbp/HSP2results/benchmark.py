@@ -1,7 +1,8 @@
 # bare bones tester
 # tests special actions and constants.
 import os
-os.chdir("C:/usr/local/home/git/HSPsquared")
+# disabled for auto testing, but may use at command primpt if needed
+#os.chdir("C:/usr/local/home/git/HSPsquared")
 from HSP2.main import *
 from HSP2.om import *
 #from HSP2.om_equation import *
