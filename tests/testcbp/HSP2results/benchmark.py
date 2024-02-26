@@ -67,5 +67,5 @@ for ix, iv in state_ix.items():
 start = time.time()
 iterate_models(model_exec_list, op_tokens, np_state_ix, dict_ix, ts_ix, siminfo['steps'], -1)
 end = time.time()
-print(len(model_exec_list), "components iterated over np_state_ix", siminfo['steps'], "time steps took" , end - start, "seconds")
+print(len(model_exec_list), "components iterated over np_state_ix(", type(np_state_ix),")", siminfo['steps'], "time steps took" , end - start, "seconds")
 
