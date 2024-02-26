@@ -1,5 +1,6 @@
 name: Python application
-
+# this is a standard setup copied from 
+# https://docs.github.com/en/enterprise-server@3.10/actions/automating-builds-and-tests/building-and-testing-python
 on:
   push:
     branches: [ "master" ]
