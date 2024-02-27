@@ -13,7 +13,7 @@ dependencies:
   - python =3.8*
   - scipy   # Scipy also installs numpy
   - pandas ==1.2.*  # Pandas installs most scientific Python modules, such as Numpy, etc.
-  - numba ==0.53.1
+  - numba >=0.53.1
   - numpy ==1.20.*  # for compatibility with numba version <0.53
   - hdf5 ==1.10.6    # latest compatible with both versions of PyTables & h5py below - doesn't work with setup.py
   - pytables ==3.6.1
