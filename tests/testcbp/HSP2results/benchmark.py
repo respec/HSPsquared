@@ -6,6 +6,7 @@ import os
 from HSP2.main import *
 from HSP2.om import *
 #from HSP2.om_equation import *
+import pytest
 
 state = init_state_dicts()
 # set up info and timer
@@ -105,3 +106,6 @@ start = time.time()
 iterate_perf(model_exec_list, op_tokens, np_state_ix, dict_ix, ts_ix, siminfo['steps'])
 end = time.time()
 print(len(model_exec_list), "np_state_ix components iterated over iterate_perf (selective component)", siminfo['steps'], "time steps took" , end - start, "seconds")
+
+def test_benchmark(model_exec_list, start, end):
+    print(len(model_exec_list), "np_state_ix components iterated over iterate_perf (selective component)", siminfo['steps'], "time steps took" , end - start, "seconds")
