@@ -1,9 +1,10 @@
 name: hsp2_py310
 channels:
   - conda-forge
+  - nodefaults # Speeds solving env, by limiting the number of options
 
 dependencies:
-  # Aligned with Anaconda since 2023.03-0 (Mar 20, 2023)
+  # Python 3.10 is default for Anaconda since 2023.03-0 (Mar 20, 2023)
   # https://docs.anaconda.com/free/anaconda/release-notes/#anaconda-2023-03-0-mar-20-2023
   # package management
   - conda
@@ -32,7 +33,6 @@ dependencies:
   - ipywidgets  # Required for HoloViz interactivity in Jupyter notebooks
 
   # Dev tools (optional)
-  - python-language-server
   - python-lsp-server # Language Server Protocol (LSP) extension for Python (pylsp)
   - jupyterlab-lsp # Provides both server extension and lab extension
 

@@ -93,13 +93,13 @@ Activate the environment using the instructions printed by conda after the envir
 To update your environment, run the following command:  
 
 ```shell
-conda env update --file path/environment.yml --solver=libmamba --prune
+conda env update --file environment.yml --solver=libmamba --prune
 ```
 
 or
 
 ```shell
-conda env create --file path/environment.yml --solver=libmamba --force
+conda env create --file environment.yml --solver=libmamba --force
 ```
 
 NOTE: The [`environment_dev.yml`](environment_dev.yml) file provides an alternate environment that provides additional capabilities and newer libraries useful to the development team. It is tested to also work with the current HSP2 codebase and will likely serve as a preview of future updates to [`environment.yml`](environment.yml).

@@ -4,8 +4,8 @@ channels:
   - nodefaults # Speeds solving env, by limiting the number of options
 
 dependencies:
-  # Aligned with Anaconda 2023.09-0 (Sep 29, 2023)
-  # https://docs.anaconda.com/free/anaconda/release-notes/#anaconda-2023-09-0-sep-29-2023
+  # Python 3.11 is supported by Anaconda since 2023.03-0 (Mar 20, 2023)
+  # https://docs.anaconda.com/free/anaconda/release-notes/#anaconda-2023-03-0-mar-20-2023
   # package management
   - conda
   - conda-build
@@ -34,8 +34,7 @@ dependencies:
   - ipywidgets  # Required for HoloViz interactivity in Jupyter notebooks
 
   # Dev tools (optional)
-  - python-language-server
-  - python-lsp-server # LSP extension for Python (pylsp), including:
+  - python-lsp-server # Language Server Protocol (LSP) extension for Python (pylsp)
     # Rope for Completions and renaming
     # Pyflakes linter to detect various errors
     # McCabe linter for complexity checking
