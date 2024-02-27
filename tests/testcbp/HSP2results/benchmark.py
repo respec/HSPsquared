@@ -69,6 +69,7 @@ iterate_models(model_exec_list, op_tokens, np_state_ix, dict_ix, ts_ix, siminfo[
 end = time.time()
 print(len(model_exec_list), "np_state_ix components iterated with full execution via iterate_models()", siminfo['steps'], "time steps took" , end - start, "seconds")
 
+
 @njit
 def iteration_test_dat(op_order, it_ops, state_ix, it_nums):
     ctr = 0
@@ -76,19 +77,11 @@ def iteration_test_dat(op_order, it_ops, state_ix, it_nums):
     for n in range(it_nums):
         for i in op_order:
             op = it_ops[i]
-            #getsx = state_ix[i] 
-            #state_ix[i] = getsx * 1.0 
+            getsx = state_ix[i] 
+            state_ix[i] = getsx * 1.0 
             #ttr = ttr + getsx
-            test_set(op, state_ix)
             ctr = ctr + 1
     print("Completed ", ctr, " loops")
-    #print("Total value", ttr)
-
-@njit
-def test_set(op, state_ix):
-    ix = op[1]
-    getsx = state_ix[ix] 
-    state_ix[ix] = getsx * 1.0 
 
 
 # Now test just the data structures with no actual calculation from primitives
