@@ -1,47 +1,53 @@
-name: hsp2_py39_dev
+name: hsp2_py311_dev
 channels:
   - conda-forge
-  # - nodefaults
+  - nodefaults # Speeds solving env, by limiting the number of options
 
 dependencies:
-  # Aligned with Anaconda 2021.11 (Nov 17, 2021); exception with HDF5 & PyTables
+  # Aligned with Anaconda 2023.09-0 (Sep 29, 2023)
+  # https://docs.anaconda.com/free/anaconda/release-notes/#anaconda-2023-09-0-sep-29-2023
   # package management
   - conda
   - conda-build
+  - conda-libmamba-solver
   - pip
 
   # Running HSP2
-  - python =3.9*
+  - python =3.11
   - scipy   # Scipy also installs numpy
-  - pandas ==1.3.* # Pandas installs most scientific Python modules, such as Numpy, etc.
-  - numba ==0.54.*
-  - numpy ==1.20.*  # for compatibility with numba version <0.54
-  - hdf5 =1.12.*    # latest compatible with both versions of pytables & h5py below
-  - pytables ==3.7.*
-  - h5py >=3.3
+  - pandas >=2.0  # Pandas installs most scientific Python modules, such as Numpy, etc.
+  - numba 
+  - numpy 
+  - hdf5
+  - pytables 
+  - h5py 
   - hdf5plugin  # HDF5 compression filters for h5py & jupyterlab_hdf
   # - dask  # for future performance enhancements
   - mando  # for Python CLI app in HSP2tools/HSP2_CLI.py; hasn't been updated since 2017 and doesn't support Python 3.9: https://github.com/rubik/mando
 
   # Interactivity & Visualization via Jupyter Notebooks (optional, but required for tutorials)
-  - jupyterlab >=3.2.*  # also installs classic Jupyter notbook
-  - ipympl  # jupyter-matplotlib, https://github.com/matplotlib/ipympl  - nodejs    # required for many JupyterLab extensions
+  - jupyterlab # also installs classic Jupyter notbook
+  - ipympl  # jupyter-matplotlib, https://github.com/matplotlib/ipympl
   - nodejs    # required for many JupyterLab extensions
-  # - nb_conda  # Conda environment & package access extension from within Jupyter, but may conflict with newer versions
   # HoloViz, https://holoviz.org
   - hvplot  # hvPlot installs most HoloViz libs, including matplotlib
   - ipywidgets  # Required for HoloViz interactivity in Jupyter notebooks
 
   # Dev tools (optional)
   - python-language-server
-  - jupyter-lsp-python  # Includes both the server extension (jupyter-lsp) and pyls third-party server (python-language-server)
-  - jupyterlab-lsp # Docs at https://github.com/krassowski/jupyterlab-lsp
+  - python-lsp-server # LSP extension for Python (pylsp), including:
+    # Rope for Completions and renaming
+    # Pyflakes linter to detect various errors
+    # McCabe linter for complexity checking
+    # pycodestyle linter for style checking
+    # pydocstyle linter for docstring style checking (disabled by default)
+    # autopep8 for code formatting
+    # YAPF for code formatting (preferred over autopep8)
+    # flake8 for error checking (disabled by default)
+    # pylint for code linting (disabled by default)
+  - jupyterlab-lsp # Provides both server extension and lab extension
 
 
   # PIP install requirements only if it is not possible with conda
   # https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#using-pip-in-an-environment
   - pip:
-    # Optional, recommended for tutorials, but may have issues with latest JupyterLab
-    # - lckr-jupyterlab-variableinspector  # https://github.com/lckr/jupyterlab-variableInspector
-    # - jupyterlab_hdf  # Explore HDF5 files in JupyterLab. Requires an additional step to install.
-        # Installation instructions: https://github.com/jupyterlab/jupyterlab-hdf5#installation

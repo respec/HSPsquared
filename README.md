@@ -46,9 +46,9 @@ We recommend getting started by:
 
 # HSP2 Installation
 
-HSP2 is designed to work with Python 3.7, 3.8, and 3.9. 
+HSP2 is designed to work with Python 3.9, 3.10, and 3.11. 
 
-We presently **recommend Python 3.8**. 
+We presently **recommend Python 3.10**. 
 
 We provide two options to installing HSP2, yet strongly recommend option 1.
 1. [Install Option 1 using `conda`](#install-option-1-using-conda)
@@ -62,10 +62,9 @@ Follow these steps to install using the [conda](https://docs.conda.io/en/latest/
 
 ### 1. Install the Anaconda Python Distribution
 
-We recommend installing the [latest release](https://docs.anaconda.com/anaconda/reference/release-notes/) of [**Anaconda Individual Edition**](https://www.anaconda.com/distribution), which includes the conda, a complete Python (and R) data science stack, and the helpful Anaconda Navigator GUI.
-- Follow [Anaconda Installation](https://docs.anaconda.com/anaconda/install/) documentation.
+We recommend installing the light-weight [Miniconda](https://docs.conda.io/projects/miniconda/en/latest/) that includes Python, the [conda](https://conda.io/docs/) environment and package management system, and their dependencies.
 
-A lighter-weight alternative is to install [Miniconda](https://docs.conda.io/en/latest/miniconda.html).
+If you have already installed the [**Anaconda Distribution**](https://www.anaconda.com/download), you can use it to complete the next steps, but you may need to [update to the latest version](https://docs.anaconda.com/free/anaconda/install/update-version/).
 
 ### 2. Clone or Download this HSPsquared repository
 
@@ -75,28 +74,37 @@ Place your copy of the HSPsquared folder in any convenient location on your comp
 
 ### 3. Create a Conda Environment for HSP2 Modeling (optional)
 
-Although HSP2 can be run from the default `base` environment created by Anaconda, we recommend creating a custom environment that includes the exact combination of software dependencies that we've in development and testing.
+We recommend creating a custom virtual environment with the same software dependencies that we've used in development and testing, as listed in the [`environment.yml`](environment.yml) file. 
 
-Create the `hsp2_py38` environment from our [`environment.yml`](environment.yml) file, which lists all primary dependencies, using one of these approaches: 
-1. Use the **Import** button on [Anaconda Navigator's Environments tab](https://docs.anaconda.com/anaconda/navigator/overview/#environments-tab), or 
-2. Use the following [`conda create`](https://docs.conda.io/projects/conda/en/latest/user-guide/getting-started.html#managing-environments) command in your terminal or console,  replacing `path/environment.yml` with the full file pathway to the [`environment.yml`](environment.yml) file in the local cloned repository.
-
-    ```shell
-    conda env create --file path/environment.yml
-    ```
-To update your environment, either use Anaconda Navigator, or run the following command:  
+Create the `hsp2_py310` environment using this [conda](https://conda.io/docs/) command in your terminal or Anaconda Prompt console. If necessary, replace `environment.yml` with the full file pathway to the `environment.yml` file in the local cloned repository.
 
 ```shell
-conda env update --file path/environment.yml --prune
+conda env create --file path/environment.yml
+```
+
+Alternatively, use the faster [`libmamba` solver](https://conda.github.io/conda-libmamba-solver/getting-started/) with:
+
+```shell
+conda env create -f environment.yml --solver=libmamba
+```
+
+Activate the environment using the instructions printed by conda after the environment is created successfully.
+
+To update your environment, run the following command:  
+
+```shell
+conda env update --file path/environment.yml --solver=libmamba --prune
 ```
 
 or
 
 ```shell
-conda env create --file path/environment.yml --force
+conda env create --file path/environment.yml --solver=libmamba --force
 ```
 
 NOTE: The [`environment_dev.yml`](environment_dev.yml) file provides an alternate environment that provides additional capabilities and newer libraries useful to the development team. It is tested to also work with the current HSP2 codebase and will likely serve as a preview of future updates to [`environment.yml`](environment.yml).
+
+For additional information on managing conda environments, see [Conda's User Guide on Managing Environments](https://docs.conda.io/projects/conda/en/stable/user-guide/tasks/manage-environments.html).
 
 
 ### 4. Add your HSPsquared Path to Anaconda sites-packages
