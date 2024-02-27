@@ -557,16 +557,6 @@ def step_model_pcode(model_exec_list, op_tokens, state_info, state_paths, state_
 def post_step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
     return 
 
-@njit 
-def test_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
-    val = 0
-    for i in model_exec_list:
-        print(i)
-        print(op_tokens[i][0])
-        print(op_tokens[i])
-        step_one(op_tokens, op_tokens[i], state_ix, dict_ix, ts_ix, step, 0)
-    return 
-
 def step_object(thisobject, step):
     # this calls the step for a given model object and timestep
     # this is a workaround since the object method ModelObject.step() fails to find the step_one() function ?
@@ -586,15 +576,6 @@ def pre_step_test(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
         #elif ops[0] == 1:
         #    # register type data (like broadcast accumulators) 
         #    continue
-    return
-
-@njit
-def test_perf(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
-#    for i in model_exec_list:
-#        ops = op_tokens[i]
-    for ops in op_tokens:
-        #step_one(op_tokens, ops, state_ix, dict_ix, ts_ix, step)
-        continue
     return
 
 @njit
