@@ -38,3 +38,6 @@ jobs:
         pytest tests/ptest/test_sysexit.py
         # add additional test, ex:
         # pytest tests/testcbp/HSP2results/benchmark.py
+        cd tests/test10/HSP2results
+        hsp2 import_uci test10.uci test10.h5
+        hsp2 run test10.h5
