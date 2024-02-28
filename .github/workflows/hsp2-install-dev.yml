@@ -26,7 +26,7 @@ jobs:
         pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         # install the hsp2 executable using dev environment
-        sudo pip install -e ".[dev]"
+        sudo pip install -e ".[extras_require[dev]]"
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
