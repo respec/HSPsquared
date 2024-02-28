@@ -40,5 +40,5 @@ jobs:
         # pytest tests/testcbp/HSP2results/benchmark.py
         cd tests/test10/HSP2results
         hsp2 import_uci test10.uci test10.h5
-        pytest pytest_test10.py
+        pytest pytest10.py
         hsp2 run test10.h5
