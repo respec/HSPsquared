@@ -40,3 +40,8 @@ jobs:
         pytest tests/ptest/test_sysexit.py
         # Add more tests here.  Example (note, benchmark takes a long time to run and could crush the free monthly 2,000 minutes during times of high activity)
         # pytest tests/testcbp/HSP2results/benchmark.py
+    - name: Run hsp2 test10
+      run: |
+        cd tests/test10/HSP2results
+        hsp2 import_uci test10.uci test10.h5
+        hsp2 run test10.h5
