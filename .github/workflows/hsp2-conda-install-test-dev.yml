@@ -43,5 +43,5 @@ jobs:
     - name: Run hsp2 test10
       run: |
         cd tests/test10/HSP2results
-        hsp2 import_uci test10.uci test10.h5
-        hsp2 run test10.h5
+        $CONDA/bin/hsp2 import_uci test10.uci test10.h5
+        $CONDA/bin/hsp2 run test10.h5
