@@ -2,9 +2,10 @@ import os
 import re
 import shlex
 import sys
+
 from setuptools import setup
 
-exec(open('./_version.py').read())
+exec(open("./_version.py").read())
 
 if sys.argv[-1] == "publish":
     os.system(shlex.quote("cleanpy ."))
@@ -36,7 +37,14 @@ def process_env_yaml(fname, dev=False):
                 # Shouldn't have interactivity, development tools, conda, pip,
                 # or python as a dependency.
                 if dev is True:
-                    if words[0] in ["conda", "conda-build", "hdf5", "nb_conda" "pip", "python", "pip:"]:
+                    if words[0] in [
+                        "conda",
+                        "conda-build",
+                        "hdf5",
+                        "nb_conda" "pip",
+                        "python",
+                        "pip:",
+                    ]:
                         continue
                 else:
                     if words[0] in [
@@ -69,13 +77,13 @@ def process_env_yaml(fname, dev=False):
 
 
 install_requires = process_env_yaml("environment.yml")
-print(install_requires)
+
 extras_require = {
     "dev": process_env_yaml("environment_dev.yml", dev=True) + ["cleanpy", "twine"]
 }
 
 setup(
-    name="HSPsquared",
+    name="hsp2",
     version=__version__,
     description="Hydrological Simulation Program - Python",
     long_description=README,
@@ -101,7 +109,7 @@ setup(
     author_email="",
     url="http://www.respec.com/product/hydrologic-simulation-program-python-hsp%C2%B2/",
     packages=["HSP2", "HSP2tools", "HSP2IO"],
-    py_modules=['_version'],
+    py_modules=["_version"],
     include_package_data=True,
     package_data={"HSP2tools": ["data/*"]},
     zip_safe=False,
