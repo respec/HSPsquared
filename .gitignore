@@ -56,16 +56,19 @@ tests/_LargeFileStash
 # Temporary files
 _TutorialData/
 
+
 # Specific files
 run.py
 tests/GLWACSO/HSP2results/hspp007.hdf
 tests/GLWACSO/HSPFresults/hspf006.HBN
 tests/GLWACSO/HSP2results/hspp007.uci
 tests/test_report_conversion.html
+
+# Omit big files
 tests/land_spec/hwmA51800.h5
 tests/testcbp/HSP2results/PL3_5250_0001.h5
-tests/testcbp/HSP2results/PL3_5250_specl.h5
 tests/testcbp/HSP2results/*.csv
+tests/test10/HSP2results/test10.h5
 
 # R files
 .Rdata
