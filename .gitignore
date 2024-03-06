@@ -68,3 +68,7 @@ tests/land_spec/hwmA51800.h5
 tests/testcbp/HSP2results/PL3_5250_0001.h5
 tests/testcbp/HSP2results/*.csv
 tests/test10/HSP2results/test10.h5
+
+# R files
+.Rdata
+.Rhistory

@@ -280,7 +280,7 @@ def get_timeseries(timeseries_inputs:SupportsReadTS, ext_sourcesdd, siminfo):
             ts[tname]  = t
     return ts
 
-def save_timeseries(timeseries:SupportsWriteTS, ts, savedict, siminfo, saveall, operation, segment, activity, compress=True):
+def save_timeseries(timeseries:SupportsWriteTS, ts, savedict, siminfo, saveall, operation, segment, activity, compress=True, outstep=2):
     df = pd.DataFrame(index=siminfo['tindex'])
     if (operation == 'IMPLND' and activity == 'IQUAL') or (operation == 'PERLND' and activity == 'PQUAL'):
         for y in savedict.keys():
@@ -316,7 +316,8 @@ def save_timeseries(timeseries:SupportsWriteTS, ts, savedict, siminfo, saveall, 
             operation=operation,
             segment=segment,
             activity=activity,
-            compress=compress
+            compress=compress,
+            outstep=outstep
         )
     else:
         print(f'DataFrame Empty for {operation}|{activity}|{segment}')
@@ -364,6 +365,8 @@ def expand_timeseries_names(sgrp, smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmems
         smemn = 'GQUAL' + smemsb1 + '_RODQAL'
     if smemn == 'ROSQAL':
         smemn = 'GQUAL' + smemsb2 + '_ROSQAL' + smemsb1  # smemsb1 is ssc
+    if smemn == 'RSQAL':
+        smemn = 'GQUAL' + smemsb2 + '_RSQAL' + smemsb1
 
     # OXRX:
     if smemn == 'OXCF1':
