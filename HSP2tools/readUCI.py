@@ -86,7 +86,10 @@ def fix_df(df, op, save, ddfaults, valid):
         df = df.append(Series(name=name1))        # add missing ids with NaNs
     if df.isna().any().any():                      # replace NaNs with defaults
         for col in df.columns:
-            df[col] = df[col].fillna(ddfaults[op, save, col])
+            try:
+                df[col] = df[col].fillna(ddfaults[op, save, col])
+            except KeyError:
+                pass
     cols = [c.replace('(','').replace(')','') for c in df.columns]
     df.columns = cols
     df = df.apply(to_numeric, errors='ignore')
@@ -215,11 +218,6 @@ def readUCI(uciname, hdfname):
             if 'SDLFAC' not in df.columns:   # didn't read LAT-FACTOR table
                 df['SDLFAC'] = 0.0
                 df['SLIFAC'] = 0.0
-                df.to_hdf(store, path, data_columns=True)
-            if 'SOTMP' not in df.columns:  # didn't read IWT-INIT table
-                df['SOTMP'] = 60.0
-                df['SODOX'] = 0.0
-                df['SOCO2'] = 0.0
                 df.to_hdf(store, path, data_columns=True)
 
         path = '/IMPLND/IQUAL/PARAMETERS'
@@ -351,6 +349,8 @@ def readUCI(uciname, hdfname):
                 if path[-6:] == "STATES":
                     # need to add states if it doesn't already exist to save initial state variables
                     # such as the case where entire IWAT-STATE1 table is being defaulted
+                    if not 'df' in locals():
+                        x = 1   # sometimes when debugging keys gets creamed, seems like an IDE bug
                     for column in df.columns:  # clear out existing data frame columns
                         df = df.drop([column], axis=1)
                     dct_params = hsp_paths[path]
@@ -540,10 +540,13 @@ def operation(info, llines, op):
     history = defaultdict(list)
     lines = iter(llines)
     gcount = 0
+    canCount = 0
+    cancovCount = 0
     for line in lines:
         tokens = line.split()
         if len(tokens) == 1:
             table = tokens[0]
+            print(table)
             if dcat[op,table] == 'EXTENDED':
                 rows = {}
                 extended_line = 0
@@ -573,7 +576,24 @@ def operation(info, llines, op):
                 if table == 'GQ-QALDATA':
                     gcount += 1
                 cat = cat + str(gcount)
-            history[dpath[op,table],cat].append((table,df))
+            if table == "PWAT-CANOPY":
+                canId = int(d['CANOPY'])
+                if canId > 1:
+                    df = df.rename(columns={'CANOPY': 'CANOPY' + str(canId), 'CANNAM': 'CANNAM' + str(canId),
+                                            'CEPSC': 'CEPSC' + str(canId), 'CEPS': 'CEPS' + str(canId)})
+            newtable = ''
+            if table == "MON-INTERCEP":   # special cases for canopy tables
+                canCount += 1
+                if canCount > 1:
+                    newtable = table + str(canCount)
+            if table == "MON-COVER":
+                cancovCount += 1
+                if cancovCount > 1:
+                    newtable = table + str(cancovCount)
+            if len(newtable) == 0:
+                history[dpath[op,table],cat].append((table,df))
+            else:
+                history[dpath[op, table], cat].append((newtable, df))
 
     if len(history['GENERAL','INFO']) > 0:
         (_,df) = history['GENERAL','INFO'][0]
@@ -582,7 +602,7 @@ def operation(info, llines, op):
             counter.add(path)
             if cat == 'SKIP':
                 continue
-            if cat in {'PARAMETERS', 'STATES', 'FLAGS', 'ACTIVITY','INFO'}:
+            if cat in {'PARAMETERS', 'STATES', 'FLAGS', 'ACTIVITY', 'INFO', 'BINOUT', 'CANOPY'}:
                 df = concat([temp[1] for temp in history[path,cat]], axis='columns', sort=False)
                 df = fix_df(df, op, path, ddfaults, valid)
                 if cat == 'ACTIVITY' and op == 'PERLND':
@@ -605,7 +625,12 @@ def operation(info, llines, op):
                 for (table,df) in history[path,cat]:
                     df = fix_df(df, op, path, ddfaults, valid)
                     df.columns = Months
-                    name = rename[(op, table)]
+                    if table[:-1] == 'MON-INTERCEP':  # special cases for canopy tables
+                        name = 'CEPSC' + table[-1:]
+                    elif table[:-1] == 'MON-COVER':
+                        name = 'COVER' + table[-1:]
+                    else:
+                        name = rename[(op, table)]
                     df.to_hdf(store, f'{op}/{path}/MONTHLY/{name}', data_columns=True)
             elif cat == 'EXTENDED':
                 temp = defaultdict(list)
