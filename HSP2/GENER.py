@@ -9,7 +9,7 @@ class Gener():
     Currently supports OPCODES 1-7, 9-26
     """
 
-    def __init__(self, segment: str, siminfo: Dict, copies: Dict, geners: Dict, ddlinks: Dict, ddgener: Dict) -> None:
+    def __init__(self, segment: str, siminfo: Dict, copies: Dict, geners: Dict, ddlinks: Dict, ddmasslinks: Dict, tsin: Dict, ddgener: Dict) -> None:
         self.ts_input_1 = pd.Series() # type: pd.Series
         self. ts_input_2 = pd.Series() # type: pd.Series
         self.ts_output = pd.Series()  # type: pd.Series
@@ -36,20 +36,48 @@ class Gener():
                 if link.SVOLNO in geners:
                     gener = geners[link.SVOLNO]
                     ts = gener.get_ts()
-                    if link.MFACTOR != 1: ts *= link.MFACTOR
+                    if link.MFACTOR != 1 and link.MFACTOR != '': ts *= link.MFACTOR
                 else:
                     raise NotImplementedError(
                         f"Invalid SVOL. This GENER operation does not exist. '{link.SVOLNO}'")
             else:
-                raise NotImplementedError(f"Invalid SVOL. GENER module does not currently support reading TimeSeries for '{link.SVOL}'")
-                
-            if link.TGRPN == 'INPUT' and link.TMEMN == 'ONE':
-                self.ts_input_1 = ts            
-            elif link.TGRPN == 'INPUT' and link.TMEMN == 'TWO':
-                self.ts_input_2 = ts
-            else:
-                raise AttributeError(f"No attribute {link.TGRPN}{link.THEMN} to assign TimeSeries. Should be either 'INPUTONE' or 'INPUTWO'")
-                
+                # get timeseries from other operations
+                if 'ONE' in tsin:
+                    self.ts_input_1 = tsin['ONE']
+                if 'TWO' in tsin:
+                    self.ts_input_2 = tsin['TWO']
+                if not 'ONE' in tsin and not 'TWO' in tsin:
+                    raise NotImplementedError(f"Invalid SVOL for '{link.SVOLNO}'")
+
+            if link.SVOL == 'COPY' or link.SVOL == 'GENER':
+                if link.MLNO != '':
+                    # also have to loop thru associated masslinks
+                    mldata = ddmasslinks[link.MLNO]
+                    for dat in mldata:
+                        mfactor = dat.MFACTOR
+                        afactr = link.AFACTR
+                        factor = afactr * mfactor
+                        ts = ts * factor
+                        if dat.TMEMN == 'ONE':
+                            self.ts_input_1 = ts
+                        elif dat.TMEMN == 'TWO':
+                            self.ts_input_2 = ts
+                        else:
+                            raise AttributeError(
+                                f"No attribute {dat.THEMN} to assign TimeSeries. Should be either 'INPUTONE' or 'INPUTTWO'")
+                else:
+                    if link.TGRPN == 'INPUT' and link.TMEMN == 'ONE':
+                        self.ts_input_1 = ts
+                    elif link.TGRPN == 'INPUT' and link.TMEMN == 'TWO':
+                        self.ts_input_2 = ts
+                    else:
+                        raise AttributeError(f"No attribute {link.TGRPN}{link.THEMN} to assign TimeSeries. Should be either 'INPUTONE' or 'INPUTTWO'")
+
+        if self.opcode in [16,17,18,19,20,21,22,23]:
+            # need to have 2 input timeseries for these
+            if self.ts_input_1.size == 0 or self.ts_input_2.size == 0:
+                raise NotImplementedError(f"Need 2 input timeseries for this gener '{link.SVOLNO}'")
+
         self._execute_gener()
 
     def get_ts(self) -> pd.Series:
