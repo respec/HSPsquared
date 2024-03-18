@@ -5,7 +5,7 @@ on:
   push:
     branches: [ "master" ]
   pull_request:
-    branches: [ "master", "develop-tests", "develop-specact-speed-eq" ]
+    branches: [ "master", "develop", "develop-specact" ]
 
 permissions:
   contents: read
