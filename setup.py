@@ -9,7 +9,7 @@ README = open("./README.md").read()
 
 
 setup(
-    name="HSPsquared",
+    name="hsp2",
     version=version,
     description="Hydrological Simulation Program - Python",
     long_description=README,
