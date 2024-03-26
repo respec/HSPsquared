@@ -69,7 +69,7 @@ def make_numba_dict(uci):
     ui = Dict.empty(key_type=types.unicode_type, value_type=types.float64)
     for name in set(uci.keys()) & {'FLAGS', 'PARAMETERS', 'STATES'}:
         for key, value in uci[name].items():
-            if type(value) in {int, float}:
+            if isinstance(value, (int, float)):
                 ui[key] = float(value)
     return ui
 

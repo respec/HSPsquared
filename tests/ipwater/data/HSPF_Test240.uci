@@ -1,0 +1,346 @@
+RUN
+
+GLOBAL
+  A basic UCI file with one IMPLND, PERLDN, RCHRES, and one input/output data file
+  START       2018/01/01 00:00  END    2018/12/31 24:00
+  RUN INTERP OUTPT LEVELS    8    0
+  RESUME     0 RUN     1                          UNITS    1
+END GLOBAL
+
+FILES
+<FILE>  <UN#>***<----FILE NAME------------------------------------------------->
+WDM1        1   HSPF_Test.wdm
+MESSU      25   HSPF_Test.ech
+           26   HSPF_Test220.out
+           40   Flow_Test.plt
+           41   HSPF_Test_Met.SEQ           
+BINO       27   HSPF_Test220.hbn
+END FILES
+
+OPN SEQUENCE
+    INGRP              INDELT 01:00
+      IMPLND       1
+      PERLND       1
+      RCHRES       1
+      COPY         1
+      PLTGEN       1
+    END INGRP
+END OPN SEQUENCE
+
+IMPLND
+  ACTIVITY
+*** <ILS >               Active Sections
+*** x -  x ATMP SNOW IWAT  SLD  IWG IQAL
+    1         0    0    1    0    0    0
+  END ACTIVITY
+
+  PRINT-INFO
+*** <ILS > ******** Print-flags ******** PIVL  PYR
+*** x -  x ATMP SNOW IWAT  SLD  IWG IQAL *********
+    1         4    4    3    4    4    4    1    9
+  END PRINT-INFO
+
+  BINARY-INFO
+*** <ILS > **** Binary-Output-flags **** PIVL  PYR
+*** x -  x ATMP SNOW IWAT  SLD  IWG IQAL *********
+    1         4    4    3    4    4    4    1    9
+  END BINARY-INFO
+
+
+  GEN-INFO
+***             Name             Unit-systems   Printer BinaryOut
+*** <ILS >                           t-series Engl Metr Engl Metr
+*** x -  x                            in  out
+    1     ImperviousLand               1    1    0   26   27    0
+  END GEN-INFO
+
+  IWAT-PARM1
+*** <ILS >        Flags
+*** x -  x CSNO RTOP  VRS  VNN RTLI
+    1         0    0    0    0    0
+  END IWAT-PARM1
+
+  IWAT-PARM2
+*** <ILS >      LSUR     SLSUR      NSUR     RETSC
+*** x -  x      (ft)                          (in)
+    1            100      0.02      0.05      0.15
+  END IWAT-PARM2
+
+
+  IWAT-PARM3
+*** <ILS >    PETMAX    PETMIN
+*** x -  x   (deg F)   (deg F)
+    1            40.       35.
+  END IWAT-PARM3
+
+  IWAT-STATE1
+*** <ILS >  IWATER state variables (inches)
+*** x -  x      RETS      SURS
+    1           0.01      0.01
+  END IWAT-STATE1
+
+END IMPLND
+
+RCHRES
+  ACTIVITY
+*** RCHRES  Active sections
+*** x -  x HYFG ADFG CNFG HTFG SDFG GQFG OXFG NUFG PKFG PHFG
+    1         1    0    0    0    0    0    0    0    0    0
+  END ACTIVITY
+
+  PRINT-INFO
+*** RCHRES  Printout level flags
+*** x -  x HYDR ADCA CONS HEAT  SED  GQL OXRX NUTR PLNK PHCB PIVL  PYR
+    1         3    4    4    4    4    4    4    4    4    4    1    9
+  END PRINT-INFO
+
+  BINARY-INFO
+*** RCHRES  Binary Output level flags
+*** x -  x HYDR ADCA CONS HEAT  SED  GQL OXRX NUTR PLNK PHCB PIVL  PYR
+    1         2    4    4    4    4    4    4    4    4    4    1    9
+  END BINARY-INFO
+
+  GEN-INFO
+***              Name        Nexits   Unit Systems   Printer      BinaryOut
+*** RCHRES                               t-series  Engl Metr LKFG Engl Metr
+*** x -  x                                 in  out
+    1     Demo Reach              1         1    1    0   26    0   27    0
+  END GEN-INFO
+
+  HYDR-PARM1
+***         Flags for HYDR section
+***RC HRES  VC A1 A2 A3  ODFVFG for each *** ODGTFG for each     FUNCT  for each
+*** x  - x  FG FG FG FG  possible   exit *** possible   exit     possible   exit
+    1        0  1  1  1    4  0  0  0  0       0  0  0  0  0       1  1  1  1  1
+  END HYDR-PARM1
+
+  HYDR-PARM2
+*** RCHRES      FTBU       LEN     DELTH     STCOR        KS      DB50
+*** x -  x             (miles)      (ft)      (ft)                (in)
+    1              1      0.10        10         0       0.5      0.01
+  END HYDR-PARM2
+
+  HYDR-INIT
+***         Initial conditions for HYDR section
+***RC HRES       VOL  CAT Initial value  of COLIND     initial  value  of OUTDGT
+*** x  - x     ac-ft      for each possible   exit  for each possible exit,ft3
+    1           20.0
+  END HYDR-INIT
+
+END RCHRES
+
+PERLND
+  ACTIVITY
+*** <PLS >               Active Sections                               ***
+*** x -  x ATMP SNOW PWAT  SED  PST  PWG PQAL MSTL PEST NITR PHOS TRAC ***
+    1         0    0    1    0    0    0    0    0    0    0    0    0
+  END ACTIVITY
+
+  PRINT-INFO
+*** < PLS>                       Print-flags                           PIVL  PYR
+*** x  - x ATMP SNOW PWAT  SED  PST  PWG PQAL MSTL PEST NITR PHOS TRAC
+    1         4    4    6    4    4    4    4    4    4    4    4    4    1    9
+  END PRINT-INFO
+
+  BINARY-INFO
+*** < PLS>               Binary Output Flags                           PIVL  PYR
+*** x  - x ATMP SNOW PWAT  SED  PST  PWG PQAL MSTL PEST NITR PHOS TRAC
+    1         4    4    6    4    4    4    4    4    4    4    4    4    1    9
+  END BINARY-INFO
+
+  GEN-INFO
+***             Name                  Unit-systems   Printer BinaryOut
+*** <PLS >                                t-series Engl Metr Engl Metr
+*** x -  x                                 in  out
+    1     Mixed Forest                      1    1    0    0   0    0
+  END GEN-INFO
+
+  PWAT-PARM1
+***<P LS >                   Flags
+*** x  - x CSNO RTOP UZFG  VCS  VUZ  VNN VIFW VIRC  VLE IFFC  HWT IRRG IFRD NCAN
+    1         0    1    1    1    0    0    0    0    0    1    0    0    0    0
+  END PWAT-PARM1
+
+  PWAT-PARM2
+*** < PLS>    FOREST      LZSN    INFILT      LSUR     SLSUR     KVARY     AGWRC
+*** x  - x                (in)   (in/hr)      (ft)              (1/in)   (1/day)
+    1              0      7.35     0.079        50    0.1548         1     0.993
+  END PWAT-PARM2
+
+  PWAT-PARM3
+*** < PLS>    PETMAX    PETMIN    INFEXP    INFILD    DEEPFR    BASETP    AGWETP
+*** x  - x   (deg F)   (deg F)
+    1            40.       35.        2.        2.      0.02      0.22      0.0
+  END PWAT-PARM3
+
+  PWAT-PARM4
+*** <PLS >     CEPSC      UZSN      NSUR     INTFW       IRC     LZETP
+*** x -  x      (in)      (in)                       (1/day)
+    1           0.01      0.85       0.4         3       0.7      0.73
+  END PWAT-PARM4
+
+  PWAT-STATE1
+*** < PLS>  PWATER state variables (in)
+*** x  - x      CEPS      SURS       UZS      IFWS       LZS      AGWS      GWVS
+    1         0.0462    0.0000    1.6075    0.0996    8.9629    2.8649    1.9555
+  END PWAT-STATE1
+
+  MON-INTERCEP
+*** <PLS >  Interception storage capacity at start of each month (in)
+*** x -  x  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC
+    1      0.09 0.10 0.10 0.14 0.17 0.18 0.18 0.18 0.17 0.15 0.12 0.10
+  END MON-INTERCEP
+  
+END PERLND
+
+FTABLES
+  FTABLE      1
+ rows cols                               ***
+    2    4
+     depth      area    volume  outflow1 ***
+       0.0       0.0         0         0
+       1.0      10.0      20.0     1000.
+  END FTABLE  1
+
+END FTABLES
+
+PLTGEN
+  PLOTINFO
+  <-range><fil><npt><nmn><lab><pyr><piv><typ> ***
+    # -  # FILE  NPT  NMN LABL  PYR PIVL TYPE ***
+    1        40    0    7    0    9    1    1
+  END PLOTINFO
+
+  GEN-LABELS
+  <-range><--------------- title ----------------> ***
+    # -  #  General Title                          ***
+    1       Average Output flow (cfs)
+  END GEN-LABELS
+
+  SCALING
+  <-range><--ymin--><--ymax--><--ivlin-><-thresh-> ***
+    # -  #      YMIN      YMAX     IVLIN    THRESH ***
+    1    7                 100        30   -1.0E32    
+  END SCALING
+
+  CURV-DATA
+  <-range>    <-----label----><lin><int><col> <tr> ***
+              Curve label      Line Intg  Col Tran ***
+    # -  #                     type  eqv code code ***
+    1         REACH01             0    0    1 AVER
+  END CURV-DATA
+
+  CURV-DATA
+  <-range>    <-----label----><lin><int><col> <tr> ***
+              Curve label      Line Intg  Col Tran ***
+    # -  #                     type  eqv code code ***
+    1         PERLND1_SURO        0    0    1 AVER
+  END CURV-DATA
+
+  CURV-DATA
+  <-range>    <-----label----><lin><int><col> <tr> ***
+              Curve label      Line Intg  Col Tran ***
+    # -  #                     type  eqv code code ***
+    1         PERLND1_IFWO        0    0    1 AVER
+  END CURV-DATA
+
+  CURV-DATA
+  <-range>    <-----label----><lin><int><col> <tr> ***
+              Curve label      Line Intg  Col Tran ***
+    # -  #                     type  eqv code code ***
+    1         PERLND1_AGWO        0    0    1 AVER
+  END CURV-DATA
+
+  CURV-DATA
+  <-range>    <-----label----><lin><int><col> <tr> ***
+              Curve label      Line Intg  Col Tran ***
+    # -  #                     type  eqv code code ***
+    1         IMPLND1_SURO        0    0    1 AVER
+  END CURV-DATA
+
+  CURV-DATA
+  <-range>    <-----label----><lin><int><col> <tr> ***
+              Curve label      Line Intg  Col Tran ***
+    # -  #                     type  eqv code code ***
+    1         PREC                0    0    1 
+  END CURV-DATA
+
+  CURV-DATA
+  <-range>    <-----label----><lin><int><col> <tr> ***
+              Curve label      Line Intg  Col Tran ***
+    # -  #                     type  eqv code code ***
+    1         PETINP              0    0    1 
+  END CURV-DATA
+
+END PLTGEN
+
+NETWORK
+<svol><o#> <sgrp> <smem><m#><-mfact--><tr> <tvol>< range> <tgrp> <tmem><m#> ***
+<-Volume-> <-Grp> <-Member-><--Mult-->Tran <-Target vols> <-Grp> <-Member-> ***
+<Name>   #        <Name> # #<-factor->strg <Name>   #   #        <Name> # # ***
+RCHRES   1 HYDR   RO                       PLTGEN   1     INPUT  MEAN   1
+PERLND   1 PWATER SURO                     PLTGEN   1     INPUT  MEAN   2
+PERLND   1 PWATER IFWO                     PLTGEN   1     INPUT  MEAN   3
+PERLND   1 PWATER AGWO                     PLTGEN   1     INPUT  MEAN   4
+IMPLND   1 IWATER SURO                     PLTGEN   1     INPUT  MEAN   5
+COPY     1 OUTPUT MEAN   1 1               PLTGEN   1     INPUT  MEAN   6
+COPY     1 OUTPUT MEAN   2 1               PLTGEN   1     INPUT  MEAN   7
+END NETWORK
+
+COPY
+  TIMESERIES
+  Copy-opn***
+*** x -  x  NPT  NMN
+    1         0    2
+  END TIMESERIES
+END COPY
+
+EXT SOURCES
+<-Volume-> <Member> SsysSgap<--Mult-->Tran <-Target vols> <-Grp> <-Member-> ***
+<Name>   x <Name> x tem strg<-factor->strg <Name>   x   x        <Name> x x ***
+WDM      1 PREC     ENGLZERO               IMPLND   1     EXTNL  PREC  
+WDM      2 HPET     ENGL                   IMPLND   1     EXTNL  PETINP
+WDM      1 PREC     ENGLZERO               PERLND   1     EXTNL  PREC  
+WDM      2 HPET     ENGL                   PERLND   1     EXTNL  PETINP
+WDM      1 PREC     ENGLZERO               RCHRES   1     EXTNL  PREC  
+WDM      2 HPET     ENGL                   RCHRES   1     EXTNL  POTEV 
+WDM      1 PREC     ENGLZERO               COPY     1     INPUT  MEAN   1  
+WDM      2 HPET     ENGL                   COPY     1     INPUT  MEAN   2
+END EXT SOURCES
+
+EXT TARGETS
+<-Volume-> <-Grp> <-Member-><--Mult-->Tran <-Volume-> <Member> Tsys Aggr Amd ***
+<Name>   x        <Name> x x<-factor->strg <Name>   x <Name>qf  tem strg strg***
+IMPLND   1 IWATER SURO   1 1               WDM1  9000 ISURO  1 METR      REPL
+RCHRES   1 HYDR   RO     1 1          AVER WDM1  9001 FLOW   1 ENGL AGGR REPL
+END EXT TARGETS
+
+
+SCHEMATIC
+<-Volume->                  <--Area-->     <-Volume->  <ML#> ***       <sb>
+<Name>   x                  <-factor->     <Name>   x        ***        x x
+IMPLND   1                          10     RCHRES   1      1
+PERLND   1                         100     RCHRES   1      2
+
+END SCHEMATIC
+
+
+  MASS-LINK        1
+<-Volume-> <-Grp> <-Member-><--Mult-->     <-Target vols> <-Grp> <-Member->  ***
+<Name>            <Name> x x<-factor->     <Name>                <Name> x x  ***
+IMPLND     IWATER SURO       0.0833333     RCHRES         INFLOW IVOL    
+  END MASS-LINK    1
+
+  MASS-LINK        2
+<-Volume-> <-Grp> <-Member-><--Mult-->     <-Target vols> <-Grp> <-Member->  ***
+<Name>            <Name> x x<-factor->     <Name>                <Name> x x  ***
+PERLND     PWATER PERO       0.0833333     RCHRES         INFLOW IVOL    
+  END MASS-LINK    2
+
+  MASS-LINK        3
+<-Volume-> <-Grp> <-Member-><--Mult-->     <-Target vols> <-Grp> <-Member->  ***
+<Name>            <Name> x x<-factor->     <Name>                <Name> x x  ***
+RCHRES     ROFLOW                          RCHRES         INFLOW         
+  END MASS-LINK    3
+  
+END RUN

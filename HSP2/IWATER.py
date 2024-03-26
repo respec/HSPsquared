@@ -30,22 +30,23 @@ def iwater(io_manager, siminfo, uci, ts):
 
     steps   = siminfo['steps']                  # number of simulation points
 
-    # insure defined, but not usable - just in case
-    for name in ('AIRTMP', 'PETINP', 'PREC', 'RAINF', 'SNOCOV', 'WYIELD'):
+    # missing flows are treated as zeros
+    for name in ('PETINP','PREC','SURLI',):
         if name not in ts:
-            ts[name] = full(steps, nan, dtype=float64)
-
-    # treat missing flows as zero flow
-    for name in ['SURLI']:           # RTLIFG = 1 requires this timeseries
-        if name not in ts:
-            ts[name] = zeros(steps, dtype=float64)
-    # Replace fixed parameters in HSPF with timeseries
-    for name in ['PETMAX', 'PETMIN']:
-        if name not in ts:
-            ts[name] = full(steps, uci['PARAMETERS'][name], dtype=float64)
+            ts[name] = zeros(steps)
+       
+    CSNOFG = int(uci.get('CSNOFG', 0))
+    if CSNOFG:
+        for name in ('RAINF', 'AIRTMP', 'SNOCOV', 'WYIELD'):
+            if name not in ts:
+                ts[name] = full(steps, nan, dtype=float64)
+        # Replace fixed parameters in HSPF with timeseries
+        for name in ('PETMAX', 'PETMIN'):
+            if name not in ts:
+                ts[name] = full(steps, uci['PARAMETERS'][name], dtype=float64)
 
     # process optional monthly arrays to return interpolated data or constant array
-    u = uci['PARAMETERS']
+    u = uci.get('PARAMETERS', {})
     if 'VRSFG' in u:
         ts['RETSC'] = initm(siminfo, uci, u['VRSFG'], 'MONTHLY_RETSC', u['RETSC'])
         ts['NSUR']  = initm(siminfo, uci, u['VNNFG'], 'MONTHLY_NSUR',  u['NSUR'])
@@ -86,39 +87,37 @@ def _iwater_(ui, ts):
     if uunits == 2:
         lsur = lsur * 3.28
 
-    RTLIFG = 0
-    if 'RTLIFG' in ui:
-        RTLIFG = int(ui['RTLIFG'])
-    CSNOFG = 0
-    if 'CSNOFG' in ui:
-        CSNOFG = int(ui['CSNOFG'])
-    RTOPFG = 0
-    if 'RTOPFG' in ui:
-        RTOPFG = int(ui['RTOPFG'])
-
+    RTLIFG = int(ui.get('RTLIFG', 0))
+    CSNOFG = int(ui.get('CSNOFG', 0))
+    RTOPFG = int(ui.get('RTOPFG', 0))
+    
     HRFG   = ts['HRFG'].astype(int64)
     HR1FG  = ts['HR1FG'].astype(int64)
     RETSC  = ts['RETSC']  # input parameter could be input monthly
     NSUR   = ts['NSUR']   # input parameter could be input monthly
-    AIRTMP = ts['AIRTMP'] # atemp
-    PETMAX = ts['PETMAX'] # input parameter
-    PETMIN = ts['PETMIN'] # input parameter
-    SNOCOV = ts['SNOCOV'] # snow
-    SURLI  = ts['SURLI']  # ext
     PETINP = ts['PETINP'] # ext
-    RAINF  = ts['RAINF']  # snow
-    WYIELD = ts['WYIELD'] # snow
     PREC   = ts['PREC']   # ext
+    SURLI  = ts['SURLI']
     if uunits == 2:
         RETSC = RETSC * 0.0394 # / 25.4
-        WYIELD = WYIELD * 0.0394 # / 25.4        ???  take to inches
-        PETMAX = (ts['PETMAX'] * 9./5.) + 32.
-        PETMIN = (ts['PETMIN'] * 9./5.) + 32.
+       
+    if CSNOFG:
+        AIRTMP = ts['AIRTMP'] # atemp # opt
+        PETMAX = ts['PETMAX'] # input parameter # opt
+        PETMIN = ts['PETMIN'] # input parameter # opt
+        SNOCOV = ts['SNOCOV'] # snow # opt
+        RAINF  = ts['RAINF']  # snow # opt
+        WYIELD = ts['WYIELD'] # snow # opt
+        PETADJ = ts['PETADJ'] = zeros(steps, dtype=float64)
+        if uunits == 2:
+            WYIELD = WYIELD * 0.0394 # / 25.4        ???  take to inches
+            PETMAX = (PETMAX * 9./5.) + 32.
+            PETMIN = (PETMIN * 9./5.) + 32.
+    
 
     # like MATLAB, much faster to preinitialize variables. Store in ts Dict
     ts['IMPEV'] = IMPEV = zeros(steps, dtype=float64)
     ts['PET']   = PET   = zeros(steps, dtype=float64)
-    ts['PETADJ']= PETADJ= zeros(steps, dtype=float64)
     ts['RETS']  = RETS  = zeros(steps, dtype=float64)
     ts['SUPY']  = SUPY  = zeros(steps, dtype=float64)
     ts['SURI']  = SURI  = zeros(steps, dtype=float64)
