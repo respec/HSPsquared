@@ -3,7 +3,7 @@
 The **[Hydrologic Simulation Program–Python (HSP2)](https://github.com/respec/HSPsquared)** watershed model is 
 is a port of the well-established [Hydrological Simulation Program - FORTRAN (HSPF)](https://www.epa.gov/ceam/hydrological-simulation-program-fortran-hspf), re-coded with modern scientific Python and data formats.
 
-HSP2 (pronouced "HSP-squared") is being developed by an open source team launched and led by RESPEC with internal funding and now in collaboration with LimnoTech and with additional support from the U.S. Army Corps of Engineers, Engineer Research and Development Center (ERDC), Environmental Laboratory.
+HSP2 (pronouced "HSP-squared") is being developed by an open source team launched and led by RESPEC with internal funding. Our list of collaborators is growing, now including LimnoTech and with additional support from the U.S. Army Corps of Engineers (Engineer Research and Development Center (ERDC), Environmental Laboratory), modelers at the Virginia Department of Environmental Quality, and others.  
 
 HSP2 currently supports all HSPF hydrology and detailed water quality modules. Support for specialty modules is currently in progress. See our [Release Notes](https://github.com/respec/HSPsquared/releases) for up-to-date details.
 
