@@ -58,7 +58,7 @@ from HSP2.om_sim_timer import *
 from HSP2.om_equation import *
 from HSP2.om_model_linkage import *
 from HSP2.om_special_action import *
-#from HSP2.om_data_matrix import *
+from HSP2.om_data_matrix import *
 from HSP2.om_model_broadcast import *
 #from HSP2.om_simple_channel import *
 #from HSP2.om_impoundment import *
