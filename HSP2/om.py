@@ -111,9 +111,8 @@ def state_load_om_python(state, io_manager, siminfo):
     # Load a function from code if it exists 
     if 'om_init_model' in dir(hsp2_local_py):
         hsp2_local_py.om_init_model(io_manager, siminfo, state['op_tokens'], state['state_paths'], state['state_ix'], state['dict_ix'], state['ts_ix'], state['model_object_cache'])
-    
 
-def state_load_dynamics_om(state, io_manager, siminfo):
+def state_initialize_om(state):
     # this function will check to see if any of the multiple paths to loading
     # dynamic operational model objects has been supplied for the model.
     # Grab globals from state for easy handling
@@ -124,6 +123,12 @@ def state_load_dynamics_om(state, io_manager, siminfo):
         op_tokens, state_paths, state_ix, dict_ix, model_object_cache, ts_ix
     )
     state['op_tokens'], state['model_object_cache'] = op_tokens, model_object_cache 
+
+
+def state_load_dynamics_om(state, io_manager, siminfo):
+    # this function will check to see if any of the multiple paths to loading
+    # dynamic operational model objects has been supplied for the model.
+    # state_initialize_om(state) must have been called already
     # load dynamic coding libraries if defined by user
     # note: this used to be inside this function, I think that the loaded module should be no problem 
     #       occuring within this function call, since this function is also called from another runtime engine
@@ -137,11 +142,16 @@ def state_load_dynamics_om(state, io_manager, siminfo):
 def state_om_model_root_object(state, siminfo):
     # Create the base that everything is added to. this object does nothing except host the rest.
     if 'model_root_object' not in state.keys():
-        model_root_object = ModelObject("") 
+        model_root_object = ModelObject("") # we give this no name so that it does not interfer with child paths like timer, year, etc (i.e. /STATE/year, ...)
         state['model_root_object'] = model_root_object
         # set up the timer as the first element 
     if '/STATE/timer' not in state['state_paths'].keys():
         timer = SimTimer('timer', model_root_object, siminfo)
+    # add base object for the HSP2 domains and other things already added to state so they can be influenced
+    for (seg_name,seg_path) in state['hsp_segments'].items():
+        if (seg_path not in state['model_object_cache'].keys()):
+            # Create an object shell for this
+            new_object = ModelObject(seg_name)
 
 
 def state_om_model_run_prep(state, io_manager, siminfo):
@@ -449,6 +459,24 @@ def model_order_recursive(model_object, model_object_cache, model_exec_list, mod
             return
     # now after loading input dependencies, add this to list
     model_exec_list.append(model_object.ix)
+
+def model_domain_dependencies(state, domain, ep_list):
+    """
+    Given an hdf5 style path to a domain, and a list of variable endpoints in that domain, 
+    Find all model elements that influence the endpoints state
+    Returns them as a sorted list of index values suitable as a model_exec_list
+    """
+    mello = []
+    for ep in ep_list:
+        mel = []
+        mtl = []
+        # if the given element is NOT in model_object_cache, then nothing is acting on it, so we return empty list
+        if (domain + '/' + ep) in state['model_object_cache'].keys():
+            endpoint = state['model_object_cache'][domain + '/' + ep]
+            model_order_recursive(endpoint, state['model_object_cache'], mel, mtl)
+            mello = mello + mel
+    
+    return mello
 
 def save_object_ts(io_manager, siminfo, op_tokens, ts_ix, ts):
     # Decide on using from utilities.py:

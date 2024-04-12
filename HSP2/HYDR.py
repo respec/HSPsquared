@@ -148,12 +148,12 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
         from hsp2_local_py import state_step_hydr
     else:
         from HSP2.state_fn_defaults import state_step_hydr
+    # initialize the hydr paths in case they don't already reside here
+    hydr_init_ix(state, state['domain'])
     # must split dicts out of state Dict since numba cannot handle mixed-type nested Dicts
     state_ix, dict_ix, ts_ix = state['state_ix'], state['dict_ix'], state['ts_ix']
     state_paths = state['state_paths']
     model_exec_list = state['model_exec_list'] # order of special actions and other dynamic ops
-    # initialize the hydr paths in case they don't already reside here
-    hydr_init_ix(state_ix, state_paths, state['domain'])
     op_tokens = state['op_tokens']
     #######################################################################################
 

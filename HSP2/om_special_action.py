@@ -36,7 +36,15 @@ class SpecialAction(ModelObject):
         self.timer_ix = self.handle_prop(model_props, 'when', False, 1) # when to begin the first attempt at action
         self.ctr_ix = self.constant_or_path('ctr', 0) # this initializes the counter for how many times an action has been performed
         # now add the state value that we are operating on (the target) as an input, so that this gets executed AFTER this is set initially
-        self.add_input('op1', ('/STATE/' + self.op_type + '_' + self.op_type[0] + str(self.range1).zfill(3) + "/" + self.vari ), 2, True )
+        #self.add_input('op1', ('/STATE/' + self.op_type + '_' + self.op_type[0] + str(self.range1).zfill(3) + "/" + self.vari ), 2, True )
+        # or, should we set up a register for the target 
+        domain = self.model_object_cache[('/STATE/' + self.op_type + '_' + self.op_type[0] + str(self.range1).zfill(3) )]
+        var_register = self.insure_register(self.vari, 0.0, domain, False)
+        #print("Created register", var_register.name, "with path", var_register.state_path)
+        # add already created objects as inputs
+        var_register.add_object_input(self.name, self, 1)
+        self.op1_ix = var_register.ix
+
         # @tbd: support time enable/disable
         #       - check if time ops have been set and add as inputs like "year", or "month", etc could give explicit path /STATE/year ...
         #       - add the time values to match as constants i.e. self.constant_or_path()
@@ -52,7 +60,7 @@ class SpecialAction(ModelObject):
         if (prop_name == 'when'):
            # when to perform this?  timestamp or time-step index
            prop_val = 0
-           si = ModelObject.model_object_cache['/STATE/timer']
+           si = self.model_object_cache[self.find_var_path('timer')]
            if len(model_props['YR']) > 0:
                # translate date to equivalent model step
                datestring = model_props['YR'] + '-' + model_props['MO'] + '-' + \
@@ -105,7 +113,7 @@ class SpecialAction(ModelObject):
     def tokenize(self):
         # call parent method to set basic ops common to all 
         super().tokenize() # sets self.ops = op_type, op_ix
-        self.ops = self.ops + [self.inputs_ix['op1'], self.opid, self.op2_ix, self.timer_ix, self.ctr_ix, self.num]
+        self.ops = self.ops + [self.op1_ix, self.opid, self.op2_ix, self.timer_ix, self.ctr_ix, self.num]
         # @tbd: check if time ops have been set and tokenize accordingly
     
     def add_op_tokens(self):

@@ -63,14 +63,15 @@ class ModelObject:
         return op_tokens
     
     @staticmethod
-    def runnable_op_list(op_tokens, meo):
+    def runnable_op_list(op_tokens, meo, debug = False):
         # only return those objects that do something at runtime
         rmeo = []
         run_ops = {}
         for ops in ModelObject.op_tokens:
             if ops[0] in ModelObject.runnables:
                 run_ops[ops[1]] = ops
-                print("Found runnable", ops[1], "type", ops[0])
+                if debug == True:
+                    print("Found runnable", ops[1], "type", ops[0])
         for ix in meo:
             if ix in run_ops.keys():
                 rmeo.append(ix)
@@ -323,7 +324,7 @@ class ModelObject:
         #   or a variable data and should handle them accordingly  
         return True
     
-    def insure_register(self, var_name, default_value, register_container, register_path = False):
+    def insure_register(self, var_name, default_value, register_container, register_path = False, is_accumulator = True):
         # we send with local_only = True so it won't go upstream 
         if register_path == False:
             register_path = register_container.find_var_path(var_name, True)
@@ -331,7 +332,11 @@ class ModelObject:
             # create a register as a placeholder for the data at the hub path 
             # in case there are no senders, or in the case of a timeseries logger, we need to register it so that its path can be set to hold data
             #print("Creating a register for data for hub ", register_container.name, "(", register_container.state_path, ")", " var name ",var_name)
-            var_register = ModelRegister(var_name, register_container, default_value, register_path)
+            if (is_accumulator == True):
+                var_register = ModelRegister(var_name, register_container, default_value, register_path)
+            else:
+                # this is just a standard numerical data holder so set up a constant
+                var_register = ModelConstant(var_name, register_container, default_value, register_path)
         else:
             var_register = self.model_object_cache[register_path]
         return var_register
