@@ -70,7 +70,7 @@ class ModelLinkage(ModelObject):
         # do we need to do this, or just trust it exists?
         #self.insure_path(self, self.right_path)
         # the left path, if this is type 4 or 5, is a push, so we must require it 
-        if ( (self.link_type == 4) or (self.link_type == 5) ):
+        if ( (self.link_type == 4) or (self.link_type == 5) or (self.link_type == 6) ):
             self.insure_path(self.left_path)
         self.paths_found = True
         return 
@@ -88,7 +88,7 @@ class ModelLinkage(ModelObject):
             else:
                 print("Error: link ", self.name, "does not have a valid source path")
             #print(self.name,"tokenize() result", self.ops)
-        if (self.link_type == 4) or (self.link_type == 5):
+        if (self.link_type == 4) or (self.link_type == 5) or (self.link_type == 6):
             # we push to the remote path in this one 
             left_ix = get_state_ix(self.state_ix, self.state_paths, self.left_path)
             right_ix = get_state_ix(self.state_ix, self.state_paths, self.right_path)
@@ -107,6 +107,7 @@ def step_model_link(op_token, state_ix, ts_ix, step):
         return True
     elif op_token[3] == 2:
         state_ix[op_token[1]] = state_ix[op_token[2]]
+        return True
     elif op_token[3] == 3:
         # read from ts variable TBD
         # state_ix[op_token[1]] = ts_ix[op_token[2]][step]
@@ -117,29 +118,9 @@ def step_model_link(op_token, state_ix, ts_ix, step):
         return True
     elif op_token[3] == 5:
         # overwrite remote variable state with value in another paths state
-        if step == 2:
-            print("Setting state_ix[", op_token[2], "] =", state_ix[op_token[4]])
         state_ix[op_token[2]] = state_ix[op_token[4]]
         return True
-
-
-def test_model_link(op_token, state_ix, ts_ix, step):
-    if op_token[3] == 1:
-        return True
-    elif op_token[3] == 2:
-        state_ix[op_token[1]] = state_ix[op_token[2]]
-    elif op_token[3] == 3:
-        # read from ts variable TBD
-        # state_ix[op_token[1]] = ts_ix[op_token[2]][step]
-        return True
-    elif op_token[3] == 4:
-        print("Remote Broadcast accumulator type link.")
-        print("Setting op ID", str(op_token[2]), "to value from ID", str(op_token[4]), "with value of ")
-        # add value in local state to the remote broadcast hub+register state 
-        state_ix[op_token[2]] = state_ix[op_token[2]] + state_ix[op_token[4]]
-        print(str(state_ix[op_token[2]]) + " = ", str(state_ix[op_token[2]]) + "+" + str(state_ix[op_token[4]]))
-        return True
-    elif op_token[3] == 5:
-        # push value in local state to the remote broadcast hub+register state 
-        state_ix[op_token[2]] = state_ix[op_token[4]]
+    elif op_token[3] == 6:
+        # set value in a timerseries
+        ts_ix[op_token[2]][step] = state_ix[op_token[4]] 
         return True

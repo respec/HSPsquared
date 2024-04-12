@@ -991,4 +991,12 @@ GENER    2 OUTPUT TIMSER          1.1      DISPLY   4     INPUT  TIMSER
 RCHRES   5 HYDR   ROVOL          12.1      PLTGEN   1     INPUT  MEAN   2
 END NETWORK
 
+SPEC-ACTIONS
+*** test special actions
+  RCHRES 5                                RSED    4       +=  2.50E+05
+  RCHRES 5                                RSED    5       +=  6.89E+05
+  RCHRES 5                                RSED    6       +=  4.01E+05
+END SPEC-ACTIONS
+
+
 END RUN

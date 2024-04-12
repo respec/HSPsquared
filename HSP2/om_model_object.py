@@ -63,14 +63,15 @@ class ModelObject:
         return op_tokens
     
     @staticmethod
-    def runnable_op_list(op_tokens, meo):
+    def runnable_op_list(op_tokens, meo, debug = False):
         # only return those objects that do something at runtime
         rmeo = []
         run_ops = {}
         for ops in ModelObject.op_tokens:
             if ops[0] in ModelObject.runnables:
                 run_ops[ops[1]] = ops
-                print("Found runnable", ops[1], "type", ops[0])
+                if debug == True:
+                    print("Found runnable", ops[1], "type", ops[0])
         for ix in meo:
             if ix in run_ops.keys():
                 rmeo.append(ix)
@@ -322,6 +323,23 @@ class ModelObject:
         #   and should also handle deciding if this is a constant, like a numeric value 
         #   or a variable data and should handle them accordingly  
         return True
+    
+    def insure_register(self, var_name, default_value, register_container, register_path = False, is_accumulator = True):
+        # we send with local_only = True so it won't go upstream 
+        if register_path == False:
+            register_path = register_container.find_var_path(var_name, True)
+        if (register_path == False) or (register_path not in self.model_object_cache.keys()):
+            # create a register as a placeholder for the data at the hub path 
+            # in case there are no senders, or in the case of a timeseries logger, we need to register it so that its path can be set to hold data
+            #print("Creating a register for data for hub ", register_container.name, "(", register_container.state_path, ")", " var name ",var_name)
+            if (is_accumulator == True):
+                var_register = ModelRegister(var_name, register_container, default_value, register_path)
+            else:
+                # this is just a standard numerical data holder so set up a constant
+                var_register = ModelConstant(var_name, register_container, default_value, register_path)
+        else:
+            var_register = self.model_object_cache[register_path]
+        return var_register
         
     def tokenize(self):
         # renders tokens for high speed execution
@@ -382,9 +400,46 @@ class ModelConstant(ModelObject):
         req_props.extend(['value'])
         return req_props
 
+
+"""
+The class ModelRegister is for storing push values.
+Behavior is to zero each timestep.  This could be amended later.
+Maybe combined with stack behavior?  Or accumulator?
+"""
+class ModelRegister(ModelConstant):
+    def __init__(self, name, container = False, value = 0.0, state_path = False):
+        super(ModelRegister, self).__init__(name, container, value, state_path)
+        self.optype = 12 # 
+        # self.state_ix[self.ix] = self.default_value
+    
+    def required_properties():
+        req_props = super(ModelConstant, ModelConstant).required_properties()
+        req_props.extend(['value'])
+        return req_props
+
 # njit functions for runtime
+@njit
+def pre_step_register(op, state_ix):
+    ix = op[1]
+    #print("Resetting register", ix,"to zero")
+    state_ix[ix] = 0.0
+    return
+
+# Note: ModelConstant has not runtime execution
 
 @njit
 def exec_model_object( op, state_ix, dict_ix):
     ix = op[1]
     return 0.0
+
+
+# njit functions for end of model run
+@njit
+def finish_model_object(op_token, state_ix, ts_ix):
+    return
+
+
+@njit
+def finish_register(op_token, state_ix, ts_ix):
+    # todo: push the values of ts_ix back to the hdf5? or does this happen in larger simulation as it is external to OM?
+    return

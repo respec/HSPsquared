@@ -88,15 +88,19 @@ def sedtrn(io_manager, siminfo, uci, ts, state):
 	# else:
 	# 	from HSP2.state_fn_defaults import state_step_hydr
 	# must split dicts out of state Dict since numba cannot handle mixed-type nested Dicts
+	# initialize the sedtrn paths in case they don't already reside here
+	sedtrn_init_ix(state, state['domain'])
 	state_ix, dict_ix, ts_ix = state['state_ix'], state['dict_ix'], state['ts_ix']
 	state_paths = state['state_paths']
-	# initialize the sedtrn paths in case they don't already reside here
-	sedtrn_init_ix(state_ix, state_paths, state['domain'])
 	op_tokens = state['op_tokens']
+	# Aggregate the list of all SEDTRN end point dependencies
+	ep_list = ['RSED4', 'RSED5', 'RSED6']
+	model_exec_list = model_domain_dependencies(state, state_info['domain'], ep_list)
+	model_exec_list = np.asarray(model_exec_list, dtype="i8") # format for use in numba
 	#######################################################################################
 
 	############################################################################
-	errors = _sedtrn_(ui, ts, state_info, state_paths, state_ix, dict_ix, ts_ix, op_tokens)  # run SEDTRN simulation code
+	errors = _sedtrn_(ui, ts, state_info, state_paths, state_ix, dict_ix, ts_ix, op_tokens, model_exec_list)  # run SEDTRN simulation code
 	############################################################################
 
 	if nexits > 1:
@@ -118,7 +122,7 @@ def sedtrn(io_manager, siminfo, uci, ts, state):
 	return errors, ERRMSGS
 
 @njit(cache=True)
-def _sedtrn_(ui, ts, state_info, state_paths, state_ix, dict_ix, ts_ix, op_tokens):
+def _sedtrn_(ui, ts, state_info, state_paths, state_ix, dict_ix, ts_ix, op_tokens, model_exec_list):
 	''' Simulate behavior of inorganic sediment'''
 	errorsV = zeros(int(ui['errlen'])).astype(int64)
 
@@ -336,7 +340,7 @@ def _sedtrn_(ui, ts, state_info, state_paths, state_ix, dict_ix, ts_ix, op_token
 		state_ix[rsed5_ix] = silt_wt_rsed5
 		state_ix[rsed6_ix] = clay_wt_rsed6
 		if (state_info['state_step_om'] == 'enabled'):
-			step_model(op_tokens[0], op_tokens, state_ix, dict_ix, ts_ix, loop)  # traditional 'ACTIONS' done in here
+			step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, loop)  # traditional 'ACTIONS' done in here
 			# Do write-backs for editable STATE variables
 			sand_wt_rsed4 = state_ix[rsed4_ix]
 			silt_wt_rsed5 = state_ix[rsed5_ix]

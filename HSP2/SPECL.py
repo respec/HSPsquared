@@ -13,13 +13,6 @@ import h5py
 def specl_load_actions(state, io_manager, siminfo):
     if 'ACTIONS' in state['specactions']:
         dc = state['specactions']['ACTIONS']
-        #print(dc.index)
-        #print("speca entry 0:0", dc[0:0])
-        #print("speca entry 0:1", dc[0:1])
-        #print("speca entry 1:2", dc[1:2])
-        #print("speca entry 0:", dc[0:])
-        #print("speca entry 1:", dc[1:])
-        #print("speca entry 1:1", dc[1:1])
         for ix in dc.index:
             # add the items to the state['model_data'] dict
             speca = dc[ix:(ix+1)]

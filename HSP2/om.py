@@ -55,11 +55,11 @@ def is_float_digit(n: str) -> bool:
 # Import Code Classes
 from HSP2.om_model_object import *
 from HSP2.om_sim_timer import *
-#from HSP2.om_equation import *
+from HSP2.om_equation import *
 from HSP2.om_model_linkage import *
 from HSP2.om_special_action import *
-#from HSP2.om_data_matrix import *
-#from HSP2.om_model_broadcast import *
+from HSP2.om_data_matrix import *
+from HSP2.om_model_broadcast import *
 #from HSP2.om_simple_channel import *
 #from HSP2.om_impoundment import *
 from HSP2.utilities import versions, get_timeseries, expand_timeseries_names, save_timeseries, get_gener_timeseries
@@ -78,7 +78,6 @@ def init_om_dicts():
 def state_load_om_json(state, io_manager, siminfo):
     # - model objects defined in file named '[model h5 base].json -- this will populate an array of object definitions that will 
     #   be loadable by "model_loader_recursive()"
-    model_data = state['model_data']
     # JSON file would be in same path as hdf5
     hdf5_path = io_manager._input.file_path
     (fbase, fext) = os.path.splitext(hdf5_path)
@@ -90,8 +89,10 @@ def state_load_om_json(state, io_manager, siminfo):
         jfile = open(fjson)
         json_data = json.load(jfile)
         # dict.update() combines the arg dict with the base
-        model_data.update(json_data)
-    state['model_data'] = model_data
+        state['model_data'].update(json_data)
+    # merge in the json siminfo data
+    if 'siminfo' in state['model_data'].keys():
+        siminfo.update(state['model_data']['siminfo'])
     return
 
 def state_load_om_python(state, io_manager, siminfo):
@@ -110,9 +111,8 @@ def state_load_om_python(state, io_manager, siminfo):
     # Load a function from code if it exists 
     if 'om_init_model' in dir(hsp2_local_py):
         hsp2_local_py.om_init_model(io_manager, siminfo, state['op_tokens'], state['state_paths'], state['state_ix'], state['dict_ix'], state['ts_ix'], state['model_object_cache'])
-    
 
-def state_load_dynamics_om(state, io_manager, siminfo):
+def state_initialize_om(state):
     # this function will check to see if any of the multiple paths to loading
     # dynamic operational model objects has been supplied for the model.
     # Grab globals from state for easy handling
@@ -123,6 +123,12 @@ def state_load_dynamics_om(state, io_manager, siminfo):
         op_tokens, state_paths, state_ix, dict_ix, model_object_cache, ts_ix
     )
     state['op_tokens'], state['model_object_cache'] = op_tokens, model_object_cache 
+
+
+def state_load_dynamics_om(state, io_manager, siminfo):
+    # this function will check to see if any of the multiple paths to loading
+    # dynamic operational model objects has been supplied for the model.
+    # state_initialize_om(state) must have been called already
     # load dynamic coding libraries if defined by user
     # note: this used to be inside this function, I think that the loaded module should be no problem 
     #       occuring within this function call, since this function is also called from another runtime engine
@@ -133,30 +139,47 @@ def state_load_dynamics_om(state, io_manager, siminfo):
     state_load_om_json(state, io_manager, siminfo)
     return
 
-def state_om_model_run_prep(state, io_manager, siminfo):
+def state_om_model_root_object(state, siminfo):
     # Create the base that everything is added to. this object does nothing except host the rest.
-    model_root_object = ModelObject("") 
-    # set up the timer as the first element 
-    timer = SimTimer('timer', model_root_object, siminfo)
-    
+    if 'model_root_object' not in state.keys():
+        model_root_object = ModelObject("") # we give this no name so that it does not interfer with child paths like timer, year, etc (i.e. /STATE/year, ...)
+        state['model_root_object'] = model_root_object
+        # set up the timer as the first element 
+    if '/STATE/timer' not in state['state_paths'].keys():
+        timer = SimTimer('timer', model_root_object, siminfo)
+    # add base object for the HSP2 domains and other things already added to state so they can be influenced
+    for (seg_name,seg_path) in state['hsp_segments'].items():
+        if (seg_path not in state['model_object_cache'].keys()):
+            # Create an object shell for this
+            new_object = ModelObject(seg_name)
+
+
+def state_om_model_run_prep(state, io_manager, siminfo):
+    # insure model base is set
+    state_om_model_root_object(state, siminfo)
     # now instantiate and link objects
     # state['model_data'] has alread been prepopulated from json, .py files, hdf5, etc.
+    model_root_object = state['model_root_object']
     model_loader_recursive(state['model_data'], model_root_object)
     print("Loaded objects & paths: insures all paths are valid, connects models as inputs")
     # both state['model_object_cache'] and the model_object_cache property of the ModelObject class def 
     # will hold a global repo for this data this may be redundant?  They DO point to the same datset?
     # since this is a function that accepts state as an argument and these were both set in state_load_dynamics_om
     # we can assume they are there and functioning
-    model_object_cache = state['model_object_cache']
+    if 'model_object_cache' in state.keys():
+        model_object_cache = state['model_object_cache']
+    else:
+        model_object_cache = ModelObject.model_object_cache
     model_path_loader(model_object_cache)
     # len() will be 1 if we only have a simtimer, but > 1 if we have a river being added
     model_exec_list = []
     # put all objects in token form for fast runtime execution and sort according to dependency order
     print("Tokenizing models")
+    if 'ops_data_type' in siminfo.keys():
+        ModelObject.ops_data_type = siminfo['ops_data_type'] # allow override of dat astructure settings
     ModelObject.op_tokens = ModelObject.make_op_tokens(max(ModelObject.state_ix.keys()) + 1)
     model_tokenizer_recursive(model_root_object, model_object_cache, model_exec_list)
     op_tokens = ModelObject.op_tokens
-    print("op_tokens has", len(op_tokens),"elements")
     # model_exec_list is the ordered list of component operations
     #print("model_exec_list(", len(model_exec_list),"items):", model_exec_list)
     # This is used to stash the model_exec_list in the dict_ix, this might be slow, need to verify.
@@ -165,10 +188,18 @@ def state_om_model_run_prep(state, io_manager, siminfo):
     state['model_object_cache'] = model_object_cache
     state['model_exec_list'] = np.asarray(model_exec_list, dtype="i8") 
     if ModelObject.ops_data_type == 'ndarray':
-        state['state_ix'] = np.asarray(list(state['state_ix'].values()), dtype="float64")
+        state_keyvals = np.asarray(zeros(max(ModelObject.state_ix.keys()) + 1), dtype="float32")
+        for ix, val in ModelObject.state_ix.items():
+            state_keyvals[ix] = val
+        state['state_ix'] = state_keyvals
+    else:
+        state['state_ix'] = ModelObject.state_ix
     state['op_tokens'] = op_tokens 
     if len(op_tokens) > 0:
         state['state_step_om'] = 'enabled' 
+    print("op_tokens is type", type(op_tokens))
+    print("state_ix is type", type(state['state_ix']))
+    print("op_tokens has", len(op_tokens),"elements, with ", len(model_exec_list),"executable elements")
     return
 
 # model class reader
@@ -271,6 +302,11 @@ def model_class_translate(model_props, object_class):
     if object_class == 'hydroImpSmall':
         model_props['object_class'] = 'Impoundment'
         print("Handling hydroImpSmall as Impoundment")
+    # now handle disabled classes - this is temporary to prevent having to comment and uncomment
+    disabled_classes = {'SimpleChannel', 'Impoundment', 'DataMatrix', 'dataMatrix'}
+    if model_props['object_class'] in disabled_classes:
+        print("Disabling class", model_props['object_class'], 'rendering as ModelObject')
+        model_props['object_class'] = 'ModelObject'
 
 def model_loader_recursive(model_data, container):
     k_list = model_data.keys()
@@ -424,6 +460,24 @@ def model_order_recursive(model_object, model_object_cache, model_exec_list, mod
     # now after loading input dependencies, add this to list
     model_exec_list.append(model_object.ix)
 
+def model_domain_dependencies(state, domain, ep_list):
+    """
+    Given an hdf5 style path to a domain, and a list of variable endpoints in that domain, 
+    Find all model elements that influence the endpoints state
+    Returns them as a sorted list of index values suitable as a model_exec_list
+    """
+    mello = []
+    for ep in ep_list:
+        mel = []
+        mtl = []
+        # if the given element is NOT in model_object_cache, then nothing is acting on it, so we return empty list
+        if (domain + '/' + ep) in state['model_object_cache'].keys():
+            endpoint = state['model_object_cache'][domain + '/' + ep]
+            model_order_recursive(endpoint, state['model_object_cache'], mel, mtl)
+            mello = mello + mel
+    
+    return mello
+
 def save_object_ts(io_manager, siminfo, op_tokens, ts_ix, ts):
     # Decide on using from utilities.py:
     # - save_timeseries(io_manager, ts, savedict, siminfo, saveall, operation, segment, activity, compress=True)
@@ -447,7 +501,7 @@ def pre_step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
     for i in model_exec_list:
         if op_tokens[i][0] == 12:
             # register type data (like broadcast accumulators) 
-            pass#pre_step_register(op_tokens[i], state_ix, dict_ix)
+            pre_step_register(op_tokens[i], state_ix)
     return
 
 @njit
@@ -467,7 +521,7 @@ def step_one(op_tokens, ops, state_ix, dict_ix, ts_ix, step, debug = 0):
     if debug == 1:
         print("DEBUG: Operator ID", ops[1], "is op type", ops[0])
     if ops[0] == 1:
-        pass #step_equation(ops, state_ix)
+        step_equation(ops, state_ix)
     elif ops[0] == 2:
         # todo: this should be moved into a single function, 
         # with the conforming name step_matrix(op_tokens, ops, state_ix, dict_ix)
@@ -500,40 +554,14 @@ def step_one(op_tokens, ops, state_ix, dict_ix, ts_ix, step, debug = 0):
 
 @njit
 def step_model_test(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step, debug_step = -1):
-    val = 0
     for i in model_exec_list:
         ops = op_tokens[i]
+        val = 0
         if (step == debug_step):
             print("Exec'ing step ", step, " model ID", i)
         # op_tokens is passed in for ops like matrices that have lookups from other 
         # locations.  All others rely only on ops 
-        # todo: decide if all step_[class() functions should set value in state_ix instead of returning value?
-        val = 0
-        if ops[0] == 1:
-            step_equation(ops, state_ix)
-        elif ops[0] == 2:
-            # todo: this should be moved into a single function, 
-            # with the conforming name step_matrix(op_tokens, ops, state_ix, dict_ix)
-            if (ops[1] == ops[2]):
-                # this insures a matrix with variables in it is up to date 
-                # only need to do this if the matrix data and matrix config are on same object
-                # otherwise, the matrix data is an input and has already been evaluated
-                state_ix[ops[1]] = exec_tbl_values(ops, state_ix, dict_ix)
-            if (ops[3] > 0):
-                # this evaluates a single value from a matrix if the matrix is configured to do so.
-                state_ix[ops[1]] = exec_tbl_eval(op_tokens, ops, state_ix, dict_ix)
-        elif ops[0] == 3:
-            step_model_link(ops, state_ix, ts_ix, step)
-            continue
-        elif ops[0] == 5:
-            step_sim_timer(ops, state_ix, dict_ix, ts_ix, step)
-        elif ops[0] == 9:
-            continue
-        elif ops[0] == 13:
-            step_simple_channel(ops, state_ix, dict_ix, step)
-        # Op 100 is Basic ACTION in Special Actions
-        elif ops[0] == 100:
-            step_special_action(ops, state_ix, dict_ix, step)
+        step_one(op_tokens, op_tokens[i], state_ix, dict_ix, ts_ix, step, 0)
     return 
 
 @njit
@@ -557,16 +585,6 @@ def step_model_pcode(model_exec_list, op_tokens, state_info, state_paths, state_
 def post_step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
     return 
 
-@njit 
-def test_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
-    val = 0
-    for i in model_exec_list:
-        print(i)
-        print(op_tokens[i][0])
-        print(op_tokens[i])
-        step_one(op_tokens, op_tokens[i], state_ix, dict_ix, ts_ix, step, 0)
-    return 
-
 def step_object(thisobject, step):
     # this calls the step for a given model object and timestep
     # this is a workaround since the object method ModelObject.step() fails to find the step_one() function ?
@@ -581,20 +599,11 @@ def pre_step_test(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
     #    op = op_tokens[i]
         if ops[0] == 12:
             # register type data (like broadcast accumulators) 
-            pre_step_register(ops, state_ix, dict_ix)
-            continue
+            pre_step_register(ops, state_ix)
+            #continue
         #elif ops[0] == 1:
         #    # register type data (like broadcast accumulators) 
         #    continue
-    return
-
-@njit
-def test_perf(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
-#    for i in model_exec_list:
-#        ops = op_tokens[i]
-    for ops in op_tokens:
-        #step_one(op_tokens, ops, state_ix, dict_ix, ts_ix, step)
-        continue
     return
 
 @njit
@@ -602,7 +611,7 @@ def iterate_perf(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, steps, de
     checksum = 0.0
     for step in range(steps):
         pre_step_test(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step)
-        step_model_test(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step, debug_step)
+        #step_model_test(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step, debug_step)
     #print("Steps completed", step)
     return checksum
 
