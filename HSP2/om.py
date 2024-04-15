@@ -52,6 +52,19 @@ def is_float_digit(n: str) -> bool:
     except ValueError:
         return False
 
+def model_element_paths(mel, state):
+    """
+    Informational. If given a list of state_ix keys, shows the operators local name and state_path
+    """
+    ixn = 1
+    for ix in mel:
+        ip = get_ix_path(state['state_paths'], ix)
+        im = state['model_object_cache'][ip]
+        print(ixn, ":", im.name, "->", im.state_path, '=', im.get_state())
+        ixn = ixn + 1
+    return
+
+
 # Import Code Classes
 from HSP2.om_model_object import *
 from HSP2.om_sim_timer import *
@@ -521,7 +534,7 @@ def step_one(op_tokens, ops, state_ix, dict_ix, ts_ix, step, debug = 0):
     if debug == 1:
         print("DEBUG: Operator ID", ops[1], "is op type", ops[0])
     if ops[0] == 1:
-        step_equation(ops, state_ix)
+        pass #step_equation(ops, state_ix)
     elif ops[0] == 2:
         # todo: this should be moved into a single function, 
         # with the conforming name step_matrix(op_tokens, ops, state_ix, dict_ix)

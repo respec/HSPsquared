@@ -35,8 +35,16 @@ state_load_dynamics_om(state, io_manager, siminfo) # operational model for custo
 state_om_model_run_prep(state, io_manager, siminfo) # this creates all objects from the UCI and previous loads
 # state['model_root_object'].find_var_path('RCHRES_R001')
 
+# Aggregate the list of all SEDTRN end point dependencies
+domain = '/STATE/RCHRES_R005'
+ep_list = ['RSED4', 'RSED5', 'RSED6']
+mello = model_domain_dependencies(state, domain, ep_list)
+print("Dependency ordered execution for RSED constants and runnables influencing", domain, "=", mello)
+mel_runnable = ModelObject.runnable_op_list(state['op_tokens'], mello)
+print("Dependency ordered execution of RSED runnables only for", domain, "=", mel_runnable)
 
-model_order_recursive(specl2, state['model_object_cache'], mel, mtl)
+
+#### Extra testing output
 def mel_path(mel, state):
     ixn = 1
     for ix in mel:
@@ -57,13 +65,6 @@ mel_runnable = ModelObject.runnable_op_list(state['op_tokens'], mel)
 print("Dependency ordered execution of runnables only for", endpoint.name)
 mel_path(mel_runnable, state)
 
-# Aggregate the list of all SEDTRN end point dependencies
-domain = '/STATE/RCHRES_R005'
-ep_list = ['RSED4', 'RSED5', 'RSED6']
-mello = model_domain_dependencies(state, domain, ep_list)
-print("Dependency ordered execution for RSED constants and runnables influencing", domain, "=", mello)
-mel_runnable = ModelObject.runnable_op_list(state['op_tokens'], mello)
-print("Dependency ordered execution of RSED runnables only for", domain, "=", mel_runnable)
 
 # Just for grins, we can show the dependency using the special action as an end point
 specl2 = state['model_object_cache']['/STATE/SPECACTION2']

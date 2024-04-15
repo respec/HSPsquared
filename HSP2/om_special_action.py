@@ -35,9 +35,7 @@ class SpecialAction(ModelObject):
         self.num = self.handle_prop(model_props, 'NUM', False, 1) # number of times to perform action
         self.timer_ix = self.handle_prop(model_props, 'when', False, 1) # when to begin the first attempt at action
         self.ctr_ix = self.constant_or_path('ctr', 0) # this initializes the counter for how many times an action has been performed
-        # now add the state value that we are operating on (the target) as an input, so that this gets executed AFTER this is set initially
-        #self.add_input('op1', ('/STATE/' + self.op_type + '_' + self.op_type[0] + str(self.range1).zfill(3) + "/" + self.vari ), 2, True )
-        # or, should we set up a register for the target 
+        # NOTE: since the spec-action modifies the same quantity that is it's input, it does *not* set it as a proper "input" since that would create a circular dependency 
         domain = self.model_object_cache[('/STATE/' + self.op_type + '_' + self.op_type[0] + str(self.range1).zfill(3) )]
         var_register = self.insure_register(self.vari, 0.0, domain, False)
         #print("Created register", var_register.name, "with path", var_register.state_path)
