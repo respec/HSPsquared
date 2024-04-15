@@ -1,3 +1,4 @@
+# Must be run from the HSPsquared source directory, the h5 file has already been setup with hsp import_uci test10.uci
 # bare bones tester - must be run from the HSPsquared source directory
 import os
 from HSP2.main import *
@@ -41,18 +42,11 @@ ep_list = ['RSED4', 'RSED5', 'RSED6']
 mello = model_domain_dependencies(state, domain, ep_list)
 print("Dependency ordered execution for RSED constants and runnables influencing", domain, "=", mello)
 mel_runnable = ModelObject.runnable_op_list(state['op_tokens'], mello)
-print("Dependency ordered execution of RSED runnables only for", domain, "=", mel_runnable)
+print("Dependency ordered execution of RSED depemndencies (all)", domain, "=", 
+model_element_paths(mello, state))
+print("Dependency ordered execution of RSED runnables only for", domain, "=", 
+model_element_paths(mel_runnable, state))
 
-
-#### Extra testing output
-def mel_path(mel, state):
-    ixn = 1
-    for ix in mel:
-        ip = get_ix_path(state['state_paths'], ix)
-        im = state['model_object_cache'][ip]
-        print(ixn, ":", im.name, "->", im.state_path, '=', im.get_state())
-        ixn = ixn + 1
-    return
 
 # Show order of ops based on dependencies
 endpoint = state['model_object_cache']['/STATE/RCHRES_R005/RSED5']
@@ -60,10 +54,10 @@ mel = []
 mtl = []
 model_order_recursive(endpoint, state['model_object_cache'], mel, mtl)
 print("Dependency ordered execution for constants and runnables influencing", endpoint.name)
-mel_path(mel, state)
+model_element_paths(mel, state)
 mel_runnable = ModelObject.runnable_op_list(state['op_tokens'], mel)
 print("Dependency ordered execution of runnables only for", endpoint.name)
-mel_path(mel_runnable, state)
+model_element_paths(mel_runnable, state)
 
 
 # Just for grins, we can show the dependency using the special action as an end point
@@ -72,5 +66,5 @@ mel = []
 mtl = []
 print("Dependency ordered execution for constants and runnables influencing ", rsed4.name)
 model_order_recursive(specl2, state['model_object_cache'], mel, mtl)
-mel_path(mel, state)
+model_element_paths(mel, state)
 mel_runnable = ModelObject.runnable_op_list(state['op_tokens'], mel)
