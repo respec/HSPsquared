@@ -7,7 +7,7 @@ import HSP2IO
 import numpy
 from HSP2IO.hdf import HDF5
 from HSP2IO.io import IOManager
-fpath = './tests/test10/HSP2results/test10.h5' 
+fpath = './tests/test10/HSP2results/test10spec.h5' 
 # try also:
 # fpath = './tests/testcbp/HSP2results/PL3_5250_0001.h5' 
 # sometimes when testing you may need to close the file, so try:
@@ -68,3 +68,5 @@ print("Dependency ordered execution for constants and runnables influencing ", r
 model_order_recursive(specl2, state['model_object_cache'], mel, mtl)
 model_element_paths(mel, state)
 mel_runnable = ModelObject.runnable_op_list(state['op_tokens'], mel)
+model_element_paths(mel_runnable, state)
+
