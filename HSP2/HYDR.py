@@ -172,7 +172,7 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
     return errors, ERRMSGS
 
 
-@njit
+@njit(cache=True)
 def _hydr_(ui, ts, COLIND, OUTDGT, rowsFT, funct, Olabels, OVOLlabels, state_info, state_paths, state_ix, dict_ix, ts_ix, state_step_hydr, op_tokens, model_exec_list):
     errors = zeros(int(ui['errlen'])).astype(int64)
 
