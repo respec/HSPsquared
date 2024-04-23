@@ -12,7 +12,7 @@ name = "hsp2"
 dynamic = ["version", "readme"]
 description = "Hydrological Simulation Program - Python"
 dependencies = [
-    "mando",
+    "cltoolbox",
     "numba",
     "pandas",
     "tables"
