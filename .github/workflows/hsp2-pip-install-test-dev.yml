@@ -1,5 +1,5 @@
 name: Python dev application
-# this is a standard setup copied from 
+# this is a standard setup copied from
 # https://docs.github.com/en/enterprise-server@3.10/actions/automating-builds-and-tests/building-and-testing-python
 on:
   push:
@@ -23,19 +23,20 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        pip install build
         pip install flake8 pytest
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        pip install mando numba pandas tables
     - name: Install hsp2
       run: |
         # install the hsp2 executable using dev environment
-        sudo pip install -e .[dev]
+        sudo pip install .[dev]
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --ignore=F821 --show-source --statistics --exclude=HSP2/ACIDPH.py,build/lib/HSP2/ACIDPH.py
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Test with pytest 
+    - name: Test with pytest
       run: |
         pytest tests/ptest/test_sysexit.py
         # Add more tests here.  Example (note, benchmark takes a long time to run and could crush the free monthly 2,000 minutes during times of high activity)

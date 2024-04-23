@@ -1,4 +1,4 @@
-import mando
+import cltoolbox
 
 from HSP2.main import main as hsp2main
 from HSP2tools.readUCI import readUCI
@@ -7,7 +7,7 @@ from HSP2IO.hdf import HDF5
 from HSP2IO.io import IOManager
 
 
-@mando.command(doctype="numpy")
+@cltoolbox.command()
 def run(hdfname, saveall=True, jupyterlab=False):
     """Run a HSPsquared model.
 
@@ -26,7 +26,7 @@ def run(hdfname, saveall=True, jupyterlab=False):
     hsp2main(io_manager, saveall=saveall, jupyterlab=jupyterlab)
 
 
-@mando.command(doctype="numpy")
+@cltoolbox.command()
 def import_uci(ucifile, h5file):
     """Import UCI and WDM files into HDF5 file.
 
@@ -57,7 +57,7 @@ def import_uci(ucifile, h5file):
 
 
 def main():
-    mando.main()
+    cltoolbox.main()
 
 
 if __name__ == "__main__":
