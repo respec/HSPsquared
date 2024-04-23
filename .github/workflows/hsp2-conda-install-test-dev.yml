@@ -1,5 +1,5 @@
 name: Python conda dev application
-# this is a standard setup copied from 
+# this is a standard setup copied from
 # https://docs.github.com/en/enterprise-server@3.10/actions/automating-builds-and-tests/building-and-testing-python
 on:
   push:
@@ -22,7 +22,8 @@ jobs:
         python-version: "3.11"
     - name: Install dependencies
       run: |
-        $CONDA/bin/conda env update --file environment_dev.yml --name base
+        $CONDA/bin/conda env update --name base
+        $CONDA/bin/conda install -c conda-forge --name base mando numba pandas pytables
         $CONDA/bin/conda install flake8
     - name: Install hsp2
       run: |
@@ -34,7 +35,7 @@ jobs:
         $CONDA/bin/flake8 . --count --select=E9,F63,F7,F82 --ignore=F821 --show-source --statistics --exclude=HSP2/ACIDPH.py,build/lib/HSP2/ACIDPH.py
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         $CONDA/bin/flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Test with pytest 
+    - name: Test with pytest
       run: |
         $CONDA/bin/conda install pytest
         $CONDA/bin/pytest tests/ptest/test_sysexit.py
