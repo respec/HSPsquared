@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 from numpy import where, zeros, array
 from math import log
@@ -10,11 +12,22 @@ from HSP2.PLANK_Class import PLANK_Class
 from HSP2.PHCARB_Class import PHCARB_Class
 from HSP2.utilities  import make_numba_dict, initm
 
+if os.environ.get("NUMBA_DISABLE_JIT", 0): # jit should be on by default.
+	OXRX_Class_ = OXRX_Class
+	NUTRX_Class_ = NUTRX_Class
+	PLANK_Class_ = PLANK_Class
+	PHCARB_Class_ = PHCARB_Class
+else:
+	OXRX_Class_ = OXRX_Class.class_type.instance_type
+	NUTRX_Class_ = NUTRX_Class.class_type.instance_type
+	PLANK_Class_ = PLANK_Class.class_type.instance_type
+	PHCARB_Class_ = PHCARB_Class.class_type.instance_type
+
 spec = [
-	('OXRX', OXRX_Class.class_type.instance_type),
-	('NUTRX', NUTRX_Class.class_type.instance_type),
-	('PLANK', PLANK_Class.class_type.instance_type),
-	('PHCARB', PHCARB_Class.class_type.instance_type),
+	('OXRX', OXRX_Class_),#.class_type.instance_type),
+	('NUTRX', NUTRX_Class_),#.class_type.instance_type),
+	('PLANK', PLANK_Class_),#.class_type.instance_type),
+	('PHCARB', PHCARB_Class_),#.class_type.instance_type),
 	('AFACT', nb.float64),
 	('ALK', nb.float64[:]),
 	('AVDEP', nb.float64[:]),

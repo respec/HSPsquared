@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 from numpy import zeros, array
 from math import log, exp
@@ -10,9 +12,16 @@ from HSP2.NUTRX_Class import NUTRX_Class
 from HSP2.RQUTIL import sink, decbal
 from HSP2.utilities  import make_numba_dict, initm
 
+if os.environ.get("NUMBA_DISABLE_JIT", 0): # jit should be on by default.
+	OXRX_Class_ = OXRX_Class
+	NUTRX_Class_ = NUTRX_Class
+else:
+	OXRX_Class_ = OXRX_Class.class_type.instance_type
+	NUTRX_Class_ = NUTRX_Class.class_type.instance_type
+
 spec = [
-	('OXRX', OXRX_Class.class_type.instance_type),
-	('NUTRX', NUTRX_Class.class_type.instance_type),
+	('OXRX', OXRX_Class_),
+	('NUTRX', NUTRX_Class_),
 	('aldh', nb.float64),
 	('aldl', nb.float64),
 	('alnpr', nb.float64),
