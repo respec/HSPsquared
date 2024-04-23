@@ -119,7 +119,7 @@ Use the following `conda create`_ command in your terminal or console,
 Install the necessary and optional packages for HSP2 in the new environment:
 
     ```console
-    conda install -c conda-forge -n hsp2_310 mando numba pandas pytables
+    conda install -c conda-forge -n hsp2_310 cltoolbox numba pandas pytables
     conda install -c conda-forge -n hsp2_310 h5py jupyterlab matplotlib notebook
     ```
 
