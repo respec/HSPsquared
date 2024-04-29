@@ -59,10 +59,9 @@ include-package-data = true
 
 [tool.setuptools.dynamic]
 readme = {file = "README.rst"}
-version = {file = "VERSION"}
+version = {attr = "HSP2._version.__version__"}
 
 [tool.setuptools.packages.find]
-exclude = ["tests*", "examples*", "tools*", "docs*"]
-where = ["HSP2", "HSP2tools", "HSP2IO"]
+include = ["HSP2", "HSP2tools", "HSP2IO"]
 
 [tool.setuptools_scm]
