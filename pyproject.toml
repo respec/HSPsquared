@@ -46,6 +46,11 @@ keywords = [
 license = {file = "LICENSE"}
 requires-python = ">=3.10"
 
+[project.optional-dependencies]
+slim = ["numba", "pandas"]
+test = ["pytest"]
+dev = ["hsp2[test]"]
+
 [project.scripts]
 hsp2 = "HSP2tools.HSP2_CLI:main"
 
