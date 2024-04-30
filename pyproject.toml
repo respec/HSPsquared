@@ -61,13 +61,6 @@ ignore = [
     ".ipynb_checkpoints/*"
 ]
 
-[tool.commitizen]
-name = "cz_conventional_commits"
-tag_format = "v$version"
-update_changelog_on_bump = true
-version = "0.11.0a1"
-version_files = ["VERSION"]
-
 [tool.isort]
 profile = "black"
 
@@ -80,7 +73,7 @@ readme = {file = "README.rst"}
 version = {file = "VERSION"}
 
 [tool.setuptools.packages.find]
-exclude = ["tests*", "examples*", "tools*", "docs*"]
-where = ["HSP2", "HSP2tools", "HSP2IO"]
-
-[tool.setuptools_scm]
+exclude = ["build*", "dist*", "docs*", "examples*", "hsp2.egg-info*", "__pycache__*", "tests*"]
+include = ["HSP2*"]
+namespaces = false
+where = ["."]
