@@ -24,7 +24,7 @@ shutil.rmtree("build", ignore_errors=True)
 subprocess.run(shlex.split("python3 -m build --wheel"), check=True)
 wheel = f"dist/{PKG_NAME}-{version}*.whl"
 
-for file in [sdist, wheel]:
+for file in [wheel]:
     subprocess.run(
         shlex.split(f"twine check {file}"),
         check=True,

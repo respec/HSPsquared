@@ -73,7 +73,5 @@ readme = {file = "README.rst"}
 version = {file = "VERSION"}
 
 [tool.setuptools.packages.find]
-exclude = ["build*", "dist*", "docs*", "examples*", "hsp2.egg-info*", "__pycache__*", "tests*"]
 include = ["HSP2*"]
 namespaces = false
-where = ["."]
