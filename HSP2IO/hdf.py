@@ -1,12 +1,12 @@
+from typing import Any, Union
+
 import pandas as pd
-from pandas.io.pytables import read_hdf
-from HSP2IO.protocols import Category
-from collections import defaultdict
-from typing import Union, Any
 
 from HSP2.uci import UCI
+from HSP2IO.protocols import Category
 
-class HDF5():
+
+class HDF5:
 
 	def __init__(self, file_path:str) -> None:
 		self.file_path = file_path
@@ -24,9 +24,9 @@ class HDF5():
 
 	def read_uci(self) -> UCI:
 		"""Read UCI related tables
-		
+
 		Parameters: None
-		
+
 		Returns: UCITuple
 
 		"""
@@ -78,10 +78,10 @@ class HDF5():
 				uci.monthdata[f'{op}/{module}'] = self._store[path]
 		return uci
 
-	def read_ts(self, 
+	def read_ts(self,
 			category:Category,
-			operation:Union[str,None]=None, 
-			segment:Union[str,None]=None, 
+			operation:Union[str,None]=None,
+			segment:Union[str,None]=None,
 			activity:Union[str,None]=None) -> pd.DataFrame:
 		try:
 			path = ''
@@ -89,33 +89,33 @@ class HDF5():
 				path = f'TIMESERIES/{segment}'
 			elif category == category.RESULTS:
 				path = f'RESULTS/{operation}_{segment}/{activity}'
-			return read_hdf(self._store, path)
+			return pd.read_hdf(self._store, path)
 		except KeyError:
 			return pd.DataFrame()
 
-	def write_ts(self, 
-			data_frame:pd.DataFrame, 
+	def write_ts(self,
+			data_frame:pd.DataFrame,
 			category: Category,
-			operation:str, 
-			segment:str, 
-			activity:str, 
-			*args:Any, 
+			operation:str,
+			segment:str,
+			activity:str,
+			*args:Any,
 			**kwargs:Any) -> None:
 		"""Saves timeseries to HDF5"""
 		path=f'{operation}_{segment}/{activity}'
 		if category:
 			path = 'RESULTS/' + path
-		complevel = None 
+		complevel = None
 		if 'compress' in kwargs:
 			if kwargs['compress']:
 				complevel = 9
-		data_frame.to_hdf(self._store, path, format='t', data_columns=True, complevel=complevel)
-		#data_frame.to_hdf(self._store, path)
+		data_frame.to_hdf(self._store, key=path, format='t', data_columns=True, complevel=complevel)
+		#data_frame.to_hdf(self._store, key=path)
 
 	def write_log(self, hsp2_log:pd.DataFrame) -> None:
-		hsp2_log.to_hdf(self._store, 'RUN_INFO/LOGFILE', data_columns=True, format='t')
+		hsp2_log.to_hdf(self._store, key='RUN_INFO/LOGFILE', data_columns=True, format='t')
 
 	def write_versioning(self, versioning:pd.DataFrame) -> None:
-		versioning.to_hdf(self._store, 'RUN_INFO/VERSIONS', data_columns=True, format='t')
+		versioning.to_hdf(self._store, key='RUN_INFO/VERSIONS', data_columns=True, format='t')
 
 
