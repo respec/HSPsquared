@@ -8,28 +8,35 @@ from numpy import float64, float32
 from pandas import DataFrame, date_range
 from pandas.tseries.offsets import Minute
 from datetime import datetime as dt
+from typing import Union
 import os
+from HSP2IO.hdf import HDF5
 from HSP2.utilities import versions, get_timeseries, expand_timeseries_names, save_timeseries, get_gener_timeseries
 from HSP2.configuration import activities, noop, expand_masslinks
 from HSP2.state import *
 
 from HSP2IO.io import IOManager, SupportsReadTS, Category
 
-def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None:
-    """Runs main HSP2 program.
+def main(io_manager:Union[str, IOManager], saveall:bool=False, jupyterlab:bool=True) -> None:
+    """
+    Run main HSP2 program.
 
     Parameters
     ----------
-   
-    saveall: Boolean - [optional] Default is False.
+    io_manager
+        An instance of IOManager class.
+    saveall: bool, default=False
         Saves all calculated data ignoring SAVE tables.
-    jupyterlab: Boolean - [optional] Default is True.
-        Flag for specific output behavior for  jupyter lab.
-    Return
-    ------------
+    jupyterlab: bool, default=True
+        Flag for specific output behavior for jupyter lab.
+
+    Returns
+    -------
     None
-    
     """
+    if isinstance(io_manager, str):
+        hdf5_instance = HDF5(io_manager)
+        io_manager = IOManager(hdf5_instance)
 
     hdfname = io_manager._input.file_path
     if not os.path.exists(hdfname):
@@ -46,12 +53,12 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
     ddext_sources = uci_obj.ddext_sources
     ddgener = uci_obj.ddgener
     uci = uci_obj.uci
-    siminfo = uci_obj.siminfo 
+    siminfo = uci_obj.siminfo
     ftables = uci_obj.ftables
     specactions = uci_obj.specactions
     monthdata = uci_obj.monthdata
     specactions = {} # placeholder till added to uci parser
-    
+
     start, stop = siminfo['start'], siminfo['stop']
 
     copy_instances = {}
@@ -64,12 +71,12 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
     state = init_state_dicts()
     state_siminfo_hsp2(uci_obj, siminfo)
     # Add support for dynamic functins to operate on STATE
-    # - Load any dynamic components if present, and store variables on objects 
+    # - Load any dynamic components if present, and store variables on objects
     state_load_dynamics_hsp2(state, io_manager, siminfo)
     # - finally stash specactions in state, not domain (segment) dependent so do it once
     state['specactions'] = specactions # stash the specaction dict in state
     #######################################################################################
-    
+
     # main processing loop
     msg(1, f'Simulation Start: {start}, Stop: {stop}')
     tscat = {}
@@ -80,7 +87,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
         siminfo['steps'] = len(siminfo['tindex'])
 
         if operation == 'COPY':
-            copy_instances[segment] = activities[operation](io_manager, siminfo, ddext_sources[(operation,segment)]) 
+            copy_instances[segment] = activities[operation](io_manager, siminfo, ddext_sources[(operation,segment)])
         elif operation == 'GENER':
             try:
                 ts = get_timeseries(io_manager, ddext_sources[(operation, segment)], siminfo)
@@ -102,7 +109,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                     flags['ADNHFG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['ADNHFG']
                     flags['PO4FG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['PO4FG']
                     flags['ADPOFG'] = uci[(operation, 'NUTRX', segment)]['FLAGS']['ADPOFG']
-                
+
                 get_flows(io_manager, ts, flags, uci, segment, ddlinks, ddmasslinks, siminfo['steps'], msg)
 
             for activity, function in activities[operation].items():
@@ -118,7 +125,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                 msg(3, f'{activity}')
                 # Set context for dynamic executables.
                 state_context_hsp2(state, operation, segment, activity)
-                
+
                 ui = uci[(operation, activity, segment)]   # ui is a dictionary
                 if operation == 'PERLND' and activity == 'SEDMNT':
                     # special exception here to make CSNOFG available
@@ -182,7 +189,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                         elif flags['PLANK']:
                             if 'CFSAEX' in uci[(operation, 'PLANK', segment)]['PARAMETERS']:
                                 ui['PARAMETERS']['CFSAEX'] = uci[(operation, 'PLANK', segment)]['PARAMETERS']['CFSAEX']
-                    
+
                     if activity == 'RQUAL':
                         # RQUAL inputs:
                         ui['advectData'] = uci[(operation, 'ADCALC', segment)]['adcalcData']
@@ -202,12 +209,12 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                                     ui['PARAMETERS']['NCONS'] = uci[(operation, 'CONS', segment)]['PARAMETERS']['NCONS']
 
                         # OXRX module inputs:
-                        ui_oxrx = uci[(operation, 'OXRX', segment)] 
-                        
+                        ui_oxrx = uci[(operation, 'OXRX', segment)]
+
                         if flags['HYDR']:
                             ui_oxrx['PARAMETERS']['LEN'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['LEN']
                             ui_oxrx['PARAMETERS']['DELTH'] = uci[(operation, 'HYDR', segment)]['PARAMETERS']['DELTH']
-                        
+
                         if flags['HTRCH']:
                             ui_oxrx['PARAMETERS']['ELEV'] = uci[(operation, 'HTRCH', segment)]['PARAMETERS']['ELEV']
 
@@ -221,9 +228,9 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                             ui['PARAMETERS']['CFSAEX'] = uci[(operation, 'HTRCH', segment)]['PARAMETERS']['CFSAEX']
 
                         # NUTRX, PLANK, PHCARB module inputs:
-                        ui_nutrx = uci[(operation, 'NUTRX', segment)] 
-                        ui_plank = uci[(operation, 'PLANK', segment)] 
-                        ui_phcarb = uci[(operation, 'PHCARB', segment)] 
+                        ui_nutrx = uci[(operation, 'NUTRX', segment)]
+                        ui_plank = uci[(operation, 'PLANK', segment)]
+                        ui_phcarb = uci[(operation, 'PHCARB', segment)]
 
                 ############ calls activity function like snow() ##############
                 if operation not in ['COPY','GENER']:
@@ -231,7 +238,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
                         errors, errmessages = function(io_manager, siminfo, ui, ts, ftables, state)
                     elif (activity != 'RQUAL'):
                         errors, errmessages = function(io_manager, siminfo, ui, ts)
-                    else:                    
+                    else:
                         errors, errmessages = function(io_manager, siminfo, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts, monthdata)
                 ###############################################################
 
@@ -256,7 +263,7 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
 
                 if 'SAVE' in ui:
                     save_timeseries(io_manager,ts,ui['SAVE'],siminfo,saveall,operation,segment,activity,jupyterlab,outstep)
-    
+
                 if (activity == 'RQUAL'):
                     if 'SAVE' in ui_oxrx:   save_timeseries(io_manager,ts,ui_oxrx['SAVE'],siminfo,saveall,operation,segment,'OXRX',jupyterlab,outstep_oxrx)
                     if 'SAVE' in ui_nutrx and flags['NUTRX'] == 1:   save_timeseries(io_manager,ts,ui_nutrx['SAVE'],siminfo,saveall,operation,segment,'NUTRX',jupyterlab,outstep_nutrx)
