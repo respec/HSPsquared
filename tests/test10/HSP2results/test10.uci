@@ -378,10 +378,10 @@ RCHRES
 
   SANDFG
     RCHRES       ***
-    # -  # SNDFG ***
-    1    2     1
-    3    4     2
-    5          3
+    # -  # SDFG ***
+    1    2    1
+    3    4    2
+    5         3
   END SANDFG
 
   SED-GENPARM
