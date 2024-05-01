@@ -462,10 +462,6 @@ def get_gener_timeseries(ts: Dict, gener_instances: Dict, ddlinks: List, ddmassl
                     mldata = ddmasslinks[link.MLNO]
                     for dat in mldata:
                         mfactor = dat.MFACTOR
-                        sgrpn = dat.SGRPN
-                        smemn = dat.SMEMN
-                        smemsb1 = dat.SMEMSB1
-                        smemsb2 = dat.SMEMSB2
                         tmemn = dat.TMEMN
                         tmemsb1 = dat.TMEMSB1
                         tmemsb2 = dat.TMEMSB2
@@ -474,9 +470,8 @@ def get_gener_timeseries(ts: Dict, gener_instances: Dict, ddlinks: List, ddmassl
                         factor = afactr * mfactor
 
                         # may need to do something in here for special cases like in get_flows
-
-                        smemn, tmemn = expand_timeseries_names(sgrpn, smemn, smemsb1, smemsb2, tmemn, tmemsb1,
-                                                               tmemsb2)
+                        if tmemn != 'ONE' and tmemn != 'TWO':
+                            tmemn = clean_name(tmemn, tmemsb1 + tmemsb2)
 
                         t = series * factor
 

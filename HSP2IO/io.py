@@ -75,17 +75,23 @@ class IOManager:
 			# change time step of output to daily
 			sumdf1 = data_frame.resample('D',kind='timestamp',origin='start').sum()
 			lastdf2 = data_frame.resample('D', kind='timestamp', origin='start').last()
+			meandf3 = data_frame.resample('D', kind='timestamp', origin='start').mean()
 			data_frame= pd.merge(lastdf2.add_suffix('_last'), sumdf1.add_suffix('_sum'), left_index=True, right_index=True)
+			data_frame = pd.merge(data_frame, meandf3.add_suffix('_aver'), left_index=True,right_index=True)
 		elif outstep == 4:
 			# change to monthly
 			sumdf1 = data_frame.resample('M',kind='timestamp',origin='start').sum()
 			lastdf2 = data_frame.resample('M', kind='timestamp', origin='start').last()
+			meandf3 = data_frame.resample('M', kind='timestamp', origin='start').mean()
 			data_frame = pd.merge(lastdf2.add_suffix('_last'), sumdf1.add_suffix('_sum'), left_index=True, right_index=True)
+			data_frame = pd.merge(data_frame, meandf3.add_suffix('_aver'), left_index=True, right_index=True)
 		elif outstep == 5:
 			# change to annual
 			sumdf1 = data_frame.resample('Y',kind='timestamp',origin='start').sum()
 			lastdf2 = data_frame.resample('Y', kind='timestamp', origin='start').last()
+			meandf3 = data_frame.resample('Y', kind='timestamp', origin='start').mean()
 			data_frame = pd.merge(lastdf2.add_suffix('_last'), sumdf1.add_suffix('_sum'), left_index=True, right_index=True)
+			data_frame = pd.merge(data_frame, meandf3.add_suffix('_aver'), left_index=True, right_index=True)
 		self._output.write_ts(data_frame, category, operation, segment, activity)
 
 	def read_ts(self,
