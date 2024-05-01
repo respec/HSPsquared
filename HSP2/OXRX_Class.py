@@ -129,17 +129,20 @@ class OXRX_Class:
 		self.expred = 0.0; self.exprev = 0.0
 		self.expod = 0.0; self.exprel = 0.0
 
+		self.len_ = ui['LEN'] * 5280.0  # mi to feet
+		if self.uunits == 2:
+			self.len_ = ui['LEN'] * 1000.0  # length of reach, in meters
+
 		if self.LKFG == 1:
 			self.cforea = ui['CFOREA']	 # reaeration parameter from table-type ox-cforea
+			self.tcginv = 0
 
 		elif self.REAMFG == 1:			 # tsivoglou method;  table-type ox-tsivoglou
 			self.reakt	= ui['REAKT']
 			self.tcginv = ui['TCGINV']
-			
-			self.len_	= ui['LEN'] * 5280.0  # mi to feet
+
 			self.delth	= ui['DELTH']
 			if self.uunits == 2:
-				self.len_ = ui['LEN'] * 1000.0  # length of reach, in meters
 				self.delth = ui['DELTH'] * 1000.0  # convert to meters
 
 		elif self.REAMFG == 2:			# owen/churchill/o'connor-dobbins; table-type ox-tcginv
