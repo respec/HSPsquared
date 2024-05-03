@@ -85,9 +85,11 @@ def fix_df(df, op, save, ddfaults, valid):
     if set(df.index) - valid:
         df = df.drop(index = set(df.index) - valid) # drop unnecessary ids
     for name1 in valid - set(df.index):
-        df = pd.concat(
-            [df, pd.Series(name=name1)], axis="columns"
-        )  # add missing ids with NaNs
+        #df = pd.concat(
+        #    [df, pd.Series(name=name1)], axis="rows"
+        #)
+        # add missing ids with NaNs
+        df = df.append(pd.Series(name=name1))
     if df.isna().any().any():  # replace NaNs with defaults
         for col in df.columns:
             try:
