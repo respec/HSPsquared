@@ -69,151 +69,153 @@ We **recommend Python 3.10**.
 
 Install From Pre-built Packages
 -------------------------------
+Python Package Index (PyPI)
++++++++++++++++++++++++++++
+Starting with version 0.11.0a1 we provide a PyPI wheel package for HSP2 which
+should work on any supported platform for Python 3.10, 3.11, and 3.12.
 
-We currently provide a PyPI package for HSP2.
+.. code-block:: console
 
-```console
-pip install hsp2
-```
+    python -m pip install hsp2
+
+Windows Executable
+++++++++++++++++++
+On the Releases_ page, we provide a Windows package in the zip file named
+HSP2_Driver_MonthYear.zip. HSP2_Driver_MonthYear.zip contains an .exe for
+running HSP2, enabling a user to run HSP2 without needing to do anything with
+Python code or Jupyter notebooks. The driver uses a file dialog to prompt for
+the name of the HDF5 file to run, or if that doesn't exist yet you can give it
+the name of a UCI or WDM file to import. It also runs with the H5 file name on
+the command line.
 
 Install From Source
 -------------------
+Clone or Download the HSPsquared Repository
++++++++++++++++++++++++++++++++++++++++++++
+From the HSP2squared_ Github page, download and extract the code using one of
+the options found by clicking on the green "Code" drop down button near the
+upper right of the page, or by downloading one of the compressed source files
+from the Releases_ page.
+
+Place your copy of the HSPsquared folder in any convenient location on your
+computer.
+
+For the rest of the installation steps, let's call this location
+`/path/to/module/hsp2`.
+
+Create a Python Environment
++++++++++++++++++++++++++++
 We provide two options to installing HSP2, yet recommend option 1.
 
 Install using only one of these options.
 
-Install Option 1 using "conda"
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Option 1: Install using "conda"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Follow these steps to install using the conda_ package manager.
 
 1. Install the Anaconda Python Distribution
-+++++++++++++++++++++++++++++++++++++++++++
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Install the `latest release`_ of the Anaconda Distribution, which includes the
 conda package manager, a complete Python (and R) data science stack, and the
 Anaconda Navigator GUI.  Follow `Anaconda Installation`_ documentation.
 
 A lighter-weight alternative is to install Miniconda_.
 
-2. Clone or Download this HSPsquared Repository
-+++++++++++++++++++++++++++++++++++++++++++++++
-From the HSP2squared_ Github page, click on the green "Code" drop down button
-near the upper right. Select to either "Open in GitHub Desktop" (i.e. git
-clone) or "Download ZIP". We recommend using GitHub Desktop, to most easily
-receive updates.
-
-Place your copy of the HSPsquared folder in any convenient location on your
-computer.
-
-3. Create a Conda Environment for HSP2 Modeling (optional)
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2. Create a Conda Environment for HSP2 Modeling (optional)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Although HSP2 can be run from the default `base` environment created by
 Anaconda, we recommend creating a custom environment that includes the exact
 combination of software dependencies that we've in development and testing.
 
-Use the following `conda create`_ command in your terminal or console,
+Use the following `conda create`_ command in your terminal or console:
 
-    ```console
+.. code-block:: console
+
     conda create -c conda-forge -n hsp2_310 python=3.10 
-    ```
 
 Install the necessary and optional packages for HSP2 in the new environment:
 
-    ```console
+.. code-block:: console
+
     conda install -c conda-forge -n hsp2_310 cltoolbox numba pandas pytables
     conda install -c conda-forge -n hsp2_310 h5py jupyterlab matplotlib notebook
-    ```
 
-4. Add your HSPsquared Path to Anaconda sites-packages
-++++++++++++++++++++++++++++++++++++++++++++++++++++++
-To have access to the `HSP2`, `HSP2tools`, and `HSP2IO` modules in your Python
-environments, it is necessary to have a path to your copy of HSPsquared in
-Anaconda's `sites-packages` directory (i.e. something like
-`$HOME/path/to/anaconda/lib/pythonX.X/site-packages` or
-`$HOME/path/to/anaconda/lib/site-packages` similar).
+.. code-block:: console
 
-- The easiest way to do this is to use the `conda develop`_ command in the
-  console or terminal like this, replacing `/path/to/module/` with the full
-  file pathway to the local cloned HSPsquared repository:
-
-    ```console
     conda activate hsp2_310
-    conda-develop /path/to/module/
-    ```
+
+    cd /path/to/module/hsp2
+    pip install .  # or "pip install -e ." to install in editable mode
 
 You should now be able to run the Tutorials and create your own Jupyter
 Notebooks!
 
-Install From Source Code Option 2 Using `pip`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Option 2: Install From Source Code Using `pip`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Installing HSP2 using `pip`, the `Package Installer for Python`_
 is an alternative method to installing with `conda`. 
 
-**WARNING**: If you followed `Install Option 1 using "conda"`_, then you should
-not also install using `pip`. Your install is complete and you can ignore all
-installation steps below.
-
 1. Install Python
-+++++++++++++++++
+^^^^^^^^^^^^^^^^^
 Instructions for downloading Python to your computer based on your operating
 system can be found in `this helpful wiki`_.
 
-2. Clone or Download this HSPsquared Repository
-+++++++++++++++++++++++++++++++++++++++++++++++
-From the HSP2squared_ Github page, click on the green "Code" drop down button
-near the upper right. Select to either "Open in GitHub Desktop" (i.e. git
-clone) or "Download ZIP". We recommend using GitHub Desktop, to most easily
-receive updates.
-
-Place your copy of the HSPsquared folder in any convenient location on your
-computer.
-
-3. Create a Python Environment for HSP2 Modeling (optional)
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2. Create a Python Environment for HSP2 Modeling (optional)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Create a custom Python virtual environment for using HSP2, following the `venv
 — Creation of virtual environments`_ package documentation to create and
-activate a new environment for running HSP2. 
+activate a new environment for running HSP2.
 
-    ```console
+.. code-block:: console
+
     python -m venv hsp2_env /path/to/python/virtual/environments/hsp2_env
-    ```
 
-4. PIP install HSP2 
-+++++++++++++++++++
-Navigate to your copy of the HSPsquared folder on your computer in the command
+3. PIP install HSP2 
+^^^^^^^^^^^^^^^^^^^
+Navigate to your copy of the HSPsquared folder (for these instructions
+/path/to/module/hsp2) on your computer in the command
 line.
 
-To install from the current local directory using pip:
+To install using pip:
 
-    ```console
+.. code-block:: console
+
     source /path/to/python/virtual/environments/hsp2_env/bin/activate
-    pip install .
-    ```
+    cd /path/to/module/hsp2
+    pip install .  # or "pip install -e ." to install in editable mode
 
-5. Run HSP2 from the Command Line
-+++++++++++++++++++++++++++++++++
+4. Run PIP Installed HSP2 from the Command Line
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The pip installed 'hsp2' command has help created from the function docstrings
 in HSP2tools/HSP2_CLI.py.
 
+Command Line Usage
+++++++++++++++++++
 Use the help to learn how to use the model and each sub-command:
-    ```console
+
+.. code-block:: console
+
     hsp2 --help
-    ```
-    
-    ```console
     hsp2 import_uci --help
-    ```
-    
-    ```console
     hsp2 run --help
-    ```
 
 Intended workflow from the command line:
-    ```console
+
+.. code-block:: console
+
     hsp2 import_uci import_test.uci new_model.h5
     hsp2 run new_model.h5
-    ```
+
+API Usage
++++++++++
+The HSP2 API is designed to be used in Python scripts and Jupyter notebooks.
+
+.. code-block:: python
+
+    from HSP2 import HSP2
 
 .. _HSP2: https://github.com/respec/HSPsquared
+.. _Releases: https://github.com/respec/HSPsquared/releases
 .. _HSPF: https://www.epa.gov/ceam/hydrological-simulation-program-fortran-hspf
 .. _`Release Notes`: https://github.com/respec/HSPsquared/releases
 .. _`HSPF Conversion Project`: https://github.com/respec/HSPsquared/blob/archivePy2/Why%20HSP2%20(EAA).pdf
