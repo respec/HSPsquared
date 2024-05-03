@@ -21,12 +21,10 @@ with open("VERSION", encoding="ascii") as version_file:
 
 shutil.rmtree("build", ignore_errors=True)
 
-subprocess.run(shlex.split("python3 -m build --sdist"), check=True)
 subprocess.run(shlex.split("python3 -m build --wheel"), check=True)
-sdist = f"dist/{PKG_NAME}-{version}.tar.gz"
 wheel = f"dist/{PKG_NAME}-{version}*.whl"
 
-for file in [sdist, wheel]:
+for file in [wheel]:
     subprocess.run(
         shlex.split(f"twine check {file}"),
         check=True,
