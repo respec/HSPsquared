@@ -45,6 +45,7 @@ htmlcov
 *.log
 *.hbnhead
 *.units.dbf
+*_temp*.h5
 
 # Translations
 *.mo

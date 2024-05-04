@@ -36,7 +36,8 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest tests
+        # python coverage
+        NUMBA_DISABLE_JIT=1 pytest --cov --cov-branch --cov-report term-missing
     - name: Run hsp2 test10
       run: |
         cd tests/test10/HSP2results

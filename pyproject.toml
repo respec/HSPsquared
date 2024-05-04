@@ -48,7 +48,7 @@ requires-python = ">=3.10"
 
 [project.optional-dependencies]
 slim = ["numba", "pandas"]
-test = ["pytest"]
+test = ["pytest", "pytest-cov"]
 dev = ["hsp2[test]"]
 
 [project.scripts]
@@ -57,17 +57,6 @@ hsp2 = "HSP2tools.HSP2_CLI:main"
 [project.urls]
 documentation = "http://www.respec.com/product/hydrologic-simulation-program-python-hsp%C2%B2/"
 github = "https://github.com/respec/HSPsquared"
-
-[tool.check-manifest]
-ignore = [
-    "docs/_function_autosummary/*",
-    ".coverage",
-    ".deepsource.toml",
-    ".ipynb_checkpoints/*"
-]
-
-[tool.isort]
-profile = "black"
 
 [tool.setuptools]
 license-files = ["LICENSE"]
