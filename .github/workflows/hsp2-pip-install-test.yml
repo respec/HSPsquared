@@ -27,7 +27,7 @@ jobs:
     - name: Install hsp2
       run: |
         # install the hsp2 executable
-        pip install .
+        pip install .[dev]
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
