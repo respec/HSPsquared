@@ -35,9 +35,11 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.9", "3.10", "3.11", "3.12"]
+        pandas-version: [""]
         include:
           - python-version: "3.11"
             pandas-version: "pandas>2.0"
+            coverage: true
           - python-version: "3.11"
             pandas-version: "pandas>1.5,<2.0"
     steps:
@@ -53,10 +55,12 @@ jobs:
           pip install .[dev]
       - if: ${{ matrix.pandas-version }}
         run: pip install "${{ matrix.pandas-version }}"
-      - name: Test with pytest
+      - if: ${{ matrix.coverage }}
         run: |
           # python coverage
           NUMBA_DISABLE_JIT=1 pytest --cov --cov-branch --cov-report term-missing
+      - if: ${{ ! matrix.coverage }}
+        run: pytest
   
   test-cmd:
     runs-on: ubuntu-latest
