@@ -67,4 +67,6 @@ version = {file = "VERSION"}
 
 [tool.setuptools.packages.find]
 include = ["HSP2*"]
-namespaces = false
+
+[tool.setuptools.package-data]
+"HSP2tools.data" = ["*"]
