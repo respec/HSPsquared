@@ -52,7 +52,7 @@ jobs:
           # install the hsp2 executable
           pip install .[dev]
       - if: ${{ matrix.pandas-version }}
-        run: pip install ${{ matrix.pandas-version }}
+        run: pip install "${{ matrix.pandas-version }}"
       - name: Test with pytest
         run: |
           # python coverage
