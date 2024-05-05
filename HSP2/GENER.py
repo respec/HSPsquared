@@ -10,9 +10,9 @@ class Gener():
     """
 
     def __init__(self, segment: str, siminfo: Dict, copies: Dict, geners: Dict, ddlinks: Dict, ddmasslinks: Dict, tsin: Dict, ddgener: Dict) -> None:
-        self.ts_input_1 = pd.Series() # type: pd.Series
-        self. ts_input_2 = pd.Series() # type: pd.Series
-        self.ts_output = pd.Series()  # type: pd.Series
+        self.ts_input_1 = pd.Series(dtype="float64")  # type: pd.Series
+        self.ts_input_2 = pd.Series(dtype="float64")  # type: pd.Series
+        self.ts_output = pd.Series(dtype="float64")  # type: pd.Series
         self.opcode = 0               # type: int
         self.k = -1.0E30              # type: float 
 
@@ -27,7 +27,7 @@ class Gener():
             self.ts_input_1 = ts
 
         for link in ddlinks[segment]:
-            ts = pd.Series()
+            ts = pd.Series(dtype="float64")
             if link.SVOL == 'COPY': 
                 copy = copies[link.SVOLNO]
                 ts = copy.get_ts(link.SMEMN,link.SMEMSB1)

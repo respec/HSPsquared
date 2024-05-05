@@ -95,7 +95,7 @@ def transform(ts, name, how, siminfo):
 
     # append duplicate of last point to force processing last full interval
     if ts.index[-1] < stop:
-        ts[stop] = ts[-1]
+        ts[stop] = ts.iloc[-1]
 
     if freq == tsfreq:
         pass
