@@ -81,15 +81,16 @@ def get_opnid(opnidstr, operation):
 
 
 def fix_df(df, op, save, ddfaults, valid):
-    '''fix NANs and excess ids, missing indicies, bad names'''
-    if set(df.index) - valid:
-        df = df.drop(index = set(df.index) - valid) # drop unnecessary ids
-    for name1 in valid - set(df.index):
-        #df = pd.concat(
-        #    [df, pd.Series(name=name1)], axis="rows"
-        #)
+    """fix NANs and excess ids, missing indicies, bad names"""
+    extra_ids = set(df.index) - valid
+    if extra_ids:
+        df = df.drop(index=extra_ids)  # drop unnecessary ids
+
+    missing_ids = valid - set(df.index)
+    for name1 in missing_ids:
         # add missing ids with NaNs
-        df = df.append(pd.Series(name=name1))
+        df = pd.concat([df, pd.DataFrame(index=[name1])])
+
     if df.isna().any().any():  # replace NaNs with defaults
         for col in df.columns:
             try:
@@ -98,7 +99,7 @@ def fix_df(df, op, save, ddfaults, valid):
                 pass
     cols = [c.replace('(','').replace(')','') for c in df.columns]
     df.columns = cols
-    df = df.apply(pd.to_numeric, errors='ignore')
+    df = df.apply(pd.to_numeric, errors='ignore') # todo: 'ignore' is deprecated.
     return df
 
 
@@ -395,9 +396,9 @@ def global_(info, lines):
     store, parse, path, *_ = info
     d = parseD(lines[1], parse['GLOBAL','START'])
     start = str(pd.Timestamp(f"{d['SYR']}-{d['SMO']}-{d['SDA']}")
-      + pd.Timedelta(int(d['SHR']), 'h') + pd.Timedelta(int(d['SMI']), 'T'))[0:16]
+      + pd.Timedelta(int(d['SHR']), 'h') + pd.Timedelta(int(d['SMI']), 'min'))[0:16]
     stop  = str(pd.Timestamp(f"{d['EYR']}-{d['EMO']}-{d['EDA']}")
-      + pd.Timedelta(int(d['EHR']), 'h') + pd.Timedelta(int(d['EMI']), 'T'))[0:16]
+      + pd.Timedelta(int(d['EHR']), 'h') + pd.Timedelta(int(d['EMI']), 'min'))[0:16]
     units = lines[3].strip()[56:60]
     data = [lines[0].strip(), start, stop, units]
     dfglobal = pd.DataFrame(data, index=['Comment','Start','Stop', 'Units'],columns=['Info'])

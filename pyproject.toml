@@ -13,7 +13,7 @@ description = "Hydrological Simulation Program - Python"
 dependencies = [
     "cltoolbox",
     "numba",
-    "pandas>=1.5,<2.0",    
+    "pandas",
     "tables"
 ]
 authors = [
