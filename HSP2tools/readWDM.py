@@ -23,7 +23,7 @@ attrinfo = {1:('TSTYPE','S',4),     2:('STAID','S',16),    11:('DAREA','R',1),
             9:('LNGDEG','R',1),   288:('SCENARIO','S',8), 289:('CONSTITUENT','S',8),
           290:('LOCATION','S',8)}
 
-freq = {7:'100YS', 6:'YS', 5:'MS', 4:'D', 3:'H', 2:'min', 1:'S'}   # pandas date_range() frequency by TCODE, TGROUP
+freq = {7:'100YS', 6:'YS', 5:'MS', 4:'D', 3:'h', 2:'min', 1:'S'}   # pandas date_range() frequency by TCODE, TGROUP
 
 
 def readWDM(wdmfile, hdffile, compress_output=False):
@@ -141,9 +141,9 @@ def readWDM(wdmfile, hdffile, compress_output=False):
 
             dsname = f'TIMESERIES/TS{dsn:03d}'
             if compress_output:
-                series.to_hdf(store, dsname, complib='blosc', complevel=9)  
+                series.to_hdf(store, key=dsname, complib='blosc', complevel=9)  
             else:
-                series.to_hdf(store, dsname, format='t', data_columns=True)
+                series.to_hdf(store, key=dsname, format='t', data_columns=True)
 
             data = [
                 str(series.index[0]), str(stop_datetime), str(tstep) + freq[tcode],

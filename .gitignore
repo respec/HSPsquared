@@ -1,3 +1,6 @@
+# Manual
+_no_git*
+
 # Editors & IDEs
 .vscode
 .vs
@@ -42,6 +45,7 @@ htmlcov
 *.log
 *.hbnhead
 *.units.dbf
+*_temp*.h5
 
 # Translations
 *.mo
