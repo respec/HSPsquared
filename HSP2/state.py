@@ -18,21 +18,16 @@ def init_state_dicts():
     state = {} # shared state Dictionary, contains numba-ready Dicts 
     state_paths = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
     state_ix = Dict.empty(key_type=types.int64, value_type=types.float64)
+    state_ix = Dict.empty(key_type=types.int64, value_type=types.float64)
     dict_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:,:])
     ts_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:])
     # initialize state for hydr
     # now put all of these Dicts into the state Dict 
     state['state_paths'], state['state_ix'], state['dict_ix'], state['ts_ix'] = state_paths, state_ix, dict_ix, ts_ix
+    # add a generic place to stash model_data for dynamic components
+    state['model_data'] = {}
     return state
 
-
-def find_state_path(state_paths, parent_path, varname):
-    """
-    We should get really good at using docstrings...
-    """
-    # this is a bandaid, we should have an object routine that searches the parent for variables or inputs
-    var_path = parent_path + "/states/" + str(varname)
-    return var_path
 
 def op_path_name(operation, id):
     """
@@ -117,11 +112,20 @@ def append_state(state_ix, var_value):
     return val_ix
 
 def state_context_hsp2(state, operation, segment, activity):
+    # this establishes domain info so that a module can know its paths
     state['operation'] = operation 
     state['segment'] = segment # 
     state['activity'] = activity
     # give shortcut to state path for the upcoming function 
-    state['domain'] = "/STATE/" + operation + "_" + segment + "/" + activity 
+    # insure that there is a model object container
+    seg_name = operation + "_" + segment 
+    seg_path =  '/STATE/' + seg_name
+    if 'hsp_segments' not in state.keys():
+        state['hsp_segments'] = {} # for later use by things that need to know hsp entities and their paths
+    if seg_name not in state['hsp_segments'].keys():
+        state['hsp_segments'][seg_name] = seg_path
+
+    state['domain'] = seg_path # + "/" + activity   # may want to comment out activity?
 
 def state_siminfo_hsp2(uci_obj, siminfo):
     # Add crucial simulation info for dynamic operation support
@@ -130,6 +134,23 @@ def state_siminfo_hsp2(uci_obj, siminfo):
     siminfo['tindex'] = date_range(siminfo['start'], siminfo['stop'], freq=Minute(delt))[1:]
     siminfo['steps'] = len(siminfo['tindex'])
 
+def state_init_hsp2(state, opseq, activities):
+    # This sets up the state entries for all state compatible HSP2 model variables
+    for _, operation, segment, delt in opseq.itertuples():
+        if operation != 'GENER' and operation != 'COPY':
+            for activity, function in activities[operation].items():
+                if activity == 'HYDR':
+                    state_context_hsp2(state, operation, segment, activity)
+                    print("Init HYDR state context for domain", state['domain'])
+                    hydr_init_ix(state, state['domain'])
+                elif activity == 'SEDTRN':
+                    state_context_hsp2(state, operation, segment, activity)
+                    sedtrn_init_ix(state, state['domain'])
+
+def state_load_hdf5_components(io_manager, siminfo, op_tokens, state_paths, state_ix, dict_ix, ts_ix, model_object_cache):
+    # Implement population of model_object_cache etc from components in a hdf5 such as Special ACTIONS
+    return
+
 def state_load_dynamics_hsp2(state, io_manager, siminfo):
     # Load any dynamic components if present, and store variables on objects 
     hsp2_local_py = load_dynamics(io_manager, siminfo)
@@ -137,15 +158,25 @@ def state_load_dynamics_hsp2(state, io_manager, siminfo):
     state['state_step_hydr'] = siminfo['state_step_hydr'] # enabled or disabled 
     state['hsp2_local_py'] = hsp2_local_py # Stores the actual function in state
 
-def hydr_init_ix(state_ix, state_paths, domain):
+def hydr_init_ix(state, domain):
     # get a list of keys for all hydr state variables
     hydr_state = ["DEP","IVOL","O1","O2","O3","OVOL1","OVOL2","OVOL3","PRSUPY","RO","ROVOL","SAREA","TAU","USTAR","VOL","VOLEV"]
     hydr_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
     for i in hydr_state:
         #var_path = f'{domain}/{i}'
         var_path = domain + "/" + i
-        hydr_ix[i] = set_state(state_ix, state_paths, var_path, 0.0)
-    return hydr_ix    
+        hydr_ix[i] = set_state(state['state_ix'], state['state_paths'], var_path, 0.0)
+    return hydr_ix
+
+def sedtrn_init_ix(state, domain):
+    # get a list of keys for all sedtrn state variables
+    sedtrn_state = ["RSED4","RSED5","RSED6"]
+    sedtrn_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
+    for i in sedtrn_state:
+        #var_path = f'{domain}/{i}'
+        var_path = domain + "/" + i
+        sedtrn_ix[i] = set_state(state['state_ix'], state['state_paths'], var_path, 0.0)
+    return sedtrn_ix
     
 @njit
 def hydr_get_ix(state_ix, state_paths, domain):
@@ -157,6 +188,16 @@ def hydr_get_ix(state_ix, state_paths, domain):
         var_path = domain + "/" + i
         hydr_ix[i] = state_paths[var_path]
     return hydr_ix    
+
+@njit
+def sedtrn_get_ix(state_ix, state_paths, domain):
+    # get a list of keys for all sedtrn state variables
+    sedtrn_state = ["RSED4", "RSED5", "RSED6"]
+    sedtrn_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
+    for i in sedtrn_state:
+        var_path = domain + "/" + i
+        sedtrn_ix[i] = state_paths[var_path]
+    return sedtrn_ix
 
 # function to dynamically load module, based on "Using imp module" in https://www.tutorialspoint.com/How-I-can-dynamically-import-Python-module#
 #def dynamic_module_import(module_name, class_name):
@@ -201,3 +242,4 @@ def load_dynamics(io_manager, siminfo):
         # print("state_step_hydr function not defined. Using default")
         return False
     return hsp2_local_py
+
