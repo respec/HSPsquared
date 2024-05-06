@@ -1,6 +1,5 @@
 name: Python application
-# this is a standard setup copied from
-# https://docs.github.com/en/enterprise-server@3.10/actions/automating-builds-and-tests/building-and-testing-python
+
 on:
   push:
     branches: [ "master" ]
@@ -11,37 +10,78 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.10"
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install flake8 pytest
-        pip install mando numba pandas tables
-    - name: Install hsp2
-      run: |
-        # install the hsp2 executable
-        pip install .
-    - name: Lint with flake8
-      run: |
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --ignore=F821 --show-source --statistics --exclude=HSP2/ACIDPH.py,build/lib/HSP2/ACIDPH.py
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Test with pytest
-      run: |
-        pytest tests/ptest/test_sysexit.py
-        # add additional test, ex:
-        # pytest tests/testcbp/HSP2results/benchmark.py
-    - name: Run hsp2 test10
-      run: |
-        cd tests/test10/HSP2results
-        hsp2 import_uci test10.uci test10.h5
-        hsp2 run test10.h5
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install dependencies
+        run: |
+          pip install flake8
+      - name: Lint with flake8
+        run: |
+          # stop the build if there are Python syntax errors or undefined names
+          flake8 . --count --select=E9,F63,F7,F82 --ignore=F821 --show-source --statistics --exclude=build/*
+          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+  
+  test-pytest:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        pandas-version: [""]
+        include:
+          - python-version: "3.11"
+            pandas-version: "pandas>2.0"
+            coverage: true
+          - python-version: "3.11"
+            pandas-version: "pandas>1.5,<2.0"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+      - name: Install hsp2
+        run: |
+          # install the hsp2 executable
+          pip install .[dev]
+      - if: ${{ matrix.pandas-version }}
+        run: pip install "${{ matrix.pandas-version }}"
+      - if: ${{ matrix.coverage }}
+        run: |
+          # python coverage
+          NUMBA_DISABLE_JIT=1 pytest --cov --cov-branch --cov-report term-missing
+      - if: ${{ ! matrix.coverage }}
+        run: pytest
+  
+  test-cmd:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+      - name: Install hsp2
+        run: |
+          # install the hsp2 executable
+          pip install .
+      - name: Run hsp2
+        run: |
+          # TODO: find much shorter test case.
+          hsp2 import_uci ./tests/test10/HSP2results/test10.uci _temp_test10.h5
+          hsp2 run _temp_test10.h5
+   

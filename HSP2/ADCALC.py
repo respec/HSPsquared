@@ -109,10 +109,10 @@ def _adcalc_(ui, ts):
 		for index in range(nexits):
 			ts['EOVOL' + str(index + 1)] = EOVOL[:, index]
 
-	ROS = ui['ROS']
+	ROS = ui.get('ROS', 0.0)
 	OS  = zeros(nexits)
 	for index in range(nexits):
-		OS[index] = ui['OS' + str(index + 1)]
+		OS[index] = ui.get('OS' + str(index + 1), 0.0)
 
 	# external time series
 	O = zeros((simlen, nexits))
