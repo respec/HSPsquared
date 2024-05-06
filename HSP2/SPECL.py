@@ -8,7 +8,6 @@ Notes:
 
 from numba import njit
 from pandas import DataFrame, date_range
-#import h5py
 
 def specl_load_actions(state, io_manager, siminfo):
     if 'ACTIONS' in state['specactions']:
