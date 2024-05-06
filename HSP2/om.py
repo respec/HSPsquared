@@ -5,8 +5,6 @@
 #       defined aove that are called by the object classes
 import random # this is only used for a demo so may be deprecated
 import json
-import requests
-from requests.auth import HTTPBasicAuth
 import csv
 import pandas as pd
 import numpy as np
