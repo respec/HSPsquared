@@ -3,11 +3,12 @@ The class SimTimer is used to translate copy data from one state location to ano
 It is also used to make an implicit parent child link to insure that an object is loaded
 during a model simulation.
 """
-from HSP2.state import *
-from HSP2.om import *
+from HSP2.state import set_state
+from HSP2.om import ModelObject
 from HSP2.om_model_object import ModelObject
 from pandas import DataFrame, DatetimeIndex
 from numba import njit
+from numpy import int64
 
 class SimTimer(ModelObject):
     def __init__(self, name, container, siminfo):
@@ -57,7 +58,7 @@ class SimTimer(ModelObject):
         dt = siminfo['delt']
         # sim timer is special, one entry for each time component for each timestep
         # convert DateIndex to numbers [int(i) for i in dateindex.year]
-        tdi = { 0: dateindex.astype(np.int64), 1:[float(i) for i in dateindex.year], 2:[float(i) for i in dateindex.month], 3:[float(i) for i in dateindex.day], 4:[float(i) for i in dateindex.hour], 5:[float(i) for i in dateindex.minute], 6:[float(i) for i in dateindex.second], 7:[float(i) for i in dateindex.weekday], 8:[float(dt) for i in dateindex], 9:[float(i) for i in dateindex.day_of_year], 10:[float(i) for i in dateindex.daysinmonth], 11:[float(dt * 60.0) for i in dateindex] }
+        tdi = { 0: dateindex.astype(int64), 1:[float(i) for i in dateindex.year], 2:[float(i) for i in dateindex.month], 3:[float(i) for i in dateindex.day], 4:[float(i) for i in dateindex.hour], 5:[float(i) for i in dateindex.minute], 6:[float(i) for i in dateindex.second], 7:[float(i) for i in dateindex.weekday], 8:[float(dt) for i in dateindex], 9:[float(i) for i in dateindex.day_of_year], 10:[float(i) for i in dateindex.daysinmonth], 11:[float(dt * 60.0) for i in dateindex] }
         #tdi = { 0:dateindex.year, 1:dateindex.month, 2:dateindex.day, 3:dateindex.hour, 4:dateindex.minute, 5:dateindex.second }
         tid = DataFrame(tdi)
         h = 1 # added to increase row count for debug testing.

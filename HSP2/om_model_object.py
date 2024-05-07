@@ -3,11 +3,12 @@ The class ModelObject is the base class upon which all other dynamic model objec
 It handles all Dict management functions, but provides for no runtime execution of it's own.
 All runtime exec is done by child classes.
 """
-from HSP2.state import *
-from HSP2.om import *
+from HSP2.state import set_state, get_state_ix
+from HSP2.om import get_exec_order, is_float_digit
 from pandas import Series, DataFrame, concat, HDFStore, set_option, to_numeric
 from pandas import Timestamp, Timedelta, read_hdf, read_csv
-from numpy import pad
+from numpy import pad, asarray, zeros, int32
+from numba import njit
 
 class ModelObject:
     state_ix = {} # Shared Dict with the numerical state of each object 
@@ -75,7 +76,7 @@ class ModelObject:
         for ix in meo:
             if ix in run_ops.keys():
                 rmeo.append(ix)
-        rmeo = np.asarray(rmeo, dtype="i8") 
+        rmeo = asarray(rmeo, dtype="i8") 
         return rmeo
     
     @staticmethod
@@ -83,7 +84,7 @@ class ModelObject:
         if (ModelObject.ops_data_type == 'ndarray'):
             ops = pad(ops,(0,ModelObject.max_token_length))[0:ModelObject.max_token_length]
         else:
-            ops = np.asarray(ops, dtype="i8")
+            ops = asarray(ops, dtype="i8")
         return ops
     
     def format_ops(self):
@@ -363,20 +364,6 @@ class ModelObject:
         # easier to understand demonstrations
         step_one(self.op_tokens, self.op_tokens[self.ix], self.state_ix, self.dict_ix, self.ts_ix, step)
         #step_model({self.op_tokens[self.ix]}, self.state_ix, self.dict_ix, self.ts_ix, step)
-    
-    def dddstep_model(op_tokens, state_ix, dict_ix, ts_ix, step):
-        for i in op_tokens.keys():
-            if op_tokens[i][0] == 1:
-                state_ix[i] = step_equation(op_tokens[i], state_ix)
-            elif op_tokens[i][0] == 2:
-                state_ix[i] = exec_tbl_eval(op_tokens[i], state_ix, dict_ix)
-            elif op_tokens[i][0] == 3:
-                step_model_link(op_tokens[i], state_ix, ts_ix, step)
-            elif op_tokens[i][0] == 4:
-                return False
-            elif op_tokens[i][0] == 5:
-                step_sim_timer(op_tokens[i], state_ix, dict_ix, ts_ix, step)
-        return 
 
 """
 The class ModelConstant is for storing constants.  It must be loaded here because ModelObject calls it.
