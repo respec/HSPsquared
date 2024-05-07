@@ -8,7 +8,9 @@ from numpy import float64, float32
 from pandas import DataFrame, date_range
 from pandas.tseries.offsets import Minute
 from datetime import datetime as dt
+from typing import Union
 import os
+from HSP2IO.hdf import HDF5
 from HSP2.utilities import versions, get_timeseries, expand_timeseries_names, save_timeseries, get_gener_timeseries
 from HSP2.configuration import activities, noop, expand_masslinks
 from HSP2.state import *
@@ -17,13 +19,14 @@ from HSP2.SPECL import *
 
 from HSP2IO.io import IOManager, SupportsReadTS, Category
 
-def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None:
-    """Runs main HSP2 program.
-
+def main(io_manager:Union[str, IOManager], saveall:bool=False, jupyterlab:bool=True) -> None:
+    """
+    Run main HSP2 program.
     Parameters
     ----------
-   
-    saveall: Boolean - [optional] Default is False.
+    io_manager
+        An instance of IOManager class.
+    saveall: bool, default=False
         Saves all calculated data ignoring SAVE tables.
     jupyterlab: Boolean - [optional] Default is True.
         Flag for specific output behavior for  jupyter lab.
@@ -32,7 +35,9 @@ def main(io_manager:IOManager, saveall:bool=False, jupyterlab:bool=True) -> None
     None
     
     """
-
+    if isinstance(io_manager, str):
+        hdf5_instance = HDF5(io_manager)
+        io_manager = IOManager(hdf5_instance)
     hdfname = io_manager._input.file_path
     if not os.path.exists(hdfname):
         raise FileNotFoundError(f'{hdfname} HDF5 File Not Found')
