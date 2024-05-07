@@ -3,15 +3,16 @@ Authors: Robert Heaphy, Ph.D. and Paul Duda
 License: LGPL2
 '''
 
-from numpy import array, zeros, where, int64, arange
+from numpy import array, zeros, where, int64, asarray
 from math import log10, exp
-from numba import njit
+from numba import njit, types
 from HSP2.ADCALC import advect
 from HSP2.utilities  import make_numba_dict
 
 # the following imports added to handle special actions
-from HSP2.om import *
-from HSP2.om_model_linkage import *
+from HSP2.state import sedtrn_get_ix, sedtrn_init_ix
+from HSP2.om import pre_step_model, step_model, model_domain_dependencies
+from numba.typed import Dict
 
 ERRMSGS =('SEDTRN: Warning -- bed storage of sediment size fraction sand is empty',                                   #ERRMSG0
           'SEDTRN: Warning -- bed storage of sediment size fraction silt is empty',                                   #ERRMSG1
@@ -96,7 +97,7 @@ def sedtrn(io_manager, siminfo, uci, ts, state):
 	# Aggregate the list of all SEDTRN end point dependencies
 	ep_list = ['RSED4', 'RSED5', 'RSED6']
 	model_exec_list = model_domain_dependencies(state, state_info['domain'], ep_list)
-	model_exec_list = np.asarray(model_exec_list, dtype="i8") # format for use in numba
+	model_exec_list = asarray(model_exec_list, dtype="i8") # format for use in numba
 	#######################################################################################
 
 	############################################################################
@@ -339,6 +340,11 @@ def _sedtrn_(ui, ts, state_info, state_paths, state_ix, dict_ix, ts_ix, op_token
 		state_ix[rsed4_ix] = sand_wt_rsed4
 		state_ix[rsed5_ix] = silt_wt_rsed5
 		state_ix[rsed6_ix] = clay_wt_rsed6
+		if (state_info['state_step_om'] == 'enabled'):
+			pre_step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, loop)
+		
+		# (todo) Insert code hook for dynamic python modification of state 
+  
 		if (state_info['state_step_om'] == 'enabled'):
 			step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, loop)  # traditional 'ACTIONS' done in here
 			# Do write-backs for editable STATE variables

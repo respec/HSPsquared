@@ -15,21 +15,14 @@ Conversion of no category version of HSPF HRCHHYD.FOR into Python'''
 from numpy import zeros, any, full, nan, array, int64, arange
 from pandas import DataFrame
 from math import sqrt, log10
-from numba import njit
+from numba import njit, types
 from numba.typed import List
 from HSP2.utilities import initm, make_numba_dict
 
 # the following imports added by rb to handle dynamic code and special actions
-from HSP2.state import *
-from HSP2.SPECL import specl
-from HSP2.om import *
-from HSP2.om_model_object import *
-from HSP2.om_sim_timer import *
-from HSP2.om_special_action import *
-#from HSP2.om_equation import *
-from HSP2.om_model_linkage import *
-#from HSP2.om_data_matrix import *
-#from HSP2.om_model_broadcast import *
+from HSP2.state import hydr_get_ix, hydr_init_ix
+from HSP2.om import pre_step_model, step_model
+from numba.typed import Dict
 
 
 ERRMSGS =('HYDR: SOLVE equations are indeterminate',             #ERRMSG0

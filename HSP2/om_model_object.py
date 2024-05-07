@@ -4,11 +4,12 @@ It handles all Dict management functions, but provides for no runtime execution 
 All runtime exec is done by child classes.
 """
 from HSP2.state import set_state, get_state_ix
+from numba.typed import Dict
 from HSP2.om import get_exec_order, is_float_digit
 from pandas import Series, DataFrame, concat, HDFStore, set_option, to_numeric
 from pandas import Timestamp, Timedelta, read_hdf, read_csv
 from numpy import pad, asarray, zeros, int32
-from numba import njit
+from numba import njit, types
 
 class ModelObject:
     state_ix = {} # Shared Dict with the numerical state of each object 
