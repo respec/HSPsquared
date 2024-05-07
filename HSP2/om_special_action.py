@@ -1,8 +1,7 @@
 """
 The class SpecialAction is used to support original HSPF ACTIONS.
 """
-from HSP2.state import *
-from HSP2.om import *
+from HSP2.om import is_float_digit
 from HSP2.om_model_object import ModelObject
 from numba import njit
 class SpecialAction(ModelObject):

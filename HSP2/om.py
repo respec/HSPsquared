@@ -13,7 +13,7 @@ from numba.typed import Dict
 from numpy import zeros, int32
 from numba import int8, float32, njit, types, typed # import the types
 import random # this is only used for a demo so may be deprecated
-from HSP2.state import *
+from HSP2.state import append_state, get_ix_path
 
 
 def get_exec_order(model_exec_list, var_ix):
