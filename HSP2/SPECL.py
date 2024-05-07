@@ -31,7 +31,7 @@ def specl_load_actions(state, io_manager, siminfo):
             #print("model_data", ix, " = ", state['model_data'][opname])
     return
 
-def state_load_dynamics_specl(state, io_manager, siminfo):
+def specl_load_state(state, io_manager, siminfo):
     specl_load_actions(state, io_manager, siminfo)
     # others defined below, like:
     # specl_load_uvnames(state, io_manager, siminfo)

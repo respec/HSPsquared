@@ -123,7 +123,7 @@ def state_load_om_python(state, io_manager, siminfo):
     if 'om_init_model' in dir(hsp2_local_py):
         hsp2_local_py.om_init_model(io_manager, siminfo, state['op_tokens'], state['state_paths'], state['state_ix'], state['dict_ix'], state['ts_ix'], state['model_object_cache'])
 
-def state_initialize_om(state):
+def om_init_state(state):
     # this function will check to see if any of the multiple paths to loading
     # dynamic operational model objects has been supplied for the model.
     # Grab globals from state for easy handling
@@ -139,7 +139,7 @@ def state_initialize_om(state):
 def state_load_dynamics_om(state, io_manager, siminfo):
     # this function will check to see if any of the multiple paths to loading
     # dynamic operational model objects has been supplied for the model.
-    # state_initialize_om(state) must have been called already
+    # om_init_state(state) must have been called already
     # load dynamic coding libraries if defined by user
     # note: this used to be inside this function, I think that the loaded module should be no problem 
     #       occuring within this function call, since this function is also called from another runtime engine
