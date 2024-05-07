@@ -13,9 +13,9 @@ import os
 from HSP2IO.hdf import HDF5
 from HSP2.utilities import versions, get_timeseries, expand_timeseries_names, save_timeseries, get_gener_timeseries
 from HSP2.configuration import activities, noop, expand_masslinks
-from HSP2.state import *
-from HSP2.om import *
-from HSP2.SPECL import *
+from HSP2.state import init_state_dicts, state_siminfo_hsp2, state_load_dynamics_hsp2, state_init_hsp2, state_context_hsp2
+from HSP2.om import om_init_state, state_om_model_run_prep, state_load_dynamics_om
+from HSP2.SPECL import specl_load_state
 
 from HSP2IO.io import IOManager, SupportsReadTS, Category
 
@@ -28,8 +28,9 @@ def main(io_manager:Union[str, IOManager], saveall:bool=False, jupyterlab:bool=T
         An instance of IOManager class.
     saveall: bool, default=False
         Saves all calculated data ignoring SAVE tables.
-    jupyterlab: Boolean - [optional] Default is True.
+    jupyterlab: bool, default=True
         Flag for specific output behavior for  jupyter lab.
+    
     Return
     ------------
     None
@@ -77,8 +78,8 @@ def main(io_manager:Union[str, IOManager], saveall:bool=False, jupyterlab:bool=T
     state_init_hsp2(state, opseq, activities)
     # - finally stash specactions in state, not domain (segment) dependent so do it once
     state['specactions'] = specactions # stash the specaction dict in state
-    state_initialize_om(state)
-    state_load_dynamics_specl(state, io_manager, siminfo)   # traditional special actions
+    om_init_state(state) # set up operational model specific state entries
+    specl_load_state(state, io_manager, siminfo)   # traditional special actions
     state_load_dynamics_om(state, io_manager, siminfo)      # operational model for custom python
     # finalize all dynamically loaded components and prepare to run the model
     state_om_model_run_prep(state, io_manager, siminfo)
