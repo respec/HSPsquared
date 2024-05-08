@@ -14,7 +14,7 @@ class RegressTest(RegressTestBase):
         hspf_uci = test_root_hspf.resolve() / f"{self.compare_case}.uci"
         assert hspf_uci.exists()
 
-        temp_h5file = test_root_hspf / f"_temp_{self.compare_case}.h5"
+        temp_h5file = test_root_hspf / f"{self.compare_case}.h5"
         if temp_h5file.exists():
             temp_h5file.unlink()
 
@@ -41,26 +41,28 @@ class RegressTest(RegressTestBase):
         # "test05",
         # "test09",
         "test10",
+        "test10specl",
         # "test10b",
     ],
 )
-class TestRegression:
-    results: dict[tuple, tuple] = {}
+def test_case(case):
+    test = RegressTest(case, threads=1)
+    results = test.run_test()
+    test.temp_h5file.unlink()
 
-    @pytest.fixture(autouse=True)
-    def setup_and_teardown(self, case):
-        test = RegressTest(case, threads=1)
-        self.results = test.run_test()
-        yield
-        test.temp_h5file.unlink()
+    found = False
+    mismatches = []
+    for key, results in results.items():
+        no_data_hsp2, no_data_hspf, match, diff = results
+        if any([no_data_hsp2, no_data_hspf]):
+            continue
+        if not match:
+            mismatches.append((case, key, results))
+        found = True
+    assert found
 
-    def test_case(self, case):
-        found = False
-        for key, results in self.results.items():
-            no_data_hsp2, no_data_hspf, match, diff = results
-            if any([no_data_hsp2, no_data_hspf]):
-                continue
-
-            assert match, (case, key, f"{diff:0.00%}")
-            found = True
-        assert found
+    if mismatches:
+        for case, key, results in mismatches:
+            _, _, _, diff = results
+            print(case, key, f"{diff:0.00%}")
+        raise ValueError("results don't match hspf output")
