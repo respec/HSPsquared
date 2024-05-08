@@ -18,7 +18,6 @@ def init_state_dicts():
     state = {} # shared state Dictionary, contains numba-ready Dicts 
     state_paths = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
     state_ix = Dict.empty(key_type=types.int64, value_type=types.float64)
-    state_ix = Dict.empty(key_type=types.int64, value_type=types.float64)
     dict_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:,:])
     ts_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:])
     # initialize state for hydr
