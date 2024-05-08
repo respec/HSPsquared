@@ -12,7 +12,7 @@ Conversion of no category version of HSPF HRCHHYD.FOR into Python'''
 '''
 
 
-from numpy import zeros, any, full, nan, array, int64, arange
+from numpy import zeros, any, full, nan, array, int64, arange, asarray
 from pandas import DataFrame
 from math import sqrt, log10
 from numba import njit, types
@@ -21,7 +21,7 @@ from HSP2.utilities import initm, make_numba_dict
 
 # the following imports added by rb to handle dynamic code and special actions
 from HSP2.state import hydr_get_ix, hydr_init_ix
-from HSP2.om import pre_step_model, step_model
+from HSP2.om import pre_step_model, step_model, model_domain_dependencies
 from numba.typed import Dict
 
 
@@ -146,7 +146,9 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
     # must split dicts out of state Dict since numba cannot handle mixed-type nested Dicts
     state_ix, dict_ix, ts_ix = state['state_ix'], state['dict_ix'], state['ts_ix']
     state_paths = state['state_paths']
-    model_exec_list = state['model_exec_list'] # order of special actions and other dynamic ops
+    ep_list = ["DEP","IVOL","O1","O2","O3","OVOL1","OVOL2","OVOL3","PRSUPY","RO","ROVOL","SAREA","TAU","USTAR","VOL","VOLEV"]
+    model_exec_list = model_domain_dependencies(state, state_info['domain'], ep_list)
+    model_exec_list = asarray(model_exec_list, dtype="i8") # format for use in numba
     op_tokens = state['op_tokens']
     #######################################################################################
 

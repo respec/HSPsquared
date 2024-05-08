@@ -56,7 +56,7 @@ class SpecialAction(ModelObject):
            self.handle_ac(prop_val)
         if (prop_name == 'when'):
            # when to perform this?  timestamp or time-step index
-           prop_val = 0
+           prop_val = -1 # prevent a 0 indexed value from triggering return, default means execute every step
            si = self.model_object_cache[self.find_var_path('timer')]
            if len(model_props['YR']) > 0:
                # translate date to equivalent model step
