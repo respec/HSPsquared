@@ -1,9 +1,12 @@
 """
 The class SpecialAction is used to support original HSPF ACTIONS.
 """
+import numpy as np
+from numba import njit
+
 from HSP2.om import is_float_digit
 from HSP2.om_model_object import ModelObject
-from numba import njit
+
 class SpecialAction(ModelObject):
     def __init__(self, name, container = False, model_props = {}):
         super(SpecialAction, self).__init__(name, container, model_props)
