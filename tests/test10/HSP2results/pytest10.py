@@ -20,20 +20,18 @@ def test_h5_file_exists():
 # Code to evaluate difference between runs with and without specl
 # not formatted in pytest friendly fashion yet, and would require oth h5 files to exist
 """
-
-fpath = "./test10.h5"
+# running from root of HSP2 install
+fpath = "./tests/test10/HSP2results/test10.h5"
 dstore = pd.HDFStore(fpath)
 sedtrn_r005 = read_hdf(dstore, '/RESULTS/RCHRES_R005/SEDTRN/table')
-sedtrn_r005['RSED5'].mean()
+print(sedtrn_r005['RSED4'].mean(), sedtrn_r005['RSED5'].mean(), sedtrn_r005['RSED6'].mean())
 dstore.close()
 
 # Grab the other
-os.chdir('../../test10specl/HSP2results')
-
-fpath = "./test10specl.h5"
+fpath = "./tests/test10specl/HSP2results/test10specl.h5"
 specl_dstore = pd.HDFStore(fpath)
 specl_sedtrn_r005 = read_hdf(specl_dstore, '/RESULTS/RCHRES_R005/SEDTRN/table')
-specl_sedtrn_r005['RSED5'].mean()
+print(specl_sedtrn_r005['RSED4'].mean(), specl_sedtrn_r005['RSED5'].mean(), specl_sedtrn_r005['RSED6'].mean())
 specl_dstore.close()
 
 """
