@@ -8,7 +8,9 @@ from HSP2.om import *
 from HSP2.om_model_object import ModelObject
 from numba import njit
 class ModelLinkage(ModelObject):
-    def __init__(self, name, container = False, model_props = {}):
+    def __init__(self, name, container = False, model_props = None):
+        if model_props is None:
+            model_props = {}
         super(ModelLinkage, self).__init__(name, container, model_props)
         # ModelLinkage copies a values from right to left
         # right_path: is the data source for the link 
@@ -35,8 +37,8 @@ class ModelLinkage(ModelObject):
             self.left_path = self.state_path 
         if (self.link_type == 0):
             # if this is a simple input  we remove the object from the model_object_cache, and pass back to parent as an input 
-            del self.model_object_cache[self.state_path]
-            del self.state_ix[self.ix]
+            del self.state['model_object_cache'][self.state_path]
+            del self.state['state_ix'][self.ix]
             container.add_input(self.name, self.right_path)
         # this breaks for some reason, doesn't like the input name being different than the variable path ending? 
         # maybe because we should be adding the input to the container, not the self?       
@@ -82,7 +84,7 @@ class ModelLinkage(ModelObject):
         # - execution hierarchy
         #print("Linkage/link_type ", self.name, self.link_type,"created with params", self.model_props_parsed)
         if self.link_type in (2, 3):
-            src_ix = get_state_ix(self.state_ix, self.state_paths, self.right_path)
+            src_ix = get_state_ix(self.state['state_ix'], self.state['state_paths'], self.right_path)
             if not (src_ix == False):
                 self.ops = self.ops + [src_ix, self.link_type]
             else:
@@ -90,8 +92,8 @@ class ModelLinkage(ModelObject):
             #print(self.name,"tokenize() result", self.ops)
         if (self.link_type == 4) or (self.link_type == 5) or (self.link_type == 6):
             # we push to the remote path in this one 
-            left_ix = get_state_ix(self.state_ix, self.state_paths, self.left_path)
-            right_ix = get_state_ix(self.state_ix, self.state_paths, self.right_path)
+            left_ix = get_state_ix(self.state['state_ix'], self.state['state_paths'], self.left_path)
+            right_ix = get_state_ix(self.state['state_ix'], self.state['state_paths'], self.right_path)
             if (left_ix != False) and (right_ix != False):
                 self.ops = self.ops + [left_ix, self.link_type, right_ix]
             else:
