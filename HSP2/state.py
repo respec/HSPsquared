@@ -16,13 +16,11 @@ def init_state_dicts():
     This contains the base dictionaries used to pass model state amongst modules and custom code plugins
     """
     state = {} # shared state Dictionary, contains numba-ready Dicts 
-    state_paths = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
-    state_ix = Dict.empty(key_type=types.int64, value_type=types.float64)
-    dict_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:,:])
-    ts_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:])
+    state['state_paths'] = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
+    state['state_ix'] = Dict.empty(key_type=types.int64, value_type=types.float64)
+    state['dict_ix'] = Dict.empty(key_type=types.int64, value_type=types.float64[:,:])
+    state['ts_ix'] = Dict.empty(key_type=types.int64, value_type=types.float64[:])
     # initialize state for hydr
-    # now put all of these Dicts into the state Dict 
-    state['state_paths'], state['state_ix'], state['dict_ix'], state['ts_ix'] = state_paths, state_ix, dict_ix, ts_ix
     # add a generic place to stash model_data for dynamic components
     state['model_data'] = {}
     return state
@@ -35,17 +33,6 @@ def op_path_name(operation, id):
     tid = str(id).zfill(3)
     path_name = f'{operation}_{operation[0]}{tid}'
     return path_name
-
-def get_op_state_path(operation, id, activity = ''):
-    """
-    Used to generate hdf5 paths in a central fashion to avoid naming convention slip-ups
-    """
-    op_name = op_path_name(operation, id) 
-    if activity == '':
-        op_path = f'/STATE/{op_name}'
-    else:
-        op_path = f'/STATE/{op_name}/{activity}'
-    return op_path
 
 
 def get_state_ix(state_ix, state_paths, var_path):

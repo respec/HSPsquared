@@ -11,32 +11,35 @@ from numba import njit
 from numpy import int64
 
 class SimTimer(ModelObject):
-    def __init__(self, name, container, siminfo):
-        super(SimTimer, self).__init__(name, container, siminfo)
+    def __init__(self, name, container, model_props = None):
+        if model_props is None:
+            model_props = {}
+        # Note: hsp2 siminfo will match model_props here
+        super(SimTimer, self).__init__(name, container, model_props)
         self.state_path = '/STATE/timer'
-        self.time_array = self.dti_to_time_array(siminfo) # creates numpy formatted array of year, mo, day, ... for each timestep
+        self.time_array = self.dti_to_time_array(model_props) # creates numpy formatted array of year, mo, day, ... for each timestep
         self.date_path_ix = [] # where are the are components stored in the state_ix Dict
         self.optype = 5 # 0 - ModelObject, 1 - Equation, 2 - datamatrix, 3 - ModelLinkage, 4 - BroadcastChannel, 5 - SimTimer 
         self.register_components() # now that we have a time array, we set the basic state and all time comps into state
     
     def register_components(self):
         # initialize the path variable if not already set
-        self.ix = set_state(self.state_ix, self.state_paths, self.state_path, float(self.time_array[0][0]))
+        self.ix = set_state(self.state['state_ix'], self.state['state_paths'], self.state_path, float(self.time_array[0][0]))
         # now register all other paths.
         # register "year", "month" "day", ...
-        year_ix = set_state(self.state_ix, self.state_paths, "/STATE/year", float(self.time_array[0][1]))
-        month_ix = set_state(self.state_ix, self.state_paths, "/STATE/month", float(self.time_array[0][2]))
-        day_ix = set_state(self.state_ix, self.state_paths, "/STATE/day", float(self.time_array[0][3]))
-        hr_ix = set_state(self.state_ix, self.state_paths, "/STATE/hour", float(self.time_array[0][4]))
-        min_ix = set_state(self.state_ix, self.state_paths, "/STATE/minute", float(self.time_array[0][5]))
-        sec_ix = set_state(self.state_ix, self.state_paths, "/STATE/second", float(self.time_array[0][6]))
-        wd_ix = set_state(self.state_ix, self.state_paths, "/STATE/weekday", float(self.time_array[0][7]))
-        dt_ix = set_state(self.state_ix, self.state_paths, "/STATE/dt", float(self.time_array[0][8]))
-        jd_ix = set_state(self.state_ix, self.state_paths, "/STATE/jday", float(self.time_array[0][9]))
-        md_ix = set_state(self.state_ix, self.state_paths, "/STATE/modays", float(self.time_array[0][10]))
-        dts_ix = set_state(self.state_ix, self.state_paths, "/STATE/dts", float(self.time_array[0][8] * 60.0))
+        year_ix = set_state(self.state['state_ix'], self.state['state_paths'], "/STATE/year", float(self.time_array[0][1]))
+        month_ix = set_state(self.state['state_ix'], self.state['state_paths'], "/STATE/month", float(self.time_array[0][2]))
+        day_ix = set_state(self.state['state_ix'], self.state['state_paths'], "/STATE/day", float(self.time_array[0][3]))
+        hr_ix = set_state(self.state['state_ix'], self.state['state_paths'], "/STATE/hour", float(self.time_array[0][4]))
+        min_ix = set_state(self.state['state_ix'], self.state['state_paths'], "/STATE/minute", float(self.time_array[0][5]))
+        sec_ix = set_state(self.state['state_ix'], self.state['state_paths'], "/STATE/second", float(self.time_array[0][6]))
+        wd_ix = set_state(self.state['state_ix'], self.state['state_paths'], "/STATE/weekday", float(self.time_array[0][7]))
+        dt_ix = set_state(self.state['state_ix'], self.state['state_paths'], "/STATE/dt", float(self.time_array[0][8]))
+        jd_ix = set_state(self.state['state_ix'], self.state['state_paths'], "/STATE/jday", float(self.time_array[0][9]))
+        md_ix = set_state(self.state['state_ix'], self.state['state_paths'], "/STATE/modays", float(self.time_array[0][10]))
+        dts_ix = set_state(self.state['state_ix'], self.state['state_paths'], "/STATE/dts", float(self.time_array[0][8] * 60.0))
         self.date_path_ix = [year_ix, month_ix, day_ix, hr_ix, min_ix, sec_ix, wd_ix, dt_ix, jd_ix, md_ix, dts_ix]
-        self.dict_ix[self.ix] = self.time_array
+        self.state['dict_ix'][self.ix] = self.time_array
         
         return self.ix
     
@@ -49,9 +52,8 @@ class SimTimer(ModelObject):
     def add_op_tokens(self):
         # this puts the tokens into the global simulation queue 
         # can be customized by subclasses to add multiple lines if needed.
-        #self.op_tokens[self.ix] = self.ops
         super().add_op_tokens()
-        self.dict_ix[self.ix] = self.time_array
+        self.state['dict_ix'][self.ix] = self.time_array
     
     def dti_to_time_array(self, siminfo):
         dateindex = siminfo['tindex']

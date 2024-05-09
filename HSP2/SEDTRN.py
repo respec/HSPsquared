@@ -97,7 +97,7 @@ def sedtrn(io_manager, siminfo, uci, ts, state):
 	# Aggregate the list of all SEDTRN end point dependencies
 	ep_list = ['RSED4', 'RSED5', 'RSED6']
 	model_exec_list = model_domain_dependencies(state, state_info['domain'], ep_list)
-	model_exec_list = asarray(model_exec_list, dtype="i8") # format for use in numba
+	model_exec_list = asarray(model_exec_list, dtype="i8") # format for use in 
 	#######################################################################################
 
 	############################################################################
@@ -341,12 +341,12 @@ def _sedtrn_(ui, ts, state_info, state_paths, state_ix, dict_ix, ts_ix, op_token
 		state_ix[rsed5_ix] = silt_wt_rsed5
 		state_ix[rsed6_ix] = clay_wt_rsed6
 		if (state_info['state_step_om'] == 'enabled'):
-			pre_step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, loop)
+			pre_step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step = loop)
 		
 		# (todo) Insert code hook for dynamic python modification of state 
   
 		if (state_info['state_step_om'] == 'enabled'):
-			step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, loop)  # traditional 'ACTIONS' done in here
+			step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step = loop)  # traditional 'ACTIONS' done in here
 			# Do write-backs for editable STATE variables
 			sand_wt_rsed4 = state_ix[rsed4_ix]
 			silt_wt_rsed5 = state_ix[rsed5_ix]

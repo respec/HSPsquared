@@ -8,7 +8,9 @@ from HSP2.om import is_float_digit
 from HSP2.om_model_object import ModelObject
 
 class SpecialAction(ModelObject):
-    def __init__(self, name, container = False, model_props = {}):
+    def __init__(self, name, container = False, model_props = None):
+        if model_props is None:
+            model_props = {}
         super(SpecialAction, self).__init__(name, container, model_props)
 
         self.optype = 100 # Special Actions start indexing at 100 
@@ -38,8 +40,8 @@ class SpecialAction(ModelObject):
         self.timer_ix = self.handle_prop(model_props, 'when', False, 1) # when to begin the first attempt at action
         self.ctr_ix = self.constant_or_path('ctr', 0) # this initializes the counter for how many times an action has been performed
         # NOTE: since the spec-action modifies the same quantity that is it's input, it does *not* set it as a proper "input" since that would create a circular dependency 
-        domain = self.model_object_cache[('/STATE/' + self.op_type + '_' + self.op_type[0] + str(self.range1).zfill(3) )]
-        var_register = self.insure_register(self.vari, 0.0, domain, False)
+        domain = self.state['model_object_cache'][('/STATE/' + self.op_type + '_' + self.op_type[0] + str(self.range1).zfill(3) )]
+        var_register = self.insure_register(self.vari, 0.0, domain, False, False)
         #print("Created register", var_register.name, "with path", var_register.state_path)
         # add already created objects as inputs
         var_register.add_object_input(self.name, self, 1)
@@ -60,7 +62,7 @@ class SpecialAction(ModelObject):
         if (prop_name == 'when'):
            # when to perform this?  timestamp or time-step index
            prop_val = -1 # prevent a 0 indexed value from triggering return, default means execute every step
-           si = self.model_object_cache[self.find_var_path('timer')]
+           si = self.state['model_object_cache'][self.find_var_path('timer')]
            if len(model_props['YR']) > 0:
                # translate date to equivalent model step
                datestring = model_props['YR'] + '-' + model_props['MO'] + '-' + \
