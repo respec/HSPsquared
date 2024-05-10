@@ -416,12 +416,7 @@ def pre_step_register(op, state_ix):
     state_ix[ix] = 0.0
     return
 
-# Note: ModelConstant has not runtime execution
-
-@njit
-def exec_model_object( op, state_ix, dict_ix):
-    ix = op[1]
-    return 0.0
+# Note: ModelConstant has no runtime execution
 
 
 # njit functions for end of model run
