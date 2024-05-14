@@ -64,7 +64,7 @@ def model_element_paths(mel, state):
 
 
 # Import Code Classes
-from HSP2.om_model_object import ModelObject, ModelConstant, ModelRegister, pre_step_register
+from HSP2.om_model_object import ModelObject, ModelVariable, ModelRegister, pre_step_register
 from HSP2.om_sim_timer import SimTimer, step_sim_timer
 #from HSP2.om_equation import *
 from HSP2.om_model_linkage import ModelLinkage, step_model_link
@@ -183,6 +183,7 @@ def state_om_model_run_prep(state, io_manager, siminfo):
     model_root_object.state['op_tokens'] = ModelObject.make_op_tokens(max(model_root_object.state['state_ix'].keys()) + 1)
     model_tokenizer_recursive(model_root_object, model_object_cache, model_exec_list)
     op_tokens = model_root_object.state['op_tokens']
+    #print("op_tokens afer tokenizing", op_tokens)
     # model_exec_list is the ordered list of component operations
     #print("model_exec_list(", len(model_exec_list),"items):", model_exec_list)
     # This is used to stash the model_exec_list in the dict_ix, this might be slow, need to verify.
@@ -200,10 +201,11 @@ def state_om_model_run_prep(state, io_manager, siminfo):
     state['op_tokens'] = op_tokens # is this superfluous since the root object got op_tokens from state?
     if len(op_tokens) > 0:
         state['state_step_om'] = 'enabled' 
-    """
-    print("op_tokens is type", type(op_tokens))
-    print("state_ix is type", type(state['state_ix']))
-    """
+    
+    #print("op_tokens is type", type(op_tokens))
+    #print("state_ix is type", type(state['state_ix']))
+    #print("op_tokens final", op_tokens)
+    
     print("Operational model status:", state['state_step_om'])
     if len(model_exec_list) > 0:
         print("op_tokens has", len(op_tokens),"elements, with ", len(model_exec_list),"executable elements")
@@ -220,7 +222,7 @@ def model_class_loader(model_name, model_props, container = False):
         return False
     if type(model_props) is str:
         if is_float_digit(model_props):
-            model_object = ModelConstant(model_name, container, float(model_props) )
+            model_object = ModelVariable(model_name, container, float(model_props) )
             return model_object
         else:
             return False
@@ -244,7 +246,7 @@ def model_class_loader(model_name, model_props, container = False):
       elif object_class == 'Impoundment':
           model_object = Impoundment(model_props.get('name'), container, model_props )
       elif object_class == 'Constant':
-          model_object = ModelConstant(model_props.get('name'), container, model_props.get('value') )
+          model_object = ModelVariable(model_props.get('name'), container, model_props.get('value') )
       elif ( object_class.lower() == 'datamatrix'):
           # add a matrix with the data, then add a matrix accessor for each required variable 
           has_props = DataMatrix.check_properties(model_props)

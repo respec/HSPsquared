@@ -13,7 +13,7 @@ from numba import njit, types
 
 class ModelObject:
     max_token_length = 64 # limit on complexity of tokenized objects since op_tokens must be fixed dimensions for numba
-    runnables = [1,2,5,6,8,9,10,11,12,13,14,15, 100] # runnable components important for optimization
+    runnables = [1,2,3,5,6,8,9,10,11,12,13,14,15, 100] # runnable components important for optimization
     ops_data_type = 'ndarray' # options are ndarray or Dict - Dict appears slower, but unsure of the cause, so keep as option.
     
     def __init__(self, name, container = False, model_props = None, state = None):
@@ -44,16 +44,18 @@ class ModelObject:
         self.ops = []
         self.optype = 0 # OpTypes are as follows:
         #                 0 - model object, 1 - equation, 2 - datamatrix, 3 - input/ModelLinkage, 
-        #                 4 - broadcastChannel, 5 - SimTimer, 6 - Conditional, 7 - ModelConstant (numeric), 
+        #                 4 - broadcastChannel, 5 - SimTimer, 6 - Conditional, 7 - ModelVariable (numeric), 
         #                 8 - matrix accessor, 9 - MicroWatershedModel, 10 - MicroWatershedNetwork, 11 - ModelTimeseries, 
         #                 12 - ModelRegister, 13 - SimpleChannel, 14 - SimpleImpoundment, 15 - FlowBy
+        #                 16 - ModelConstant
+        #                 100 - SpecialAction, 101 - UVNAME, 102 - UVQUAN, 103 - DISTRB
         self.register_path() # note this registers the path AND stores the object in model_object_cache 
         self.parse_model_props(model_props)
     
     @staticmethod
     def required_properties():
         # returns a list or minimum properties to create.
-        # see ModelConstant below for how to call this in a sub-class 
+        # see ModelVariable below for how to call this in a sub-class 
         # note: 
         # req_props = super(DataMatrix, DataMatrix).required_properties()
         req_props = ['name']
@@ -223,7 +225,7 @@ class ModelObject:
     def constant_or_path(self, keyname, keyval, trust = False):
         if is_float_digit(keyval):
             # we are given a constant value, not a variable reference 
-            k = ModelConstant(keyname, self, float(keyval))
+            k = ModelVariable(keyname, self, float(keyval))
             kix = k.ix
         else:
             kix = self.add_input(keyname, keyval, 2, trust)
@@ -342,7 +344,7 @@ class ModelObject:
                 var_register = ModelRegister(var_name, register_container, default_value, register_path)
             else:
                 # this is just a standard numerical data holder so set up a constant
-                var_register = ModelConstant(var_name, register_container, default_value, register_path)
+                var_register = ModelVariable(var_name, register_container, default_value, register_path)
         else:
             var_register = self.state['model_object_cache'][register_path]
         return var_register
@@ -370,26 +372,34 @@ class ModelObject:
         #step_model({self.state['op_tokens'][self.ix]}, self.state['state_ix'], self.state['dict_ix'], self.state['ts_ix'], step)
 
 """
-The class ModelConstant is for storing constants.  It must be loaded here because ModelObject calls it.
-Is this useful or just clutter?  Useful I think since there are numerical constants...
+The class ModelVariable is a base cass for storing numerical values.  Used for UVQUAN and misc numerical constants...
 """
-class ModelConstant(ModelObject):
+class ModelVariable(ModelObject):
     def __init__(self, name, container = False, value = 0.0, state_path = False):
         if (state_path != False):
             # this allows us to mandate the location. useful for placeholders, broadcasts, etc.
             self.state_path = state_path
-        super(ModelConstant, self).__init__(name, container)
+        super(ModelVariable, self).__init__(name, container)
         self.default_value = float(value) 
-        self.optype = 7 # 0 - shell object, 1 - equation, 2 - datamatrix, 3 - input, 4 - broadcastChannel, 5 - SimTimer, 6 - Conditional, 7 - ModelConstant (numeric)
-        #print("ModelConstant named",self.name, "with path", self.state_path,"and ix", self.ix, "value", value)
+        self.optype = 7 # 0 - shell object, 1 - equation, 2 - datamatrix, 3 - input, 4 - broadcastChannel, 5 - SimTimer, 6 - Conditional, 7 - ModelVariable (numeric)
+        #print("ModelVariable named",self.name, "with path", self.state_path,"and ix", self.ix, "value", value)
         var_ix = self.set_state(float(value))
         self.paths_found = True
         # self.state['state_ix'][self.ix] = self.default_value
     
     def required_properties():
-        req_props = super(ModelConstant, ModelConstant).required_properties()
+        req_props = super(ModelVariable, ModelVariable).required_properties()
         req_props.extend(['value'])
         return req_props
+
+"""
+The class ModelConstant is for storing non-changing values.
+"""
+class ModelConstant(ModelVariable):
+    def __init__(self, name, container = False, value = 0.0, state_path = False):
+        super(ModelConstant, self).__init__(name, container, value, state_path)
+        self.optype = 16 # 0 - shell object, 1 - equation, 2 - datamatrix, 3 - input, 4 - broadcastChannel, 5 - SimTimer, 6 - Conditional, 7 - ModelVariable (numeric)
+        #print("ModelVariable named",self.name, "with path", self.state_path,"and ix", self.ix, "value", value)
 
 
 """
@@ -397,14 +407,14 @@ The class ModelRegister is for storing push values.
 Behavior is to zero each timestep.  This could be amended later.
 Maybe combined with stack behavior?  Or accumulator?
 """
-class ModelRegister(ModelConstant):
+class ModelRegister(ModelVariable):
     def __init__(self, name, container = False, value = 0.0, state_path = False):
         super(ModelRegister, self).__init__(name, container, value, state_path)
         self.optype = 12 # 
         # self.state['state_ix'][self.ix] = self.default_value
     
     def required_properties():
-        req_props = super(ModelConstant, ModelConstant).required_properties()
+        req_props = super(ModelVariable, ModelVariable).required_properties()
         req_props.extend(['value'])
         return req_props
 
@@ -416,7 +426,7 @@ def pre_step_register(op, state_ix):
     state_ix[ix] = 0.0
     return
 
-# Note: ModelConstant has no runtime execution
+# Note: ModelVariable has no runtime execution
 
 
 # njit functions for end of model run

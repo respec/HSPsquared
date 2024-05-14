@@ -59,7 +59,7 @@ class ModelLinkage(ModelObject):
     @staticmethod
     def required_properties():
         # returns a list or minimum properties to create.
-        # see ModelConstant below for how to call this in a sub-class 
+        # see ModelVariable below for how to call this in a sub-class 
         # note: 
         # req_props = super(DataMatrix, DataMatrix).required_properties()
         req_props = ['name', 'right_path']
