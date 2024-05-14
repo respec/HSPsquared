@@ -1,5 +1,12 @@
 """
 The class SpecialAction is used to support original HSPF ACTIONS.
+Draft: @tbd: 
+        - CTCODE: code specifying time units of the interval between separate applications or actions -
+                (valid values: MI,HR,DY,MO,YR)
+        - CDEFFG: deferral flag - indicates how to treat deferral of the action under a conditional situation - 
+                (valid values: SKIP, SHIFT, ACCUM; default = SKIP)
+        - FRACT: fractions for each of the separate applications
+
 """
 import numpy as np
 from numba import njit
