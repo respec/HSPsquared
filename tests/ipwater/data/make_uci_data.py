@@ -3,8 +3,8 @@ import os
 
 from pathlib import Path
 
-from HSP2tools import readUCI
-from HSP2IO.hdf import HDF5
+from hsp2.hsp2tools import readUCI
+from hsp2.hsp2io.hdf import HDF5
 
 this_dir = Path(__file__).parent
 
