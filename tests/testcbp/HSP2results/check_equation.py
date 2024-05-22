@@ -1,15 +1,14 @@
 # Must be run from the HSPsquared source directory, the h5 file has already been setup with hsp import_uci test10.uci
 # bare bones tester - must be run from the HSPsquared source directory
 import os
-from HSP2.main import *
-from HSP2.om import *
-import HSP2IO
+from hsp2.hsp2.main import *
+from hsp2.hsp2.om import *
 import numpy
-from HSP2IO.hdf import HDF5
-from HSP2IO.io import IOManager
-fpath = './tests/testcbp/HSP2results/JL1_6562_6560.h5' 
+from hsp2.hsp2io.hdf import HDF5
+from hsp2.hsp2io.io import IOManager
+fpath = './tests/testcbp/HSP2results/JL1_6562_6560.h5'
 # try also:
-# fpath = './tests/testcbp/HSP2results/JL1_6562_6560.h5' 
+# fpath = './tests/testcbp/HSP2results/JL1_6562_6560.h5'
 # sometimes when testing you may need to close the file, so try:
 # f = h5py.File(fpath,'a') # use mode 'a' which allows read, write, modify
 # # f.close()
@@ -28,9 +27,9 @@ state['specactions'] = uci_obj.specactions # stash the specaction dict in state
 
 state_siminfo_hsp2(uci_obj, siminfo)
 # Add support for dynamic functions to operate on STATE
-# - Load any dynamic components if present, and store variables on objects 
+# - Load any dynamic components if present, and store variables on objects
 state_load_dynamics_hsp2(state, io_manager, siminfo)
-# Iterate through all segments and add crucial paths to state 
+# Iterate through all segments and add crucial paths to state
 # before loading dynamic components that may reference them
 state_init_hsp2(state, opseq, activities)
 state_load_dynamics_specl(state, io_manager, siminfo) # traditional special actions
