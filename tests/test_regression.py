@@ -2,8 +2,8 @@ from pathlib import Path
 
 import pytest
 
-from HSP2tools.commands import import_uci, run
-from HSP2tools.HDF5 import HDF5
+from hsp2.hsp2tools.commands import import_uci, run
+from hsp2.hsp2tools.HDF5 import HDF5
 
 from .convert.regression_base import RegressTest as RegressTestBase
 
