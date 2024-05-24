@@ -52,7 +52,7 @@ test = ["pytest", "pytest-cov"]
 dev = ["hsp2[test]"]
 
 [project.scripts]
-hsp2 = "HSP2tools.HSP2_CLI:main"
+hsp2 = "hsp2.hsp2tools.HSP2_CLI:main"
 
 [project.urls]
 documentation = "http://www.respec.com/product/hydrologic-simulation-program-python-hsp%C2%B2/"
@@ -67,7 +67,7 @@ readme = {file = "README.rst"}
 version = {file = "VERSION"}
 
 [tool.setuptools.packages.find]
-include = ["HSP2*"]
+where = ["src"]
 
 [tool.setuptools.package-data]
-"HSP2tools.data" = ["*"]
+"hsp2.hsp2tools.data" = ["*"]

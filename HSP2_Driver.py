@@ -32,21 +32,21 @@ os.chdir(dir_name)
 
 if file_ext.upper() == "UCI":
     h5_name = filename[:-3] + "h5"
-    from HSP2tools.readUCI import readUCI
+    from hsp2.hsp2tools.readUCI import readUCI
     readUCI(filename, h5_name)
     # readUCI('HSPF.uci', 'test.h5')
 
 if file_ext.upper() == "WDM":
     h5_name = filename[:-3] + "h5"
-    from HSP2tools.readWDM import readWDM
+    from hsp2.hsp2tools.readWDM import readWDM
     readWDM(filename, h5_name)
     # readWDM('GRICM.wdm', 'test.h5')
     # readWDM('ZUMBROSCEN.WDM', 'test.h5')
 
 if file_ext.upper() == ".H5":
-    from HSP2.main import main
-    from HSP2IO.hdf import HDF5
-    from HSP2IO.io import IOManager
+    from hsp2.hsp2.main import main
+    from hsp2.hsp2io.hdf import HDF5
+    from hsp2.hsp2io.io import IOManager
 
     hdf5_instance = HDF5(filename)
     io_manager = IOManager(hdf5_instance)

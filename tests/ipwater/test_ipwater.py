@@ -7,8 +7,8 @@ import pytest
 from numba import types
 from numba.typed import Dict
 
-from HSP2.PWATER import pwater
-from HSP2.IWATER import iwater
+from hsp2.hsp2.PWATER import pwater
+from hsp2.hsp2.IWATER import iwater
 
 data_path = Path(__file__).parent / "data"
 
