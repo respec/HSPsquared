@@ -122,7 +122,7 @@ def state_siminfo_hsp2(uci_obj, siminfo):
 
 def state_init_hsp2(state, opseq, activities):
     # This sets up the state entries for all state compatible HSP2 model variables
-    print("STATE initializing contexts.")
+    # print("STATE initializing contexts.")
     for _, operation, segment, delt in opseq.itertuples():
         if operation != 'GENER' and operation != 'COPY':
             for activity, function in activities[operation].items():

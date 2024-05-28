@@ -94,7 +94,7 @@ def state_load_om_json(state, io_manager, siminfo):
     (fbase, fext) = os.path.splitext(hdf5_path)
     # see if there is custom json
     fjson = fbase + ".json"
-    print("Looking for custom om json ", fjson)
+    # print("Looking for custom om json ", fjson)
     if (os.path.isfile(fjson)):
         print("Found local json file", fjson)
         jfile = open(fjson)
@@ -117,7 +117,7 @@ def state_load_om_python(state, io_manager, siminfo):
     hdf5_path = io_manager._input.file_path
     (fbase, fext) = os.path.splitext(hdf5_path)
     # see if there is a code module with custom python 
-    print("Looking for custom om loader in python code ", (fbase + ".py"))
+    # print("Looking for custom om loader in python code ", (fbase + ".py"))
     hsp2_local_py = state['hsp2_local_py']
     # Load a function from code if it exists 
     if 'om_init_model' in dir(hsp2_local_py):
@@ -167,7 +167,7 @@ def state_om_model_run_prep(state, io_manager, siminfo):
     # state['model_data'] has alread been prepopulated from json, .py files, hdf5, etc.
     model_root_object = state['model_root_object']
     model_loader_recursive(state['model_data'], model_root_object)
-    print("Loaded objects & paths: insures all paths are valid, connects models as inputs")
+    # print("Loaded objects & paths: insures all paths are valid, connects models as inputs")
     # both state['model_object_cache'] and the model_object_cache property of the ModelObject class def 
     # will hold a global repo for this data this may be redundant?  They DO point to the same datset?
     # since this is a function that accepts state as an argument and these were both set in state_load_dynamics_om
@@ -177,7 +177,7 @@ def state_om_model_run_prep(state, io_manager, siminfo):
     # len() will be 1 if we only have a simtimer, but > 1 if we have a river being added
     model_exec_list = state['model_exec_list']
     # put all objects in token form for fast runtime execution and sort according to dependency order
-    print("Tokenizing models")
+    # print("Tokenizing models")
     if 'ops_data_type' in siminfo.keys():
         model_root_object.ops_data_type = siminfo['ops_data_type'] # allow override of dat astructure settings
     model_root_object.state['op_tokens'] = ModelObject.make_op_tokens(max(model_root_object.state['state_ix'].keys()) + 1)
@@ -206,9 +206,10 @@ def state_om_model_run_prep(state, io_manager, siminfo):
     #print("state_ix is type", type(state['state_ix']))
     #print("op_tokens final", op_tokens)
     
-    print("Operational model status:", state['state_step_om'])
+    #print("Operational model status:", state['state_step_om'])
     if len(model_exec_list) > 0:
-        print("op_tokens has", len(op_tokens),"elements, with ", len(model_exec_list),"executable elements")
+        pass
+        #print("op_tokens has", len(op_tokens),"elements, with ", len(model_exec_list),"executable elements")
     return
 
 # model class reader
