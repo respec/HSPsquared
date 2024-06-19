@@ -1,0 +1,73 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = [
+    "setuptools>=45",
+    "wheel",
+    "oldest-supported-numpy"
+]
+
+[project]
+name = "hsp2"
+dynamic = ["version", "readme"]
+description = "Hydrological Simulation Program - Python"
+dependencies = [
+    "cltoolbox",
+    "numba",
+    "pandas",
+    "tables"
+]
+authors = [
+    {name = "RESPEC, Inc", email = "Paul.Duda@respec.com"}
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Developers",
+    "Environment :: Console",
+    "License :: OSI Approved :: GNU Affero General Public License v3",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development :: Libraries :: Python Modules"
+]
+keywords = [
+    "hydrology",
+    "hydrological",
+    "hydraulic",
+    "hspf",
+    "simulation",
+    "python",
+]
+license = {file = "LICENSE"}
+requires-python = ">=3.9"
+
+[project.optional-dependencies]
+slim = ["numba", "pandas"]
+test = ["pytest", "pytest-cov"]
+dev = ["hsp2[test]"]
+
+[project.scripts]
+hsp2 = "hsp2.hsp2tools.HSP2_CLI:main"
+
+[project.urls]
+documentation = "http://www.respec.com/product/hydrologic-simulation-program-python-hsp%C2%B2/"
+github = "https://github.com/respec/HSPsquared"
+
+[tool.setuptools]
+license-files = ["LICENSE"]
+include-package-data = true
+
+[tool.setuptools.dynamic]
+readme = {file = "README.rst"}
+version = {file = "VERSION"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"hsp2.hsp2tools.data" = ["*"]

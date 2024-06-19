@@ -1914,15 +1914,15 @@ WDM1   177 PREC     ENGL        1.06       RCHRES 506     EXTNL  PREC
 
 *** Point Sources ***
 *** Location         DSN                UNITS          TSTEP   DISCHARGES TO
-----------------------------------------------------------------------------   ***
-1.  Camrosa          301                 MGD              D     Q to Ck 305    ***
-    Camrosa          335                 MGD              M     Q to Ponds 195 ***
-2.  Hill Canyon      302                 MGD              D     431            ***
-3.  Camarillo        303                 MGD              D     408            ***
-4.  Moorpark         304                 MGD              D     Q to Ck 206    ***
-    Moorpark         325                 MGD              D     Q to Ponds 194 ***
-5.  Olsen Rd         305                 MGD              D     431            ***
-6.  Simi Valley      307                 MGD              M     201            ***
+*** ----------------------------------------------------------------------------
+*** 1.  Camrosa          301                 MGD              D     Q to Ck 305
+***     Camrosa          335                 MGD              M     Q to Ponds 195
+*** 2.  Hill Canyon      302                 MGD              D     431
+*** 3.  Camarillo        303                 MGD              D     408
+*** 4.  Moorpark         304                 MGD              D     Q to Ck 206
+***     Moorpark         325                 MGD              D     Q to Ponds 194
+*** 5.  Olsen Rd         305                 MGD              D     431
+*** 6.  Simi Valley      307                 MGD              M     201
 
 *** DSNs will be multiplied by 3.0689 to convert to ac-ft/day and /24 to get hourly
 *** interval of the run --> (ac-ft/hr)

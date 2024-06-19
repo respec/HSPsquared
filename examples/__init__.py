@@ -1,2 +1,2 @@
-import HSP2
-__version__ = HSP2.__version__
+from hsp2 import hsp2
+__version__ = hsp2.__version__

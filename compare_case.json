@@ -1,0 +1,20 @@
+{
+    "RCHRES_R001": {
+        "name": "RCHRES_R001",
+        "object_class": "ModelObject",
+        "value": "0",
+        "wd_cfs": {
+            "name": "wd_cfs",
+            "object_class": "Constant",
+            "value": 10.0
+        },
+        "IVOLwrite": {
+            "name": "IVOLwrite",
+            "object_class": "ModelLinkage",
+            "left_path": "/STATE/RCHRES_R001/HYDR/O2",
+            "right_path": "/STATE/RCHRES_R001/wd_cfs",
+            "link_type": 5
+        }
+    }
+}
+
