@@ -9129,15 +9129,15 @@ label {
 }
 /* Flexible box model classes */
 /* Taken from Alex Russell http://infrequently.org/2009/08/css-3-progress/ */
-/* This file is a compatability layer.  It allows the usage of flexible box 
+/* This file is a compatability layer.  It allows the usage of flexible box
 model layouts accross multiple browsers, including older browsers.  The newest,
 universal implementation of the flexible box model is used when available (see
-`Modern browsers` comments below).  Browsers that are known to implement this 
+`Modern browsers` comments below).  Browsers that are known to implement this
 new spec completely include:
 
     Firefox 28.0+
     Chrome 29.0+
-    Internet Explorer 11+ 
+    Internet Explorer 11+
     Opera 17.0+
 
 Browsers not listed, including Safari, are supported via the styling under the
@@ -12519,7 +12519,7 @@ div#pager .ui-resizable-handle {
   background: #f7f7f7;
   border-top: 1px solid #cfcfcf;
   border-bottom: 1px solid #cfcfcf;
-  /* This injects handle bars (a short, wide = symbol) for 
+  /* This injects handle bars (a short, wide = symbol) for
         the resize handle. */
 }
 div#pager .ui-resizable-handle::after {
@@ -13033,14 +13033,14 @@ div#notebook {
   div.cell {
     display: block;
     page-break-inside: avoid;
-  } 
-  div.output_wrapper { 
-    display: block;
-    page-break-inside: avoid; 
   }
-  div.output { 
+  div.output_wrapper {
     display: block;
-    page-break-inside: avoid; 
+    page-break-inside: avoid;
+  }
+  div.output {
+    display: block;
+    page-break-inside: avoid;
   }
 }
 </style>
@@ -13890,7 +13890,7 @@ Date/Time                                 2020-05-12 08:49:08
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span> 
+<div class=" highlight hl-ipython3"><pre><span></span>
 </pre></div>
 
     </div>
@@ -13920,20 +13920,20 @@ NO Flush   - create test10.h5       Run time is about 01:19.1   size 2,136,787 K
              existing test10.h5     Run time is about 01:14.4   size 2,236,836 KB
 BLOSC      - create test10.h5       Run time is about 01:29.0   size 1,156,499 KB   No Flush, but no warning messages  (Blosc in save_timeseries only)
              existing test10.h5     Run time is about 01:26.2   size 1,156,796 KB
-             
+
 BLOSC (wdm & main)
            - create test10.h5       Run time is about 01:30.8   size 1,050,043 KB  No Flush, no warning messages.
              existing test10.h5     Run time is about 01:26.0   size 1,060,340 KB
              existing test10.h5     Run time is about 01:23.6  (5/8/2020)
              existing test10.h5     Run time is about 01:19.7  (5/8/2020) - no kernel restart from last run
-             
+
 NO Numba   - existing test10.h5     Run time is about 13:25.1  or x9.4 slower than with Numba.
 
 So current timing results show HSP2 is 2.8x slower than HSPF for this problem.
 
 Also tried return to store.put() with BLOSC (wdm & main) instead of to_hdf()
            - existing test10.h5     Run time is about 01:28.0  but found warning messages for closed node. Speedup not worth it.
- 
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -14005,7 +14005,7 @@ Also tried return to store.put() with BLOSC (wdm & main) instead of to_hdf()
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">hsp2key</span><span class="p">(</span><span class="n">hspfkey</span><span class="p">):</span>
     <span class="n">op</span><span class="p">,</span> <span class="n">activity</span><span class="p">,</span> <span class="n">segment</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">hspfkey</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
-    <span class="k">return</span>  <span class="sa">f</span><span class="s1">&#39;RESULTS/</span><span class="si">{</span><span class="n">op</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">op</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}{</span><span class="n">segment</span><span class="si">:</span><span class="s1">0&gt;3s</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">activity</span><span class="si">}</span><span class="s1">&#39;</span>    
+    <span class="k">return</span>  <span class="sa">f</span><span class="s1">&#39;RESULTS/</span><span class="si">{</span><span class="n">op</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">op</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}{</span><span class="n">segment</span><span class="si">:</span><span class="s1">0&gt;3s</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">activity</span><span class="si">}</span><span class="s1">&#39;</span>
 </pre></div>
 
     </div>
@@ -14028,13 +14028,13 @@ Also tried return to store.put() with BLOSC (wdm & main) instead of to_hdf()
         <span class="n">hspfsum</span> <span class="o">=</span> <span class="n">hspf</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 
         <span class="n">segment</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
-        
+
         <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">segment</span><span class="p">,</span> <span class="s1">&#39;HSP2 SUM&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hsp2</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
         <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">segment</span><span class="p">,</span> <span class="s1">&#39;HSPF SUM&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hspf</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
         <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">segment</span><span class="p">,</span> <span class="s1">&#39;Percent diff&#39;</span><span class="p">]</span>      <span class="o">=</span> <span class="mf">100.0</span> <span class="o">*</span>    <span class="p">(</span><span class="n">hspfsum</span> <span class="o">-</span> <span class="n">hsp2sum</span><span class="p">)</span><span class="o">/</span><span class="n">hspfsum</span>
         <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">segment</span><span class="p">,</span> <span class="s1">&#39;abs(Percent diff)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">hspfsum</span> <span class="o">-</span> <span class="n">hsp2sum</span><span class="p">)</span><span class="o">/</span><span class="n">hspfsum</span>
 
-    <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;abs(Percent diff)&#39;</span><span class="p">])</span>    
+    <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;abs(Percent diff)&#39;</span><span class="p">])</span>
 </pre></div>
 
     </div>
@@ -14057,13 +14057,13 @@ Also tried return to store.put() with BLOSC (wdm & main) instead of to_hdf()
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span> <span class="n">ils</span><span class="p">,</span> <span class="n">activity</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;sum&#39;</span><span class="p">):</span>
     <span class="n">hspf</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">activity</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">ils</span><span class="si">:</span><span class="s1">0&gt;3s</span><span class="si">}</span><span class="s1">_4&#39;</span>
     <span class="n">tshspf</span> <span class="o">=</span> <span class="n">read_hdf</span><span class="p">(</span><span class="n">HBN</span><span class="p">,</span> <span class="n">hspf</span><span class="p">)[</span><span class="n">name</span><span class="p">]</span>
-    
+
     <span class="n">hsp2</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;RESULTS/</span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">operation</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}{</span><span class="n">ils</span><span class="si">:</span><span class="s1">0&gt;3s</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">activity</span><span class="si">}</span><span class="s1">&#39;</span>
     <span class="k">if</span> <span class="n">how</span> <span class="o">==</span> <span class="s1">&#39;sum&#39;</span><span class="p">:</span>
         <span class="n">tshsp2</span> <span class="o">=</span> <span class="n">read_hdf</span><span class="p">(</span><span class="n">hdfname</span><span class="p">,</span> <span class="n">hsp2</span><span class="p">)[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s1">&#39;M&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;D&#39;</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">how</span> <span class="o">==</span> <span class="s1">&#39;last&#39;</span><span class="p">:</span>
         <span class="n">tshsp2</span> <span class="o">=</span> <span class="n">read_hdf</span><span class="p">(</span><span class="n">hdfname</span><span class="p">,</span> <span class="n">hsp2</span><span class="p">)[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s1">&#39;M&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;D&#39;</span><span class="p">)</span>
-    
+
     <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tshspf</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">tshspf</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;HSPF&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tshsp2</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">tshsp2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;HSP2&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
@@ -14084,13 +14084,13 @@ Also tried return to store.put() with BLOSC (wdm & main) instead of to_hdf()
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">scatter</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span> <span class="n">ils</span><span class="p">,</span> <span class="n">activity</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;sum&#39;</span><span class="p">):</span>
     <span class="n">hspf</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">activity</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">ils</span><span class="si">:</span><span class="s1">0&gt;3s</span><span class="si">}</span><span class="s1">_4&#39;</span>
     <span class="n">tshspf</span> <span class="o">=</span> <span class="n">read_hdf</span><span class="p">(</span><span class="n">HBN</span><span class="p">,</span> <span class="n">hspf</span><span class="p">)[</span><span class="n">name</span><span class="p">]</span>
-    
+
     <span class="n">hsp2</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;RESULTS/</span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">operation</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}{</span><span class="n">ils</span><span class="si">:</span><span class="s1">0&gt;3s</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">activity</span><span class="si">}</span><span class="s1">&#39;</span>
     <span class="k">if</span> <span class="n">how</span> <span class="o">==</span> <span class="s1">&#39;sum&#39;</span><span class="p">:</span>
         <span class="n">tshsp2</span> <span class="o">=</span> <span class="n">read_hdf</span><span class="p">(</span><span class="n">hdfname</span><span class="p">,</span> <span class="n">hsp2</span><span class="p">)[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s1">&#39;M&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;D&#39;</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">how</span> <span class="o">==</span> <span class="s1">&#39;last&#39;</span><span class="p">:</span>
         <span class="n">tshsp2</span> <span class="o">=</span> <span class="n">read_hdf</span><span class="p">(</span><span class="n">hdfname</span><span class="p">,</span> <span class="n">hsp2</span><span class="p">)[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s1">&#39;M&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;D&#39;</span><span class="p">)</span>
-    
+
     <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">tshspf</span><span class="p">,</span> <span class="n">tshsp2</span><span class="p">)</span>
 </pre></div>
 
@@ -15188,7 +15188,7 @@ Also tried return to store.put() with BLOSC (wdm & main) instead of to_hdf()
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span> 
+<div class=" highlight hl-ipython3"><pre><span></span>
 </pre></div>
 
     </div>
@@ -16614,7 +16614,7 @@ Also tried return to store.put() with BLOSC (wdm & main) instead of to_hdf()
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span> 
+<div class=" highlight hl-ipython3"><pre><span></span>
 </pre></div>
 
     </div>
@@ -16704,7 +16704,7 @@ Also tried return to store.put() with BLOSC (wdm & main) instead of to_hdf()
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span> 
+<div class=" highlight hl-ipython3"><pre><span></span>
 </pre></div>
 
     </div>
@@ -18026,7 +18026,7 @@ Also tried return to store.put() with BLOSC (wdm & main) instead of to_hdf()
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span> 
+<div class=" highlight hl-ipython3"><pre><span></span>
 </pre></div>
 
     </div>
@@ -19690,7 +19690,7 @@ Also tried return to store.put() with BLOSC (wdm & main) instead of to_hdf()
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span> 
+<div class=" highlight hl-ipython3"><pre><span></span>
 </pre></div>
 
     </div>
@@ -19702,7 +19702,7 @@ Also tried return to store.put() with BLOSC (wdm & main) instead of to_hdf()
   </div>
 </body>
 
- 
+
 
 
 </html>

@@ -1,7 +1,7 @@
- OUTPUT LEVEL IS BLOCK     
- UPDATE OPTION IS NO 
+ OUTPUT LEVEL IS BLOCK
+ UPDATE OPTION IS NO
 
- WDM FILE: rpo772.wdm                                                      
+ WDM FILE: rpo772.wdm
    MAXREC      :    20
    FREREC      :    15
 

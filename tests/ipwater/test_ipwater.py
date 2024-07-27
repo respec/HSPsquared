@@ -3,12 +3,10 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
-
+from hsp2.hsp2.IWATER import iwater
+from hsp2.hsp2.PWATER import pwater
 from numba import types
 from numba.typed import Dict
-
-from hsp2.hsp2.PWATER import pwater
-from hsp2.hsp2.IWATER import iwater
 
 data_path = Path(__file__).parent / "data"
 

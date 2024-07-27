@@ -1,13 +1,15 @@
-''' Copyright (c) 2020 by RESPEC, INC.
+"""Copyright (c) 2020 by RESPEC, INC.
 Author: Robert Heaphy, Ph.D.
 License: LGPL2
-'''
+"""
 
-from pandas import HDFStore, read_csv
 from io import StringIO
 
+from pandas import HDFStore, read_csv
+
+
 def fetchtable(hdfname, path, names=[], usercol=None, usercolvalue=None, CSV=False):
-    '''
+    """
     Fetch HSP2 table and after user modification, use it to update HDF5 file.
     If CSV=True is used, the return to fetch() must also be a CSV string!
 
@@ -37,7 +39,7 @@ def fetchtable(hdfname, path, names=[], usercol=None, usercolvalue=None, CSV=Fal
         to modify.
     replace : (closure) function
         Call this function with modified table to update table in HDF5 file
-    '''
+    """
 
     with HDFStore(hdfname) as store:
         dforiginal = store[path]
@@ -45,7 +47,7 @@ def fetchtable(hdfname, path, names=[], usercol=None, usercolvalue=None, CSV=Fal
         df = dforiginal.copy()
         if usercol:  # subset rows using user defined table
             df = df[df[usercol] == usercolvalue]
-        if names:    # subset columns by names in list
+        if names:  # subset columns by names in list
             df = df[names]
         df = df.copy()
         if CSV:
@@ -57,5 +59,6 @@ def fetchtable(hdfname, path, names=[], usercol=None, usercolvalue=None, CSV=Fal
                 dff = read_csv(StringIO(dff), index_col=0)
                 print(dff)
             dforiginal.update(dff)
-            dforiginal.to_hdf(store, path, format='table', data_columns=True)
+            dforiginal.to_hdf(store, path, format="table", data_columns=True)
+
     return df, replace

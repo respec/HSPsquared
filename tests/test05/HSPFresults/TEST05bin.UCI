@@ -200,19 +200,19 @@ EXT SOURCES
 <-Volume-> <Member> SsysSgap<--Mult-->Tran <-Target vols> <-Grp> <-Member-> ***
 <Name>   x <Name> x tem strg<-factor->strg <Name>   x   x        <Name> x x ***
 *** Met Seg C:1,PI:PETINP=0.7
-WDM     39 PREC     ENGLZERO               PERLND   1   2 EXTNL  PREC  
+WDM     39 PREC     ENGLZERO               PERLND   1   2 EXTNL  PREC
 WDM    123 ATMP     ENGL              SAME PERLND   1   2 ATEMP  AIRTMP
 WDM     41 EVAP     ENGL           0.7DIV  PERLND   1   2 EXTNL  PETINP
 WDM     42 WIND     ENGL              DIV  PERLND   1   2 EXTNL  WINMOV
 WDM     46 SOLR     ENGL              DIV  PERLND   1   2 EXTNL  SOLRAD
-WDM    126 DEWP     ENGL              SAME PERLND   1   2 EXTNL  DTMPG 
+WDM    126 DEWP     ENGL              SAME PERLND   1   2 EXTNL  DTMPG
 *** Met Seg C:1,PI:PETINP=0.7
-WDM    131 PREC     ENGLZERO               PERLND   3     EXTNL  PREC  
+WDM    131 PREC     ENGLZERO               PERLND   3     EXTNL  PREC
 WDM    122 ATMP     ENGL              SAME PERLND   3     ATEMP  AIRTMP
 WDM     41 EVAP     ENGL           0.7DIV  PERLND   3     EXTNL  PETINP
 WDM     42 WIND     ENGL              DIV  PERLND   3     EXTNL  WINMOV
 WDM     46 SOLR     ENGL              DIV  PERLND   3     EXTNL  SOLRAD
-WDM    125 DEWP     ENGL              SAME PERLND   3     EXTNL  DTMPG 
+WDM    125 DEWP     ENGL              SAME PERLND   3     EXTNL  DTMPG
 WDM    136 FLOW     ENGL              SAME PLTGEN   1     INPUT  MEAN   4
 END EXT SOURCES
 
@@ -229,7 +229,7 @@ COPY     1 OUTPUT MEAN   1         1.      COPY     2     INPUT  MEAN   1
 PERLND   1 PWATER PERO        122000.      COPY     3     INPUT  MEAN   1
 PERLND   2 PWATER PERO        176200.      COPY     3     INPUT  MEAN   1
 PERLND   3 PWATER PERO         75500.      COPY     3     INPUT  MEAN   1
-COPY     3 OUTPUT MEAN   1         1.      DISPLY   1     INPUT  TIMSER  
+COPY     3 OUTPUT MEAN   1         1.      DISPLY   1     INPUT  TIMSER
 COPY     1 OUTPUT MEAN   1         1.      PLTGEN   1     INPUT  MEAN   1
 COPY     2 OUTPUT MEAN   1         1.      PLTGEN   1     INPUT  MEAN   2
 COPY     3 OUTPUT MEAN   1         1.      PLTGEN   1     INPUT  MEAN   3

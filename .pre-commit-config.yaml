@@ -1,0 +1,96 @@
+---
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+
+exclude: |
+    (?x)^(
+        .*\.hbn|
+        .*\.wdm|
+        .*\.hdf5|
+        .*\.h5
+        )$
+
+repos:
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v4.6.0
+      hooks:
+          - id: check-case-conflict
+          - id: check-docstring-first
+          - id: check-executables-have-shebangs
+          - id: check-json
+          - id: check-merge-conflict
+          - id: check-shebang-scripts-are-executable
+          - id: check-toml
+          - id: check-xml
+          - id: end-of-file-fixer
+            exclude: notebooks/tstoolbox_plot_bash.sh
+          - id: fix-encoding-pragma
+            args: [--remove]
+          - id: mixed-line-ending
+          - id: trailing-whitespace
+            exclude: notebooks/tstoolbox_plot_bash.sh
+
+    - repo: https://github.com/astral-sh/ruff-pre-commit
+      # Ruff version.
+      rev: v0.5.5
+      hooks:
+          # Run the linter.
+          # Uncomment the following lines to enable the linter.
+          # Right now way to many things fail.
+          # - id: ruff
+          #   types_or: [python, pyi, jupyter]
+          #   args: [--fix]
+
+          # Run the linter sort imports.
+          - id: ruff
+            types_or: [python, pyi, jupyter]
+            args: [--select, I, --fix]
+
+          # Run the formatter.
+          - id: ruff-format
+            types_or: [python, pyi, jupyter]
+
+    - repo: https://github.com/pappasam/toml-sort
+      rev: v0.23.1
+      hooks:
+          - id: toml-sort-fix
+            args: [--in-place, --spaces-indent-inline-array, '4']
+
+    - repo: https://github.com/adrienverge/yamllint.git
+      rev: v1.35.1
+      hooks:
+          - id: yamllint
+            args: [--format, parsable, --strict]
+
+    - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
+      rev: 0.2.3
+      hooks:
+          - id: yamlfmt
+
+    - repo: https://github.com/jumanjihouse/pre-commit-hooks
+      rev: 3.0.0
+      hooks:
+          - id: shellcheck
+            args: [-s, bash]
+
+    - repo: https://github.com/lovesegfault/beautysh
+      rev: v6.2.1
+      hooks:
+          - id: beautysh
+            args: [--indent-size, '4']
+
+    - repo: https://github.com/asottile/blacken-docs
+      rev: 1.18.0
+      hooks:
+          - id: blacken-docs
+
+    - repo: https://github.com/asottile/pyupgrade
+      rev: v3.16.0
+      hooks:
+          - id: pyupgrade
+
+    - repo: https://github.com/commitizen-tools/commitizen
+      rev: v3.28.0
+      hooks:
+          - id: commitizen
+            stages: [commit-msg]
