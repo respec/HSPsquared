@@ -1,5 +1,5 @@
 RUN
- 
+
 GLOBAL
   PL3_5250_0 riv | P5 | hsp2_2022  | Occoquan
   START       2001/01/01        END    2001/12/31
@@ -54,7 +54,7 @@ RCHRES
   HYDR-PARM2
     RCHRES                                                             ***
     # -  #    FTABNO       LEN     DELTH     STCOR        KS      DB50 ***
-    1             1.       10.        2.                 0.5                    
+    1             1.       10.        2.                 0.5
   END HYDR-PARM2
 
   HYDR-INIT
@@ -68,7 +68,7 @@ RCHRES
   ADCALC-DATA
     RCHRES  Data for section ADCALC ***
     # -  #     CRRAT       VOL      ***
-    1            1.5    12175.                                                  
+    1            1.5    12175.
   END ADCALC-DATA
 
 END RCHRES

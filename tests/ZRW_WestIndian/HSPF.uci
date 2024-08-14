@@ -24,7 +24,7 @@ END FILES
 
 OPN SEQUENCE
     INGRP              INDELT 01:00
- 
+
 ***Pervious Land Segments***
       PERLND       5
       PERLND      20
@@ -202,7 +202,7 @@ PERLND
 ********************************************************************
 ***             Pervious Land Segments -- Hydrology              ***
 ********************************************************************
-  
+
   ATEMP-DAT
 *** <PLS >     ELDAT    AIRTEMP
 *** x -  x      (ft)    (deg F)
@@ -1100,7 +1100,7 @@ PERLND
   209            45.       35.        2.        2.      0.00     0.002     0.000
   210            45.       35.        2.        2.      0.00     0.002     0.000
   END PWAT-PARM3
-  
+
   PWAT-PARM4
 *** <PLS >     CEPSC      UZSN      NSUR     INTFW       IRC     LZETP
 *** x -  x      (in)      (in)                       (1/day)
@@ -1114,7 +1114,7 @@ PERLND
   181  195        0.      0.10      0.10        0.   1.0E-30        0.
   196  210        0.      0.20      0.15        0.   1.0E-30        0.
   END PWAT-PARM4
-  
+
   PWAT-PARM5
 *** <PLS >       FZG      FZGL
 *** x -  x
@@ -1804,7 +1804,7 @@ PERLND
   209      0.63 0.63 0.63 0.63 0.63 0.63 0.63 0.63 0.63 0.63 0.63 0.63
   210      0.63 0.63 0.63 0.63 0.63 0.63 0.63 0.63 0.63 0.63 0.63 0.63
   END MON-IRC
-  
+
   MON-LZETPARM
 *** <PLS >  Lower zone evapotranspiration parm at start of each month
 *** x -  x  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC
@@ -2245,7 +2245,7 @@ PERLND
   END SED-PARM2
 
   SED-PARM3
-*** <PLS >                           
+*** <PLS >
 *** x -  x      KSER      JSER      KGER      JGER
     1           1.20      2.00      0.38      2.50
     2           1.20      2.00      0.38      2.50
@@ -2563,7 +2563,7 @@ PERLND
     1   30  38.  42.  45.  47.  50.  50.  52.  50.  50.  48.  45.  42.
    31   45  38.  42.  45.  47.  50.  50.  52.  50.  50.  48.  45.  42.
    46   75  35.  35.  40.  42.  45.  50.  52.  50.  50.  48.  45.  42.
-   76  105  35.  35.  40.  42.  45.  50.  52.  50.  50.  48.  45.  42.  
+   76  105  35.  35.  40.  42.  45.  50.  52.  50.  50.  48.  45.  42.
   106  120  32.  32.  37.  44.  47.  52.  54.  55.  55.  53.  44.  40.
   121  135  32.  32.  37.  44.  47.  52.  54.  55.  55.  53.  44.  40.
   136  150  32.  32.  37.  44.  47.  52.  54.  55.  55.  53.  44.  40.
@@ -2576,7 +2576,7 @@ PERLND
 *** x -  x     AIRTC     SLTMP     ULTMP     LGTMP
     1  210       32.       32.       32.       45.
   END PSTEMP-TEMPS
-  
+
 ********************************************************************
 *** Pervious Land Segments -- Water Temperature & Dissolved Gas  ***
 ********************************************************************
@@ -2626,16 +2626,16 @@ PERLND
 *** <PLS >
 *** x -  x NQUAL **
     1  210    4
-  END NQUALS 
+  END NQUALS
 
-  PQL-AD-FLAGS        
+  PQL-AD-FLAGS
              Atmospheric Deposition Flags ***
     <PLS >  QUAL1  QUAL2  QUAL3  QUAL4     ***
     # -  #   F  C   F  C   F  C   F  C     ***
     1  210  -1 -1  -1 -1   0  0   0  0
   END PQL-AD-FLAGS
 
-***Total Ammonia Nitrogen***  
+***Total Ammonia Nitrogen***
 
   QUAL-PROPS
 *** <PLS >  Identifiers and Flags
@@ -2654,7 +2654,7 @@ PERLND
   196  210   0.100                                   0.550
   END QUAL-INPUT
 
-  MON-ACCUM      
+  MON-ACCUM
             ACCUMULATION RATE OF NH4 (lb NH4-N/AC.DAY)            ***
     #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
     1   30.0012.0016.0020.0048.0048.0048.0048.0048.0048.0032.0016.0012
@@ -2666,9 +2666,9 @@ PERLND
   166  180.0032.0032.0036.0088.0088.0088.0088.0088.0088.0088.0036.0032
   181  195.0036.0036.0040.0100.0100.0100.0100.0100.0100.0100.0040.0036
   196  210.0320.0320.0320.0320.0300.0300.0300.0300.0300.0320.0320.0320
-  END MON-ACCUM      
-  
-  MON-SQOLIM                      
+  END MON-ACCUM
+
+  MON-SQOLIM
             STORAGE LIMIT OF NH4 (lb NH4-N/AC)                        ***
     #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC***
     1   30.0036.0048.0060.0144.0144.0144.0144.0144.0144.0096.0048.0036
@@ -2680,9 +2680,9 @@ PERLND
   166  180.0096.0096.0108.0264.0264.0264.0264.0264.0264.0264.0108.0096
   181  195.0108.0108.0120.0300.0300.0300.0300.0300.0300.0300.0120.0108
   196  210.0960.0960.0960.0960.0900.0900.0900.0900.0900.0960.0960.0960
-  END MON-SQOLIM      
- 
-  MON-IFLW-CONC  
+  END MON-SQOLIM
+
+  MON-IFLW-CONC
             Interflow Concentration of NH4-N (mg/l)                     ***
     #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
     1   30 .045 .045 .045 .023 .023 .023 .023 .023 .023 .045 .045 .045
@@ -2694,9 +2694,9 @@ PERLND
   166  180 .125 .125 .125 .095 .095 .095 .095 .095 .095 .125 .125 .125
   181  195 .133 .133 .133 .100 .100 .100 .100 .100 .100 .133 .133 .133
   196  210 .750 .750 .750 .720 .720 .720 .720 .720 .720 .750 .750 .750
-  END MON-IFLW-CONC  
- 
-  MON-GRND-CONC  
+  END MON-IFLW-CONC
+
+  MON-GRND-CONC
             Active Groundwater Concentration of NH4-N (mg/l)            ***
     #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
     1   30 .060 .060 .060 .038 .038 .038 .038 .038 .038 .060 .060 .060
@@ -2710,14 +2710,14 @@ PERLND
   181  195 .080 .080 .080 .075 .075 .075 .075 .075 .075 .080 .080 .080
   196  210 .700 .700 .700 .680 .680 .680 .680 .680 .680 .700 .700 .700
 
-  END MON-GRND-CONC  
+  END MON-GRND-CONC
 
-***Nitrite plus Nitrate***  
-  
-  QUAL-PROPS     
+***Nitrite plus Nitrate***
+
+  QUAL-PROPS
     #    #<--QUALID-->    QTID  QSD VPFW VPFS  QSO  VQO QIFW VIQC QAGW VAQC  ***
     1  210     NO2+NO3     LBS    0    0    0    1    1    1    3    1    3
-  END QUAL-PROPS     
+  END QUAL-PROPS
 
   QUAL-INPUT
     #    #     SQO   POTFW   POTFS   ACQOP  SQOLIM   WSQOP    IOQC    AOQC   ***
@@ -2729,8 +2729,8 @@ PERLND
   151  195   0.450                                   0.500
   196  210   5.000                                   0.550
   END QUAL-INPUT
-  
-  MON-ACCUM      
+
+  MON-ACCUM
             ACCUMULATION RATE   NO2 NO3 (lb NO3-N/AC.DAY)               ***
     #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
     1   30 .013 .015 .016 .018 .018 .018 .016 .013 .010 .016 .020 .018
@@ -2742,9 +2742,9 @@ PERLND
   166  180 .034 .049 .064 .068 .068 .078 .078 .078 .078 .064 .049 .034
   181  195 .040 .050 .070 .080 .080 .080 .080 .080 .080 .070 .050 .040
   196  210 .350 .350 .350 .350 .300 .300 .300 .300 .300 .350 .350 .350
-  END MON-ACCUM      
-  
-  MON-SQOLIM           
+  END MON-ACCUM
+
+  MON-SQOLIM
             STORAGE RATE  OF    NO2 NO3 (lb NO3-N/AC)                   ***
     #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
     1   30 .078 .090 .096 .108 .108 .108 .096 .078 .060 .096 .120 .108
@@ -2756,9 +2756,9 @@ PERLND
   166  180 .204 .294 .384 .408 .408 .468 .468 .468 .468 .384 .294 .204
   181  195 .240 .300 .420 .480 .480 .480 .480 .480 .480 .420 .300 .240
   196  210 2.10 2.10 2.10 2.10 1.80 1.80 1.80 1.80 1.80 2.10 2.10 2.10
-  END MON-SQOLIM     
- 
-  MON-IFLW-CONC  
+  END MON-SQOLIM
+
+  MON-IFLW-CONC
             Interflow Concentration of NO3-N (mg/l)                     ***
     #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
     1   30  1.2  1.0  1.0  1.2  1.4  1.4  1.2  1.0  1.0  1.0  1.2  1.4
@@ -2773,9 +2773,9 @@ PERLND
   181  195  2.4  2.0  2.0  2.4  2.8  2.8  2.4  2.0  2.0  2.0  2.4  2.8
   196  210 20.0 20.0 20.0 20.0 20.0 20.0 20.0 20.0 20.0 20.0 20.0 20.0
 
-  END MON-IFLW-CONC  
- 
-  MON-GRND-CONC  
+  END MON-IFLW-CONC
+
+  MON-GRND-CONC
             Active Groundwater Concentration of NO3-N (mg/l)            ***
     #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
     1   30  .60  .50  .50  .60  .70  .70  .60  .50  .50  .50  .60  .70
@@ -2790,16 +2790,16 @@ PERLND
   181  195  1.2  1.0  1.0  1.2  1.4  1.4  1.2  1.0  1.0  1.0  1.2  1.4
   196  210 12.0 10.0 10.0 12.0 14.0 14.0 12.0 10.0 10.0 10.0 12.0 14.0
 
-  END MON-GRND-CONC  
-  
-***Ortho-Phosphorus***  
-  
-  QUAL-PROPS     
+  END MON-GRND-CONC
+
+***Ortho-Phosphorus***
+
+  QUAL-PROPS
     #    #<--QUALID-->    QTID  QSD VPFW VPFS  QSO  VQO QIFW VIQC QAGW VAQC  ***
     1  210         PO4     LBS    1    1    0    0    0    1    3    1    3
-  END QUAL-PROPS     
+  END QUAL-PROPS
 
-  QUAL-INPUT    
+  QUAL-INPUT
     #    #     SQO   POTFW   POTFS   ACQOP  SQOLIM   WSQOP    IOQC    AOQC   ***
     1   30   0.017            0.05                     0.5
    31   45   0.020                                     0.5
@@ -2809,9 +2809,9 @@ PERLND
   121  150   0.380            0.70                     0.5
   151  195   0.040                                     0.5
   196  210   0.040                                     0.5
-  END QUAL-INPUT     
-  
-  MON-POTFW   
+  END QUAL-INPUT
+
+  MON-POTFW
     #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
     1   30 .180 .180 .180 .180 .180 .180 .180 .180 .180 .180 .180 .180
    31   45 .180 .180 .180 .180 .180 .180 .180 .180 .180 .180 .180 .180
@@ -2822,11 +2822,11 @@ PERLND
   136  150  1.0  1.0  2.5  4.0  4.0  3.0  3.0  3.0  4.0  4.0  2.5  1.0
   151  165  1.6  1.6  1.6  1.7  1.7  1.6  1.6  1.7  1.7  1.6  1.6  1.6
   166  180  1.7  1.7  1.7  1.8  1.7  1.7  1.7  1.8  1.8  1.7  1.7  1.7
-  181  195  1.8  1.8  1.8  1.9  1.9  1.8  1.8  1.9  1.9  1.8  1.8  1.8  
+  181  195  1.8  1.8  1.8  1.9  1.9  1.8  1.8  1.9  1.9  1.8  1.8  1.8
   196  210  5.7  5.7  5.7  5.0  5.0  4.8  4.8  4.8  5.0  5.0  5.0  5.0
-  END MON-POTFW      
- 
-  MON-IFLW-CONC  
+  END MON-POTFW
+
+  MON-IFLW-CONC
             Interflow Concentration of PO4-P (mg/l)                     ***
     #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
     1   30 .050 .050 .050 .050 .050 .050 .050 .050 .050 .050 .050 .050
@@ -2841,9 +2841,9 @@ PERLND
   181  195 .100 .100 .100 .100 .100 .100 .100 .100 .100 .100 .100 .100
   196  210 .500 .500 .500 .500 .500 .500 .500 .500 .500 .500 .500 .500
 
-  END MON-IFLW-CONC  
- 
-  MON-GRND-CONC  
+  END MON-IFLW-CONC
+
+  MON-GRND-CONC
             Active Groundwater Concentration of PO4-P (mg/l)            ***
     #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
     1   30 .015 .015 .015 .015 .015 .015 .015 .015 .015 .015 .015 .015
@@ -2858,15 +2858,15 @@ PERLND
   181  195 .030 .030 .030 .030 .030 .030 .030 .030 .030 .030 .030 .030
   196  210 .100 .100 .100 .100 .100 .100 .100 .100 .100 .100 .100 .100
 
-  END MON-GRND-CONC 
+  END MON-GRND-CONC
 
-***Biochemical Oxygen Demand (Organic Nutrients)***    
+***Biochemical Oxygen Demand (Organic Nutrients)***
 
-  QUAL-PROPS     
+  QUAL-PROPS
     #    #<--QUALID-->    QTID  QSD VPFW VPFS  QSO  VQO QIFW VIQC QAGW VAQC  ***
     1  210         BOD     LBS    1    0    0    0    0    1    3    1    3
-  END QUAL-PROPS     
- 
+  END QUAL-PROPS
+
   QUAL-INPUT
     #    #     SQO   POTFW   POTFS   ACQOP  SQOLIM   WSQOP    IOQC    AOQC   ***
     1   30    1.00     8.5    0.05                    0.50
@@ -2881,7 +2881,7 @@ PERLND
   196  210    7.00   141.0                            0.50
   END QUAL-INPUT
 
-  MON-IFLW-CONC  
+  MON-IFLW-CONC
             Interflow Concentration of ORG (mg/l)                       ***
     #    #  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC  ***
     1   30  6.0  6.0  6.0  6.0  6.0  6.0  6.0  6.0  6.0  6.0  6.0  6.0
@@ -3014,8 +3014,8 @@ IMPLND
   END SNOW-FLAGS
 
   SNOW-PARM1
-*** < ILS>       LAT     MELEV     SHADE    SNOWCF    COVIND     
-*** x  - x   degrees      (ft)                          (in)      
+*** < ILS>       LAT     MELEV     SHADE    SNOWCF    COVIND
+*** x  - x   degrees      (ft)                          (in)
   151           44.3       889      0.15      1.15       4.0
   152           44.3       999      0.15      1.15       4.0
   153           44.2      1080      0.15      1.15       4.0
@@ -3148,7 +3148,7 @@ IMPLND
 *** x -  x      RETS      SURS
   151  195     0.001     0.001
   END IWAT-STATE1
-  
+
 ********************************************************************
 ***           Impervious Land Segments -- Sediment               ***
 ********************************************************************
@@ -3180,7 +3180,7 @@ IMPLND
 
 ********************************************************************
 ***Impervious Land Segments -- Water Temperature & Dissolved Gas ***
-********************************************************************  
+********************************************************************
 
   IWT-PARM1
 *** <ILS >  Flags for section IWTGAS
@@ -3194,14 +3194,14 @@ IMPLND
 *** x -  x      (ft)   (deg F) (deg F/F)
   151  165     1027.       34.       0.3
   166  180     1027.       34.       0.3
-  181  195     1027.       34.       0.3  
+  181  195     1027.       34.       0.3
   END IWT-PARM2
 
   MON-AWTF
 *** <ILS >  Value of AWTF at start of each month (deg F)
 *** x -  x  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC
   151  165  29.  29.  30.  34.  54.  63.  65.  64.  60.  48.  35.  30.
-  166  180  29.  29.  30.  34.  54.  63.  65.  64.  60.  48.  35.  30. 
+  166  180  29.  29.  30.  34.  54.  63.  65.  64.  60.  48.  35.  30.
   181  195  29.  29.  30.  34.  54.  63.  65.  64.  60.  48.  35.  30.
   END MON-AWTF
 
@@ -3220,7 +3220,7 @@ IMPLND
 ***NQUAL 1 = NH3
 ***NQUAL 2 = NO2+NO3
 ***NQUAL 3 = PO4
-***NQUAL 4 = BOD 
+***NQUAL 4 = BOD
 
   NQUALS
     #    # NQAL  ***
@@ -3233,7 +3233,7 @@ IMPLND
     # -  #   F  C   F  C   F  C   F  C    ***
   151  195  -1 -1  -1 -1   0  0   0  0
   END IQL-AD-FLAGS
-  
+
   ***Total Ammonia Nitrogen***
 
   QUAL-PROPS
@@ -3259,7 +3259,7 @@ IMPLND
   END QUAL-INPUT
 
 ***Ortho-Phosphorus***
-  
+
   QUAL-PROPS
     #    #<--QUALID-->    QTID  QSD VPFW  QSO  VQO  ***
   151  195     ORTHO P     LBS    0    0    1    0
@@ -3892,7 +3892,7 @@ RCHRES
 
   SAND-PM
 *** RCHRES         D         W       RHO     KSAND    EXPSND
-*** x -  x      (in)  (in/sec)  (gm/cm3) 
+*** x -  x      (in)  (in/sec)  (gm/cm3)
     1          0.005      2.00       2.5     1.000       3.0
     2          0.005      2.00       2.5     1.000       3.0
     3          0.005      2.00       2.5     1.000       2.5
@@ -4273,13 +4273,13 @@ RCHRES
   508  612     1.047      .200    -1.673      .969
   END OX-REAPARM
 
-  OX-CFOREA              
-    RCHRES    CFOREA***  
-    # -  #          ***  
+  OX-CFOREA
+    RCHRES    CFOREA***
+    # -  #          ***
 ***Lakes
   110            1.0
   507            1.0
-  END OX-CFOREA 
+  END OX-CFOREA
 
   OX-BENPARM
     RCHRES     BENOD     TCBEN     EXPOD  BRBOD(1)  BRBOD(2)    EXPREL***
@@ -4287,16 +4287,16 @@ RCHRES
     1  612       75.     1.074      1.22      1.00     10.0       2.82
   END OX-BENPARM
 
-  OX-INIT 
+  OX-INIT
     RCHRES       DOX       BOD     SATDO ***
     # -  #      mg/l      mg/l      mg/l ***
     1  612      12.8       3.5      13.5
-  END OX-INIT 
+  END OX-INIT
 
   NUT-FLAGS
 *** RCHRES  Nutrient flags
 *** x -  x  NH3  NO2  PO4  AMV  DEN ADNH ADPO PHFL
-    1  612    1    1    1    0    1    1    1     
+    1  612    1    1    1    0    1    1    1
   END NUT-FLAGS
 
   NUT-AD-FLAGS
@@ -4330,13 +4330,13 @@ RCHRES
     1  612      .050      .012     1.070      .002      1.04        5.
   END NUT-NITDENIT
 
-  NUT-BEDCONC   
-    RCHRES       Bed concentrations of NH4 & PO4 (mg/kg)               *** 
+  NUT-BEDCONC
+    RCHRES       Bed concentrations of NH4 & PO4 (mg/kg)               ***
     # -  #  NH4-sand  NH4-silt  NH4-clay  PO4-sand  PO4-silt  PO4-clay ***
     1  612       30.       70.       70.       10.      500.     1000.
-  END NUT-BEDCONC   
+  END NUT-BEDCONC
 
-  NUT-ADSPARM   
+  NUT-ADSPARM
     RCHRES       Partition coefficients for NH4 AND PO4  (ml/g)        ***
     # -  #  NH4-sand  NH4-silt  NH4-clay  PO4-sand  PO4-silt  PO4-clay ***
     1  612       10.       50.      100.      100.     1000.    10000.
@@ -4344,15 +4344,15 @@ RCHRES
 
   NUT-DINIT
     RCHRES       NO3       TAM       NO2       PO4        PH ***
-    # -  #      mg/l      mg/l      mg/l      mg/l           *** 
+    # -  #      mg/l      mg/l      mg/l      mg/l           ***
     1  612      4.00       .10        0.      .050        7.
   END NUT-DINIT
 
-  NUT-ADSINIT                        
+  NUT-ADSINIT
     RCHRES        Initial suspended NH4 and PO4 concentrations (mg/kg) ***
     # -  #  NH4-sand  NH4-silt  NH4-clay  PO4-sand  PO4-silt  PO4-clay ***
     1  612        0.        0.        0.        0.        0.        0.
-  END NUT-ADSINIT  
+  END NUT-ADSINIT
 
   NUT-NH3VOLAT
     RCHRES    EXPNVG    EXPNVL  ***
@@ -4369,12 +4369,12 @@ RCHRES
   PLNK-PARM1
     RCHRES    RATCLP    NONREF    LITSED     ALNPR      EXTB     MALGR ***
     # -  #                                               /ft       /hr ***
-    1   87       .68       .75    0.0015      0.50       .12      .100   
-  100  109       .68       .75    0.0015      0.50       .12      .045    
-  110            .68       .75    0.0015      0.50       .03      .030    
-  111  506       .68       .75    0.0015      0.50       .12      .045    
-  507            .68       .75    0.0015      0.50       .03      .030    
-  508  612       .68       .75    0.0015      0.50       .12      .045    
+    1   87       .68       .75    0.0015      0.50       .12      .100
+  100  109       .68       .75    0.0015      0.50       .12      .045
+  110            .68       .75    0.0015      0.50       .03      .030
+  111  506       .68       .75    0.0015      0.50       .12      .045
+  507            .68       .75    0.0015      0.50       .03      .030
+  508  612       .68       .75    0.0015      0.50       .12      .045
   END PLNK-PARM1
 
   PLNK-PARM2
@@ -4389,11 +4389,11 @@ RCHRES
 
   PLNK-PARM3
     RCHRES     ALR20      ALDH      ALDL     OXALD     NALDH     PALDH ***
-    # -  #       /hr       /hr       /hr       /hr      mg/l      mg/l ***       
+    # -  #       /hr       /hr       /hr       /hr      mg/l      mg/l ***
     1  109      .005       .02      .001       .03      .010      .002
   110           .005      .005      .001       .03      .010      .002
   111  506      .005       .02      .001       .03      .010      .002
-  507           .005      .005      .001       .03      .010      .002    
+  507           .005      .005      .001       .03      .010      .002
   508  612      .005       .02      .001       .03      .010      .002
   END PLNK-PARM3
 
@@ -4537,558 +4537,558 @@ EXT SOURCES
 ***Pervious Land Segments***
 
 ***Precipitation (stored as inches/hour)
-WDM1   136 PREC     ENGL          1.00SAME PERLND   1     EXTNL  PREC  
-WDM1   137 PREC     ENGL          1.00SAME PERLND   2     EXTNL  PREC  
-WDM1   138 PREC     ENGL          1.00SAME PERLND   3     EXTNL  PREC  
-WDM1   139 PREC     ENGL          1.00SAME PERLND   4     EXTNL  PREC  
-WDM1   140 PREC     ENGL          1.00SAME PERLND   5     EXTNL  PREC  
-WDM1   141 PREC     ENGL          1.00SAME PERLND   6     EXTNL  PREC  
-WDM1   142 PREC     ENGL          1.00SAME PERLND   7     EXTNL  PREC  
-WDM1   143 PREC     ENGL          1.00SAME PERLND   8     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME PERLND   9     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME PERLND  10     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME PERLND  11     EXTNL  PREC  
-WDM1   147 PREC     ENGL          1.00SAME PERLND  12     EXTNL  PREC  
-WDM1   148 PREC     ENGL          1.00SAME PERLND  13     EXTNL  PREC  
-WDM1   149 PREC     ENGL          1.00SAME PERLND  14     EXTNL  PREC  
-WDM1   150 PREC     ENGL          1.00SAME PERLND  15     EXTNL  PREC  
-WDM1   136 PREC     ENGL          1.00SAME PERLND  16     EXTNL  PREC  
-WDM1   137 PREC     ENGL          1.00SAME PERLND  17     EXTNL  PREC  
-WDM1   138 PREC     ENGL          1.00SAME PERLND  18     EXTNL  PREC  
-WDM1   139 PREC     ENGL          1.00SAME PERLND  19     EXTNL  PREC  
-WDM1   140 PREC     ENGL          1.00SAME PERLND  20     EXTNL  PREC  
-WDM1   141 PREC     ENGL          1.00SAME PERLND  21     EXTNL  PREC  
-WDM1   142 PREC     ENGL          1.00SAME PERLND  22     EXTNL  PREC  
-WDM1   143 PREC     ENGL          1.00SAME PERLND  23     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME PERLND  24     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME PERLND  25     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME PERLND  26     EXTNL  PREC  
-WDM1   147 PREC     ENGL          1.00SAME PERLND  27     EXTNL  PREC  
-WDM1   148 PREC     ENGL          1.00SAME PERLND  28     EXTNL  PREC  
-WDM1   149 PREC     ENGL          1.00SAME PERLND  29     EXTNL  PREC  
-WDM1   150 PREC     ENGL          1.00SAME PERLND  30     EXTNL  PREC  
-WDM1   136 PREC     ENGL          1.00SAME PERLND  31     EXTNL  PREC  
-WDM1   137 PREC     ENGL          1.00SAME PERLND  32     EXTNL  PREC  
-WDM1   138 PREC     ENGL          1.00SAME PERLND  33     EXTNL  PREC  
-WDM1   139 PREC     ENGL          1.00SAME PERLND  34     EXTNL  PREC  
-WDM1   140 PREC     ENGL          1.00SAME PERLND  35     EXTNL  PREC  
-WDM1   141 PREC     ENGL          1.00SAME PERLND  36     EXTNL  PREC  
-WDM1   142 PREC     ENGL          1.00SAME PERLND  37     EXTNL  PREC  
-WDM1   143 PREC     ENGL          1.00SAME PERLND  38     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME PERLND  39     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME PERLND  40     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME PERLND  41     EXTNL  PREC  
-WDM1   147 PREC     ENGL          1.00SAME PERLND  42     EXTNL  PREC  
-WDM1   148 PREC     ENGL          1.00SAME PERLND  43     EXTNL  PREC  
-WDM1   149 PREC     ENGL          1.00SAME PERLND  44     EXTNL  PREC  
-WDM1   150 PREC     ENGL          1.00SAME PERLND  45     EXTNL  PREC  
-WDM1   136 PREC     ENGL          1.00SAME PERLND  46     EXTNL  PREC  
-WDM1   137 PREC     ENGL          1.00SAME PERLND  47     EXTNL  PREC  
-WDM1   138 PREC     ENGL          1.00SAME PERLND  48     EXTNL  PREC  
-WDM1   139 PREC     ENGL          1.00SAME PERLND  49     EXTNL  PREC  
-WDM1   140 PREC     ENGL          1.00SAME PERLND  50     EXTNL  PREC  
-WDM1   141 PREC     ENGL          1.00SAME PERLND  51     EXTNL  PREC  
-WDM1   142 PREC     ENGL          1.00SAME PERLND  52     EXTNL  PREC  
-WDM1   143 PREC     ENGL          1.00SAME PERLND  53     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME PERLND  54     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME PERLND  55     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME PERLND  56     EXTNL  PREC  
-WDM1   147 PREC     ENGL          1.00SAME PERLND  57     EXTNL  PREC  
-WDM1   148 PREC     ENGL          1.00SAME PERLND  58     EXTNL  PREC  
-WDM1   149 PREC     ENGL          1.00SAME PERLND  59     EXTNL  PREC  
-WDM1   150 PREC     ENGL          1.00SAME PERLND  60     EXTNL  PREC  
-WDM1   136 PREC     ENGL          1.00SAME PERLND  61     EXTNL  PREC  
-WDM1   137 PREC     ENGL          1.00SAME PERLND  62     EXTNL  PREC  
-WDM1   138 PREC     ENGL          1.00SAME PERLND  63     EXTNL  PREC  
-WDM1   139 PREC     ENGL          1.00SAME PERLND  64     EXTNL  PREC  
-WDM1   140 PREC     ENGL          1.00SAME PERLND  65     EXTNL  PREC  
-WDM1   141 PREC     ENGL          1.00SAME PERLND  66     EXTNL  PREC  
-WDM1   142 PREC     ENGL          1.00SAME PERLND  67     EXTNL  PREC  
-WDM1   143 PREC     ENGL          1.00SAME PERLND  68     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME PERLND  69     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME PERLND  70     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME PERLND  71     EXTNL  PREC  
-WDM1   147 PREC     ENGL          1.00SAME PERLND  72     EXTNL  PREC  
-WDM1   148 PREC     ENGL          1.00SAME PERLND  73     EXTNL  PREC  
-WDM1   149 PREC     ENGL          1.00SAME PERLND  74     EXTNL  PREC  
-WDM1   150 PREC     ENGL          1.00SAME PERLND  75     EXTNL  PREC  
-WDM1   136 PREC     ENGL          1.00SAME PERLND  76     EXTNL  PREC  
-WDM1   137 PREC     ENGL          1.00SAME PERLND  77     EXTNL  PREC  
-WDM1   138 PREC     ENGL          1.00SAME PERLND  78     EXTNL  PREC  
-WDM1   139 PREC     ENGL          1.00SAME PERLND  79     EXTNL  PREC  
-WDM1   140 PREC     ENGL          1.00SAME PERLND  80     EXTNL  PREC  
-WDM1   141 PREC     ENGL          1.00SAME PERLND  81     EXTNL  PREC  
-WDM1   142 PREC     ENGL          1.00SAME PERLND  82     EXTNL  PREC  
-WDM1   143 PREC     ENGL          1.00SAME PERLND  83     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME PERLND  84     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME PERLND  85     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME PERLND  86     EXTNL  PREC  
-WDM1   147 PREC     ENGL          1.00SAME PERLND  87     EXTNL  PREC  
-WDM1   148 PREC     ENGL          1.00SAME PERLND  88     EXTNL  PREC  
-WDM1   149 PREC     ENGL          1.00SAME PERLND  89     EXTNL  PREC  
-WDM1   150 PREC     ENGL          1.00SAME PERLND  90     EXTNL  PREC  
-WDM1   136 PREC     ENGL          1.00SAME PERLND  91     EXTNL  PREC  
-WDM1   137 PREC     ENGL          1.00SAME PERLND  92     EXTNL  PREC  
-WDM1   138 PREC     ENGL          1.00SAME PERLND  93     EXTNL  PREC  
-WDM1   139 PREC     ENGL          1.00SAME PERLND  94     EXTNL  PREC  
-WDM1   140 PREC     ENGL          1.00SAME PERLND  95     EXTNL  PREC  
-WDM1   141 PREC     ENGL          1.00SAME PERLND  96     EXTNL  PREC  
-WDM1   142 PREC     ENGL          1.00SAME PERLND  97     EXTNL  PREC  
-WDM1   143 PREC     ENGL          1.00SAME PERLND  98     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME PERLND  99     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME PERLND 100     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME PERLND 101     EXTNL  PREC  
-WDM1   147 PREC     ENGL          1.00SAME PERLND 102     EXTNL  PREC  
-WDM1   148 PREC     ENGL          1.00SAME PERLND 103     EXTNL  PREC  
-WDM1   149 PREC     ENGL          1.00SAME PERLND 104     EXTNL  PREC  
-WDM1   150 PREC     ENGL          1.00SAME PERLND 105     EXTNL  PREC  
-WDM1   136 PREC     ENGL          1.00SAME PERLND 106     EXTNL  PREC  
-WDM1   137 PREC     ENGL          1.00SAME PERLND 107     EXTNL  PREC  
-WDM1   138 PREC     ENGL          1.00SAME PERLND 108     EXTNL  PREC  
-WDM1   139 PREC     ENGL          1.00SAME PERLND 109     EXTNL  PREC  
-WDM1   140 PREC     ENGL          1.00SAME PERLND 110     EXTNL  PREC  
-WDM1   141 PREC     ENGL          1.00SAME PERLND 111     EXTNL  PREC  
-WDM1   142 PREC     ENGL          1.00SAME PERLND 112     EXTNL  PREC  
-WDM1   143 PREC     ENGL          1.00SAME PERLND 113     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME PERLND 114     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME PERLND 115     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME PERLND 116     EXTNL  PREC  
-WDM1   147 PREC     ENGL          1.00SAME PERLND 117     EXTNL  PREC  
-WDM1   148 PREC     ENGL          1.00SAME PERLND 118     EXTNL  PREC  
-WDM1   149 PREC     ENGL          1.00SAME PERLND 119     EXTNL  PREC  
-WDM1   150 PREC     ENGL          1.00SAME PERLND 120     EXTNL  PREC  
-WDM1   136 PREC     ENGL          1.00SAME PERLND 121     EXTNL  PREC  
-WDM1   137 PREC     ENGL          1.00SAME PERLND 122     EXTNL  PREC  
-WDM1   138 PREC     ENGL          1.00SAME PERLND 123     EXTNL  PREC  
-WDM1   139 PREC     ENGL          1.00SAME PERLND 124     EXTNL  PREC  
-WDM1   140 PREC     ENGL          1.00SAME PERLND 125     EXTNL  PREC  
-WDM1   141 PREC     ENGL          1.00SAME PERLND 126     EXTNL  PREC  
-WDM1   142 PREC     ENGL          1.00SAME PERLND 127     EXTNL  PREC  
-WDM1   143 PREC     ENGL          1.00SAME PERLND 128     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME PERLND 129     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME PERLND 130     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME PERLND 131     EXTNL  PREC  
-WDM1   147 PREC     ENGL          1.00SAME PERLND 132     EXTNL  PREC  
-WDM1   148 PREC     ENGL          1.00SAME PERLND 133     EXTNL  PREC  
-WDM1   149 PREC     ENGL          1.00SAME PERLND 134     EXTNL  PREC  
-WDM1   150 PREC     ENGL          1.00SAME PERLND 135     EXTNL  PREC  
-WDM1   136 PREC     ENGL          1.00SAME PERLND 136     EXTNL  PREC  
-WDM1   137 PREC     ENGL          1.00SAME PERLND 137     EXTNL  PREC  
-WDM1   138 PREC     ENGL          1.00SAME PERLND 138     EXTNL  PREC  
-WDM1   139 PREC     ENGL          1.00SAME PERLND 139     EXTNL  PREC  
-WDM1   140 PREC     ENGL          1.00SAME PERLND 140     EXTNL  PREC  
-WDM1   141 PREC     ENGL          1.00SAME PERLND 141     EXTNL  PREC  
-WDM1   142 PREC     ENGL          1.00SAME PERLND 142     EXTNL  PREC  
-WDM1   143 PREC     ENGL          1.00SAME PERLND 143     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME PERLND 144     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME PERLND 145     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME PERLND 146     EXTNL  PREC  
-WDM1   147 PREC     ENGL          1.00SAME PERLND 147     EXTNL  PREC  
-WDM1   148 PREC     ENGL          1.00SAME PERLND 148     EXTNL  PREC  
-WDM1   149 PREC     ENGL          1.00SAME PERLND 149     EXTNL  PREC  
-WDM1   150 PREC     ENGL          1.00SAME PERLND 150     EXTNL  PREC  
-WDM1   136 PREC     ENGL          1.00SAME PERLND 151     EXTNL  PREC  
-WDM1   137 PREC     ENGL          1.00SAME PERLND 152     EXTNL  PREC  
-WDM1   138 PREC     ENGL          1.00SAME PERLND 153     EXTNL  PREC  
-WDM1   139 PREC     ENGL          1.00SAME PERLND 154     EXTNL  PREC  
-WDM1   140 PREC     ENGL          1.00SAME PERLND 155     EXTNL  PREC  
-WDM1   141 PREC     ENGL          1.00SAME PERLND 156     EXTNL  PREC  
-WDM1   142 PREC     ENGL          1.00SAME PERLND 157     EXTNL  PREC  
-WDM1   143 PREC     ENGL          1.00SAME PERLND 158     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME PERLND 159     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME PERLND 160     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME PERLND 161     EXTNL  PREC  
-WDM1   147 PREC     ENGL          1.00SAME PERLND 162     EXTNL  PREC  
-WDM1   148 PREC     ENGL          1.00SAME PERLND 163     EXTNL  PREC  
-WDM1   149 PREC     ENGL          1.00SAME PERLND 164     EXTNL  PREC  
-WDM1   150 PREC     ENGL          1.00SAME PERLND 165     EXTNL  PREC  
-WDM1   136 PREC     ENGL          1.00SAME PERLND 166     EXTNL  PREC  
-WDM1   137 PREC     ENGL          1.00SAME PERLND 167     EXTNL  PREC  
-WDM1   138 PREC     ENGL          1.00SAME PERLND 168     EXTNL  PREC  
-WDM1   139 PREC     ENGL          1.00SAME PERLND 169     EXTNL  PREC  
-WDM1   140 PREC     ENGL          1.00SAME PERLND 170     EXTNL  PREC  
-WDM1   141 PREC     ENGL          1.00SAME PERLND 171     EXTNL  PREC  
-WDM1   142 PREC     ENGL          1.00SAME PERLND 172     EXTNL  PREC  
-WDM1   143 PREC     ENGL          1.00SAME PERLND 173     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME PERLND 174     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME PERLND 175     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME PERLND 176     EXTNL  PREC  
-WDM1   147 PREC     ENGL          1.00SAME PERLND 177     EXTNL  PREC  
-WDM1   148 PREC     ENGL          1.00SAME PERLND 178     EXTNL  PREC  
-WDM1   149 PREC     ENGL          1.00SAME PERLND 179     EXTNL  PREC  
-WDM1   150 PREC     ENGL          1.00SAME PERLND 180     EXTNL  PREC  
-WDM1   136 PREC     ENGL          1.00SAME PERLND 181     EXTNL  PREC  
-WDM1   137 PREC     ENGL          1.00SAME PERLND 182     EXTNL  PREC  
-WDM1   138 PREC     ENGL          1.00SAME PERLND 183     EXTNL  PREC  
-WDM1   139 PREC     ENGL          1.00SAME PERLND 184     EXTNL  PREC  
-WDM1   140 PREC     ENGL          1.00SAME PERLND 185     EXTNL  PREC  
-WDM1   141 PREC     ENGL          1.00SAME PERLND 186     EXTNL  PREC  
-WDM1   142 PREC     ENGL          1.00SAME PERLND 187     EXTNL  PREC  
-WDM1   143 PREC     ENGL          1.00SAME PERLND 188     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME PERLND 189     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME PERLND 190     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME PERLND 191     EXTNL  PREC  
-WDM1   147 PREC     ENGL          1.00SAME PERLND 192     EXTNL  PREC  
-WDM1   148 PREC     ENGL          1.00SAME PERLND 193     EXTNL  PREC  
-WDM1   149 PREC     ENGL          1.00SAME PERLND 194     EXTNL  PREC  
-WDM1   150 PREC     ENGL          1.00SAME PERLND 195     EXTNL  PREC  
-WDM1   136 PREC     ENGL          1.00SAME PERLND 196     EXTNL  PREC  
-WDM1   137 PREC     ENGL          1.00SAME PERLND 197     EXTNL  PREC  
-WDM1   138 PREC     ENGL          1.00SAME PERLND 198     EXTNL  PREC  
-WDM1   139 PREC     ENGL          1.00SAME PERLND 199     EXTNL  PREC  
-WDM1   140 PREC     ENGL          1.00SAME PERLND 200     EXTNL  PREC  
-WDM1   141 PREC     ENGL          1.00SAME PERLND 201     EXTNL  PREC  
-WDM1   142 PREC     ENGL          1.00SAME PERLND 202     EXTNL  PREC  
-WDM1   143 PREC     ENGL          1.00SAME PERLND 203     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME PERLND 204     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME PERLND 205     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME PERLND 206     EXTNL  PREC  
-WDM1   147 PREC     ENGL          1.00SAME PERLND 207     EXTNL  PREC  
-WDM1   148 PREC     ENGL          1.00SAME PERLND 208     EXTNL  PREC  
+WDM1   136 PREC     ENGL          1.00SAME PERLND   1     EXTNL  PREC
+WDM1   137 PREC     ENGL          1.00SAME PERLND   2     EXTNL  PREC
+WDM1   138 PREC     ENGL          1.00SAME PERLND   3     EXTNL  PREC
+WDM1   139 PREC     ENGL          1.00SAME PERLND   4     EXTNL  PREC
+WDM1   140 PREC     ENGL          1.00SAME PERLND   5     EXTNL  PREC
+WDM1   141 PREC     ENGL          1.00SAME PERLND   6     EXTNL  PREC
+WDM1   142 PREC     ENGL          1.00SAME PERLND   7     EXTNL  PREC
+WDM1   143 PREC     ENGL          1.00SAME PERLND   8     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME PERLND   9     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME PERLND  10     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME PERLND  11     EXTNL  PREC
+WDM1   147 PREC     ENGL          1.00SAME PERLND  12     EXTNL  PREC
+WDM1   148 PREC     ENGL          1.00SAME PERLND  13     EXTNL  PREC
+WDM1   149 PREC     ENGL          1.00SAME PERLND  14     EXTNL  PREC
+WDM1   150 PREC     ENGL          1.00SAME PERLND  15     EXTNL  PREC
+WDM1   136 PREC     ENGL          1.00SAME PERLND  16     EXTNL  PREC
+WDM1   137 PREC     ENGL          1.00SAME PERLND  17     EXTNL  PREC
+WDM1   138 PREC     ENGL          1.00SAME PERLND  18     EXTNL  PREC
+WDM1   139 PREC     ENGL          1.00SAME PERLND  19     EXTNL  PREC
+WDM1   140 PREC     ENGL          1.00SAME PERLND  20     EXTNL  PREC
+WDM1   141 PREC     ENGL          1.00SAME PERLND  21     EXTNL  PREC
+WDM1   142 PREC     ENGL          1.00SAME PERLND  22     EXTNL  PREC
+WDM1   143 PREC     ENGL          1.00SAME PERLND  23     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME PERLND  24     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME PERLND  25     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME PERLND  26     EXTNL  PREC
+WDM1   147 PREC     ENGL          1.00SAME PERLND  27     EXTNL  PREC
+WDM1   148 PREC     ENGL          1.00SAME PERLND  28     EXTNL  PREC
+WDM1   149 PREC     ENGL          1.00SAME PERLND  29     EXTNL  PREC
+WDM1   150 PREC     ENGL          1.00SAME PERLND  30     EXTNL  PREC
+WDM1   136 PREC     ENGL          1.00SAME PERLND  31     EXTNL  PREC
+WDM1   137 PREC     ENGL          1.00SAME PERLND  32     EXTNL  PREC
+WDM1   138 PREC     ENGL          1.00SAME PERLND  33     EXTNL  PREC
+WDM1   139 PREC     ENGL          1.00SAME PERLND  34     EXTNL  PREC
+WDM1   140 PREC     ENGL          1.00SAME PERLND  35     EXTNL  PREC
+WDM1   141 PREC     ENGL          1.00SAME PERLND  36     EXTNL  PREC
+WDM1   142 PREC     ENGL          1.00SAME PERLND  37     EXTNL  PREC
+WDM1   143 PREC     ENGL          1.00SAME PERLND  38     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME PERLND  39     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME PERLND  40     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME PERLND  41     EXTNL  PREC
+WDM1   147 PREC     ENGL          1.00SAME PERLND  42     EXTNL  PREC
+WDM1   148 PREC     ENGL          1.00SAME PERLND  43     EXTNL  PREC
+WDM1   149 PREC     ENGL          1.00SAME PERLND  44     EXTNL  PREC
+WDM1   150 PREC     ENGL          1.00SAME PERLND  45     EXTNL  PREC
+WDM1   136 PREC     ENGL          1.00SAME PERLND  46     EXTNL  PREC
+WDM1   137 PREC     ENGL          1.00SAME PERLND  47     EXTNL  PREC
+WDM1   138 PREC     ENGL          1.00SAME PERLND  48     EXTNL  PREC
+WDM1   139 PREC     ENGL          1.00SAME PERLND  49     EXTNL  PREC
+WDM1   140 PREC     ENGL          1.00SAME PERLND  50     EXTNL  PREC
+WDM1   141 PREC     ENGL          1.00SAME PERLND  51     EXTNL  PREC
+WDM1   142 PREC     ENGL          1.00SAME PERLND  52     EXTNL  PREC
+WDM1   143 PREC     ENGL          1.00SAME PERLND  53     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME PERLND  54     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME PERLND  55     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME PERLND  56     EXTNL  PREC
+WDM1   147 PREC     ENGL          1.00SAME PERLND  57     EXTNL  PREC
+WDM1   148 PREC     ENGL          1.00SAME PERLND  58     EXTNL  PREC
+WDM1   149 PREC     ENGL          1.00SAME PERLND  59     EXTNL  PREC
+WDM1   150 PREC     ENGL          1.00SAME PERLND  60     EXTNL  PREC
+WDM1   136 PREC     ENGL          1.00SAME PERLND  61     EXTNL  PREC
+WDM1   137 PREC     ENGL          1.00SAME PERLND  62     EXTNL  PREC
+WDM1   138 PREC     ENGL          1.00SAME PERLND  63     EXTNL  PREC
+WDM1   139 PREC     ENGL          1.00SAME PERLND  64     EXTNL  PREC
+WDM1   140 PREC     ENGL          1.00SAME PERLND  65     EXTNL  PREC
+WDM1   141 PREC     ENGL          1.00SAME PERLND  66     EXTNL  PREC
+WDM1   142 PREC     ENGL          1.00SAME PERLND  67     EXTNL  PREC
+WDM1   143 PREC     ENGL          1.00SAME PERLND  68     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME PERLND  69     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME PERLND  70     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME PERLND  71     EXTNL  PREC
+WDM1   147 PREC     ENGL          1.00SAME PERLND  72     EXTNL  PREC
+WDM1   148 PREC     ENGL          1.00SAME PERLND  73     EXTNL  PREC
+WDM1   149 PREC     ENGL          1.00SAME PERLND  74     EXTNL  PREC
+WDM1   150 PREC     ENGL          1.00SAME PERLND  75     EXTNL  PREC
+WDM1   136 PREC     ENGL          1.00SAME PERLND  76     EXTNL  PREC
+WDM1   137 PREC     ENGL          1.00SAME PERLND  77     EXTNL  PREC
+WDM1   138 PREC     ENGL          1.00SAME PERLND  78     EXTNL  PREC
+WDM1   139 PREC     ENGL          1.00SAME PERLND  79     EXTNL  PREC
+WDM1   140 PREC     ENGL          1.00SAME PERLND  80     EXTNL  PREC
+WDM1   141 PREC     ENGL          1.00SAME PERLND  81     EXTNL  PREC
+WDM1   142 PREC     ENGL          1.00SAME PERLND  82     EXTNL  PREC
+WDM1   143 PREC     ENGL          1.00SAME PERLND  83     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME PERLND  84     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME PERLND  85     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME PERLND  86     EXTNL  PREC
+WDM1   147 PREC     ENGL          1.00SAME PERLND  87     EXTNL  PREC
+WDM1   148 PREC     ENGL          1.00SAME PERLND  88     EXTNL  PREC
+WDM1   149 PREC     ENGL          1.00SAME PERLND  89     EXTNL  PREC
+WDM1   150 PREC     ENGL          1.00SAME PERLND  90     EXTNL  PREC
+WDM1   136 PREC     ENGL          1.00SAME PERLND  91     EXTNL  PREC
+WDM1   137 PREC     ENGL          1.00SAME PERLND  92     EXTNL  PREC
+WDM1   138 PREC     ENGL          1.00SAME PERLND  93     EXTNL  PREC
+WDM1   139 PREC     ENGL          1.00SAME PERLND  94     EXTNL  PREC
+WDM1   140 PREC     ENGL          1.00SAME PERLND  95     EXTNL  PREC
+WDM1   141 PREC     ENGL          1.00SAME PERLND  96     EXTNL  PREC
+WDM1   142 PREC     ENGL          1.00SAME PERLND  97     EXTNL  PREC
+WDM1   143 PREC     ENGL          1.00SAME PERLND  98     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME PERLND  99     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME PERLND 100     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME PERLND 101     EXTNL  PREC
+WDM1   147 PREC     ENGL          1.00SAME PERLND 102     EXTNL  PREC
+WDM1   148 PREC     ENGL          1.00SAME PERLND 103     EXTNL  PREC
+WDM1   149 PREC     ENGL          1.00SAME PERLND 104     EXTNL  PREC
+WDM1   150 PREC     ENGL          1.00SAME PERLND 105     EXTNL  PREC
+WDM1   136 PREC     ENGL          1.00SAME PERLND 106     EXTNL  PREC
+WDM1   137 PREC     ENGL          1.00SAME PERLND 107     EXTNL  PREC
+WDM1   138 PREC     ENGL          1.00SAME PERLND 108     EXTNL  PREC
+WDM1   139 PREC     ENGL          1.00SAME PERLND 109     EXTNL  PREC
+WDM1   140 PREC     ENGL          1.00SAME PERLND 110     EXTNL  PREC
+WDM1   141 PREC     ENGL          1.00SAME PERLND 111     EXTNL  PREC
+WDM1   142 PREC     ENGL          1.00SAME PERLND 112     EXTNL  PREC
+WDM1   143 PREC     ENGL          1.00SAME PERLND 113     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME PERLND 114     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME PERLND 115     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME PERLND 116     EXTNL  PREC
+WDM1   147 PREC     ENGL          1.00SAME PERLND 117     EXTNL  PREC
+WDM1   148 PREC     ENGL          1.00SAME PERLND 118     EXTNL  PREC
+WDM1   149 PREC     ENGL          1.00SAME PERLND 119     EXTNL  PREC
+WDM1   150 PREC     ENGL          1.00SAME PERLND 120     EXTNL  PREC
+WDM1   136 PREC     ENGL          1.00SAME PERLND 121     EXTNL  PREC
+WDM1   137 PREC     ENGL          1.00SAME PERLND 122     EXTNL  PREC
+WDM1   138 PREC     ENGL          1.00SAME PERLND 123     EXTNL  PREC
+WDM1   139 PREC     ENGL          1.00SAME PERLND 124     EXTNL  PREC
+WDM1   140 PREC     ENGL          1.00SAME PERLND 125     EXTNL  PREC
+WDM1   141 PREC     ENGL          1.00SAME PERLND 126     EXTNL  PREC
+WDM1   142 PREC     ENGL          1.00SAME PERLND 127     EXTNL  PREC
+WDM1   143 PREC     ENGL          1.00SAME PERLND 128     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME PERLND 129     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME PERLND 130     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME PERLND 131     EXTNL  PREC
+WDM1   147 PREC     ENGL          1.00SAME PERLND 132     EXTNL  PREC
+WDM1   148 PREC     ENGL          1.00SAME PERLND 133     EXTNL  PREC
+WDM1   149 PREC     ENGL          1.00SAME PERLND 134     EXTNL  PREC
+WDM1   150 PREC     ENGL          1.00SAME PERLND 135     EXTNL  PREC
+WDM1   136 PREC     ENGL          1.00SAME PERLND 136     EXTNL  PREC
+WDM1   137 PREC     ENGL          1.00SAME PERLND 137     EXTNL  PREC
+WDM1   138 PREC     ENGL          1.00SAME PERLND 138     EXTNL  PREC
+WDM1   139 PREC     ENGL          1.00SAME PERLND 139     EXTNL  PREC
+WDM1   140 PREC     ENGL          1.00SAME PERLND 140     EXTNL  PREC
+WDM1   141 PREC     ENGL          1.00SAME PERLND 141     EXTNL  PREC
+WDM1   142 PREC     ENGL          1.00SAME PERLND 142     EXTNL  PREC
+WDM1   143 PREC     ENGL          1.00SAME PERLND 143     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME PERLND 144     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME PERLND 145     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME PERLND 146     EXTNL  PREC
+WDM1   147 PREC     ENGL          1.00SAME PERLND 147     EXTNL  PREC
+WDM1   148 PREC     ENGL          1.00SAME PERLND 148     EXTNL  PREC
+WDM1   149 PREC     ENGL          1.00SAME PERLND 149     EXTNL  PREC
+WDM1   150 PREC     ENGL          1.00SAME PERLND 150     EXTNL  PREC
+WDM1   136 PREC     ENGL          1.00SAME PERLND 151     EXTNL  PREC
+WDM1   137 PREC     ENGL          1.00SAME PERLND 152     EXTNL  PREC
+WDM1   138 PREC     ENGL          1.00SAME PERLND 153     EXTNL  PREC
+WDM1   139 PREC     ENGL          1.00SAME PERLND 154     EXTNL  PREC
+WDM1   140 PREC     ENGL          1.00SAME PERLND 155     EXTNL  PREC
+WDM1   141 PREC     ENGL          1.00SAME PERLND 156     EXTNL  PREC
+WDM1   142 PREC     ENGL          1.00SAME PERLND 157     EXTNL  PREC
+WDM1   143 PREC     ENGL          1.00SAME PERLND 158     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME PERLND 159     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME PERLND 160     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME PERLND 161     EXTNL  PREC
+WDM1   147 PREC     ENGL          1.00SAME PERLND 162     EXTNL  PREC
+WDM1   148 PREC     ENGL          1.00SAME PERLND 163     EXTNL  PREC
+WDM1   149 PREC     ENGL          1.00SAME PERLND 164     EXTNL  PREC
+WDM1   150 PREC     ENGL          1.00SAME PERLND 165     EXTNL  PREC
+WDM1   136 PREC     ENGL          1.00SAME PERLND 166     EXTNL  PREC
+WDM1   137 PREC     ENGL          1.00SAME PERLND 167     EXTNL  PREC
+WDM1   138 PREC     ENGL          1.00SAME PERLND 168     EXTNL  PREC
+WDM1   139 PREC     ENGL          1.00SAME PERLND 169     EXTNL  PREC
+WDM1   140 PREC     ENGL          1.00SAME PERLND 170     EXTNL  PREC
+WDM1   141 PREC     ENGL          1.00SAME PERLND 171     EXTNL  PREC
+WDM1   142 PREC     ENGL          1.00SAME PERLND 172     EXTNL  PREC
+WDM1   143 PREC     ENGL          1.00SAME PERLND 173     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME PERLND 174     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME PERLND 175     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME PERLND 176     EXTNL  PREC
+WDM1   147 PREC     ENGL          1.00SAME PERLND 177     EXTNL  PREC
+WDM1   148 PREC     ENGL          1.00SAME PERLND 178     EXTNL  PREC
+WDM1   149 PREC     ENGL          1.00SAME PERLND 179     EXTNL  PREC
+WDM1   150 PREC     ENGL          1.00SAME PERLND 180     EXTNL  PREC
+WDM1   136 PREC     ENGL          1.00SAME PERLND 181     EXTNL  PREC
+WDM1   137 PREC     ENGL          1.00SAME PERLND 182     EXTNL  PREC
+WDM1   138 PREC     ENGL          1.00SAME PERLND 183     EXTNL  PREC
+WDM1   139 PREC     ENGL          1.00SAME PERLND 184     EXTNL  PREC
+WDM1   140 PREC     ENGL          1.00SAME PERLND 185     EXTNL  PREC
+WDM1   141 PREC     ENGL          1.00SAME PERLND 186     EXTNL  PREC
+WDM1   142 PREC     ENGL          1.00SAME PERLND 187     EXTNL  PREC
+WDM1   143 PREC     ENGL          1.00SAME PERLND 188     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME PERLND 189     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME PERLND 190     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME PERLND 191     EXTNL  PREC
+WDM1   147 PREC     ENGL          1.00SAME PERLND 192     EXTNL  PREC
+WDM1   148 PREC     ENGL          1.00SAME PERLND 193     EXTNL  PREC
+WDM1   149 PREC     ENGL          1.00SAME PERLND 194     EXTNL  PREC
+WDM1   150 PREC     ENGL          1.00SAME PERLND 195     EXTNL  PREC
+WDM1   136 PREC     ENGL          1.00SAME PERLND 196     EXTNL  PREC
+WDM1   137 PREC     ENGL          1.00SAME PERLND 197     EXTNL  PREC
+WDM1   138 PREC     ENGL          1.00SAME PERLND 198     EXTNL  PREC
+WDM1   139 PREC     ENGL          1.00SAME PERLND 199     EXTNL  PREC
+WDM1   140 PREC     ENGL          1.00SAME PERLND 200     EXTNL  PREC
+WDM1   141 PREC     ENGL          1.00SAME PERLND 201     EXTNL  PREC
+WDM1   142 PREC     ENGL          1.00SAME PERLND 202     EXTNL  PREC
+WDM1   143 PREC     ENGL          1.00SAME PERLND 203     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME PERLND 204     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME PERLND 205     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME PERLND 206     EXTNL  PREC
+WDM1   147 PREC     ENGL          1.00SAME PERLND 207     EXTNL  PREC
+WDM1   148 PREC     ENGL          1.00SAME PERLND 208     EXTNL  PREC
 WDM1   149 PREC     ENGL          1.00SAME PERLND 209     EXTNL  PREC
 WDM1   150 PREC     ENGL          1.00SAME PERLND 210     EXTNL  PREC
 
 ***Air Temperature (stored as hourly deg. F)
-WDM1   283 ATEM     ENGL          1.00SAME PERLND   1     EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND   2   4 EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND   5     EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND   6   7 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND   8  11 EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND  12     EXTNL  GATMP 
-WDM1   273 ATEM     ENGL          1.00SAME PERLND  13  14 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND  15     EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND  16     EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND  17  19 EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND  20     EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND  21  22 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND  23  26 EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND  27     EXTNL  GATMP 
-WDM1   273 ATEM     ENGL          1.00SAME PERLND  28  29 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND  30     EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND  31     EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND  32  34 EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND  35     EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND  36  37 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND  38  41 EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND  42     EXTNL  GATMP 
-WDM1   273 ATEM     ENGL          1.00SAME PERLND  43  44 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND  45     EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND  46     EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND  47  49 EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND  50     EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND  51  52 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND  53  56 EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND  57     EXTNL  GATMP 
-WDM1   273 ATEM     ENGL          1.00SAME PERLND  58  59 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND  60     EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND  61     EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND  62  64 EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND  65     EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND  66  67 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND  68  71 EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND  72     EXTNL  GATMP 
-WDM1   273 ATEM     ENGL          1.00SAME PERLND  73  74 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND  75     EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND  76     EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND  77  79 EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND  80     EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND  81  82 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND  83  86 EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND  87     EXTNL  GATMP 
-WDM1   273 ATEM     ENGL          1.00SAME PERLND  88  89 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND  90     EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND  91     EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND  92  94 EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND  95     EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND  96  97 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND  98 101 EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND 102     EXTNL  GATMP 
-WDM1   273 ATEM     ENGL          1.00SAME PERLND 103 104 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND 105     EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND 106     EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND 107 109 EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND 110     EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND 111 112 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND 113 116 EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND 117     EXTNL  GATMP 
-WDM1   273 ATEM     ENGL          1.00SAME PERLND 118 119 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND 120     EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND 121     EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND 122 124 EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND 125     EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND 126 127 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND 128 131 EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND 132     EXTNL  GATMP 
-WDM1   273 ATEM     ENGL          1.00SAME PERLND 133 134 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND 135     EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND 136     EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND 137 139 EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND 140     EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND 141 142 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND 143 146 EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND 147     EXTNL  GATMP 
-WDM1   273 ATEM     ENGL          1.00SAME PERLND 148 149 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND 150     EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND 151     EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND 152 154 EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND 155     EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND 156 157 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND 158 161 EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND 162     EXTNL  GATMP 
-WDM1   273 ATEM     ENGL          1.00SAME PERLND 163 164 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND 165     EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND 166     EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND 167 169 EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND 170     EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND 171 172 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND 173 176 EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND 177     EXTNL  GATMP 
-WDM1   273 ATEM     ENGL          1.00SAME PERLND 178 179 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND 180     EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND 181     EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND 182 184 EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND 185     EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND 186 187 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND 188 191 EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND 192     EXTNL  GATMP 
-WDM1   273 ATEM     ENGL          1.00SAME PERLND 193 194 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND 195     EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND 196     EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND 197 199 EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME PERLND 200     EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND 201 202 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND 203 206 EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME PERLND 207     EXTNL  GATMP 
-WDM1   273 ATEM     ENGL          1.00SAME PERLND 208 209 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME PERLND 210     EXTNL  GATMP 
+WDM1   283 ATEM     ENGL          1.00SAME PERLND   1     EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND   2   4 EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND   5     EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND   6   7 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND   8  11 EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND  12     EXTNL  GATMP
+WDM1   273 ATEM     ENGL          1.00SAME PERLND  13  14 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND  15     EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND  16     EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND  17  19 EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND  20     EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND  21  22 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND  23  26 EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND  27     EXTNL  GATMP
+WDM1   273 ATEM     ENGL          1.00SAME PERLND  28  29 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND  30     EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND  31     EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND  32  34 EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND  35     EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND  36  37 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND  38  41 EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND  42     EXTNL  GATMP
+WDM1   273 ATEM     ENGL          1.00SAME PERLND  43  44 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND  45     EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND  46     EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND  47  49 EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND  50     EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND  51  52 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND  53  56 EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND  57     EXTNL  GATMP
+WDM1   273 ATEM     ENGL          1.00SAME PERLND  58  59 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND  60     EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND  61     EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND  62  64 EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND  65     EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND  66  67 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND  68  71 EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND  72     EXTNL  GATMP
+WDM1   273 ATEM     ENGL          1.00SAME PERLND  73  74 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND  75     EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND  76     EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND  77  79 EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND  80     EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND  81  82 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND  83  86 EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND  87     EXTNL  GATMP
+WDM1   273 ATEM     ENGL          1.00SAME PERLND  88  89 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND  90     EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND  91     EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND  92  94 EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND  95     EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND  96  97 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND  98 101 EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND 102     EXTNL  GATMP
+WDM1   273 ATEM     ENGL          1.00SAME PERLND 103 104 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND 105     EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND 106     EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND 107 109 EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND 110     EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND 111 112 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND 113 116 EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND 117     EXTNL  GATMP
+WDM1   273 ATEM     ENGL          1.00SAME PERLND 118 119 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND 120     EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND 121     EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND 122 124 EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND 125     EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND 126 127 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND 128 131 EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND 132     EXTNL  GATMP
+WDM1   273 ATEM     ENGL          1.00SAME PERLND 133 134 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND 135     EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND 136     EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND 137 139 EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND 140     EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND 141 142 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND 143 146 EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND 147     EXTNL  GATMP
+WDM1   273 ATEM     ENGL          1.00SAME PERLND 148 149 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND 150     EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND 151     EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND 152 154 EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND 155     EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND 156 157 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND 158 161 EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND 162     EXTNL  GATMP
+WDM1   273 ATEM     ENGL          1.00SAME PERLND 163 164 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND 165     EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND 166     EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND 167 169 EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND 170     EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND 171 172 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND 173 176 EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND 177     EXTNL  GATMP
+WDM1   273 ATEM     ENGL          1.00SAME PERLND 178 179 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND 180     EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND 181     EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND 182 184 EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND 185     EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND 186 187 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND 188 191 EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND 192     EXTNL  GATMP
+WDM1   273 ATEM     ENGL          1.00SAME PERLND 193 194 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND 195     EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND 196     EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND 197 199 EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME PERLND 200     EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND 201 202 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND 203 206 EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME PERLND 207     EXTNL  GATMP
+WDM1   273 ATEM     ENGL          1.00SAME PERLND 208 209 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME PERLND 210     EXTNL  GATMP
 
 ***Dew Point Temperature (stored as hourly deg. F)
-WDM1   287 DEWP     ENGL          1.00SAME PERLND   1     EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND   2   4 EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND   5     EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND   6   7 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND   8  11 EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND  12     EXTNL  DTMPG 
-WDM1   277 DEWP     ENGL          1.00SAME PERLND  13  14 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND  15     EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND  16     EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND  17  19 EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND  20     EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND  21  22 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND  23  26 EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND  27     EXTNL  DTMPG 
-WDM1   277 DEWP     ENGL          1.00SAME PERLND  28  29 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND  30     EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND  31     EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND  32  34 EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND  35     EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND  36  37 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND  38  41 EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND  42     EXTNL  DTMPG 
-WDM1   277 DEWP     ENGL          1.00SAME PERLND  43  44 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND  45     EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND  46     EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND  47  49 EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND  50     EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND  51  52 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND  53  56 EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND  57     EXTNL  DTMPG 
-WDM1   277 DEWP     ENGL          1.00SAME PERLND  58  59 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND  60     EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND  61     EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND  62  64 EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND  65     EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND  66  67 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND  68  71 EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND  72     EXTNL  DTMPG 
-WDM1   277 DEWP     ENGL          1.00SAME PERLND  73  74 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND  75     EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND  76     EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND  77  79 EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND  80     EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND  81  82 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND  83  86 EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND  87     EXTNL  DTMPG 
-WDM1   277 DEWP     ENGL          1.00SAME PERLND  88  89 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND  90     EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND  91     EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND  92  94 EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND  95     EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND  96  97 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND  98 101 EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND 102     EXTNL  DTMPG 
-WDM1   277 DEWP     ENGL          1.00SAME PERLND 103 104 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND 105     EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND 106     EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND 107 109 EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND 110     EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND 111 112 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND 113 116 EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND 117     EXTNL  DTMPG 
-WDM1   277 DEWP     ENGL          1.00SAME PERLND 118 119 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND 120     EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND 121     EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND 122 124 EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND 125     EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND 126 127 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND 128 131 EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND 132     EXTNL  DTMPG 
-WDM1   277 DEWP     ENGL          1.00SAME PERLND 133 134 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND 135     EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND 136     EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND 137 139 EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND 140     EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND 141 142 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND 143 146 EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND 147     EXTNL  DTMPG 
-WDM1   277 DEWP     ENGL          1.00SAME PERLND 148 149 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND 150     EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND 151     EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND 152 154 EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND 155     EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND 156 157 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND 158 161 EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND 162     EXTNL  DTMPG 
-WDM1   277 DEWP     ENGL          1.00SAME PERLND 163 164 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND 165     EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND 166     EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND 167 169 EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND 170     EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND 171 172 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND 173 176 EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND 177     EXTNL  DTMPG 
-WDM1   277 DEWP     ENGL          1.00SAME PERLND 178 179 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND 180     EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND 181     EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND 182 184 EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND 185     EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND 186 187 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND 188 191 EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND 192     EXTNL  DTMPG 
-WDM1   277 DEWP     ENGL          1.00SAME PERLND 193 194 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND 195     EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND 196     EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND 197 199 EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME PERLND 200     EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND 201 202 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND 203 206 EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME PERLND 207     EXTNL  DTMPG 
-WDM1   277 DEWP     ENGL          1.00SAME PERLND 208 209 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME PERLND 210     EXTNL  DTMPG 
+WDM1   287 DEWP     ENGL          1.00SAME PERLND   1     EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND   2   4 EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND   5     EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND   6   7 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND   8  11 EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND  12     EXTNL  DTMPG
+WDM1   277 DEWP     ENGL          1.00SAME PERLND  13  14 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND  15     EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND  16     EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND  17  19 EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND  20     EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND  21  22 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND  23  26 EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND  27     EXTNL  DTMPG
+WDM1   277 DEWP     ENGL          1.00SAME PERLND  28  29 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND  30     EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND  31     EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND  32  34 EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND  35     EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND  36  37 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND  38  41 EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND  42     EXTNL  DTMPG
+WDM1   277 DEWP     ENGL          1.00SAME PERLND  43  44 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND  45     EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND  46     EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND  47  49 EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND  50     EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND  51  52 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND  53  56 EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND  57     EXTNL  DTMPG
+WDM1   277 DEWP     ENGL          1.00SAME PERLND  58  59 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND  60     EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND  61     EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND  62  64 EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND  65     EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND  66  67 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND  68  71 EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND  72     EXTNL  DTMPG
+WDM1   277 DEWP     ENGL          1.00SAME PERLND  73  74 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND  75     EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND  76     EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND  77  79 EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND  80     EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND  81  82 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND  83  86 EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND  87     EXTNL  DTMPG
+WDM1   277 DEWP     ENGL          1.00SAME PERLND  88  89 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND  90     EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND  91     EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND  92  94 EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND  95     EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND  96  97 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND  98 101 EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND 102     EXTNL  DTMPG
+WDM1   277 DEWP     ENGL          1.00SAME PERLND 103 104 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND 105     EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND 106     EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND 107 109 EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND 110     EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND 111 112 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND 113 116 EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND 117     EXTNL  DTMPG
+WDM1   277 DEWP     ENGL          1.00SAME PERLND 118 119 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND 120     EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND 121     EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND 122 124 EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND 125     EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND 126 127 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND 128 131 EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND 132     EXTNL  DTMPG
+WDM1   277 DEWP     ENGL          1.00SAME PERLND 133 134 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND 135     EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND 136     EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND 137 139 EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND 140     EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND 141 142 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND 143 146 EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND 147     EXTNL  DTMPG
+WDM1   277 DEWP     ENGL          1.00SAME PERLND 148 149 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND 150     EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND 151     EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND 152 154 EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND 155     EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND 156 157 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND 158 161 EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND 162     EXTNL  DTMPG
+WDM1   277 DEWP     ENGL          1.00SAME PERLND 163 164 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND 165     EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND 166     EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND 167 169 EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND 170     EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND 171 172 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND 173 176 EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND 177     EXTNL  DTMPG
+WDM1   277 DEWP     ENGL          1.00SAME PERLND 178 179 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND 180     EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND 181     EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND 182 184 EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND 185     EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND 186 187 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND 188 191 EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND 192     EXTNL  DTMPG
+WDM1   277 DEWP     ENGL          1.00SAME PERLND 193 194 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND 195     EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND 196     EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND 197 199 EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME PERLND 200     EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND 201 202 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND 203 206 EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME PERLND 207     EXTNL  DTMPG
+WDM1   277 DEWP     ENGL          1.00SAME PERLND 208 209 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME PERLND 210     EXTNL  DTMPG
 
-***Cloud Cover (stored as hourly tenths) 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND   1     EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND   2   4 EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND   5     EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND   6   7 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND   8  11 EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND  12     EXTNL  CLOUD 
-WDM1   278 CLOU     ENGL          1.00SAME PERLND  13  14 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND  15     EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND  16     EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND  17  19 EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND  20     EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND  21  22 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND  23  26 EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND  27     EXTNL  CLOUD 
-WDM1   278 CLOU     ENGL          1.00SAME PERLND  28  29 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND  30     EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND  31     EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND  32  34 EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND  35     EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND  36  37 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND  38  41 EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND  42     EXTNL  CLOUD 
-WDM1   278 CLOU     ENGL          1.00SAME PERLND  43  44 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND  45     EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND  46     EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND  47  49 EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND  50     EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND  51  52 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND  53  56 EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND  57     EXTNL  CLOUD 
-WDM1   278 CLOU     ENGL          1.00SAME PERLND  58  59 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND  60     EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND  61     EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND  62  64 EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND  65     EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND  66  67 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND  68  71 EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND  72     EXTNL  CLOUD 
-WDM1   278 CLOU     ENGL          1.00SAME PERLND  73  74 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND  75     EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND  76     EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND  77  79 EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND  80     EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND  81  82 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND  83  86 EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND  87     EXTNL  CLOUD 
-WDM1   278 CLOU     ENGL          1.00SAME PERLND  88  89 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND  90     EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND  91     EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND  92  94 EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND  95     EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND  96  97 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND  98 101 EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND 102     EXTNL  CLOUD 
-WDM1   278 CLOU     ENGL          1.00SAME PERLND 103 104 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND 105     EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND 106     EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND 107 109 EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND 110     EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND 111 112 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND 113 116 EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND 117     EXTNL  CLOUD 
-WDM1   278 CLOU     ENGL          1.00SAME PERLND 118 119 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND 120     EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND 121     EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND 122 124 EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND 125     EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND 126 127 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND 128 131 EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND 132     EXTNL  CLOUD 
-WDM1   278 CLOU     ENGL          1.00SAME PERLND 133 134 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND 135     EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND 136     EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND 137 139 EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND 140     EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND 141 142 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND 143 146 EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND 147     EXTNL  CLOUD 
-WDM1   278 CLOU     ENGL          1.00SAME PERLND 148 149 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND 150     EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND 151     EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND 152 154 EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND 155     EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND 156 157 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND 158 161 EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND 162     EXTNL  CLOUD 
-WDM1   278 CLOU     ENGL          1.00SAME PERLND 163 164 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND 165     EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND 166     EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND 167 169 EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND 170     EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND 171 172 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND 173 176 EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND 177     EXTNL  CLOUD 
-WDM1   278 CLOU     ENGL          1.00SAME PERLND 178 179 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND 180     EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND 181     EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND 182 184 EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND 185     EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND 186 187 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND 188 191 EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND 192     EXTNL  CLOUD 
-WDM1   278 CLOU     ENGL          1.00SAME PERLND 193 194 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND 195     EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND 196     EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND 197 199 EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME PERLND 200     EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND 201 202 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND 203 206 EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME PERLND 207     EXTNL  CLOUD 
-WDM1   278 CLOU     ENGL          1.00SAME PERLND 208 209 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME PERLND 210     EXTNL  CLOUD 
+***Cloud Cover (stored as hourly tenths)
+WDM1   288 CLOU     ENGL          1.00SAME PERLND   1     EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND   2   4 EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND   5     EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND   6   7 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND   8  11 EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND  12     EXTNL  CLOUD
+WDM1   278 CLOU     ENGL          1.00SAME PERLND  13  14 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND  15     EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND  16     EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND  17  19 EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND  20     EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND  21  22 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND  23  26 EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND  27     EXTNL  CLOUD
+WDM1   278 CLOU     ENGL          1.00SAME PERLND  28  29 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND  30     EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND  31     EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND  32  34 EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND  35     EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND  36  37 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND  38  41 EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND  42     EXTNL  CLOUD
+WDM1   278 CLOU     ENGL          1.00SAME PERLND  43  44 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND  45     EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND  46     EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND  47  49 EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND  50     EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND  51  52 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND  53  56 EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND  57     EXTNL  CLOUD
+WDM1   278 CLOU     ENGL          1.00SAME PERLND  58  59 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND  60     EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND  61     EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND  62  64 EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND  65     EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND  66  67 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND  68  71 EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND  72     EXTNL  CLOUD
+WDM1   278 CLOU     ENGL          1.00SAME PERLND  73  74 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND  75     EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND  76     EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND  77  79 EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND  80     EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND  81  82 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND  83  86 EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND  87     EXTNL  CLOUD
+WDM1   278 CLOU     ENGL          1.00SAME PERLND  88  89 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND  90     EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND  91     EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND  92  94 EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND  95     EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND  96  97 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND  98 101 EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND 102     EXTNL  CLOUD
+WDM1   278 CLOU     ENGL          1.00SAME PERLND 103 104 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND 105     EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND 106     EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND 107 109 EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND 110     EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND 111 112 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND 113 116 EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND 117     EXTNL  CLOUD
+WDM1   278 CLOU     ENGL          1.00SAME PERLND 118 119 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND 120     EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND 121     EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND 122 124 EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND 125     EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND 126 127 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND 128 131 EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND 132     EXTNL  CLOUD
+WDM1   278 CLOU     ENGL          1.00SAME PERLND 133 134 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND 135     EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND 136     EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND 137 139 EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND 140     EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND 141 142 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND 143 146 EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND 147     EXTNL  CLOUD
+WDM1   278 CLOU     ENGL          1.00SAME PERLND 148 149 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND 150     EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND 151     EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND 152 154 EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND 155     EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND 156 157 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND 158 161 EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND 162     EXTNL  CLOUD
+WDM1   278 CLOU     ENGL          1.00SAME PERLND 163 164 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND 165     EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND 166     EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND 167 169 EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND 170     EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND 171 172 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND 173 176 EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND 177     EXTNL  CLOUD
+WDM1   278 CLOU     ENGL          1.00SAME PERLND 178 179 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND 180     EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND 181     EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND 182 184 EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND 185     EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND 186 187 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND 188 191 EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND 192     EXTNL  CLOUD
+WDM1   278 CLOU     ENGL          1.00SAME PERLND 193 194 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND 195     EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND 196     EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND 197 199 EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME PERLND 200     EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND 201 202 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND 203 206 EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME PERLND 207     EXTNL  CLOUD
+WDM1   278 CLOU     ENGL          1.00SAME PERLND 208 209 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME PERLND 210     EXTNL  CLOUD
 
 ***Solar Radiation (stored as Langleys/hour)
 WDM1   285 SOLR     ENGL          1.00SAME PERLND   1     EXTNL  SOLRAD
@@ -5436,130 +5436,130 @@ WDM1   909 PEVT     ENGL          0.79     PERLND 210     EXTNL  PETINP
 ***Impervious Land Segments***
 
 ***Precipitation (stored as inches/hour)
-WDM1   136 PREC     ENGL          1.00SAME IMPLND 151     EXTNL  PREC  
-WDM1   137 PREC     ENGL          1.00SAME IMPLND 152     EXTNL  PREC  
-WDM1   138 PREC     ENGL          1.00SAME IMPLND 153     EXTNL  PREC  
-WDM1   139 PREC     ENGL          1.00SAME IMPLND 154     EXTNL  PREC  
-WDM1   140 PREC     ENGL          1.00SAME IMPLND 155     EXTNL  PREC  
-WDM1   141 PREC     ENGL          1.00SAME IMPLND 156     EXTNL  PREC  
-WDM1   142 PREC     ENGL          1.00SAME IMPLND 157     EXTNL  PREC  
-WDM1   143 PREC     ENGL          1.00SAME IMPLND 158     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME IMPLND 159     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME IMPLND 160     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME IMPLND 161     EXTNL  PREC  
-WDM1   147 PREC     ENGL          1.00SAME IMPLND 162     EXTNL  PREC  
-WDM1   148 PREC     ENGL          1.00SAME IMPLND 163     EXTNL  PREC  
-WDM1   149 PREC     ENGL          1.00SAME IMPLND 164     EXTNL  PREC  
-WDM1   150 PREC     ENGL          1.00SAME IMPLND 165     EXTNL  PREC  
-WDM1   136 PREC     ENGL          1.00SAME IMPLND 166     EXTNL  PREC  
-WDM1   137 PREC     ENGL          1.00SAME IMPLND 167     EXTNL  PREC  
-WDM1   138 PREC     ENGL          1.00SAME IMPLND 168     EXTNL  PREC  
-WDM1   139 PREC     ENGL          1.00SAME IMPLND 169     EXTNL  PREC  
-WDM1   140 PREC     ENGL          1.00SAME IMPLND 170     EXTNL  PREC  
-WDM1   141 PREC     ENGL          1.00SAME IMPLND 171     EXTNL  PREC  
-WDM1   142 PREC     ENGL          1.00SAME IMPLND 172     EXTNL  PREC  
-WDM1   143 PREC     ENGL          1.00SAME IMPLND 173     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME IMPLND 174     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME IMPLND 175     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME IMPLND 176     EXTNL  PREC  
-WDM1   147 PREC     ENGL          1.00SAME IMPLND 177     EXTNL  PREC  
-WDM1   148 PREC     ENGL          1.00SAME IMPLND 178     EXTNL  PREC  
-WDM1   149 PREC     ENGL          1.00SAME IMPLND 179     EXTNL  PREC  
-WDM1   150 PREC     ENGL          1.00SAME IMPLND 180     EXTNL  PREC  
-WDM1   136 PREC     ENGL          1.00SAME IMPLND 181     EXTNL  PREC  
-WDM1   137 PREC     ENGL          1.00SAME IMPLND 182     EXTNL  PREC  
-WDM1   138 PREC     ENGL          1.00SAME IMPLND 183     EXTNL  PREC  
-WDM1   139 PREC     ENGL          1.00SAME IMPLND 184     EXTNL  PREC  
-WDM1   140 PREC     ENGL          1.00SAME IMPLND 185     EXTNL  PREC  
-WDM1   141 PREC     ENGL          1.00SAME IMPLND 186     EXTNL  PREC  
-WDM1   142 PREC     ENGL          1.00SAME IMPLND 187     EXTNL  PREC  
-WDM1   143 PREC     ENGL          1.00SAME IMPLND 188     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME IMPLND 189     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME IMPLND 190     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME IMPLND 191     EXTNL  PREC  
-WDM1   147 PREC     ENGL          1.00SAME IMPLND 192     EXTNL  PREC  
-WDM1   148 PREC     ENGL          1.00SAME IMPLND 193     EXTNL  PREC  
-WDM1   149 PREC     ENGL          1.00SAME IMPLND 194     EXTNL  PREC  
-WDM1   150 PREC     ENGL          1.00SAME IMPLND 195     EXTNL  PREC  
+WDM1   136 PREC     ENGL          1.00SAME IMPLND 151     EXTNL  PREC
+WDM1   137 PREC     ENGL          1.00SAME IMPLND 152     EXTNL  PREC
+WDM1   138 PREC     ENGL          1.00SAME IMPLND 153     EXTNL  PREC
+WDM1   139 PREC     ENGL          1.00SAME IMPLND 154     EXTNL  PREC
+WDM1   140 PREC     ENGL          1.00SAME IMPLND 155     EXTNL  PREC
+WDM1   141 PREC     ENGL          1.00SAME IMPLND 156     EXTNL  PREC
+WDM1   142 PREC     ENGL          1.00SAME IMPLND 157     EXTNL  PREC
+WDM1   143 PREC     ENGL          1.00SAME IMPLND 158     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME IMPLND 159     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME IMPLND 160     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME IMPLND 161     EXTNL  PREC
+WDM1   147 PREC     ENGL          1.00SAME IMPLND 162     EXTNL  PREC
+WDM1   148 PREC     ENGL          1.00SAME IMPLND 163     EXTNL  PREC
+WDM1   149 PREC     ENGL          1.00SAME IMPLND 164     EXTNL  PREC
+WDM1   150 PREC     ENGL          1.00SAME IMPLND 165     EXTNL  PREC
+WDM1   136 PREC     ENGL          1.00SAME IMPLND 166     EXTNL  PREC
+WDM1   137 PREC     ENGL          1.00SAME IMPLND 167     EXTNL  PREC
+WDM1   138 PREC     ENGL          1.00SAME IMPLND 168     EXTNL  PREC
+WDM1   139 PREC     ENGL          1.00SAME IMPLND 169     EXTNL  PREC
+WDM1   140 PREC     ENGL          1.00SAME IMPLND 170     EXTNL  PREC
+WDM1   141 PREC     ENGL          1.00SAME IMPLND 171     EXTNL  PREC
+WDM1   142 PREC     ENGL          1.00SAME IMPLND 172     EXTNL  PREC
+WDM1   143 PREC     ENGL          1.00SAME IMPLND 173     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME IMPLND 174     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME IMPLND 175     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME IMPLND 176     EXTNL  PREC
+WDM1   147 PREC     ENGL          1.00SAME IMPLND 177     EXTNL  PREC
+WDM1   148 PREC     ENGL          1.00SAME IMPLND 178     EXTNL  PREC
+WDM1   149 PREC     ENGL          1.00SAME IMPLND 179     EXTNL  PREC
+WDM1   150 PREC     ENGL          1.00SAME IMPLND 180     EXTNL  PREC
+WDM1   136 PREC     ENGL          1.00SAME IMPLND 181     EXTNL  PREC
+WDM1   137 PREC     ENGL          1.00SAME IMPLND 182     EXTNL  PREC
+WDM1   138 PREC     ENGL          1.00SAME IMPLND 183     EXTNL  PREC
+WDM1   139 PREC     ENGL          1.00SAME IMPLND 184     EXTNL  PREC
+WDM1   140 PREC     ENGL          1.00SAME IMPLND 185     EXTNL  PREC
+WDM1   141 PREC     ENGL          1.00SAME IMPLND 186     EXTNL  PREC
+WDM1   142 PREC     ENGL          1.00SAME IMPLND 187     EXTNL  PREC
+WDM1   143 PREC     ENGL          1.00SAME IMPLND 188     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME IMPLND 189     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME IMPLND 190     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME IMPLND 191     EXTNL  PREC
+WDM1   147 PREC     ENGL          1.00SAME IMPLND 192     EXTNL  PREC
+WDM1   148 PREC     ENGL          1.00SAME IMPLND 193     EXTNL  PREC
+WDM1   149 PREC     ENGL          1.00SAME IMPLND 194     EXTNL  PREC
+WDM1   150 PREC     ENGL          1.00SAME IMPLND 195     EXTNL  PREC
 
-***Air Temperature (stored as hourly deg. F)  
-WDM1   283 ATEM     ENGL          1.00SAME IMPLND 151     EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME IMPLND 152 154 EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME IMPLND 155     EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME IMPLND 156 157 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME IMPLND 158 161 EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME IMPLND 162     EXTNL  GATMP 
-WDM1   273 ATEM     ENGL          1.00SAME IMPLND 163 164 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME IMPLND 165     EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME IMPLND 166     EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME IMPLND 167 169 EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME IMPLND 170     EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME IMPLND 171 172 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME IMPLND 173 176 EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME IMPLND 177     EXTNL  GATMP 
-WDM1   273 ATEM     ENGL          1.00SAME IMPLND 178 179 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME IMPLND 180     EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME IMPLND 181     EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME IMPLND 182 184 EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME IMPLND 185     EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME IMPLND 186 187 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME IMPLND 188 191 EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME IMPLND 192     EXTNL  GATMP 
-WDM1   273 ATEM     ENGL          1.00SAME IMPLND 193 194 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME IMPLND 195     EXTNL  GATMP 
+***Air Temperature (stored as hourly deg. F)
+WDM1   283 ATEM     ENGL          1.00SAME IMPLND 151     EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME IMPLND 152 154 EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME IMPLND 155     EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME IMPLND 156 157 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME IMPLND 158 161 EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME IMPLND 162     EXTNL  GATMP
+WDM1   273 ATEM     ENGL          1.00SAME IMPLND 163 164 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME IMPLND 165     EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME IMPLND 166     EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME IMPLND 167 169 EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME IMPLND 170     EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME IMPLND 171 172 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME IMPLND 173 176 EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME IMPLND 177     EXTNL  GATMP
+WDM1   273 ATEM     ENGL          1.00SAME IMPLND 178 179 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME IMPLND 180     EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME IMPLND 181     EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME IMPLND 182 184 EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME IMPLND 185     EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME IMPLND 186 187 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME IMPLND 188 191 EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME IMPLND 192     EXTNL  GATMP
+WDM1   273 ATEM     ENGL          1.00SAME IMPLND 193 194 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME IMPLND 195     EXTNL  GATMP
 
 
 ***Dew Point Temperature (stored as hourly deg. F)
-WDM1   287 DEWP     ENGL          1.00SAME IMPLND 151     EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME IMPLND 152 154 EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME IMPLND 155     EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME IMPLND 156 157 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME IMPLND 158 161 EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME IMPLND 162     EXTNL  DTMPG 
-WDM1   277 DEWP     ENGL          1.00SAME IMPLND 163 164 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME IMPLND 165     EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME IMPLND 166     EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME IMPLND 167 169 EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME IMPLND 170     EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME IMPLND 171 172 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME IMPLND 173 176 EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME IMPLND 177     EXTNL  DTMPG 
-WDM1   277 DEWP     ENGL          1.00SAME IMPLND 178 179 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME IMPLND 180     EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME IMPLND 181     EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME IMPLND 182 184 EXTNL  DTMPG 
-WDM1   287 DEWP     ENGL          1.00SAME IMPLND 185     EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME IMPLND 186 187 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME IMPLND 188 191 EXTNL  DTMPG 
-WDM1   267 DEWP     ENGL          1.00SAME IMPLND 192     EXTNL  DTMPG 
-WDM1   277 DEWP     ENGL          1.00SAME IMPLND 193 194 EXTNL  DTMPG 
-WDM1   904 DEWP     ENGL          1.00SAME IMPLND 195     EXTNL  DTMPG 
+WDM1   287 DEWP     ENGL          1.00SAME IMPLND 151     EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME IMPLND 152 154 EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME IMPLND 155     EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME IMPLND 156 157 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME IMPLND 158 161 EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME IMPLND 162     EXTNL  DTMPG
+WDM1   277 DEWP     ENGL          1.00SAME IMPLND 163 164 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME IMPLND 165     EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME IMPLND 166     EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME IMPLND 167 169 EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME IMPLND 170     EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME IMPLND 171 172 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME IMPLND 173 176 EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME IMPLND 177     EXTNL  DTMPG
+WDM1   277 DEWP     ENGL          1.00SAME IMPLND 178 179 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME IMPLND 180     EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME IMPLND 181     EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME IMPLND 182 184 EXTNL  DTMPG
+WDM1   287 DEWP     ENGL          1.00SAME IMPLND 185     EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME IMPLND 186 187 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME IMPLND 188 191 EXTNL  DTMPG
+WDM1   267 DEWP     ENGL          1.00SAME IMPLND 192     EXTNL  DTMPG
+WDM1   277 DEWP     ENGL          1.00SAME IMPLND 193 194 EXTNL  DTMPG
+WDM1   904 DEWP     ENGL          1.00SAME IMPLND 195     EXTNL  DTMPG
 
 ***Cloud Cover (stored as hourly tenths)
-WDM1   288 CLOU     ENGL          1.00SAME IMPLND 151     EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME IMPLND 152 154 EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME IMPLND 155     EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME IMPLND 156 157 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME IMPLND 158 161 EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME IMPLND 162     EXTNL  CLOUD 
-WDM1   278 CLOU     ENGL          1.00SAME IMPLND 163 164 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME IMPLND 165     EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME IMPLND 166     EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME IMPLND 167 169 EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME IMPLND 170     EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME IMPLND 171 172 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME IMPLND 173 176 EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME IMPLND 177     EXTNL  CLOUD 
-WDM1   278 CLOU     ENGL          1.00SAME IMPLND 178 179 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME IMPLND 180     EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME IMPLND 181     EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME IMPLND 182 184 EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME IMPLND 185     EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME IMPLND 186 187 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME IMPLND 188 191 EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME IMPLND 192     EXTNL  CLOUD 
-WDM1   278 CLOU     ENGL          1.00SAME IMPLND 193 194 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME IMPLND 195     EXTNL  CLOUD 
+WDM1   288 CLOU     ENGL          1.00SAME IMPLND 151     EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME IMPLND 152 154 EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME IMPLND 155     EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME IMPLND 156 157 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME IMPLND 158 161 EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME IMPLND 162     EXTNL  CLOUD
+WDM1   278 CLOU     ENGL          1.00SAME IMPLND 163 164 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME IMPLND 165     EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME IMPLND 166     EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME IMPLND 167 169 EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME IMPLND 170     EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME IMPLND 171 172 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME IMPLND 173 176 EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME IMPLND 177     EXTNL  CLOUD
+WDM1   278 CLOU     ENGL          1.00SAME IMPLND 178 179 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME IMPLND 180     EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME IMPLND 181     EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME IMPLND 182 184 EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME IMPLND 185     EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME IMPLND 186 187 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME IMPLND 188 191 EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME IMPLND 192     EXTNL  CLOUD
+WDM1   278 CLOU     ENGL          1.00SAME IMPLND 193 194 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME IMPLND 195     EXTNL  CLOUD
 
 ***Solar Radiation (stored as Langleys/hour)
 WDM1   285 SOLR     ENGL          1.00SAME IMPLND 151     EXTNL  SOLRAD
@@ -5643,139 +5643,139 @@ WDM1   909 PEVT     ENGL          0.79     IMPLND 195     EXTNL  PETINP
 ***Reach Segments***
 
 ***Precipitation (stored as inches/hour)
-WDM1   136 PREC     ENGL          1.00SAME RCHRES   1     EXTNL  PREC  
-WDM1   140 PREC     ENGL          1.00SAME RCHRES   2     EXTNL  PREC  
-WDM1   140 PREC     ENGL          1.00SAME RCHRES   3     EXTNL  PREC  
-WDM1   140 PREC     ENGL          1.00SAME RCHRES   4     EXTNL  PREC  
-WDM1   140 PREC     ENGL          1.00SAME RCHRES   5     EXTNL  PREC  
-WDM1   140 PREC     ENGL          1.00SAME RCHRES   6     EXTNL  PREC  
-WDM1   137 PREC     ENGL          1.00SAME RCHRES   7     EXTNL  PREC  
-WDM1   137 PREC     ENGL          1.00SAME RCHRES   8     EXTNL  PREC  
-WDM1   140 PREC     ENGL          1.00SAME RCHRES   9     EXTNL  PREC  
-WDM1   138 PREC     ENGL          1.00SAME RCHRES  10     EXTNL  PREC  
-WDM1   138 PREC     ENGL          1.00SAME RCHRES  11     EXTNL  PREC  
-WDM1   142 PREC     ENGL          1.00SAME RCHRES  12     EXTNL  PREC  
-WDM1   142 PREC     ENGL          1.00SAME RCHRES  13     EXTNL  PREC  
-WDM1   142 PREC     ENGL          1.00SAME RCHRES  14     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME RCHRES  15     EXTNL  PREC  
-WDM1   138 PREC     ENGL          1.00SAME RCHRES  16     EXTNL  PREC  
-WDM1   142 PREC     ENGL          1.00SAME RCHRES  20     EXTNL  PREC  
-WDM1   142 PREC     ENGL          1.00SAME RCHRES  21     EXTNL  PREC  
-WDM1   143 PREC     ENGL          1.00SAME RCHRES  30     EXTNL  PREC  
-WDM1   143 PREC     ENGL          1.00SAME RCHRES  31     EXTNL  PREC  
-WDM1   148 PREC     ENGL          1.00SAME RCHRES  32     EXTNL  PREC  
-WDM1   148 PREC     ENGL          1.00SAME RCHRES  33     EXTNL  PREC  
-WDM1   148 PREC     ENGL          1.00SAME RCHRES  34     EXTNL  PREC  
-WDM1   148 PREC     ENGL          1.00SAME RCHRES  35     EXTNL  PREC  
-WDM1   148 PREC     ENGL          1.00SAME RCHRES  40     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME RCHRES  50     EXTNL  PREC  
-WDM1   149 PREC     ENGL          1.00SAME RCHRES  51     EXTNL  PREC  
-WDM1   149 PREC     ENGL          1.00SAME RCHRES  52     EXTNL  PREC  
-WDM1   149 PREC     ENGL          1.00SAME RCHRES  53     EXTNL  PREC  
-WDM1   149 PREC     ENGL          1.00SAME RCHRES  54     EXTNL  PREC  
-WDM1   149 PREC     ENGL          1.00SAME RCHRES  55     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME RCHRES  60     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME RCHRES  61     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME RCHRES  62     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME RCHRES  63     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME RCHRES  64     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME RCHRES  65     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME RCHRES  66     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME RCHRES  67     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME RCHRES  68     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME RCHRES  69     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME RCHRES  70     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME RCHRES  71     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME RCHRES  72     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME RCHRES  73     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME RCHRES  74     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME RCHRES  75     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME RCHRES  76     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME RCHRES  77     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME RCHRES  78     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME RCHRES  79     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME RCHRES  80     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME RCHRES  81     EXTNL  PREC  
-WDM1   150 PREC     ENGL          1.00SAME RCHRES  82     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME RCHRES  83     EXTNL  PREC  
-WDM1   150 PREC     ENGL          1.00SAME RCHRES  84     EXTNL  PREC  
-WDM1   150 PREC     ENGL          1.00SAME RCHRES  85     EXTNL  PREC  
-WDM1   150 PREC     ENGL          1.00SAME RCHRES  86     EXTNL  PREC  
-WDM1   150 PREC     ENGL          1.00SAME RCHRES  87     EXTNL  PREC  
-WDM1   136 PREC     ENGL          1.00SAME RCHRES 100     EXTNL  PREC  
-WDM1   136 PREC     ENGL          1.00SAME RCHRES 101     EXTNL  PREC  
-WDM1   136 PREC     ENGL          1.00SAME RCHRES 102     EXTNL  PREC  
-WDM1   136 PREC     ENGL          1.00SAME RCHRES 103     EXTNL  PREC  
-WDM1   137 PREC     ENGL          1.00SAME RCHRES 104     EXTNL  PREC  
-WDM1   139 PREC     ENGL          1.00SAME RCHRES 105     EXTNL  PREC  
-WDM1   139 PREC     ENGL          1.00SAME RCHRES 106     EXTNL  PREC  
-WDM1   139 PREC     ENGL          1.00SAME RCHRES 107     EXTNL  PREC  
-WDM1   139 PREC     ENGL          1.00SAME RCHRES 108     EXTNL  PREC  
-WDM1   139 PREC     ENGL          1.00SAME RCHRES 109     EXTNL  PREC  
-WDM1   139 PREC     ENGL          1.00SAME RCHRES 110     EXTNL  PREC  
-WDM1   139 PREC     ENGL          1.00SAME RCHRES 200     EXTNL  PREC  
-WDM1   142 PREC     ENGL          1.00SAME RCHRES 201     EXTNL  PREC  
-WDM1   141 PREC     ENGL          1.00SAME RCHRES 202     EXTNL  PREC  
-WDM1   141 PREC     ENGL          1.00SAME RCHRES 203     EXTNL  PREC  
-WDM1   141 PREC     ENGL          1.00SAME RCHRES 204     EXTNL  PREC  
-WDM1   147 PREC     ENGL          1.00SAME RCHRES 205     EXTNL  PREC  
-WDM1   147 PREC     ENGL          1.00SAME RCHRES 206     EXTNL  PREC  
-WDM1   147 PREC     ENGL          1.00SAME RCHRES 207     EXTNL  PREC  
-WDM1   143 PREC     ENGL          1.00SAME RCHRES 300     EXTNL  PREC  
-WDM1   143 PREC     ENGL          1.00SAME RCHRES 301     EXTNL  PREC  
-WDM1   143 PREC     ENGL          1.00SAME RCHRES 302     EXTNL  PREC  
-WDM1   143 PREC     ENGL          1.00SAME RCHRES 303     EXTNL  PREC  
-WDM1   143 PREC     ENGL          1.00SAME RCHRES 304     EXTNL  PREC  
-WDM1   143 PREC     ENGL          1.00SAME RCHRES 305     EXTNL  PREC  
-WDM1   148 PREC     ENGL          1.00SAME RCHRES 306     EXTNL  PREC  
-WDM1   148 PREC     ENGL          1.00SAME RCHRES 307     EXTNL  PREC  
-WDM1   143 PREC     ENGL          1.00SAME RCHRES 400     EXTNL  PREC  
-WDM1   148 PREC     ENGL          1.00SAME RCHRES 401     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME RCHRES 500     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME RCHRES 501     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME RCHRES 502     EXTNL  PREC  
-WDM1   144 PREC     ENGL          1.00SAME RCHRES 503     EXTNL  PREC  
-WDM1   149 PREC     ENGL          1.00SAME RCHRES 504     EXTNL  PREC  
-WDM1   149 PREC     ENGL          1.00SAME RCHRES 505     EXTNL  PREC  
-WDM1   149 PREC     ENGL          1.00SAME RCHRES 506     EXTNL  PREC  
-WDM1   149 PREC     ENGL          1.00SAME RCHRES 507     EXTNL  PREC  
-WDM1   139 PREC     ENGL          1.00SAME RCHRES 600     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME RCHRES 601     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME RCHRES 602     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME RCHRES 603     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME RCHRES 604     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME RCHRES 605     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME RCHRES 606     EXTNL  PREC  
-WDM1   145 PREC     ENGL          1.00SAME RCHRES 607     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME RCHRES 608     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME RCHRES 609     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME RCHRES 610     EXTNL  PREC  
-WDM1   146 PREC     ENGL          1.00SAME RCHRES 611     EXTNL  PREC  
-WDM1   150 PREC     ENGL          1.00SAME RCHRES 612     EXTNL  PREC   
+WDM1   136 PREC     ENGL          1.00SAME RCHRES   1     EXTNL  PREC
+WDM1   140 PREC     ENGL          1.00SAME RCHRES   2     EXTNL  PREC
+WDM1   140 PREC     ENGL          1.00SAME RCHRES   3     EXTNL  PREC
+WDM1   140 PREC     ENGL          1.00SAME RCHRES   4     EXTNL  PREC
+WDM1   140 PREC     ENGL          1.00SAME RCHRES   5     EXTNL  PREC
+WDM1   140 PREC     ENGL          1.00SAME RCHRES   6     EXTNL  PREC
+WDM1   137 PREC     ENGL          1.00SAME RCHRES   7     EXTNL  PREC
+WDM1   137 PREC     ENGL          1.00SAME RCHRES   8     EXTNL  PREC
+WDM1   140 PREC     ENGL          1.00SAME RCHRES   9     EXTNL  PREC
+WDM1   138 PREC     ENGL          1.00SAME RCHRES  10     EXTNL  PREC
+WDM1   138 PREC     ENGL          1.00SAME RCHRES  11     EXTNL  PREC
+WDM1   142 PREC     ENGL          1.00SAME RCHRES  12     EXTNL  PREC
+WDM1   142 PREC     ENGL          1.00SAME RCHRES  13     EXTNL  PREC
+WDM1   142 PREC     ENGL          1.00SAME RCHRES  14     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME RCHRES  15     EXTNL  PREC
+WDM1   138 PREC     ENGL          1.00SAME RCHRES  16     EXTNL  PREC
+WDM1   142 PREC     ENGL          1.00SAME RCHRES  20     EXTNL  PREC
+WDM1   142 PREC     ENGL          1.00SAME RCHRES  21     EXTNL  PREC
+WDM1   143 PREC     ENGL          1.00SAME RCHRES  30     EXTNL  PREC
+WDM1   143 PREC     ENGL          1.00SAME RCHRES  31     EXTNL  PREC
+WDM1   148 PREC     ENGL          1.00SAME RCHRES  32     EXTNL  PREC
+WDM1   148 PREC     ENGL          1.00SAME RCHRES  33     EXTNL  PREC
+WDM1   148 PREC     ENGL          1.00SAME RCHRES  34     EXTNL  PREC
+WDM1   148 PREC     ENGL          1.00SAME RCHRES  35     EXTNL  PREC
+WDM1   148 PREC     ENGL          1.00SAME RCHRES  40     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME RCHRES  50     EXTNL  PREC
+WDM1   149 PREC     ENGL          1.00SAME RCHRES  51     EXTNL  PREC
+WDM1   149 PREC     ENGL          1.00SAME RCHRES  52     EXTNL  PREC
+WDM1   149 PREC     ENGL          1.00SAME RCHRES  53     EXTNL  PREC
+WDM1   149 PREC     ENGL          1.00SAME RCHRES  54     EXTNL  PREC
+WDM1   149 PREC     ENGL          1.00SAME RCHRES  55     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME RCHRES  60     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME RCHRES  61     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME RCHRES  62     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME RCHRES  63     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME RCHRES  64     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME RCHRES  65     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME RCHRES  66     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME RCHRES  67     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME RCHRES  68     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME RCHRES  69     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME RCHRES  70     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME RCHRES  71     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME RCHRES  72     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME RCHRES  73     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME RCHRES  74     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME RCHRES  75     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME RCHRES  76     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME RCHRES  77     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME RCHRES  78     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME RCHRES  79     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME RCHRES  80     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME RCHRES  81     EXTNL  PREC
+WDM1   150 PREC     ENGL          1.00SAME RCHRES  82     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME RCHRES  83     EXTNL  PREC
+WDM1   150 PREC     ENGL          1.00SAME RCHRES  84     EXTNL  PREC
+WDM1   150 PREC     ENGL          1.00SAME RCHRES  85     EXTNL  PREC
+WDM1   150 PREC     ENGL          1.00SAME RCHRES  86     EXTNL  PREC
+WDM1   150 PREC     ENGL          1.00SAME RCHRES  87     EXTNL  PREC
+WDM1   136 PREC     ENGL          1.00SAME RCHRES 100     EXTNL  PREC
+WDM1   136 PREC     ENGL          1.00SAME RCHRES 101     EXTNL  PREC
+WDM1   136 PREC     ENGL          1.00SAME RCHRES 102     EXTNL  PREC
+WDM1   136 PREC     ENGL          1.00SAME RCHRES 103     EXTNL  PREC
+WDM1   137 PREC     ENGL          1.00SAME RCHRES 104     EXTNL  PREC
+WDM1   139 PREC     ENGL          1.00SAME RCHRES 105     EXTNL  PREC
+WDM1   139 PREC     ENGL          1.00SAME RCHRES 106     EXTNL  PREC
+WDM1   139 PREC     ENGL          1.00SAME RCHRES 107     EXTNL  PREC
+WDM1   139 PREC     ENGL          1.00SAME RCHRES 108     EXTNL  PREC
+WDM1   139 PREC     ENGL          1.00SAME RCHRES 109     EXTNL  PREC
+WDM1   139 PREC     ENGL          1.00SAME RCHRES 110     EXTNL  PREC
+WDM1   139 PREC     ENGL          1.00SAME RCHRES 200     EXTNL  PREC
+WDM1   142 PREC     ENGL          1.00SAME RCHRES 201     EXTNL  PREC
+WDM1   141 PREC     ENGL          1.00SAME RCHRES 202     EXTNL  PREC
+WDM1   141 PREC     ENGL          1.00SAME RCHRES 203     EXTNL  PREC
+WDM1   141 PREC     ENGL          1.00SAME RCHRES 204     EXTNL  PREC
+WDM1   147 PREC     ENGL          1.00SAME RCHRES 205     EXTNL  PREC
+WDM1   147 PREC     ENGL          1.00SAME RCHRES 206     EXTNL  PREC
+WDM1   147 PREC     ENGL          1.00SAME RCHRES 207     EXTNL  PREC
+WDM1   143 PREC     ENGL          1.00SAME RCHRES 300     EXTNL  PREC
+WDM1   143 PREC     ENGL          1.00SAME RCHRES 301     EXTNL  PREC
+WDM1   143 PREC     ENGL          1.00SAME RCHRES 302     EXTNL  PREC
+WDM1   143 PREC     ENGL          1.00SAME RCHRES 303     EXTNL  PREC
+WDM1   143 PREC     ENGL          1.00SAME RCHRES 304     EXTNL  PREC
+WDM1   143 PREC     ENGL          1.00SAME RCHRES 305     EXTNL  PREC
+WDM1   148 PREC     ENGL          1.00SAME RCHRES 306     EXTNL  PREC
+WDM1   148 PREC     ENGL          1.00SAME RCHRES 307     EXTNL  PREC
+WDM1   143 PREC     ENGL          1.00SAME RCHRES 400     EXTNL  PREC
+WDM1   148 PREC     ENGL          1.00SAME RCHRES 401     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME RCHRES 500     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME RCHRES 501     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME RCHRES 502     EXTNL  PREC
+WDM1   144 PREC     ENGL          1.00SAME RCHRES 503     EXTNL  PREC
+WDM1   149 PREC     ENGL          1.00SAME RCHRES 504     EXTNL  PREC
+WDM1   149 PREC     ENGL          1.00SAME RCHRES 505     EXTNL  PREC
+WDM1   149 PREC     ENGL          1.00SAME RCHRES 506     EXTNL  PREC
+WDM1   149 PREC     ENGL          1.00SAME RCHRES 507     EXTNL  PREC
+WDM1   139 PREC     ENGL          1.00SAME RCHRES 600     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME RCHRES 601     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME RCHRES 602     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME RCHRES 603     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME RCHRES 604     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME RCHRES 605     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME RCHRES 606     EXTNL  PREC
+WDM1   145 PREC     ENGL          1.00SAME RCHRES 607     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME RCHRES 608     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME RCHRES 609     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME RCHRES 610     EXTNL  PREC
+WDM1   146 PREC     ENGL          1.00SAME RCHRES 611     EXTNL  PREC
+WDM1   150 PREC     ENGL          1.00SAME RCHRES 612     EXTNL  PREC
 
 ***Air Temperature (stored as hourly deg. F)
-WDM1   283 ATEM     ENGL          1.00SAME RCHRES   1   6 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME RCHRES   7   8 EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME RCHRES   9     EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME RCHRES  10  11 EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME RCHRES  12  14 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME RCHRES  15  16 EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME RCHRES  20  21 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME RCHRES  30  31 EXTNL  GATMP 
-WDM1   273 ATEM     ENGL          1.00SAME RCHRES  32  40 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME RCHRES  50     EXTNL  GATMP 
-WDM1   273 ATEM     ENGL          1.00SAME RCHRES  51  55 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME RCHRES  60  87 EXTNL  GATMP 
-WDM1   283 ATEM     ENGL          1.00SAME RCHRES 100 103 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME RCHRES 104 200 EXTNL  GATMP 
-WDM1   263 ATEM     ENGL          1.00SAME RCHRES 201 207 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME RCHRES 300 305 EXTNL  GATMP 
-WDM1   273 ATEM     ENGL          1.00SAME RCHRES 306 307 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME RCHRES 400     EXTNL  GATMP 
-WDM1   273 ATEM     ENGL          1.00SAME RCHRES 401     EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME RCHRES 500 503 EXTNL  GATMP 
-WDM1   273 ATEM     ENGL          1.00SAME RCHRES 504 507 EXTNL  GATMP 
-WDM1   902 ATEM     ENGL          1.00SAME RCHRES 600 612 EXTNL  GATMP 
+WDM1   283 ATEM     ENGL          1.00SAME RCHRES   1   6 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME RCHRES   7   8 EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME RCHRES   9     EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME RCHRES  10  11 EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME RCHRES  12  14 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME RCHRES  15  16 EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME RCHRES  20  21 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME RCHRES  30  31 EXTNL  GATMP
+WDM1   273 ATEM     ENGL          1.00SAME RCHRES  32  40 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME RCHRES  50     EXTNL  GATMP
+WDM1   273 ATEM     ENGL          1.00SAME RCHRES  51  55 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME RCHRES  60  87 EXTNL  GATMP
+WDM1   283 ATEM     ENGL          1.00SAME RCHRES 100 103 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME RCHRES 104 200 EXTNL  GATMP
+WDM1   263 ATEM     ENGL          1.00SAME RCHRES 201 207 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME RCHRES 300 305 EXTNL  GATMP
+WDM1   273 ATEM     ENGL          1.00SAME RCHRES 306 307 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME RCHRES 400     EXTNL  GATMP
+WDM1   273 ATEM     ENGL          1.00SAME RCHRES 401     EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME RCHRES 500 503 EXTNL  GATMP
+WDM1   273 ATEM     ENGL          1.00SAME RCHRES 504 507 EXTNL  GATMP
+WDM1   902 ATEM     ENGL          1.00SAME RCHRES 600 612 EXTNL  GATMP
 
 
 ***Dew Point Temperature (stored as hourly deg. F)
@@ -5804,28 +5804,28 @@ WDM1   904 DEWP     ENGL          1.00SAME RCHRES 600 612 EXTNL  DEWTMP
 
 
 ***Cloud Cover (tenths)
-WDM1   288 CLOU     ENGL          1.00SAME RCHRES   1   6 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME RCHRES   7   8 EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME RCHRES   9     EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME RCHRES  10  11 EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME RCHRES  12  14 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME RCHRES  15  16 EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME RCHRES  20  21 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME RCHRES  30  31 EXTNL  CLOUD 
-WDM1   278 CLOU     ENGL          1.00SAME RCHRES  32  40 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME RCHRES  50     EXTNL  CLOUD 
-WDM1   278 CLOU     ENGL          1.00SAME RCHRES  51  55 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME RCHRES  60  87 EXTNL  CLOUD 
-WDM1   288 CLOU     ENGL          1.00SAME RCHRES 100 103 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME RCHRES 104 200 EXTNL  CLOUD 
-WDM1   268 CLOU     ENGL          1.00SAME RCHRES 201 207 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME RCHRES 300 305 EXTNL  CLOUD 
-WDM1   278 CLOU     ENGL          1.00SAME RCHRES 306 307 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME RCHRES 400     EXTNL  CLOUD 
-WDM1   278 CLOU     ENGL          1.00SAME RCHRES 401     EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME RCHRES 500 503 EXTNL  CLOUD 
-WDM1   278 CLOU     ENGL          1.00SAME RCHRES 504 507 EXTNL  CLOUD 
-WDM1   905 CLOU     ENGL          1.00SAME RCHRES 600 612 EXTNL  CLOUD 
+WDM1   288 CLOU     ENGL          1.00SAME RCHRES   1   6 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME RCHRES   7   8 EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME RCHRES   9     EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME RCHRES  10  11 EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME RCHRES  12  14 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME RCHRES  15  16 EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME RCHRES  20  21 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME RCHRES  30  31 EXTNL  CLOUD
+WDM1   278 CLOU     ENGL          1.00SAME RCHRES  32  40 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME RCHRES  50     EXTNL  CLOUD
+WDM1   278 CLOU     ENGL          1.00SAME RCHRES  51  55 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME RCHRES  60  87 EXTNL  CLOUD
+WDM1   288 CLOU     ENGL          1.00SAME RCHRES 100 103 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME RCHRES 104 200 EXTNL  CLOUD
+WDM1   268 CLOU     ENGL          1.00SAME RCHRES 201 207 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME RCHRES 300 305 EXTNL  CLOUD
+WDM1   278 CLOU     ENGL          1.00SAME RCHRES 306 307 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME RCHRES 400     EXTNL  CLOUD
+WDM1   278 CLOU     ENGL          1.00SAME RCHRES 401     EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME RCHRES 500 503 EXTNL  CLOUD
+WDM1   278 CLOU     ENGL          1.00SAME RCHRES 504 507 EXTNL  CLOUD
+WDM1   905 CLOU     ENGL          1.00SAME RCHRES 600 612 EXTNL  CLOUD
 
 
 ***Solar Radiation (stored as Langleys/hour)
@@ -5854,53 +5854,53 @@ WDM1   908 SOLR     ENGL          1.00SAME RCHRES 600 612 EXTNL  SOLRAD
 
 
 ***Wind Movement (stored as miles/hour)
-WDM1   284 WIND     ENGL          1.00SAME RCHRES   1   6 EXTNL  WIND  
-WDM1   903 WIND     ENGL          1.00SAME RCHRES   7   8 EXTNL  WIND  
-WDM1   284 WIND     ENGL          1.00SAME RCHRES   9     EXTNL  WIND  
-WDM1   903 WIND     ENGL          1.00SAME RCHRES  10  11 EXTNL  WIND  
-WDM1   264 WIND     ENGL          1.00SAME RCHRES  12  14 EXTNL  WIND  
-WDM1   903 WIND     ENGL          1.00SAME RCHRES  15  16 EXTNL  WIND  
-WDM1   264 WIND     ENGL          1.00SAME RCHRES  20  21 EXTNL  WIND  
-WDM1   903 WIND     ENGL          1.00SAME RCHRES  30  31 EXTNL  WIND  
-WDM1   274 WIND     ENGL          1.00SAME RCHRES  32  40 EXTNL  WIND  
-WDM1   903 WIND     ENGL          1.00SAME RCHRES  50     EXTNL  WIND  
-WDM1   274 WIND     ENGL          1.00SAME RCHRES  51  55 EXTNL  WIND  
-WDM1   903 WIND     ENGL          1.00SAME RCHRES  60  87 EXTNL  WIND  
-WDM1   284 WIND     ENGL          1.00SAME RCHRES 100 103 EXTNL  WIND  
-WDM1   903 WIND     ENGL          1.00SAME RCHRES 104 200 EXTNL  WIND  
-WDM1   264 WIND     ENGL          1.00SAME RCHRES 201 207 EXTNL  WIND  
-WDM1   903 WIND     ENGL          1.00SAME RCHRES 300 305 EXTNL  WIND  
-WDM1   274 WIND     ENGL          1.00SAME RCHRES 306 307 EXTNL  WIND  
-WDM1   903 WIND     ENGL          1.00SAME RCHRES 400     EXTNL  WIND  
-WDM1   274 WIND     ENGL          1.00SAME RCHRES 401     EXTNL  WIND  
-WDM1   903 WIND     ENGL          1.00SAME RCHRES 500 503 EXTNL  WIND  
-WDM1   274 WIND     ENGL          1.00SAME RCHRES 504 507 EXTNL  WIND  
-WDM1   903 WIND     ENGL          1.00SAME RCHRES 600 612 EXTNL  WIND  
+WDM1   284 WIND     ENGL          1.00SAME RCHRES   1   6 EXTNL  WIND
+WDM1   903 WIND     ENGL          1.00SAME RCHRES   7   8 EXTNL  WIND
+WDM1   284 WIND     ENGL          1.00SAME RCHRES   9     EXTNL  WIND
+WDM1   903 WIND     ENGL          1.00SAME RCHRES  10  11 EXTNL  WIND
+WDM1   264 WIND     ENGL          1.00SAME RCHRES  12  14 EXTNL  WIND
+WDM1   903 WIND     ENGL          1.00SAME RCHRES  15  16 EXTNL  WIND
+WDM1   264 WIND     ENGL          1.00SAME RCHRES  20  21 EXTNL  WIND
+WDM1   903 WIND     ENGL          1.00SAME RCHRES  30  31 EXTNL  WIND
+WDM1   274 WIND     ENGL          1.00SAME RCHRES  32  40 EXTNL  WIND
+WDM1   903 WIND     ENGL          1.00SAME RCHRES  50     EXTNL  WIND
+WDM1   274 WIND     ENGL          1.00SAME RCHRES  51  55 EXTNL  WIND
+WDM1   903 WIND     ENGL          1.00SAME RCHRES  60  87 EXTNL  WIND
+WDM1   284 WIND     ENGL          1.00SAME RCHRES 100 103 EXTNL  WIND
+WDM1   903 WIND     ENGL          1.00SAME RCHRES 104 200 EXTNL  WIND
+WDM1   264 WIND     ENGL          1.00SAME RCHRES 201 207 EXTNL  WIND
+WDM1   903 WIND     ENGL          1.00SAME RCHRES 300 305 EXTNL  WIND
+WDM1   274 WIND     ENGL          1.00SAME RCHRES 306 307 EXTNL  WIND
+WDM1   903 WIND     ENGL          1.00SAME RCHRES 400     EXTNL  WIND
+WDM1   274 WIND     ENGL          1.00SAME RCHRES 401     EXTNL  WIND
+WDM1   903 WIND     ENGL          1.00SAME RCHRES 500 503 EXTNL  WIND
+WDM1   274 WIND     ENGL          1.00SAME RCHRES 504 507 EXTNL  WIND
+WDM1   903 WIND     ENGL          1.00SAME RCHRES 600 612 EXTNL  WIND
 
 
 ***Potential Evapotranspiration (stored as inches/hour)
-WDM1   286 PEVT     ENGL          0.80     RCHRES   1   6 EXTNL  POTEV 
-WDM1   909 PEVT     ENGL          0.80     RCHRES   7   8 EXTNL  POTEV 
-WDM1   286 PEVT     ENGL          0.80     RCHRES   9     EXTNL  POTEV 
-WDM1   909 PEVT     ENGL          0.80     RCHRES  10  11 EXTNL  POTEV 
-WDM1   266 PEVT     ENGL          0.80     RCHRES  12  14 EXTNL  POTEV 
-WDM1   909 PEVT     ENGL          0.80     RCHRES  15  16 EXTNL  POTEV 
-WDM1   266 PEVT     ENGL          0.80     RCHRES  20  21 EXTNL  POTEV 
-WDM1   909 PEVT     ENGL          0.80     RCHRES  30  31 EXTNL  POTEV 
-WDM1   276 PEVT     ENGL          0.80     RCHRES  32  40 EXTNL  POTEV 
-WDM1   909 PEVT     ENGL          0.80     RCHRES  50     EXTNL  POTEV 
-WDM1   276 PEVT     ENGL          0.80     RCHRES  51  55 EXTNL  POTEV 
-WDM1   909 PEVT     ENGL          0.80     RCHRES  60  87 EXTNL  POTEV 
-WDM1   286 PEVT     ENGL          0.80     RCHRES 100 103 EXTNL  POTEV 
-WDM1   909 PEVT     ENGL          0.80     RCHRES 104 200 EXTNL  POTEV 
-WDM1   266 PEVT     ENGL          0.80     RCHRES 201 207 EXTNL  POTEV 
-WDM1   909 PEVT     ENGL          0.80     RCHRES 300 305 EXTNL  POTEV 
-WDM1   276 PEVT     ENGL          0.80     RCHRES 306 307 EXTNL  POTEV 
-WDM1   909 PEVT     ENGL          0.80     RCHRES 400     EXTNL  POTEV 
-WDM1   276 PEVT     ENGL          0.80     RCHRES 401     EXTNL  POTEV 
-WDM1   909 PEVT     ENGL          0.80     RCHRES 500 503 EXTNL  POTEV 
-WDM1   276 PEVT     ENGL          0.80     RCHRES 504 507 EXTNL  POTEV 
-WDM1   909 PEVT     ENGL          0.80     RCHRES 600 612 EXTNL  POTEV 
+WDM1   286 PEVT     ENGL          0.80     RCHRES   1   6 EXTNL  POTEV
+WDM1   909 PEVT     ENGL          0.80     RCHRES   7   8 EXTNL  POTEV
+WDM1   286 PEVT     ENGL          0.80     RCHRES   9     EXTNL  POTEV
+WDM1   909 PEVT     ENGL          0.80     RCHRES  10  11 EXTNL  POTEV
+WDM1   266 PEVT     ENGL          0.80     RCHRES  12  14 EXTNL  POTEV
+WDM1   909 PEVT     ENGL          0.80     RCHRES  15  16 EXTNL  POTEV
+WDM1   266 PEVT     ENGL          0.80     RCHRES  20  21 EXTNL  POTEV
+WDM1   909 PEVT     ENGL          0.80     RCHRES  30  31 EXTNL  POTEV
+WDM1   276 PEVT     ENGL          0.80     RCHRES  32  40 EXTNL  POTEV
+WDM1   909 PEVT     ENGL          0.80     RCHRES  50     EXTNL  POTEV
+WDM1   276 PEVT     ENGL          0.80     RCHRES  51  55 EXTNL  POTEV
+WDM1   909 PEVT     ENGL          0.80     RCHRES  60  87 EXTNL  POTEV
+WDM1   286 PEVT     ENGL          0.80     RCHRES 100 103 EXTNL  POTEV
+WDM1   909 PEVT     ENGL          0.80     RCHRES 104 200 EXTNL  POTEV
+WDM1   266 PEVT     ENGL          0.80     RCHRES 201 207 EXTNL  POTEV
+WDM1   909 PEVT     ENGL          0.80     RCHRES 300 305 EXTNL  POTEV
+WDM1   276 PEVT     ENGL          0.80     RCHRES 306 307 EXTNL  POTEV
+WDM1   909 PEVT     ENGL          0.80     RCHRES 400     EXTNL  POTEV
+WDM1   276 PEVT     ENGL          0.80     RCHRES 401     EXTNL  POTEV
+WDM1   909 PEVT     ENGL          0.80     RCHRES 500 503 EXTNL  POTEV
+WDM1   276 PEVT     ENGL          0.80     RCHRES 504 507 EXTNL  POTEV
+WDM1   909 PEVT     ENGL          0.80     RCHRES 600 612 EXTNL  POTEV
 
 
 *********************************************************************
@@ -5912,7 +5912,7 @@ WDM1   909 PEVT     ENGL          0.80     RCHRES 600 612 EXTNL  POTEV
 *** Discharge: FLOW (stored as MG/day) * 3.0689 acre-ft/MG = acre-ft/day
 *** TSS Silt Fractionation: TSS (stored as lbs/day) * 5E-4 ton/lb * 0.40 (Silt/Total) = ton/day
 ***  *Net conversion factor = 2.0E-4
-*** TSS Clay Fractionation TSS: (stored as lbs/day) * 5E-4 ton/lb * 0.60 (Clay/Total) = ton/day                                     
+*** TSS Clay Fractionation TSS: (stored as lbs/day) * 5E-4 ton/lb * 0.60 (Clay/Total) = ton/day
 ***  *Net conversion factor = 3.0E-4
 *** Dissolved Oxygen: DOX(stored as lbs/day) = no conversion factor
 *** BOD Ultimate: BOD5(stored as lbs/day) * 2.5 (assumed BODU/BOD5) = lbs/day
@@ -5925,7 +5925,7 @@ WDM1   909 PEVT     ENGL          0.80     RCHRES 600 612 EXTNL  POTEV
 ***  *Net conversion factor = 0.1072
 *** Ortho-Phosphorus: TP (stored as lbs/day) * 0.7235 (assumed fraction of TP) = lbs/day
 *** Organic Refractory Phosphorus: TP (stored as lbs/day) * 0.2765 (assumed fraction of TP) = lbs/day
-*** Organic Refractory Carbon: BOD5 (stored as lbs/day) * 2.5 (assumed BODU/BOD5) * 0.2699 (assumed fraction of BODU) = lbs/day 
+*** Organic Refractory Carbon: BOD5 (stored as lbs/day) * 2.5 (assumed BODU/BOD5) * 0.2699 (assumed fraction of BODU) = lbs/day
 ***  *Net conversion factor = 0.6748
 *** DIV time series transform function is used for all to convert /day to /hour
 
@@ -6368,7 +6368,7 @@ WDM3  627  HEAT     ENGL      1.0000  DIV  RCHRES 606     INFLOW IHEAT  1
 ***                      Atmospheric Deposition                   ***
 *********************************************************************
 
-*** Dry Atmospheric Deposition Inputs 
+*** Dry Atmospheric Deposition Inputs
 *** Stored as "kg/ha/day"
 *** Multiply by 0.404687 ha/acre and 2.204623 lb/kg to convert to lb/acre/day
 *** Multiply by 0.778 for NH4, by 0.226 for NO3 to convert to elemental N
@@ -6563,7 +6563,7 @@ PERLND     SEDMNT WSSD   1       0.350     RCHRES         INFLOW ISED   3
 PERLND     SEDMNT SCRSD  1       0.190     RCHRES         INFLOW ISED   1
 PERLND     SEDMNT SCRSD  1       0.610     RCHRES         INFLOW ISED   2
 PERLND     SEDMNT SCRSD  1       0.200     RCHRES         INFLOW ISED   3
-  
+
 *** Assume 5 mg/l clay in groundwater outflow (AGWO)***
 *** AGWO (in/hr) * 5 (mg/L) * PLS_Area (acres) * [1 ft/12 in] * [1 ton/9.072E+8 mg] * [1.233E+6 L/acre-ft] = Clay Load (tons/hr) ***
 *** Net conversion factor = 5.66E-4
@@ -6572,23 +6572,23 @@ PERLND     PWATER AGWO        5.66E-4      RCHRES         INFLOW ISED   3
 PERLND     PWTGAS POHT                     RCHRES         INFLOW IHEAT
 PERLND     PWTGAS PODOXM                   RCHRES         INFLOW OXIF   1
 PERLND     PQUAL  POQUAL 1                 RCHRES         INFLOW NUIF1  2
-PERLND     PQUAL  POQUAL 2                 RCHRES         INFLOW NUIF1  1 
-PERLND     PQUAL  SOQUAL 3       0.100     RCHRES         INFLOW NUIF1  4   
-PERLND     PQUAL  SOQUAL 3       0.580     RCHRES         INFLOW NUIF2  2 2 
-PERLND     PQUAL  SOQUAL 3        0.32     RCHRES         INFLOW NUIF2  3 2      
-PERLND     PQUAL  IOQUAL 3        1.00     RCHRES         INFLOW NUIF1  4 
-PERLND     PQUAL  AOQUAL 3        1.00     RCHRES         INFLOW NUIF1  4 
-PERLND     PQUAL  SOQUAL 4        0.40     RCHRES         INFLOW OXIF   2        
-PERLND     PQUAL  IOQUAL 4        0.32     RCHRES         INFLOW OXIF   2       
-PERLND     PQUAL  AOQUAL 4        0.40     RCHRES         INFLOW OXIF   2       
-PERLND     PQUAL  SOQUAL 4      0.0407     RCHRES         INFLOW PKIF   3       
-PERLND     PQUAL  AOQUAL 4      0.0488     RCHRES         INFLOW PKIF   3          
-PERLND     PQUAL  IOQUAL 4      0.0407     RCHRES         INFLOW PKIF   3          
+PERLND     PQUAL  POQUAL 2                 RCHRES         INFLOW NUIF1  1
+PERLND     PQUAL  SOQUAL 3       0.100     RCHRES         INFLOW NUIF1  4
+PERLND     PQUAL  SOQUAL 3       0.580     RCHRES         INFLOW NUIF2  2 2
+PERLND     PQUAL  SOQUAL 3        0.32     RCHRES         INFLOW NUIF2  3 2
+PERLND     PQUAL  IOQUAL 3        1.00     RCHRES         INFLOW NUIF1  4
+PERLND     PQUAL  AOQUAL 3        1.00     RCHRES         INFLOW NUIF1  4
+PERLND     PQUAL  SOQUAL 4        0.40     RCHRES         INFLOW OXIF   2
+PERLND     PQUAL  IOQUAL 4        0.32     RCHRES         INFLOW OXIF   2
+PERLND     PQUAL  AOQUAL 4        0.40     RCHRES         INFLOW OXIF   2
+PERLND     PQUAL  SOQUAL 4      0.0407     RCHRES         INFLOW PKIF   3
+PERLND     PQUAL  AOQUAL 4      0.0488     RCHRES         INFLOW PKIF   3
+PERLND     PQUAL  IOQUAL 4      0.0407     RCHRES         INFLOW PKIF   3
 PERLND     PQUAL  SOQUAL 4      0.0051     RCHRES         INFLOW PKIF   4
-PERLND     PQUAL  IOQUAL 4      0.0051     RCHRES         INFLOW PKIF   4            
-PERLND     PQUAL  AOQUAL 4      0.0040     RCHRES         INFLOW PKIF   4          
-PERLND     PQUAL  POQUAL 4       0.570     RCHRES         INFLOW PKIF   5          
-  END MASS-LINK    1                      
+PERLND     PQUAL  IOQUAL 4      0.0051     RCHRES         INFLOW PKIF   4
+PERLND     PQUAL  AOQUAL 4      0.0040     RCHRES         INFLOW PKIF   4
+PERLND     PQUAL  POQUAL 4       0.570     RCHRES         INFLOW PKIF   5
+  END MASS-LINK    1
 
 *** IMPLNDs (EIA) ***
   MASS-LINK        2
@@ -6596,20 +6596,20 @@ PERLND     PQUAL  POQUAL 4       0.570     RCHRES         INFLOW PKIF   5
 <Name>            <Name> x x<-factor->strg <Name>                <Name> x x  ***
 ***Conversion of Runoff from inches to ac-ft = 0.083333***
 IMPLND     IWATER SURO       0.0833333     RCHRES         INFLOW IVOL
-IMPLND     SOLIDS SOSLD          0.050     RCHRES         INFLOW ISED   1       
-IMPLND     SOLIDS SOSLD          0.600     RCHRES         INFLOW ISED   2       
+IMPLND     SOLIDS SOSLD          0.050     RCHRES         INFLOW ISED   1
+IMPLND     SOLIDS SOSLD          0.600     RCHRES         INFLOW ISED   2
 IMPLND     SOLIDS SOSLD          0.350     RCHRES         INFLOW ISED   3
 IMPLND     IWTGAS SOHT                     RCHRES         INFLOW IHEAT
 IMPLND     IWTGAS SODOXM                   RCHRES         INFLOW OXIF   1
 IMPLND     IQUAL  SOQUAL 1                 RCHRES         INFLOW NUIF1  2
-IMPLND     IQUAL  SOQUAL 2                 RCHRES         INFLOW NUIF1  1   
-IMPLND     IQUAL  SOQUAL 3                 RCHRES         INFLOW NUIF1  4   
-IMPLND     IQUAL  SOQUAL 4        0.40     RCHRES         INFLOW OXIF   2   
-IMPLND     IQUAL  SOQUAL 4      0.0407     RCHRES         INFLOW PKIF   3   
-IMPLND     IQUAL  SOQUAL 4      0.0051     RCHRES         INFLOW PKIF   4   
-IMPLND     IQUAL  SOQUAL 4       0.570     RCHRES         INFLOW PKIF   5   
+IMPLND     IQUAL  SOQUAL 2                 RCHRES         INFLOW NUIF1  1
+IMPLND     IQUAL  SOQUAL 3                 RCHRES         INFLOW NUIF1  4
+IMPLND     IQUAL  SOQUAL 4        0.40     RCHRES         INFLOW OXIF   2
+IMPLND     IQUAL  SOQUAL 4      0.0407     RCHRES         INFLOW PKIF   3
+IMPLND     IQUAL  SOQUAL 4      0.0051     RCHRES         INFLOW PKIF   4
+IMPLND     IQUAL  SOQUAL 4       0.570     RCHRES         INFLOW PKIF   5
   END MASS-LINK    2
-  
+
 *** RCHRES ***
   MASS-LINK        5
 <-Volume-> <-Grp> <-Member-><--Mult-->Tran <-Target vols> <-Grp> <-Member->  ***
@@ -6663,10 +6663,10 @@ PERLND     PQUAL  POQUAL 4       0.570     RCHRES         INFLOW PKIF   5
 <Name>            <Name> x x<-factor->strg <Name>                <Name> x x  ***
 ***Conversion of Runoff from inches to ac-ft = 0.083333***
 IMPLND     IWATER SURO       0.0833333     RCHRES         INFLOW IVOL
-IMPLND     SOLIDS SOSLD          0.050     RCHRES         INFLOW ISED   1       
-IMPLND     SOLIDS SOSLD          0.600     RCHRES         INFLOW ISED   2       
+IMPLND     SOLIDS SOSLD          0.050     RCHRES         INFLOW ISED   1
+IMPLND     SOLIDS SOSLD          0.600     RCHRES         INFLOW ISED   2
 IMPLND     SOLIDS SOSLD          0.350     RCHRES         INFLOW ISED   3
-IMPLND     IWTGAS SOHT                     RCHRES         INFLOW IHEAT 
+IMPLND     IWTGAS SOHT                     RCHRES         INFLOW IHEAT
 IMPLND     IWTGAS SODOXM                   RCHRES         INFLOW OXIF   1
 IMPLND     IQUAL  SOQUAL 1                 RCHRES         INFLOW NUIF1  2
 IMPLND     IQUAL  SOQUAL 2                 RCHRES         INFLOW NUIF1  1
@@ -6674,7 +6674,7 @@ IMPLND     IQUAL  SOQUAL 3                 RCHRES         INFLOW NUIF1  4
 IMPLND     IQUAL  SOQUAL 4        0.40     RCHRES         INFLOW OXIF   2
 IMPLND     IQUAL  SOQUAL 4      0.0407     RCHRES         INFLOW PKIF   3
 IMPLND     IQUAL  SOQUAL 4      0.0051     RCHRES         INFLOW PKIF   4
-IMPLND     IQUAL  SOQUAL 4       0.570     RCHRES         INFLOW PKIF   5  
+IMPLND     IQUAL  SOQUAL 4       0.570     RCHRES         INFLOW PKIF   5
   END MASS-LINK   12
 
 *********************************************************************
@@ -6721,16 +6721,16 @@ END MASS-LINK
 
 GENER
   OPCODE
-    #thru# code ***  
-  101  115   25          
-  201  215   19          
+    #thru# code ***
+  101  115   25
+  201  215   19
   301  315   18
   END OPCODE
 
   PARM
 *** Set minimum surface runoff depth to 0.1 inch for calculation of sediment concentration in tile drainage ***
 *** to prevent divide by zero error ***
-    #thru#  constant *** 
+    #thru#  constant ***
   101  115       0.1
   END PARM
 END GENER

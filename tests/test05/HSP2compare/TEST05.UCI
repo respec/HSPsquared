@@ -7,7 +7,7 @@ GLOBAL
   RESUME     0 RUN     1                   UNIT SYSTEM     1
 END GLOBAL
 
-FILES      
+FILES
 <FILE>  <UN#>***<----FILE NAME------------------------------------------------->
 WDM        21   test.wdm
 MESSU      22   test05.ech

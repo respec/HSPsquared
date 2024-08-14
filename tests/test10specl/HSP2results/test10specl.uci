@@ -9,7 +9,7 @@ END GLOBAL
 
    ***  This test run uses MASS-LINK and SCHEMATIC blocks  ***
 
-FILES      
+FILES
 <FILE>  <UN#>***<----FILE NAME------------------------------------------------->
 WDM        21   test10.wdm
 MESSU      22   test10.ech
@@ -309,7 +309,7 @@ RCHRES
   ACTIVITY
     RCHRES  Active Sections (1=Active, 0=Inactive)           ***
     # -  # HYFG ADFG CNFG HTFG SDFG GQFG OXFG NUFG PKFG PHFG ***
-    1    5    1    1    1    1    1    1    1    1    1    1   
+    1    5    1    1    1    1    1    1    1    1    1    1
   END ACTIVITY
 
   PRINT-INFO
@@ -618,8 +618,8 @@ RCHRES
 
   OX-BENPARM
     RCHRES     BENOD     TCBEN     EXPOD  BRBOD(1)  BRBOD(2)    EXPREL ***
-    # -  #  mg/m2.hr                      mg/m2.hr  mg/m2.hr           *** 
-    1    5       10.       1.1       1.2       20.       25.       1.3 
+    # -  #  mg/m2.hr                      mg/m2.hr  mg/m2.hr           ***
+    1    5       10.       1.1       1.2       20.       25.       1.3
   END OX-BENPARM
 
   OX-CFOREA
@@ -649,46 +649,46 @@ RCHRES
   END NUT-FLAGS
 
   NUT-BENPARM
-    RCHRES  BRTAM(1)  BRTAM(2)  BRPO4(1)  BRPO4(2)     ANAER  ***   
-    # -  #  mg/m2.hr  mg/m2.hr  mg/m2.hr  mg/m2.hr      mg/l  *** 
+    RCHRES  BRTAM(1)  BRTAM(2)  BRPO4(1)  BRPO4(2)     ANAER  ***
+    # -  #  mg/m2.hr  mg/m2.hr  mg/m2.hr  mg/m2.hr      mg/l  ***
     1    5      11.0      33.0       1.1       2.2    0.0005
-  END NUT-BENPARM             
-                                                                       
+  END NUT-BENPARM
+
   NUT-NITDENIT
-    RCHRES    KTAM20    KNO220     TCNIT    KNO320     TCDEN    DENOXT *** 
-    # -  #       /hr       /hr                 /hr                mg/l *** 
+    RCHRES    KTAM20    KNO220     TCNIT    KNO320     TCDEN    DENOXT ***
+    # -  #       /hr       /hr                 /hr                mg/l ***
     1    5      .002      .004      1.07      .001      1.04       0.2
   END NUT-NITDENIT
-                     
+
   NUT-NH3VOLAT
-    RCHRES    EXPNVG    EXPNVL ***       
-    # -  #                     ***     
+    RCHRES    EXPNVG    EXPNVL ***
+    # -  #                     ***
     1    5       .50    0.6667
-  END NUT-NH3VOLAT             
-                            
-  NUT-BEDCONC   
+  END NUT-NH3VOLAT
+
+  NUT-BEDCONC
     RCHRES       Bed concentrations of NH4 & PO4 (mg/mg)               ***
     # -  #  NH4-sand  NH4-silt  NH4-clay  PO4-sand  PO4-silt  PO4-clay ***
     1    5   0.00001   0.00001   0.00001   0.00001   0.00001   0.00001
-  END NUT-BEDCONC                
-                                
-  NUT-ADSPARM   
+  END NUT-BEDCONC
+
+  NUT-ADSPARM
     RCHRES       Partition coefficients for NH4 AND PO4  (l/mg)        ***
     # -  #  NH4-sand  NH4-silt  NH4-clay  PO4-sand  PO4-silt  PO4-clay ***
     1    5    0.0001    0.0001    0.0001       10.       10.       10.
   END NUT-ADSPARM
-                            
-  NUT-DINIT   
+
+  NUT-DINIT
     RCHRES       NO3       TAM       NO2       PO4     PHVAL  ***
-    # -  #      mg/l      mg/l      mg/l      mg/l ph units   *** 
+    # -  #      mg/l      mg/l      mg/l      mg/l ph units   ***
     1    5       40.       10.        1.       50.       7.0
   END NUT-DINIT
-                                           
-  NUT-ADSINIT                        
+
+  NUT-ADSINIT
     RCHRES        Initial suspended NH4 and PO4 concentrations (mg/mg) ***
     # -  #  NH4-sand  NH4-silt  NH4-clay  PO4-sand  PO4-silt  PO4-clay ***
     1    5        0.        0.        0.        0.        0.        0.
-  END NUT-ADSINIT          
+  END NUT-ADSINIT
 
   *** Section PLANK ***
 
@@ -941,11 +941,11 @@ SCHEMATIC
 <Name>   #                <-factor->       <Name>   #      #  ***
 PERLND   1                     6000.       RCHRES   1      1
 IMPLND   1                     3000.       RCHRES   5      2
-RCHRES   1                                 RCHRES   2      3  
-RCHRES   1                                 RCHRES   3      4  
-RCHRES   2                                 RCHRES   4      5  
-RCHRES   3                                 RCHRES   4      5  
-RCHRES   4                                 RCHRES   5      5  
+RCHRES   1                                 RCHRES   2      3
+RCHRES   1                                 RCHRES   3      4
+RCHRES   2                                 RCHRES   4      5
+RCHRES   3                                 RCHRES   4      5
+RCHRES   4                                 RCHRES   5      5
 END SCHEMATIC
 
 MASS-LINK

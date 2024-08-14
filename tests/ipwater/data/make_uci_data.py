@@ -1,10 +1,9 @@
 import json
 import os
-
 from pathlib import Path
 
-from hsp2.hsp2tools import readUCI
 from hsp2.hsp2io.hdf import HDF5
+from hsp2.hsp2tools import readUCI
 
 this_dir = Path(__file__).parent
 

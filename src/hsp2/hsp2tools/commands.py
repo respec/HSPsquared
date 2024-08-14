@@ -1,10 +1,10 @@
 from pathlib import Path
 
 from hsp2.hsp2.main import main
-from hsp2.hsp2tools.readUCI import readUCI
-from hsp2.hsp2tools.readWDM import readWDM
 from hsp2.hsp2io.hdf import HDF5
 from hsp2.hsp2io.io import IOManager
+from hsp2.hsp2tools.readUCI import readUCI
+from hsp2.hsp2tools.readWDM import readWDM
 
 
 def run(h5file, saveall=True, compress=True):
@@ -39,7 +39,7 @@ def import_uci(ucifile, h5file):
 
     readUCI(ucifile, h5file)
 
-    with open(ucifile, "r") as fp:
+    with open(ucifile) as fp:
         uci = []
         for line in fp.readlines():
             if "***" in line[:81]:

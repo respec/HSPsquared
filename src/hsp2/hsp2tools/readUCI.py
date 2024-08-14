@@ -1,7 +1,7 @@
-'''
+"""
 Copyright 2020 by RESPEC, INC. - see License.txt with this HSP2 distribution
 Author: Robert Heaphy, Ph.D.
-'''
+"""
 
 import os.path
 from collections import defaultdict
@@ -10,28 +10,93 @@ import pandas as pd
 
 from hsp2 import hsp2tools
 
-pd.set_option('io.hdf.default_format', 'table')
+pd.set_option("io.hdf.default_format", "table")
 
-Lapse = pd.Series ([0.0035, 0.0035, 0.0035, 0.0035, 0.0035, 0.0035, 0.0037,
- 0.0040, 0.0041, 0.0043, 0.0046, 0.0047, 0.0048, 0.0049, 0.0050, 0.0050,
- 0.0048, 0.0046, 0.0044, 0.0042, 0.0040, 0.0038, 0.0037, 0.0036])
+Lapse = pd.Series(
+    [
+        0.0035,
+        0.0035,
+        0.0035,
+        0.0035,
+        0.0035,
+        0.0035,
+        0.0037,
+        0.0040,
+        0.0041,
+        0.0043,
+        0.0046,
+        0.0047,
+        0.0048,
+        0.0049,
+        0.0050,
+        0.0050,
+        0.0048,
+        0.0046,
+        0.0044,
+        0.0042,
+        0.0040,
+        0.0038,
+        0.0037,
+        0.0036,
+    ]
+)
 
-Seasons = pd.Series ([0,0,0, 1,1,1,1,1,1, 0,0,0]).astype(bool)
+Seasons = pd.Series([0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0]).astype(bool)
 
-Svp = pd.Series([1.005, 1.005, 1.005, 1.005, 1.005, 1.005, 1.005, 1.005, 1.005,
- 1.005, 1.01, 1.01, 1.015, 1.02, 1.03, 1.04, 1.06, 1.08, 1.1, 1.29, 1.66,
- 2.13, 2.74,3.49, 4.40, 5.55,6.87, 8.36, 10.1,12.2,14.6, 17.5, 20.9, 24.8,
- 29.3, 34.6, 40.7, 47.7, 55.7, 64.9])
+Svp = pd.Series(
+    [
+        1.005,
+        1.005,
+        1.005,
+        1.005,
+        1.005,
+        1.005,
+        1.005,
+        1.005,
+        1.005,
+        1.005,
+        1.01,
+        1.01,
+        1.015,
+        1.02,
+        1.03,
+        1.04,
+        1.06,
+        1.08,
+        1.1,
+        1.29,
+        1.66,
+        2.13,
+        2.74,
+        3.49,
+        4.40,
+        5.55,
+        6.87,
+        8.36,
+        10.1,
+        12.2,
+        14.6,
+        17.5,
+        20.9,
+        24.8,
+        29.3,
+        34.6,
+        40.7,
+        47.7,
+        55.7,
+        64.9,
+    ]
+)
 
 
 def reader(filename):
     # simple reader to return non blank, non comment and proper length lines
-    with open(filename, "r") as uci_file:
+    with open(filename) as uci_file:
         for line in uci_file:
             nline = line[:81].rstrip()  # UCI max line length is 80
             if "***" in nline or not nline:
                 continue
-            yield f"{nline: <90}"        # prevent short line problems
+            yield f"{nline: <90}"  # prevent short line problems
 
 
 def getlines(f):
@@ -43,13 +108,16 @@ def getlines(f):
     return lines
 
 
-convert = {'C':str, 'I':int, 'R':float}
+convert = {"C": str, "I": int, "R": float}
+
+
 def parseD(line, parse):
     d = {}
     for name, type_, start, end, default in parse:
         field = line[start:end].strip()
         d[name] = convert[type_](field) if field else convert[type_](default)
     return d
+
 
 def parseD2(line, parse, d):
     icnt = 0
@@ -60,6 +128,7 @@ def parseD2(line, parse, d):
         if icnt > 8:
             d[name] = convert[type_](field) if field else convert[type_](default)
     return d
+
 
 def parseD3(line, parse, d):
     icnt = 0
@@ -76,8 +145,8 @@ def get_opnid(opnidstr, operation):
     first, *last = opnidstr.split()
     b = int(last[0]) if last else int(first)
     a = int(first)
-    for x in range(a, b+1):
-        yield f'{operation[0]}{x:03d}'
+    for x in range(a, b + 1):
+        yield f"{operation[0]}{x:03d}"
 
 
 def fix_df(df, op, save, ddfaults, valid):
@@ -97,9 +166,9 @@ def fix_df(df, op, save, ddfaults, valid):
                 df[col] = df[col].fillna(ddfaults[op, save, col])
             except KeyError:
                 pass
-    cols = [c.replace('(','').replace(')','') for c in df.columns]
+    cols = [c.replace("(", "").replace(")", "") for c in df.columns]
     df.columns = cols
-    df = df.apply(pd.to_numeric, errors='ignore') # todo: 'ignore' is deprecated.
+    df = df.apply(pd.to_numeric, errors="ignore")  # todo: 'ignore' is deprecated.
     return df
 
 
@@ -144,17 +213,19 @@ def readUCI(uciname, hdfname, overwrite=True):
     cat = {}
     path = {}
     hsp_paths = {}
-    datapath = os.path.join(hsp2tools.__path__[0], 'data', 'ParseTable.csv')
+    datapath = os.path.join(hsp2tools.__path__[0], "data", "ParseTable.csv")
     for row in pd.read_csv(datapath).itertuples():
-        parse[row.OP,row.TABLE].append((row.NAME, row.TYPE, row.START, row.STOP, row.DEFAULT))
+        parse[row.OP, row.TABLE].append(
+            (row.NAME, row.TYPE, row.START, row.STOP, row.DEFAULT)
+        )
 
         defaults[row.OP, row.SAVE, row.NAME] = convert[row.TYPE](row.DEFAULT)
 
-        cat[row.OP,row.TABLE]  = row.CAT
-        path[row.OP,row.TABLE] = row.SAVE
+        cat[row.OP, row.TABLE] = row.CAT
+        path[row.OP, row.TABLE] = row.SAVE
 
         # store paths for checking defaults:
-        hsp_path = f'/{row.OP}/{row.SAVE}/{row.CAT}'
+        hsp_path = f"/{row.OP}/{row.SAVE}/{row.CAT}"
         if not hsp_path in hsp_paths:
             hsp_paths[hsp_path] = {}
 
@@ -162,194 +233,226 @@ def readUCI(uciname, hdfname, overwrite=True):
 
     rename = {}
     extendlen = {}
-    datapath = os.path.join(hsp2tools.__path__[0], 'data', 'rename.csv')
+    datapath = os.path.join(hsp2tools.__path__[0], "data", "rename.csv")
     for row in pd.read_csv(datapath).itertuples():
         if row.LENGTH != 1:
-            extendlen[row.OPERATION,row.TABLE] = row.LENGTH
-        rename[row.OPERATION,row.TABLE] = row.RENAME
+            extendlen[row.OPERATION, row.TABLE] = row.LENGTH
+        rename[row.OPERATION, row.TABLE] = row.RENAME
 
-    net = None; sc = None
-    with pd.HDFStore(hdfname, mode = 'a') as store:
+    net = None
+    sc = None
+    with pd.HDFStore(hdfname, mode="a") as store:
         info = (store, parse, path, defaults, cat, rename, extendlen)
 
         f = reader(uciname)
         for line in f:
-            if line.startswith('GLOBAL'):       global_(info, getlines(f))
-            elif line.startswith('OPN'):              opn(info, getlines(f))
-            elif line.startswith('NETWORK'):  net=network(info, getlines(f))
-            elif line.startswith('SCHEMATIC'):sc=schematic(info,getlines(f))
-            elif line.startswith('MASS-LINK'):   masslink(info, getlines(f))
-            elif line.startswith('FTABLES'):      ftables(info, getlines(f))
-            elif line.startswith('EXT'):              ext(info, getlines(f))
-            elif line.startswith('GENER'):          gener(info, getlines(f))
-            elif line.startswith('PERLND'):     operation(info, getlines(f),'PERLND')
-            elif line.startswith('IMPLND'):     operation(info, getlines(f),'IMPLND')
-            elif line.startswith('RCHRES'):     operation(info, getlines(f),'RCHRES')
-            elif line.startswith('MONTH-DATA'): monthdata(info, getlines(f))
-            elif line.startswith('SPEC-ACTIONS'):  specactions(info, getlines(f))
+            if line.startswith("GLOBAL"):
+                global_(info, getlines(f))
+            elif line.startswith("OPN"):
+                opn(info, getlines(f))
+            elif line.startswith("NETWORK"):
+                net = network(info, getlines(f))
+            elif line.startswith("SCHEMATIC"):
+                sc = schematic(info, getlines(f))
+            elif line.startswith("MASS-LINK"):
+                masslink(info, getlines(f))
+            elif line.startswith("FTABLES"):
+                ftables(info, getlines(f))
+            elif line.startswith("EXT"):
+                ext(info, getlines(f))
+            elif line.startswith("GENER"):
+                gener(info, getlines(f))
+            elif line.startswith("PERLND"):
+                operation(info, getlines(f), "PERLND")
+            elif line.startswith("IMPLND"):
+                operation(info, getlines(f), "IMPLND")
+            elif line.startswith("RCHRES"):
+                operation(info, getlines(f), "RCHRES")
+            elif line.startswith("MONTH-DATA"):
+                monthdata(info, getlines(f))
+            elif line.startswith("SPEC-ACTIONS"):
+                specactions(info, getlines(f))
 
-        colnames = ('AFACTR', 'MFACTOR', 'MLNO', 'SGRPN', 'SMEMN', 'SMEMSB',
-         'SVOL', 'SVOLNO', 'TGRPN', 'TMEMN', 'TMEMSB', 'TRAN', 'TVOL',
-         'TVOLNO', 'COMMENTS')
-        if not ( (net is None) and (sc is None) ):
+        colnames = (
+            "AFACTR",
+            "MFACTOR",
+            "MLNO",
+            "SGRPN",
+            "SMEMN",
+            "SMEMSB",
+            "SVOL",
+            "SVOLNO",
+            "TGRPN",
+            "TMEMN",
+            "TMEMSB",
+            "TRAN",
+            "TVOL",
+            "TVOLNO",
+            "COMMENTS",
+        )
+        if not ((net is None) and (sc is None)):
             linkage = pd.concat((net, sc), ignore_index=True, sort=True)
             for cname in colnames:
                 if cname not in linkage.columns:
-                    linkage[cname] = ''
-            linkage = linkage.sort_values(by=['TVOLNO']).replace('na','')
-            linkage.to_hdf(store, key='/CONTROL/LINKS', data_columns=True)
+                    linkage[cname] = ""
+            linkage = linkage.sort_values(by=["TVOLNO"]).replace("na", "")
+            linkage.to_hdf(store, key="/CONTROL/LINKS", data_columns=True)
 
-        Lapse.to_hdf(store, key='TIMESERIES/LAPSE_Table')
-        Seasons.to_hdf(store, key='TIMESERIES/SEASONS_Table')
-        Svp.to_hdf(store, key='TIMESERIES/Saturated_Vapor_Pressure_Table')
+        Lapse.to_hdf(store, key="TIMESERIES/LAPSE_Table")
+        Seasons.to_hdf(store, key="TIMESERIES/SEASONS_Table")
+        Svp.to_hdf(store, key="TIMESERIES/Saturated_Vapor_Pressure_Table")
 
         keys = set(store.keys())
         # rename needed for restart. NOTE issue with line 157 in PERLND SNOW HSPF
         # where PKSNOW = PKSNOW + PKICE at start - ONLY
-        path = '/PERLND/SNOW/STATES'
+        path = "/PERLND/SNOW/STATES"
         if path in keys:
             df = pd.read_hdf(store, path)
-            df=df.rename(columns={'PKSNOW':'PACKF','PKICE':'PACKI','PKWATR':'PACKW'})
+            df = df.rename(
+                columns={"PKSNOW": "PACKF", "PKICE": "PACKI", "PKWATR": "PACKW"}
+            )
             df.to_hdf(store, key=path, data_columns=True)
 
-        path = '/IMPLND/SNOW/STATES'
+        path = "/IMPLND/SNOW/STATES"
         if path in keys:
             df = pd.read_hdf(store, path)
-            df=df.rename(columns={'PKSNOW':'PACKF','PKICE':'PACKI','PKWATR':'PACKW'})
+            df = df.rename(
+                columns={"PKSNOW": "PACKF", "PKICE": "PACKI", "PKWATR": "PACKW"}
+            )
             df.to_hdf(store, key=path, data_columns=True)
 
-        path = '/PERLND/SNOW/FLAGS'
+        path = "/PERLND/SNOW/FLAGS"
         if path in keys:
             df = pd.read_hdf(store, path)
-            if 'SNOPFG' not in df.columns:   # didn't read SNOW-FLAGS table
-                df['SNOPFG']  = 0
+            if "SNOPFG" not in df.columns:  # didn't read SNOW-FLAGS table
+                df["SNOPFG"] = 0
                 df.to_hdf(store, key=path, data_columns=True)
 
-        path = '/IMPLND/SNOW/FLAGS'
+        path = "/IMPLND/SNOW/FLAGS"
         if path in keys:
             df = pd.read_hdf(store, path)
-            if 'SNOPFG' not in df.columns:   # didn't read SNOW-FLAGS table
-                df['SNOPFG']  = 0
+            if "SNOPFG" not in df.columns:  # didn't read SNOW-FLAGS table
+                df["SNOPFG"] = 0
                 df.to_hdf(store, key=path, data_columns=True)
 
         # Need to fixup missing data
-        path = '/IMPLND/IWATER/PARAMETERS'
+        path = "/IMPLND/IWATER/PARAMETERS"
         if path in keys:
             df = pd.read_hdf(store, path)
-            if 'PETMIN' not in df.columns:   # didn't read IWAT-PARM2 table
-                df['PETMIN'] = 0.35
-                df['PETMAX'] = 40.0
+            if "PETMIN" not in df.columns:  # didn't read IWAT-PARM2 table
+                df["PETMIN"] = 0.35
+                df["PETMAX"] = 40.0
                 df.to_hdf(store, key=path, data_columns=True)
 
-        path = '/IMPLND/IWTGAS/PARAMETERS'
+        path = "/IMPLND/IWTGAS/PARAMETERS"
         if path in keys:
             df = pd.read_hdf(store, path)
-            if 'SDLFAC' not in df.columns:   # didn't read LAT-FACTOR table
-                df['SDLFAC'] = 0.0
-                df['SLIFAC'] = 0.0
+            if "SDLFAC" not in df.columns:  # didn't read LAT-FACTOR table
+                df["SDLFAC"] = 0.0
+                df["SLIFAC"] = 0.0
                 df.to_hdf(store, key=path, data_columns=True)
 
-        path = '/IMPLND/IQUAL/PARAMETERS'
+        path = "/IMPLND/IQUAL/PARAMETERS"
         if path in keys:
             df = pd.read_hdf(store, path)
-            if 'SDLFAC' not in df.columns:   # didn't read LAT-FACTOR table
-                df['SDLFAC'] = 0.0
-                df['SLIFAC'] = 0.0
+            if "SDLFAC" not in df.columns:  # didn't read LAT-FACTOR table
+                df["SDLFAC"] = 0.0
+                df["SLIFAC"] = 0.0
                 df.to_hdf(store, key=path, data_columns=True)
 
-        path = '/PERLND/PWTGAS/PARAMETERS'
+        path = "/PERLND/PWTGAS/PARAMETERS"
         if path in keys:
             df = pd.read_hdf(store, path)
-            if 'SDLFAC' not in df.columns:  # didn't read LAT-FACTOR table
-                df['SDLFAC'] = 0.0
-                df['SLIFAC'] = 0.0
-                df['ILIFAC'] = 0.0
-                df['ALIFAC'] = 0.0
+            if "SDLFAC" not in df.columns:  # didn't read LAT-FACTOR table
+                df["SDLFAC"] = 0.0
+                df["SLIFAC"] = 0.0
+                df["ILIFAC"] = 0.0
+                df["ALIFAC"] = 0.0
                 df.to_hdf(store, key=path, data_columns=True)
-            if 'SOTMP' not in df.columns:  # didn't read PWT-TEMPS table
-                df['SOTMP'] = 60.0
-                df['IOTMP'] = 60.0
-                df['AOTMP'] = 60.0
+            if "SOTMP" not in df.columns:  # didn't read PWT-TEMPS table
+                df["SOTMP"] = 60.0
+                df["IOTMP"] = 60.0
+                df["AOTMP"] = 60.0
                 df.to_hdf(store, key=path, data_columns=True)
-            if 'SODOX' not in df.columns:  # didn't read PWT-GASES table
-                df['SODOX'] = 0.0
-                df['SOCO2'] = 0.0
-                df['IODOX'] = 0.0
-                df['IOCO2'] = 0.0
-                df['AODOX'] = 0.0
-                df['AOCO2'] = 0.0
+            if "SODOX" not in df.columns:  # didn't read PWT-GASES table
+                df["SODOX"] = 0.0
+                df["SOCO2"] = 0.0
+                df["IODOX"] = 0.0
+                df["IOCO2"] = 0.0
+                df["AODOX"] = 0.0
+                df["AOCO2"] = 0.0
                 df.to_hdf(store, key=path, data_columns=True)
 
-        path = '/PERLND/PWATER/PARAMETERS'
+        path = "/PERLND/PWATER/PARAMETERS"
         if path in keys:
             df = pd.read_hdf(store, path)
-            if 'FZG' not in df.columns:   # didn't read PWAT-PARM5 table
-                df['FZG']  = 1.0
-                df['FZGL'] = 0.1
+            if "FZG" not in df.columns:  # didn't read PWAT-PARM5 table
+                df["FZG"] = 1.0
+                df["FZGL"] = 0.1
                 df.to_hdf(store, key=path, data_columns=True)
 
-        path = '/PERLND/PQUAL/PARAMETERS'
+        path = "/PERLND/PQUAL/PARAMETERS"
         if path in keys:
             df = pd.read_hdf(store, path)
-            if 'SDLFAC' not in df.columns:  # didn't read LAT-FACTOR table
-                df['SDLFAC'] = 0.0
-                df['SLIFAC'] = 0.0
-                df['ILIFAC'] = 0.0
-                df['ALIFAC'] = 0.0
+            if "SDLFAC" not in df.columns:  # didn't read LAT-FACTOR table
+                df["SDLFAC"] = 0.0
+                df["SLIFAC"] = 0.0
+                df["ILIFAC"] = 0.0
+                df["ALIFAC"] = 0.0
                 df.to_hdf(store, key=path, data_columns=True)
 
-        path = '/RCHRES/GENERAL/INFO'
+        path = "/RCHRES/GENERAL/INFO"
         if path in keys:
             dfinfo = pd.read_hdf(store, path)
-            path = '/RCHRES/HYDR/PARAMETERS'
+            path = "/RCHRES/HYDR/PARAMETERS"
             if path in keys:
                 df = pd.read_hdf(store, path)
-                df['NEXITS'] = dfinfo['NEXITS']
-                df['LKFG']   = dfinfo['LKFG']
-                if 'IREXIT' not in df.columns:   # didn't read HYDR-IRRIG table
-                    df['IREXIT'] = 0
-                    df['IRMINV'] = 0.0
-                df['FTBUCI'] = df['FTBUCI'].map(lambda x: f'FT{int(x):03d}')
+                df["NEXITS"] = dfinfo["NEXITS"]
+                df["LKFG"] = dfinfo["LKFG"]
+                if "IREXIT" not in df.columns:  # didn't read HYDR-IRRIG table
+                    df["IREXIT"] = 0
+                    df["IRMINV"] = 0.0
+                df["FTBUCI"] = df["FTBUCI"].map(lambda x: f"FT{int(x):03d}")
                 df.to_hdf(store, key=path, data_columns=True)
-            del dfinfo['NEXITS']
-            del dfinfo['LKFG']
-            dfinfo.to_hdf(store, key='RCHRES/GENERAL/INFO', data_columns=True)
+            del dfinfo["NEXITS"]
+            del dfinfo["LKFG"]
+            dfinfo.to_hdf(store, key="RCHRES/GENERAL/INFO", data_columns=True)
 
-        path = '/RCHRES/HTRCH/FLAGS'
+        path = "/RCHRES/HTRCH/FLAGS"
         if path in keys:
             df = pd.read_hdf(store, path)
-            if 'BEDFLG' not in df.columns:  # didn't read HT-BED-FLAGS table
-                df['BEDFLG'] = 0
-                df['TGFLG']  = 2
-                df['TSTOP']  = 55
+            if "BEDFLG" not in df.columns:  # didn't read HT-BED-FLAGS table
+                df["BEDFLG"] = 0
+                df["TGFLG"] = 2
+                df["TSTOP"] = 55
                 df.to_hdf(store, key=path, data_columns=True)
 
-        path = '/RCHRES/HTRCH/PARAMETERS'
+        path = "/RCHRES/HTRCH/PARAMETERS"
         if path in keys:
             df = pd.read_hdf(store, path)
-            if 'ELEV' not in df.columns:  # didn't read HEAT-PARM table
-                df['ELEV']  = 0.0
-                df['ELDAT'] = 0.0
-                df['CFSAEX']= 1.0
-                df['KATRAD']= 9.37
-                df['KCOND'] = 6.12
-                df['KEVAP'] = 2.24
+            if "ELEV" not in df.columns:  # didn't read HEAT-PARM table
+                df["ELEV"] = 0.0
+                df["ELDAT"] = 0.0
+                df["CFSAEX"] = 1.0
+                df["KATRAD"] = 9.37
+                df["KCOND"] = 6.12
+                df["KEVAP"] = 2.24
                 df.to_hdf(store, key=path, data_columns=True)
 
-        path = '/RCHRES/HTRCH/PARAMETERS'
+        path = "/RCHRES/HTRCH/PARAMETERS"
         if path in keys:
             df = pd.read_hdf(store, path)
-            if 'MUDDEP' not in df.columns:  # didn't read HT-BED-PARM table
-                df['MUDDEP']= 0.33
-                df['TGRND'] = 59.0
-                df['KMUD']  = 50.0
-                df['KGRND'] = 1.4
+            if "MUDDEP" not in df.columns:  # didn't read HT-BED-PARM table
+                df["MUDDEP"] = 0.33
+                df["TGRND"] = 59.0
+                df["KMUD"] = 50.0
+                df["KGRND"] = 1.4
                 df.to_hdf(store, key=path, data_columns=True)
 
-        path = '/RCHRES/HTRCH/STATES'
+        path = "/RCHRES/HTRCH/STATES"
         if path in keys:
             df = pd.read_hdf(store, path)
-            #if 'TW' not in df.columns:  # didn't read HEAT-INIT table
+            # if 'TW' not in df.columns:  # didn't read HEAT-INIT table
             #    df['TW']    = 60.0
             #    df['AIRTMP']= 60.0
 
@@ -361,12 +464,12 @@ def readUCI(uciname, hdfname, overwrite=True):
 
                 new_columns = {}
                 for par_name in dct_params:
-                    if par_name == 'CFOREA':
+                    if par_name == "CFOREA":
                         ichk = 0
 
-                    if par_name not in df.columns:   # missing value in HDF5 path
+                    if par_name not in df.columns:  # missing value in HDF5 path
                         def_val = dct_params[par_name]
-                        if def_val != 'None':
+                        if def_val != "None":
                             # df[par_name] = def_val
                             new_columns[par_name] = def_val
 
@@ -378,14 +481,14 @@ def readUCI(uciname, hdfname, overwrite=True):
                 if path[-6:] == "STATES":
                     # need to add states if it doesn't already exist to save initial state variables
                     # such as the case where entire IWAT-STATE1 table is being defaulted
-                    if not 'df' in locals():
-                        x = 1   # sometimes when debugging keys gets creamed, seems like an IDE bug
+                    if not "df" in locals():
+                        x = 1  # sometimes when debugging keys gets creamed, seems like an IDE bug
                     for column in df.columns:  # clear out existing data frame columns
                         df = df.drop([column], axis=1)
                     dct_params = hsp_paths[path]
                     for par_name in dct_params:
                         def_val = dct_params[par_name]
-                        if def_val != 'None':
+                        if def_val != "None":
                             df[par_name] = def_val
                     df.to_hdf(store, key=path, data_columns=True)
 
@@ -394,15 +497,23 @@ def readUCI(uciname, hdfname, overwrite=True):
 
 def global_(info, lines):
     store, parse, path, *_ = info
-    d = parseD(lines[1], parse['GLOBAL','START'])
-    start = str(pd.Timestamp(f"{d['SYR']}-{d['SMO']}-{d['SDA']}")
-      + pd.Timedelta(int(d['SHR']), 'h') + pd.Timedelta(int(d['SMI']), 'min'))[0:16]
-    stop  = str(pd.Timestamp(f"{d['EYR']}-{d['EMO']}-{d['EDA']}")
-      + pd.Timedelta(int(d['EHR']), 'h') + pd.Timedelta(int(d['EMI']), 'min'))[0:16]
+    d = parseD(lines[1], parse["GLOBAL", "START"])
+    start = str(
+        pd.Timestamp(f"{d['SYR']}-{d['SMO']}-{d['SDA']}")
+        + pd.Timedelta(int(d["SHR"]), "h")
+        + pd.Timedelta(int(d["SMI"]), "min")
+    )[0:16]
+    stop = str(
+        pd.Timestamp(f"{d['EYR']}-{d['EMO']}-{d['EDA']}")
+        + pd.Timedelta(int(d["EHR"]), "h")
+        + pd.Timedelta(int(d["EMI"]), "min")
+    )[0:16]
     units = lines[3].strip()[56:60]
     data = [lines[0].strip(), start, stop, units]
-    dfglobal = pd.DataFrame(data, index=['Comment','Start','Stop', 'Units'],columns=['Info'])
-    dfglobal.to_hdf(store, key='/CONTROL/GLOBAL', data_columns=True)
+    dfglobal = pd.DataFrame(
+        data, index=["Comment", "Start", "Stop", "Units"], columns=["Info"]
+    )
+    dfglobal.to_hdf(store, key="/CONTROL/GLOBAL", data_columns=True)
 
 
 def opn(info, lines):
@@ -410,27 +521,27 @@ def opn(info, lines):
     lst = []
     for line in lines:
         tokens = line.split()
-        if tokens[0] == 'INGRP' and tokens[1] == 'INDELT':
-            s = tokens[2].split(':')
+        if tokens[0] == "INGRP" and tokens[1] == "INDELT":
+            s = tokens[2].split(":")
             indelt = int(s[0]) if len(s) == 1 else 60 * int(s[0]) + int(s[1])
         elif tokens[0] in ops:
-            s = f'{tokens[0][0]}{int(tokens[1]):03d}'
+            s = f"{tokens[0][0]}{int(tokens[1]):03d}"
             lst.append((tokens[0], s, indelt))
-    dfopn = pd.DataFrame(lst, columns = ['OPERATION', 'SEGMENT', 'INDELT_minutes'])
-    dfopn.to_hdf(store, key='/CONTROL/OP_SEQUENCE', data_columns=True)
+    dfopn = pd.DataFrame(lst, columns=["OPERATION", "SEGMENT", "INDELT_minutes"])
+    dfopn.to_hdf(store, key="/CONTROL/OP_SEQUENCE", data_columns=True)
 
 
 def network(info, lines):
     store, parse, path, *_ = info
     lst = []
     for line in lines:
-        d = parseD(line, parse['NETWORK','na'])
-        if d['SVOL'] in ops and d['TVOL'] in ops:
-            d['SVOLNO'] = f"{d['SVOL'][0]}{int(d['SVOLNO']):03d}"
-            if 'TVOLNO' in d:
-                d['TVOLNO'] = f"{d['TVOL'][0]}{int(d['TVOLNO']):03d}"
-            elif 'TOPFST' in d:
-                d['TOPFST'] = f"{d['TVOL'][0]}{int(d['TOPFST']):03d}"
+        d = parseD(line, parse["NETWORK", "na"])
+        if d["SVOL"] in ops and d["TVOL"] in ops:
+            d["SVOLNO"] = f"{d['SVOL'][0]}{int(d['SVOLNO']):03d}"
+            if "TVOLNO" in d:
+                d["TVOLNO"] = f"{d['TVOL'][0]}{int(d['TVOLNO']):03d}"
+            elif "TOPFST" in d:
+                d["TOPFST"] = f"{d['TVOL'][0]}{int(d['TOPFST']):03d}"
             lst.append(d)
     return pd.DataFrame(lst, columns=d) if lst else pd.DataFrame()
 
@@ -439,11 +550,11 @@ def schematic(info, lines):
     store, parse, path, *_ = info
     lst = []
     for line in lines:
-        d = parseD(line, parse['SCHEMATIC','na'])
-        if d['SVOL'] in ops and d['TVOL'] in ops:
-            d['MLNO']   = f"ML{int(d['MLNO']):03d}"
-            d['SVOLNO'] = f"{d['SVOL'][0]}{int(d['SVOLNO']):03d}"
-            d['TVOLNO'] = f"{d['TVOL'][0]}{int(d['TVOLNO']):03d}"
+        d = parseD(line, parse["SCHEMATIC", "na"])
+        if d["SVOL"] in ops and d["TVOL"] in ops:
+            d["MLNO"] = f"ML{int(d['MLNO']):03d}"
+            d["SVOLNO"] = f"{d['SVOL'][0]}{int(d['SVOLNO']):03d}"
+            d["TVOLNO"] = f"{d['TVOL'][0]}{int(d['TVOLNO']):03d}"
             lst.append(d)
     return pd.DataFrame(lst, columns=d) if lst else pd.DataFrame()
 
@@ -452,34 +563,43 @@ def masslink(info, lines):
     store, parse, path, *_ = info
     lst = []
     for line in lines:
-        if line[2:11] == 'MASS-LINK':
+        if line[2:11] == "MASS-LINK":
             name = line[12:].rstrip()
-        elif line[2:5] != 'END':
-            d = parseD(line, parse['MASS-LINK','na'])
-            d['MLNO'] = f'ML{int(name):03d}'
+        elif line[2:5] != "END":
+            d = parseD(line, parse["MASS-LINK", "na"])
+            d["MLNO"] = f"ML{int(name):03d}"
             lst.append(d)
     if lst:
-        dfmasslink = pd.DataFrame(lst, columns=d).replace('na','')
-        del dfmasslink['TGRPN']
-        dfmasslink['COMMENTS'] = ''
-        dfmasslink.to_hdf(store, key='/CONTROL/MASS_LINKS', data_columns=True)
+        dfmasslink = pd.DataFrame(lst, columns=d).replace("na", "")
+        del dfmasslink["TGRPN"]
+        dfmasslink["COMMENTS"] = ""
+        dfmasslink.to_hdf(store, key="/CONTROL/MASS_LINKS", data_columns=True)
 
 
 def ftables(info, llines):
     store, parse, path, *_ = info
-    header=['Depth','Area','Volume','Disch1','Disch2','Disch3','Disch4','Disch5']
+    header = [
+        "Depth",
+        "Area",
+        "Volume",
+        "Disch1",
+        "Disch2",
+        "Disch3",
+        "Disch4",
+        "Disch5",
+    ]
     lines = iter(llines)
     for line in lines:
-        if line[2:8] == 'FTABLE':
+        if line[2:8] == "FTABLE":
             unit = int(line[8:])
-            name = f'FT{unit:03d}'
-            rows,cols = next(lines).split()
+            name = f"FT{unit:03d}"
+            rows, cols = next(lines).split()
             lst = []
-        elif line[2:5] == 'END':
-            dfftable = pd.DataFrame(lst, columns=header[0:int(cols)])
-            dfftable.to_hdf(store, key=f'/FTABLES/{name}', data_columns=True)
+        elif line[2:5] == "END":
+            dfftable = pd.DataFrame(lst, columns=header[0 : int(cols)])
+            dfftable.to_hdf(store, key=f"/FTABLES/{name}", data_columns=True)
         else:
-            lst.append(parseD(line, parse['FTABLES','FTABLE']))
+            lst.append(parseD(line, parse["FTABLES", "FTABLE"]))
 
 
 def specactions(info, llines):
@@ -492,8 +612,30 @@ def specactions(info, llines):
     #   - Each type of actions "head_[action type]" should include an "CURLVL"
     #     column to match with conditional expression if applicable
     #   - The value of CURLVL matches with an expression
-    sa_actions = [] # referred to as "classic" in old HSPF code comments
-    head_actions = ['OPTYP','RANGE1','RANGE2','DC','DS','YR','MO','DA','HR','MN','D','T','VARI', 'S1','S2','AC','VALUE','TC','TS','NUM', 'CURLVL']
+    sa_actions = []  # referred to as "classic" in old HSPF code comments
+    head_actions = [
+        "OPTYP",
+        "RANGE1",
+        "RANGE2",
+        "DC",
+        "DS",
+        "YR",
+        "MO",
+        "DA",
+        "HR",
+        "MN",
+        "D",
+        "T",
+        "VARI",
+        "S1",
+        "S2",
+        "AC",
+        "VALUE",
+        "TC",
+        "TS",
+        "NUM",
+        "CURLVL",
+    ]
     sa_mult = []
     head_mult = []
     sa_uvquan = []
@@ -506,62 +648,78 @@ def specactions(info, llines):
     head_uvname = []
     sa_if = []
     head_if = []
-    in_if = False # are we in an if block?
+    in_if = False  # are we in an if block?
     curlvl = 0
     for line in lines:
-        if line[2:5] == 'MULT':
+        if line[2:5] == "MULT":
             sa_mult.append(line)
-        elif line[2:8] == 'UVQUAN':
+        elif line[2:8] == "UVQUAN":
             sa_uvquan.append(line)
-        elif line[2:13] == 'CONDITIONAL':
+        elif line[2:13] == "CONDITIONAL":
             sa_conditional.append(line)
-        elif line[2:8] == 'DISTRB':
+        elif line[2:8] == "DISTRB":
             sa_distrb.append(line)
-        elif line[2:8] == 'UVNAME':
+        elif line[2:8] == "UVNAME":
             sa_uvname.append(line)
         # This CURLVL code is a place-holder. This has not been thought through.
-        elif line[0:2] == 'IF':
+        elif line[0:2] == "IF":
             sa_if.append(line)
             curlvl = len(sa_if)
-        elif line[0:7] == 'END IF':
+        elif line[0:7] == "END IF":
             sa_if.append(line)
             curlvl = curlvl - 1
         else:
             # ACTIONS block
-            d = parseD(line, parse['SPEC-ACTIONS','ACTIONS'])
-            d['CURLVL'] = curlvl
+            d = parseD(line, parse["SPEC-ACTIONS", "ACTIONS"])
+            d["CURLVL"] = curlvl
             sa_actions.append(d.copy())
     if sa_actions:
-        dfftable = pd.DataFrame(sa_actions, columns=head_actions).replace('na','')
-        dfftable.to_hdf(store, key=f'/SPEC_ACTIONS/ACTIONS', data_columns=True)
+        dfftable = pd.DataFrame(sa_actions, columns=head_actions).replace("na", "")
+        dfftable.to_hdf(store, key=f"/SPEC_ACTIONS/ACTIONS", data_columns=True)
+
 
 def ext(info, lines):
     store, parse, path, *_ = info
     lst = []
     lst_cols = {}
     for line in lines:
-        d = parseD(line, parse['EXT SOURCES','na'])
-        if d['TVOL'] in ops:
-            d['SVOLNO'] = f"TS{int(d['SVOLNO']):03d}"
-            d['SVOL'] = '*'
-            if d['TGRPN'] == 'EXTNL':
-                d['TGRPN'] = ''
-            toplst = int(d['TOPFST']) if d['TOPLST'] == 'na' else int(d['TOPLST'])
-            for i in range(int(d['TOPFST']), toplst + 1):
-                d['TVOLNO'] = f"{d['TVOL'][0]}{i:03d}"
+        d = parseD(line, parse["EXT SOURCES", "na"])
+        if d["TVOL"] in ops:
+            d["SVOLNO"] = f"TS{int(d['SVOLNO']):03d}"
+            d["SVOL"] = "*"
+            if d["TGRPN"] == "EXTNL":
+                d["TGRPN"] = ""
+            toplst = int(d["TOPFST"]) if d["TOPLST"] == "na" else int(d["TOPLST"])
+            for i in range(int(d["TOPFST"]), toplst + 1):
+                d["TVOLNO"] = f"{d['TVOL'][0]}{i:03d}"
                 lst.append(d.copy())
                 lst_cols = d
 
     if lst:
-        dfext = pd.DataFrame(lst, columns = lst_cols).replace('na','')
-        dfext['COMMENT'] = ''
-        del dfext['TOPFST']
-        del dfext['TOPLST']
-        dfext = dfext.sort_values(by=['TVOLNO'])
-        dfext.to_hdf(store, key='/CONTROL/EXT_SOURCES', data_columns=True)
+        dfext = pd.DataFrame(lst, columns=lst_cols).replace("na", "")
+        dfext["COMMENT"] = ""
+        del dfext["TOPFST"]
+        del dfext["TOPLST"]
+        dfext = dfext.sort_values(by=["TVOLNO"])
+        dfext.to_hdf(store, key="/CONTROL/EXT_SOURCES", data_columns=True)
 
 
-Months=('JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC')
+Months = (
+    "JAN",
+    "FEB",
+    "MAR",
+    "APR",
+    "MAY",
+    "JUN",
+    "JUL",
+    "AUG",
+    "SEP",
+    "OCT",
+    "NOV",
+    "DEC",
+)
+
+
 def operation(info, llines, op):
     store, parse, dpath, ddfaults, dcat, rename, extendlen = info
     counter = set()
@@ -575,11 +733,11 @@ def operation(info, llines, op):
         if len(tokens) == 1:
             table = tokens[0]
             rows = {}
-            if dcat[op,table] == 'EXTENDED':
+            if dcat[op, table] == "EXTENDED":
                 extended_line = 0
                 for line in lines:
                     extended_line += 1
-                    if (op, table) not in parse or line[2:5] == 'END':
+                    if (op, table) not in parse or line[2:5] == "END":
                         break
                     if extended_line == 1:
                         d = parseD(line, parse[op, table])
@@ -587,28 +745,34 @@ def operation(info, llines, op):
                         d = parseD2(line, parse[op, table], d)
                     elif extended_line == 3:
                         d = parseD3(line, parse[op, table], d)
-                        for opnid in get_opnid(d.pop('OPNID'), op):
+                        for opnid in get_opnid(d.pop("OPNID"), op):
                             rows[opnid] = d
             else:
                 for line in lines:
-                    if (op,table) not in parse or line[2:5] == 'END':
+                    if (op, table) not in parse or line[2:5] == "END":
                         break
-                    d = parseD(line, parse[op,table])
-                    for opnid in get_opnid(d.pop('OPNID'), op):
+                    d = parseD(line, parse[op, table])
+                    for opnid in get_opnid(d.pop("OPNID"), op):
                         rows[opnid] = d
-            df = pd.DataFrame.from_dict(rows, orient='index')
-            cat = dcat[op,table]
-            if cat.startswith('GQUAL'):
-                if table == 'GQ-QALDATA':
+            df = pd.DataFrame.from_dict(rows, orient="index")
+            cat = dcat[op, table]
+            if cat.startswith("GQUAL"):
+                if table == "GQ-QALDATA":
                     gcount += 1
                 cat = cat + str(gcount)
             if table == "PWAT-CANOPY":
-                canId = int(d['CANOPY'])
+                canId = int(d["CANOPY"])
                 if canId > 1:
-                    df = df.rename(columns={'CANOPY': 'CANOPY' + str(canId), 'CANNAM': 'CANNAM' + str(canId),
-                                            'CEPSC': 'CEPSC' + str(canId), 'CEPS': 'CEPS' + str(canId)})
-            newtable = ''
-            if table == "MON-INTERCEP":   # special cases for canopy tables
+                    df = df.rename(
+                        columns={
+                            "CANOPY": "CANOPY" + str(canId),
+                            "CANNAM": "CANNAM" + str(canId),
+                            "CEPSC": "CEPSC" + str(canId),
+                            "CEPS": "CEPS" + str(canId),
+                        }
+                    )
+            newtable = ""
+            if table == "MON-INTERCEP":  # special cases for canopy tables
                 canCount += 1
                 if canCount > 1:
                     newtable = table + str(canCount)
@@ -617,160 +781,233 @@ def operation(info, llines, op):
                 if cancovCount > 1:
                     newtable = table + str(cancovCount)
             if len(newtable) == 0:
-                history[dpath[op,table],cat].append((table,df))
+                history[dpath[op, table], cat].append((table, df))
             else:
                 history[dpath[op, table], cat].append((newtable, df))
-    if len(history['GENERAL','INFO']) > 0:
-        (_,df) = history['GENERAL','INFO'][0]
+    if len(history["GENERAL", "INFO"]) > 0:
+        (_, df) = history["GENERAL", "INFO"][0]
         valid = set(df.index)
-        for path,cat in history:
+        for path, cat in history:
             counter.add(path)
-            if cat == 'SKIP':
+            if cat == "SKIP":
                 continue
-            if cat in {'PARAMETERS', 'STATES', 'FLAGS', 'ACTIVITY', 'INFO', 'BINOUT', 'CANOPY'}:
-                df = pd.concat([temp[1] for temp in history[path,cat]], axis='columns', sort=False)
+            if cat in {
+                "PARAMETERS",
+                "STATES",
+                "FLAGS",
+                "ACTIVITY",
+                "INFO",
+                "BINOUT",
+                "CANOPY",
+            }:
+                df = pd.concat(
+                    [temp[1] for temp in history[path, cat]], axis="columns", sort=False
+                )
                 df = fix_df(df, op, path, ddfaults, valid)
-                if cat == 'ACTIVITY' and op == 'PERLND':
-                    df = df.rename(columns = {'AIRTFG':'ATEMP', 'SNOWFG':'SNOW',
-                      'PWATFG':'PWATER', 'SEDFG':'SEDMNT', 'PSTFG':'PSTEMP',
-                      'PWGFG':'PWTGAS', 'PQALFG':'PQUAL','MSTLFG':'MSTLAY',
-                      'PESTFG':'PEST', 'NITRFG':'NITR', 'PHOSFG':'PHOS',
-                      'TRACFG':'TRACER'})
-                if cat ==  'ACTIVITY' and op == 'IMPLND':
-                    df = df.rename(columns = {'ATMPFG':'ATEMP', 'SNOWFG':'SNOW',
-                      'IWATFG':'IWATER', 'SLDFG':'SOLIDS', 'IWGFG':'IWTGAS',
-                      'IQALFG':'IQUAL'})
-                if cat == 'ACTIVITY' and op == 'RCHRES':
-                    df = df.rename(columns  = {'HYDRFG':'HYDR', 'ADFG':'ADCALC',
-                      'CONSFG':'CONS', 'HTFG':'HTRCH', 'SEDFG':'SEDTRN',
-                      'GQALFG':'GQUAL', 'OXFG':'OXRX', 'NUTFG':'NUTRX',
-                      'PLKFG':'PLANK', 'PHFG':'PHCARB'})
-                df.to_hdf(store, key=f'{op}/{path}/{cat}', data_columns=True)
-            elif cat == 'MONTHLYS':
-                for (table,df) in history[path,cat]:
+                if cat == "ACTIVITY" and op == "PERLND":
+                    df = df.rename(
+                        columns={
+                            "AIRTFG": "ATEMP",
+                            "SNOWFG": "SNOW",
+                            "PWATFG": "PWATER",
+                            "SEDFG": "SEDMNT",
+                            "PSTFG": "PSTEMP",
+                            "PWGFG": "PWTGAS",
+                            "PQALFG": "PQUAL",
+                            "MSTLFG": "MSTLAY",
+                            "PESTFG": "PEST",
+                            "NITRFG": "NITR",
+                            "PHOSFG": "PHOS",
+                            "TRACFG": "TRACER",
+                        }
+                    )
+                if cat == "ACTIVITY" and op == "IMPLND":
+                    df = df.rename(
+                        columns={
+                            "ATMPFG": "ATEMP",
+                            "SNOWFG": "SNOW",
+                            "IWATFG": "IWATER",
+                            "SLDFG": "SOLIDS",
+                            "IWGFG": "IWTGAS",
+                            "IQALFG": "IQUAL",
+                        }
+                    )
+                if cat == "ACTIVITY" and op == "RCHRES":
+                    df = df.rename(
+                        columns={
+                            "HYDRFG": "HYDR",
+                            "ADFG": "ADCALC",
+                            "CONSFG": "CONS",
+                            "HTFG": "HTRCH",
+                            "SEDFG": "SEDTRN",
+                            "GQALFG": "GQUAL",
+                            "OXFG": "OXRX",
+                            "NUTFG": "NUTRX",
+                            "PLKFG": "PLANK",
+                            "PHFG": "PHCARB",
+                        }
+                    )
+                df.to_hdf(store, key=f"{op}/{path}/{cat}", data_columns=True)
+            elif cat == "MONTHLYS":
+                for table, df in history[path, cat]:
                     df = fix_df(df, op, path, ddfaults, valid)
                     df.columns = Months
-                    if table[:-1] == 'MON-INTERCEP':  # special cases for canopy tables
-                        name = 'CEPSC' + table[-1:]
-                    elif table[:-1] == 'MON-COVER':
-                        name = 'COVER' + table[-1:]
+                    if table[:-1] == "MON-INTERCEP":  # special cases for canopy tables
+                        name = "CEPSC" + table[-1:]
+                    elif table[:-1] == "MON-COVER":
+                        name = "COVER" + table[-1:]
                     else:
                         name = rename[(op, table)]
-                    df.to_hdf(store, key=f'{op}/{path}/MONTHLY/{name}', data_columns=True)
-            elif cat == 'EXTENDED':
+                    df.to_hdf(
+                        store, key=f"{op}/{path}/MONTHLY/{name}", data_columns=True
+                    )
+            elif cat == "EXTENDED":
                 temp = defaultdict(list)
-                for table,df in history[path,cat]:
+                for table, df in history[path, cat]:
                     temp[table].append(df)
-                for table,lst in temp.items():
-                    df = pd.concat(lst, axis='columns')
-                    length = extendlen[op,table]
-                    name = rename[op,table]
-                    df.columns = [name+str(i) for i in range(len(df.columns))]
+                for table, lst in temp.items():
+                    df = pd.concat(lst, axis="columns")
+                    length = extendlen[op, table]
+                    name = rename[op, table]
+                    df.columns = [name + str(i) for i in range(len(df.columns))]
                     df = df[df.columns[0:length]]
                     df = fix_df(df, op, path, ddfaults, valid)
-                    df.to_hdf(store, key=f'{op}/{path}/EXTENDEDS/{name}', data_columns=True)
-            elif cat == 'SILTCLAY':
-                table,df = history[path,cat][0]
+                    df.to_hdf(
+                        store, key=f"{op}/{path}/EXTENDEDS/{name}", data_columns=True
+                    )
+            elif cat == "SILTCLAY":
+                table, df = history[path, cat][0]
                 df = fix_df(df, op, path, ddfaults, valid)
-                df.to_hdf(store, key=f'{op}/{path}/SILT', data_columns=True)
-                table,df = history[path,cat][1]
+                df.to_hdf(store, key=f"{op}/{path}/SILT", data_columns=True)
+                table, df = history[path, cat][1]
                 df = fix_df(df, op, path, ddfaults, valid)
-                df.to_hdf(store, key=f'{op}/{path}/CLAY', data_columns=True)
-            elif cat == 'CONS':
+                df.to_hdf(store, key=f"{op}/{path}/CLAY", data_columns=True)
+            elif cat == "CONS":
                 count = 0
-                for table,df in history[path,cat]:
-                    if table == 'NCONS':
-                        temp_path = '/RCHRES/CONS/PARAMETERS'
+                for table, df in history[path, cat]:
+                    if table == "NCONS":
+                        temp_path = "/RCHRES/CONS/PARAMETERS"
                         df = fix_df(df, op, path, ddfaults, valid)
                         df.to_hdf(store, key=temp_path, data_columns=True)
-                    elif table == 'CONS-DATA':
+                    elif table == "CONS-DATA":
                         count += 1
                         df = fix_df(df, op, path, ddfaults, valid)
-                        df.to_hdf(store, key=f'{op}/{path}/{cat}{count}', data_columns=True)
-            elif cat == 'PQUAL' or cat == 'IQUAL':
+                        df.to_hdf(
+                            store, key=f"{op}/{path}/{cat}{count}", data_columns=True
+                        )
+            elif cat == "PQUAL" or cat == "IQUAL":
                 count = 0
-                for table,df in history[path,cat]:
-                    if table == 'NQUALS':
-                        if cat == 'IQUAL':
-                            temp_path = '/IMPLND/IQUAL/PARAMETERS'
+                for table, df in history[path, cat]:
+                    if table == "NQUALS":
+                        if cat == "IQUAL":
+                            temp_path = "/IMPLND/IQUAL/PARAMETERS"
                         else:
-                            temp_path = '/PERLND/PQUAL/PARAMETERS'
+                            temp_path = "/PERLND/PQUAL/PARAMETERS"
                         df = fix_df(df, op, path, ddfaults, valid)
                         df.to_hdf(store, key=temp_path, data_columns=True)
-                    elif table.startswith('MON'):
+                    elif table.startswith("MON"):
                         name = rename[(op, table)]
                         df = fix_df(df, op, path, ddfaults, valid)
                         df.columns = Months
-                        df.to_hdf(store, key=f'{op}/{path}/{cat}{count}/MONTHLY/{name}', data_columns=True)
+                        df.to_hdf(
+                            store,
+                            key=f"{op}/{path}/{cat}{count}/MONTHLY/{name}",
+                            data_columns=True,
+                        )
                     else:
-                        if table == 'QUAL-PROPS':
+                        if table == "QUAL-PROPS":
                             count += 1
-                            tag = 'FLAGS'
+                            tag = "FLAGS"
                         else:
-                            tag = 'PARAMETERS'
+                            tag = "PARAMETERS"
                         df = fix_df(df, op, path, ddfaults, valid)
-                        df.to_hdf(store, key=f'{op}/{path}/{cat}{count}/{tag}', data_columns=True)
-            elif cat.startswith('GQUAL'):
+                        df.to_hdf(
+                            store,
+                            key=f"{op}/{path}/{cat}{count}/{tag}",
+                            data_columns=True,
+                        )
+            elif cat.startswith("GQUAL"):
                 count = 0
-                for table,df in history[path,cat]:
-                    if table.startswith('MON'):
+                for table, df in history[path, cat]:
+                    if table.startswith("MON"):
                         name = rename[(op, table)]
                         df = fix_df(df, op, path, ddfaults, valid)
                         df.columns = Months
-                        df.to_hdf(store, key=f'{op}/{path}/{cat}/MONTHLY/{name}', data_columns=True)
+                        df.to_hdf(
+                            store,
+                            key=f"{op}/{path}/{cat}/MONTHLY/{name}",
+                            data_columns=True,
+                        )
                     else:
-                        if table == 'GQ-QALDATA':
+                        if table == "GQ-QALDATA":
                             count += 1
-                        df = pd.concat([temp[1] for temp in history[path, cat]], axis='columns')
+                        df = pd.concat(
+                            [temp[1] for temp in history[path, cat]], axis="columns"
+                        )
                         df = fix_df(df, op, path, ddfaults, valid)
-                        df.to_hdf(store, key=f'{op}/{path}/{cat}', data_columns=True)
+                        df.to_hdf(store, key=f"{op}/{path}/{cat}", data_columns=True)
             else:
-                print('UCI TABLE is not understood (yet) by readUCI', op, cat)
+                print("UCI TABLE is not understood (yet) by readUCI", op, cat)
 
     savetable = defaultdict(dict)
-    datapath = os.path.join(hsp2tools.__path__[0], 'data', 'SaveTable.csv')
+    datapath = os.path.join(hsp2tools.__path__[0], "data", "SaveTable.csv")
     for row in pd.read_csv(datapath).itertuples():
         savetable[row.OPERATION, row.ACTIVITY][row.NAME] = row.VALUE
-    for activity in counter - set(['GENERAL']):
+    for activity in counter - {"GENERAL"}:
         df = pd.DataFrame(index=sorted(valid))
-        for name,value in savetable[op,activity].items():
+        for name, value in savetable[op, activity].items():
             df[name] = int(value)
-        df.to_hdf(store, key=f'{op}/{activity}/SAVE', data_columns=True)
+        df.to_hdf(store, key=f"{op}/{activity}/SAVE", data_columns=True)
 
 
 def copy(info, lines):
-    #placeholder - PRT - no sure I actually need to implement this method
+    # placeholder - PRT - no sure I actually need to implement this method
     pass
+
 
 def gener(info, lines):
     store, parse, path, *_ = info
     lst = []
-    sub_blocks = ['OPCODE','PARM']
-    current_block  = ''
+    sub_blocks = ["OPCODE", "PARM"]
+    current_block = ""
     d = {}
     for line in lines:
-        if line [2:5] == 'END':
+        if line[2:5] == "END":
             df = pd.DataFrame(lst, columns=d)
-            df.to_hdf(store, key=f'GENER/{current_block}', data_columns=True)
+            df.to_hdf(store, key=f"GENER/{current_block}", data_columns=True)
             lst.clear()
         elif any(s in line for s in sub_blocks):
             current_block = [s for s in sub_blocks if s in line][0]
         else:
-            d = parseD(line, parse['GENER',current_block])
+            d = parseD(line, parse["GENER", current_block])
             lst.append(d)
+
 
 def monthdata(info, llines):
     store, parse, path, *_ = info
-    header=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
+    header = [
+        "JAN",
+        "FEB",
+        "MAR",
+        "APR",
+        "MAY",
+        "JUN",
+        "JUL",
+        "AUG",
+        "SEP",
+        "OCT",
+        "NOV",
+        "DEC",
+    ]
     lines = iter(llines)
     for line in lines:
-        if line[2:12] == 'MONTH-DATA':
+        if line[2:12] == "MONTH-DATA":
             unit = line[12:].strip()
-            name = 'MONTHDATA' + unit
+            name = "MONTHDATA" + unit
             lst = []
-        elif line[2:5] == 'END':
+        elif line[2:5] == "END":
             dfftable = pd.DataFrame(lst, columns=header[0:12])
-            dfftable.to_hdf(store, f'/MONTHDATA/{name}', data_columns=True)
+            dfftable.to_hdf(store, f"/MONTHDATA/{name}", data_columns=True)
         else:
             vals = []
             line = line.strip()
