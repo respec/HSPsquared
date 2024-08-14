@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import pytest
-
 from hsp2.hsp2tools.commands import import_uci, run
 from hsp2.hsp2tools.HDF5 import HDF5
 

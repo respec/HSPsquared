@@ -44,7 +44,7 @@ Source Code Directories
   future automation and model coupling. - NOTE: With v0.10 the I/O abstraction
   classes provide an alternate approach to running HSP2. Our plan is to migrate
   solely using the I/O abstracted methods, but we will maintain both approaches
-  for for several more releases for backward compatibility. 
+  for for several more releases for backward compatibility.
 
 - **docs** contains relevant reference documentation.
 
@@ -65,7 +65,7 @@ We recommend getting started by:
 
 HSP2 Installation
 =================
-We **recommend Python 3.10**. 
+We **recommend Python 3.10**.
 
 Install From Pre-built Packages
 -------------------------------
@@ -131,7 +131,7 @@ Use the following `conda create`_ command in your terminal or console:
 
 .. code-block:: console
 
-    conda create -c conda-forge -n hsp2_310 python=3.10 
+    conda create -c conda-forge -n hsp2_310 python=3.10
 
 Install the necessary and optional packages for HSP2 in the new environment:
 
@@ -153,7 +153,7 @@ Notebooks!
 Option 2: Install From Source Code Using `pip`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Installing HSP2 using `pip`, the `Package Installer for Python`_
-is an alternative method to installing with `conda`. 
+is an alternative method to installing with `conda`.
 
 1. Install Python
 ^^^^^^^^^^^^^^^^^
@@ -170,7 +170,7 @@ activate a new environment for running HSP2.
 
     python -m venv hsp2_env /path/to/python/virtual/environments/hsp2_env
 
-3. PIP install HSP2 
+3. PIP install HSP2
 ^^^^^^^^^^^^^^^^^^^
 Navigate to your copy of the HSPsquared folder (for these instructions
 /path/to/module/hsp2) on your computer in the command
@@ -221,7 +221,7 @@ The HSP2 API is designed to be used in Python scripts and Jupyter notebooks.
 .. _`HSPF Conversion Project`: https://github.com/respec/HSPsquared/blob/archivePy2/Why%20HSP2%20(EAA).pdf
 .. _`Introduction to HSP2 by Jason Love (RESPEC)`: https://www.youtube.com/watch?v=aeLScKsP1Wk
 .. _`initial release`: https://github.com/respec/HSPsquared/releases/tag/0.7.7
-.. _`GNU Affero General Public License (AGPL), copyrighted 2017 by RESPEC`: https://github.com/respec/HSPsquared/blob/master/LICENSE 
+.. _`GNU Affero General Public License (AGPL), copyrighted 2017 by RESPEC`: https://github.com/respec/HSPsquared/blob/master/LICENSE
 .. _JupyterLab: https://jupyterlab.readthedocs.io/en/stable/
 .. _conda: https://docs.conda.io/en/latest/
 .. _`latest release`: https://docs.anaconda.com/anaconda/reference/release-notes/

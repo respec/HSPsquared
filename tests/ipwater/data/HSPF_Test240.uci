@@ -13,7 +13,7 @@ WDM1        1   HSPF_Test.wdm
 MESSU      25   HSPF_Test.ech
            26   HSPF_Test220.out
            40   Flow_Test.plt
-           41   HSPF_Test_Met.SEQ           
+           41   HSPF_Test_Met.SEQ
 BINO       27   HSPF_Test220.hbn
 END FILES
 
@@ -190,7 +190,7 @@ PERLND
 *** x -  x  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC
     1      0.09 0.10 0.10 0.14 0.17 0.18 0.18 0.18 0.17 0.15 0.12 0.10
   END MON-INTERCEP
-  
+
 END PERLND
 
 FTABLES
@@ -220,7 +220,7 @@ PLTGEN
   SCALING
   <-range><--ymin--><--ymax--><--ivlin-><-thresh-> ***
     # -  #      YMIN      YMAX     IVLIN    THRESH ***
-    1    7                 100        30   -1.0E32    
+    1    7                 100        30   -1.0E32
   END SCALING
 
   CURV-DATA
@@ -262,14 +262,14 @@ PLTGEN
   <-range>    <-----label----><lin><int><col> <tr> ***
               Curve label      Line Intg  Col Tran ***
     # -  #                     type  eqv code code ***
-    1         PREC                0    0    1 
+    1         PREC                0    0    1
   END CURV-DATA
 
   CURV-DATA
   <-range>    <-----label----><lin><int><col> <tr> ***
               Curve label      Line Intg  Col Tran ***
     # -  #                     type  eqv code code ***
-    1         PETINP              0    0    1 
+    1         PETINP              0    0    1
   END CURV-DATA
 
 END PLTGEN
@@ -298,13 +298,13 @@ END COPY
 EXT SOURCES
 <-Volume-> <Member> SsysSgap<--Mult-->Tran <-Target vols> <-Grp> <-Member-> ***
 <Name>   x <Name> x tem strg<-factor->strg <Name>   x   x        <Name> x x ***
-WDM      1 PREC     ENGLZERO               IMPLND   1     EXTNL  PREC  
+WDM      1 PREC     ENGLZERO               IMPLND   1     EXTNL  PREC
 WDM      2 HPET     ENGL                   IMPLND   1     EXTNL  PETINP
-WDM      1 PREC     ENGLZERO               PERLND   1     EXTNL  PREC  
+WDM      1 PREC     ENGLZERO               PERLND   1     EXTNL  PREC
 WDM      2 HPET     ENGL                   PERLND   1     EXTNL  PETINP
-WDM      1 PREC     ENGLZERO               RCHRES   1     EXTNL  PREC  
-WDM      2 HPET     ENGL                   RCHRES   1     EXTNL  POTEV 
-WDM      1 PREC     ENGLZERO               COPY     1     INPUT  MEAN   1  
+WDM      1 PREC     ENGLZERO               RCHRES   1     EXTNL  PREC
+WDM      2 HPET     ENGL                   RCHRES   1     EXTNL  POTEV
+WDM      1 PREC     ENGLZERO               COPY     1     INPUT  MEAN   1
 WDM      2 HPET     ENGL                   COPY     1     INPUT  MEAN   2
 END EXT SOURCES
 
@@ -328,19 +328,19 @@ END SCHEMATIC
   MASS-LINK        1
 <-Volume-> <-Grp> <-Member-><--Mult-->     <-Target vols> <-Grp> <-Member->  ***
 <Name>            <Name> x x<-factor->     <Name>                <Name> x x  ***
-IMPLND     IWATER SURO       0.0833333     RCHRES         INFLOW IVOL    
+IMPLND     IWATER SURO       0.0833333     RCHRES         INFLOW IVOL
   END MASS-LINK    1
 
   MASS-LINK        2
 <-Volume-> <-Grp> <-Member-><--Mult-->     <-Target vols> <-Grp> <-Member->  ***
 <Name>            <Name> x x<-factor->     <Name>                <Name> x x  ***
-PERLND     PWATER PERO       0.0833333     RCHRES         INFLOW IVOL    
+PERLND     PWATER PERO       0.0833333     RCHRES         INFLOW IVOL
   END MASS-LINK    2
 
   MASS-LINK        3
 <-Volume-> <-Grp> <-Member-><--Mult-->     <-Target vols> <-Grp> <-Member->  ***
 <Name>            <Name> x x<-factor->     <Name>                <Name> x x  ***
-RCHRES     ROFLOW                          RCHRES         INFLOW         
+RCHRES     ROFLOW                          RCHRES         INFLOW
   END MASS-LINK    3
-  
+
 END RUN
