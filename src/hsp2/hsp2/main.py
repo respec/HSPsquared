@@ -1,52 +1,39 @@
 """Copyright (c) 2020 by RESPEC, INC.
 Author: Robert Heaphy, Ph.D.
 License: LGPL2
-
-    # This table defines the expansion to INFLOW, ROFLOW, OFLOW for RCHRES networks
-    d = [
-        ['IVOL',  'ROVOL',  'OVOL',  'HYDRFG', 'HYDR'],
-        ['ICON',  'ROCON',  'OCON',  'CONSFG', 'CONS'],
-        ['IHEAT', 'ROHEAT', 'OHEAT', 'HTFG',   'HTRCH'],
-        ['ISED',  'ROSED',  'OSED',  'SEDFG',  'SEDTRN'],
-        ['IDQAL', 'RODQAL', 'ODQAL', 'GQALFG', 'GQUAL'],
-        ['ISQAL', 'ROSQAL', 'OSQAL', 'GQALFG', 'GQUAL'],
-        ['OXIF',  'OXCF1',  'OXCF2', 'OXFG',   'OXRX'],
-        ['NUIF1', 'NUCF1',  'NUCF1', 'NUTFG',  'NUTRX'],
-        ['NUIF2', 'NUCF2',  'NUCF9', 'NUTFG',  'NUTRX'],
-        ['PKIF',  'PKCF1',  'PKCH2', 'PLKFG',  'PLANK'],
-        ['PHIF',  'PHCF1',  'PHCF2', 'PHFG',   'PHCARB']]
-    df = pd.DataFrame(d, columns=['INFLOW', 'ROFLOW', 'OFLOW', 'Flag', 'Name'])
-    df.to_hdf(h2name, '/FLOWEXPANSION', format='t', data_columns=True)
 """
 
-import os
-from datetime import datetime as dt
-from re import S
-from typing import Union
-
-from numpy import float32, float64
+from numpy import float64
 from pandas import DataFrame, date_range
 from pandas.tseries.offsets import Minute
-
-from hsp2.hsp2.configuration import activities, expand_masslinks, noop
-from hsp2.hsp2.om import om_init_state, state_load_dynamics_om, state_om_model_run_prep
-from hsp2.hsp2.SPECL import specl_load_state
+from datetime import datetime as dt
+from typing import Union
+import os
+from hsp2.hsp2io.hdf import HDF5
+from hsp2.hsp2.utilities import (
+    versions,
+    get_timeseries,
+    expand_timeseries_names,
+    save_timeseries,
+    get_gener_timeseries,
+)
+from hsp2.hsp2.configuration import activities, noop, expand_masslinks
 from hsp2.hsp2.state import (
     init_state_dicts,
-    state_context_hsp2,
-    state_init_hsp2,
-    state_load_dynamics_hsp2,
     state_siminfo_hsp2,
+    state_load_dynamics_hsp2,
+    state_init_hsp2,
+    state_context_hsp2,
 )
-from hsp2.hsp2.utilities import (
-    expand_timeseries_names,
-    get_gener_timeseries,
-    get_timeseries,
-    save_timeseries,
-    versions,
+from hsp2.hsp2.om import (
+    om_init_state,
+    state_om_model_run_prep,
+    state_load_dynamics_om,
+    state_om_model_run_finish,
 )
-from hsp2.hsp2io.hdf import HDF5
-from hsp2.hsp2io.io import Category, IOManager, SupportsReadTS
+from hsp2.hsp2.SPECL import specl_load_state
+
+from hsp2.hsp2io.io import IOManager, SupportsReadTS, Category
 
 
 def main(
@@ -101,7 +88,7 @@ def main(
     #######################################################################################
     # Set up Things in state that will be used in all modular activities like SPECL
     state = init_state_dicts()
-    state_siminfo_hsp2(uci_obj, siminfo)
+    state_siminfo_hsp2(uci_obj, siminfo, io_manager, state)
     # Add support for dynamic functions to operate on STATE
     # - Load any dynamic components if present, and store variables on objects
     state_load_dynamics_hsp2(state, io_manager, siminfo)
@@ -235,7 +222,7 @@ def main(
                         "PARAMETERS"
                     ]["CSNOFG"]
                 if operation == "RCHRES":
-                    if not "PARAMETERS" in ui:
+                    if "PARAMETERS" not in ui:
                         ui["PARAMETERS"] = {}
                     ui["PARAMETERS"]["NEXITS"] = uci[(operation, "HYDR", segment)][
                         "PARAMETERS"
@@ -533,6 +520,9 @@ def main(
 
     msglist = msg(1, "Done", final=True)
 
+    # Finish operational models
+    state_om_model_run_finish(state, io_manager, siminfo)
+
     df = DataFrame(msglist, columns=["logfile"])
     io_manager.write_log(df)
 
@@ -741,3 +731,25 @@ def get_flows(
                     print("ERROR in FLOWS, cant resolve ", path + " " + smemn)
 
     return
+
+
+"""
+
+    # This table defines the expansion to INFLOW, ROFLOW, OFLOW for RCHRES networks
+    d = [
+        ['IVOL',  'ROVOL',  'OVOL',  'HYDRFG', 'HYDR'],
+        ['ICON',  'ROCON',  'OCON',  'CONSFG', 'CONS'],
+        ['IHEAT', 'ROHEAT', 'OHEAT', 'HTFG',   'HTRCH'],
+        ['ISED',  'ROSED',  'OSED',  'SEDFG',  'SEDTRN'],
+        ['IDQAL', 'RODQAL', 'ODQAL', 'GQALFG', 'GQUAL'],
+        ['ISQAL', 'ROSQAL', 'OSQAL', 'GQALFG', 'GQUAL'],
+        ['OXIF',  'OXCF1',  'OXCF2', 'OXFG',   'OXRX'],
+        ['NUIF1', 'NUCF1',  'NUCF1', 'NUTFG',  'NUTRX'],
+        ['NUIF2', 'NUCF2',  'NUCF9', 'NUTFG',  'NUTRX'],
+        ['PKIF',  'PKCF1',  'PKCH2', 'PLKFG',  'PLANK'],
+        ['PHIF',  'PHCF1',  'PHCF2', 'PHFG',   'PHCARB']]
+    df = pd.DataFrame(d, columns=['INFLOW', 'ROFLOW', 'OFLOW', 'Flag', 'Name'])
+    df.to_hdf(h2name, '/FLOWEXPANSION', format='t', data_columns=True)
+
+
+"""

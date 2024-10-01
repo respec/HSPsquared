@@ -3,18 +3,16 @@ Authors: Robert Heaphy, Ph.D. and Paul Duda
 License: LGPL2
 """
 
-from math import exp, log10
-
+from numpy import array, zeros, where, int64, asarray
+from math import log10, exp
 from numba import njit, types
-from numba.typed import Dict
-from numpy import array, asarray, int64, where, zeros
-
 from hsp2.hsp2.ADCALC import advect
-from hsp2.hsp2.om import model_domain_dependencies, pre_step_model, step_model
+from hsp2.hsp2.utilities import make_numba_dict
 
 # the following imports added to handle special actions
-from hsp2.hsp2.state import sedtrn_get_ix, sedtrn_init_ix
-from hsp2.hsp2.utilities import make_numba_dict
+from hsp2.hsp2.state import sedtrn_get_ix, sedtrn_init_ix, sedtrn_state_vars
+from hsp2.hsp2.om import pre_step_model, step_model, model_domain_dependencies
+from numba.typed import Dict
 
 ERRMSGS = (
     "SEDTRN: Warning -- bed storage of sediment size fraction sand is empty",  # ERRMSG0
@@ -110,9 +108,9 @@ def sedtrn(io_manager, siminfo, uci, ts, state):
     # # It appears necessary to load this here, instead of from main.py, otherwise,
     # # _hydr_() does not recognize the function state_step_hydr()?
     # if (hsp2_local_py != False):
-    # 	from hsp2_local_py import state_step_hydr
+    #     from hsp2_local_py import state_step_hydr
     # else:
-    # 	from hsp2.hsp2.state_fn_defaults import state_step_hydr
+    #     from hsp2.hsp2.state_fn_defaults import state_step_hydr
     # must split dicts out of state Dict since numba cannot handle mixed-type nested Dicts
     # initialize the sedtrn paths in case they don't already reside here
     sedtrn_init_ix(state, state["domain"])
@@ -120,8 +118,12 @@ def sedtrn(io_manager, siminfo, uci, ts, state):
     state_paths = state["state_paths"]
     op_tokens = state["op_tokens"]
     # Aggregate the list of all SEDTRN end point dependencies
-    ep_list = ["RSED4", "RSED5", "RSED6"]
-    model_exec_list = model_domain_dependencies(state, state_info["domain"], ep_list)
+    ep_list = (
+        sedtrn_state_vars()
+    )  # define all eligibile for state integration in state.py
+    model_exec_list = model_domain_dependencies(
+        state, state_info["domain"], ep_list, True
+    )
     model_exec_list = asarray(model_exec_list, dtype="i8")  # format for use in
     #######################################################################################
 
@@ -274,11 +276,11 @@ def _sedtrn_(
     HRAD = ts["HRAD"]
     TWID = ts["TWID"]
 
-    if not "ISED1" in ts:
+    if "ISED1" not in ts:
         ts["ISED1"] = zeros(simlen)
-    if not "ISED2" in ts:
+    if "ISED2" not in ts:
         ts["ISED2"] = zeros(simlen)
-    if not "ISED3" in ts:
+    if "ISED3" not in ts:
         ts["ISED3"] = zeros(simlen)
 
     ISED1 = ts["ISED1"]  # if present, else ISED is identically zero;  sand
@@ -799,11 +801,13 @@ def bdexch(avdepm, w, tau, taucd, taucs, m, vol, frcsed, susp, bed):
     return depmas - scrmas, susp, bed  # net deposition or scour, susp, bed
 
 
+""" Sediment Transport in Alluvial Channels, 1963-65 by Bruce Colby.
+This report explains the following empirical algorithm."""
+
+
 @njit(cache=True)
 def colby(v, db50, fhrad, fsl, tempr):
-    """Sediment Transport in Alluvial Channels, 1963-65 by Bruce Colby.
-    This report explains the following empirical algorithm."""
-    # 	Colby's method to calculate the capacity of the flow to transport sand.
+    #     Colby's method to calculate the capacity of the flow to transport sand.
     #
     #   The colby method has the following units and applicable ranges of variables.
     #         average velocity.............v.......fps.........1-10 fps
@@ -875,10 +879,10 @@ def colby(v, db50, fhrad, fsl, tempr):
     F[1, 10], F[2, 10], F[3, 10], F[4, 10], F[5, 10] = 1.0, 1.4, 4.9, 22.0, 120.0
 
     # T = array([[-999, -999, -999, -999, -999, -999, -999, -999],
-    # 		   [-999, 1.2,  1.15, 1.10, 0.96, 0.90, 0.85, 0.82],
-    # 		   [-999, 1.35, 1.25, 1.12, 0.92, 0.86, 0.80, 0.75],
-    # 		   [-999, 1.60, 1.40, 1.20, 0.89, 0.80, 0.72, 0.66],
-    # 		   [-999, 2.00, 1.65, 1.30, 0.85, 0.72, 0.63, 0.55]]).T               # Temperature adjustment, Figure 24
+    #            [-999, 1.2,  1.15, 1.10, 0.96, 0.90, 0.85, 0.82],
+    #            [-999, 1.35, 1.25, 1.12, 0.92, 0.86, 0.80, 0.75],
+    #            [-999, 1.60, 1.40, 1.20, 0.89, 0.80, 0.72, 0.66],
+    #            [-999, 2.00, 1.65, 1.30, 0.85, 0.72, 0.63, 0.55]]).T               # Temperature adjustment, Figure 24
 
     T = zeros((8, 5))
     T[0, 0], T[0, 1], T[0, 2], T[0, 3], T[0, 4] = -999, -999, -999, -999, -999
