@@ -324,13 +324,13 @@ class ModelObject:
             self.state_path,
             self.default_value,
         )
-        # store object in model_object_cache
-        if self.state_path not in self.state["model_object_cache"].keys():
-            self.state["model_object_cache"][self.state_path] = self
+        # store object in model_object_cache - always, if we have reached this point we need to overwrite
+        self.state["model_object_cache"][self.state_path] = self
         # this should check to see if this object has a parent, and if so, register the name on the parent
         # default is as a child object.
         if not (self.container == False):
             # since this is a request to actually create a new path, we instruct trust = True as last argument
+            # print("Adding", self.name, "as input to", self.container.name)
             return self.container.add_input(self.name, self.state_path, 1, True)
         return self.ix
 
@@ -377,6 +377,7 @@ class ModelObject:
                 var_path = found_path
         self.inputs[var_name] = var_path
         self.inputs_ix[var_name] = var_ix
+        # print(self.name, "added input", var_name, var_ix)
         # Should we create a register for the input to be reported here?
         # i.e., if we have an input named Qin on RCHRES_R001, shouldn't we be able
         # to find the data in /STATE/RCHRES_R001/Qin ???  It is redundant data and writing

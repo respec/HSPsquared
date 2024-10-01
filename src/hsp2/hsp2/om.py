@@ -185,9 +185,8 @@ def state_om_model_root_object(state, siminfo):
             #      later when adding from json?
             #      Can we simply check the model_object_cache during load step?
             # Create an object shell for this
-            # river_seg = ModelObject(seg_name, model_root_object, {}, state)
-            # state['model_object_cache'][river_seg.state_path] = river_seg
-            pass
+            segment = ModelObject(seg_name, model_root_object, {}, state)
+            state['model_object_cache'][segment.state_path] = segment
 
 
 def state_om_model_run_prep(state, io_manager, siminfo):
@@ -298,6 +297,7 @@ def model_class_loader(model_name, model_props, container=False, state=None):
         #       for attributes to pass in.
         #       ".get()" will return NoValue if it does not exist or the value.
         if object_class == "Equation":
+            print("Loading", model_props.get("name"), "with parent=", container.name, container.ix)
             model_object = Equation(
                 model_props.get("name"), container, model_props, state
             )
@@ -437,7 +437,19 @@ def model_loader_recursive(model_data, container, state):
         # now we either have a constant (key and value), or a
         # fully defined object.  Either one should work OK.
         # print("Loading", object_name)
-        model_object = model_class_loader(object_name, model_props, container, state)
+        model_object = False
+        model_object_path = container.find_var_path(object_name)
+        if (model_object_path == False):
+            model_object = False
+        elif "overwrite" in model_props.keys():
+            # we only reach this step if an existing model was found
+            if model_props['overwrite'] == True:
+                model_object = False
+            else:
+                model_object = state['model_object_cache'][model_object_path]
+        if model_object == False:
+            # try to load this object
+            model_object = model_class_loader(object_name, model_props, container, state)
         if model_object == False:
             print("Could not load", object_name)
             continue  # not handled, but for now we will continue, tho later we should bail?
