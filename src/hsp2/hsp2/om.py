@@ -297,7 +297,6 @@ def model_class_loader(model_name, model_props, container=False, state=None):
         #       for attributes to pass in.
         #       ".get()" will return NoValue if it does not exist or the value.
         if object_class == "Equation":
-            print("Loading", model_props.get("name"), "with parent=", container.name, container.ix)
             model_object = Equation(
                 model_props.get("name"), container, model_props, state
             )
