@@ -43,6 +43,8 @@ dependencies:
     - jupyter-lsp-python
     - jupyterlab-lsp  # Docs at https://github.com/krassowski/jupyterlab-lsp
 
+    # Operational Model (om)
+    - pyparsing
 
     # PIP install requirements only if it is not possible with conda
     # https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#using-pip-in-an-environment
