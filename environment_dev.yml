@@ -27,6 +27,9 @@ dependencies:
     # - dask  # for future performance enhancements
     - cltoolbox
 
+    # Operational Model (om)
+    - pyparsing
+
     # Interactivity & Visualization via Jupyter Notebooks (optional,
     # but required for tutorials)
     - jupyterlab  # also installs classic Jupyter notbook

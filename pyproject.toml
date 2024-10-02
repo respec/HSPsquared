@@ -15,7 +15,8 @@ dependencies = [
     "numba",
     "numpy<2.0",
     "pandas",
-    "tables"
+    "tables",
+    "pyparsing"
 ]
 authors = [
     {name = "RESPEC, Inc", email = "Paul.Duda@respec.com"}
