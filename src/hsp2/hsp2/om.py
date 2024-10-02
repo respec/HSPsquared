@@ -186,7 +186,7 @@ def state_om_model_root_object(state, siminfo):
             #      Can we simply check the model_object_cache during load step?
             # Create an object shell for this
             segment = ModelObject(seg_name, model_root_object, {}, state)
-            state['model_object_cache'][segment.state_path] = segment
+            state["model_object_cache"][segment.state_path] = segment
 
 
 def state_om_model_run_prep(state, io_manager, siminfo):
@@ -438,17 +438,19 @@ def model_loader_recursive(model_data, container, state):
         # print("Loading", object_name)
         model_object = False
         model_object_path = container.find_var_path(object_name)
-        if (model_object_path == False):
+        if model_object_path == False:
             model_object = False
         elif "overwrite" in model_props.keys():
             # we only reach this step if an existing model was found
-            if model_props['overwrite'] == True:
+            if model_props["overwrite"] == True:
                 model_object = False
             else:
-                model_object = state['model_object_cache'][model_object_path]
+                model_object = state["model_object_cache"][model_object_path]
         if model_object == False:
             # try to load this object
-            model_object = model_class_loader(object_name, model_props, container, state)
+            model_object = model_class_loader(
+                object_name, model_props, container, state
+            )
         if model_object == False:
             print("Could not load", object_name)
             continue  # not handled, but for now we will continue, tho later we should bail?
@@ -676,7 +678,7 @@ def step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
 
 
 def finish_model(state, io_manager, siminfo):
-    #print("Model object cache list", state["model_object_cache"].keys())
+    # print("Model object cache list", state["model_object_cache"].keys())
     for i in state["model_exec_list"]:
         model_object = state["model_object_cache"][get_ix_path(state["state_paths"], i)]
         if "io_manager" in dir(model_object):
