@@ -676,7 +676,7 @@ def step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
 
 
 def finish_model(state, io_manager, siminfo):
-    print("Model object cache list", state["model_object_cache"].keys())
+    #print("Model object cache list", state["model_object_cache"].keys())
     for i in state["model_exec_list"]:
         model_object = state["model_object_cache"][get_ix_path(state["state_paths"], i)]
         if "io_manager" in dir(model_object):
