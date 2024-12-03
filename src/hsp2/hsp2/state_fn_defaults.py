@@ -1,5 +1,5 @@
 # null function to be loaded when not supplied by user
-from numba import float32, int8, njit, typed, types  # import the types
+from numba import njit  # import the types
 
 
 @njit

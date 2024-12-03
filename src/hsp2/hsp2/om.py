@@ -5,15 +5,11 @@
 #       defined aove that are called by the object classes
 import json
 import os
-import random  # this is only used for a demo so may be deprecated  # this is only used for a demo so may be deprecated
-import time
-
-import numpy as np
 import pandas as pd
-from numba import float32, int8, njit, typed, types  # import the types
-from numba.typed import Dict
-from numpy import int32, zeros
-
+import numpy as np
+import time
+from numpy import zeros
+from numba import njit  # import the types
 from hsp2.hsp2.state import append_state, get_ix_path
 
 
@@ -68,28 +64,15 @@ def model_element_paths(mel, state):
 
 
 # Import Code Classes
-# from hsp2.hsp2.om_equation import *
-from hsp2.hsp2.om_model_linkage import ModelLinkage, step_model_link
-from hsp2.hsp2.om_model_object import (
-    ModelObject,
-    ModelRegister,
-    ModelVariable,
-    pre_step_register,
-)
+from hsp2.hsp2.om_model_object import ModelObject, ModelVariable, pre_step_register
 from hsp2.hsp2.om_sim_timer import SimTimer, step_sim_timer
+from hsp2.hsp2.om_equation import Equation, step_equation
+from hsp2.hsp2.om_model_linkage import ModelLinkage, step_model_link
 from hsp2.hsp2.om_special_action import SpecialAction, step_special_action
-
 # from hsp2.hsp2.om_data_matrix import *
 # from hsp2.hsp2.om_model_broadcast import *
 # from hsp2.hsp2.om_simple_channel import *
 # from hsp2.hsp2.om_impoundment import *
-from hsp2.hsp2.utilities import (
-    expand_timeseries_names,
-    get_gener_timeseries,
-    get_timeseries,
-    save_timeseries,
-    versions,
-)
 
 
 def init_om_dicts():
@@ -123,6 +106,8 @@ def state_load_om_json(state, io_manager, siminfo):
     # merge in the json siminfo data
     if "siminfo" in state["model_data"].keys():
         siminfo.update(state["model_data"]["siminfo"])
+    else:
+        state["model_data"]["siminfo"] = siminfo
     return
 
 
@@ -184,17 +169,24 @@ def state_om_model_root_object(state, siminfo):
     # Create the base that everything is added to. this object does nothing except host the rest.
     if "model_root_object" not in state.keys():
         model_root_object = ModelObject(
-            "", False, {}, state
+            state["model_root_name"], False, {}, state
         )  # we give this no name so that it does not interfer with child paths like timer, year, etc (i.e. /STATE/year, ...)
         state["model_root_object"] = model_root_object
         # set up the timer as the first element
+    model_root_object = state["model_root_object"]
     if "/STATE/timer" not in state["state_paths"].keys():
-        timer = SimTimer("timer", model_root_object, siminfo)
+        timer_props = siminfo
+        timer_props["state_path"] = "/STATE/timer"
+        timer = SimTimer("timer", model_root_object, timer_props, state)
     # add base object for the HSP2 domains and other things already added to state so they can be influenced
     for seg_name, seg_path in state["hsp_segments"].items():
         if seg_path not in state["model_object_cache"].keys():
+            # BUG: need to figure out if this is OK, then how do we add attributes to these River Objects
+            #      later when adding from json?
+            #      Can we simply check the model_object_cache during load step?
             # Create an object shell for this
-            ModelObject(seg_name, model_root_object)
+            segment = ModelObject(seg_name, model_root_object, {}, state)
+            state["model_object_cache"][segment.state_path] = segment
 
 
 def state_om_model_run_prep(state, io_manager, siminfo):
@@ -203,7 +195,7 @@ def state_om_model_run_prep(state, io_manager, siminfo):
     # now instantiate and link objects
     # state['model_data'] has alread been prepopulated from json, .py files, hdf5, etc.
     model_root_object = state["model_root_object"]
-    model_loader_recursive(state["model_data"], model_root_object)
+    model_loader_recursive(state["model_data"], model_root_object, state)
     # print("Loaded objects & paths: insures all paths are valid, connects models as inputs")
     # both state['model_object_cache'] and the model_object_cache property of the ModelObject class def
     # will hold a global repo for this data this may be redundant?  They DO point to the same datset?
@@ -249,19 +241,36 @@ def state_om_model_run_prep(state, io_manager, siminfo):
 
     # print("op_tokens is type", type(op_tokens))
     # print("state_ix is type", type(state['state_ix']))
+    # print("state_paths final", state['state_paths'])
     # print("op_tokens final", op_tokens)
-
+    # Stash a list of runnables
+    state["runnables"] = ModelObject.runnable_op_list(
+        state["op_tokens"], list(state["state_paths"].values())
+    )
     # print("Operational model status:", state['state_step_om'])
     if len(model_exec_list) > 0:
-        pass
-        # print("op_tokens has", len(op_tokens),"elements, with ", len(model_exec_list),"executable elements")
+        # pass
+        print(
+            "op_tokens has",
+            len(op_tokens),
+            "elements, with ",
+            len(model_exec_list),
+            "executable elements",
+        )
+        # print("Exec list:", model_exec_list)
     return
+
+
+def state_om_model_run_finish(state, io_manager, siminfo):
+    # write logs and other post-processing steps (if any)
+    finish_model(state, io_manager, siminfo)
+    return True
 
 
 # model class reader
 # get model class  to guess object type in this lib
 # the parent object must be known
-def model_class_loader(model_name, model_props, container=False):
+def model_class_loader(model_name, model_props, container=False, state=None):
     # todo: check first to see if the model_name is an attribute on the container
     # Use: if hasattr(container, model_name):
     # if so, we set the value on the container, if not, we create a new subcomp on the container
@@ -269,7 +278,9 @@ def model_class_loader(model_name, model_props, container=False):
         return False
     if type(model_props) is str:
         if is_float_digit(model_props):
-            model_object = ModelVariable(model_name, container, float(model_props))
+            model_object = ModelVariable(
+                model_name, container, {"value": float(model_props)}, state
+            )
             return model_object
         else:
             return False
@@ -286,17 +297,21 @@ def model_class_loader(model_name, model_props, container=False):
         #       for attributes to pass in.
         #       ".get()" will return NoValue if it does not exist or the value.
         if object_class == "Equation":
-            model_object = Equation(model_props.get("name"), container, model_props)
+            model_object = Equation(
+                model_props.get("name"), container, model_props, state
+            )
             # remove_used_keys(model_props,
         elif object_class == "SimpleChannel":
             model_object = SimpleChannel(
-                model_props.get("name"), container, model_props
+                model_props.get("name"), container, model_props, state
             )
         elif object_class == "Impoundment":
-            model_object = Impoundment(model_props.get("name"), container, model_props)
+            model_object = Impoundment(
+                model_props.get("name"), container, model_props, state
+            )
         elif object_class == "Constant":
             model_object = ModelVariable(
-                model_props.get("name"), container, model_props.get("value")
+                model_props.get("name"), container, {"value": model_props.get("value")}
             )
         elif object_class.lower() == "datamatrix":
             # add a matrix with the data, then add a matrix accessor for each required variable
@@ -305,7 +320,9 @@ def model_class_loader(model_name, model_props, container=False):
                 print("Matrix object must have", DataMatrix.required_properties())
                 return False
             # create it
-            model_object = DataMatrix(model_props.get("name"), container, model_props)
+            model_object = DataMatrix(
+                model_props.get("name"), container, model_props, state
+            )
         elif object_class == "ModelBroadcast":
             # add a matrix with the data, then add a matrix accessor for each required variable
             has_props = ModelBroadcast.check_properties(model_props)
@@ -317,7 +334,7 @@ def model_class_loader(model_name, model_props, container=False):
                 return False
             # create it
             model_object = ModelBroadcast(
-                model_props.get("name"), container, model_props
+                model_props.get("name"), container, model_props, state
             )
         elif object_class == "MicroWatershedModel":
             # add a matrix with the data, then add a matrix accessor for each required variable
@@ -329,16 +346,22 @@ def model_class_loader(model_name, model_props, container=False):
                 )
                 return False
             # create it
-            model_object = DataMatrix(model_props.get("name"), container, model_props)
+            model_object = DataMatrix(
+                model_props.get("name"), container, model_props, state
+            )
         elif object_class == "ModelLinkage":
-            model_object = ModelLinkage(model_props.get("name"), container, model_props)
+            model_object = ModelLinkage(
+                model_props.get("name"), container, model_props, state
+            )
         elif object_class == "SpecialAction":
             model_object = SpecialAction(
-                model_props.get("name"), container, model_props
+                model_props.get("name"), container, model_props, state
             )
         else:
             # print("Loading", model_props.get('name'), "with object_class", object_class,"as ModelObject")
-            model_object = ModelObject(model_props.get("name"), container, model_props)
+            model_object = ModelObject(
+                model_props.get("name"), container, model_props, state
+            )
     # one way to insure no class attributes get parsed as sub-comps is:
     # model_object.remove_used_keys()
     if len(model_object.model_props_parsed) == 0:
@@ -382,7 +405,7 @@ def model_class_translate(model_props, object_class):
         model_props["object_class"] = "ModelObject"
 
 
-def model_loader_recursive(model_data, container):
+def model_loader_recursive(model_data, container, state):
     k_list = model_data.keys()
     object_names = dict.fromkeys(k_list, 1)
     if type(object_names) is not dict:
@@ -401,10 +424,10 @@ def model_loader_recursive(model_data, container):
             # are formally declared as type Constant
             continue
         if type(model_props) is dict:
-            if not ("object_class" in model_props):
+            if "object_class" not in model_props:
                 # this is either a class attribute or an un-handleable meta-data
                 # if the class atttribute exists, we should pass it to container to load
-                # print("Skipping un-typed", object_name)
+                print("Skipping un-typed", object_name)
                 continue
             # print("Translating", object_name)
             # this is a kludge, but can be important
@@ -412,14 +435,29 @@ def model_loader_recursive(model_data, container):
             model_class_translate(model_props, object_class)
         # now we either have a constant (key and value), or a
         # fully defined object.  Either one should work OK.
-        # print("Trying to load", object_name)
-        model_object = model_class_loader(object_name, model_props, container)
+        # print("Loading", object_name)
+        model_object = False
+        model_object_path = container.find_var_path(object_name)
+        if model_object_path == False:
+            model_object = False
+        elif "overwrite" in model_props.keys():
+            # we only reach this step if an existing model was found
+            if model_props["overwrite"] == True:
+                model_object = False
+            else:
+                model_object = state["model_object_cache"][model_object_path]
+        if model_object == False:
+            # try to load this object
+            model_object = model_class_loader(
+                object_name, model_props, container, state
+            )
         if model_object == False:
             print("Could not load", object_name)
             continue  # not handled, but for now we will continue, tho later we should bail?
         # now for container type objects, go through its properties and handle
+        # print("loaded object", model_object, "with container", container)
         if type(model_props) is dict:
-            model_loader_recursive(model_props, model_object)
+            model_loader_recursive(model_props, model_object, state)
 
 
 def model_path_loader(model_object_cache):
@@ -448,7 +486,7 @@ def model_tokenizer_recursive(
     """
     if model_touch_list is None:
         model_touch_list = []
-    # print("Handling", model_object.name, " ", model_object.state_path)
+    # print("Tokenizing", model_object.name, " ", model_object.state_path)
     if model_object.ix in model_exec_list:
         return
     if model_object.ix in model_touch_list:
@@ -560,7 +598,26 @@ def model_order_recursive(
     model_exec_list.append(model_object.ix)
 
 
-def model_domain_dependencies(state, domain, ep_list):
+def model_input_dependencies(state, exec_list, only_runnable=False):
+    mello = exec_list
+    mtl = []
+    mel = []
+    for model_element in state["model_object_cache"].values():
+        for input_path in model_element.inputs:
+            input_ix = get_state_ix(state["state_ix"], state["state_paths"], input_path)
+            if input_ix in exec_list:
+                # do a recursive pull of factors affecting this element
+                model_order_recursive(
+                    model_element, state["model_object_cache"], mel, mtl
+                )
+                mello = mello + mel
+    if only_runnable == True:
+        mello = ModelObject.runnable_op_list(state["op_tokens"], mello)
+    mello = pd.Series(mello).drop_duplicates().tolist()
+    return mello
+
+
+def model_domain_dependencies(state, domain, ep_list, only_runnable=False):
     """
     Given an hdf5 style path to a domain, and a list of variable endpoints in that domain,
     Find all model elements that influence the endpoints state
@@ -571,11 +628,14 @@ def model_domain_dependencies(state, domain, ep_list):
         mel = []
         mtl = []
         # if the given element is NOT in model_object_cache, then nothing is acting on it, so we return empty list
-        if (domain + "/" + ep) in state["model_object_cache"].keys():
-            endpoint = state["model_object_cache"][domain + "/" + ep]
-            model_order_recursive(endpoint, state["model_object_cache"], mel, mtl)
-            mello = mello + mel
+        if (domain + "/" + ep) in state["state_paths"]:
+            if (domain + "/" + ep) in state["model_object_cache"].keys():
+                endpoint = state["model_object_cache"][domain + "/" + ep]
+                model_order_recursive(endpoint, state["model_object_cache"], mel, mtl)
+                mello = mello + mel
 
+    if only_runnable == True:
+        mello = ModelObject.runnable_op_list(state["op_tokens"], mello)
     return mello
 
 
@@ -617,6 +677,16 @@ def step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
     return
 
 
+def finish_model(state, io_manager, siminfo):
+    # print("Model object cache list", state["model_object_cache"].keys())
+    for i in state["model_exec_list"]:
+        model_object = state["model_object_cache"][get_ix_path(state["state_paths"], i)]
+        if "io_manager" in dir(model_object):
+            model_object.io_manager = io_manager
+        model_object.finish()
+    return
+
+
 @njit
 def step_one(op_tokens, ops, state_ix, dict_ix, ts_ix, step, debug=0):
     # op_tokens is passed in for ops like matrices that have lookups from other
@@ -624,8 +694,9 @@ def step_one(op_tokens, ops, state_ix, dict_ix, ts_ix, step, debug=0):
     # todo: decide if all step_[class() functions should set value in state_ix instead of returning value?
     if debug > 0:
         print("DEBUG: Operator ID", ops[1], "is op type", ops[0])
+        print("DEBUG: ops: ", ops)
     if ops[0] == 1:
-        pass  # step_equation(ops, state_ix)
+        step_equation(ops, state_ix)
     elif ops[0] == 2:
         # todo: this should be moved into a single function,
         # with the conforming name step_matrix(op_tokens, ops, state_ix, dict_ix)

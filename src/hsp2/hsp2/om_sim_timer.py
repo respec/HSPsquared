@@ -4,21 +4,20 @@ It is also used to make an implicit parent child link to insure that an object i
 during a model simulation.
 """
 
-from numba import njit
-from numpy import int64
-from pandas import DataFrame, DatetimeIndex
-
+from hsp2.hsp2.state import set_state
 from hsp2.hsp2.om import ModelObject
 from hsp2.hsp2.om_model_object import ModelObject
-from hsp2.hsp2.state import set_state
+from pandas import DataFrame
+from numba import njit
+from numpy import int64
 
 
 class SimTimer(ModelObject):
-    def __init__(self, name, container, model_props=None):
+    def __init__(self, name, container, model_props=None, state=None):
         if model_props is None:
             model_props = {}
         # Note: hsp2 siminfo will match model_props here
-        super().__init__(name, container, model_props)
+        super(SimTimer, self).__init__(name, container, model_props)
         self.state_path = "/STATE/timer"
         self.time_array = self.dti_to_time_array(
             model_props
