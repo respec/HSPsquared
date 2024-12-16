@@ -17,7 +17,7 @@ dependencies:
   - python =3.10
   - scipy  # Scipy also installs numpy
   # Pandas installs most scientific Python modules, such as Numpy, etc.
-  - pandas 2
+  - pandas
   - numba
   - numpy
   - hdf5
