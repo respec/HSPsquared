@@ -71,7 +71,7 @@ Install From Pre-built Packages
 -------------------------------
 Python Package Index (PyPI)
 +++++++++++++++++++++++++++
-Starting with version 0.11.0a1 we provide a PyPI wheel package for HSP2 which
+Starting with version 0.11.0a1 we provide `a PyPI wheel package for HSP2`_ which
 should work on any supported platform for Python 3.10, 3.11, and 3.12.
 
 .. code-block:: console
@@ -113,13 +113,17 @@ Option 1: Install using "conda"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Follow these steps to install using the conda_ package manager.
 
-1. Install the Anaconda Python Distribution
+1. Install Miniconda or Anaconda Python Distribution
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Install the `latest release`_ of the Anaconda Distribution, which includes the
-conda package manager, a complete Python (and R) data science stack, and the
-Anaconda Navigator GUI.  Follow `Anaconda Installation`_ documentation.
+We recommend installing the light-weight Miniconda_ that includes Python, the 
+conda_ environment and package management system, and their dependencies.
 
-A lighter-weight alternative is to install Miniconda_.
+NOTE: Follow conda defaults to install in your local user directory. DO NOT 
+install for all users, to avoid substantial headaches with permissions.
+
+If you have already installed the Anaconda Distribution, you can use it to 
+complete the next steps, but you may need to update to the `latest release`_.
+
 
 2. Create a Conda Environment for HSP2 Modeling (optional)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -146,6 +150,14 @@ Install the necessary and optional packages for HSP2 in the new environment:
 
     cd /path/to/module/hsp2
     pip install .  # or "pip install -e ." to install in editable mode
+
+**Alternately**, you can replace all of the create and install steps above by 
+creating the new environment from the included `environment.yml` file 
+from this single line of code:
+
+.. code-block:: console
+
+    conda env create --file=environment.yml --solver=libmamba
 
 You should now be able to run the Tutorials and create your own Jupyter
 Notebooks!
@@ -223,6 +235,7 @@ The HSP2 API is designed to be used in Python scripts and Jupyter notebooks.
 .. _`initial release`: https://github.com/respec/HSPsquared/releases/tag/0.7.7
 .. _`GNU Affero General Public License (AGPL), copyrighted 2017 by RESPEC`: https://github.com/respec/HSPsquared/blob/master/LICENSE
 .. _JupyterLab: https://jupyterlab.readthedocs.io/en/stable/
+.. _`a PyPI wheel package for HSP2`: https://pypi.org/project/hsp2/
 .. _conda: https://docs.conda.io/en/latest/
 .. _`latest release`: https://docs.anaconda.com/anaconda/reference/release-notes/
 .. _`Anaconda Installation`: https://docs.anaconda.com/anaconda/install/
