@@ -9,5 +9,4 @@ from hsp2.hsp2.main import main
 from hsp2.hsp2.mainDoE import main as mainDoE
 from hsp2.hsp2.utilities import flowtype, versions
 
-# __version__ = version("hsp2")
-# from _version import __version__
+__version__ = version("hsp2")

@@ -14,3 +14,5 @@ from .readHBN import readHBN
 from .readUCI import readUCI
 from .readWDM import readWDM
 from .restart import restart
+
+__version__ = version("hsp2")
