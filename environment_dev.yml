@@ -6,15 +6,10 @@ channels:
 
 dependencies:
   # Python 3.11 was default for Anaconda 2023.07-0 (Jul 11, 2023)
-  # https://docs.anaconda.com/free/anaconda/release-notes/#anaconda-2023-03-0-mar-20-2023
-  # package management
-  - conda
-  - conda-build
-  - conda-libmamba-solver
-  - pip
+  # https://docs.anaconda.com/anaconda/release-notes/#anaconda-2023-07-0-jul-11-2023
+  - python =3.11
 
   # Running HSP2
-  - python =3.11
   - scipy  # Scipy also installs numpy
   # Pandas installs most scientific Python modules, such as Numpy, etc.
   - pandas >=2.0
@@ -30,16 +25,17 @@ dependencies:
   # Operational Model (om)
   - pyparsing
 
-  # Interactivity & Visualization via Jupyter Notebooks (optional,
-  # but required for tutorials)
+  # Interactivity via Jupyter Notebooks (optional, but required for tutorials)
   - jupyterlab  # also installs classic Jupyter notbook
-  - ipympl  # jupyter-matplotlib, https://github.com/matplotlib/ipympl
   - nodejs  # required for many JupyterLab extensions
-  # HoloViz, https://holoviz.org
+
+  # Visualization (optional)
   - hvplot  # hvPlot installs most HoloViz libs, including matplotlib
+  - ipympl  # jupyter-matplotlib, https://github.com/matplotlib/ipympl
   - ipywidgets  # Required for HoloViz interactivity in Jupyter notebooks
   - ipywidgets_bokeh
-  - jupyter_bokeh # for VSCode
+  - jupyter_bokeh # Renders Holviz / Bokeh objects in Jupyter
+  - pyviz_comms # bidirectional communication between Python & JavaScript for Jupyter
 
   # Dev tools (optional)
   # Language Server Protocol (LSP) extension for Python (pylsp)
@@ -53,10 +49,14 @@ dependencies:
     # YAPF for code formatting (preferred over autopep8)
     # flake8 for error checking (disabled by default)
     # pylint for code linting (disabled by default)
-  - jupyterlab-lsp  # Provides both server extension and lab extension
+  - jupyterlab-lsp # Provides both server extension and lab extension
 
-
+  # Environment and package management
+  - conda
+  - conda-build
+  - conda-libmamba-solver
+  - pip
   # PIP install requirements only if it is not possible with conda
   # https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#using-pip-in-an-environment
   - pip:
-    # For Dev environment, we recommend using the `conda build` command to install
+    # For developing HPS2, we recommend using the `conda build` command to "install"
