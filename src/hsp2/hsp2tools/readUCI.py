@@ -168,7 +168,11 @@ def fix_df(df, op, save, ddfaults, valid):
                 pass
     cols = [c.replace("(", "").replace(")", "") for c in df.columns]
     df.columns = cols
-    df = df.apply(pd.to_numeric, errors="ignore")  # todo: 'ignore' is deprecated.
+    for col in df.columns:
+        try:
+            df[col] = pd.to_numeric(df[col])
+        except ValueError:
+            pass
     return df
 
 

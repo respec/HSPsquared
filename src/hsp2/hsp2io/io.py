@@ -1,9 +1,9 @@
 from typing import List, Union
 
 import pandas as pd
-from pandas.core.frame import DataFrame
 
 from hsp2.hsp2.uci import UCI
+from hsp2.hsp2.utilities import pandas_offset_by_version
 from hsp2.hsp2io.protocols import (
     Category,
     SupportsReadTS,
@@ -86,11 +86,14 @@ class IOManager:
         if drop_columns:
             data_frame = data_frame.drop(columns=drop_columns)
 
+        if not isinstance(data_frame.index, pd.core.indexes.datetimes.DatetimeIndex):
+            data_frame = data_frame.to_timestamp()
+
         if outstep == 3:
             # change time step of output to daily
-            sumdf1 = data_frame.resample("D", kind="timestamp", origin="start").sum()
-            lastdf2 = data_frame.resample("D", kind="timestamp", origin="start").last()
-            meandf3 = data_frame.resample("D", kind="timestamp", origin="start").mean()
+            sumdf1 = data_frame.resample("D", origin="start").sum()
+            lastdf2 = data_frame.resample("D", origin="start").last()
+            meandf3 = data_frame.resample("D", origin="start").mean()
             data_frame = pd.merge(
                 lastdf2.add_suffix("_last"),
                 sumdf1.add_suffix("_sum"),
@@ -105,9 +108,15 @@ class IOManager:
             )
         elif outstep == 4:
             # change to monthly
-            sumdf1 = data_frame.resample("M", kind="timestamp", origin="start").sum()
-            lastdf2 = data_frame.resample("M", kind="timestamp", origin="start").last()
-            meandf3 = data_frame.resample("M", kind="timestamp", origin="start").mean()
+            sumdf1 = data_frame.resample(
+                pandas_offset_by_version("ME"), origin="start"
+            ).sum()
+            lastdf2 = data_frame.resample(
+                pandas_offset_by_version("ME"), origin="start"
+            ).last()
+            meandf3 = data_frame.resample(
+                pandas_offset_by_version("ME"), origin="start"
+            ).mean()
             data_frame = pd.merge(
                 lastdf2.add_suffix("_last"),
                 sumdf1.add_suffix("_sum"),
@@ -122,9 +131,15 @@ class IOManager:
             )
         elif outstep == 5:
             # change to annual
-            sumdf1 = data_frame.resample("Y", kind="timestamp", origin="start").sum()
-            lastdf2 = data_frame.resample("Y", kind="timestamp", origin="start").last()
-            meandf3 = data_frame.resample("Y", kind="timestamp", origin="start").mean()
+            sumdf1 = data_frame.resample(
+                pandas_offset_by_version("YE"), origin="start"
+            ).sum()
+            lastdf2 = data_frame.resample(
+                pandas_offset_by_version("YE"), origin="start"
+            ).last()
+            meandf3 = data_frame.resample(
+                pandas_offset_by_version("YE"), origin="start"
+            ).mean()
             data_frame = pd.merge(
                 lastdf2.add_suffix("_last"),
                 sumdf1.add_suffix("_sum"),
