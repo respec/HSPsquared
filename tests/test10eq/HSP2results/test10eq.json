@@ -1,0 +1,23 @@
+{
+    "RCHRES_R005": {
+        "name": "RCHRES_R005",
+        "object_class": "ModelObject",
+        "value": "0",
+        "RSED4": {
+            "name": "RSED4",
+            "object_class": "Equation",
+            "equation": "RSED4 + 250000.0"
+        },
+        "RSED5": {
+            "name": "RSED5",
+            "object_class": "Equation",
+            "equation": "RSED5 + 689000.0"
+        },
+        "RSED6": {
+            "name": "RSED6",
+            "object_class": "Equation",
+            "equation": "RSED6 + 401000.0"
+        }
+    }
+}
+

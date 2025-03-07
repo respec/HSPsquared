@@ -224,7 +224,7 @@ def transform(ts, name, how, siminfo):
 
     if freq == tsfreq:
         pass
-    elif tsfreq == None:  # Sparse time base, frequency not defined
+    elif tsfreq is None:  # Sparse time base, frequency not defined
         ts = ts.reindex(siminfo["tbase"]).ffill().bfill()
     elif how == "SAME":
         ts = ts.resample(freq).ffill()  # tsfreq >= freq assumed, or bad user choice
@@ -618,7 +618,7 @@ def get_gener_timeseries(
             if link.SVOLNO in gener_instances:
                 gener = gener_instances[link.SVOLNO]
                 series = zeros(len(gener.ts_output)) + gener.ts_output
-                if type(link.MFACTOR) == float and link.MFACTOR != 1:
+                if isinstance(link.MFACTOR, float) and link.MFACTOR != 1:
                     series *= link.MFACTOR
 
                 key = f"{link.TMEMN}{link.TMEMSB1} {link.TMEMSB2}".rstrip()
@@ -700,3 +700,53 @@ def clean_name(TMEMN, TMEMSB):
             tname = TMEMN + "1"
 
     return tname
+
+
+def pandas_offset_by_version(new_offset: str) -> str:
+    """
+    Convert the time offset code to match the version of pandas.
+
+    Parameters
+    ----------
+    offset
+        The offset to convert.
+
+    Returns
+    -------
+    offset_by_version
+        The offset converted to the correct version of pandas.
+    """
+    new_to_old_freq = {}
+    major, minor = pd.__version__.split(".")[:2]
+    if (int(major) + int(minor) / 10) < 2.2:
+        new_to_old_freq = {
+            "Y": "A",
+            "ME": "M",
+            "BME": "BM",
+            "SME": "SM",
+            "CBME": "CBM",
+            "QE": "Q",
+            "BQE": "BQ",
+            "BYE": "BY",
+            "h": "H",
+            "bh": "BH",
+            "cbh": "CBH",
+            "min": "T",
+            "s": "S",
+            "ms": "L",
+            "us": "U",
+            "ns": "N",
+            "YE-JAN": "A-JAN",
+            "YE-FEB": "A-FEB",
+            "YE-MAR": "A-MAR",
+            "YE-APR": "A-APR",
+            "YE-MAY": "A-MAY",
+            "YE-JUN": "A-JUN",
+            "YE-JUL": "A-JUL",
+            "YE-AUG": "A-AUG",
+            "YE-SEP": "A-SEP",
+            "YE-OCT": "A-OCT",
+            "YE-NOV": "A-NOV",
+            "YE-DEC": "A-DEC",
+        }
+    return new_to_old_freq.get(new_offset, new_offset)

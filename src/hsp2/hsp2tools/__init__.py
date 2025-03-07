@@ -1,4 +1,7 @@
-from importlib.metadata import version
+"""The `hsp2tools` module contains supporting software modules such as the code
+    to convert legacy WDM and UCI files to HDF5 files for HSP2, and to provide 
+    additional new and legacy capabilities.
+"""
 
 from .clone import clone, removeClone
 from .fetch import fetchtable
@@ -15,4 +18,4 @@ from .readUCI import readUCI
 from .readWDM import readWDM
 from .restart import restart
 
-__version__ = version("hsp2")
+from hsp2 import __version__
