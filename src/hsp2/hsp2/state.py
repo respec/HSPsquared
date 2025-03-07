@@ -188,6 +188,26 @@ def state_load_dynamics_hsp2(state, io_manager, siminfo):
     state["hsp2_local_py"] = hsp2_local_py  # Stores the actual function in state
 
 
+def get_domain_state(state_paths, state_ix, domain, varkeys=False):
+    # get values for a set of variables in a domain
+    # will not check for the index in state_ix, and will fail if a non-scalar value is needed (like from dict_ix)
+    # if varkeys = False, assume that we want all the variables 
+    # from the domain, that are predetermined ahead of time, and should save performance
+    ret_vals = np.zeros(len(varkeys))
+    if varkeys == False:
+        # todo: have a default full list for the given domain?
+        return ret_vals
+        #if (domain + "/" + "allvars") in state_paths.keys():
+    j = 0
+    for i in varkeys:
+        # var_path = f'{domain}/{i}'
+        var_path = domain + "/" + i
+        #print(var_path)
+        ix = state_paths[var_path]
+        ret_vals[j] = state_ix[ix]
+    return ret_vals
+
+
 def hydr_state_vars():
     return [
         "DEP",
