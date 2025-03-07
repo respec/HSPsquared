@@ -1,8 +1,6 @@
 # Must be run from the HSPsquared source directory, the h5 file has already been setup with hsp import_uci test10.uci
 # bare bones tester - must be run from the HSPsquared source directory
 import os
-import numpy as np
-
 import numpy
 from hsp2.hsp2.main import *
 from hsp2.hsp2.om import *

@@ -599,6 +599,9 @@ def model_order_recursive(
 
 
 def model_input_dependencies(state, exec_list, only_runnable=False):
+    # TODO: is this redundant to model_domain_dependencies?
+    # Cmment in github suggest it is not, and has specific utility
+    # for timeseries values? https://github.com/HARPgroup/HSPsquared/issues/60#issuecomment-2231668979
     mello = exec_list
     mtl = []
     mel = []
@@ -633,9 +636,10 @@ def model_domain_dependencies(state, domain, ep_list, only_runnable=False):
                 endpoint = state["model_object_cache"][domain + "/" + ep]
                 model_order_recursive(endpoint, state["model_object_cache"], mel, mtl)
                 mello = mello + mel
-
+    # TODO: stash the runnable list (mellorun) as a element in dict_ix for cached access during runtime
+    mellorun = ModelObject.runnable_op_list(state["op_tokens"], mello)
     if only_runnable == True:
-        mello = ModelObject.runnable_op_list(state["op_tokens"], mello)
+        mello = mellorun
     return mello
 
 

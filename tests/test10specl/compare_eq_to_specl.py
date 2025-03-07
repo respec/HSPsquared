@@ -111,8 +111,14 @@ dstore_eq_specl.close()
 # Calculate the % difference
 print("Total Silt ")
 print([
+  {'HSPF no specl': total_silt_nospecl_hspf},
   {'HSPF specl': total_silt_hspf},
-  {'HSP2 specl': total_silt_hsp2},
+  {'HSP2 specl': total_silt_hsp2}
+])
+print(
+  {'HSPF no specl': total_silt_nospecl_hspf}
+)
+print([
   {'HSP2 eq': total_silt_eq_hsp2},
   {'HSP2 no specl': total_silt_nospecl_hsp2},
   {'HSPF no specl': total_silt_nospecl_hspf}

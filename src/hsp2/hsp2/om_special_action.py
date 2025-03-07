@@ -206,18 +206,18 @@ def step_special_action(op, state_ix, dict_ix, step):
     # - operand 1 (left side)
     # - operand 2 (right side)
     # @tbd: check if time ops have been set and enable/disable accordingly
-    #     - 2 ops will be added for each time matching switch, the state_ix of the time element (year, month, ...) and the state_ix of the constant to match
-    #     - matching should be as simple as if (state_ix[tix1] <> state_ix[vtix1]): return state_ix[ix1] (don't modify the value)
+    #     - 2 ops for each time matching switch: state_ix of the time element (year, month, ...) and the state_ix of the constant to match
+    #     - if (state_ix[tix1] <> state_ix[vtix1]): return state_ix[ix1] (don't modify the value)
     #     - alternative: save the integer timestamp or timestep of the start, and if step/stamp > value, enable
     # @tbd: add number of repeats, and save the value of repeats in a register
     ix1 = op[2]  # ID of source of data and destination of data
-    sop = op[3]
-    ix2 = op[4]
-    tix = op[5]  # which slot is the time comparison in?
-    if tix in state_ix and step < state_ix[tix]:
-        return
+    sop = op[3]  # type of conditional comparator
+    ix2 = op[4]  # ID of the other operand
+    tix = op[5]  # which slot is the time to start in?
     ctr_ix = op[6]  # id of the counter variable
     num_ix = op[7]  # max times to complete
+    if tix in state_ix and step < state_ix[tix]:
+        return
     num_done = state_ix[ctr_ix]
     num = state_ix[num_ix]  # num to complete
     if tix in state_ix and num_done >= num:
@@ -234,9 +234,7 @@ def step_special_action(op, state_ix, dict_ix, step):
         elif sop == 5:
             result = state_ix[ix1] / state_ix[ix2]
 
-    # set value in target
-    # tbd: handle this with a model linkage? cons: this makes a loop since the ix1 is source and destination
-
+    # set value in target. tbd: handle this with a model linkage? pros: dependencies. cons: this makes a loop since the ix1 is source and destination
     state_ix[ix1] = result
     state_ix[op[1]] = result
     return result
