@@ -8,10 +8,10 @@ from hsp2.hsp2.state import sedtrn_get_ix, sedtrn_init_ix, get_domain_state, set
 from hsp2.hsp2.om import pre_step_model, step_model, model_domain_dependencies
 from numba.typed import Dict
 
-
 @njit
 def step_sedtrn(domain, state_paths, state_ix, dict_ix, ts_ix, op_tokens, model_exec_list, step, ep_list):
     # model_exec_list: a list of elements (specl etc.) that influence these SEDTRN end points
+    # ep_list = np.asarray(["RSED1", "RSED2", "RSED3", "RSED4", "RSED5", "RSED6"], dtype='U')
     # NOTE: this could be cached in dict_ix
     # call related specl/ops pre-steps, such as loading timeseries values
     pre_step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step)
