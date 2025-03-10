@@ -208,6 +208,8 @@ class SpecialAction(ModelObject):
 #     - alternative: save the integer timestamp or timestep of the start, and if step/stamp > value, enable
 # @tbd: add number of repeats, and save the value of repeats in a register
 """
+
+
 @njit(cache=True)
 def step_special_action(op, state_ix, dict_ix, step):
     ix = op[1]  # ID of this op

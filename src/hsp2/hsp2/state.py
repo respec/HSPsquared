@@ -192,16 +192,16 @@ def state_load_dynamics_hsp2(state, io_manager, siminfo):
 def get_domain_state(state_paths, state_ix, domain, varkeys):
     # get values for a set of variables in a domain
     # will not check for the index in state_ix, and will fail if a non-scalar value is needed (like from dict_ix)
-    # if varkeys = False, assume that we want all the variables 
+    # if varkeys = False, assume that we want all the variables
     # from the domain, that are predetermined ahead of time, and should save performance
     ret_vals = np.zeros(len(varkeys))
     j = 0
     for i in varkeys:
         # var_path = f'{domain}/{i}'
         var_path = domain + "/" + i
-        #print(var_path)
+        # print(var_path)
         ix = state_paths[var_path]
-        #print("ix",ix) 
+        # print("ix",ix)
         ret_vals[j] = state_ix[ix]
         j += 1
     return ret_vals
@@ -211,17 +211,18 @@ def get_domain_state(state_paths, state_ix, domain, varkeys):
 def set_domain_state(state_paths, state_ix, domain, varkeys, state_vals):
     # get values for a set of variables in a domain
     # will not check for the index in state_ix, and will fail if a non-scalar value is needed (like from dict_ix)
-    # if varkeys = False, assume that we want all the variables 
+    # if varkeys = False, assume that we want all the variables
     # from the domain, that are predetermined ahead of time, and should save performance
     j = 0
     for i in varkeys:
         # var_path = f'{domain}/{i}'
         var_path = domain + "/" + i
-        #print(var_path)
+        # print(var_path)
         ix = state_paths[var_path]
         state_ix[ix] = state_vals[j]
         j += 1
     return True
+
 
 def hydr_state_vars():
     return [
