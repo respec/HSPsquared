@@ -147,11 +147,12 @@ def sedtrn(io_manager, siminfo, uci, ts, state):
         key2 = "OSED2"
         key3 = "OSED3"
         key4 = "OSED4"
+        keyx = "OSED"
         for i in range(nexits):
-            u[f"{key1}{i + 1}"] = u[key1]
-            u[f"{key2}{i + 1}"] = u[key2]
-            u[f"{key3}{i + 1}"] = u[key3]
-            u[f"{key4}{i + 1}"] = u[key4]
+            u[f"{keyx}{i + 1}"+"1"] = u[key1]
+            u[f"{keyx}{i + 1}"+"2"] = u[key2]
+            u[f"{keyx}{i + 1}"+"3"] = u[key3]
+            u[f"{keyx}{i + 1}"+"4"] = u[key4]
         del u[key1]
         del u[key2]
         del u[key3]
@@ -768,10 +769,10 @@ def _sedtrn_(
 
     if nexits > 1:
         for i in range(nexits):
-            ts["OSED1" + str(i + 1)] = OSED1[:, i]
-            ts["OSED2" + str(i + 1)] = OSED2[:, i]
-            ts["OSED3" + str(i + 1)] = OSED3[:, i]
-            ts["OSED4" + str(i + 1)] = OSED4[:, i]
+            ts["OSED" + str(i + 1) + "1"] = OSED1[:, i]
+            ts["OSED" + str(i + 1) + "2"] = OSED2[:, i]
+            ts["OSED" + str(i + 1) + "3"] = OSED3[:, i]
+            ts["OSED" + str(i + 1) + "4"] = OSED4[:, i]
 
     return errorsV
 
@@ -1173,8 +1174,8 @@ def expand_SEDTRN_masslinks(flags, uci, dat, recs):
             rec["SMEMSB2"] = ""
         else:
             rec["SMEMN"] = "OSED"
-            rec["SMEMSB1"] = "1"
-            rec["SMEMSB2"] = dat.SMEMSB1
+            rec["SMEMSB1"] = dat.SMEMSB1
+            rec["SMEMSB2"] = "1"
         rec["TMEMN"] = "ISED1"
         rec["TMEMSB1"] = dat.TMEMSB1
         rec["TMEMSB2"] = dat.TMEMSB2
@@ -1190,8 +1191,8 @@ def expand_SEDTRN_masslinks(flags, uci, dat, recs):
             rec["SMEMSB2"] = ""
         else:
             rec["SMEMN"] = "OSED"
-            rec["SMEMSB1"] = "2"
-            rec["SMEMSB2"] = dat.SMEMSB1
+            rec["SMEMSB1"] = dat.SMEMSB1
+            rec["SMEMSB2"] = "2"
         rec["TMEMN"] = "ISED2"
         rec["TMEMSB1"] = dat.TMEMSB1
         rec["TMEMSB2"] = dat.TMEMSB2
@@ -1207,8 +1208,8 @@ def expand_SEDTRN_masslinks(flags, uci, dat, recs):
             rec["SMEMSB2"] = ""
         else:
             rec["SMEMN"] = "OSED"
-            rec["SMEMSB1"] = "3"
-            rec["SMEMSB2"] = dat.SMEMSB1
+            rec["SMEMSB1"] = dat.SMEMSB1
+            rec["SMEMSB2"] = "3"
         rec["TMEMN"] = "ISED3"
         rec["TMEMSB1"] = dat.TMEMSB1
         rec["TMEMSB2"] = dat.TMEMSB2

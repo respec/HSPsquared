@@ -721,6 +721,7 @@ def pandas_offset_by_version(new_offset: str) -> str:
     if (int(major) + int(minor) / 10) < 2.2:
         new_to_old_freq = {
             "Y": "A",
+            "YE": "A",
             "ME": "M",
             "BME": "BM",
             "SME": "SM",

@@ -896,7 +896,7 @@ class RQUAL_Class:
 
                         if self.nexits > 1:
                             for i in range(self.nexits):
-                                osed[i, j] = ts["OSED" + str(j) + str(i + 1)][loop]
+                                osed[i, j] = ts["OSED" + str(i + 1) + str(j)][loop]
                         else:
                             osed[0, j] = rosed[j]
 

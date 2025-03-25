@@ -789,9 +789,9 @@ def _gqual_(ui, ts):
         for timeindex in range(simlen):
             if nexits > 1:
                 for xindex in range(nexits):
-                    OSED1[timeindex, xindex] = ts["OSED1" + str(xindex + 1)][timeindex]
-                    OSED2[timeindex, xindex] = ts["OSED2" + str(xindex + 1)][timeindex]
-                    OSED3[timeindex, xindex] = ts["OSED3" + str(xindex + 1)][timeindex]
+                    OSED1[timeindex, xindex] = ts["OSED" + str(xindex + 1) + "1"][timeindex]
+                    OSED2[timeindex, xindex] = ts["OSED" + str(xindex + 1) + "2"][timeindex]
+                    OSED3[timeindex, xindex] = ts["OSED" + str(xindex + 1) + "3"][timeindex]
             else:
                 OSED1[timeindex, 0] = ts["ROSED1"][timeindex]
                 OSED2[timeindex, 0] = ts["ROSED2"][timeindex]

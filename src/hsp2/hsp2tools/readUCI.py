@@ -972,7 +972,7 @@ def copy(info, lines):
 def gener(info, lines):
     store, parse, path, *_ = info
     lst = []
-    sub_blocks = ["OPCODE", "PARM"]
+    sub_blocks = ["OPCODE", "PARM", "NTERMS", "COEFFS"]
     current_block = ""
     d = {}
     for line in lines:
@@ -1016,6 +1016,12 @@ def monthdata(info, llines):
             vals = []
             line = line.strip()
             while line:
-                vals.append(float(line[:6]))
+                try:
+                    vals.append(float(line[:6]))
+                except:
+                    if '-' in line[:6]:
+                        # assume this exception was caused by the E missing, as is allowed in HSPF
+                        negpos = line[:6].index("-")
+                        vals.append(float(line[:negpos] + 'E' + line[negpos:6]))
                 line = line[6:]
             lst.append(vals)

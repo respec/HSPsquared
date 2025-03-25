@@ -260,38 +260,41 @@ def rqual(
             u[f"OXCF2_{i + 1}1"] = u["OXCF2_11"]
             u[f"OXCF2_{i + 1}2"] = u["OXCF2_12"]
 
-        u = uci_nutrx["SAVE"]
-        for i in range(nexits):
-            u[f"NUCF9_{i + 1}1"] = u["NUCF9_11"]
-            u[f"NUCF9_{i + 1}2"] = u["NUCF9_12"]
-            u[f"NUCF9_{i + 1}3"] = u["NUCF9_13"]
-            u[f"NUCF9_{i + 1}4"] = u["NUCF9_14"]
-            u[f"OSNH4_{i + 1}1"] = u["OSNH4_11"]
-            u[f"OSNH4_{i + 1}2"] = u["OSNH4_12"]
-            u[f"OSNH4_{i + 1}3"] = u["OSNH4_13"]
-            u[f"OSNH4_{i + 1}4"] = u["OSNH4_14"]
-            u[f"OSPO4_{i + 1}1"] = u["OSPO4_11"]
-            u[f"OSPO4_{i + 1}2"] = u["OSPO4_12"]
-            u[f"OSPO4_{i + 1}3"] = u["OSPO4_13"]
-            u[f"OSPO4_{i + 1}4"] = u["OSPO4_14"]
+        if NUTFG == 1:
+            u = uci_nutrx["SAVE"]
+            for i in range(nexits):
+                u[f"NUCF9_{i + 1}1"] = u["NUCF9_11"]
+                u[f"NUCF9_{i + 1}2"] = u["NUCF9_12"]
+                u[f"NUCF9_{i + 1}3"] = u["NUCF9_13"]
+                u[f"NUCF9_{i + 1}4"] = u["NUCF9_14"]
+                u[f"OSNH4_{i + 1}1"] = u["OSNH4_11"]
+                u[f"OSNH4_{i + 1}2"] = u["OSNH4_12"]
+                u[f"OSNH4_{i + 1}3"] = u["OSNH4_13"]
+                u[f"OSNH4_{i + 1}4"] = u["OSNH4_14"]
+                u[f"OSPO4_{i + 1}1"] = u["OSPO4_11"]
+                u[f"OSPO4_{i + 1}2"] = u["OSPO4_12"]
+                u[f"OSPO4_{i + 1}3"] = u["OSPO4_13"]
+                u[f"OSPO4_{i + 1}4"] = u["OSPO4_14"]
 
-        u = uci_plank["SAVE"]
-        for i in range(nexits):
-            u[f"PKCF2_{i + 1}1"] = u["PKCF2_11"]
-            u[f"PKCF2_{i + 1}2"] = u["PKCF2_12"]
-            u[f"PKCF2_{i + 1}3"] = u["PKCF2_13"]
-            u[f"PKCF2_{i + 1}4"] = u["PKCF2_14"]
-            u[f"PKCF2_{i + 1}5"] = u["PKCF2_15"]
-            u[f"TPKCF2_{i + 1}1"] = u["TPKCF2_11"]
-            u[f"TPKCF2_{i + 1}2"] = u["TPKCF2_12"]
-            u[f"TPKCF2_{i + 1}3"] = u["TPKCF2_13"]
-            u[f"TPKCF2_{i + 1}4"] = u["TPKCF2_14"]
-            u[f"TPKCF2_{i + 1}5"] = u["TPKCF2_15"]
+        if PLKFG == 1:
+            u = uci_plank["SAVE"]
+            for i in range(nexits):
+                u[f"PKCF2_{i + 1}1"] = u["PKCF2_11"]
+                u[f"PKCF2_{i + 1}2"] = u["PKCF2_12"]
+                u[f"PKCF2_{i + 1}3"] = u["PKCF2_13"]
+                u[f"PKCF2_{i + 1}4"] = u["PKCF2_14"]
+                u[f"PKCF2_{i + 1}5"] = u["PKCF2_15"]
+                u[f"TPKCF2_{i + 1}1"] = u["TPKCF2_11"]
+                u[f"TPKCF2_{i + 1}2"] = u["TPKCF2_12"]
+                u[f"TPKCF2_{i + 1}3"] = u["TPKCF2_13"]
+                u[f"TPKCF2_{i + 1}4"] = u["TPKCF2_14"]
+                u[f"TPKCF2_{i + 1}5"] = u["TPKCF2_15"]
 
-        u = uci_phcarb["SAVE"]
-        for i in range(nexits):
-            u[f"OTIC{i + 1}"] = u["OTIC1"]
-            u[f"OCO2{i + 1}"] = u["OCO21"]
+        if PHFG == 1:
+            u = uci_phcarb["SAVE"]
+            for i in range(nexits):
+                u[f"OTIC{i + 1}"] = u["OTIC1"]
+                u[f"OCO2{i + 1}"] = u["OCO21"]
 
     return errors, ERRMSGS
 

@@ -131,7 +131,7 @@ class SpecialAction(ModelObject):
         else:
             # this will fail catastrophically if the requested function is not supported
             # which is a good thing
-            if ac not in cop_codes.values():
+            if int(ac) not in cop_codes.values():
                 raise Exception(
                     "Error: in "
                     + self.name
@@ -140,8 +140,8 @@ class SpecialAction(ModelObject):
                     + ") not supported.  Object creation halted. Path to object with error is "
                     + self.state_path
                 )
-            opid = ac
-            self.ac = list(cop_codes.keys())[list(cop_codes.values()).index(ac)]
+            opid = int(ac)
+            self.ac = list(cop_codes.keys())[list(cop_codes.values()).index(int(ac))]
         self.opid = opid
 
     def tokenize(self):
