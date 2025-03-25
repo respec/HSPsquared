@@ -7,10 +7,15 @@ Conversion of HSPF HPERSED.FOR module into Python
 PDETS= DETS*MFACTA # convert dimensional variables to external units
 """
 
-from numba import njit
-from numpy import float64, full, int64, where, zeros
+from numba import njit, types
+from numpy import float64, full, int64, where, zeros, asarray
 
 from hsp2.hsp2.utilities import hourflag, initm, make_numba_dict
+
+# the following imports added to handle special actions
+from hsp2.hsp2.state import sedmnt_get_ix, sedmnt_init_ix, sedmnt_state_vars
+from hsp2.hsp2.om import pre_step_model, step_model, model_domain_dependencies
+from numba.typed import Dict
 
 ERRMSG = []
 
@@ -19,7 +24,7 @@ ERRMSG = []
 MFACTA = 1.0
 
 
-def sedmnt(io_manager, siminfo, uci, ts):
+def sedmnt(io_manager, siminfo, uci, ts, state):
     """Produce and remove sediment from the land surface"""
 
     simlen = siminfo["steps"]
@@ -43,15 +48,67 @@ def sedmnt(io_manager, siminfo, uci, ts):
 
     ts["DAYFG"] = hourflag(siminfo, 0, dofirst=True).astype(float64)
 
+    #######################################################################################
+    # the following section (1 of 3) added to SEDMNT by pbd to handle special actions
+    #######################################################################################
+    # state_info is some generic things about the simulation
+    # must be numba safe, so we don't just pass the whole state which is not
+    state_info = Dict.empty(key_type=types.unicode_type, value_type=types.unicode_type)
+    state_info["operation"], state_info["segment"], state_info["activity"] = (
+        state["operation"],
+        state["segment"],
+        state["activity"],
+    )
+    state_info["domain"], state_info["state_step_hydr"], state_info["state_step_om"] = (
+        state["domain"],
+        state["state_step_hydr"],
+        state["state_step_om"],
+    )
+    # must split dicts out of state Dict since numba cannot handle mixed-type nested Dicts
+    # initialize the sedmnt paths in case they don't already reside here
+    sedmnt_init_ix(state, state["domain"])
+    state_ix, dict_ix, ts_ix = state["state_ix"], state["dict_ix"], state["ts_ix"]
+    state_paths = state["state_paths"]
+    op_tokens = state["op_tokens"]
+    # Aggregate the list of all SEDMNT end point dependencies
+    ep_list = (
+        sedmnt_state_vars()
+    )  # define all eligibile for state integration in state.py
+    model_exec_list = model_domain_dependencies(
+        state, state_info["domain"], ep_list, True
+    )
+    model_exec_list = asarray(model_exec_list, dtype="i8")  # format for use in
+    #######################################################################################
+
     ############################################################################
-    errors = _sedmnt_(ui, ts)  # run SEDMNT simulation code
+    errors = _sedmnt_(
+        ui,
+        ts,
+        state_info,
+        state_paths,
+        state_ix,
+        dict_ix,
+        ts_ix,
+        op_tokens,
+        model_exec_list,
+    )  # run SEDMNT simulation code
     ############################################################################
 
     return errors, ERRMSG
 
 
 @njit(cache=True)
-def _sedmnt_(ui, ts):
+def _sedmnt_(
+    ui,
+    ts,
+    state_info,
+    state_paths,
+    state_ix,
+    dict_ix,
+    ts_ix,
+    op_tokens,
+    model_exec_list,
+):
     """Produce and remove sediment from the land surface"""
 
     errorsV = zeros(int(ui["errlen"])).astype(int64)
@@ -145,7 +202,37 @@ def _sedmnt_(ui, ts):
 
     DRYDFG = 1
 
+    #######################################################################################
+    # the following section (2 of 3) added by pbd to SEDMNT, this one to prepare for special actions
+    #######################################################################################
+    sedmnt_ix = sedmnt_get_ix(state_ix, state_paths, state_info["domain"])
+    # these are integer placeholders faster than calling the array look each timestep
+    dets_ix = (
+        sedmnt_ix["DETS"]
+    )
+    #######################################################################################
+
     for loop in range(simlen):
+        #######################################################################################
+        # the following section (3 of 3) added by pbd to accommodate special actions
+        #######################################################################################
+        # set state_ix with value of local state variables and/or needed vars
+        state_ix[dets_ix] = dets
+        if state_info["state_step_om"] == "enabled":
+            pre_step_model(
+                model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step=loop
+            )
+
+        # (todo) Insert code hook for dynamic python modification of state
+
+        if state_info["state_step_om"] == "enabled":
+            step_model(
+                model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step=loop
+            )  # traditional 'ACTIONS' done in here
+            # Do write-backs for editable STATE variables
+            dets = state_ix[dets_ix]
+        #######################################################################################
+
         dayfg = DAYFG[loop]
         rain = RAIN[loop]
         prec = PREC[loop]

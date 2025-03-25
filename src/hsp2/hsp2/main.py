@@ -401,7 +401,7 @@ def main(
                         errors, errmessages = function(
                             io_manager, siminfo, ui, ts, ftables, state
                         )
-                    elif activity == "SEDTRN":
+                    elif activity == "SEDTRN" or activity == "SEDMNT":
                         errors, errmessages = function(
                             io_manager, siminfo, ui, ts, state
                         )

@@ -164,6 +164,9 @@ def state_init_hsp2(state, opseq, activities):
                 elif activity == "SEDTRN":
                     state_context_hsp2(state, operation, segment, activity)
                     sedtrn_init_ix(state, state["domain"])
+                elif activity == "SEDMNT":
+                    state_context_hsp2(state, operation, segment, activity)
+                    sedmnt_init_ix(state, state["domain"])
 
 
 def state_load_hdf5_components(
@@ -272,6 +275,21 @@ def sedtrn_init_ix(state, domain):
     return sedtrn_ix
 
 
+def sedmnt_state_vars():
+    sedmnt_state = ["DETS"]
+    return sedmnt_state
+
+
+def sedmnt_init_ix(state, domain):
+    # get a list of keys for all sedmnt state variables
+    sedmnt_state = sedmnt_state_vars()
+    sedmnt_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
+    for i in sedmnt_state:
+        var_path = domain + "/" + i
+        sedmnt_ix[i] = set_state(state["state_ix"], state["state_paths"], var_path, 0.0)
+    return sedmnt_ix
+
+
 @njit
 def hydr_get_ix(state_ix, state_paths, domain):
     # get a list of keys for all hydr state variables
@@ -310,6 +328,17 @@ def sedtrn_get_ix(state_ix, state_paths, domain):
         var_path = domain + "/" + i
         sedtrn_ix[i] = state_paths[var_path]
     return sedtrn_ix
+
+
+@njit
+def sedmnt_get_ix(state_ix, state_paths, domain):
+    # get a list of keys for all sedmnt state variables
+    sedmnt_state = ["DETS"]
+    sedmnt_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
+    for i in sedmnt_state:
+        var_path = domain + "/" + i
+        sedmnt_ix[i] = state_paths[var_path]
+    return sedmnt_ix
 
 
 # function to dynamically load module, based on "Using imp module" in https://www.tutorialspoint.com/How-I-can-dynamically-import-Python-module#
