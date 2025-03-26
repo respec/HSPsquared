@@ -24,6 +24,7 @@ from datetime import datetime as dt
 from re import S
 from typing import Union
 
+import pandas as pd
 from numpy import float32, float64
 from pandas import DataFrame, date_range
 from pandas.tseries.offsets import Minute
@@ -807,7 +808,10 @@ def get_flows(
                     )
                 else:
                     path = f'/RESULTS/{x.SVOL}_{x.SVOLNO}/{sgrpn}'
-                    data_frame = io_manager[path]
+                    try:
+                        data_frame = io_manager[path]
+                    except KeyError:
+                        data_frame = pd.DataFrame()
 
                 try:
                     if data in data_frame.columns:
