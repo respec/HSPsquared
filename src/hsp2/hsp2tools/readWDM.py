@@ -3,6 +3,9 @@ Author: Robert Heaphy, Ph.D.
 
 Based on MATLAB program by Seth Kenner, RESPEC
 License: LGPL2
+PBD enhancement, if no hdf5 file name passed in,
+instead puts all tables into 'store' as dictionary
+and returns store for access by calling routine.
 """
 
 import datetime
@@ -88,68 +91,29 @@ def readWDM(wdmfile, hdffile, compress_output=False):
             f"Wrong number of Time Series Records found expecting:{ntimeseries} found:{len(dsnlist)}"
         )
 
-    with pd.HDFStore(hdffile) as store:
-        summary = []
-        summaryindx = []
+    if len(hdffile) > 0:
+        store = pd.HDFStore(hdffile)
+    else:
+        store = {}
 
-        # check to see which extra attributes are on each dsn
-        columns_to_add = []
-        search = ["STAID", "STNAM", "SCENARIO", "CONSTITUENT", "LOCATION"]
-        for att in search:
-            found_in_all = True
-            for index in dsnlist:
-                dattr = {}
-                psa = iarray[index + 9]
-                if psa > 0:
-                    sacnt = iarray[index + psa - 1]
-                for i in range(psa + 1, psa + 1 + 2 * sacnt, 2):
-                    id = iarray[index + i]
-                    ptr = iarray[index + i + 1] - 1 + index
-                    if id not in attrinfo:
-                        continue
-                    name, atype, length = attrinfo[id]
-                    if atype == "I":
-                        dattr[name] = iarray[ptr]
-                    elif atype == "R":
-                        dattr[name] = farray[ptr]
-                    else:
-                        dattr[name] = "".join(
-                            [
-                                _inttostr(iarray[k])
-                                for k in range(ptr, ptr + length // 4)
-                            ]
-                        ).strip()
-                if att not in dattr:
-                    found_in_all = False
-            if found_in_all:
-                columns_to_add.append(att)
+    summary = []
+    summaryindx = []
 
+    # check to see which extra attributes are on each dsn
+    columns_to_add = []
+    search = ["STAID", "STNAM", "SCENARIO", "CONSTITUENT", "LOCATION"]
+    for att in search:
+        found_in_all = True
         for index in dsnlist:
-            # get layout information for TimeSeries Dataset frame
-            dsn = iarray[index + 4]
+            dattr = {}
             psa = iarray[index + 9]
             if psa > 0:
                 sacnt = iarray[index + psa - 1]
-            pdat = iarray[index + 10]
-            pdatv = iarray[index + 11]
-            frepos = iarray[index + pdat]
-
-            print(f"{dsn} reading from wdm")
-            # get attributes
-            dattr = {
-                "TSBDY": 1,
-                "TSBHR": 1,
-                "TSBMO": 1,
-                "TSBYR": 1900,
-                "TFILL": -999.0,
-            }  # preset defaults
             for i in range(psa + 1, psa + 1 + 2 * sacnt, 2):
                 id = iarray[index + i]
                 ptr = iarray[index + i + 1] - 1 + index
                 if id not in attrinfo:
-                    # print('PROGRAM ERROR: ATTRIBUTE INDEX not found', id, 'Attribute pointer', iarray[index + i+1])
                     continue
-
                 name, atype, length = attrinfo[id]
                 if atype == "I":
                     dattr[name] = iarray[ptr]
@@ -157,78 +121,126 @@ def readWDM(wdmfile, hdffile, compress_output=False):
                     dattr[name] = farray[ptr]
                 else:
                     dattr[name] = "".join(
-                        [_inttostr(iarray[k]) for k in range(ptr, ptr + length // 4)]
+                        [
+                            _inttostr(iarray[k])
+                            for k in range(ptr, ptr + length // 4)
+                        ]
                     ).strip()
+            if att not in dattr:
+                found_in_all = False
+        if found_in_all:
+            columns_to_add.append(att)
 
-            # Get timeseries timebase data
-            records = []
-            offsets = []
-            for i in range(pdat + 1, pdatv - 1):
-                a = iarray[index + i]
-                if a != 0:
-                    record, offset = _splitposition(a)
-                    records.append(record)
-                    offsets.append(offset)
-            if len(records) == 0:
+    for index in dsnlist:
+        # get layout information for TimeSeries Dataset frame
+        dsn = iarray[index + 4]
+        psa = iarray[index + 9]
+        if psa > 0:
+            sacnt = iarray[index + psa - 1]
+        pdat = iarray[index + 10]
+        pdatv = iarray[index + 11]
+        frepos = iarray[index + pdat]
+
+        print(f"{dsn} reading from wdm")
+        # get attributes
+        dattr = {
+            "TSBDY": 1,
+            "TSBHR": 1,
+            "TSBMO": 1,
+            "TSBYR": 1900,
+            "TFILL": -999.0,
+        }  # preset defaults
+        for i in range(psa + 1, psa + 1 + 2 * sacnt, 2):
+            id = iarray[index + i]
+            ptr = iarray[index + i + 1] - 1 + index
+            if id not in attrinfo:
+                # print('PROGRAM ERROR: ATTRIBUTE INDEX not found', id, 'Attribute pointer', iarray[index + i+1])
                 continue
 
-            # calculate number of data points in each group, tindex is final index for storage
-            tgroup = dattr["TGROUP"]
-            tstep = dattr["TSSTEP"]
-            tcode = dattr["TCODE"]
+            name, atype, length = attrinfo[id]
+            if atype == "I":
+                dattr[name] = iarray[ptr]
+            elif atype == "R":
+                dattr[name] = farray[ptr]
+            else:
+                dattr[name] = "".join(
+                    [_inttostr(iarray[k]) for k in range(ptr, ptr + length // 4)]
+                ).strip()
 
-            records = np.asarray(records)
-            offsets = np.asarray(offsets)
+        # Get timeseries timebase data
+        records = []
+        offsets = []
+        for i in range(pdat + 1, pdatv - 1):
+            a = iarray[index + i]
+            if a != 0:
+                record, offset = _splitposition(a)
+                records.append(record)
+                offsets.append(offset)
+        if len(records) == 0:
+            continue
 
-            dates, values, stop_datetime = _process_groups(
-                iarray, farray, records, offsets, tgroup
-            )
-            stop_datetime = datetime.datetime(*_bits_to_date(stop_datetime))
-            dates = np.array(dates)
-            dates_converted = _date_convert(
-                dates,
-                date_epoch,
-                dt_year,
-                dt_month,
-                dt_day,
-                dt_hour,
-                dt_minute,
-                dt_second,
-            )
-            series = pd.Series(values, index=dates_converted)
-            try:
-                series.index.freq = str(tstep) + freq[tcode]
-            except ValueError:
-                series.index.freq = None
+        # calculate number of data points in each group, tindex is final index for storage
+        tgroup = dattr["TGROUP"]
+        tstep = dattr["TSSTEP"]
+        tcode = dattr["TCODE"]
 
-            dsname = f"TIMESERIES/TS{dsn:03d}"
+        records = np.asarray(records)
+        offsets = np.asarray(offsets)
+
+        dates, values, stop_datetime = _process_groups(
+            iarray, farray, records, offsets, tgroup
+        )
+        stop_datetime = datetime.datetime(*_bits_to_date(stop_datetime))
+        dates = np.array(dates)
+        dates_converted = _date_convert(
+            dates,
+            date_epoch,
+            dt_year,
+            dt_month,
+            dt_day,
+            dt_hour,
+            dt_minute,
+            dt_second,
+        )
+        series = pd.Series(values, index=dates_converted)
+        try:
+            series.index.freq = str(tstep) + freq[tcode]
+        except ValueError:
+            series.index.freq = None
+
+        dsname = f"/TIMESERIES/TS{dsn:03d}"
+
+        if not isinstance(store, dict):
             if compress_output:
                 series.to_hdf(store, key=dsname, complib="blosc", complevel=9)
             else:
                 series.to_hdf(store, key=dsname, format="t", data_columns=True)
+        else:
+            store[dsname] = series
 
-            data = [
-                str(series.index[0]),
-                str(stop_datetime),
-                str(tstep) + freq[tcode],
-                len(series),
-                dattr["TSTYPE"],
-                dattr["TFILL"],
-            ]
-            columns = ["Start", "Stop", "Freq", "Length", "TSTYPE", "TFILL"]
-            for x in columns_to_add:
-                if x in dattr:
-                    data.append(dattr[x])
-                    columns.append(x)
+        data = [
+            str(series.index[0]),
+            str(stop_datetime),
+            str(tstep) + freq[tcode],
+            len(series),
+            dattr["TSTYPE"],
+            dattr["TFILL"],
+        ]
+        columns = ["Start", "Stop", "Freq", "Length", "TSTYPE", "TFILL"]
+        for x in columns_to_add:
+            if x in dattr:
+                data.append(dattr[x])
+                columns.append(x)
 
-            summary.append(data)
-            summaryindx.append(dsname[11:])
+        summary.append(data)
+        summaryindx.append(dsname[11:])
 
+    if not isinstance(store, dict):
         dfsummary = pd.DataFrame(summary, index=summaryindx, columns=columns)
-        store.put("TIMESERIES/SUMMARY", dfsummary, format="t", data_columns=True)
-
-    return dfsummary
-
+        store.put("/TIMESERIES/SUMMARY", dfsummary, format="t", data_columns=True)
+        return dfsummary
+    else:
+        return store
 
 @njit
 def _splitdate(x):

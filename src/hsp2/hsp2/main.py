@@ -4,6 +4,7 @@ License: LGPL2
 """
 
 from numpy import float64
+import pandas as pd
 from pandas import DataFrame, date_range
 from pandas.tseries.offsets import Minute
 from datetime import datetime as dt
@@ -34,6 +35,8 @@ from hsp2.hsp2.om import (
 from hsp2.hsp2.SPECL import specl_load_state
 
 from hsp2.hsp2io.io import IOManager, SupportsReadTS, Category
+# special for in-memory version
+from hsp2.hsp2io.uci_dict import convert_uci_InMem
 
 
 def main(
@@ -58,15 +61,21 @@ def main(
     if isinstance(io_manager, str):
         hdf5_instance = HDF5(io_manager)
         io_manager = IOManager(hdf5_instance)
-    hdfname = io_manager._input.file_path
-    if not os.path.exists(hdfname):
-        raise FileNotFoundError(f"{hdfname} HDF5 File Not Found")
+    elif isinstance(io_manager, dict):
+        hdfname = ''
+    else:
+        hdfname = io_manager._input.file_path
+        if not os.path.exists(hdfname):
+            raise FileNotFoundError(f"{hdfname} HDF5 File Not Found")
 
     msg = messages()
     msg(1, f"Processing started for file {hdfname}; saveall={saveall}")
 
     # read user control, parameters, states, and flags uci and map to local variables
-    uci_obj = io_manager.read_uci()
+    if isinstance(io_manager, dict):
+        uci_obj = convert_uci_InMem(io_manager)
+    else:
+        uci_obj = io_manager.read_uci()
     opseq = uci_obj.opseq
     ddlinks = uci_obj.ddlinks
     ddmasslinks = uci_obj.ddmasslinks
@@ -90,8 +99,13 @@ def main(
     state = init_state_dicts()
     state_siminfo_hsp2(uci_obj, siminfo, io_manager, state)
     # Add support for dynamic functions to operate on STATE
-    # - Load any dynamic components if present, and store variables on objects
-    state_load_dynamics_hsp2(state, io_manager, siminfo)
+    if not isinstance(io_manager, dict):
+        # - Load any dynamic components if present, and store variables on objects
+        state_load_dynamics_hsp2(state, io_manager, siminfo)
+    else:
+        state['state_step_hydr'] = 'disabled'
+        state['hsp2_local_py'] = False
+        state["state_step_om"] = "disabled"
     # Iterate through all segments and add crucial paths to state
     # before loading dynamic components that may reference them
     state_init_hsp2(state, opseq, activities)
@@ -99,9 +113,10 @@ def main(
     state["specactions"] = specactions  # stash the specaction dict in state
     om_init_state(state)  # set up operational model specific state entries
     specl_load_state(state, io_manager, siminfo)  # traditional special actions
-    state_load_dynamics_om(
-        state, io_manager, siminfo
-    )  # operational model for custom python
+    if not isinstance(io_manager, dict):
+        state_load_dynamics_om(
+            state, io_manager, siminfo
+        )  # operational model for custom python
     # finalize all dynamically loaded components and prepare to run the model
     state_om_model_run_prep(state, io_manager, siminfo)
     #######################################################################################
@@ -524,12 +539,14 @@ def main(
     state_om_model_run_finish(state, io_manager, siminfo)
 
     df = DataFrame(msglist, columns=["logfile"])
-    io_manager.write_log(df)
-
-    if jupyterlab:
-        df = versions(["jupyterlab", "notebook"])
-        io_manager.write_versioning(df)
-        print("\n\n", df)
+    if isinstance(io_manager, dict):
+        io_manager["logfile"] = df
+    else:
+        io_manager.write_log(df)
+        if jupyterlab:
+            df = versions(["jupyterlab", "notebook"])
+            io_manager.write_versioning(df)
+            print("\n\n", df)
     return
 
 
@@ -693,9 +710,17 @@ def get_flows(
                 AFname = f"{x.SVOL}{x.SVOLNO}_AFACTR"
                 data = f"{smemn}{smemsb1}{smemsb2}"
 
-                data_frame = io_manager.read_ts(
-                    Category.RESULTS, x.SVOL, x.SVOLNO, sgrpn
-                )
+                if not isinstance(io_manager, dict):
+                    data_frame = io_manager.read_ts(
+                        Category.RESULTS, x.SVOL, x.SVOLNO, sgrpn
+                    )
+                else:
+                    path = f'/RESULTS/{x.SVOL}_{x.SVOLNO}/{sgrpn}'
+                    try:
+                        data_frame = io_manager[path]
+                    except KeyError:
+                        data_frame = pd.DataFrame()
+
                 try:
                     if data in data_frame.columns:
                         t = data_frame[data].astype(float64).to_numpy()[0:steps]

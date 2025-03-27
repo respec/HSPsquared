@@ -147,9 +147,12 @@ def state_siminfo_hsp2(uci_obj, siminfo, io_manager, state):
         siminfo["start"], siminfo["stop"], freq=Minute(delt)
     )[1:]
     siminfo["steps"] = len(siminfo["tindex"])
-    hdf5_path = io_manager._input.file_path
-    (fbase, fext) = os.path.splitext(hdf5_path)
-    state["model_root_name"] = os.path.split(fbase)[1]  # takes the text before .h5
+    if not isinstance(io_manager, dict):
+        hdf5_path = io_manager._input.file_path
+        (fbase, fext) = os.path.splitext(hdf5_path)
+        state["model_root_name"] = os.path.split(fbase)[1]  # takes the text before .h5
+    else:
+        state["model_root_name"] = ""  # pbd temp fix for in mem version
 
 
 def state_init_hsp2(state, opseq, activities):

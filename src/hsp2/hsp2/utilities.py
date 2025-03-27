@@ -412,13 +412,25 @@ def get_timeseries(timeseries_inputs: SupportsReadTS, ext_sourcesdd, siminfo):
     # explicit creation of Numba dictionary with signatures
     ts = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
     for row in ext_sourcesdd:
-        data_frame = timeseries_inputs.read_ts(
-            category=Category.INPUTS, segment=row.SVOLNO
-        )
+        if not isinstance(timeseries_inputs, dict):
+            data_frame = timeseries_inputs.read_ts(
+                category=Category.INPUTS, segment=row.SVOLNO
+            )
 
-        if row.MFACTOR != 1.0:
-            data_frame *= row.MFACTOR
-        t = transform(data_frame, row.TMEMN, row.TRAN, siminfo)
+            if row.MFACTOR != 1.0:
+                data_frame *= row.MFACTOR
+            t = transform(data_frame, row.TMEMN, row.TRAN, siminfo)
+        else:
+            # case for inMem version, where timeseries_inputs is a Dict
+            path = f'/TIMESERIES/{row.SVOLNO}'
+            temp_data_frame = pd.DataFrame()
+            if path in timeseries_inputs:
+                data_frame = timeseries_inputs[path]
+                temp_data_frame = data_frame.copy()
+
+            if row.MFACTOR != 1.0:
+                temp_data_frame *= row.MFACTOR
+            t = transform(temp_data_frame, row.TMEMN, row.TRAN, siminfo)
 
         tname = clean_name(row.TMEMN, row.TMEMSB)
         if tname in ts:
@@ -470,16 +482,24 @@ def save_timeseries(
         save_columns = [key for key, value in savedict.items() if value or saveall]
 
     if not df.empty:
-        timeseries.write_ts(
-            data_frame=df,
-            save_columns=save_columns,
-            category=Category.RESULTS,
-            operation=operation,
-            segment=segment,
-            activity=activity,
-            compress=compress,
-            outstep=outstep,
-        )
+        if not isinstance(timeseries, dict):
+            timeseries.write_ts(
+                data_frame=df,
+                save_columns=save_columns,
+                category=Category.RESULTS,
+                operation=operation,
+                segment=segment,
+                activity=activity,
+                compress=compress,
+                outstep=outstep,
+            )
+        else:
+            # case for inMem version, where timeseries is a Dict
+            path = f'{operation}_{segment}/{activity}'
+            # if category:
+            path = '/RESULTS/' + path
+            timeseries[path] = df
+
     else:
         print(f"DataFrame Empty for {operation}|{activity}|{segment}")
     return
