@@ -12,6 +12,10 @@ from hsp2.hsp2.PHCARB_Class import PHCARB_Class
 from hsp2.hsp2.PLANK_Class import PLANK_Class
 from hsp2.hsp2.utilities import initm, make_numba_dict
 
+# the following imports added to handle special actions
+from hsp2.hsp2.state import rqual_get_ix
+from hsp2.hsp2.om import pre_step_model, step_model
+
 if os.environ.get("NUMBA_DISABLE_JIT", 0):  # jit should be on by default.
     OXRX_Class_ = OXRX_Class
     NUTRX_Class_ = NUTRX_Class
@@ -819,8 +823,75 @@ class RQUAL_Class:
 
         return
 
-    def simulate(self, ts):
+    def simulate(self, ts,
+                 state_info,
+                 state_paths,
+                 state_ix,
+                 dict_ix,
+                 ts_ix,
+                 op_tokens,
+                 model_exec_list):
+
+        #######################################################################################
+        # the following section (2 of 3) added by pbd to RQUAL, this one to prepare for special actions
+        #######################################################################################
+        rqual_ix = rqual_get_ix(state_ix, state_paths, state_info["domain"])
+        # these are integer placeholders faster than calling the array look each timestep
+        dox_ix = (rqual_ix["DOX"])
+        bod_ix = (rqual_ix["BOD"])
+        no3_ix = (rqual_ix["NO3"])
+        tam_ix = (rqual_ix["TAM"])
+        no2_ix = (rqual_ix["NO2"])
+        po4_ix = (rqual_ix["PO4"])
+        brtam1_ix = (rqual_ix["BRTAM1"])
+        brtam2_ix = (rqual_ix["BRTAM2"])
+        brpo41_ix = (rqual_ix["BRPO41"])
+        brpo42_ix = (rqual_ix["BRPO42"])
+        cforea_ix = (rqual_ix["CFOREA"])
+        #######################################################################################
+
         for loop in range(self.simlen):
+
+            #######################################################################################
+            # the following section (3 of 3) added by pbd to accommodate special actions
+            #######################################################################################
+            # set state_ix with value of local state variables and/or needed vars
+            state_ix[dox_ix] = self.OXRX.dox
+            state_ix[bod_ix] = self.OXRX.bod
+            state_ix[no3_ix] = self.NUTRX.no3
+            state_ix[tam_ix] = self.NUTRX.tam
+            state_ix[no2_ix] = self.NUTRX.no2
+            state_ix[po4_ix] = self.NUTRX.po4
+            state_ix[brtam1_ix] = self.NUTRX.brtam[1]
+            state_ix[brtam2_ix] = self.NUTRX.brtam[2]
+            state_ix[brpo41_ix] = self.NUTRX.brpo4[1]
+            state_ix[brpo42_ix] = self.NUTRX.brpo4[2]
+            state_ix[cforea_ix] = self.OXRX.cforea
+            if state_info["state_step_om"] == "enabled":
+                pre_step_model(
+                    model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step=loop
+                )
+
+            # (todo) Insert code hook for dynamic python modification of state
+
+            if state_info["state_step_om"] == "enabled":
+                step_model(
+                    model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step=loop
+                )  # traditional 'ACTIONS' done in here
+                # Do write-backs for editable STATE variables
+                self.OXRX.dox = state_ix[dox_ix]
+                self.OXRX.bod = state_ix[bod_ix]
+                self.NUTRX.no3 = state_ix[no3_ix]
+                self.NUTRX.tam = state_ix[tam_ix]
+                self.NUTRX.no2 = state_ix[no2_ix]
+                self.NUTRX.po4 = state_ix[po4_ix]
+                self.NUTRX.brtam[1] = state_ix[brtam1_ix]
+                self.NUTRX.brtam[2] = state_ix[brtam2_ix]
+                self.NUTRX.brpo4[1] = state_ix[brpo41_ix]
+                self.NUTRX.brpo4[2] = state_ix[brpo42_ix]
+                self.OXRX.cforea = state_ix[cforea_ix]
+            #######################################################################################
+
             # -------------------------------------------------------
             # define inputs for current step:
             # -------------------------------------------------------
