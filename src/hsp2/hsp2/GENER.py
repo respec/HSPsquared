@@ -29,7 +29,10 @@ class Gener:
 
         self.opcode = ddgener["OPCODE"][segment]
         if self.opcode in [9, 10, 11, 24, 25, 26]:
-            self.k = ddgener["PARM"][segment]
+            if segment in ddgener["PARM"]:
+                self.k = ddgener["PARM"][segment]
+            else:
+                self.k = 1.0
 
         # special case for k as constant case 24
         if self.opcode == 24:

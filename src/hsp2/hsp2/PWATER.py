@@ -345,6 +345,8 @@ def _pwater_(ui, ts):
 
             if dayfg or oldmsupy == 0.0:
                 dummy = NSUR[step] * lsur
+                if dummy == 0.0:
+                    dummy = 0.001
                 dec = 0.00982 * (dummy / sqrt(slsur)) ** 0.6
                 src = 1020.0 * (sqrt(slsur) / dummy)
 
