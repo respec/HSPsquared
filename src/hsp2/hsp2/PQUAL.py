@@ -214,6 +214,8 @@ def _pqual_(ui, ts):
         else:
             sqo = 0.0
         wsqop = ui["WSQOP" + str(index)]
+        if wsqop == 0.0:
+            wsqop = 0.01
         wsfac = 2.30 / wsqop
 
         pqadfgf = ui["pqadfgf" + str(index)]

@@ -170,6 +170,9 @@ def state_init_hsp2(state, opseq, activities):
                 elif activity == "SEDMNT":
                     state_context_hsp2(state, operation, segment, activity)
                     sedmnt_init_ix(state, state["domain"])
+                elif activity == "RQUAL":
+                    state_context_hsp2(state, operation, segment, activity)
+                    rqual_init_ix(state, state["domain"])
 
 
 def state_load_hdf5_components(
@@ -293,6 +296,21 @@ def sedmnt_init_ix(state, domain):
     return sedmnt_ix
 
 
+def rqual_state_vars():
+    rqual_state = ["DOX","BOD","NO3","TAM","NO2","PO4","BRTAM1","BRTAM2","BRPO41","BRPO42","CFOREA"]
+    return rqual_state
+
+
+def rqual_init_ix(state, domain):
+    # get a list of keys for all rqual state variables
+    rqual_state = rqual_state_vars()
+    rqual_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
+    for i in rqual_state:
+        var_path = domain + "/" + i
+        rqual_ix[i] = set_state(state["state_ix"], state["state_paths"], var_path, 0.0)
+    return rqual_ix
+
+
 @njit
 def hydr_get_ix(state_ix, state_paths, domain):
     # get a list of keys for all hydr state variables
@@ -342,6 +360,17 @@ def sedmnt_get_ix(state_ix, state_paths, domain):
         var_path = domain + "/" + i
         sedmnt_ix[i] = state_paths[var_path]
     return sedmnt_ix
+
+
+@njit
+def rqual_get_ix(state_ix, state_paths, domain):
+    # get a list of keys for all sedmnt state variables
+    rqual_state = ["DOX","BOD","NO3","TAM","NO2","PO4","BRTAM1","BRTAM2","BRPO41","BRPO42","CFOREA"]
+    rqual_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
+    for i in rqual_state:
+        var_path = domain + "/" + i
+        rqual_ix[i] = state_paths[var_path]
+    return rqual_ix
 
 
 # function to dynamically load module, based on "Using imp module" in https://www.tutorialspoint.com/How-I-can-dynamically-import-Python-module#

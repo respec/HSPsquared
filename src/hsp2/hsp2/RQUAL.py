@@ -8,10 +8,15 @@ import logging
 import numpy as np
 from numba import njit, types
 from numba.typed import Dict
-from numpy import array, float64, full, where, zeros
+from numpy import array, float64, full, where, zeros, asarray
 
 from hsp2.hsp2.RQUAL_Class import RQUAL_Class
 from hsp2.hsp2.utilities import initm, initmd, make_numba_dict
+
+# the following imports added to handle special actions
+from hsp2.hsp2.state import rqual_get_ix, rqual_init_ix, rqual_state_vars
+from hsp2.hsp2.om import pre_step_model, step_model, model_domain_dependencies
+from numba.typed import Dict
 
 ERRMSGS_oxrx = (
     "OXRX: Warning -- SATDO is less than zero. This usually occurs when water temperature is very high (above ~66 deg. C). This usually indicates an error in input GATMP (or TW, if HTRCH is not being simulated).",
@@ -35,7 +40,8 @@ ERRMSGS_phcarb = (
 
 
 def rqual(
-    io_manager, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts, monthdata
+    io_manager, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts,
+        monthdata, state
 ):
     """Simulate constituents involved in biochemical transformations"""
 
@@ -237,12 +243,51 @@ def rqual(
         if balfg == 2 and binvfg == 3:
             ts["BINV"] = initm(siminfo, ui_plank, binvfg, "MONTHLY/BINV", binv_init)
 
+    #######################################################################################
+    # the following section (1 of 3) added to RQUAL by pbd to handle special actions
+    #######################################################################################
+    # state_info is some generic things about the simulation
+    # must be numba safe, so we don't just pass the whole state which is not
+    state_info = Dict.empty(key_type=types.unicode_type, value_type=types.unicode_type)
+    state_info["operation"], state_info["segment"], state_info["activity"] = (
+        state["operation"],
+        state["segment"],
+        state["activity"],
+    )
+    state_info["domain"], state_info["state_step_hydr"], state_info["state_step_om"] = (
+        state["domain"],
+        state["state_step_hydr"],
+        state["state_step_om"],
+    )
+    # must split dicts out of state Dict since numba cannot handle mixed-type nested Dicts
+    # initialize the rqual paths in case they don't already reside here
+    rqual_init_ix(state, state["domain"])
+    state_ix, dict_ix, ts_ix = state["state_ix"], state["dict_ix"], state["ts_ix"]
+    state_paths = state["state_paths"]
+    op_tokens = state["op_tokens"]
+    # Aggregate the list of all RQUAL end point dependencies
+    ep_list = (
+        rqual_state_vars()
+    )  # define all eligibile for state integration in state.py
+    model_exec_list = model_domain_dependencies(
+        state, state_info["domain"], ep_list, True
+    )
+    model_exec_list = asarray(model_exec_list, dtype="i8")
+    #######################################################################################
+
     # ---------------------------------------------------------------------
     # initialize & run integerated WQ simulation:
     # ---------------------------------------------------------------------
 
     (err_oxrx, err_nutrx, err_plank, err_phcarb) = _rqual_run(
-        siminfo_, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts
+        siminfo_, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts,
+        state_info,
+        state_paths,
+        state_ix,
+        dict_ix,
+        ts_ix,
+        op_tokens,
+        model_exec_list,
     )
 
     # ---------------------------------------------------------------------
@@ -300,16 +345,32 @@ def rqual(
 
 
 @njit(cache=True)
-def _rqual_run(siminfo_, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts):
+def _rqual_run(siminfo_, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts,
+        state_info,
+        state_paths,
+        state_ix,
+        dict_ix,
+        ts_ix,
+        op_tokens,
+        model_exec_list):
     nutrx_errors = zeros((0), dtype=np.int64)
     plank_errors = zeros((0), dtype=np.int64)
     phcarb_errors = zeros((0), dtype=np.int64)
 
     # initialize WQ simulation:
-    RQUAL = RQUAL_Class(siminfo_, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts)
+    RQUAL = RQUAL_Class(siminfo_, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts
+                        )
 
     # run WQ simulation:
-    RQUAL.simulate(ts)
+    RQUAL.simulate(ts,
+                   state_info,
+                   state_paths,
+                   state_ix,
+                   dict_ix,
+                   ts_ix,
+                   op_tokens,
+                   model_exec_list
+                   )
 
     # return error data:
     oxrx_errors = RQUAL.OXRX.errors

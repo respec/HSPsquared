@@ -256,7 +256,22 @@ def transform(ts, name, how, siminfo):
     elif how == "LAST":
         ts = ts.resample(freq).ffill()
     elif how == "DIV":
-        ts = (ts * (freq / ts.index.freq)).resample(freq).ffill()
+        if "Y" in str(tsfreq) or "M" in str(tsfreq):
+            mult = 1
+            firstchar = str(tsfreq)[1:str(tsfreq).index(" ")]
+            try:
+                mult = int(firstchar)  # like '<3 * MonthBegins>'
+            except ValueError:
+                pass
+            if "M" in str(tsfreq):
+                ratio = 1.0 / (730.5*mult)   # avg hrs in month
+            elif "Y" in str(tsfreq):
+                ratio = 1.0 / (8766.0*mult)
+            else:
+                ratio = freq / tsfreq
+            ts = (ratio * ts).resample(freq).ffill()  # HSP2 how = div
+        else:
+            ts = (ts * (freq / ts.index.freq)).resample(freq).ffill()
     elif how == "ZEROFILL":
         ts = ts.resample(freq).fillna(0.0)
     elif how == "INTERPOLATE":
