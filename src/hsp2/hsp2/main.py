@@ -97,15 +97,15 @@ def main(
     #######################################################################################
     # Set up Things in state that will be used in all modular activities like SPECL
     state = init_state_dicts()
-    state_siminfo_hsp2(uci_obj, siminfo, io_manager, state)
-    # Add support for dynamic functions to operate on STATE
     if not isinstance(io_manager, dict):
-        # - Load any dynamic components if present, and store variables on objects
-        state_load_dynamics_hsp2(state, io_manager, siminfo)
+        io_manager_path = io_manager._input.file_path
     else:
-        state['state_step_hydr'] = 'disabled'
-        state['hsp2_local_py'] = False
-        state["state_step_om"] = "disabled"
+        io_manager_path = io_manager["/UCI/NAME"]
+    state_siminfo_hsp2(uci_obj, siminfo, io_manager_path, state)
+    # Add support for dynamic functions to operate on STATE
+    # - Load any dynamic components if present, and store variables on objects
+    state_load_dynamics_hsp2(state, io_manager_path, siminfo)
+
     # Iterate through all segments and add crucial paths to state
     # before loading dynamic components that may reference them
     state_init_hsp2(state, opseq, activities)

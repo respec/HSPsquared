@@ -139,7 +139,7 @@ def state_context_hsp2(state, operation, segment, activity):
     state["domain"] = seg_path  # + "/" + activity   # may want to comment out activity?
 
 
-def state_siminfo_hsp2(uci_obj, siminfo, io_manager, state):
+def state_siminfo_hsp2(uci_obj, siminfo, io_manager_path, state):
     # Add crucial simulation info for dynamic operation support
     delt = uci_obj.opseq.INDELT_minutes[0]  # get initial value for STATE objects
     siminfo["delt"] = delt
@@ -147,12 +147,8 @@ def state_siminfo_hsp2(uci_obj, siminfo, io_manager, state):
         siminfo["start"], siminfo["stop"], freq=Minute(delt)
     )[1:]
     siminfo["steps"] = len(siminfo["tindex"])
-    if not isinstance(io_manager, dict):
-        hdf5_path = io_manager._input.file_path
-        (fbase, fext) = os.path.splitext(hdf5_path)
-        state["model_root_name"] = os.path.split(fbase)[1]  # takes the text before .h5
-    else:
-        state["model_root_name"] = ""  # pbd temp fix for in mem version
+    (fbase, fext) = os.path.splitext(io_manager_path)
+    state["model_root_name"] = os.path.split(fbase)[1]  # takes the text before .h5
 
 
 def state_init_hsp2(state, opseq, activities):
@@ -189,9 +185,9 @@ def state_load_hdf5_components(
     return
 
 
-def state_load_dynamics_hsp2(state, io_manager, siminfo):
+def state_load_dynamics_hsp2(state, io_manager_path, siminfo):
     # Load any dynamic components if present, and store variables on objects
-    hsp2_local_py = load_dynamics(io_manager, siminfo)
+    hsp2_local_py = load_dynamics(io_manager_path, siminfo)
     # if a local file with state_step_hydr() was found in load_dynamics(), we add it to state
     state["state_step_hydr"] = siminfo["state_step_hydr"]  # enabled or disabled
     state["hsp2_local_py"] = hsp2_local_py  # Stores the actual function in state
@@ -400,11 +396,10 @@ def dynamic_module_import(local_name, local_path, module_name):
     return module
 
 
-def load_dynamics(io_manager, siminfo):
+def load_dynamics(io_manager_path, siminfo):
     local_path = os.getcwd()
     # try this
-    hdf5_path = io_manager._input.file_path
-    (fbase, fext) = os.path.splitext(hdf5_path)
+    (fbase, fext) = os.path.splitext(io_manager_path)
     # see if there is a code module with custom python
     # print("Looking for SPECL with custom python code ", (fbase + ".py"))
     hsp2_local_py = dynamic_module_import(fbase, fbase + ".py", "hsp2_local_py")

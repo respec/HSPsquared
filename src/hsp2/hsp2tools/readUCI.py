@@ -255,6 +255,7 @@ def readUCI(uciname, hdfname, overwrite=True):
         store = pd.HDFStore(hdfname, mode='a')
     else:
         store = {}
+        store["/UCI/NAME"] = os.path.abspath(uciname)
 
     info = (store, parse, path, defaults, cat, rename, extendlen)
 
