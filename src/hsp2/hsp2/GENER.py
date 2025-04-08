@@ -34,6 +34,21 @@ class Gener:
             else:
                 self.k = 1.0
 
+        # special case for power series case 8
+        if self.opcode == 8:
+            # need tables NTERMS and COEFFS
+            if segment in ddgener["NTERMS"]:
+                self.nterms = ddgener["NTERMS"][segment]
+            else:
+                self.nterms = 2
+            self.k1 = ddgener["K1"][segment]
+            self.k2 = ddgener["K2"][segment]
+            self.k3 = ddgener["K3"][segment]
+            self.k4 = ddgener["K4"][segment]
+            self.k5 = ddgener["K5"][segment]
+            self.k6 = ddgener["K6"][segment]
+            self.k7 = ddgener["K7"][segment]
+
         # special case for k as constant case 24
         if self.opcode == 24:
             start, stop, steps = siminfo["start"], siminfo["stop"], siminfo["steps"]
@@ -136,9 +151,11 @@ class Gener:
         return np.log10(self.ts_input_1)
 
     def _opcode8(self) -> pd.Series:
-        # Not presently implemented, read UCI would need to modify to
-        # process NTERMS and COEFFS sub blocks of GENER block
-        raise NotImplementedError("GENER OPCODE 8 is not currently supported")
+        # K(1) + K(2) * A + K(3) * A ** 2
+        # The user supplies the number of terms and the values of coefficients (K)
+        return ((self.k1 + (self.k2 * self.ts_input_1) + (self.k3 * (self.ts_input_1 ** 2))
+                + (self.k4 * (self.ts_input_1 ** 3))) + (self.k5 * (self.ts_input_1 ** 4))
+                + (self.k6 * (self.ts_input_1 ** 7)) + (self.k7 * (self.ts_input_1 ** 8)))
 
     def _opcode9(self) -> pd.Series:
         return np.power(self.k, self.ts_input_1)

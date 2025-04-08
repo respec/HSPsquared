@@ -68,7 +68,11 @@ class HDF5:
                     else:
                         start, stop = row.OPNID.split()
                     for i in range(int(start), int(stop) + 1):
-                        uci.ddgener[module][f"G{i:03d}"] = row[2]
+                        if module != "COEFFS":
+                            uci.ddgener[module][f"G{i:03d}"] = row[2]
+                        else:
+                            for it in range(1, 8):
+                                uci.ddgener[f"K{it:01d}"][f"G{i:03d}"] = row[it+1]
             elif op == "FTABLES":
                 uci.ftables[module] = self._store[path]
             elif op == "SPEC_ACTIONS":
