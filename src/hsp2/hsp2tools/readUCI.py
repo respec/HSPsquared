@@ -669,7 +669,7 @@ def specactions(info, llines):
         elif line[0:2] == "IF":
             sa_if.append(line)
             curlvl = len(sa_if)
-        elif line[0:2] == "ELSE":
+        elif line[0:4] == "ELSE":
             sa_if.append(line)
             # should an ELSE change the level? Don't think so
             # either way this is just a holding spot for now
