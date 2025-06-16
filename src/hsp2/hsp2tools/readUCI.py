@@ -670,6 +670,9 @@ def specactions(info, llines):
             sa_if.append(line)
             curlvl = len(sa_if)
         elif line[0:4] == "ELSE":
+            print("Found ELSE with 0:4 chars")
+        elif line[0:5] == "ELSE":
+            print("Found ELSE with 0:5 chars")
             sa_if.append(line)
             # should an ELSE change the level? Don't think so
             # either way this is just a holding spot for now
