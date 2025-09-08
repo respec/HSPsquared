@@ -140,7 +140,7 @@ class IOManager:
 		except KeyError:
 			return None
 
-class IOManagerPandas(IOManager):
+class IOManagerDF(IOManager):
 	def __init__(self,
 			io_combined: Union[SupportsReadUCI, SupportsReadTS, SupportsWriteTS, None] = None,
 			uci: Union[SupportsReadUCI,None]=None,
@@ -174,7 +174,7 @@ class IOManagerPandas(IOManager):
 			segment:Union[str,None]=None,
 			activity:Union[str,None]=None) -> Union[pd.DataFrame, None]:
 		key = (category, operation, segment, activity)
-		path = f'/RESULTS/{x.SVOL}_{x.SVOLNO}/{sgrpn}'
+		path = f'/RESULTS/{operation}_{segment}/{activity}'
 		# TODO: this ehavior is different than the base class - get with Paul Duda to see if it needs to be
 		try:
 			data_frame = io_manager[path]

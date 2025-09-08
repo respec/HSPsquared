@@ -47,7 +47,7 @@ from hsp2.hsp2.utilities import (
     versions,
 )
 from hsp2.hsp2io.hdf import HDF5
-from hsp2.hsp2io.io import Category, IOManager, SupportsReadTS
+from hsp2.hsp2io.io import Category, IOManager, IOManagerPandas, SupportsReadTS
 
 # special in-memory version of these
 from .HSP2utilitiesInMem import get_timeseries_InMem, save_timeseries_InMem
@@ -78,6 +78,7 @@ def main(
         io_manager = IOManager(hdf5_instance)
     elif isinstance(io_manager, dict):
         hdfname = ''
+        io_manager = IOManagerPandas(io_manager)
     else:
         hdfname = io_manager._input.file_path
         if not os.path.exists(hdfname):
@@ -87,10 +88,7 @@ def main(
     msg(1, f"Processing started for file {hdfname}; saveall={saveall}")
 
     # read user control, parameters, states, and flags uci and map to local variables
-    if isinstance(io_manager, dict):
-        uci_obj = convert_uci_InMem(io_manager)
-    else:
-        uci_obj = io_manager.read_uci()
+    uci_obj = io_manager.read_uci()
     opseq = uci_obj.opseq
     ddlinks = uci_obj.ddlinks
     ddmasslinks = uci_obj.ddmasslinks
