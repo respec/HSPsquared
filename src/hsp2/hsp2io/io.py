@@ -2,6 +2,7 @@ import pandas as pd
 from pandas.core.frame import DataFrame
 from hsp2.hsp2io.protocols import Category, SupportsReadUCI, SupportsReadTS, SupportsWriteTS, SupportsWriteLogging
 from typing import Union, List
+from HSP2utilitiesInMem import convert_uci_InMem
 
 from hsp2.hsp2.uci import UCI
 
@@ -103,6 +104,16 @@ class IOManager:
 		data_frame = self._get_in_memory(category, operation, segment, activity)
 		if data_frame is not None:
 			return data_frame
+		data_frame = self.read_input(category, operation, segment, activity)
+		return data_frame
+
+    # do the actual reading from the data store. This can be subclassed to support any manner of storage csv, wdm, etc
+	def read_input(self,
+			category:Category,
+			operation:Union[str,None]=None,
+			segment:Union[str,None]=None,
+			activity:Union[str,None]=None,
+			*args, **kwargs) -> pd.DataFrame:
 		if category == Category.INPUTS:
 			data_frame = self._input.read_ts(category, operation, segment, activity)
 			key = (category, operation, segment, activity)
@@ -111,7 +122,7 @@ class IOManager:
 		if category == Category.RESULTS:
 			return self._output.read_ts(category, operation, segment, activity)
 		return pd.DataFrame
-
+		
 	def write_log(self, data_frame)-> None:
 		if self._log: self._log.write_log(data_frame)
 
@@ -128,3 +139,45 @@ class IOManager:
 			return self._in_memory[key].copy(deep=True)
 		except KeyError:
 			return None
+
+class IOManagerPandas(IOManager):
+	def __init__(self,
+			io_combined: Union[SupportsReadUCI, SupportsReadTS, SupportsWriteTS, None] = None,
+			uci: Union[SupportsReadUCI,None]=None,
+			input: Union[SupportsReadTS,None]=None,
+			output: Union[SupportsReadTS,SupportsWriteTS,None]=None,
+			log: Union[SupportsWriteLogging,None]=None,) -> None:
+		self._input = io_combined if input is None else input
+		self._output = io_combined if output is None else output
+		self._uci = io_combined if uci is None else uci
+		self._log = io_combined if log is None else log
+		self.uci_df = io_combined
+		# Essentially, we should be able to set the pandas df here and then we can fully support reads
+		self._in_memory = io_combined
+    
+	def read_uci(self, *args, **kwargs):
+		uci = convert_uci_InMem(args)
+		return uci
+	
+	def read_ts(self,
+			category:Category,
+			operation:Union[str,None]=None,
+			segment:Union[str,None]=None,
+			activity:Union[str,None]=None,
+			*args, **kwargs) -> pd.DataFrame:
+		data_frame = self._get_in_memory(category, operation, segment, activity)
+		return data_frame
+	
+	def _get_in_memory(self,
+			category:Category,
+			operation:Union[str,None]=None,
+			segment:Union[str,None]=None,
+			activity:Union[str,None]=None) -> Union[pd.DataFrame, None]:
+		key = (category, operation, segment, activity)
+		path = f'/RESULTS/{x.SVOL}_{x.SVOLNO}/{sgrpn}'
+		# TODO: this ehavior is different than the base class - get with Paul Duda to see if it needs to be
+		try:
+			data_frame = io_manager[path]
+		except KeyError:
+			data_frame = pd.DataFrame()
+		return data_frame
