@@ -174,7 +174,9 @@ class IOManagerDF(IOManager):
 			segment:Union[str,None]=None,
 			activity:Union[str,None]=None) -> Union[pd.DataFrame, None]:
 		key = (category, operation, segment, activity)
-		path = f'/RESULTS/{operation}_{segment}/{activity}'
+		try:
+			return self._in_memory[key].copy(deep=True)
+		# called by get_timeseries() as timeseries_inputs.read_ts(category=Category.INPUTS,segment=row.SVOLNO)
 		# TODO: this ehavior is different than the base class - get with Paul Duda to see if it needs to be
 		try:
 			data_frame = io_manager[path]
