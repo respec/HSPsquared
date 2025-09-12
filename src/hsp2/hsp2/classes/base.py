@@ -13,8 +13,10 @@ def model_make_spec(prop_names, prop_type):
 
 # this is temporatry, these will be merged with state soon
 # state vars - two options to see which is fastest
+# and ts will be gained from the hsp2 libs
 state_ix = Dict.empty(key_type=types.int64, value_type=types.float64)
 state_paths = Dict.empty(key_type=types.unicode_type, value_type=types.float64)
+ts = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
 
 state_paths_ty = ('state_paths', typeof(state_paths))
 state_ix_ty = ('state_ix', typeof(state_ix))
