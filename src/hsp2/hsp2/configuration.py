@@ -85,16 +85,16 @@ activities = {
 }
 
 
-def expand_masslinks(flags, uci, dat, recs):
-    recs = expand_HYDR_masslinks(flags, uci, dat, recs)
-    recs = expand_HTRCH_masslinks(flags, uci, dat, recs)
-    recs = expand_CONS_masslinks(flags, uci, dat, recs)
-    recs = expand_SEDTRN_masslinks(flags, uci, dat, recs)
-    recs = expand_GQUAL_masslinks(flags, uci, dat, recs)
-    recs = expand_OXRX_masslinks(flags, uci, dat, recs)
-    recs = expand_NUTRX_masslinks(flags, uci, dat, recs)
-    recs = expand_PLANK_masslinks(flags, uci, dat, recs)
-    recs = expand_PHCARB_masslinks(flags, uci, dat, recs)
+def expand_masslinks(flags, parameters, dat, recs):
+    recs = expand_HYDR_masslinks(flags, parameters, dat, recs)
+    recs = expand_HTRCH_masslinks(flags, parameters, dat, recs)
+    recs = expand_CONS_masslinks(flags, parameters, dat, recs)
+    recs = expand_SEDTRN_masslinks(flags, parameters, dat, recs)
+    recs = expand_GQUAL_masslinks(flags, parameters, dat, recs)
+    recs = expand_OXRX_masslinks(flags, parameters, dat, recs)
+    recs = expand_NUTRX_masslinks(flags, parameters, dat, recs)
+    recs = expand_PLANK_masslinks(flags, parameters, dat, recs)
+    recs = expand_PHCARB_masslinks(flags, parameters, dat, recs)
 
     return recs
 

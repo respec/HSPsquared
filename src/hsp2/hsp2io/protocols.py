@@ -1,11 +1,10 @@
-from collections import defaultdict
 from enum import Enum
-from typing import Any, Dict, List, Protocol, Union, runtime_checkable
+from typing import Dict, Protocol, Union, runtime_checkable
 
 import numpy as np
 import pandas as pd
 
-from hsp2.hsp2.uci import UCI
+from hsp2.hsp2.model import Model
 
 TimeSeriesDict = Dict[str, np.float64]
 
@@ -16,8 +15,8 @@ class Category(Enum):
 
 
 @runtime_checkable
-class SupportsReadUCI(Protocol):
-    def read_uci(self) -> UCI: ...
+class SupportsReadParameters(Protocol):
+    def read_parameters(self) -> Model: ...
 
 
 @runtime_checkable

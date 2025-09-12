@@ -27,7 +27,7 @@ ERRMSGS = (
 )  # ERRMSG11
 
 
-def gqual(io_manager, siminfo, uci, ts):
+def gqual(io_manager, siminfo, parameters, ts):
     """Simulate the behavior of a generalized quality constituent"""
 
     errors = zeros(len(ERRMSGS)).astype(int64)
@@ -42,7 +42,7 @@ def gqual(io_manager, siminfo, uci, ts):
         # si units conversion
         AFACT = 1000000.0
 
-    advectData = uci["advectData"]
+    advectData = parameters["advectData"]
     (nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = advectData
     svol = vol * AFACT
 
@@ -53,7 +53,7 @@ def gqual(io_manager, siminfo, uci, ts):
         ts["SOVOL" + str(i + 1)] = SOVOL[:, i]
         ts["EOVOL" + str(i + 1)] = EOVOL[:, i]
 
-    ui = make_numba_dict(uci)
+    ui = make_numba_dict(parameters)
     ui["simlen"] = siminfo["steps"]
     ui["uunits"] = siminfo["units"]
     ui["svol"] = svol
@@ -71,7 +71,7 @@ def gqual(io_manager, siminfo, uci, ts):
     sdfg = 2
     phytfg = 2
 
-    # ui = uci['PARAMETERS']
+    # ui = parameters['PARAMETERS']
     if "NGQUAL" in ui:
         ngqual = int(ui["NGQUAL"])
         tempfg = ui["TEMPFG"]
@@ -90,21 +90,29 @@ def gqual(io_manager, siminfo, uci, ts):
         ui = ui_base
         ui["index"] = index
         # update UI values for this constituent here!
-        ui_parms = uci["GQUAL" + str(index)]
+        ui_parms = parameters["GQUAL" + str(index)]
 
         if "GQADFG" + str((index * 2) - 1) in ui_parms:
             # get atmos dep timeseries
             gqadfgf = ui_parms["GQADFG" + str((index * 2) - 1)]
             if gqadfgf > 0:
                 ts["GQADFX"] = initm(
-                    siminfo, uci, gqadfgf, "GQUAL" + str(index) + "_MONTHLY/GQADFX", 0.0
+                    siminfo,
+                    parameters,
+                    gqadfgf,
+                    "GQUAL" + str(index) + "_MONTHLY/GQADFX",
+                    0.0,
                 )
             elif gqadfgf == -1:
                 ts["GQADFX"] = ts["GQADFX" + str(index) + " 1"]
             gqadfgc = ui_parms["GQADFG" + str(index * 2)]
             if gqadfgc > 0:
                 ts["GQADCN"] = initm(
-                    siminfo, uci, gqadfgc, "GQUAL" + str(index) + "_MONTHLY/GQADCN", 0.0
+                    siminfo,
+                    parameters,
+                    gqadfgc,
+                    "GQUAL" + str(index) + "_MONTHLY/GQADCN",
+                    0.0,
                 )
             elif gqadfgc == -1:
                 ts["GQADCN"] = ts["GQADCN" + str(index) + " 1"]
@@ -141,7 +149,7 @@ def gqual(io_manager, siminfo, uci, ts):
                 # BIOM = # from ts, monthly, constant
                 ts["BIO"] = initm(
                     siminfo,
-                    uci,
+                    parameters,
                     ui_parms["GQPM27"],
                     "GQUAL" + str(index) + "_MONTHLY/BIO",
                     ui_parms["BIO"],
@@ -176,27 +184,47 @@ def gqual(io_manager, siminfo, uci, ts):
         # for the following, if the flag value is 1 the timeseries should already be available as input
         if tempfg == 2 or tempfg == 3:
             ts["TW_GQ"] = initm(
-                siminfo, uci, tempfg, "GQUAL" + str(index) + "_MONTHLY/WATEMP", twat
+                siminfo,
+                parameters,
+                tempfg,
+                "GQUAL" + str(index) + "_MONTHLY/WATEMP",
+                twat,
             )
         if phflag == 2 or phflag == 3:
             ts["PHVAL_GQ"] = initm(
-                siminfo, uci, phflag, "GQUAL" + str(index) + "_MONTHLY/PHVAL", phval
+                siminfo,
+                parameters,
+                phflag,
+                "GQUAL" + str(index) + "_MONTHLY/PHVAL",
+                phval,
             )
         if roxfg == 2 or roxfg == 3:
             ts["ROC_GQ"] = initm(
-                siminfo, uci, roxfg, "GQUAL" + str(index) + "_MONTHLY/ROXYGEN", roc
+                siminfo,
+                parameters,
+                roxfg,
+                "GQUAL" + str(index) + "_MONTHLY/ROXYGEN",
+                roc,
             )
         if cldfg == 2 or cldfg == 3:
             ts["CLOUD_GQ"] = initm(
-                siminfo, uci, cldfg, "GQUAL" + str(index) + "_MONTHLY/CLOUD", cld
+                siminfo, parameters, cldfg, "GQUAL" + str(index) + "_MONTHLY/CLOUD", cld
             )
         if sdfg == 2 or sdfg == 3:
             ts["SDCNC_GQ"] = initm(
-                siminfo, uci, sdfg, "GQUAL" + str(index) + "_MONTHLY/SEDCONC", sdcnc
+                siminfo,
+                parameters,
+                sdfg,
+                "GQUAL" + str(index) + "_MONTHLY/SEDCONC",
+                sdcnc,
             )
         if phytfg == 2 or phytfg == 3:
             ts["PHYTO_GQ"] = initm(
-                siminfo, uci, phytfg, "GQUAL" + str(index) + "_MONTHLY/PHYTO", phy
+                siminfo,
+                parameters,
+                phytfg,
+                "GQUAL" + str(index) + "_MONTHLY/PHYTO",
+                phy,
             )
         # if any of these flags are 1 and the timeseries does not exist, that's a problem -- trigger message
 
@@ -205,28 +233,28 @@ def gqual(io_manager, siminfo, uci, ts):
         qalfg3 = ui_parms["QALFG3"]
         if qalfg3 == 1:  # qual undergoes photolysis
             # PHOTPM(1,I) # table-type gq-photpm
-            if "EXTENDEDS_PHOTPM" in uci:
-                ttable = uci["EXTENDEDS_PHOTPM"]
+            if "EXTENDEDS_PHOTPM" in parameters:
+                ttable = parameters["EXTENDEDS_PHOTPM"]
                 for i in range(1, 21):
                     ui["photpm" + str(i)] = ttable["PHOTPM" + str(i - 1)]
             #  table-type gq-alpha
-            if "EXTENDEDS_ALPH" in uci:
-                ttable = uci["EXTENDEDS_ALPH"]
+            if "EXTENDEDS_ALPH" in parameters:
+                ttable = parameters["EXTENDEDS_ALPH"]
                 for i in range(1, 19):
                     ui["alph" + str(i)] = ttable["ALPH" + str(i - 1)]
             #  table-type gq-gamma
-            if "EXTENDEDS_GAMM" in uci:
-                ttable = uci["EXTENDEDS_GAMM"]
+            if "EXTENDEDS_GAMM" in parameters:
+                ttable = parameters["EXTENDEDS_GAMM"]
                 for i in range(1, 19):
                     ui["gamm" + str(i)] = ttable["GAMM" + str(i - 1)]
             #  table-type gq-delta
-            if "EXTENDEDS_DEL" in uci:
-                ttable = uci["EXTENDEDS_DEL"]
+            if "EXTENDEDS_DEL" in parameters:
+                ttable = parameters["EXTENDEDS_DEL"]
                 for i in range(1, 19):
                     ui["delta" + str(i)] = ttable["DEL" + str(i - 1)]
             #  table-type gq-cldfact
-            if "EXTENDEDS_KCLD" in uci:
-                ttable = uci["EXTENDEDS_KCLD"]
+            if "EXTENDEDS_KCLD" in parameters:
+                ttable = parameters["EXTENDEDS_KCLD"]
                 for i in range(1, 19):
                     ui["kcld" + str(i)] = ttable["KCLD" + str(i - 1)]
 
@@ -241,7 +269,7 @@ def gqual(io_manager, siminfo, uci, ts):
         ############################################################################
 
         if nexits > 1:
-            u = uci["SAVE"]
+            u = parameters["SAVE"]
             name = "GQUAL" + str(index)  # arbitrary identification
             key1 = name + "_ODQAL"
             for i in range(nexits):
@@ -789,9 +817,15 @@ def _gqual_(ui, ts):
         for timeindex in range(simlen):
             if nexits > 1:
                 for xindex in range(nexits):
-                    OSED1[timeindex, xindex] = ts["OSED" + str(xindex + 1) + "1"][timeindex]
-                    OSED2[timeindex, xindex] = ts["OSED" + str(xindex + 1) + "2"][timeindex]
-                    OSED3[timeindex, xindex] = ts["OSED" + str(xindex + 1) + "3"][timeindex]
+                    OSED1[timeindex, xindex] = ts["OSED" + str(xindex + 1) + "1"][
+                        timeindex
+                    ]
+                    OSED2[timeindex, xindex] = ts["OSED" + str(xindex + 1) + "2"][
+                        timeindex
+                    ]
+                    OSED3[timeindex, xindex] = ts["OSED" + str(xindex + 1) + "3"][
+                        timeindex
+                    ]
             else:
                 OSED1[timeindex, 0] = ts["ROSED1"][timeindex]
                 OSED2[timeindex, 0] = ts["ROSED2"][timeindex]
@@ -930,11 +964,11 @@ def _gqual_(ui, ts):
         isqal2 = ISQAL2[loop]
         isqal3 = ISQAL3[loop]
 
-        if uunits == 2:  # uci is in metric units
+        if uunits == 2:  # parameters are in metric units
             avdepm = AVDEP[loop]
             avdepe = AVDEP[loop] * 3.28
             avvele = AVVEL[loop] * 3.28
-        else:  # uci is in english units
+        else:  # parameters is are english units
             avdepm = AVDEP[loop] * 0.3048
             avdepe = AVDEP[loop]
             avvele = AVVEL[loop]
@@ -2074,11 +2108,11 @@ def light_factor(l, lset, light):
     return vals[l - 1]
 
 
-def expand_GQUAL_masslinks(flags, uci, dat, recs):
+def expand_GQUAL_masslinks(flags, parameters, dat, recs):
     if flags["GQUAL"]:
         ngqual = 1
-        if "PARAMETERS" in uci:
-            ui = uci["PARAMETERS"]
+        if "PARAMETERS" in parameters:
+            ui = parameters["PARAMETERS"]
             if "NGQUAL" in ui:
                 ngqual = ui["NGQUAL"]
         for i in range(1, ngqual + 1):

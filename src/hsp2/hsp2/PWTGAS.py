@@ -5,7 +5,7 @@ License: LGPL2
 Conversion of HSPF HPERGAS.FOR module into Python"""
 
 from numba import njit
-from numpy import float64, full, int64, where, zeros
+from numpy import float64, full, int64, zeros
 
 from hsp2.hsp2.utilities import hourflag, initm, make_numba_dict
 
@@ -25,31 +25,39 @@ MFACTA = 0.2266
 MFACTB = 0.0
 
 
-def pwtgas(io_manager, siminfo, uci, ts):
+def pwtgas(io_manager, siminfo, parameters, ts):
     """Estimate water temperature, dissolved oxygen, and carbon dioxide in the outflows
     from a pervious landsegment. calculate associated fluxes through exit gates"""
     simlen = siminfo["steps"]
 
-    ui = make_numba_dict(uci)
+    ui = make_numba_dict(parameters)
     ui["simlen"] = siminfo["steps"]
     ui["uunits"] = siminfo["units"]
     ui["errlen"] = len(ERRMSG)
 
-    u = uci["PARAMETERS"]
+    u = parameters["PARAMETERS"]
     if "IDVFG" in u:
-        ts["IDOXP"] = initm(siminfo, uci, u["IDVFG"], "MONTHLY_IDOXP", u["IDOXP"])
+        ts["IDOXP"] = initm(
+            siminfo, parameters, u["IDVFG"], "MONTHLY_IDOXP", u["IDOXP"]
+        )
     else:
         ts["IDOXP"] = full(simlen, u["IDOXP"])
     if "ICVFG" in u:
-        ts["ICO2P"] = initm(siminfo, uci, u["ICVFG"], "MONTHLY_ICO2P", u["ICO2P"])
+        ts["ICO2P"] = initm(
+            siminfo, parameters, u["ICVFG"], "MONTHLY_ICO2P", u["ICO2P"]
+        )
     else:
         ts["ICO2P"] = full(simlen, u["ICO2P"])
     if "GDVFG" in u:
-        ts["ADOXP"] = initm(siminfo, uci, u["GDVFG"], "MONTHLY_ADOXP", u["ADOXP"])
+        ts["ADOXP"] = initm(
+            siminfo, parameters, u["GDVFG"], "MONTHLY_ADOXP", u["ADOXP"]
+        )
     else:
         ts["ADOXP"] = full(simlen, u["ADOXP"])
     if "GCVFG" in u:
-        ts["ACO2P"] = initm(siminfo, uci, u["GCVFG"], "MONTHLY_ACO2P", u["ACO2P"])
+        ts["ACO2P"] = initm(
+            siminfo, parameters, u["GCVFG"], "MONTHLY_ACO2P", u["ACO2P"]
+        )
     else:
         ts["ACO2P"] = full(simlen, u["ACO2P"])
 

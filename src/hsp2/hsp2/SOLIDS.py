@@ -5,7 +5,7 @@ License: LGPL2
 Conversion of HSPF HIMPSLD.FOR module into Python"""
 
 from numba import njit
-from numpy import float64, full, int64, where, zeros
+from numpy import float64, full, int64, zeros
 
 from hsp2.hsp2.utilities import hourflag, initm, make_numba_dict
 
@@ -14,7 +14,7 @@ MFACTA = 1.0  # english units
 ERRMSG = []
 
 
-def solids(io_manager, siminfo, uci, ts):
+def solids(io_manager, siminfo, parameters, ts):
     """Accumulate and remove solids from the impervious land segment"""
 
     simlen = siminfo["steps"]
@@ -23,18 +23,24 @@ def solids(io_manager, siminfo, uci, ts):
         if name not in ts:
             ts[name] = zeros(simlen)
 
-    u = uci["PARAMETERS"]
+    u = parameters["PARAMETERS"]
     # process optional monthly arrays to return interpolated data or constant array
     if "VASDFG" in u:
-        ts["ACCSDP"] = initm(siminfo, uci, u["VASDFG"], "MONTHLY_ACCSDP", u["ACCSDP"])
+        ts["ACCSDP"] = initm(
+            siminfo, parameters, u["VASDFG"], "MONTHLY_ACCSDP", u["ACCSDP"]
+        )
     else:
         ts["ACCSDP"] = full(simlen, u["ACCSDP"])
     if "VRSDFG" in u:
-        ts["REMSDP"] = initm(siminfo, uci, u["VRSDFG"], "MONTHLY_REMSDP", u["REMSDP"])
+        ts["REMSDP"] = initm(
+            siminfo, parameters, u["VRSDFG"], "MONTHLY_REMSDP", u["REMSDP"]
+        )
     else:
         ts["REMSDP"] = full(simlen, u["REMSDP"])
 
-    ui = make_numba_dict(uci)  # Note: all values converted to float automatically
+    ui = make_numba_dict(
+        parameters
+    )  # Note: all values converted to float automatically
     ui["uunits"] = siminfo["units"]
     ui["simlen"] = siminfo["steps"]
     ui["delt60"] = siminfo["delt"] / 60  # delt60 - simulation time interval in hours

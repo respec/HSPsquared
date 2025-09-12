@@ -78,7 +78,7 @@ class Gener:
                     self.ts_input_1 = tsin["ONE"]
                 if "TWO" in tsin:
                     self.ts_input_2 = tsin["TWO"]
-                if not "ONE" in tsin and not "TWO" in tsin:
+                if "ONE" not in tsin and "TWO" not in tsin:
                     raise NotImplementedError(f"Invalid SVOL for '{link.SVOLNO}'")
 
             if link.SVOL == "COPY" or link.SVOL == "GENER":
@@ -153,9 +153,17 @@ class Gener:
     def _opcode8(self) -> pd.Series:
         # K(1) + K(2) * A + K(3) * A ** 2
         # The user supplies the number of terms and the values of coefficients (K)
-        return ((self.k1 + (self.k2 * self.ts_input_1) + (self.k3 * (self.ts_input_1 ** 2))
-                + (self.k4 * (self.ts_input_1 ** 3))) + (self.k5 * (self.ts_input_1 ** 4))
-                + (self.k6 * (self.ts_input_1 ** 7)) + (self.k7 * (self.ts_input_1 ** 8)))
+        return (
+            (
+                self.k1
+                + (self.k2 * self.ts_input_1)
+                + (self.k3 * (self.ts_input_1**2))
+                + (self.k4 * (self.ts_input_1**3))
+            )
+            + (self.k5 * (self.ts_input_1**4))
+            + (self.k6 * (self.ts_input_1**7))
+            + (self.k7 * (self.ts_input_1**8))
+        )
 
     def _opcode9(self) -> pd.Series:
         return np.power(self.k, self.ts_input_1)

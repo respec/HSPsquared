@@ -25,7 +25,7 @@ ERRMSGS = (
 )  # ERRMSG6
 
 
-def sedtrn(io_manager, siminfo, uci, ts, state):
+def sedtrn(io_manager, siminfo, parameters, ts, state):
     """Simulate behavior of inorganic sediment"""
 
     # simlen = siminfo['steps']
@@ -34,7 +34,7 @@ def sedtrn(io_manager, siminfo, uci, ts, state):
     delts = siminfo["delt"] * 60
     uunits = siminfo["units"]
 
-    advectData = uci["advectData"]
+    advectData = parameters["advectData"]
     (nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = advectData
 
     ts["VOL"] = VOL
@@ -44,7 +44,7 @@ def sedtrn(io_manager, siminfo, uci, ts, state):
         ts["SOVOL" + str(i + 1)] = SOVOL[:, i]
         ts["EOVOL" + str(i + 1)] = EOVOL[:, i]
 
-    ui = make_numba_dict(uci)
+    ui = make_numba_dict(parameters)
     ui["simlen"] = siminfo["steps"]
     ui["uunits"] = siminfo["units"]
     ui["vol"] = vol
@@ -52,7 +52,7 @@ def sedtrn(io_manager, siminfo, uci, ts, state):
     ui["delt60"] = siminfo["delt"] / 60
     ui["errlen"] = len(ERRMSGS)
 
-    ui_silt = uci["SILT"]
+    ui_silt = parameters["SILT"]
     if uunits == 1:
         ui["silt_d"] = ui_silt["D"] * 0.0833
         ui["silt_w"] = (
@@ -70,7 +70,7 @@ def sedtrn(io_manager, siminfo, uci, ts, state):
         ui_silt["M"] * delt60 / 24.0 * 4.880
     )  # convert erodibility coeff from /day to /ivl
 
-    ui_clay = uci["CLAY"]
+    ui_clay = parameters["CLAY"]
     if uunits == 1:
         ui["clay_d"] = ui_clay["D"] * 0.0833
         ui["clay_w"] = (
@@ -142,17 +142,17 @@ def sedtrn(io_manager, siminfo, uci, ts, state):
     ############################################################################
 
     if nexits > 1:
-        u = uci["SAVE"]
+        u = parameters["SAVE"]
         key1 = "OSED1"
         key2 = "OSED2"
         key3 = "OSED3"
         key4 = "OSED4"
         keyx = "OSED"
         for i in range(nexits):
-            u[f"{keyx}{i + 1}"+"1"] = u[key1]
-            u[f"{keyx}{i + 1}"+"2"] = u[key2]
-            u[f"{keyx}{i + 1}"+"3"] = u[key3]
-            u[f"{keyx}{i + 1}"+"4"] = u[key4]
+            u[f"{keyx}{i + 1}" + "1"] = u[key1]
+            u[f"{keyx}{i + 1}" + "2"] = u[key2]
+            u[f"{keyx}{i + 1}" + "3"] = u[key3]
+            u[f"{keyx}{i + 1}" + "4"] = u[key4]
         del u[key1]
         del u[key2]
         del u[key3]
@@ -438,7 +438,7 @@ def _sedtrn_(
         #######################################################################################
 
         # perform any necessary unit conversions
-        if uunits == 2:  # uci is in metric units
+        if uunits == 2:  # parameters is in metric units
             avvele = AVVEL[loop] * 3.28
             avdepm = AVDEP[loop]
             avdepe = AVDEP[loop] * 3.28
@@ -448,7 +448,7 @@ def _sedtrn_(
             ised1 = ISED1[loop] / 2.83e-08
             ised2 = ISED2[loop] / 2.83e-08
             ised3 = ISED3[loop] / 2.83e-08
-        else:  # uci is in english units
+        else:  # parameters is in english units
             avvele = AVVEL[loop]
             avdepm = AVDEP[loop] * 0.3048
             avdepe = AVDEP[loop]
@@ -1162,7 +1162,7 @@ def toffaleti(v, fdiam, fhrad, slope, tempr, vset):
     )  # Total transport capacity of the rchres (tons/day/ft)
 
 
-def expand_SEDTRN_masslinks(flags, uci, dat, recs):
+def expand_SEDTRN_masslinks(flags, parameters, dat, recs):
     if flags["SEDTRN"]:
         # ISED1
         rec = {}

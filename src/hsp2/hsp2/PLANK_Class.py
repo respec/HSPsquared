@@ -4,13 +4,12 @@ from math import exp, log
 import numba as nb
 import numpy as np
 from numba.experimental import jitclass
-from numpy import array, zeros
+from numpy import zeros
 
 from hsp2.hsp2.ADCALC import advect
 from hsp2.hsp2.NUTRX_Class import NUTRX_Class
 from hsp2.hsp2.OXRX_Class import OXRX_Class
 from hsp2.hsp2.RQUTIL import decbal, sink
-from hsp2.hsp2.utilities import initm, make_numba_dict
 
 if os.environ.get("NUMBA_DISABLE_JIT", 0):  # jit should be on by default.
     OXRX_Class_ = OXRX_Class

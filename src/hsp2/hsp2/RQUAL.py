@@ -3,20 +3,17 @@ Authors: Robert Heaphy, Ph.D. and Paul Duda
 License: LGPL2
 """
 
-import logging
-
 import numpy as np
 from numba import njit, types
 from numba.typed import Dict
-from numpy import array, float64, full, where, zeros, asarray
+from numpy import full, zeros, asarray
 
 from hsp2.hsp2.RQUAL_Class import RQUAL_Class
 from hsp2.hsp2.utilities import initm, initmd, make_numba_dict
 
 # the following imports added to handle special actions
-from hsp2.hsp2.state import rqual_get_ix, rqual_init_ix, rqual_state_vars
-from hsp2.hsp2.om import pre_step_model, step_model, model_domain_dependencies
-from numba.typed import Dict
+from hsp2.hsp2.state import rqual_init_ix, rqual_state_vars
+from hsp2.hsp2.om import model_domain_dependencies
 
 ERRMSGS_oxrx = (
     "OXRX: Warning -- SATDO is less than zero. This usually occurs when water temperature is very high (above ~66 deg. C). This usually indicates an error in input GATMP (or TW, if HTRCH is not being simulated).",
@@ -40,8 +37,16 @@ ERRMSGS_phcarb = (
 
 
 def rqual(
-    io_manager, siminfo, uci, uci_oxrx, uci_nutrx, uci_plank, uci_phcarb, ts,
-        monthdata, state
+    io_manager,
+    siminfo,
+    parameters,
+    parameters_oxrx,
+    parameters_nutrx,
+    parameters_plank,
+    parameters_phcarb,
+    ts,
+    monthdata,
+    state,
 ):
     """Simulate constituents involved in biochemical transformations"""
 
@@ -59,33 +64,33 @@ def rqual(
             siminfo_[key] = float(value)
 
     # module flags:
-    ui = make_numba_dict(uci)
+    ui = make_numba_dict(parameters)
 
     NUTFG = int(ui["NUTFG"])
     PLKFG = int(ui["PLKFG"])
     PHFG = int(ui["PHFG"])
 
     # create numba dictionaries (empty if not simulated):
-    ui_oxrx = make_numba_dict(uci_oxrx)
+    ui_oxrx = make_numba_dict(parameters_oxrx)
     ui_oxrx["errlen"] = len(ERRMSGS_oxrx)
 
     ui_nutrx = Dict.empty(key_type=types.unicode_type, value_type=types.float64)
     if NUTFG == 1:
-        ui_nutrx = make_numba_dict(uci_nutrx)
+        ui_nutrx = make_numba_dict(parameters_nutrx)
         ui_nutrx["errlen"] = len(ERRMSGS_nutrx)
 
     ui_plank = Dict.empty(key_type=types.unicode_type, value_type=types.float64)
     if PLKFG == 1:
-        ui_plank = make_numba_dict(uci_plank)
+        ui_plank = make_numba_dict(parameters_plank)
         ui_plank["errlen"] = len(ERRMSGS_plank)
 
     ui_phcarb = Dict.empty(key_type=types.unicode_type, value_type=types.float64)
     if PHFG == 1:
-        ui_phcarb = make_numba_dict(uci_phcarb)
+        ui_phcarb = make_numba_dict(parameters_phcarb)
         ui_phcarb["errlen"] = len(ERRMSGS_phcarb)
 
     # hydraulic results:
-    advectData = uci["advectData"]
+    advectData = parameters["advectData"]
     (nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = advectData
 
     ui["nexits"] = nexits
@@ -280,7 +285,13 @@ def rqual(
     # ---------------------------------------------------------------------
 
     (err_oxrx, err_nutrx, err_plank, err_phcarb) = _rqual_run(
-        siminfo_, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts,
+        siminfo_,
+        ui,
+        ui_oxrx,
+        ui_nutrx,
+        ui_plank,
+        ui_phcarb,
+        ts,
         state_info,
         state_paths,
         state_ix,
@@ -300,13 +311,13 @@ def rqual(
 
     # for multiple exits, modify save table as needed
     if nexits > 1:
-        u = uci_oxrx["SAVE"]
+        u = parameters_oxrx["SAVE"]
         for i in range(nexits):
             u[f"OXCF2_{i + 1}1"] = u["OXCF2_11"]
             u[f"OXCF2_{i + 1}2"] = u["OXCF2_12"]
 
         if NUTFG == 1:
-            u = uci_nutrx["SAVE"]
+            u = parameters_nutrx["SAVE"]
             for i in range(nexits):
                 u[f"NUCF9_{i + 1}1"] = u["NUCF9_11"]
                 u[f"NUCF9_{i + 1}2"] = u["NUCF9_12"]
@@ -322,7 +333,7 @@ def rqual(
                 u[f"OSPO4_{i + 1}4"] = u["OSPO4_14"]
 
         if PLKFG == 1:
-            u = uci_plank["SAVE"]
+            u = parameters_plank["SAVE"]
             for i in range(nexits):
                 u[f"PKCF2_{i + 1}1"] = u["PKCF2_11"]
                 u[f"PKCF2_{i + 1}2"] = u["PKCF2_12"]
@@ -336,7 +347,7 @@ def rqual(
                 u[f"TPKCF2_{i + 1}5"] = u["TPKCF2_15"]
 
         if PHFG == 1:
-            u = uci_phcarb["SAVE"]
+            u = parameters_phcarb["SAVE"]
             for i in range(nexits):
                 u[f"OTIC{i + 1}"] = u["OTIC1"]
                 u[f"OCO2{i + 1}"] = u["OCO21"]
@@ -345,32 +356,40 @@ def rqual(
 
 
 @njit(cache=True)
-def _rqual_run(siminfo_, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts,
+def _rqual_run(
+    siminfo_,
+    ui,
+    ui_oxrx,
+    ui_nutrx,
+    ui_plank,
+    ui_phcarb,
+    ts,
+    state_info,
+    state_paths,
+    state_ix,
+    dict_ix,
+    ts_ix,
+    op_tokens,
+    model_exec_list,
+):
+    nutrx_errors = zeros((0), dtype=np.int64)
+    plank_errors = zeros((0), dtype=np.int64)
+    phcarb_errors = zeros((0), dtype=np.int64)
+
+    # initialize WQ simulation:
+    RQUAL = RQUAL_Class(siminfo_, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts)
+
+    # run WQ simulation:
+    RQUAL.simulate(
+        ts,
         state_info,
         state_paths,
         state_ix,
         dict_ix,
         ts_ix,
         op_tokens,
-        model_exec_list):
-    nutrx_errors = zeros((0), dtype=np.int64)
-    plank_errors = zeros((0), dtype=np.int64)
-    phcarb_errors = zeros((0), dtype=np.int64)
-
-    # initialize WQ simulation:
-    RQUAL = RQUAL_Class(siminfo_, ui, ui_oxrx, ui_nutrx, ui_plank, ui_phcarb, ts
-                        )
-
-    # run WQ simulation:
-    RQUAL.simulate(ts,
-                   state_info,
-                   state_paths,
-                   state_ix,
-                   dict_ix,
-                   ts_ix,
-                   op_tokens,
-                   model_exec_list
-                   )
+        model_exec_list,
+    )
 
     # return error data:
     oxrx_errors = RQUAL.OXRX.errors
@@ -431,7 +450,7 @@ def _compile_errors(NUTFG, PLKFG, PHFG, err_oxrx, err_nutrx, err_plank, err_phca
 # -------------------------------------------------------------------
 
 
-def expand_OXRX_masslinks(flags, uci, dat, recs):
+def expand_OXRX_masslinks(flags, parameters, dat, recs):
     if flags["OXRX"]:
         for i in range(1, 3):
             rec = {}
@@ -457,7 +476,7 @@ def expand_OXRX_masslinks(flags, uci, dat, recs):
     return recs
 
 
-def expand_NUTRX_masslinks(flags, uci, dat, recs):
+def expand_NUTRX_masslinks(flags, parameters, dat, recs):
     if flags["NUTRX"]:
         # dissolved species:
         for i in range(1, 5):
@@ -527,7 +546,7 @@ def expand_NUTRX_masslinks(flags, uci, dat, recs):
     return recs
 
 
-def expand_PLANK_masslinks(flags, uci, dat, recs):
+def expand_PLANK_masslinks(flags, parameters, dat, recs):
     if flags["PLANK"]:
         for i in range(1, 6):
             rec = {}
@@ -552,7 +571,7 @@ def expand_PLANK_masslinks(flags, uci, dat, recs):
     return recs
 
 
-def expand_PHCARB_masslinks(flags, uci, dat, recs):
+def expand_PHCARB_masslinks(flags, parameters, dat, recs):
     if flags["PHCARB"]:
         for i in range(1, 3):
             rec = {}

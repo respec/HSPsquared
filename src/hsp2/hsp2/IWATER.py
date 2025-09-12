@@ -18,7 +18,7 @@ ERRMSGS = (
 )
 
 
-def iwater(io_manager, siminfo, uci, ts):
+def iwater(io_manager, siminfo, parameters, ts):
     """Driver for IMPLND IWATER code. CALL: iwater(store, general, ui, ts)
     store is the Pandas/PyTable open store
     general is a dictionary with simulation info (OP_SEQUENCE for example)
@@ -44,13 +44,15 @@ def iwater(io_manager, siminfo, uci, ts):
     # Replace fixed parameters in HSPF with timeseries
     for name in ["PETMAX", "PETMIN"]:
         if name not in ts:
-            ts[name] = full(steps, uci["PARAMETERS"][name], dtype=float64)
+            ts[name] = full(steps, parameters["PARAMETERS"][name], dtype=float64)
 
     # process optional monthly arrays to return interpolated data or constant array
-    u = uci["PARAMETERS"]
+    u = parameters["PARAMETERS"]
     if "VRSFG" in u:
-        ts["RETSC"] = initm(siminfo, uci, u["VRSFG"], "MONTHLY_RETSC", u["RETSC"])
-        ts["NSUR"] = initm(siminfo, uci, u["VNNFG"], "MONTHLY_NSUR", u["NSUR"])
+        ts["RETSC"] = initm(
+            siminfo, parameters, u["VRSFG"], "MONTHLY_RETSC", u["RETSC"]
+        )
+        ts["NSUR"] = initm(siminfo, parameters, u["VNNFG"], "MONTHLY_NSUR", u["NSUR"])
     else:
         ts["RETSC"] = full(steps, u["RETSC"])
         ts["NSUR"] = full(steps, u["NSUR"])
@@ -65,7 +67,7 @@ def iwater(io_manager, siminfo, uci, ts):
         float64
     )  # numba Dict limitation
 
-    ui = make_numba_dict(uci)  # Note: all values coverted to float automatically
+    ui = make_numba_dict(parameters)  # Note: all values coverted to float automatically
     ui["steps"] = steps
     ui["delt"] = siminfo["delt"]
     ui["errlen"] = len(ERRMSGS)

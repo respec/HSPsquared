@@ -8,7 +8,7 @@ ADFLAG == 2  loop simplification as elif
 """
 
 from numba import njit
-from numpy import array, zeros
+from numpy import zeros
 
 from hsp2.hsp2.utilities import make_numba_dict
 
@@ -18,14 +18,14 @@ from hsp2.hsp2.utilities import make_numba_dict
 ERRMSG = []
 
 
-def adcalc(io_manager, siminfo, uci, ts):
+def adcalc(io_manager, siminfo, parameter, ts):
     """Prepare to simulate advection of fully entrained constituents"""
 
     errorsV = zeros(len(ERRMSG), dtype=int)
 
     simlen = siminfo["steps"]
 
-    ui = make_numba_dict(uci)
+    ui = make_numba_dict(parameter)
     nexits = int(ui["NEXITS"])  # table type GEN-INFO
     ui["simlen"] = siminfo["steps"]
     ui["delts"] = siminfo["delt"] * 60.0  # delts is the simulation interval in seconds
@@ -55,7 +55,7 @@ def adcalc(io_manager, siminfo, uci, ts):
         SOVOL[:, i] = ts["SOVOL" + str(i + 1)]
         EOVOL[:, i] = ts["EOVOL" + str(i + 1)]
 
-    uci["adcalcData"] = (nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL)
+    parameter["adcalcData"] = (nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL)
 
     return errorsV, ERRMSG
 
