@@ -54,7 +54,7 @@ def fetchtable(hdfname, path, names=[], usercol=None, usercolvalue=None, CSV=Fal
             df = df.to_csv()
 
         def replace(dff):
-            nonlocal dforiginal
+            nonlocal dforiginal  # noqa F824
             if CSV:
                 dff = read_csv(StringIO(dff), index_col=0)
                 print(dff)
