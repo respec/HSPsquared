@@ -17,20 +17,19 @@ from numpy import full, int64, nan, ones, zeros
 from hsp2.hsp2.utilities import (
     SEASONS,
     SVP,
-    hourflag,
     hoursval,
     initm,
     make_numba_dict,
     monthval,
 )
-from hsp2.hsp2io.protocols import Category, SupportsReadTS
+from hsp2.hsp2io.protocols import SupportsReadTS
 
 ERRMSGS = (
     "Snow simulation cannot function properly with delt> 360",  # ERRMSG0
 )
 
 
-def snow(io_manager: SupportsReadTS, siminfo, uci, ts):
+def snow(io_manager: SupportsReadTS, siminfo, parameters, ts):
     """high level driver for SNOW module
     CALL: snow(store, general, ui, ts)
        store is the Pandas/PyTable open store
@@ -62,8 +61,8 @@ def snow(io_manager: SupportsReadTS, siminfo, uci, ts):
         "SNOWCF",
         "KMELT",
     ]:
-        if name not in ts and name in uci["PARAMETERS"]:
-            ts[name] = full(steps, uci["PARAMETERS"][name])
+        if name not in ts and name in parameters["PARAMETERS"]:
+            ts[name] = full(steps, parameters["PARAMETERS"][name])
 
     # true the first time and at 6am and earlier every day of simulation
     ts["HR6IND"] = hour6flag(siminfo, dofirst=True).astype(float)
@@ -73,25 +72,25 @@ def snow(io_manager: SupportsReadTS, siminfo, uci, ts):
 
     # make ICEFG available to PWATER later.
     siminfo["ICEFG"] = 0
-    if "FLAGS" in uci:
-        if "ICEFG" in uci["FLAGS"]:
-            siminfo["ICEFG"] = uci["FLAGS"]["ICEFG"]
+    if "FLAGS" in parameters:
+        if "ICEFG" in parameters["FLAGS"]:
+            siminfo["ICEFG"] = parameters["FLAGS"]["ICEFG"]
 
-    ui = make_numba_dict(uci)  # Note: all values coverted to float automatically
+    ui = make_numba_dict(parameters)  # Note: all values coverted to float automatically
     ui["steps"] = steps
     ui["uunits"] = UUNITS
     ui["delt"] = siminfo["delt"]
     ui["errlen"] = len(ERRMSGS)
     ui["cloudfg"] = cloudfg
 
-    u = uci["PARAMETERS"]
+    u = parameters["PARAMETERS"]
 
     vkmfg = 0
-    if "FLAGS" in uci:
-        uf = uci["FLAGS"]
+    if "FLAGS" in parameters:
+        uf = parameters["FLAGS"]
         if "VKMFG" in uf:
             vkmfg = uf["VKMFG"]
-    ts["KMELT"] = initm(siminfo, uci, vkmfg, "MONTHLY_KMELT", u["KMELT"])
+    ts["KMELT"] = initm(siminfo, parameters, vkmfg, "MONTHLY_KMELT", u["KMELT"])
 
     ############################################################################
     errors = _snow_(ui, ts)

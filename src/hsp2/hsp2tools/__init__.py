@@ -1,6 +1,6 @@
 """The `hsp2tools` module contains supporting software modules such as the code
-    to convert legacy WDM and UCI files to HDF5 files for HSP2, and to provide 
-    additional new and legacy capabilities.
+to convert legacy WDM and UCI files to HDF5 files for HSP2, and to provide
+additional new and legacy capabilities.
 """
 
 from .clone import clone, removeClone

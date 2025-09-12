@@ -28,7 +28,7 @@ ERRMSGS = (
 )
 
 
-def pwater(io_manager, siminfo, uci, ts):
+def pwater(io_manager, siminfo, parameters, ts):
     """PERLND WATER module
     CALL: pwater(store, general, ui, ts)
        store is the Pandas/PyTable open store
@@ -53,20 +53,24 @@ def pwater(io_manager, siminfo, uci, ts):
 
     # Replace fixed parameters with time series if not already present
     for name in ("AGWRC", "DEEPFR", "INFILT", "KVARY", "LZSN", "PETMIN", "PETMAX"):
-        if name not in ts and name in uci["PARAMETERS"]:
-            ts[name] = full(steps, uci["PARAMETERS"][name])
+        if name not in ts and name in parameters["PARAMETERS"]:
+            ts[name] = full(steps, parameters["PARAMETERS"][name])
 
     # process optional monthly arrays to return interpolated data or constant array
-    u = uci["PARAMETERS"]
+    u = parameters["PARAMETERS"]
     if "VLEFG" in u:
         flag = (u["VLEFG"] == 1) or (u["VLEFG"] == 3)
 
-        ts["LZETP"] = initm(siminfo, uci, flag, "MONTHLY_LZETP", u["LZETP"])
-        ts["CEPSC"] = initm(siminfo, uci, u["VCSFG"], "MONTHLY_CEPSC", u["CEPSC"])
-        ts["INTFW"] = initm(siminfo, uci, u["VIFWFG"], "MONTHLY_INTFW", u["INTFW"])
-        ts["IRC"] = initm(siminfo, uci, u["VIRCFG"], "MONTHLY_IRC", u["IRC"])
-        ts["NSUR"] = initm(siminfo, uci, u["VNNFG"], "MONTHLY_NSUR", u["NSUR"])
-        ts["UZSN"] = initm(siminfo, uci, u["VUZFG"], "MONTHLY_UZSN", u["UZSN"])
+        ts["LZETP"] = initm(siminfo, parameters, flag, "MONTHLY_LZETP", u["LZETP"])
+        ts["CEPSC"] = initm(
+            siminfo, parameters, u["VCSFG"], "MONTHLY_CEPSC", u["CEPSC"]
+        )
+        ts["INTFW"] = initm(
+            siminfo, parameters, u["VIFWFG"], "MONTHLY_INTFW", u["INTFW"]
+        )
+        ts["IRC"] = initm(siminfo, parameters, u["VIRCFG"], "MONTHLY_IRC", u["IRC"])
+        ts["NSUR"] = initm(siminfo, parameters, u["VNNFG"], "MONTHLY_NSUR", u["NSUR"])
+        ts["UZSN"] = initm(siminfo, parameters, u["VUZFG"], "MONTHLY_UZSN", u["UZSN"])
     else:
         ts["LZETP"] = full(steps, u["LZETP"])
         ts["CEPSC"] = full(steps, u["CEPSC"])
@@ -81,7 +85,7 @@ def pwater(io_manager, siminfo, uci, ts):
     # true the first time and at every hour of simulation
     ts["HRFG"] = hoursval(siminfo, ones(24), dofirst=True).astype(float)
 
-    ui = make_numba_dict(uci)  # Note: all values coverted to float automatically
+    ui = make_numba_dict(parameters)  # Note: all values coverted to float automatically
     ui["steps"] = siminfo["steps"]
     ui["delt"] = siminfo["delt"]
     ui["errlen"] = len(ERRMSGS)

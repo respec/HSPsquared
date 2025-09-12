@@ -110,8 +110,8 @@ def main(hdfname, doe, doename="DOE_RESULTS", saveall=False):
         msg(1, f"Processing started for file {hdfname}; saveall={saveall}")
 
         # read user control, parameters, states, and flags  from HDF5 file
-        opseq, ddlinks, ddmasslinks, ddext_sources, originaluci, siminfo = get_uci(
-            store
+        opseq, ddlinks, ddmasslinks, ddext_sources, originaluci, siminfo = (
+            get_parameters(store)
         )
         start, stop = siminfo["start"], siminfo["stop"]
 
@@ -124,7 +124,7 @@ def main(hdfname, doe, doename="DOE_RESULTS", saveall=False):
             savepath = f"{doename}/RUN{run}"
             msg(2, f"Starting Run {run}; saving as {savepath}")
 
-            uci = deepcopy(originaluci)
+            parameters = deepcopy(originaluci)
             for _, operation, segment, delt in opseq.itertuples():
                 msg(3, f"{operation} {segment} DELT(minutes): {delt}")
                 siminfo["delt"] = delt
@@ -133,7 +133,7 @@ def main(hdfname, doe, doename="DOE_RESULTS", saveall=False):
 
                 # now conditionally execute all activity modules for the op, segment
                 ts = get_timeseries(store, ddext_sources[(operation, segment)], siminfo)
-                flags = uci[(operation, "GENERAL", segment)]["ACTIVITY"]
+                flags = parameters[(operation, "GENERAL", segment)]["ACTIVITY"]
                 for activity, function in activities[operation].items():
                     if function == noop or not flags[activity]:
                         continue
@@ -151,7 +151,7 @@ def main(hdfname, doe, doename="DOE_RESULTS", saveall=False):
                             msg,
                             savepath,
                         )
-                    ui = uci[operation, activity, segment]  # ui is a dictionary
+                    ui = parameters[operation, activity, segment]  # ui is a dictionary
 
                     # update deep copy of UCI dict with run dict
                     ruci = rundict[run]
@@ -209,9 +209,9 @@ def messages():
     return msg
 
 
-def get_uci(store):
+def get_parameters(store):
     # read user control and user data from HDF5 file
-    uci = defaultdict(dict)
+    parameters = defaultdict(dict)
     siminfo = {}
     for path in store.keys():  # finds ALL data sets into HDF5 file
         op, module, *other = path[1:].split(sep="/", maxsplit=3)
@@ -237,8 +237,8 @@ def get_uci(store):
                 opseq = store[path]
         elif op in {"PERLND", "IMPLND", "RCHRES"}:
             for id, vdict in store[path].to_dict("index").items():
-                uci[(op, module, id)][s] = vdict
-    return opseq, ddlinks, ddmasslinks, ddext_sources, uci, siminfo
+                parameters[(op, module, id)][s] = vdict
+    return opseq, ddlinks, ddmasslinks, ddext_sources, parameters, siminfo
 
 
 def make_runlist(store, doe, doename):

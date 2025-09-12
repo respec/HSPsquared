@@ -139,9 +139,9 @@ def state_context_hsp2(state, operation, segment, activity):
     state["domain"] = seg_path  # + "/" + activity   # may want to comment out activity?
 
 
-def state_siminfo_hsp2(uci_obj, siminfo, io_manager, state):
+def state_siminfo_hsp2(parameter_obj, siminfo, io_manager, state):
     # Add crucial simulation info for dynamic operation support
-    delt = uci_obj.opseq.INDELT_minutes[0]  # get initial value for STATE objects
+    delt = parameter_obj.opseq.INDELT_minutes[0]  # get initial value for STATE objects
     siminfo["delt"] = delt
     siminfo["tindex"] = date_range(
         siminfo["start"], siminfo["stop"], freq=Minute(delt)
@@ -294,7 +294,19 @@ def sedmnt_init_ix(state, domain):
 
 
 def rqual_state_vars():
-    rqual_state = ["DOX","BOD","NO3","TAM","NO2","PO4","BRTAM1","BRTAM2","BRPO41","BRPO42","CFOREA"]
+    rqual_state = [
+        "DOX",
+        "BOD",
+        "NO3",
+        "TAM",
+        "NO2",
+        "PO4",
+        "BRTAM1",
+        "BRTAM2",
+        "BRPO41",
+        "BRPO42",
+        "CFOREA",
+    ]
     return rqual_state
 
 
@@ -362,7 +374,19 @@ def sedmnt_get_ix(state_ix, state_paths, domain):
 @njit
 def rqual_get_ix(state_ix, state_paths, domain):
     # get a list of keys for all sedmnt state variables
-    rqual_state = ["DOX","BOD","NO3","TAM","NO2","PO4","BRTAM1","BRTAM2","BRPO41","BRPO42","CFOREA"]
+    rqual_state = [
+        "DOX",
+        "BOD",
+        "NO3",
+        "TAM",
+        "NO2",
+        "PO4",
+        "BRTAM1",
+        "BRTAM2",
+        "BRPO41",
+        "BRPO42",
+        "CFOREA",
+    ]
     rqual_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
     for i in rqual_state:
         var_path = domain + "/" + i

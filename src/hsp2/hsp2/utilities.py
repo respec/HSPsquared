@@ -181,25 +181,24 @@ SVP = Series(
 ).to_numpy()
 
 
-def make_numba_dict(uci):
+def make_numba_dict(parameters):
     """
-    Move UCI dictionary data to Numba dict for FLAGS, STATES, PARAMETERS.
+    Move dictionary data to Numba dict for FLAGS, STATES, PARAMETERS.
 
     Parameters
     ----------
-    uci : Python dictionary
-        The uci dictionary contains xxxx.uci file data
+    parameters : Python dictionary
+        The dictionary contains the model parameters.
 
     Returns
     -------
     ui : Numba dictionary
-        Same content as uci except for strings
-
+        Same content as parameters except for strings
     """
 
     ui = Dict.empty(key_type=types.unicode_type, value_type=types.float64)
-    for name in set(uci.keys()) & {"FLAGS", "PARAMETERS", "STATES"}:
-        for key, value in uci[name].items():
+    for name in set(parameters.keys()) & {"FLAGS", "PARAMETERS", "STATES"}:
+        for key, value in parameters[name].items():
             if type(value) in {int, float}:
                 ui[key] = float(value)
     return ui
@@ -258,15 +257,15 @@ def transform(ts, name, how, siminfo):
     elif how == "DIV":
         if "Y" in str(tsfreq) or "M" in str(tsfreq):
             mult = 1
-            firstchar = str(tsfreq)[1:str(tsfreq).index(" ")]
+            firstchar = str(tsfreq)[1 : str(tsfreq).index(" ")]
             try:
                 mult = int(firstchar)  # like '<3 * MonthBegins>'
             except ValueError:
                 pass
             if "M" in str(tsfreq):
-                ratio = 1.0 / (730.5*mult)   # avg hrs in month
+                ratio = 1.0 / (730.5 * mult)  # avg hrs in month
             elif "Y" in str(tsfreq):
-                ratio = 1.0 / (8766.0*mult)
+                ratio = 1.0 / (8766.0 * mult)
             else:
                 ratio = freq / tsfreq
             ts = (ratio * ts).resample(freq).ffill()  # HSP2 how = div

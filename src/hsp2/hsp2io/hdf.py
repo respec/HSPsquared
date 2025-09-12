@@ -1,8 +1,9 @@
 from typing import Any, Union
+import warnings
 
 import pandas as pd
 
-from hsp2.hsp2.uci import UCI
+from hsp2.hsp2.model import Model
 from hsp2.hsp2io.protocols import Category
 
 
@@ -21,45 +22,56 @@ class HDF5:
     def __exit__(self, exc_type, exc_value, trace):
         self.__del__()
 
-    def read_uci(self) -> UCI:
-        """Read UCI related tables
-
-        Parameters: None
-
-        Returns: UCITuple
-
+    def read_uci(self) -> Model:
         """
-        uci = UCI()
+        DEPRECATED: use read_parameters instead
+        """
+        warnings.warn(
+            """
+* 
+* DEPRECATED: use read_parameters instead
+* read_uci will be removed in future releases
+*
+""",
+            DeprecationWarning,
+        )
+        return self.read_parameters()
+
+    def read_parameters(self) -> Model:
+        """
+        Read parameter tables from HDF5 and populate Model instance.
+        """
+        model = Model()
         for path in self._store.keys():  # finds ALL data sets into HDF5 file
             op, module, *other = path[1:].split(sep="/", maxsplit=3)
             s = "_".join(other)
             if op == "CONTROL":
                 if module == "GLOBAL":
                     temp = self._store[path].to_dict()["Info"]
-                    uci.siminfo["start"] = pd.Timestamp(temp["Start"])
-                    uci.siminfo["stop"] = pd.Timestamp(temp["Stop"])
-                    uci.siminfo["units"] = 1
+                    model.siminfo["start"] = pd.Timestamp(temp["Start"])
+                    model.siminfo["stop"] = pd.Timestamp(temp["Stop"])
+                    model.siminfo["units"] = 1
                     if "Units" in temp:
                         if int(temp["Units"]):
-                            uci.siminfo["units"] = int(temp["Units"])
+                            model.siminfo["units"] = int(temp["Units"])
                 elif module == "LINKS":
                     for row in self._store[path].fillna("").itertuples():
                         if row.TVOLNO != "":
-                            uci.ddlinks[f"{row.TVOLNO}"].append(row)
+                            model.ddlinks[f"{row.TVOLNO}"].append(row)
                         else:
-                            uci.ddlinks[f"{row.TOPFST}"].append(row)
+                            model.ddlinks[f"{row.TOPFST}"].append(row)
 
                 elif module == "MASS_LINKS":
                     for row in self._store[path].replace("na", "").itertuples():
-                        uci.ddmasslinks[row.MLNO].append(row)
+                        model.ddmasslinks[row.MLNO].append(row)
                 elif module == "EXT_SOURCES":
                     for row in self._store[path].replace("na", "").itertuples():
-                        uci.ddext_sources[(row.TVOL, row.TVOLNO)].append(row)
+                        model.ddext_sources[(row.TVOL, row.TVOLNO)].append(row)
                 elif module == "OP_SEQUENCE":
-                    uci.opseq = self._store[path]
+                    model.opseq = self._store[path]
             elif op in {"PERLND", "IMPLND", "RCHRES"}:
                 for id, vdict in self._store[path].to_dict("index").items():
-                    uci.uci[(op, module, id)][s] = vdict
+                    model.model[(op, module, id)][s] = vdict
             elif op == "GENER":
                 for row in self._store[path].itertuples():
                     if len(row.OPNID.split()) == 1:
@@ -69,19 +81,19 @@ class HDF5:
                         start, stop = row.OPNID.split()
                     for i in range(int(start), int(stop) + 1):
                         if module != "COEFFS":
-                            uci.ddgener[module][f"G{i:03d}"] = row[2]
+                            model.ddgener[module][f"G{i:03d}"] = row[2]
                         else:
                             for it in range(1, 8):
-                                uci.ddgener[f"K{it:01d}"][f"G{i:03d}"] = row[it+1]
+                                model.ddgener[f"K{it:01d}"][f"G{i:03d}"] = row[it + 1]
             elif op == "FTABLES":
-                uci.ftables[module] = self._store[path]
+                model.ftables[module] = self._store[path]
             elif op == "SPEC_ACTIONS":
-                uci.specactions[module] = self._store[path]
+                model.specactions[module] = self._store[path]
             elif op == "MONTHDATA":
-                if not uci.monthdata:
-                    uci.monthdata = {}
-                uci.monthdata[f"{op}/{module}"] = self._store[path]
-        return uci
+                if not model.monthdata:
+                    model.monthdata = {}
+                model.monthdata[f"{op}/{module}"] = self._store[path]
+        return model
 
     def read_ts(
         self,

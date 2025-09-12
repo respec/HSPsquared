@@ -61,10 +61,10 @@ ERRMSGS = (
 )  # ERRMSG0
 
 
-def htrch(io_manager, siminfo, uci, ts):
+def htrch(io_manager, siminfo, parameters, ts):
     """Simulate heat exchange and water temperature"""
 
-    advectData = uci["advectData"]
+    advectData = parameters["advectData"]
     (nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = advectData
 
     ts["VOL"] = VOL
@@ -78,7 +78,7 @@ def htrch(io_manager, siminfo, uci, ts):
 
     ts["DAYFG"] = hourflag(siminfo, 0, dofirst=True).astype(float64)
 
-    ui = make_numba_dict(uci)
+    ui = make_numba_dict(parameters)
     nexits = int(ui["NEXITS"])
     ui["simlen"] = siminfo["steps"]
     ui["uunits"] = siminfo["units"]
@@ -108,10 +108,10 @@ def htrch(io_manager, siminfo, uci, ts):
         deltt = zeros(int(tstop))
     ts["DELTT"] = deltt
 
-    u = uci["PARAMETERS"]
+    u = parameters["PARAMETERS"]
     # process optional monthly arrays to return interpolated data or constant array
     if "TGFLG" in u:
-        ts["TGRND"] = initm(siminfo, uci, u["TGFLG"], "TGRND", tgrnd)
+        ts["TGRND"] = initm(siminfo, parameters, u["TGFLG"], "TGRND", tgrnd)
     else:
         ts["TGRND"] = full(simlen, tgrnd)
 
@@ -122,7 +122,7 @@ def htrch(io_manager, siminfo, uci, ts):
     ############################################################################
 
     if nexits > 1:
-        u = uci["SAVE"]
+        u = parameters["SAVE"]
         key = "OHEAT"
         for i in range(nexits):
             u[f"{key}{i + 1}"] = u[key]
@@ -240,7 +240,7 @@ def _htrch_(ui, ts):
 
     TGRND = ts["TGRND"]
 
-    if not "IHEAT" in ts:
+    if "IHEAT" not in ts:
         ts["IHEAT"] = zeros(simlen)
     IHEAT = ts["IHEAT"]  # kcal.vol/l.ivl; heat is relative to 0 degreees c
     if uunits == 1:
@@ -551,7 +551,7 @@ def vapor(tmp):
     )
 
 
-def expand_HTRCH_masslinks(flags, uci, dat, recs):
+def expand_HTRCH_masslinks(flags, parameters, dat, recs):
     if flags["HTRCH"]:
         # IHEAT
         rec = {}

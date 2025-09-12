@@ -1,16 +1,13 @@
 import os
-from math import log
 
 import numba as nb
-import numpy as np
 from numba.experimental import jitclass
-from numpy import array, where, zeros
+from numpy import zeros
 
 from hsp2.hsp2.NUTRX_Class import NUTRX_Class
 from hsp2.hsp2.OXRX_Class import OXRX_Class
 from hsp2.hsp2.PHCARB_Class import PHCARB_Class
 from hsp2.hsp2.PLANK_Class import PLANK_Class
-from hsp2.hsp2.utilities import initm, make_numba_dict
 
 # the following imports added to handle special actions
 from hsp2.hsp2.state import rqual_get_ix
@@ -790,7 +787,7 @@ class RQUAL_Class:
                         ts["PHIF2"] = zeros(simlen)
                     ts["ICO2"] = ts["PHIF2"]
 
-                    if not "ALKCON" in ts:
+                    if "ALKCON" not in ts:
                         ts["ALKCON"] = zeros(simlen)
                     if "CONS" + str(int(self.PHCARB.alkcon)) + "_CON" in ts:
                         self.ALK = ts["CONS" + str(int(self.PHCARB.alkcon)) + "_CON"]
@@ -823,35 +820,36 @@ class RQUAL_Class:
 
         return
 
-    def simulate(self, ts,
-                 state_info,
-                 state_paths,
-                 state_ix,
-                 dict_ix,
-                 ts_ix,
-                 op_tokens,
-                 model_exec_list):
-
+    def simulate(
+        self,
+        ts,
+        state_info,
+        state_paths,
+        state_ix,
+        dict_ix,
+        ts_ix,
+        op_tokens,
+        model_exec_list,
+    ):
         #######################################################################################
         # the following section (2 of 3) added by pbd to RQUAL, this one to prepare for special actions
         #######################################################################################
         rqual_ix = rqual_get_ix(state_ix, state_paths, state_info["domain"])
         # these are integer placeholders faster than calling the array look each timestep
-        dox_ix = (rqual_ix["DOX"])
-        bod_ix = (rqual_ix["BOD"])
-        no3_ix = (rqual_ix["NO3"])
-        tam_ix = (rqual_ix["TAM"])
-        no2_ix = (rqual_ix["NO2"])
-        po4_ix = (rqual_ix["PO4"])
-        brtam1_ix = (rqual_ix["BRTAM1"])
-        brtam2_ix = (rqual_ix["BRTAM2"])
-        brpo41_ix = (rqual_ix["BRPO41"])
-        brpo42_ix = (rqual_ix["BRPO42"])
-        cforea_ix = (rqual_ix["CFOREA"])
+        dox_ix = rqual_ix["DOX"]
+        bod_ix = rqual_ix["BOD"]
+        no3_ix = rqual_ix["NO3"]
+        tam_ix = rqual_ix["TAM"]
+        no2_ix = rqual_ix["NO2"]
+        po4_ix = rqual_ix["PO4"]
+        brtam1_ix = rqual_ix["BRTAM1"]
+        brtam2_ix = rqual_ix["BRTAM2"]
+        brpo41_ix = rqual_ix["BRPO41"]
+        brpo42_ix = rqual_ix["BRPO42"]
+        cforea_ix = rqual_ix["CFOREA"]
         #######################################################################################
 
         for loop in range(self.simlen):
-
             #######################################################################################
             # the following section (3 of 3) added by pbd to accommodate special actions
             #######################################################################################

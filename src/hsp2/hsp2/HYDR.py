@@ -36,14 +36,14 @@ TOLERANCE = 0.001  # newton method max loops
 MAXLOOPS = 100  # newton method exit tolerance
 
 
-def hydr(io_manager, siminfo, uci, ts, ftables, state):
+def hydr(io_manager, siminfo, parameters, ts, ftables, state):
     """find the state of the reach/reservoir at the end of the time interval
     and the outflows during the interval
 
     CALL: hydr(store, general, ui, ts, state)
        store is the Pandas/PyTable open store
        general is a dictionary with simulation level infor (OP_SEQUENCE for example)
-       ui is a dictionary with RID specific HSPF UCI like data
+       ui is a dictionary with RID specific HSPF parameter data
        ts is a dictionary with RID specific timeseries
        state is a dictionary that contains all dynamic code dictionaries such as:
        - specactions is a dictionary with all special actions
@@ -51,7 +51,7 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
 
     steps = siminfo["steps"]  # number of simulation points
     uunits = siminfo["units"]
-    nexits = int(uci["PARAMETERS"]["NEXITS"])
+    nexits = int(parameters["PARAMETERS"]["NEXITS"])
 
     # units conversion constants, 1 ACRE is 43560 sq ft. assumes input in acre-ft
     VFACT = 43560.0
@@ -61,7 +61,7 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
         VFACT = 1.0e6
         AFACT = 10000.0
 
-    u = uci["PARAMETERS"]
+    u = parameters["PARAMETERS"]
     funct = array([u[name] for name in u.keys() if name.startswith("FUNCT")]).astype(
         int
     )[0:nexits]
@@ -72,7 +72,7 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
         int
     )[0:nexits]
 
-    u = uci["STATES"]
+    u = parameters["STATES"]
     colin = array([u[name] for name in u.keys() if name.startswith("COLIN")]).astype(
         float
     )[0:nexits]
@@ -96,10 +96,10 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
 
     # generic SAVE table doesn't know nexits for output flows and rates
     if nexits > 1:
-        u = uci["SAVE"]
+        u = parameters["SAVE"]
         for key in ("O", "OVOL"):
             for i in range(nexits):
-                u[f"{key}{i+1}"] = u[key]
+                u[f"{key}{i + 1}"] = u[key]
             del u[key]
 
     # optional - defined, but can't used accidently
@@ -111,17 +111,17 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
     for name in ("IVOL", "POTEV", "PREC"):
         if name not in ts:
             ts[name] = zeros(steps)
-    ts["CONVF"] = initm(siminfo, uci, "VCONFG", "MONTHLY_CONVF", 1.0)
+    ts["CONVF"] = initm(siminfo, parameters, "VCONFG", "MONTHLY_CONVF", 1.0)
 
     # extract key columns of specified FTable for faster access (1d vs. 2d)
-    rchtab = ftables[f"{uci['PARAMETERS']['FTBUCI']}"]
-    # rchtab = store[f"FTABLES/{uci['PARAMETERS']['FTBUCI']}"]
+    rchtab = ftables[f"{parameters['PARAMETERS']['FTBUCI']}"]
+    # rchtab = store[f"FTABLES/{parameters['PARAMETERS']['FTBUCI']}"]
     ts["volumeFT"] = rchtab["Volume"].to_numpy() * VFACT
     ts["depthFT"] = rchtab["Depth"].to_numpy()
     ts["sareaFT"] = rchtab["Area"].to_numpy() * AFACT
     rchtab = rchtab.to_numpy()
 
-    ui = make_numba_dict(uci)  # Note: all values coverted to float automatically
+    ui = make_numba_dict(parameters)  # Note: all values coverted to float automatically
     ui["steps"] = steps
     ui["delt"] = siminfo["delt"]
     ui["nexits"] = nexits
@@ -134,8 +134,8 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
     Olabels = List()
     OVOLlabels = List()
     for i in range(nexits):
-        Olabels.append(f"O{i+1}")
-        OVOLlabels.append(f"OVOL{i+1}")
+        Olabels.append(f"O{i + 1}")
+        OVOLlabels.append(f"OVOL{i + 1}")
 
     #######################################################################################
     # the following section (1 of 3) added to HYDR by rb to handle dynamic code and special actions
@@ -203,9 +203,9 @@ def hydr(io_manager, siminfo, uci, ts, ftables, state):
         del ts["OVOL"]
 
     # save initial outflow(s) from reach:
-    uci["PARAMETERS"]["ROS"] = ui["ROS"]
+    parameters["PARAMETERS"]["ROS"] = ui["ROS"]
     for i in range(nexits):
-        uci["PARAMETERS"]["OS" + str(i + 1)] = ui["OS" + str(i + 1)]
+        parameters["PARAMETERS"]["OS" + str(i + 1)] = ui["OS" + str(i + 1)]
     # copy back (modified) operational element data
     state["state_ix"], state["dict_ix"], state["ts_ix"] = state_ix, dict_ix, ts_ix
     return errors, ERRMSGS
@@ -848,7 +848,7 @@ def auxil(volumeFT, depthFT, sareaFT, indx, vol, length, stcor, AUX1FG, errors):
     return dep, stage, sarea, avdep, twid, hrad
 
 
-def expand_HYDR_masslinks(flags, uci, dat, recs):
+def expand_HYDR_masslinks(flags, parameters, dat, recs):
     if flags["HYDR"]:
         # IVOL
         rec = {}

@@ -1019,9 +1019,9 @@ def monthdata(info, llines):
                 try:
                     vals.append(float(line[:6]))
                 except:
-                    if '-' in line[:6]:
+                    if "-" in line[:6]:
                         # assume this exception was caused by the E missing, as is allowed in HSPF
                         negpos = line[:6].index("-")
-                        vals.append(float(line[:negpos] + 'E' + line[negpos:6]))
+                        vals.append(float(line[:negpos] + "E" + line[negpos:6]))
                 line = line[6:]
             lst.append(vals)
