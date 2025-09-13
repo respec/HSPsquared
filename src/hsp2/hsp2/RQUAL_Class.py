@@ -860,10 +860,10 @@ class RQUAL_Class:
             state_ix[tam_ix] = self.NUTRX.tam
             state_ix[no2_ix] = self.NUTRX.no2
             state_ix[po4_ix] = self.NUTRX.po4
-            state_ix[brtam1_ix] = self.NUTRX.brtam[1]
-            state_ix[brtam2_ix] = self.NUTRX.brtam[2]
-            state_ix[brpo41_ix] = self.NUTRX.brpo4[1]
-            state_ix[brpo42_ix] = self.NUTRX.brpo4[2]
+            state_ix[brtam1_ix] = self.NUTRX.brtam[0]
+            state_ix[brtam2_ix] = self.NUTRX.brtam[1]
+            state_ix[brpo41_ix] = self.NUTRX.brpo4[0]
+            state_ix[brpo42_ix] = self.NUTRX.brpo4[1]
             state_ix[cforea_ix] = self.OXRX.cforea
             if state_info["state_step_om"] == "enabled":
                 pre_step_model(
@@ -883,10 +883,10 @@ class RQUAL_Class:
                 self.NUTRX.tam = state_ix[tam_ix]
                 self.NUTRX.no2 = state_ix[no2_ix]
                 self.NUTRX.po4 = state_ix[po4_ix]
-                self.NUTRX.brtam[1] = state_ix[brtam1_ix]
-                self.NUTRX.brtam[2] = state_ix[brtam2_ix]
-                self.NUTRX.brpo4[1] = state_ix[brpo41_ix]
-                self.NUTRX.brpo4[2] = state_ix[brpo42_ix]
+                self.NUTRX.brtam[0] = state_ix[brtam1_ix]
+                self.NUTRX.brtam[1] = state_ix[brtam2_ix]
+                self.NUTRX.brpo4[0] = state_ix[brpo41_ix]
+                self.NUTRX.brpo4[1] = state_ix[brpo42_ix]
                 self.OXRX.cforea = state_ix[cforea_ix]
             #######################################################################################
 
