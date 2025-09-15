@@ -26,7 +26,7 @@ from hsp2.hsp2.utilities import initm, make_numba_dict
 ERRMSG = []
 
 
-def cons(io_manager, siminfo, uci, ts):
+def cons(io_manager, siminfo, parameters, ts):
     """Simulate behavior of conservative constituents; calculate concentration
     of conservative constituents after advection"""
 
@@ -40,7 +40,7 @@ def cons(io_manager, siminfo, uci, ts):
         # si units conversion constants, 1 hectare is 10000 sq m
         AFACT = 1000000.0
 
-    advectData = uci["advectData"]
+    advectData = parameters["advectData"]
     (nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = advectData
     svol = vol * AFACT
 
@@ -51,7 +51,7 @@ def cons(io_manager, siminfo, uci, ts):
         ts["SOVOL" + str(i + 1)] = SOVOL[:, i]
         ts["EOVOL" + str(i + 1)] = EOVOL[:, i]
 
-    ui = make_numba_dict(uci)
+    ui = make_numba_dict(parameters)
     nexits = int(ui["NEXITS"])
 
     ui["simlen"] = siminfo["steps"]
@@ -63,13 +63,13 @@ def cons(io_manager, siminfo, uci, ts):
     # conactive = ui['CONACTIVE']   # dict
 
     ncons = 1
-    if "PARAMETERS" in uci:
-        if "NCONS" in uci["PARAMETERS"]:
-            ncons = uci["PARAMETERS"]["NCONS"]
+    if "PARAMETERS" in parameters:
+        if "NCONS" in parameters["PARAMETERS"]:
+            ncons = parameters["PARAMETERS"]["NCONS"]
 
     for index in range(ncons):
         icon = str(index + 1)
-        parms = uci["CONS" + icon]
+        parms = parameters["CONS" + icon]
         conid = parms["CONID"]  # string name of the conservative constituent
         con = parms["CON"]  # initial concentration of the conservative
         concid = parms[
@@ -92,13 +92,17 @@ def cons(io_manager, siminfo, uci, ts):
         # COADFG2 = ui['COADFG2']    # table-type cons-ad-flags
         # COADCN = getit()            # flag: COADFG; monthly COACNM; value COADCN
 
-        if "FLAGS" in uci:
-            u = uci["FLAGS"]
+        if "FLAGS" in parameters:
+            u = parameters["FLAGS"]
             # get atmos dep timeseries
             coadfg1 = u["COADFG" + str((index * 2) - 1)]
             if coadfg1 > 0:
                 ts["COADFX"] = initm(
-                    siminfo, uci, coadfg1, "CONS" + str(index) + "_MONTHLY/COADFX", 0.0
+                    siminfo,
+                    parameters,
+                    coadfg1,
+                    "CONS" + str(index) + "_MONTHLY/COADFX",
+                    0.0,
                 )
             elif coadfg1 == -1:
                 ts["COADFX"] = ts["COADFX" + str(index)]
@@ -106,7 +110,11 @@ def cons(io_manager, siminfo, uci, ts):
             coadfg2 = u["COADFG" + str(index * 2)]
             if coadfg2 > 0:
                 ts["COADCN"] = initm(
-                    siminfo, uci, coadfg2, "CONS" + str(index) + "_MONTHLY/COADCN", 0.0
+                    siminfo,
+                    parameters,
+                    coadfg2,
+                    "CONS" + str(index) + "_MONTHLY/COADCN",
+                    0.0,
                 )
             elif coadfg2 == -1:
                 ts["COADCN"] = ts["COADCN" + str(index)]
@@ -121,7 +129,7 @@ def cons(io_manager, siminfo, uci, ts):
         ############################################################################
 
         if nexits > 1:
-            u = uci["SAVE"]
+            u = parameters["SAVE"]
             key1 = name + "_OCON"
             for i in range(nexits):
                 u[f"{key1}{i + 1}"] = u["OCON"]
@@ -226,12 +234,12 @@ def _cons_(ui, ts):
     return
 
 
-def expand_CONS_masslinks(flags, uci, dat, recs):
+def expand_CONS_masslinks(flags, parameters, dat, recs):
     if flags["CONS"]:
         ncons = 1
-        if "PARAMETERS" in uci:
-            if "NCONS" in uci["PARAMETERS"]:
-                ncons = uci["PARAMETERS"]["NCONS"]
+        if "PARAMETERS" in parameters:
+            if "NCONS" in parameters["PARAMETERS"]:
+                ncons = parameters["PARAMETERS"]["NCONS"]
         for i in range(1, ncons + 1):
             # ICONS                        loop for each cons
             rec = {}

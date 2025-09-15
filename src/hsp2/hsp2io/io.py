@@ -2,12 +2,12 @@ from typing import List, Union
 
 import pandas as pd
 
-from hsp2.hsp2.uci import UCI
+from hsp2.hsp2.model import Model
 from hsp2.hsp2.utilities import pandas_offset_by_version
 from hsp2.hsp2io.protocols import (
     Category,
     SupportsReadTS,
-    SupportsReadUCI,
+    SupportsReadParameters,
     SupportsWriteLogging,
     SupportsWriteTS,
 )
@@ -19,41 +19,45 @@ class IOManager:
     def __init__(
         self,
         io_combined: Union[
-            SupportsReadUCI, SupportsReadTS, SupportsWriteTS, None
+            SupportsReadParameters, SupportsReadTS, SupportsWriteTS, None
         ] = None,
-        uci: Union[SupportsReadUCI, None] = None,
+        parameters: Union[SupportsReadParameters, None] = None,
         input: Union[SupportsReadTS, None] = None,
         output: Union[SupportsReadTS, SupportsWriteTS, None] = None,
         log: Union[SupportsWriteLogging, None] = None,
     ) -> None:
-        """io_combined: SupportsReadUCI & SupportsReadTS & SupportsWriteTS & SupportsWriteLogging / None
-                Intended to allow users with a object that combines protocols for
-                UCI, Input, Output and Log a shortcut where only a
-                single argument needs to be provided. If UCI, Input, Output and/or
-                Log are not specified this argument will be used as the default.
-        uci: SupportsReadUCI/None (Default None)
-                A class instance implementing the SupportReadUCI protocol.
-                This class acts as the data source for UCI information.
-                The argument io_combined be used in place by default if this argument is not specified.
-        input: SupportsReadUCI/None (Default None)
-                A class instance implementing SupportReadTS protocol.
-                This class acts as the data source for any input timeseries.
-                The argument io_combined be used in place by default if this argument is not specified.
-        output: SupportsWriteTS & SupportsReadTS / None (Default None)
-                A class implementing SupportsWriteTS & SupportReadTS protocol
-                This class acts as the location for outputing result timeseries as
-                well as the data source should those result timeseries be needed for
-                inputs into a model modules.
-                The argument io_combined be used in place by default if this argument is not specified.
-        log: SupportsWriteLogging/None (Default None)
-                A class implementing SupportWriteLogging protocol. This class
-                This class acts as the location to output logging information.
-                The argument io_combined be used in place by default if this argument is not specified.
+        """
+        Initialize the IOManager for HSP2 model IO operations.
+
+        Parameters
+        ----------
+        io_combined : SupportsReadParameters or SupportsReadTS or SupportsWriteTS or None, optional
+            Object that combines protocols for Parameters, Input, Output, and
+            Log. If `parameters`, `input`, `output`, or `log` are not
+            specified, this argument will be used as the default for those.
+        parameters : SupportsReadParameters or None, optional
+            Instance implementing the SupportReadParameters protocol. Acts as
+            the data source for parameter information.  If not specified,
+            `io_combined` will be used by default.
+        input : SupportsReadTS or None, optional
+            Instance implementing the SupportReadTS protocol. Acts as the data
+            source for any input timeseries.  If not specified, `io_combined`
+            will be used by default.
+        output : SupportsWriteTS or SupportsReadTS or None, optional
+            Instance implementing the SupportsWriteTS and/or SupportReadTS
+            protocol. Acts as the location for outputting result timeseries and
+            as the data source for result timeseries needed as inputs to model
+            modules.
+            If not specified, `io_combined` will be used by default.
+        log : SupportsWriteLogging or None, optional
+            Instance implementing the SupportWriteLogging protocol. Acts as the
+            location to output logging information.  If not specified,
+            `io_combined` will be used by default.
         """
 
         self._input = io_combined if input is None else input
         self._output = io_combined if output is None else output
-        self._uci = io_combined if uci is None else uci
+        self._parameters = io_combined if parameters is None else parameters
         self._log = io_combined if log is None else log
 
         self._in_memory = {}
@@ -61,11 +65,11 @@ class IOManager:
     def __del__(self):
         del self._input
         del self._output
-        del self._uci
+        del self._parameters
         del self._log
 
-    def read_uci(self, *args, **kwargs) -> UCI:
-        return self._uci.read_uci()
+    def read_parameters(self, *args, **kwargs) -> Model:
+        return self._parameters.read_parameters()
 
     def write_ts(
         self,

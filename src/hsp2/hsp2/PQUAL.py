@@ -14,7 +14,7 @@ NEED to check all units conversions
 from math import exp
 
 from numba import njit
-from numpy import float64, full, int64, where, zeros
+from numpy import float64, int64, zeros
 
 from hsp2.hsp2.utilities import hourflag, initm, initmdiv, make_numba_dict
 
@@ -29,37 +29,37 @@ CFACTA = 2.7548e-04
 PFACTA = 1.0
 
 
-def pqual(io_manager, siminfo, uci, ts):
+def pqual(io_manager, siminfo, parameters, ts):
     """Simulate quality constituents (other than sediment, heat, dox, and co2)
     using simple relationships with sediment and water yield"""
 
     simlen = siminfo["steps"]
 
     nquals = 1
-    if "PARAMETERS" in uci:
-        if "NQUAL" in uci["PARAMETERS"]:
-            nquals = int(uci["PARAMETERS"]["NQUAL"])
+    if "PARAMETERS" in parameters:
+        if "NQUAL" in parameters["PARAMETERS"]:
+            nquals = int(parameters["PARAMETERS"]["NQUAL"])
     constituents = []
     for index in range(nquals):
         pqual = str(index + 1)
-        flags = uci["PQUAL" + pqual + "_FLAGS"]
+        flags = parameters["PQUAL" + pqual + "_FLAGS"]
         constituents.append(flags["QUALID"])
 
-    ui = make_numba_dict(uci)
+    ui = make_numba_dict(parameters)
     ui["simlen"] = siminfo["steps"]
     ui["delt60"] = siminfo["delt"] / 60  # delt60 - simulation time interval in hours
     ui["nquals"] = nquals
     ui["errlen"] = len(ERRMSGS)
     # constituents = ui['CONSTITUENTS']   # (short) names of constituents
-    if "FLAGS" in uci:
-        u = uci["FLAGS"]
+    if "FLAGS" in parameters:
+        u = parameters["FLAGS"]
 
     index = 0
     for constituent in constituents:  # simulate constituent
         index += 1
         # update UI values for this constituent here!
-        ui_flags = uci["PQUAL" + str(index) + "_FLAGS"]
-        ui_parms = uci["PQUAL" + str(index) + "_PARAMETERS"]
+        ui_flags = parameters["PQUAL" + str(index) + "_FLAGS"]
+        ui_parms = parameters["PQUAL" + str(index) + "_PARAMETERS"]
 
         qualid = ui_flags["QUALID"]
         qtyid = ui_flags["QTYID"]
@@ -81,42 +81,42 @@ def pqual(io_manager, siminfo, uci, ts):
 
         ts["POTFW" + str(index)] = initm(
             siminfo,
-            uci,
+            parameters,
             ui_flags["VPFWFG"],
             "PQUAL" + str(index) + "_MONTHLY/POTFW",
             ui_parms["POTFW"],
         )
         ts["POTFS" + str(index)] = initm(
             siminfo,
-            uci,
+            parameters,
             ui_flags["VPFSFG"],
             "PQUAL" + str(index) + "_MONTHLY/POTFS",
             ui_parms["POTFS"],
         )
         ts["ACQOP" + str(index)] = initm(
             siminfo,
-            uci,
+            parameters,
             ui_flags["VQOFG"],
             "PQUAL" + str(index) + "_MONTHLY/ACQOP",
             ui_parms["ACQOP"],
         )
         ts["SQOLIM" + str(index)] = initm(
             siminfo,
-            uci,
+            parameters,
             ui_flags["VQOFG"],
             "PQUAL" + str(index) + "_MONTHLY/SQOLIM",
             ui_parms["SQOLIM"],
         )
         ts["IOQCP" + str(index)] = initm(
             siminfo,
-            uci,
+            parameters,
             ui_flags["VIQCFG"],
             "PQUAL" + str(index) + "_MONTHLY/IOQC",
             ui_parms["IOQC"],
         )
         ts["AOQCP" + str(index)] = initm(
             siminfo,
-            uci,
+            parameters,
             ui_flags["VAQCFG"],
             "PQUAL" + str(index) + "_MONTHLY/AOQC",
             ui_parms["AOQC"],
@@ -124,7 +124,7 @@ def pqual(io_manager, siminfo, uci, ts):
 
         ts["REMQOP" + str(index)] = initmdiv(
             siminfo,
-            uci,
+            parameters,
             ui_flags["VQOFG"],
             "PQUAL" + str(index) + "_MONTHLY/ACQOP",
             "PQUAL" + str(index) + "_MONTHLY/SQOLIM",
@@ -136,19 +136,27 @@ def pqual(io_manager, siminfo, uci, ts):
         pqadfgc = 0
         ts["PQADFX" + str(index)] = zeros(simlen)
         ts["PQADCN" + str(index)] = zeros(simlen)
-        if "FLAGS" in uci:
+        if "FLAGS" in parameters:
             # get atmos dep timeseries
             pqadfgf = u["PQADFG" + str((index * 2) - 1)]
             if pqadfgf > 0:
                 ts["PQADFX" + str(index)] = initm(
-                    siminfo, uci, pqadfgf, "PQUAL" + str(index) + "_MONTHLY/PQADFX", 0.0
+                    siminfo,
+                    parameters,
+                    pqadfgf,
+                    "PQUAL" + str(index) + "_MONTHLY/PQADFX",
+                    0.0,
                 )
             elif pqadfgf == -1:
                 ts["PQADFX" + str(index)] = ts["PQADFX" + str(index) + " 1"]
             pqadfgc = u["PQADFG" + str(index * 2)]
             if pqadfgc > 0:
                 ts["PQADCN" + str(index)] = initm(
-                    siminfo, uci, pqadfgc, "PQUAL" + str(index) + "_MONTHLY/PQADCN", 0.0
+                    siminfo,
+                    parameters,
+                    pqadfgc,
+                    "PQUAL" + str(index) + "_MONTHLY/PQADCN",
+                    0.0,
                 )
             elif pqadfgc == -1:
                 ts["PQADCN" + str(index)] = ts["PQADCN" + str(index) + " 1"]
@@ -201,8 +209,8 @@ def _pqual_(ui, ts):
     for i in range(nquals):  # simulate constituent
         index = i + 1
         # update UI values for this constituent here!
-        # ui_flags = uci['PQUAL' + str(index) + '_FLAGS']
-        # ui_parms = uci['PQUAL' + str(index) + '_PARAMETERS']
+        # ui_flags = parameters['PQUAL' + str(index) + '_FLAGS']
+        # ui_parms = parameters['PQUAL' + str(index) + '_PARAMETERS']
         name = "PQUAL" + str(index)  # arbitrary identification
 
         QSDFG = ui["QSDFG" + str(index)]

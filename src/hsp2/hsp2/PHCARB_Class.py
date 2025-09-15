@@ -3,8 +3,7 @@ from math import log10
 import numba as nb
 import numpy as np
 from numba.experimental import jitclass
-from numba.typed import Dict
-from numpy import array, zeros
+from numpy import zeros
 
 from hsp2.hsp2.ADCALC import advect
 from hsp2.hsp2.RQUTIL import benth

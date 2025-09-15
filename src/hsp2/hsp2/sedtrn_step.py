@@ -1,17 +1,11 @@
-from numpy import array, zeros, where, int64, asarray
-from math import log10, exp
-from numba import njit, types
-from numba.types import List
+from numba import njit
 
 # the following imports added to handle special actions
 from hsp2.hsp2.state import (
-    sedtrn_get_ix,
-    sedtrn_init_ix,
     get_domain_state,
     set_domain_state,
 )
-from hsp2.hsp2.om import pre_step_model, step_model, model_domain_dependencies
-from numba.typed import Dict
+from hsp2.hsp2.om import pre_step_model, step_model
 
 
 @njit

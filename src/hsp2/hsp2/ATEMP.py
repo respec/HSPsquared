@@ -7,17 +7,17 @@ from numba import njit
 from numpy import empty, int64, zeros
 
 from hsp2.hsp2.utilities import LAPSE, hoursval, make_numba_dict
-from hsp2.hsp2io.protocols import Category, SupportsReadTS
+from hsp2.hsp2io.protocols import SupportsReadTS
 
 ERRMSGS = ()
 
 
-def atemp(io_manager: SupportsReadTS, siminfo, uci, ts):
+def atemp(io_manager: SupportsReadTS, siminfo, parameters, ts):
     """high level driver for air temperature module"""
 
     ts["LAPSE"] = hoursval(siminfo, LAPSE, lapselike=True)
 
-    ui = make_numba_dict(uci)  # Note: all values coverted to float automatically
+    ui = make_numba_dict(parameters)  # Note: all values coverted to float automatically
     ui["k"] = siminfo["delt"] * 0.000833  # convert to in/timestep
     ui["steps"] = siminfo["steps"]
     ui["errlen"] = len(ERRMSGS)

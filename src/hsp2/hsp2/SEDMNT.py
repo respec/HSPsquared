@@ -8,7 +8,7 @@ PDETS= DETS*MFACTA # convert dimensional variables to external units
 """
 
 from numba import njit, types
-from numpy import float64, full, int64, where, zeros, asarray
+from numpy import float64, full, int64, zeros, asarray
 
 from hsp2.hsp2.utilities import hourflag, initm, make_numba_dict
 
@@ -24,25 +24,29 @@ ERRMSG = []
 MFACTA = 1.0
 
 
-def sedmnt(io_manager, siminfo, uci, ts, state):
+def sedmnt(io_manager, siminfo, parameters, ts, state):
     """Produce and remove sediment from the land surface"""
 
     simlen = siminfo["steps"]
 
-    ui = make_numba_dict(uci)  # Note: all values converted to float automatically
+    ui = make_numba_dict(
+        parameters
+    )  # Note: all values converted to float automatically
     ui["simlen"] = siminfo["steps"]
     ui["uunits"] = siminfo["units"]
     ui["delt"] = siminfo["delt"]
     ui["errlen"] = len(ERRMSG)
 
-    u = uci["PARAMETERS"]
+    u = parameters["PARAMETERS"]
     if "CRVFG" in u:
-        ts["COVERI"] = initm(siminfo, uci, u["CRVFG"], "MONTHLY_COVER", u["COVER"])
+        ts["COVERI"] = initm(
+            siminfo, parameters, u["CRVFG"], "MONTHLY_COVER", u["COVER"]
+        )
     else:
         ts["COVERI"] = full(simlen, u["COVER"])
 
     if "VSIVFG" in u:
-        ts["NVSI"] = initm(siminfo, uci, u["VSIVFG"], "MONTHLY_NVSI", u["NVSI"])
+        ts["NVSI"] = initm(siminfo, parameters, u["VSIVFG"], "MONTHLY_NVSI", u["NVSI"])
     else:
         ts["NVSI"] = full(simlen, u["NVSI"])
 
@@ -207,9 +211,7 @@ def _sedmnt_(
     #######################################################################################
     sedmnt_ix = sedmnt_get_ix(state_ix, state_paths, state_info["domain"])
     # these are integer placeholders faster than calling the array look each timestep
-    dets_ix = (
-        sedmnt_ix["DETS"]
-    )
+    dets_ix = sedmnt_ix["DETS"]
     #######################################################################################
 
     for loop in range(simlen):

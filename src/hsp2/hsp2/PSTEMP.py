@@ -5,7 +5,7 @@ License: LGPL2
 Conversion of HSPF HPERTMP.FOR module into Python"""
 
 from numba import njit
-from numpy import float64, full, int64, ones, where, zeros
+from numpy import float64, full, int64, ones, zeros
 
 from hsp2.hsp2.utilities import hoursval, initm, make_numba_dict
 
@@ -22,32 +22,40 @@ MINTMP = -100
 MAXTMP = 100
 
 
-def pstemp(io_manager, siminfo, uci, ts):
+def pstemp(io_manager, siminfo, parameters, ts):
     """Estimate soil temperatures in a pervious land segment"""
     simlen = siminfo["steps"]
 
-    ui = make_numba_dict(uci)
+    ui = make_numba_dict(parameters)
     ui["simlen"] = siminfo["steps"]
     ui["uunits"] = siminfo["units"]
     ui["delt"] = siminfo["delt"]
     ui["errlen"] = len(ERRMSG)
 
-    u = uci["PARAMETERS"]
+    u = parameters["PARAMETERS"]
     if "SLTVFG" in u:
-        ts["ASLT"] = initm(siminfo, uci, u["SLTVFG"], "MONTHLY_ASLT", u["ASLT"])
-        ts["BSLT"] = initm(siminfo, uci, u["SLTVFG"], "MONTHLY_BSLT", u["BSLT"])
+        ts["ASLT"] = initm(siminfo, parameters, u["SLTVFG"], "MONTHLY_ASLT", u["ASLT"])
+        ts["BSLT"] = initm(siminfo, parameters, u["SLTVFG"], "MONTHLY_BSLT", u["BSLT"])
     else:
         ts["ASLT"] = full(simlen, u["ASLT"])
         ts["BSLT"] = full(simlen, u["BSLT"])
     if "ULTVFG" in u:
-        ts["ULTP1"] = initm(siminfo, uci, u["ULTVFG"], "MONTHLY_ULTP1", u["ULTP1"])
-        ts["ULTP2"] = initm(siminfo, uci, u["ULTVFG"], "MONTHLY_ULTP2", u["ULTP2"])
+        ts["ULTP1"] = initm(
+            siminfo, parameters, u["ULTVFG"], "MONTHLY_ULTP1", u["ULTP1"]
+        )
+        ts["ULTP2"] = initm(
+            siminfo, parameters, u["ULTVFG"], "MONTHLY_ULTP2", u["ULTP2"]
+        )
     else:
         ts["ULTP1"] = full(simlen, u["ULTP1"])
         ts["ULTP2"] = full(simlen, u["ULTP2"])
     if "LGTVFG" in u:
-        ts["LGTP1"] = initm(siminfo, uci, u["LGTVFG"], "MONTHLY_LGTP1", u["LGTP1"])
-        ts["LGTP2"] = initm(siminfo, uci, u["LGTVFG"], "MONTHLY_LGTP2", u["LGTP2"])
+        ts["LGTP1"] = initm(
+            siminfo, parameters, u["LGTVFG"], "MONTHLY_LGTP1", u["LGTP1"]
+        )
+        ts["LGTP2"] = initm(
+            siminfo, parameters, u["LGTVFG"], "MONTHLY_LGTP2", u["LGTP2"]
+        )
     else:
         ts["LGTP1"] = full(simlen, u["LGTP1"])
         ts["LGTP2"] = full(simlen, u["LGTP2"])

@@ -16,7 +16,7 @@ UNDEFINED: sliqsp
 from math import exp
 
 from numba import njit
-from numpy import float64, full, int64, where, zeros
+from numpy import float64, full, int64, zeros
 
 from hsp2.hsp2.utilities import hourflag, initm, initmdiv, make_numba_dict
 
@@ -26,37 +26,37 @@ ERRMSGS = (
 )  # ERRMSG0
 
 
-def iqual(io_manager, siminfo, uci, ts):
+def iqual(io_manager, siminfo, parameters, ts):
     """Simulate washoff of quality constituents (other than solids, Heat, dox, and co2)
     using simple relationships with solids And/or water yield"""
 
     simlen = siminfo["steps"]
 
     nquals = 1
-    if "PARAMETERS" in uci:
-        if "NQUAL" in uci["PARAMETERS"]:
-            nquals = int(uci["PARAMETERS"]["NQUAL"])
+    if "PARAMETERS" in parameters:
+        if "NQUAL" in parameters["PARAMETERS"]:
+            nquals = int(parameters["PARAMETERS"]["NQUAL"])
     constituents = []
     for index in range(nquals):
         iqual = str(index + 1)
-        flags = uci["IQUAL" + iqual + "_FLAGS"]
+        flags = parameters["IQUAL" + iqual + "_FLAGS"]
         constituents.append(flags["QUALID"])
 
-    ui = make_numba_dict(uci)
+    ui = make_numba_dict(parameters)
     ui["simlen"] = siminfo["steps"]
     ui["delt60"] = siminfo["delt"] / 60  # delt60 - simulation time interval in hours
     ui["nquals"] = nquals
     ui["errlen"] = len(ERRMSGS)
     # constituents = ui['CONSTITUENTS']   # (short) names of constituents
-    if "FLAGS" in uci:
-        u = uci["FLAGS"]
+    if "FLAGS" in parameters:
+        u = parameters["FLAGS"]
 
     index = 0
     for constituent in constituents:  # simulate constituent
         index += 1
         # update UI values for this constituent here!
-        ui_flags = uci["IQUAL" + str(index) + "_FLAGS"]
-        ui_parms = uci["IQUAL" + str(index) + "_PARAMETERS"]
+        ui_flags = parameters["IQUAL" + str(index) + "_FLAGS"]
+        ui_parms = parameters["IQUAL" + str(index) + "_PARAMETERS"]
         qualid = ui_flags["QUALID"]
         qtyid = ui_flags["QTYID"]
         QSDFG = ui_flags["QSDFG"]
@@ -73,21 +73,21 @@ def iqual(io_manager, siminfo, uci, ts):
         # handle monthly tables
         ts["POTFW" + str(index)] = initm(
             siminfo,
-            uci,
+            parameters,
             ui_flags["VPFWFG"],
             "IQUAL" + str(index) + "_MONTHLY/POTFW",
             ui_parms["POTFW"],
         )
         ts["ACQOP" + str(index)] = initm(
             siminfo,
-            uci,
+            parameters,
             ui_flags["VQOFG"],
             "IQUAL" + str(index) + "_MONTHLY/ACQOP",
             ui_parms["ACQOP"],
         )
         ts["SQOLIM" + str(index)] = initm(
             siminfo,
-            uci,
+            parameters,
             ui_flags["VQOFG"],
             "IQUAL" + str(index) + "_MONTHLY/SQOLIM",
             ui_parms["SQOLIM"],
@@ -95,7 +95,7 @@ def iqual(io_manager, siminfo, uci, ts):
 
         ts["REMQOP" + str(index)] = initmdiv(
             siminfo,
-            uci,
+            parameters,
             ui_flags["VQOFG"],
             "IQUAL" + str(index) + "_MONTHLY/ACQOP",
             "IQUAL" + str(index) + "_MONTHLY/SQOLIM",
@@ -107,19 +107,27 @@ def iqual(io_manager, siminfo, uci, ts):
         iqadfgc = 0
         ts["IQADFX" + str(index)] = zeros(simlen)
         ts["IQADCN" + str(index)] = zeros(simlen)
-        if "FLAGS" in uci:
+        if "FLAGS" in parameters:
             # get atmos dep timeseries
             iqadfgf = u["IQADFG" + str((index * 2) - 1)]
             if iqadfgf > 0:
                 ts["IQADFX" + str(index)] = initm(
-                    siminfo, uci, iqadfgf, "IQUAL" + str(index) + "_MONTHLY/IQADFX", 0.0
+                    siminfo,
+                    parameters,
+                    iqadfgf,
+                    "IQUAL" + str(index) + "_MONTHLY/IQADFX",
+                    0.0,
                 )
             elif iqadfgf == -1:
                 ts["IQADFX" + str(index)] = ts["IQADFX" + str(index) + " 1"]
             iqadfgc = u["IQADFG" + str(index * 2)]
             if iqadfgc > 0:
                 ts["IQADCN" + str(index)] = initm(
-                    siminfo, uci, iqadfgc, "IQUAL" + str(index) + "_MONTHLY/IQADCN", 0.0
+                    siminfo,
+                    parameters,
+                    iqadfgc,
+                    "IQUAL" + str(index) + "_MONTHLY/IQADCN",
+                    0.0,
                 )
             elif iqadfgc == -1:
                 ts["IQADCN" + str(index)] = ts["IQADCN" + str(index) + " 1"]

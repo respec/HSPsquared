@@ -5,7 +5,7 @@ License: LGPL2
 Conversion of HSPF HIMPGAS.FOR module into Python"""
 
 from numba import njit
-from numpy import float64, full, int64, where, zeros
+from numpy import float64, full, int64, zeros
 
 from hsp2.hsp2.utilities import hourflag, initm, make_numba_dict
 
@@ -23,7 +23,7 @@ TFACTB = 32.0
 MFACTA = 0.2266
 
 
-def iwtgas(io_manager, siminfo, uci, ts):
+def iwtgas(io_manager, siminfo, parameters, ts):
     """Estimate water temperature, dissolved oxygen, and carbon dioxide in the outflows
     from a impervious land segment. calculate associated fluxes through exit gate
 
@@ -37,15 +37,15 @@ def iwtgas(io_manager, siminfo, uci, ts):
 
     simlen = siminfo["steps"]
 
-    ui = make_numba_dict(uci)
+    ui = make_numba_dict(parameters)
     ui["simlen"] = siminfo["steps"]
     ui["uunits"] = siminfo["units"]
     ui["errlen"] = len(ERRMSG)
 
-    u = uci["PARAMETERS"]
+    u = parameters["PARAMETERS"]
     if "WTFVFG" in u:
-        ts["AWTF"] = initm(siminfo, uci, u["WTFVFG"], "MONTHLY_AWTF", u["AWTF"])
-        ts["BWTF"] = initm(siminfo, uci, u["WTFVFG"], "MONTHLY_BWTF", u["BWTF"])
+        ts["AWTF"] = initm(siminfo, parameters, u["WTFVFG"], "MONTHLY_AWTF", u["AWTF"])
+        ts["BWTF"] = initm(siminfo, parameters, u["WTFVFG"], "MONTHLY_BWTF", u["BWTF"])
     else:
         ts["AWTF"] = full(simlen, u["AWTF"])
         ts["BWTF"] = full(simlen, u["BWTF"])
