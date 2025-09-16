@@ -20,6 +20,7 @@ ts = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
 
 state_paths_ty = ('state_paths', typeof(state_paths))
 state_ix_ty = ('state_ix', typeof(state_ix))
+ts_ty = ('ts', typeof(ts))
 
 model_num_type = float32
 model_str_type = numba_str # Imported from numba.types.string
@@ -30,9 +31,12 @@ model_base = [state_paths_ty, state_ix_ty]+ model_make_spec(model_str_props,mode
 @jitclass(model_base)
 class ModelBase:
     def __init__(self):
+        self.path = '' # must initialize
         self.value = 0
         self.state_ix = Dict.empty(key_type=types.int64, value_type=types.float64)
         self.state_paths = Dict.empty(key_type=types.unicode_type, value_type=types.float64)
+        self.ts = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
+        return
     
     def step(self, step):
         ret = self.value
@@ -52,30 +56,37 @@ class ModelBase:
         return
 
 class HandlerBase:
-    def __init__(self, props = None):
-        self.model_props = props
+    def __init__(self, model_props = None):
+        self.model_props = model_props
+        self.model_props_parsed = {} # after handling
+        self.parse_model_props(model_props)
         return
     
-    def make_model(self):
-        # Create an empty model
-        model = ModelBase()
-        print("Creating ModelBase with props:", self.model_props)
-        # Populate model props and return
-        self.set_props(model, self.model_props)
-        return model
-    
-    def set_props(self, model, model_props = None, strict = False ):
-        if model_props == None:
-            model_props = self.model_props # use the values stored on this handler during __init__()
-        if model_props == None:
+    def parse_model_props(self, model_props, strict = False ):
+        # sub-classes will allow an create argument "model_props" and handle them here.
+        #  - subclasses should insure that they call super().parse_model_props() or include all code below
+        # see also: handle_prop(), which will be called y parse_model_props 
+        #           for all attributes supported by the class
+        # this base object only handles inputs
+        #self.handle_inputs(model_props)
+        if model_props is None:
             return False
-        for prop in model_props:
+        self.model_props_parsed = model_props
+        return True
+    
+    def set_props(self, model, strict = False ):
+        if self.model_props == None:
+            raise Exception("Model properties are empty, Process terminated.")
+            return False # maybe return exception?
+        for prop in self.model_props:
             if hasattr(model, prop):
-                propval = self.handle_propval(model, prop, model_props[prop], strict)
+                propval = self.handle_propval(prop, self.model_props[prop], strict)
                 setattr(model,prop,propval)
     
-    def handle_propval(self, model, prop, propval, strict = False ):
+    def handle_propval(self, propname, propval, strict = False ):
         # sub classes can check to see if this is in the right format, or change to numba compatible types etc.
+        if not propname:
+            return False # MAYBE should throw an exception here
         return propval
     
     def make_numba_dict(props):

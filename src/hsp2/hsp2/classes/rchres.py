@@ -1,89 +1,4 @@
-#from hsp2.hsp2.classes.base import HandlerBase
-
-class HandlerRCHRES(HandlerBase):
-    float_props = ['DB50', 'db50u', 'AUX1FG', 'AUX2FG', 'AUX3FG', 'AVDEP', 'AVVEL', 'DELTH', 'DEP', 'HRAD', 'IRRDEM', 'LEN', 
-                   'LKFG', 'PRSUPY', 'RO', 'ROVOL', 'SAREA', 'LEN', 'length', 'STCOR', 'TAU', 'TWID', 'USTAR', 'VOL', 'VOLEV', 'delts']
-    int_props = ['nrows', 'nexits', 'AUX1FG', 'AUX2FG', 'AUX3FG', 'LKFG', 'DELTH','STCOR', 'uunits']
-    farray_props = ['o', 'odz', 'ovol', 'oseff', 'od1', 'od2', 'outdgt', 'colind', 'CONVF']
-    carray_props = ['state_read_vars', 'state_write_vars']
-    # props with number of exits
-    nexprops = ['o', 'odz', 'ovol', 'oseff', 'outdgt', 'od1', 'od2', 'colind']
-    def __init__(self, props = None):
-        super(HandlerRCHRES, self).__init__(props)
-        return
-    
-    def make_model(self):
-        # Create an empty model
-        model = ModelRCHRES()
-        print("Creating ModelRCHRES with props:", self.model_props)
-        # Populate model props and return
-        self.set_props(model, self.model_props)
-        self.init_nexits(model)
-        model.delts
-        return model
-    
-    def prep_run(model):
-        # insure that all local timeseries linkages are correct, inputs are sound
-        # later we will test if this is advantageous or if the notation
-        # self.inputs['PREC'] will work as well in equations
-        model.POTEV = model.ts['POTEV']
-        model.PREC = model.ts['PREC']
-        model.CONVF = model.ts['CONVF']
-        model.convf = model.CONVF[0]
-        model.volumeFT = model.ts['volumeFT']
-        model.depthFT = model.ts['depthFT']
-        model.sareaFT = model.ts['sareaFT']
-        # units conversion constants, 1 ACRE is 43560 sq ft. assumes input in acre-ft
-        model.VFACT = 43560.0
-        model.AFACT = 43560.0
-        model.LFACTA = 1.0
-        model.SFACTA = 1.0
-        model.TFACTA = 1.0
-        # physical constants (English units)
-        model.GAM = 62.4  # density of water
-        model.GRAV = 32.2  # gravitational acceleration
-        model.length = model.LEN * 5280.0 # length of reach, in feet
-        AKAPPA = 0.4  # von karmen constant
-        if model.uunits == 2:
-            # si units conversion constants, 1 hectare is 10000 sq m, assumes area input in hectares, vol in Mm3
-            model.VFACT = 1.0e6
-            model.AFACT = 10000.0
-            # physical constants (English units)
-            model.GAM = 9806.  # density of water
-            model.GRAV = 9.81  # gravitational acceleration
-        model.IVOL = model.ts['IVOL']  * VFACT # or sum civol, zeros if no inflow ???
-        model.CONVF = model.ts['CONVF']
-        model.CONVF = model.ts['CONVF']
-        if model.AUX1FG:
-            model.ts['DEP']   = DEP   = zeros(steps)
-            model.ts['SAREA'] = SAREA = zeros(steps)
-            model.ts['USTAR'] = USTAR = zeros(steps)
-            model.ts['TAU']   = TAU   = zeros(steps)
-            model.ts['AVDEP'] = AVDEP = zeros(steps)
-            model.ts['AVVEL'] = AVVEL = zeros(steps)
-            model.ts['HRAD']  = HRAD  = zeros(steps)
-            model.ts['TWID']  = TWID  = zeros(steps)
-        
-        
-        if model.uunits == 2:
-            model.db50u = model.DB50 / 40.0 # mean diameter of bed material
-        else:
-            model.db50u   = model.DB50 / 12.0 # mean diameter of bed material
-        
-        return
-    
-    def handle_propval(self, model, prop, propval, strict = False ):
-        # sub classes can check to see if this is in the right format, or change to numba compatible types etc.
-        propval = super.handle_propval(propname)
-        if (propname == 'delt'):
-            model.delts = propval * 60.0
-        return propval
-    
-    def init_nexits(self, model):
-        # faster to preallocate arrays - like MATLAB)
-        for i in self.nexprops:
-            setattr(model, i, zeros(model.nexits))
-        return
+from hsp2.hsp2.classes.rchres.handler import HandlerRCHRES
 
 # Define the spec for the ModelRCHRES class
 # note: we store the float, int, array props on the HandlerRCHRES object for convenience
@@ -92,9 +7,16 @@ model_rchres_spec = model_base + model_make_spec(HandlerRCHRES.float_props, floa
 
 @jitclass(model_rchres_spec )
 class ModelRCHRES:
-    def __init__(self, props = None):
-        # calls shared external method to avoid duplication due to lack of inheritance in jitclass
+    def __init__(self):
+        # Note: no inheritance in jitclass as of py 3.12, so, the following cannot work:
+        # super(ModelRCHRES, self).__init__()
+        # must copy any base method stuff from ModelBase
         self.path = '' # must initialize
+        self.value = 0
+        self.ix = 0 # this is the pointer to the current value for this object in state_ix
+        self.state_ix = Dict.empty(key_type=types.int64, value_type=types.float64)
+        self.state_paths = Dict.empty(key_type=types.unicode_type, value_type=types.float64)
+        self.ts = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
         return
     
     def step(self, step):
