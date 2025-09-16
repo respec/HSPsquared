@@ -26,7 +26,7 @@ model_num_type = float32
 model_str_type = numba_str # Imported from numba.types.string
 model_str_props = ['name' , 'path']
 model_num_props = ['value']
-model_base = [state_paths_ty, state_ix_ty]+ model_make_spec(model_str_props,model_str_type ) + model_make_spec(model_num_props, model_num_type )
+model_base = [state_paths_ty, state_ix_ty, ts_ty]+ model_make_spec(model_str_props,model_str_type ) + model_make_spec(model_num_props, model_num_type )
 
 @jitclass(model_base)
 class ModelBase:

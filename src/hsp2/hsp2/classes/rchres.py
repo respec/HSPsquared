@@ -13,7 +13,6 @@ class ModelRCHRES:
         # must copy any base method stuff from ModelBase
         self.path = '' # must initialize
         self.value = 0
-        self.ix = 0 # this is the pointer to the current value for this object in state_ix
         self.state_ix = Dict.empty(key_type=types.int64, value_type=types.float64)
         self.state_paths = Dict.empty(key_type=types.unicode_type, value_type=types.float64)
         self.ts = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
