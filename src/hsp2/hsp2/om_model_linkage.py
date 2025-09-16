@@ -4,18 +4,19 @@ It is also used to make an implicit parent child link to insure that an object i
 during a model simulation.
 """
 
-from hsp2.hsp2.state import state_add_ts, get_state_ix
+from numba import njit
+
 from hsp2.hsp2.om import *
 from hsp2.hsp2.om_model_object import ModelObject
-from numba import njit
+from hsp2.hsp2.state import get_state_ix, state_add_ts
 
 
 class ModelLinkage(ModelObject):
     def __init__(self, name, container=False, model_props=None, state=None):
         if model_props is None:
             model_props = {}
-        super(ModelLinkage, self).__init__(name, container, model_props, state=False)
-        # ModelLinkage copies a values from right to left
+        super().__init__(name, container, model_props, state=False)
+        # ModelLinkage copies values from right to left
         # right_path: is the data source for the link
         # left_path: is the destination of the link
         #   - is implicit in types 1-3, i.e., the ModelLinkage object path itself is the left_path
