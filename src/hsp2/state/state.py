@@ -4,57 +4,28 @@ import numpy as np
 from pandas import date_range
 from pandas.tseries.offsets import Minute
 from numba.typed import Dict
-from numba.experimental import jitclass
-from numpy import zeros, int32, asarray as npasarray
-from numba import njit, types, typeof  # import the types
+from numpy import zeros
+from numba import njit, types  # import the types
 import os
 import importlib.util
 import sys
-from hsp2.hsp2.utilities import make_class_spec
 
 
-# this is temporary, these will be merged with state soon
-state_ix = npasarray(zeros(1), dtype="float64")
-op_tokens = int32(zeros((1,64)))
-op_exec_lists = int32(zeros((1,1024)))
-# note: tested 32-bit key and saw absolutely no improvement, so test 32bit value
-state_paths = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
-ts_paths = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
-ts_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:])
-
-state_paths_ty = ('state_paths', typeof(state_paths))
-op_tokens_ty = ('op_tokens', typeof(op_tokens))
-state_ix_ty = ('state_ix', typeof(state_ix))
-ts_ix_ty = ('ts_ix', typeof(ts_ix))
-ts_paths_ty = ('ts_paths', typeof(ts_paths))
-model_root_name_ty = ('model_root_name', types.unicode_type)
-state_step_hydr_ty = ('state_step_hydr', types.unicode_type)
-hsp2_local_py_ty = ('hsp2_local_py', types.boolean)
-op_exec_lists_ty = ('op_exec_lists', typeof(op_exec_lists))
-state_spec = [state_paths_ty, state_ix_ty, ts_paths_ty, ts_ix_ty,
-              model_root_name_ty, state_step_hydr_ty, hsp2_local_py_ty,
-              op_tokens_ty, op_exec_lists_ty]
-
-@jitclass(state_spec)
-class state_object:
-    def __init__(self, num_ops=5000):
-        self.state_ix = zeros(num_ops)
-        self.state_paths = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
-        self.ts_paths = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
-        self.ts_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:])
-        self.state_step_hydr = "disabled"
-        self.model_root_name = ""
-        self.hsp2_local_py = False
-        # Note: in the type declaration above we are alloweed to use the shortened form
-        #         op_tokens = int32(zeros((1,64)))
-        #       but in jited class that throws an error and we have to use the 
-        #       form op_tokens.astype(int32) to do the type cast
-        op_tokens = zeros( (num_ops,64) )
-        self.op_tokens = op_tokens.astype(int32)
-        op_exec_lists = zeros( (num_ops,1024) )
-        self.op_exec_lists = op_exec_lists.astype(int32)
-        return
-
+def init_state_dicts():
+    """
+    This contains the base dictionaries used to pass model state amongst modules and custom code plugins
+    """
+    state = {}  # shared state Dictionary, contains numba-ready Dicts
+    state["state_paths"] = Dict.empty(
+        key_type=types.unicode_type, value_type=types.int64
+    )
+    state["state_ix"] = Dict.empty(key_type=types.int64, value_type=types.float64)
+    state["dict_ix"] = Dict.empty(key_type=types.int64, value_type=types.float64[:, :])
+    state["ts_ix"] = Dict.empty(key_type=types.int64, value_type=types.float64[:])
+    # initialize state for hydr
+    # add a generic place to stash model_data for dynamic components
+    state["model_data"] = {}
+    return state
 
 
 def op_path_name(operation, id):
@@ -110,10 +81,10 @@ def state_add_ts(state, var_path, default_value=0.0, debug=False):
     If the variable does not yet exist, create it.
     Returns the integer key of the variable in the state_ix Dict
     """
-    if var_path not in state.state_paths.keys():
+    if var_path not in state["state_paths"].keys():
         # we need to add this to the state
-        state.state_paths[var_path] = append_state(state.state_ix, default_value)
-    var_ix = get_state_ix(state.state_ix, state.state_paths, var_path)
+        state["state_paths"][var_path] = append_state(state["state_ix"], default_value)
+    var_ix = get_state_ix(state["state_ix"], state["state_paths"], var_path)
     if debug == True:
         print("Setting state_ix[", var_ix, "], to", default_value)
     # siminfo needs to be in the model_data array of state.  Can be populated by HSP2 or standalone by ops model
@@ -149,7 +120,26 @@ def append_state(state_ix, var_value):
     return val_ix
 
 
-def state_siminfo_hsp2(state, parameter_obj, siminfo, io_manager):
+def state_context_hsp2(state, operation, segment, activity):
+    # this establishes domain info so that a module can know its paths
+    state["operation"] = operation
+    state["segment"] = segment  #
+    state["activity"] = activity
+    # give shortcut to state path for the upcoming function
+    # insure that there is a model object container
+    seg_name = operation + "_" + segment
+    seg_path = "/STATE/" + state["model_root_name"] + "/" + seg_name
+    if "hsp_segments" not in state.keys():
+        state[
+            "hsp_segments"
+        ] = {}  # for later use by things that need to know hsp entities and their paths
+    if seg_name not in state["hsp_segments"].keys():
+        state["hsp_segments"][seg_name] = seg_path
+
+    state["domain"] = seg_path  # + "/" + activity   # may want to comment out activity?
+
+
+def state_siminfo_hsp2(parameter_obj, siminfo, io_manager, state):
     # Add crucial simulation info for dynamic operation support
     delt = parameter_obj.opseq.INDELT_minutes[0]  # get initial value for STATE objects
     siminfo["delt"] = delt
@@ -159,25 +149,8 @@ def state_siminfo_hsp2(state, parameter_obj, siminfo, io_manager):
     siminfo["steps"] = len(siminfo["tindex"])
     hdf5_path = io_manager._input.file_path
     (fbase, fext) = os.path.splitext(hdf5_path)
-    state.model_root_name = os.path.split(fbase)[1]  # takes the text before .h5
+    state["model_root_name"] = os.path.split(fbase)[1]  # takes the text before .h5
 
-
-def state_context_hsp2(state, operation, segment, activity):
-    # this establishes domain info so that a module can know its paths
-    state["operation"] = operation
-    state["segment"] = segment  #
-    state["activity"] = activity
-    # give shortcut to state path for the upcoming function
-    # insure that there is a model object container
-    seg_name = operation + "_" + segment
-    seg_path = "/STATE/" + state.model_root_name + "/" + seg_name
-    if "hsp_segments" not in state.keys():
-        state[
-            "hsp_segments"
-        ] = {}  # for later use by things that need to know hsp entities and their paths
-    if seg_name not in state["hsp_segments"].keys():
-        state["hsp_segments"][seg_name] = seg_path
-    state.domain = seg_path  # + "/" + activity   # may want to comment out activity?
 
 def state_init_hsp2(state, opseq, activities):
     # This sets up the state entries for all state compatible HSP2 model variables
@@ -185,36 +158,19 @@ def state_init_hsp2(state, opseq, activities):
     for _, operation, segment, delt in opseq.itertuples():
         if operation != "GENER" and operation != "COPY":
             for activity, function in activities[operation].items():
-                # set up named paths for model operations
-                seg_name = op_path_name(operation, segment)
-                seg_path = "/STATE/" + state.model_root_name + "/" + seg_name
-                segid = set_state(
-                    state.state_ix, state.state_paths, seg_path, 0.0
-                )
-                ep_list = []
                 if activity == "HYDR":
                     state_context_hsp2(state, operation, segment, activity)
-                    ep_list = hydr_init_ix(state, state.domain)
+                    hydr_init_ix(state, state["domain"])
                 elif activity == "SEDTRN":
                     state_context_hsp2(state, operation, segment, activity)
-                    ep_list = sedtrn_init_ix(state, state.domain)
+                    sedtrn_init_ix(state, state["domain"])
                 elif activity == "SEDMNT":
                     state_context_hsp2(state, operation, segment, activity)
-                    ep_list = sedmnt_init_ix(state, state.domain)
+                    sedmnt_init_ix(state, state["domain"])
                 elif activity == "RQUAL":
                     state_context_hsp2(state, operation, segment, activity)
-                    ep_list = rqual_init_ix(state, state.domain)
-                # Register list of elements to execute if any
-                op_exec_list = model_domain_dependencies(
-                    state, state.domain, ep_list, True
-                )
-                state.op_exec_lists[segid] = op_exec_list
+                    rqual_init_ix(state, state["domain"])
 
-def load_dynamics_hsp2(state, io_manager, siminfo):
-    # Load any dynamic components if present, and store variables on objects
-    # if a local file with state_step_hydr() was found in load_dynamics(), we add it to state
-    state.state_step_hydr = siminfo.state_step_hydr  # enabled or disabled
-    state.hsp2_local_py = load_dynamics(io_manager, siminfo)  # Stores the actual function in state
 
 def state_load_hdf5_components(
     io_manager,
@@ -229,6 +185,13 @@ def state_load_hdf5_components(
     # Implement population of model_object_cache etc from components in a hdf5 such as Special ACTIONS
     return
 
+
+def state_load_dynamics_hsp2(state, io_manager, siminfo):
+    # Load any dynamic components if present, and store variables on objects
+    hsp2_local_py = load_dynamics(io_manager, siminfo)
+    # if a local file with state_step_hydr() was found in load_dynamics(), we add it to state
+    state["state_step_hydr"] = siminfo["state_step_hydr"]  # enabled or disabled
+    state["hsp2_local_py"] = hsp2_local_py  # Stores the actual function in state
 
 
 @njit
@@ -295,7 +258,7 @@ def hydr_init_ix(state, domain):
     for i in hydr_state:
         # var_path = f'{domain}/{i}'
         var_path = domain + "/" + i
-        hydr_ix[i] = set_state(state.state_ix, state.state_paths, var_path, 0.0)
+        hydr_ix[i] = set_state(state["state_ix"], state["state_paths"], var_path, 0.0)
     return hydr_ix
 
 
@@ -311,7 +274,7 @@ def sedtrn_init_ix(state, domain):
     for i in sedtrn_state:
         # var_path = f'{domain}/{i}'
         var_path = domain + "/" + i
-        sedtrn_ix[i] = set_state(state.state_ix, state.state_paths, var_path, 0.0)
+        sedtrn_ix[i] = set_state(state["state_ix"], state["state_paths"], var_path, 0.0)
     return sedtrn_ix
 
 
@@ -326,7 +289,7 @@ def sedmnt_init_ix(state, domain):
     sedmnt_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
     for i in sedmnt_state:
         var_path = domain + "/" + i
-        sedmnt_ix[i] = set_state(state.state_ix, state.state_paths, var_path, 0.0)
+        sedmnt_ix[i] = set_state(state["state_ix"], state["state_paths"], var_path, 0.0)
     return sedmnt_ix
 
 
@@ -353,7 +316,7 @@ def rqual_init_ix(state, domain):
     rqual_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
     for i in rqual_state:
         var_path = domain + "/" + i
-        rqual_ix[i] = set_state(state.state_ix, state.state_paths, var_path, 0.0)
+        rqual_ix[i] = set_state(state["state_ix"], state["state_paths"], var_path, 0.0)
     return rqual_ix
 
 
@@ -466,9 +429,9 @@ def load_dynamics(io_manager, siminfo):
     # see if there is a code module with custom python
     # print("Looking for SPECL with custom python code ", (fbase + ".py"))
     hsp2_local_py = dynamic_module_import(fbase, fbase + ".py", "hsp2_local_py")
-    siminfo.state_step_hydr = "disabled"
+    siminfo["state_step_hydr"] = "disabled"
     if "state_step_hydr" in dir(hsp2_local_py):
-        siminfo.state_step_hydr = "enabled"
+        siminfo["state_step_hydr"] = "enabled"
         print("state_step_hydr function defined, using custom python code")
     else:
         # print("state_step_hydr function not defined. Using default")
