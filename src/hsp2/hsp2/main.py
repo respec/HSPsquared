@@ -96,14 +96,13 @@ def main(
     # before loading dynamic components that may reference them
     state_init_hsp2(state, opseq, activities)
     # - finally stash specactions in state, not domain (segment) dependent so do it once
-    state["specactions"] = specactions  # stash the specaction dict in state
-    om_init_state(state)  # set up operational model specific state entries
-    specl_load_state(state, io_manager, siminfo)  # traditional special actions
+    om_operations = om_init_state()  # set up operational model specific containers
+    specl_load_om(om_operations, specactions)  # load traditional special actions
     state_load_dynamics_om(
         state, io_manager, siminfo
     )  # operational model for custom python
     # finalize all dynamically loaded components and prepare to run the model
-    state_om_model_run_prep(state, io_manager, siminfo)
+    state_om_model_run_prep(state, om_operations, siminfo)
     #######################################################################################
 
     # main processing loop

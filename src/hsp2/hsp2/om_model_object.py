@@ -32,7 +32,7 @@ class ModelObject:
     ]  # runnable components important for optimization
     ops_data_type = "ndarray"  # options are ndarray or Dict - Dict appears slower, but unsure of the cause, so keep as option.
 
-    def __init__(self, name, container=False, model_props=None, state=None):
+    def __init__(self, name, container=False, model_props=None, state=None, model_object_cache=None):
         self.name = name
         self.handle_deprecated_args(name, container, model_props, state)
         # END - handle deprecated
@@ -52,7 +52,9 @@ class ModelObject:
                 )
             else:
                 state = self.container.state
+                model_object_cache = self.container.model_object_cache
         self.state = state  # make a copy here. is this efficient?
+        self.model_object_cache = model_object_cache  # make a copy here. is this efficient?
         # Local properties
         self.model_props_parsed = {}  # a place to stash parse record for debugging
         self.log_path = ""  # Ex: "/RESULTS/RCHRES_001/SPECL"
@@ -273,10 +275,10 @@ class ModelObject:
 
     def get_object(self, var_name=False):
         if var_name == False:
-            return self.state["model_object_cache"][self.state_path]
+            return self.model_object_cache[self.state_path]
         else:
             var_path = self.find_var_path(var_name)
-            return self.state["model_object_cache"][var_path]
+            return self.model_object_cache[var_path]
 
     def find_var_path(self, var_name, local_only=False):
         # check local inputs for name
@@ -325,7 +327,7 @@ class ModelObject:
             self.default_value,
         )
         # store object in model_object_cache - always, if we have reached this point we need to overwrite
-        self.state["model_object_cache"][self.state_path] = self
+        self.model_object_cache[self.state_path] = self
         # this should check to see if this object has a parent, and if so, register the name on the parent
         # default is as a child object.
         if not (self.container == False):
@@ -446,7 +448,7 @@ class ModelObject:
         if register_path == False:
             register_path = register_container.find_var_path(var_name, True)
         if (register_path == False) or (
-            register_path not in self.state["model_object_cache"].keys()
+            register_path not in self.model_object_cache.keys()
         ):
             # create a register as a placeholder for the data at the hub path
             # in case there are no senders, or in the case of a timeseries logger, we need to register it so that its path can be set to hold data
@@ -466,7 +468,7 @@ class ModelObject:
                     var_name, register_container, reg_props, self.state
                 )
         else:
-            var_register = self.state["model_object_cache"][register_path]
+            var_register = self.model_object_cache[register_path]
         return var_register
 
     def tokenize(self):

@@ -15,14 +15,18 @@ from hsp2.hsp2.utilities import make_class_spec
 
 # this is temporary, these will be merged with state soon
 state_ix = npasarray(zeros(1), dtype="float64")
+model_exec_list = npasarray(zeros(1), dtype="int64")
 op_tokens = int32(zeros((1,64)))
 op_exec_lists = int32(zeros((1,1024)))
 # note: tested 32-bit key and saw absolutely no improvement, so test 32bit value
 state_paths = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
+hsp_segments = Dict.empty(key_type=types.unicode_type, value_type=types.unicode_type)
 ts_paths = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
 ts_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:])
 
 state_paths_ty = ('state_paths', typeof(state_paths))
+model_exec_list_ty = ('model_exec_list', typeof(model_exec_list))
+hsp_segments_ty = ('hsp_segments', typeof(hsp_segments))
 op_tokens_ty = ('op_tokens', typeof(op_tokens))
 state_ix_ty = ('state_ix', typeof(state_ix))
 ts_ix_ty = ('ts_ix', typeof(ts_ix))
@@ -33,13 +37,14 @@ hsp2_local_py_ty = ('hsp2_local_py', types.boolean)
 op_exec_lists_ty = ('op_exec_lists', typeof(op_exec_lists))
 state_spec = [state_paths_ty, state_ix_ty, ts_paths_ty, ts_ix_ty,
               model_root_name_ty, state_step_hydr_ty, hsp2_local_py_ty,
-              op_tokens_ty, op_exec_lists_ty]
+              hsp_segments_ty, op_tokens_ty, op_exec_lists_ty, model_exec_list_ty]
 
 @jitclass(state_spec)
 class state_object:
     def __init__(self, num_ops=5000):
         self.state_ix = zeros(num_ops)
         self.state_paths = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
+        self.hsp_segments = Dict.empty(key_type=types.unicode_type, value_type=types.unicode_type)
         self.ts_paths = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
         self.ts_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:])
         self.state_step_hydr = "disabled"
@@ -169,14 +174,10 @@ def state_context_hsp2(state, operation, segment, activity):
     state["activity"] = activity
     # give shortcut to state path for the upcoming function
     # insure that there is a model object container
-    seg_name = operation + "_" + segment
+    seg_name = op_path_name(operation, segment)
     seg_path = "/STATE/" + state.model_root_name + "/" + seg_name
-    if "hsp_segments" not in state.keys():
-        state[
-            "hsp_segments"
-        ] = {}  # for later use by things that need to know hsp entities and their paths
-    if seg_name not in state["hsp_segments"].keys():
-        state["hsp_segments"][seg_name] = seg_path
+    if seg_name not in state.hsp_segments.keys():
+        state.hsp_segments[seg_name] = seg_path
     state.domain = seg_path  # + "/" + activity   # may want to comment out activity?
 
 def state_init_hsp2(state, opseq, activities):

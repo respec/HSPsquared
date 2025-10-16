@@ -56,7 +56,7 @@ def model_element_paths(mel, state):
     """
     ixn = 1
     for ix in mel:
-        ip = get_ix_path(state["state_paths"], ix)
+        ip = get_ix_path(state.state_paths, ix)
         im = state["model_object_cache"][ip]
         print(ixn, ":", im.name, "->", im.state_path, "=", im.get_state())
         ixn = ixn + 1
@@ -130,7 +130,7 @@ def state_load_om_python(state, io_manager, siminfo):
             io_manager,
             siminfo,
             state["op_tokens"],
-            state["state_paths"],
+            state.state_paths,
             state["state_ix"],
             state["dict_ix"],
             state["ts_ix"],
@@ -138,16 +138,18 @@ def state_load_om_python(state, io_manager, siminfo):
         )
 
 
-def om_init_state(state):
+def om_init_state():
     # this function will check to see if any of the multiple paths to loading - was state_initialize_om()
     # dynamic operational model objects has been supplied for the model.
     # Grab globals from state for easy handling
     op_tokens, model_object_cache = init_om_dicts()
-    state["op_tokens"], state["model_object_cache"], state["model_exec_list"] = (
+    om_operations = {}
+    om_operations["op_tokens"], om_operations["model_object_cache"], om_operations["model_exec_list"] = (
         op_tokens,
         model_object_cache,
         [],
     )
+    return(om_operations)
 
 
 def state_load_dynamics_om(state, io_manager, siminfo):
@@ -165,43 +167,46 @@ def state_load_dynamics_om(state, io_manager, siminfo):
     return
 
 
-def state_om_model_root_object(state, siminfo):
+def state_om_model_root_object(state, om_operations, siminfo):
     # Create the base that everything is added to. this object does nothing except host the rest.
-    if "model_root_object" not in state.keys():
+    if "model_root_object" not in om_operations.keys():
         model_root_object = ModelObject(
-            state["model_root_name"], False, {}, state
+            om_operations["model_root_name"], False, {}, state
         )  # we give this no name so that it does not interfer with child paths like timer, year, etc (i.e. /STATE/year, ...)
-        state["model_root_object"] = model_root_object
+        om_operations["model_root_object"] = model_root_object
         # set up the timer as the first element
-    model_root_object = state["model_root_object"]
-    if "/STATE/timer" not in state["state_paths"].keys():
+    model_root_object = om_operations["model_root_object"]
+    if "/STATE/timer" not in state.state_paths.keys():
         timer_props = siminfo
         timer_props["state_path"] = "/STATE/timer"
         timer = SimTimer("timer", model_root_object, timer_props, state)
     # add base object for the HSP2 domains and other things already added to state so they can be influenced
-    for seg_name, seg_path in state["hsp_segments"].items():
+    for seg_path in state.hsp_segments.items():
         if seg_path not in state["model_object_cache"].keys():
             # BUG: need to figure out if this is OK, then how do we add attributes to these River Objects
             #      later when adding from json?
             #      Can we simply check the model_object_cache during load step?
             # Create an object shell for this
+            # just get the end of the path, which should be fine since we 
+            # don't use model names for anything, but might be more appropriately made as full path
+            seg_name = seg_path.rsplit('/',1)[-1]
             segment = ModelObject(seg_name, model_root_object, {}, state)
-            state["model_object_cache"][segment.state_path] = segment
+            om_operations["model_object_cache"][segment.state_path] = segment
 
 
-def state_om_model_run_prep(state, io_manager, siminfo):
+def state_om_model_run_prep(state, om_operations, siminfo):
     # insure model base is set
-    state_om_model_root_object(state, siminfo)
+    state_om_model_root_object(state, om_operations, siminfo)
     # now instantiate and link objects
     # state['model_data'] has alread been prepopulated from json, .py files, hdf5, etc.
-    model_root_object = state["model_root_object"]
+    model_root_object = om_operations["model_root_object"]
     model_loader_recursive(state["model_data"], model_root_object, state)
     # print("Loaded objects & paths: insures all paths are valid, connects models as inputs")
     # both state['model_object_cache'] and the model_object_cache property of the ModelObject class def
     # will hold a global repo for this data this may be redundant?  They DO point to the same datset?
     # since this is a function that accepts state as an argument and these were both set in state_load_dynamics_om
     # we can assume they are there and functioning
-    model_object_cache = model_root_object.state["model_object_cache"]
+    model_object_cache = om_operations["model_object_cache"]
     model_path_loader(model_object_cache)
     # len() will be 1 if we only have a simtimer, but > 1 if we have a river being added
     model_exec_list = state["model_exec_list"]
@@ -245,7 +250,7 @@ def state_om_model_run_prep(state, io_manager, siminfo):
     # print("op_tokens final", op_tokens)
     # Stash a list of runnables
     state["runnables"] = ModelObject.runnable_op_list(
-        state["op_tokens"], list(state["state_paths"].values())
+        state["op_tokens"], list(state.state_paths.values())
     )
     # print("Operational model status:", state['state_step_om'])
     if len(model_exec_list) > 0:
@@ -607,7 +612,7 @@ def model_input_dependencies(state, exec_list, only_runnable=False):
     mel = []
     for model_element in state["model_object_cache"].values():
         for input_path in model_element.inputs:
-            input_ix = get_state_ix(state["state_ix"], state["state_paths"], input_path)
+            input_ix = get_state_ix(state["state_ix"], state.state_paths, input_path)
             if input_ix in exec_list:
                 # do a recursive pull of factors affecting this element
                 model_order_recursive(
@@ -631,7 +636,7 @@ def model_domain_dependencies(state, domain, ep_list, only_runnable=False):
         mel = []
         mtl = []
         # if the given element is NOT in model_object_cache, then nothing is acting on it, so we return empty list
-        if (domain + "/" + ep) in state["state_paths"]:
+        if (domain + "/" + ep) in state.state_paths:
             if (domain + "/" + ep) in state["model_object_cache"].keys():
                 endpoint = state["model_object_cache"][domain + "/" + ep]
                 model_order_recursive(endpoint, state["model_object_cache"], mel, mtl)
@@ -684,7 +689,7 @@ def step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
 def finish_model(state, io_manager, siminfo):
     # print("Model object cache list", state["model_object_cache"].keys())
     for i in state["model_exec_list"]:
-        model_object = state["model_object_cache"][get_ix_path(state["state_paths"], i)]
+        model_object = state["model_object_cache"][get_ix_path(state.state_paths, i)]
         if "io_manager" in dir(model_object):
             model_object.io_manager = io_manager
         model_object.finish()
