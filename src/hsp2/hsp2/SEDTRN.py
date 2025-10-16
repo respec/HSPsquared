@@ -10,7 +10,7 @@ from hsp2.hsp2.ADCALC import advect
 from hsp2.hsp2.utilities import make_numba_dict
 
 # the following imports added to handle special actions
-from hsp2.hsp2.state import sedtrn_get_ix, sedtrn_init_ix, sedtrn_state_vars
+from hsp2.state.state import sedtrn_get_ix, sedtrn_init_ix, sedtrn_state_vars
 from hsp2.hsp2.om import pre_step_model, step_model, model_domain_dependencies
 from numba.typed import Dict
 
@@ -110,7 +110,7 @@ def sedtrn(io_manager, siminfo, parameters, ts, state):
     # if (hsp2_local_py != False):
     #     from hsp2_local_py import state_step_hydr
     # else:
-    #     from hsp2.hsp2.state_fn_defaults import state_step_hydr
+    #     from hsp2.state.state_fn_defaults import state_step_hydr
     # must split dicts out of state Dict since numba cannot handle mixed-type nested Dicts
     # initialize the sedtrn paths in case they don't already reside here
     sedtrn_init_ix(state, state["domain"])

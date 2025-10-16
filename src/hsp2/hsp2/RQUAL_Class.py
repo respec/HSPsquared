@@ -10,7 +10,7 @@ from hsp2.hsp2.PHCARB_Class import PHCARB_Class
 from hsp2.hsp2.PLANK_Class import PLANK_Class
 
 # the following imports added to handle special actions
-from hsp2.hsp2.state import rqual_get_ix
+from hsp2.state.state import rqual_get_ix
 from hsp2.hsp2.om import pre_step_model, step_model
 
 if os.environ.get("NUMBA_DISABLE_JIT", 0):  # jit should be on by default.

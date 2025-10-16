@@ -7,12 +7,12 @@ in the state_ix Dict for runtime execution.
 """
 
 from hsp2.hsp2.om import is_float_digit
-from hsp2.hsp2.state import set_state, get_state_ix
+from hsp2.state.state import set_state, get_state_ix
 from hsp2.hsp2.om_model_object import ModelObject, ModelConstant
 from numba import njit
 from numpy import array, append
 
-# from hsp2.hsp2.state import set_state, get_state_ix
+# from hsp2.state.state import set_state, get_state_ix
 # from numba.typed import Dict
 # from hsp2.hsp2.om import get_exec_order, is_float_digit
 # from pandas import Series, DataFrame, concat, HDFStore, set_option, to_numeric

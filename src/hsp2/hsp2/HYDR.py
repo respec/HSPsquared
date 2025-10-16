@@ -19,7 +19,7 @@ from numba.typed import List
 from hsp2.hsp2.utilities import initm, make_numba_dict
 
 # the following imports added by rb to handle dynamic code and special actions
-from hsp2.hsp2.state import hydr_get_ix, hydr_init_ix, hydr_state_vars
+from hsp2.state.state import hydr_get_ix, hydr_init_ix, hydr_state_vars
 from hsp2.hsp2.om import pre_step_model, step_model, model_domain_dependencies
 from numba.typed import Dict
 
@@ -159,7 +159,7 @@ def hydr(io_manager, siminfo, parameters, ts, ftables, state):
     if hsp2_local_py != False:
         from hsp2_local_py import state_step_hydr
     else:
-        from hsp2.hsp2.state_fn_defaults import state_step_hydr
+        from hsp2.state.state_fn_defaults import state_step_hydr
     # initialize the hydr paths in case they don't already reside here
     hydr_init_ix(state, state["domain"])
     # must split dicts out of state Dict since numba cannot handle mixed-type nested Dicts
