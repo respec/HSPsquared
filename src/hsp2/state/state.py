@@ -58,6 +58,8 @@ class state_object:
         self.op_tokens = op_tokens.astype(int32)
         op_exec_lists = zeros( (num_ops,1024) )
         self.op_exec_lists = op_exec_lists.astype(int32)
+        model_exec_list = zeros(num_ops)
+        self.model_exec_list = model_exec_list.astype(types.int64)
         return
 
 
@@ -122,7 +124,7 @@ def state_add_ts(state, var_path, default_value=0.0, debug=False):
     if debug == True:
         print("Setting state_ix[", var_ix, "], to", default_value)
     # siminfo needs to be in the model_data array of state.  Can be populated by HSP2 or standalone by ops model
-    state["ts_ix"][var_ix] = np.full_like(
+    state.ts_ix[var_ix] = np.full_like(
         zeros(state["model_data"]["siminfo"]["steps"]), default_value
     )
     return var_ix

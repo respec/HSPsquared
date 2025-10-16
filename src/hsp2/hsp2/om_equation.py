@@ -139,7 +139,7 @@ class Equation(ModelObject):
                 constant_path = self.state_path + "/_ops/_op" + str(j)
                 s_ix = set_state(
                     self.state["state_ix"],
-                    self.state["state_paths"],
+                    self.state.state_paths,
                     constant_path,
                     float(self.var_ops[j]),
                 )
@@ -148,7 +148,7 @@ class Equation(ModelObject):
                 # this is a variable, must find it's data path index
                 var_path = self.find_var_path(self.var_ops[j])
                 s_ix = get_state_ix(
-                    self.state["state_ix"], self.state["state_paths"], var_path
+                    self.state["state_ix"], self.state.state_paths, var_path
                 )
                 if s_ix == False:
                     print(
@@ -160,7 +160,7 @@ class Equation(ModelObject):
                         s_ix,
                     )
                     print(
-                        "searched: ", self.state["state_paths"], self.state["state_ix"]
+                        "searched: ", self.state.state_paths, self.state["state_ix"]
                     )
                     return
                 else:

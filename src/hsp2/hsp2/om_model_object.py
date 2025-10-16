@@ -210,18 +210,18 @@ class ModelObject:
 
     def set_state(self, set_value):
         var_ix = set_state(
-            self.state["state_ix"],
-            self.state["state_paths"],
+            self.state_ix,
+            self.state_paths,
             self.state_path,
             set_value,
         )
         return var_ix
 
     def load_state_dicts(self, op_tokens, state_paths, state_ix, dict_ix):
-        self.state["op_tokens"] = op_tokens
-        self.state["state_paths"] = state_paths
-        self.state["state_ix"] = state_ix
-        self.state["dict_ix"] = dict_ix
+        self.state.op_tokens = op_tokens
+        self.state_paths = state_paths
+        self.state_ix = state_ix
+        self.state.dict_ix = dict_ix
 
     def save_object_hdf(self, hdfname, overwrite=False):
         # save the object in the full hdf5 path
@@ -252,15 +252,15 @@ class ModelObject:
 
     def get_state(self, var_name=False):
         if var_name == False:
-            return self.state["state_ix"][self.ix]
+            return self.state_ix[self.ix]
         else:
             var_path = self.find_var_path(var_name)
             var_ix = get_state_ix(
-                self.state["state_ix"], self.state["state_paths"], var_path
+                self.state_ix, self.state_paths, var_path
             )
         if var_ix == False:
             return False
-        return self.state["state_ix"][var_ix]
+        return self.state_ix[var_ix]
 
     def get_exec_order(self, var_name=False):
         if var_name == False:
@@ -268,9 +268,9 @@ class ModelObject:
         else:
             var_path = self.find_var_path(var_name)
             var_ix = get_state_ix(
-                self.state["state_ix"], self.state["state_paths"], var_path
+                self.state_ix, self.state_paths, var_path
             )
-        exec_order = get_exec_order(self.state["model_exec_list"], var_ix)
+        exec_order = get_exec_order(self.self.model_exec_list, var_ix)
         return exec_order
 
     def get_object(self, var_name=False):
@@ -294,11 +294,11 @@ class ModelObject:
         if not (self.container == False):
             return self.container.find_var_path(var_name)
         # check for root state vars STATE + var_name
-        if ("/STATE/" + var_name) in self.state["state_paths"].keys():
+        if ("/STATE/" + var_name) in self.state_paths.keys():
             # return self.state['state_paths'][("/STATE/" + var_name)]
             return "/STATE/" + var_name
         # check for full paths
-        if var_name in self.state["state_paths"].keys():
+        if var_name in self.state_paths.keys():
             # return self.state['state_paths'][var_name]
             return var_name
         return False
@@ -321,8 +321,8 @@ class ModelObject:
         if self.state_path == "" or self.state_path == False:
             self.make_paths()
         self.ix = set_state(
-            self.state["state_ix"],
-            self.state["state_paths"],
+            self.state_ix,
+            self.state_paths,
             self.state_path,
             self.default_value,
         )
@@ -354,7 +354,7 @@ class ModelObject:
         found_path = self.find_var_path(var_path)
         # print("Searched", var_name, "with path", var_path,"found", found_path)
         var_ix = get_state_ix(
-            self.state["state_ix"], self.state["state_paths"], found_path
+            self.state_ix, self.state_paths, found_path
         )
         if var_ix == False:
             if trust == False:
@@ -411,14 +411,14 @@ class ModelObject:
         # and that it has needed object class to render it at runtime (some are automatic)
         # RIGHT NOW THIS DOES NOTHING TO CHECK IF THE VAR EXISTS THIS MUST BE FIXED
         var_ix = set_state(
-            self.state["state_ix"], self.state["state_paths"], var_path, 0.0
+            self.state_ix, self.state_paths, var_path, 0.0
         )
         return var_ix
 
     def get_dict_state(self, ix=-1):
         if ix >= 0:
-            return self.state["dict_ix"][ix]
-        return self.state["dict_ix"][self.ix]
+            return self.state.dict_ix[ix]
+        return self.state.dict_ix[self.ix]
 
     def find_paths(self):
         # Note: every single piece of data used by objects, even constants, are resolved to a PATH in the hdf5
@@ -497,18 +497,18 @@ class ModelObject:
                 + self.state_path
                 + "). "
             )
-        self.state["op_tokens"][self.ix] = self.format_ops()
+        self.state.op_tokens[self.ix] = self.format_ops()
 
     def step(self, step):
         # this tests the model for a single timestep.
         # this is not the method that is used for high-speed runs, but can theoretically be used for
         # easier to understand demonstrations
         step_one(
-            self.state["op_tokens"],
-            self.state["op_tokens"][self.ix],
-            self.state["state_ix"],
-            self.state["dict_ix"],
-            self.state["ts_ix"],
+            self.state.op_tokens,
+            self.state.op_tokens[self.ix],
+            self.state_ix,
+            self.state.dict_ix,
+            self.state_ixts_ix"],
             step,
         )
         # step_model({self.state['op_tokens'][self.ix]}, self.state['state_ix'], self.state['dict_ix'], self.state['ts_ix'], step)

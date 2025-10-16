@@ -123,17 +123,17 @@ def state_load_om_python(state, io_manager, siminfo):
     (fbase, fext) = os.path.splitext(hdf5_path)
     # see if there is a code module with custom python
     # print("Looking for custom om loader in python code ", (fbase + ".py"))
-    hsp2_local_py = state["hsp2_local_py"]
+    hsp2_local_py = state.state_step_hydr
     # Load a function from code if it exists
     if "om_init_model" in dir(hsp2_local_py):
         hsp2_local_py.om_init_model(
             io_manager,
             siminfo,
-            state["op_tokens"],
+            state.op_tokens,
             state.state_paths,
             state["state_ix"],
-            state["dict_ix"],
-            state["ts_ix"],
+            state.dict_ix,
+            state.ts_ix,
             state["model_object_cache"],
         )
 
@@ -206,21 +206,21 @@ def state_om_model_run_prep(state, om_operations, siminfo):
     # will hold a global repo for this data this may be redundant?  They DO point to the same datset?
     # since this is a function that accepts state as an argument and these were both set in state_load_dynamics_om
     # we can assume they are there and functioning
-    model_object_cache = om_operations["model_object_cache"]
+    model_object_cache = model_root_object.state["model_object_cache"]
     model_path_loader(model_object_cache)
     # len() will be 1 if we only have a simtimer, but > 1 if we have a river being added
-    model_exec_list = state["model_exec_list"]
+    model_exec_list = state.model_exec_list
     # put all objects in token form for fast runtime execution and sort according to dependency order
     # print("Tokenizing models")
     if "ops_data_type" in siminfo.keys():
         model_root_object.ops_data_type = siminfo[
             "ops_data_type"
         ]  # allow override of dat astructure settings
-    model_root_object.state["op_tokens"] = ModelObject.make_op_tokens(
+    model_root_object.state.op_tokens = ModelObject.make_op_tokens(
         max(model_root_object.state["state_ix"].keys()) + 1
     )
     model_tokenizer_recursive(model_root_object, model_object_cache, model_exec_list)
-    op_tokens = model_root_object.state["op_tokens"]
+    op_tokens = model_root_object.state.op_tokens
     # print("op_tokens afer tokenizing", op_tokens)
     # model_exec_list is the ordered list of component operations
     # print("model_exec_list(", len(model_exec_list),"items):", model_exec_list)
@@ -228,7 +228,7 @@ def state_om_model_run_prep(state, om_operations, siminfo):
     # the resulting set of objects is returned.
     state["state_step_om"] = "disabled"
     state["model_object_cache"] = model_object_cache
-    state["model_exec_list"] = np.asarray(model_exec_list, dtype="i8")
+    state.model_exec_list = np.asarray(model_exec_list, dtype="i8")
     if model_root_object.ops_data_type == "ndarray":
         state_keyvals = np.asarray(
             zeros(max(model_root_object.state["state_ix"].keys()) + 1), dtype="float64"
@@ -238,7 +238,7 @@ def state_om_model_run_prep(state, om_operations, siminfo):
         state["state_ix"] = state_keyvals
     else:
         state["state_ix"] = model_root_object.state["state_ix"]
-    state["op_tokens"] = (
+    state.op_tokens = (
         op_tokens  # is this superfluous since the root object got op_tokens from state?
     )
     if len(op_tokens) > 0:
@@ -250,7 +250,7 @@ def state_om_model_run_prep(state, om_operations, siminfo):
     # print("op_tokens final", op_tokens)
     # Stash a list of runnables
     state["runnables"] = ModelObject.runnable_op_list(
-        state["op_tokens"], list(state.state_paths.values())
+        state.op_tokens, list(state.state_paths.values())
     )
     # print("Operational model status:", state['state_step_om'])
     if len(model_exec_list) > 0:
@@ -620,7 +620,7 @@ def model_input_dependencies(state, exec_list, only_runnable=False):
                 )
                 mello = mello + mel
     if only_runnable == True:
-        mello = ModelObject.runnable_op_list(state["op_tokens"], mello)
+        mello = ModelObject.runnable_op_list(state.op_tokens, mello)
     mello = pd.Series(mello).drop_duplicates().tolist()
     return mello
 
@@ -642,7 +642,7 @@ def model_domain_dependencies(state, domain, ep_list, only_runnable=False):
                 model_order_recursive(endpoint, state["model_object_cache"], mel, mtl)
                 mello = mello + mel
     # TODO: stash the runnable list (mellorun) as a element in dict_ix for cached access during runtime
-    mellorun = ModelObject.runnable_op_list(state["op_tokens"], mello)
+    mellorun = ModelObject.runnable_op_list(state.op_tokens, mello)
     if only_runnable == True:
         mello = mellorun
     return mello
@@ -688,7 +688,7 @@ def step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
 
 def finish_model(state, io_manager, siminfo):
     # print("Model object cache list", state["model_object_cache"].keys())
-    for i in state["model_exec_list"]:
+    for i in state.model_exec_list:
         model_object = state["model_object_cache"][get_ix_path(state.state_paths, i)]
         if "io_manager" in dir(model_object):
             model_object.io_manager = io_manager

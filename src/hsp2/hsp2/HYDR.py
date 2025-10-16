@@ -150,10 +150,10 @@ def hydr(io_manager, siminfo, parameters, ts, ftables, state):
     )
     state_info["domain"], state_info["state_step_hydr"], state_info["state_step_om"] = (
         state["domain"],
-        state["state_step_hydr"],
+        state.state_step_hydr,
         state["state_step_om"],
     )
-    hsp2_local_py = state["hsp2_local_py"]
+    hsp2_local_py = state.state_step_hydr
     # It appears necessary to load this here, instead of from main.py, otherwise,
     # _hydr_() does not recognize the function state_step_hydr()?
     if hsp2_local_py != False:
@@ -163,8 +163,8 @@ def hydr(io_manager, siminfo, parameters, ts, ftables, state):
     # initialize the hydr paths in case they don't already reside here
     hydr_init_ix(state, state["domain"])
     # must split dicts out of state Dict since numba cannot handle mixed-type nested Dicts
-    state_ix, dict_ix, ts_ix = state["state_ix"], state["dict_ix"], state["ts_ix"]
-    state_paths = state["state_paths"]
+    state_ix, dict_ix, ts_ix = state["state_ix"], state.dict_ix, state.ts_ix
+    state_paths = state.state_paths
     ep_list = (
         hydr_state_vars()
     )  # define all eligibile for state integration in state.py
@@ -174,7 +174,7 @@ def hydr(io_manager, siminfo, parameters, ts, ftables, state):
         state, state_info["domain"], ep_list, True
     )
     model_exec_list = asarray(model_exec_list, dtype="i8")  # format for use in numba
-    op_tokens = state["op_tokens"]
+    op_tokens = state.op_tokens
     #######################################################################################
 
     # Do the simulation with _hydr_   (ie run reaches simulation code)
@@ -207,7 +207,7 @@ def hydr(io_manager, siminfo, parameters, ts, ftables, state):
     for i in range(nexits):
         parameters["PARAMETERS"]["OS" + str(i + 1)] = ui["OS" + str(i + 1)]
     # copy back (modified) operational element data
-    state["state_ix"], state["dict_ix"], state["ts_ix"] = state_ix, dict_ix, ts_ix
+    state["state_ix"], state.dict_ix, state.ts_ix = state_ix, dict_ix, ts_ix
     return errors, ERRMSGS
 
 
