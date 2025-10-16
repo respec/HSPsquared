@@ -4,7 +4,7 @@ It handles all Dict management functions, but provides for no runtime execution 
 All runtime exec is done by child classes.
 """
 
-from hsp2.hsp2.state import set_state, get_state_ix
+from hsp2.state.state import set_state, get_state_ix
 from numba.typed import Dict
 from hsp2.hsp2.om import get_exec_order, is_float_digit
 from pandas import HDFStore

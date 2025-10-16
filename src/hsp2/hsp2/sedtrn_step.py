@@ -1,7 +1,7 @@
 from numba import njit
 
 # the following imports added to handle special actions
-from hsp2.hsp2.state import (
+from hsp2.state.state import (
     get_domain_state,
     set_domain_state,
 )

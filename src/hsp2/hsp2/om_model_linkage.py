@@ -4,7 +4,7 @@ It is also used to make an implicit parent child link to insure that an object i
 during a model simulation.
 """
 
-from hsp2.hsp2.state import state_add_ts, get_state_ix
+from hsp2.state.state import state_add_ts, get_state_ix
 from hsp2.hsp2.om import *
 from hsp2.hsp2.om_model_object import ModelObject
 from numba import njit

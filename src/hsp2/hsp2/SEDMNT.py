@@ -13,7 +13,7 @@ from numpy import float64, full, int64, zeros, asarray
 from hsp2.hsp2.utilities import hourflag, initm, make_numba_dict
 
 # the following imports added to handle special actions
-from hsp2.hsp2.state import sedmnt_get_ix, sedmnt_init_ix, sedmnt_state_vars
+from hsp2.state.state import sedmnt_get_ix, sedmnt_init_ix, sedmnt_state_vars
 from hsp2.hsp2.om import pre_step_model, step_model, model_domain_dependencies
 from numba.typed import Dict
 
