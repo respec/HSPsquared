@@ -144,12 +144,12 @@ def hydr(io_manager, siminfo, parameters, ts, ftables, state):
     # must be numba safe, so we don't just pass the whole state which is not
     state_info = Dict.empty(key_type=types.unicode_type, value_type=types.unicode_type)
     state_info["operation"], state_info["segment"], state_info["activity"] = (
-        state["operation"],
-        state["segment"],
-        state["activity"],
+        state.operation,
+        state.segment,
+        state.activity,
     )
     state_info["domain"], state_info["state_step_hydr"], state_info["state_step_om"] = (
-        state["domain"],
+        state.domain,
         state.state_step_hydr,
         state["state_step_om"],
     )
@@ -161,7 +161,7 @@ def hydr(io_manager, siminfo, parameters, ts, ftables, state):
     else:
         from hsp2.state.state_fn_defaults import state_step_hydr
     # initialize the hydr paths in case they don't already reside here
-    hydr_init_ix(state, state["domain"])
+    hydr_init_ix(state, state.domain)
     # must split dicts out of state Dict since numba cannot handle mixed-type nested Dicts
     state_ix, dict_ix, ts_ix = state["state_ix"], state.dict_ix, state.ts_ix
     state_paths = state.state_paths

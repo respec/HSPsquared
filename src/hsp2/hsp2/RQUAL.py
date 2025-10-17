@@ -255,18 +255,18 @@ def rqual(
     # must be numba safe, so we don't just pass the whole state which is not
     state_info = Dict.empty(key_type=types.unicode_type, value_type=types.unicode_type)
     state_info["operation"], state_info["segment"], state_info["activity"] = (
-        state["operation"],
-        state["segment"],
-        state["activity"],
+        state.operation,
+        state.segment,
+        state.activity,
     )
     state_info["domain"], state_info["state_step_hydr"], state_info["state_step_om"] = (
-        state["domain"],
+        state.domain,
         state.state_step_hydr,
         state["state_step_om"],
     )
     # must split dicts out of state Dict since numba cannot handle mixed-type nested Dicts
     # initialize the rqual paths in case they don't already reside here
-    rqual_init_ix(state, state["domain"])
+    rqual_init_ix(state, state.domain)
     state_ix, dict_ix, ts_ix = state["state_ix"], state.dict_ix, state.ts_ix
     state_paths = state.state_paths
     op_tokens = state.op_tokens

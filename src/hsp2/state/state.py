@@ -184,9 +184,9 @@ def state_siminfo_hsp2(state, parameter_obj, siminfo, io_manager):
 
 def state_context_hsp2(state, operation, segment, activity):
     # this establishes domain info so that a module can know its paths
-    state["operation"] = operation
-    state["segment"] = segment  #
-    state["activity"] = activity
+    state.operation = operation
+    state.segment = segment  #
+    state.activity = activity
     # give shortcut to state path for the upcoming function
     # insure that there is a model object container
     seg_name = op_path_name(operation, segment)
@@ -226,7 +226,7 @@ def state_init_hsp2(state, opseq, activities):
                 )
                 state.op_exec_lists[segid] = op_exec_list
 
-def load_dynamics_hsp2(state, io_manager, siminfo):
+def state_load_dynamics_hsp2(state, io_manager, siminfo):
     # Load any dynamic components if present, and store variables on objects
     # if a local file with state_step_hydr() was found in load_dynamics(), we add it to state
     state.state_step_hydr = siminfo.state_step_hydr  # enabled or disabled
