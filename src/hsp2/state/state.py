@@ -13,12 +13,12 @@ import sys
 from hsp2.hsp2.utilities import make_class_spec
 
 
-# this is temporary, these will be merged with state soon
+# Define the complex datatypes
 state_ix = npasarray(zeros(1), dtype="float64")
 model_exec_list = npasarray(zeros(1), dtype="int64")
 op_tokens = int32(zeros((1,64)))
 op_exec_lists = int32(zeros((1,1024)))
-# note: tested 32-bit key and saw absolutely no improvement, so test 32bit value
+# note: tested 32-bit key and saw absolutely no improvement, so go with 64 bit
 state_paths = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
 hsp_segments = Dict.empty(key_type=types.unicode_type, value_type=types.unicode_type)
 ts_paths = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
@@ -32,12 +32,21 @@ state_ix_ty = ('state_ix', typeof(state_ix))
 ts_ix_ty = ('ts_ix', typeof(ts_ix))
 ts_paths_ty = ('ts_paths', typeof(ts_paths))
 model_root_name_ty = ('model_root_name', types.unicode_type)
+# these are likely to be located in model objects when we go fully to that level. 
+# But for now, they are here to maintain compatiility with the existing code base
 state_step_hydr_ty = ('state_step_hydr', types.unicode_type)
+operation_ty = ('operation', types.unicode_type)
+segment_ty = ('segment', types.unicode_type)
+activity_ty = ('activity', types.unicode_type)
+domain_ty = ('domain', types.unicode_type)
 hsp2_local_py_ty = ('hsp2_local_py', types.boolean)
 op_exec_lists_ty = ('op_exec_lists', typeof(op_exec_lists))
+
+# Combine these into a spec to create the class
 state_spec = [state_paths_ty, state_ix_ty, ts_paths_ty, ts_ix_ty,
               model_root_name_ty, state_step_hydr_ty, hsp2_local_py_ty,
-              hsp_segments_ty, op_tokens_ty, op_exec_lists_ty, model_exec_list_ty]
+              hsp_segments_ty, op_tokens_ty, op_exec_lists_ty, model_exec_list_ty,
+              operation_ty, segment_ty, activity_ty, domain_ty]
 
 @jitclass(state_spec)
 class state_object:
@@ -49,6 +58,10 @@ class state_object:
         self.ts_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:])
         self.state_step_hydr = "disabled"
         self.model_root_name = ""
+        self.operation = ""
+        self.segment = ""
+        self.activity = ""
+        self.domain = ""
         self.hsp2_local_py = False
         # Note: in the type declaration above we are alloweed to use the shortened form
         #         op_tokens = int32(zeros((1,64)))
