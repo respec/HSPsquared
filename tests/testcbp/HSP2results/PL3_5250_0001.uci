@@ -225,6 +225,10 @@ PLTGEN
 END PLTGEN
 
 SPEC-ACTIONS
+*** test special actions
+  RCHRES 1                                RSED    4       +=  2.50E+05
+  RCHRES 1                                RSED    5       +=  6.89E+05
+  RCHRES 1                                RSED    6       +=  4.01E+05
 END SPEC-ACTIONS
 
 END RUN
