@@ -29,10 +29,9 @@ opseq = uci_obj.opseq
 # - finally stash specactions in state, not domain (segment) dependent so do it once
 # now load state and the special actions
 state = state_object()
-om_operations = om_init_state(state)
-state["specactions"] = uci_obj.specactions  # stash the specaction dict in state
+om_operations = om_init_state()
 
-state_siminfo_hsp2(uci_obj, siminfo)
+state_siminfo_hsp2(state, uci_obj, siminfo, io_manager)
 # Add support for dynamic functions to operate on STATE
 # - Load any dynamic components if present, and store variables on objects
 state_load_dynamics_hsp2(state, io_manager, siminfo)
