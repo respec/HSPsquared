@@ -508,12 +508,14 @@ class ModelObject:
         # this tests the model for a single timestep.
         # this is not the method that is used for high-speed runs, but can theoretically be used for
         # easier to understand demonstrations
+        # this has not been tested since changes to the state from array to object
         step_one(
             self.state.op_tokens,
             self.state.op_tokens[self.ix],
             self.state_ix,
             self.state.dict_ix,
-            self.state_ixts_ix"],
+            self.state.state_ix,
+            self.state.ts_ix
             step,
         )
         # step_model({self.state['op_tokens'][self.ix]}, self.state['state_ix'], self.state['dict_ix'], self.state['ts_ix'], step)
