@@ -249,8 +249,8 @@ def state_init_hsp2(state, opseq, activities):
 def state_load_dynamics_hsp2(state, io_manager, siminfo):
     # Load any dynamic components if present, and store variables on objects
     # if a local file with state_step_hydr() was found in load_dynamics(), we add it to state
-    state.state_step_hydr = siminfo['state_step_hydr']  # enabled or disabled
     state.hsp2_local_py = load_dynamics(io_manager, siminfo)  # Stores the actual function in state
+    state.state_step_hydr = siminfo['state_step_hydr']  # enabled or disabled
 
 def state_load_hdf5_components(
     io_manager,
