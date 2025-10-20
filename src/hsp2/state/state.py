@@ -10,7 +10,7 @@ from numba import njit, types, typeof  # import the types
 import os
 import importlib.util
 import sys
-from hsp2.hsp2.utilities import make_class_spec
+#from hsp2.hsp2.utilities import make_class_spec
 
 
 # Define the complex datatypes

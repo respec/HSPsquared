@@ -7,8 +7,10 @@ from hsp2.hsp2.main import *
 from hsp2.hsp2.om import *
 from hsp2.hsp2io.hdf import HDF5
 from hsp2.hsp2io.io import IOManager
+from hsp2.hsp2tools.readUCI import *
 
 fpath = "./tests/testcbp/HSP2results/JL1_6562_6560.h5"
+ucipath = "./tests/testcbp/HSP2results/JL1_6562_6560.uci"
 # try also:
 # fpath = './tests/testcbp/HSP2results/JL1_6562_6560.h5'
 # sometimes when testing you may need to close the file, so try:
@@ -16,7 +18,7 @@ fpath = "./tests/testcbp/HSP2results/JL1_6562_6560.h5"
 # # f.close()
 hdf5_instance = HDF5(fpath)
 io_manager = IOManager(hdf5_instance)
-uci_obj = io_manager.read_uci()
+uci_obj = io_manager.read_parameters()
 siminfo = uci_obj.siminfo
 opseq = uci_obj.opseq
 # Note: now that the UCI is read in and hdf5 loaded, you can see things like:
