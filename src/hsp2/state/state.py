@@ -17,8 +17,8 @@ import sys
 state_ix = npasarray(zeros(1), dtype="float64")
 model_exec_list = npasarray(zeros(1), dtype="int64")
 # TBD: Create a sample tindex for typing
-#tindex = date_range("1984-01-01", "2020-12-31", freq=Minute(60))
-#tindex_ty = ('tindex', typeof(tindex))
+tindex = date_range("1984-01-01", "2020-12-31", freq=Minute(60))
+tindex_ty = ('tindex', typeof(tindex.to_numpy()))
 op_tokens = int32(zeros((1,64)))
 op_exec_lists = int32(zeros((1,1024)))
 # note: tested 32-bit key and saw absolutely no improvement, so go with 64 bit
@@ -50,7 +50,8 @@ op_exec_lists_ty = ('op_exec_lists', typeof(op_exec_lists))
 state_spec = [state_paths_ty, state_ix_ty, ts_paths_ty, ts_ix_ty,
               model_root_name_ty, state_step_hydr_ty, hsp2_local_py_ty,
               hsp_segments_ty, op_tokens_ty, op_exec_lists_ty, model_exec_list_ty,
-              operation_ty, segment_ty, activity_ty, domain_ty, state_step_om_ty]
+              operation_ty, segment_ty, activity_ty, domain_ty, state_step_om_ty,
+              tindex_ty]
 
 @jitclass(state_spec)
 class state_object:
