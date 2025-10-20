@@ -16,8 +16,9 @@ import sys
 # Define the complex datatypes
 state_ix = npasarray(zeros(1), dtype="float64")
 model_exec_list = npasarray(zeros(1), dtype="int64")
-# Create a sample tindex for typing
-tindex = date_range("1984-01-01", "2020-12-31", freq=Minute(60))
+# TBD: Create a sample tindex for typing
+#tindex = date_range("1984-01-01", "2020-12-31", freq=Minute(60))
+#tindex_ty = ('tindex', typeof(tindex))
 op_tokens = int32(zeros((1,64)))
 op_exec_lists = int32(zeros((1,1024)))
 # note: tested 32-bit key and saw absolutely no improvement, so go with 64 bit
@@ -27,7 +28,6 @@ ts_paths = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
 ts_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:])
 
 state_paths_ty = ('state_paths', typeof(state_paths))
-tindex_ty = ('tindex', typeof(tindex))
 model_exec_list_ty = ('model_exec_list', typeof(model_exec_list))
 hsp_segments_ty = ('hsp_segments', typeof(hsp_segments))
 op_tokens_ty = ('op_tokens', typeof(op_tokens))
