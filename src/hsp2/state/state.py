@@ -38,7 +38,7 @@ model_root_name_ty = ('model_root_name', types.unicode_type)
 # these are likely to be located in model objects when we go fully to that level. 
 # But for now, they are here to maintain compatiility with the existing code base
 state_step_hydr_ty = ('state_step_hydr', types.unicode_type)
-state_step_om_ty = ('state_step_om_ty', types.unicode_type)
+state_step_om_ty = ('state_step_om', types.unicode_type)
 operation_ty = ('operation', types.unicode_type)
 segment_ty = ('segment', types.unicode_type)
 activity_ty = ('activity', types.unicode_type)

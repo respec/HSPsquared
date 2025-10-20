@@ -4,13 +4,16 @@ import os
 
 import numpy
 from hsp2.hsp2.main import *
+from hsp2.state.state import *
 from hsp2.hsp2.om import *
 from hsp2.hsp2io.hdf import HDF5
 from hsp2.hsp2io.io import IOManager
 from hsp2.hsp2tools.readUCI import *
 
-fpath = "./tests/testcbp/HSP2results/JL1_6562_6560.h5"
-ucipath = "./tests/testcbp/HSP2results/JL1_6562_6560.uci"
+fpath = "./tests/testcbp/HSP2results/PL3_5250_0001.h5"
+ucipath = "./tests/testcbp/HSP2results/PL3_5250_0001.uci"
+uci = readUCI(ucipath, fpath)
+
 # try also:
 # fpath = './tests/testcbp/HSP2results/JL1_6562_6560.h5'
 # sometimes when testing you may need to close the file, so try:
@@ -25,8 +28,8 @@ opseq = uci_obj.opseq
 # - hdf5_instance._store.keys() - all the paths in the UCI/hdf5
 # - finally stash specactions in state, not domain (segment) dependent so do it once
 # now load state and the special actions
-state = init_state_dicts()
-state_initialize_om(state)
+state = state_object()
+om_operations = om_init_state(state)
 state["specactions"] = uci_obj.specactions  # stash the specaction dict in state
 
 state_siminfo_hsp2(uci_obj, siminfo)
