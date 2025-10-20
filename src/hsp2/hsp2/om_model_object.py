@@ -515,7 +515,7 @@ class ModelObject:
             self.state_ix,
             self.state.dict_ix,
             self.state.state_ix,
-            self.state.ts_ix
+            self.state.ts_ix,
             step,
         )
         # step_model({self.state['op_tokens'][self.ix]}, self.state['state_ix'], self.state['dict_ix'], self.state['ts_ix'], step)
