@@ -1,0 +1,261 @@
+RUN
+ 
+GLOBAL
+  JL1_6562_6 riv | P5 | subsheds   | Beaver
+  START       1984/01/01        END    2020/12/31
+  RUN INTERP OUTPUT LEVEL    1    1
+  RESUME     0 RUN     1                   UNIT SYSTEM     1
+END GLOBAL
+
+FILES
+<FILE>  <UN#>***<----FILE NAME------------------------------------------------->
+WDM1       21   met_N51003.wdm
+WDM2       22   prad_N51003.wdm
+WDM3       23   ps_sep_div_ams_subsheds_JL1_6562_6560.wdm
+WDM4       24   JL1_6562_6560.wdm
+MESSU      25   JL1_6562_6560.ech
+           26   JL1_6562_6560.out
+           31   JL1_6562_6560.tau
+END FILES
+
+OPN SEQUENCE
+    INGRP              INDELT 01:00
+      RCHRES       1
+      PLTGEN       1
+    END INGRP
+END OPN SEQUENCE
+
+RCHRES
+  ACTIVITY
+    # -  # HYFG ADFG CNFG HTFG SDFG GQFG OXFG NUFG PKFG PHFG ***
+    1         1    1    0    0    0    0    0    0    0    0
+  END ACTIVITY
+
+  PRINT-INFO
+    # -  # HYFG ADFG CNFG HTFG SDFG GQFG OXFG NUFG PKFG PHFG PIVL***PY
+    1         5    5    0    0    0    0    0    0    0    0    0   12
+  END PRINT-INFO
+
+  GEN-INFO
+    RCHRES<-------Name------->Nexit   Unit Systems   Printer      ***
+    # -  #                          User t-series  Engl Metr LKFG ***
+    1      JL1_6562_6560          3    1    1    1   26    0    0
+  END GEN-INFO
+
+  HYDR-PARM1
+    RCHRES  Flags for HYDR section                    ***
+    # -  #  VC A1 A2 A3  ODFVFG for each     ODGTFG for each *** FUNCT  for each
+            FG FG FG FG  possible   exit     possible   exit *** possible   exit
+                           1  2  3  4  5       1  2  3  4  5 ***   1  2  3  4  5
+            VC A1 A2 A3   V1 V2 V3 V4 V5      G1 G2 G3 G4 G5 ***  F1 F2 F3 F4 F5
+    1        0  1  1  1    0  0  4  0  0       1  2  0  0  0       0  0  0  0  0
+  END HYDR-PARM1
+
+  HYDR-PARM2
+    RCHRES                                                             ***
+    # -  #    FTABNO       LEN     DELTH     STCOR        KS      DB50 ***
+    1             1.     17.01    249.28                 0.5                    
+  END HYDR-PARM2
+
+  HYDR-INIT
+    RCHRES  Initial conditions for HYDR section     ***
+    # -  #       VOL       Initial value of COLIND  ***  Initial value of OUTDGT
+             (ac-ft)       for each  possible exit  ***  for each  possible exit
+                 VOL      CEX1 CEX2 CEX3 CEX4 CEX5  *** DEX1 DEX2 DEX3 DEX4 DEX5
+    1      293.16000
+  END HYDR-INIT
+
+  ADCALC-DATA
+    RCHRES  Data for section ADCALC ***
+    # -  #     CRRAT       VOL      ***
+    1            1.5    293.16                                                  
+  END ADCALC-DATA
+
+END RCHRES
+
+FTABLES
+  FTABLE      1
+NOTE: FLOODPLAIN BASE = 5*BANKFULL WIDTH ***
+      FLOODPLAIN SIDE-SLOPE = SAME AS CHANNEL'S ***
+ ROWS COLS ***
+   19    4
+     DEPTH      AREA    VOLUME     DISCH  ***
+      (FT)   (ACRES)   (AC-FT)     (CFS)  ***
+     0.000     0.000      0.00      0.00
+     0.423    11.894      4.78     23.85
+     0.846    13.061     10.06     77.00
+     1.269    14.227     15.83    154.23
+     1.691    15.393     22.09    254.22
+     2.114    16.560     28.85    376.68
+     2.537    17.726     36.10    521.75
+     2.960    18.893     43.84    689.83
+     3.383    20.059     52.07    881.43
+     3.806    21.225     60.80   1097.15
+     4.806   108.886    168.31   1305.89
+     6.108   112.478    312.43   3577.19
+     7.410   116.069    461.23   6694.41
+     8.712   119.661    614.71  10572.52
+    10.014   123.253    772.86  15161.71
+    11.316   126.845    935.69  20429.73
+    12.618   130.437   1103.20  26354.64
+    13.921   134.028   1275.38  32921.26
+    15.223   137.620   1452.24  40119.05
+  END FTABLE  1
+END FTABLES
+
+EXT SOURCES
+<-Volume-> <Member> SsysSgap<--Mult-->Tran <-Target vols> <-Grp> <-Member->***
+<Name>   # <Name> # tem strg<-factor->strg <Name>   #   #        <Name> # #***
+*** METEOROLOGY
+WDM1  1000 EVAP     ENGLZERO  1.000   SAME RCHRES   1     EXTNL  POTEV
+WDM1  1001 DEWP     ENGLZERO          SAME RCHRES   1     EXTNL  DEWTMP
+WDM1  1002 WNDH     ENGLZERO          SAME RCHRES   1     EXTNL  WIND
+WDM1  1003 RADH     ENGLZERO          SAME RCHRES   1     EXTNL  SOLRAD
+WDM1  1004 ATMP     ENGLZERO          SAME RCHRES   1     EXTNL  GATMP
+WDM1  1005 CLDC     ENGLZERO          SAME RCHRES   1     EXTNL  CLOUD
+
+*** PRECIPITATION AND ATMOSPHERIC DEPOSITION LOADS
+WDM2  2000 HPRC     ENGLZERO          SAME RCHRES   1     EXTNL  PREC
+WDM2  2001 NO23     ENGLZERO          DIV  RCHRES   1     EXTNL  NUADFX 1 1
+WDM2  2002 NH4A     ENGLZERO          DIV  RCHRES   1     EXTNL  NUADFX 2 1
+WDM2  2003 NO3D     ENGLZERO          DIV  RCHRES   1     EXTNL  NUADFX 1 1
+WDM2  2004 NH4D     ENGLZERO          DIV  RCHRES   1     EXTNL  NUADFX 2 1
+WDM2  2005 ORGN     ENGLZERO          DIV  RCHRES   1     EXTNL  PLADFX 1 1
+WDM2  2006 PO4A     ENGLZERO          DIV  RCHRES   1     EXTNL  NUADFX 3 1
+WDM2  2007 ORGP     ENGLZERO          DIV  RCHRES   1     EXTNL  PLADFX 2 1
+
+*** POINT SOURCE
+WDM3  3000 FLOW     ENGLZERO          DIV  RCHRES   1     INFLOW IVOL
+WDM3  3001 HEAT     ENGLZERO          DIV  RCHRES   1     INFLOW IHEAT
+WDM3  3002 NH3X     ENGLZERO          DIV  RCHRES   1     INFLOW NUIF1  2
+WDM3  3003 NO3X     ENGLZERO          DIV  RCHRES   1     INFLOW NUIF1  1
+WDM3  3004 ORNX     ENGLZERO          DIV  RCHRES   1     INFLOW PKIF   3
+WDM3  3005 PO4X     ENGLZERO          DIV  RCHRES   1     INFLOW NUIF1  4
+WDM3  3006 ORPX     ENGLZERO          DIV  RCHRES   1     INFLOW PKIF   4
+WDM3  3021 BODX     ENGLZERO          DIV  RCHRES   1     INFLOW OXIF   2
+WDM3  3022 TSSX     ENGLZERO  0.0005  DIV  RCHRES   1     INFLOW ISED   3
+WDM3  3023 DOXX     ENGLZERO          DIV  RCHRES   1     INFLOW OXIF   1
+WDM3  3024 TOCX     ENGLZERO          DIV  RCHRES   1     INFLOW PKIF   5
+
+*** RPA LOAD
+WDM3  3031 NH3R     ENGLZERO  1.0000  DIV  RCHRES   1     INFLOW NUIF1  2
+WDM3  3032 NO3R     ENGLZERO  1.0000  DIV  RCHRES   1     INFLOW NUIF1  1
+WDM3  3033 RONR     ENGLZERO  1.0000  DIV  RCHRES   1     INFLOW PKIF   3
+WDM3  3034 PO4R     ENGLZERO  1.0000  DIV  RCHRES   1     INFLOW NUIF1  4
+WDM3  3035 ROPR     ENGLZERO  1.0000  DIV  RCHRES   1     INFLOW PKIF   4
+WDM3  3036 BODR     ENGLZERO  1.0000  DIV  RCHRES   1     INFLOW OXIF   2
+WDM3  3037 SNDR     ENGLZERO  1.0000  DIV  RCHRES   1     INFLOW ISED   1
+WDM3  3038 SLTR     ENGLZERO  1.0000  DIV  RCHRES   1     INFLOW ISED   2
+WDM3  3039 CLYR     ENGLZERO  1.0000  DIV  RCHRES   1     INFLOW ISED   3
+
+*** DIVERSIONS
+WDM3  3007 DIVR     ENGLZERO          SAME RCHRES   1     EXTNL  OUTDGT 1
+WDM3  3008 DIVA     ENGLZERO          SAME RCHRES   1     EXTNL  OUTDGT 2
+
+*** SEPTIC
+WDM3  3010 SNO3     ENGLZERO  1.0000  DIV  RCHRES   1     INFLOW NUIF1  1
+
+*** RIB
+WDM3  3012 NH3X     ENGLZERO          DIV  RCHRES   1     INFLOW NUIF1  2
+WDM3  3013 NO3X     ENGLZERO          DIV  RCHRES   1     INFLOW NUIF1  1
+WDM3  3014 ORNX     ENGLZERO          DIV  RCHRES   1     INFLOW PKIF   3
+WDM3  3015 PO4X     ENGLZERO          DIV  RCHRES   1     INFLOW NUIF1  4
+WDM3  3016 ORPX     ENGLZERO          DIV  RCHRES   1     INFLOW PKIF   4
+WDM3  3017 BODX     ENGLZERO          DIV  RCHRES   1     INFLOW OXIF   2
+
+*** AEOLIAN SEDIMENT
+WDM3  3061 SFAS     ENGLZERO 7.027e-06DIV  RCHRES   1     INFLOW ISED   2
+WDM3  3062 SFAC     ENGLZERO 7.027e-06DIV  RCHRES   1     INFLOW ISED   3
+
+*** UPSTREAM and EOS INPUT ***
+WDM4    11 WATR     ENGLZERO          SAME RCHRES   1     INFLOW IVOL
+WDM4    12 HEAT     ENGLZERO          SAME RCHRES   1     INFLOW IHEAT
+WDM4    13 DOXY     ENGLZERO          SAME RCHRES   1     INFLOW OXIF   1
+WDM4    21 SAND     ENGLZERO          SAME RCHRES   1     INFLOW ISED   1
+WDM4    22 SILT     ENGLZERO          SAME RCHRES   1     INFLOW ISED   2
+WDM4    23 CLAY     ENGLZERO          SAME RCHRES   1     INFLOW ISED   3
+WDM4    31 NO3D     ENGLZERO          SAME RCHRES   1     INFLOW NUIF1  1
+WDM4    32 NH3D     ENGLZERO          SAME RCHRES   1     INFLOW NUIF1  2
+WDM4    33 NH3A     ENGLZERO          SAME RCHRES   1     INFLOW NUIF2  1 1
+WDM4    34 NH3I     ENGLZERO          SAME RCHRES   1     INFLOW NUIF2  2 1
+WDM4    35 NH3C     ENGLZERO          SAME RCHRES   1     INFLOW NUIF2  3 1
+WDM4    36 RORN     ENGLZERO          SAME RCHRES   1     INFLOW PKIF   3
+WDM4    37 LORN     ENGLZERO          SAME RCHRES   1     INFLOW PKIF   3
+WDM4    41 PO4D     ENGLZERO          SAME RCHRES   1     INFLOW NUIF1  4
+WDM4    42 PO4A     ENGLZERO          SAME RCHRES   1     INFLOW NUIF2  1 2
+WDM4    43 PO4I     ENGLZERO          SAME RCHRES   1     INFLOW NUIF2  2 2
+WDM4    44 PO4C     ENGLZERO          SAME RCHRES   1     INFLOW NUIF2  3 2
+WDM4    45 RORP     ENGLZERO          SAME RCHRES   1     INFLOW PKIF   4
+WDM4    47 LORP     ENGLZERO          SAME RCHRES   1     INFLOW PKIF   4
+WDM4    51 BODA     ENGLZERO          SAME RCHRES   1     INFLOW OXIF   2
+WDM4    52 TORC     ENGLZERO          SAME RCHRES   1     INFLOW PKIF   5
+WDM4    53 PHYT     ENGLZERO          SAME RCHRES   1     INFLOW PKIF   1
+END EXT SOURCES
+
+EXT TARGETS
+<-Volume-> <-Grp> <-Member-><--Mult-->Tran <-Volume-> <Member> Tsys Tgap Amd ***
+<Name>   #        <Name> # #<-factor->strg <Name>   # <Name> #  tem strg strg***
+RCHRES   1 OFLOW  OVOL   3            SAME WDM4   111 WATR     ENGL      REPL
+RCHRES   1 OFLOW  OHEAT  3            SAME WDM4   112 HEAT     ENGL      REPL
+RCHRES   1 OFLOW  OXCF2  3 1          SAME WDM4   113 DOXY     ENGL      REPL
+RCHRES   1 OFLOW  OSED   3 1          SAME WDM4   121 SAND     ENGL      REPL
+RCHRES   1 OFLOW  OSED   3 2          SAME WDM4   122 SILT     ENGL      REPL
+RCHRES   1 OFLOW  OSED   3 3          SAME WDM4   123 CLAY     ENGL      REPL
+RCHRES   1 OFLOW  NUCF9  3 1          SAME WDM4   131 NO3D     ENGL      REPL
+RCHRES   1 OFLOW  NUCF9  3 2          SAME WDM4   132 NH3D     ENGL      REPL
+RCHRES   1 OFLOW  OSNH4  3 1          SAME WDM4   133 NH3A     ENGL      REPL
+RCHRES   1 OFLOW  OSNH4  3 2          SAME WDM4   134 NH3I     ENGL      REPL
+RCHRES   1 OFLOW  OSNH4  3 3          SAME WDM4   135 NH3C     ENGL      REPL
+RCHRES   1 OFLOW  PKCF2  3 3          SAME WDM4   136 RORN     ENGL      REPL
+RCHRES   1 OFLOW  PKCF2  3 3   0.     SAME WDM4   137 LORN     ENGL      REPL
+RCHRES   1 OFLOW  NUCF9  3 4          SAME WDM4   141 PO4D     ENGL      REPL
+RCHRES   1 OFLOW  OSPO4  3 1          SAME WDM4   142 PO4A     ENGL      REPL
+RCHRES   1 OFLOW  OSPO4  3 2          SAME WDM4   143 PO4I     ENGL      REPL
+RCHRES   1 OFLOW  OSPO4  3 3          SAME WDM4   144 PO4C     ENGL      REPL
+RCHRES   1 OFLOW  PKCF2  3 4          SAME WDM4   145 RORP     ENGL      REPL
+RCHRES   1 OFLOW  PKCF2  3 4   0.     SAME WDM4   147 LORP     ENGL      REPL
+RCHRES   1 OFLOW  OXCF2  3 2          SAME WDM4   151 BODA     ENGL      REPL
+RCHRES   1 OFLOW  PKCF2  3 5          SAME WDM4   152 TORC     ENGL      REPL
+RCHRES   1 OFLOW  PKCF2  3 1          SAME WDM4   153 PHYT     ENGL      REPL
+RCHRES   1 SEDTRN DEPSCR 4            SAME WDM4   124 SSCR     ENGL      REPL
+END EXT TARGETS
+
+NETWORK
+<-Volume-> <-Grp> <-Member-><--Mult-->Tran <-Target vols> <-Grp> <-Member-> ***
+<Name>   #        <Name> # #<-factor->strg <Name>   #   #        <Name> # # ***
+RCHRES   1 HYDR   TAU                 AVER PLTGEN   1     INPUT  MEAN   1
+END NETWORK
+
+PLTGEN
+  PLOTINFO
+    # -  # FILE  NPT  NMN LABL  PYR PIVL ***
+    1        31         1        12   24
+  END PLOTINFO
+
+  GEN-LABELS
+    # -  #<----------------Title----------------->   ***
+    1         JL1_6562_6560 daily_shear_stress_lbsft2
+  END GEN-LABELS
+
+  SCALING
+    #thru#      YMIN      YMAX     IVLIN     THRESH ***
+    1   99        0.   100000.       20.
+  END SCALING
+
+  CURV-DATA
+              <-Curve label--> Line Intg  Col Tran ***
+    # -  #                     type  eqv code code ***
+    1         daily_shear_stre         1    1 AVER
+  END CURV-DATA
+END PLTGEN
+
+ 
+
+SPEC-ACTIONS
+*** test special actions
+  RCHRES 1                                RSED    4       +=  2.50E+05
+  RCHRES 1                                RSED    5       +=  6.89E+05
+  RCHRES 1                                RSED    6       +=  4.01E+05
+END SPEC-ACTIONS
+
+END RUN
