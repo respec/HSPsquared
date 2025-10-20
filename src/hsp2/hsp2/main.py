@@ -99,7 +99,7 @@ def main(
     om_operations = om_init_state()  # set up operational model specific containers
     specl_load_om(om_operations, specactions)  # load traditional special actions
     state_load_dynamics_om(
-        state, io_manager, siminfo
+        state, io_manager, siminfo, om_operations
     )  # operational model for custom python
     # finalize all dynamically loaded components and prepare to run the model
     state_om_model_run_prep(state, om_operations, siminfo)

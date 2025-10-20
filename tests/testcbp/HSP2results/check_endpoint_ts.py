@@ -44,7 +44,7 @@ state_om_model_run_prep(
 )  # this creates all objects from the UCI and previous loads
 # state['model_root_object'].find_var_path('RCHRES_R001')
 # Get the timeseries naked, without an object
-rchres1 = state["model_object_cache"]["/STATE/RCHRES_R001"]
+rchres1 = om_operations["model_object_cache"]["/STATE/RCHRES_R001"]
 precip_ts = ModelLinkage(
     "PRCP",
     rchres1,

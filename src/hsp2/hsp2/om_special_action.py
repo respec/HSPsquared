@@ -78,7 +78,7 @@ class SpecialAction(ModelObject):
         if prop_name == "when":
             # when to perform this?  timestamp or time-step index
             prop_val = -1  # prevent a 0 indexed value from triggering return, default means execute every step
-            si = self.state["model_object_cache"][self.find_var_path("timer")]
+            si = self.om_operations["model_object_cache"][self.find_var_path("timer")]
             if len(model_props["YR"]) > 0:
                 # translate date to equivalent model step
                 datestring = (
@@ -168,7 +168,7 @@ class SpecialAction(ModelObject):
             + self.op_type[0]
             + str(self.range1).zfill(3)
         )
-        domain = self.state["model_object_cache"][domain_path]
+        domain = self.om_operations["model_object_cache"][domain_path]
         var_register = self.insure_register(self.vari, 0.0, domain, False, False)
         # print("Created register", var_register.name, "with path", var_register.state_path)
         # add already created objects as inputs

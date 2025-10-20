@@ -57,7 +57,7 @@ def model_element_paths(mel, state):
     ixn = 1
     for ix in mel:
         ip = get_ix_path(state.state_paths, ix)
-        im = state["model_object_cache"][ip]
+        im = om_operations["model_object_cache"][ip]
         print(ixn, ":", im.name, "->", im.state_path, "=", im.get_state())
         ixn = ixn + 1
     return
@@ -88,7 +88,7 @@ def init_om_dicts():
     return op_tokens, model_object_cache
 
 
-def state_load_om_json(state, io_manager, siminfo):
+def state_load_om_json(state, io_manager, siminfo, om_operations):
     # - model objects defined in file named '[model h5 base].json -- this will populate an array of object definitions that will
     #   be loadable by "model_loader_recursive()"
     # JSON file would be in same path as hdf5
@@ -102,16 +102,14 @@ def state_load_om_json(state, io_manager, siminfo):
         jfile = open(fjson)
         json_data = json.load(jfile)
         # dict.update() combines the arg dict with the base
-        state["model_data"].update(json_data)
-    # merge in the json siminfo data
-    if "siminfo" in state["model_data"].keys():
-        siminfo.update(state["model_data"]["siminfo"])
-    else:
-        state["model_data"]["siminfo"] = siminfo
+        om_operations["model_data"].update(json_data)
+    # merge in the json siminfo data if provided
+    if "siminfo" in om_operations["model_data"].keys():
+        siminfo.update(om_operations["model_data"]["siminfo"])
     return
 
 
-def state_load_om_python(state, io_manager, siminfo):
+def state_load_om_python(state, io_manager, siminfo, om_operations):
     # Look for a [hdf5 file base].py file with specific named functions
     # - function "om_init_model": This function can be defined in the [model h5 base].py file containing things to be done
     #   early in the model loading, like setting up model objects.  This file will already have been loaded by the state module,
@@ -131,10 +129,10 @@ def state_load_om_python(state, io_manager, siminfo):
             siminfo,
             state.op_tokens,
             state.state_paths,
-            state["state_ix"],
+            state.state_ix,
             state.dict_ix,
             state.ts_ix,
-            state["model_object_cache"],
+            om_operations["model_object_cache"],
         )
 
 
@@ -152,7 +150,7 @@ def om_init_state():
     return(om_operations)
 
 
-def state_load_dynamics_om(state, io_manager, siminfo):
+def state_load_dynamics_om(state, io_manager, siminfo, om_operations):
     # this function will check to see if any of the multiple paths to loading
     # dynamic operational model objects has been supplied for the model.
     # om_init_state(state) must have been called already
@@ -162,8 +160,8 @@ def state_load_dynamics_om(state, io_manager, siminfo):
     #       but if things fail post develop-specact-1 pull requests we may investigate here
     # also, it may be that this should be loaded elsewhere?
     # comment state_load_om_python() to disable dynamic python
-    state_load_om_python(state, io_manager, siminfo)
-    state_load_om_json(state, io_manager, siminfo)
+    state_load_om_python(state, io_manager, siminfo, om_operations)
+    state_load_om_json(state, io_manager, siminfo, om_operations)
     return
 
 
@@ -182,7 +180,7 @@ def state_om_model_root_object(state, om_operations, siminfo):
         timer = SimTimer("timer", model_root_object, timer_props, state)
     # add base object for the HSP2 domains and other things already added to state so they can be influenced
     for seg_path in state.hsp_segments.items():
-        if seg_path not in state["model_object_cache"].keys():
+        if seg_path not in om_operations["model_object_cache"].keys():
             # BUG: need to figure out if this is OK, then how do we add attributes to these River Objects
             #      later when adding from json?
             #      Can we simply check the model_object_cache during load step?
@@ -198,15 +196,15 @@ def state_om_model_run_prep(state, om_operations, siminfo):
     # insure model base is set
     state_om_model_root_object(state, om_operations, siminfo)
     # now instantiate and link objects
-    # state['model_data'] has alread been prepopulated from json, .py files, hdf5, etc.
+    # om_operations['model_data'] has alread been prepopulated from json, .py files, hdf5, etc.
     model_root_object = om_operations["model_root_object"]
-    model_loader_recursive(state["model_data"], model_root_object, state)
+    model_object_cache = om_operations["model_object_cache"]
+    model_loader_recursive(om_operations["model_data"], model_root_object, state, model_object_cache)
     # print("Loaded objects & paths: insures all paths are valid, connects models as inputs")
     # both state['model_object_cache'] and the model_object_cache property of the ModelObject class def
     # will hold a global repo for this data this may be redundant?  They DO point to the same datset?
     # since this is a function that accepts state as an argument and these were both set in state_load_dynamics_om
     # we can assume they are there and functioning
-    model_object_cache = model_root_object.state["model_object_cache"]
     model_path_loader(model_object_cache)
     # len() will be 1 if we only have a simtimer, but > 1 if we have a river being added
     model_exec_list = state.model_exec_list
@@ -217,7 +215,7 @@ def state_om_model_run_prep(state, om_operations, siminfo):
             "ops_data_type"
         ]  # allow override of dat astructure settings
     model_root_object.state.op_tokens = ModelObject.make_op_tokens(
-        max(model_root_object.state["state_ix"].keys()) + 1
+        max(model_root_object.state.state_ix.keys()) + 1
     )
     model_tokenizer_recursive(model_root_object, model_object_cache, model_exec_list)
     op_tokens = model_root_object.state.op_tokens
@@ -226,23 +224,23 @@ def state_om_model_run_prep(state, om_operations, siminfo):
     # print("model_exec_list(", len(model_exec_list),"items):", model_exec_list)
     # This is used to stash the model_exec_list in the dict_ix, this might be slow, need to verify.
     # the resulting set of objects is returned.
-    state["state_step_om"] = "disabled"
-    state["model_object_cache"] = model_object_cache
+    state.state_step_om = "disabled"
+    om_operations["model_object_cache"] = model_object_cache
     state.model_exec_list = np.asarray(model_exec_list, dtype="i8")
     if model_root_object.ops_data_type == "ndarray":
         state_keyvals = np.asarray(
-            zeros(max(model_root_object.state["state_ix"].keys()) + 1), dtype="float64"
+            zeros(max(model_root_object.state.state_ix.keys()) + 1), dtype="float64"
         )
-        for ix, val in model_root_object.state["state_ix"].items():
+        for ix, val in model_root_object.state.state_ix.items():
             state_keyvals[ix] = val
-        state["state_ix"] = state_keyvals
+        state.state_ix = state_keyvals
     else:
-        state["state_ix"] = model_root_object.state["state_ix"]
+        state.state_ix = model_root_object.state.state_ix
     state.op_tokens = (
         op_tokens  # is this superfluous since the root object got op_tokens from state?
     )
     if len(op_tokens) > 0:
-        state["state_step_om"] = "enabled"
+        state.state_step_om = "enabled"
 
     # print("op_tokens is type", type(op_tokens))
     # print("state_ix is type", type(state['state_ix']))
@@ -410,7 +408,7 @@ def model_class_translate(model_props, object_class):
         model_props["object_class"] = "ModelObject"
 
 
-def model_loader_recursive(model_data, container, state):
+def model_loader_recursive(model_data, container, state, model_object_cache):
     k_list = model_data.keys()
     object_names = dict.fromkeys(k_list, 1)
     if type(object_names) is not dict:
@@ -450,7 +448,7 @@ def model_loader_recursive(model_data, container, state):
             if model_props["overwrite"] == True:
                 model_object = False
             else:
-                model_object = state["model_object_cache"][model_object_path]
+                model_object = model_object_cache[model_object_path]
         if model_object == False:
             # try to load this object
             model_object = model_class_loader(
@@ -462,7 +460,7 @@ def model_loader_recursive(model_data, container, state):
         # now for container type objects, go through its properties and handle
         # print("loaded object", model_object, "with container", container)
         if type(model_props) is dict:
-            model_loader_recursive(model_props, model_object, state)
+            model_loader_recursive(model_props, model_object, state, model_object_cache)
 
 
 def model_path_loader(model_object_cache):
@@ -603,20 +601,20 @@ def model_order_recursive(
     model_exec_list.append(model_object.ix)
 
 
-def model_input_dependencies(state, exec_list, only_runnable=False):
+def model_input_dependencies(state, exec_list, model_object_cache, only_runnable=False):
     # TODO: is this redundant to model_domain_dependencies?
     # Cmment in github suggest it is not, and has specific utility
     # for timeseries values? https://github.com/HARPgroup/HSPsquared/issues/60#issuecomment-2231668979
     mello = exec_list
     mtl = []
     mel = []
-    for model_element in state["model_object_cache"].values():
+    for model_element in model_object_cache.values():
         for input_path in model_element.inputs:
-            input_ix = get_state_ix(state["state_ix"], state.state_paths, input_path)
+            input_ix = get_state_ix(state.state_ix, state.state_paths, input_path)
             if input_ix in exec_list:
                 # do a recursive pull of factors affecting this element
                 model_order_recursive(
-                    model_element, state["model_object_cache"], mel, mtl
+                    model_element, model_object_cache, mel, mtl
                 )
                 mello = mello + mel
     if only_runnable == True:
@@ -637,9 +635,9 @@ def model_domain_dependencies(state, domain, ep_list, only_runnable=False):
         mtl = []
         # if the given element is NOT in model_object_cache, then nothing is acting on it, so we return empty list
         if (domain + "/" + ep) in state.state_paths:
-            if (domain + "/" + ep) in state["model_object_cache"].keys():
-                endpoint = state["model_object_cache"][domain + "/" + ep]
-                model_order_recursive(endpoint, state["model_object_cache"], mel, mtl)
+            if (domain + "/" + ep) in om_operations["model_object_cache"].keys():
+                endpoint = om_operations["model_object_cache"][domain + "/" + ep]
+                model_order_recursive(endpoint, om_operations["model_object_cache"], mel, mtl)
                 mello = mello + mel
     # TODO: stash the runnable list (mellorun) as a element in dict_ix for cached access during runtime
     mellorun = ModelObject.runnable_op_list(state.op_tokens, mello)
@@ -687,9 +685,9 @@ def step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
 
 
 def finish_model(state, io_manager, siminfo):
-    # print("Model object cache list", state["model_object_cache"].keys())
+    # print("Model object cache list", om_operations["model_object_cache"].keys())
     for i in state.model_exec_list:
-        model_object = state["model_object_cache"][get_ix_path(state.state_paths, i)]
+        model_object = om_operations["model_object_cache"][get_ix_path(state.state_paths, i)]
         if "io_manager" in dir(model_object):
             model_object.io_manager = io_manager
         model_object.finish()

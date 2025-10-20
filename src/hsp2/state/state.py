@@ -16,6 +16,8 @@ from hsp2.hsp2.utilities import make_class_spec
 # Define the complex datatypes
 state_ix = npasarray(zeros(1), dtype="float64")
 model_exec_list = npasarray(zeros(1), dtype="int64")
+# Create a sample tindex for typing
+tindex = date_range("1984-01-01", "2020-12-31", freq=Minute(60))
 op_tokens = int32(zeros((1,64)))
 op_exec_lists = int32(zeros((1,1024)))
 # note: tested 32-bit key and saw absolutely no improvement, so go with 64 bit
@@ -25,6 +27,7 @@ ts_paths = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
 ts_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:])
 
 state_paths_ty = ('state_paths', typeof(state_paths))
+tindex_ty = ('tindex', typeof(tindex))
 model_exec_list_ty = ('model_exec_list', typeof(model_exec_list))
 hsp_segments_ty = ('hsp_segments', typeof(hsp_segments))
 op_tokens_ty = ('op_tokens', typeof(op_tokens))
@@ -35,6 +38,7 @@ model_root_name_ty = ('model_root_name', types.unicode_type)
 # these are likely to be located in model objects when we go fully to that level. 
 # But for now, they are here to maintain compatiility with the existing code base
 state_step_hydr_ty = ('state_step_hydr', types.unicode_type)
+state_step_om_ty = ('state_step_om_ty', types.unicode_type)
 operation_ty = ('operation', types.unicode_type)
 segment_ty = ('segment', types.unicode_type)
 activity_ty = ('activity', types.unicode_type)
@@ -46,7 +50,7 @@ op_exec_lists_ty = ('op_exec_lists', typeof(op_exec_lists))
 state_spec = [state_paths_ty, state_ix_ty, ts_paths_ty, ts_ix_ty,
               model_root_name_ty, state_step_hydr_ty, hsp2_local_py_ty,
               hsp_segments_ty, op_tokens_ty, op_exec_lists_ty, model_exec_list_ty,
-              operation_ty, segment_ty, activity_ty, domain_ty]
+              operation_ty, segment_ty, activity_ty, domain_ty, state_step_om_ty]
 
 @jitclass(state_spec)
 class state_object:
@@ -56,6 +60,7 @@ class state_object:
         self.hsp_segments = Dict.empty(key_type=types.unicode_type, value_type=types.unicode_type)
         self.ts_paths = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
         self.ts_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:])
+        self.state_step_om = "disabled"
         self.state_step_hydr = "disabled"
         self.model_root_name = ""
         self.operation = ""
@@ -66,7 +71,9 @@ class state_object:
         # Note: in the type declaration above we are alloweed to use the shortened form
         #         op_tokens = int32(zeros((1,64)))
         #       but in jited class that throws an error and we have to use the 
-        #       form op_tokens.astype(int32) to do the type cast
+        #       form 
+        #         op_tokens.astype(int32) 
+        #       to do the type cast
         op_tokens = zeros( (num_ops,64) )
         self.op_tokens = op_tokens.astype(int32)
         op_exec_lists = zeros( (num_ops,1024) )
@@ -138,7 +145,7 @@ def state_add_ts(state, var_path, default_value=0.0, debug=False):
         print("Setting state_ix[", var_ix, "], to", default_value)
     # siminfo needs to be in the model_data array of state.  Can be populated by HSP2 or standalone by ops model
     state.ts_ix[var_ix] = np.full_like(
-        zeros(state["model_data"]["siminfo"]["steps"]), default_value
+        zeros(om_operations["model_data"]["steps"]), default_value
     )
     return var_ix
 
@@ -177,6 +184,7 @@ def state_siminfo_hsp2(state, parameter_obj, siminfo, io_manager):
         siminfo["start"], siminfo["stop"], freq=Minute(delt)
     )[1:]
     siminfo["steps"] = len(siminfo["tindex"])
+    state.tindex = siminfo["tindex"].to_numpy()
     hdf5_path = io_manager._input.file_path
     (fbase, fext) = os.path.splitext(hdf5_path)
     state.model_root_name = os.path.split(fbase)[1]  # takes the text before .h5
@@ -207,6 +215,10 @@ def state_init_hsp2(state, opseq, activities):
                 segid = set_state(
                     state.state_ix, state.state_paths, seg_path, 0.0
                 )
+                activity_path = seg_path + "/" + activity
+                activity_id = set_state(
+                    state.state_ix, state.state_paths, activity_path, 0.0
+                )
                 ep_list = []
                 if activity == "HYDR":
                     state_context_hsp2(state, operation, segment, activity)
@@ -224,7 +236,14 @@ def state_init_hsp2(state, opseq, activities):
                 op_exec_list = model_domain_dependencies(
                     state, state.domain, ep_list, True
                 )
-                state.op_exec_lists[segid] = op_exec_list
+                """
+                Note: the domain is just the path to the entity that has the properties, and the
+                    properties (variables) in hsp* are unique, in that there are no duplicate 
+                    names between areas like HYDR and PQUAL etc.  So, they are properties on the 
+                    RCHRES or PERLND etc. The actual operations that are triggered ARE specific
+                    to the activity, so the path to save these operations should reflect the activity
+                """
+                state.op_exec_lists[activity_id] = op_exec_list
 
 def state_load_dynamics_hsp2(state, io_manager, siminfo):
     # Load any dynamic components if present, and store variables on objects

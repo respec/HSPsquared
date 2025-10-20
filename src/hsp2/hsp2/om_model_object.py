@@ -273,6 +273,11 @@ class ModelObject:
         exec_order = get_exec_order(self.self.model_exec_list, var_ix)
         return exec_order
 
+    def get_tindex(self):
+        timer = self.get_object('timer')
+        tindex = self.state.dict_ix[timer.ix]
+        return(tindex)
+    
     def get_object(self, var_name=False):
         if var_name == False:
             return self.model_object_cache[self.state_path]
