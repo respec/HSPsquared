@@ -6,7 +6,7 @@ All runtime exec is done by child classes.
 
 from hsp2.state.state import set_state, get_state_ix
 from numba.typed import Dict
-from hsp2.hsp2.om import get_exec_order, is_float_digit
+from hsp2.hsp2.om import is_float_digit
 from pandas import HDFStore
 from numpy import pad, asarray, zeros, int32
 from numba import njit, types
@@ -207,19 +207,11 @@ class ModelObject:
         return True
     
     def set_state(self, set_value):
-        var_ix = set_state(
-            self.state_ix,
-            self.state_paths,
+        var_ix = self.state.set_state(
             self.state_path,
             set_value,
         )
         return var_ix
-    
-    def load_state_dicts(self, op_tokens, state_paths, state_ix, dict_ix):
-        self.state.op_tokens = op_tokens
-        self.state_paths = state_paths
-        self.state_ix = state_ix
-        self.state.dict_ix = dict_ix
     
     def save_object_hdf(self, hdfname, overwrite=False):
         # save the object in the full hdf5 path
@@ -257,17 +249,6 @@ class ModelObject:
         if var_ix == False:
             return False
         return self.state_ix[var_ix]
-    
-    def get_exec_order(self, var_name=False):
-        if var_name == False:
-            var_ix = self.ix
-        else:
-            var_path = self.find_var_path(var_name)
-            var_ix = get_state_ix(
-                self.state_ix, self.state_paths, var_path
-            )
-        exec_order = get_exec_order(self.self.model_exec_list, var_ix)
-        return exec_order
     
     def get_tindex(self):
         timer = self.get_object('timer')

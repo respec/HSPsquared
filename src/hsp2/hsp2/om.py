@@ -12,19 +12,6 @@ from numpy import zeros
 from numba import njit  # import the types
 from hsp2.state.state import append_state, get_ix_path, hydr_init_ix, sedtrn_init_ix, sedmnt_init_ix, rqual_init_ix
 
-
-def get_exec_order(model_exec_list, var_ix):
-    """
-    Find the integer key of a variable name in state_ix
-    """
-    model_exec_list = dict(enumerate(model_exec_list.flatten(), 1))
-    for exec_order, ix in model_exec_list.items():
-        if var_ix == ix:
-            # we need to add this to the state
-            return exec_order
-    return False
-
-
 def init_op_tokens(op_tokens, tops, eq_ix):
     """
     Iinitialize the op_tokens Dict

@@ -14,7 +14,6 @@ from numpy import array, append
 
 # from hsp2.state.state import set_state, get_state_ix
 # from numba.typed import Dict
-# from hsp2.hsp2.om import get_exec_order, is_float_digit
 # from pandas import Series, DataFrame, concat, HDFStore, set_option, to_numeric
 # from pandas import Timestamp, Timedelta, read_hdf, read_csv
 # from numpy import pad, asarray, zeros, int32
