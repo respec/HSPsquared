@@ -253,9 +253,7 @@ class ModelObject:
             return self.state_ix[self.ix]
         else:
             var_path = self.find_var_path(var_name)
-            var_ix = get_state_ix(
-                self.state_ix, self.state_paths, var_path
-            )
+            var_ix = self.state.get_state_ix(var_path)
         if var_ix == False:
             return False
         return self.state_ix[var_ix]
@@ -321,12 +319,7 @@ class ModelObject:
         # print("register_path called for", self.name, "with state_path", self.state_path)
         if self.state_path == "" or self.state_path == False:
             self.make_paths()
-        self.ix = set_state(
-            self.state_ix,
-            self.state_paths,
-            self.state_path,
-            self.default_value,
-        )
+        self.ix = self.state.set_state(self.state_path, self.default_value)
         # store object in model_object_cache - always, if we have reached this point we need to overwrite
         self.model_object_cache[self.state_path] = self
         # this should check to see if this object has a parent, and if so, register the name on the parent
