@@ -176,7 +176,7 @@ def state_om_model_root_object(state, om_operations, siminfo):
     if "/STATE/timer" not in state.state_paths.keys():
         timer_props = siminfo
         timer_props["state_path"] = "/STATE/timer"
-        timer = SimTimer("timer", model_root_object, timer_props, state)
+        timer = SimTimer("timer", model_root_object, timer_props)
     # add base object for the HSP2 domains and other things already added to state so they can be influenced
     for seg_path in state.hsp_segments.items():
         if seg_path not in om_operations["model_object_cache"].keys():
