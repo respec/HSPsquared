@@ -276,11 +276,11 @@ class ModelObject:
         if not (self.container == False):
             return self.container.find_var_path(var_name)
         # check for root state vars STATE + var_name
-        if ("/STATE/" + var_name) in self.state_paths.keys():
+        if ("/STATE/" + var_name) in self.state.state_paths.keys():
             # return self.state['state_paths'][("/STATE/" + var_name)]
             return "/STATE/" + var_name
         # check for full paths
-        if var_name in self.state_paths.keys():
+        if var_name in self.state.state_paths.keys():
             # return self.state['state_paths'][var_name]
             return var_name
         return False
@@ -379,9 +379,7 @@ class ModelObject:
         # if this path can be found in the hdf5 make sure that it is registered in state
         # and that it has needed object class to render it at runtime (some are automatic)
         # RIGHT NOW THIS DOES NOTHING TO CHECK IF THE VAR EXISTS THIS MUST BE FIXED
-        var_ix = set_state(
-            self.state_ix, self.state_paths, var_path, 0.0
-        )
+        var_ix = self.state.set_state(var_path, 0.0)
         return var_ix
     def get_dict_state(self, ix=-1):
         if ix >= 0:
