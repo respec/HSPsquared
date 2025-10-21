@@ -250,33 +250,15 @@ def state_init_hsp2(state, opseq, activities, om_operations):
                 seg_name = operation + "_" + segment
                 seg_path = "/STATE/" + state.model_root_name + "/" + seg_name
                 state.set_state(seg_path, 0.0)
-                activity_path = seg_path + "/" + activity
-                activity_id = state.set_state(activity_path, 0.0)
-                ep_list = []
                 if activity == "HYDR":
                     state_context_hsp2(state, operation, segment, activity)
-                    ep_list = hydr_init_ix(state, state.domain)
                 elif activity == "SEDTRN":
                     state_context_hsp2(state, operation, segment, activity)
-                    ep_list = sedtrn_init_ix(state, state.domain)
                 elif activity == "SEDMNT":
                     state_context_hsp2(state, operation, segment, activity)
-                    ep_list = sedmnt_init_ix(state, state.domain)
                 elif activity == "RQUAL":
                     state_context_hsp2(state, operation, segment, activity)
-                    ep_list = rqual_init_ix(state, state.domain)
-                # Register list of elements to execute if any
-                op_exec_list = model_domain_dependencies(
-                    om_operations, state, state.domain, ep_list, True
-                )
-                """
-                Note: the domain is just the path to the entity that has the properties, and the
-                    properties (variables) in hsp* are unique, in that there are no duplicate 
-                    names between areas like HYDR and PQUAL etc.  So, they are properties on the 
-                    RCHRES or PERLND etc. The actual operations that are triggered ARE specific
-                    to the activity, so the path to save these operations should reflect the activity
-                """
-                state.op_exec_lists[activity_id] = np.pad(op_exec_list,(0,state.op_exec_lists.shape[1] - len(op_exec_list)))
+
 
 def state_load_dynamics_hsp2(state, io_manager, siminfo):
     # Load any dynamic components if present, and store variables on objects

@@ -619,6 +619,35 @@ def model_input_dependencies(state, exec_list, model_object_cache, only_runnable
     return mello
 
 
+def hsp2_domain_dependencies(state, opseq, activities, om_operations):
+    # This sets up the state entries for all state compatible HSP2 model variables
+    # print("STATE initializing contexts.")
+    for _, operation, segment, delt in opseq.itertuples():
+        if operation != "GENER" and operation != "COPY":
+            for activity, function in activities[operation].items():
+                # set up named paths for model operations
+                seg_name = operation + "_" + segment
+                seg_path = "/STATE/" + state.model_root_name + "/" + seg_name
+                activity_path = seg_path + "/" + activity
+                activity_id = state.set_state(activity_path, 0.0)
+                ep_list = []
+                if activity == "HYDR":
+                    ep_list = hydr_init_ix(state, state.domain)
+                elif activity == "SEDTRN":
+                    ep_list = sedtrn_init_ix(state, state.domain)
+                elif activity == "SEDMNT":
+                    ep_list = sedmnt_init_ix(state, state.domain)
+                elif activity == "RQUAL":
+                    ep_list = rqual_init_ix(state, state.domain)
+                # Register list of elements to execute if any
+                op_exec_list = model_domain_dependencies(
+                    om_operations, state, state.domain, ep_list, True
+                )
+                # register the dependencies for each activity so we can load once here
+                # then just iterate through them at runtime without re-querying
+                state.op_exec_lists[activity_id] = np.pad(op_exec_list,(0,state.op_exec_lists.shape[1] - len(op_exec_list)))
+
+
 def model_domain_dependencies(om_operations, state, domain, ep_list, only_runnable=False):
     """
     Given an hdf5 style path to a domain, and a list of variable endpoints in that domain,
