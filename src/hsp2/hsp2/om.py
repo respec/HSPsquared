@@ -199,11 +199,11 @@ def state_om_model_run_prep(state, om_operations, siminfo):
         model_root_object.ops_data_type = siminfo[
             "ops_data_type"
         ]  # allow override of dat astructure settings
-    model_root_object.state.op_tokens = ModelObject.make_op_tokens(
-        len(model_root_object.state.state_ix)
-    )
+    #model_root_object.state.op_tokens = ModelObject.make_op_tokens(
+    #    len(model_root_object.state.state_ix)
+    #)
     model_tokenizer_recursive(model_root_object, model_object_cache, model_exec_list)
-    op_tokens = model_root_object.state.op_tokens
+    #op_tokens = model_root_object.state.op_tokens
     # print("op_tokens afer tokenizing", op_tokens)
     # model_exec_list is the ordered list of component operations
     # print("model_exec_list(", len(model_exec_list),"items):", model_exec_list)
@@ -221,9 +221,9 @@ def state_om_model_run_prep(state, om_operations, siminfo):
         state.state_ix = state_keyvals
     else:
         state.state_ix = model_root_object.state.state_ix
-    state.op_tokens = (
-        op_tokens  # is this superfluous since the root object got op_tokens from state?
-    )
+    #state.op_tokens = (
+    #    op_tokens  # is this superfluous since the root object got op_tokens from state?
+    #)
     if len(op_tokens) > 0:
         state.state_step_om = "enabled"
     if len(model_exec_list) > 0:
