@@ -246,10 +246,6 @@ def state_om_model_run_prep(state, om_operations, siminfo):
     # print("state_ix is type", type(state['state_ix']))
     # print("state_paths final", state['state_paths'])
     # print("op_tokens final", op_tokens)
-    # Stash a list of runnables
-    state["runnables"] = ModelObject.runnable_op_list(
-        state.op_tokens, list(state.state_paths.values())
-    )
     # print("Operational model status:", state['state_step_om'])
     if len(model_exec_list) > 0:
         # pass
@@ -623,7 +619,7 @@ def model_input_dependencies(state, exec_list, model_object_cache, only_runnable
     return mello
 
 
-def model_domain_dependencies(state, domain, ep_list, only_runnable=False):
+def model_domain_dependencies(om_operations, state, domain, ep_list, only_runnable=False):
     """
     Given an hdf5 style path to a domain, and a list of variable endpoints in that domain,
     Find all model elements that influence the endpoints state

@@ -35,6 +35,19 @@ state_siminfo_hsp2(state, uci_obj, siminfo, io_manager)
 # Add support for dynamic functions to operate on STATE
 # - Load any dynamic components if present, and store variables on objects
 state_load_dynamics_hsp2(state, io_manager, siminfo)
+
+# Iterate through all segments and add crucial paths to state
+# before loading dynamic components that may reference them
+state_init_hsp2(state, opseq, activities, om_operations)
+# - finally stash specactions in state, not domain (segment) dependent so do it once
+om_operations = om_init_state()  # set up operational model specific containers
+specl_load_om(om_operations, specactions)  # load traditional special actions
+state_load_dynamics_om(
+    state, io_manager, siminfo, om_operations
+)  # operational model for custom python
+# finalize all dynamically loaded components and prepare to run the model
+state_om_model_run_prep(state, om_operations, siminfo)
+
 # Iterate through all segments and add crucial paths to state
 # before loading dynamic components that may reference them
 state_init_hsp2(state, opseq, activities)

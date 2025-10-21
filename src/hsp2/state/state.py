@@ -26,6 +26,7 @@ state_paths = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
 hsp_segments = Dict.empty(key_type=types.unicode_type, value_type=types.unicode_type)
 ts_paths = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
 ts_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:])
+last_id_ty = ('last_id', types.int64)
 
 state_paths_ty = ('state_paths', typeof(state_paths))
 model_exec_list_ty = ('model_exec_list', typeof(model_exec_list))
@@ -47,7 +48,7 @@ hsp2_local_py_ty = ('hsp2_local_py', types.boolean)
 op_exec_lists_ty = ('op_exec_lists', typeof(op_exec_lists))
 
 # Combine these into a spec to create the class
-state_spec = [state_paths_ty, state_ix_ty, ts_paths_ty, ts_ix_ty,
+state_spec = [state_paths_ty, state_ix_ty, ts_paths_ty, ts_ix_ty, last_id_ty,
               model_root_name_ty, state_step_hydr_ty, hsp2_local_py_ty,
               hsp_segments_ty, op_tokens_ty, op_exec_lists_ty, model_exec_list_ty,
               operation_ty, segment_ty, activity_ty, domain_ty, state_step_om_ty,
@@ -68,6 +69,7 @@ class state_object:
         self.segment = ""
         self.activity = ""
         self.domain = ""
+        self.last_id = 0
         self.hsp2_local_py = False
         # Note: in the type declaration above we are alloweed to use the shortened form
         #         op_tokens = int32(zeros((1,64)))
@@ -82,6 +84,40 @@ class state_object:
         model_exec_list = zeros(num_ops)
         self.model_exec_list = model_exec_list.astype(types.int64)
         return
+    
+    def append_state(self, var_value):
+        val_ix = self.last_id + 1  # next ix value
+        self.state_ix[val_ix] = var_value
+        self.last_id = val_ix
+        return(val_ix)
+    
+    def set_state(self, var_path, var_value=0.0, debug=False):
+        """
+        Given an hdf5 style path to a variable, set the value
+        If the variable does not yet exist, create it.
+        Returns the integer key of the variable in the state_ix Dict
+        """
+        if var_path not in self.state_paths:
+            # we need to add this to the state
+            var_ix = self.append_state(var_value)
+            self.state_paths[var_path] = var_ix
+        else:
+            var_ix = self.get_state_ix(var_path)
+            self.state_ix[var_ix] = var_value
+        if debug:
+            print("Setting state_ix[", var_ix, "], to", var_value)
+        return(var_ix)
+    
+    def get_state_ix(self, var_path):
+        """
+        Find the integer key of a variable name in state_ix
+        """
+        if var_path not in self.state_paths:
+            # we need to add this to the state
+            return False  # should throw an error
+        var_ix = self.state_paths[var_path]
+        return(var_ix)
+
 
 
 
@@ -198,28 +234,24 @@ def state_context_hsp2(state, operation, segment, activity):
     state.activity = activity
     # give shortcut to state path for the upcoming function
     # insure that there is a model object container
-    seg_name = op_path_name(operation, segment)
+    seg_name = operation + "_" + segment
     seg_path = "/STATE/" + state.model_root_name + "/" + seg_name
     if seg_name not in state.hsp_segments.keys():
         state.hsp_segments[seg_name] = seg_path
     state.domain = seg_path  # + "/" + activity   # may want to comment out activity?
 
-def state_init_hsp2(state, opseq, activities):
+def state_init_hsp2(state, opseq, activities, om_operations):
     # This sets up the state entries for all state compatible HSP2 model variables
     # print("STATE initializing contexts.")
     for _, operation, segment, delt in opseq.itertuples():
         if operation != "GENER" and operation != "COPY":
             for activity, function in activities[operation].items():
                 # set up named paths for model operations
-                seg_name = op_path_name(operation, segment)
+                seg_name = operation + "_" + segment
                 seg_path = "/STATE/" + state.model_root_name + "/" + seg_name
-                segid = set_state(
-                    state.state_ix, state.state_paths, seg_path, 0.0
-                )
+                state.set_state(seg_path, 0.0)
                 activity_path = seg_path + "/" + activity
-                activity_id = set_state(
-                    state.state_ix, state.state_paths, activity_path, 0.0
-                )
+                activity_id = state.set_state(activity_path, 0.0)
                 ep_list = []
                 if activity == "HYDR":
                     state_context_hsp2(state, operation, segment, activity)
@@ -235,7 +267,7 @@ def state_init_hsp2(state, opseq, activities):
                     ep_list = rqual_init_ix(state, state.domain)
                 # Register list of elements to execute if any
                 op_exec_list = model_domain_dependencies(
-                    state, state.domain, ep_list, True
+                    om_operations, state, state.domain, ep_list, True
                 )
                 """
                 Note: the domain is just the path to the entity that has the properties, and the
@@ -244,7 +276,7 @@ def state_init_hsp2(state, opseq, activities):
                     RCHRES or PERLND etc. The actual operations that are triggered ARE specific
                     to the activity, so the path to save these operations should reflect the activity
                 """
-                state.op_exec_lists[activity_id] = op_exec_list
+                state.op_exec_lists[activity_id] = np.pad(op_exec_list,(0,state.op_exec_lists.shape[1] - len(op_exec_list)))
 
 def state_load_dynamics_hsp2(state, io_manager, siminfo):
     # Load any dynamic components if present, and store variables on objects
@@ -331,7 +363,7 @@ def hydr_init_ix(state, domain):
     for i in hydr_state:
         # var_path = f'{domain}/{i}'
         var_path = domain + "/" + i
-        hydr_ix[i] = set_state(state.state_ix, state.state_paths, var_path, 0.0)
+        hydr_ix[i] = state.set_state(var_path, 0.0)
     return hydr_ix
 
 
@@ -347,7 +379,7 @@ def sedtrn_init_ix(state, domain):
     for i in sedtrn_state:
         # var_path = f'{domain}/{i}'
         var_path = domain + "/" + i
-        sedtrn_ix[i] = set_state(state.state_ix, state.state_paths, var_path, 0.0)
+        sedtrn_ix[i] = state.set_state(var_path, 0.0)
     return sedtrn_ix
 
 
@@ -362,7 +394,7 @@ def sedmnt_init_ix(state, domain):
     sedmnt_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
     for i in sedmnt_state:
         var_path = domain + "/" + i
-        sedmnt_ix[i] = set_state(state.state_ix, state.state_paths, var_path, 0.0)
+        sedmnt_ix[i] = state.set_state(var_path, 0.0)
     return sedmnt_ix
 
 
@@ -389,7 +421,7 @@ def rqual_init_ix(state, domain):
     rqual_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
     for i in rqual_state:
         var_path = domain + "/" + i
-        rqual_ix[i] = set_state(state.state_ix, state.state_paths, var_path, 0.0)
+        rqual_ix[i] = state.set_state(var_path, 0.0)
     return rqual_ix
 
 
