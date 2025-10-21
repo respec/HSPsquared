@@ -168,7 +168,7 @@ def state_om_model_root_object(state, om_operations, siminfo):
     # Create the base that everything is added to. this object does nothing except host the rest.
     if "model_root_object" not in om_operations.keys():
         model_root_object = ModelObject(
-            om_operations["model_root_name"], False, {}, state
+            state["model_root_name"], False, {}, state
         )  # we give this no name so that it does not interfer with child paths like timer, year, etc (i.e. /STATE/year, ...)
         om_operations["model_root_object"] = model_root_object
         # set up the timer as the first element
@@ -618,7 +618,34 @@ def model_input_dependencies(state, exec_list, model_object_cache, only_runnable
     return mello
 
 
-def hsp2_domain_dependencies(state, opseq, activities, om_operations):
+def model_domain_dependencies(om_operations, state, domain, ep_list, only_runnable=False, debug=False):
+    """
+    Given an hdf5 style path to a domain, and a list of variable endpoints in that domain,
+    Find all model elements that influence the endpoints state
+    Returns them as a sorted list of index values suitable as a model_exec_list
+    """
+    mello = []
+    for ep in ep_list:
+        mel = []
+        mtl = []
+        if debug:
+            print("Searching for", (domain + "/" + ep), "in state_paths" )
+        # if the given element is NOT in model_object_cache, then nothing is acting on it, so we return empty list
+        if (domain + "/" + ep) in state.state_paths.keys():
+            if (domain + "/" + ep) in om_operations["model_object_cache"].keys():
+                if debug:
+                    print("Found", (domain + "/" + ep), "in om_operations" )
+                endpoint = om_operations["model_object_cache"][domain + "/" + ep]
+                model_order_recursive(endpoint, om_operations["model_object_cache"], mel, mtl)
+                mello = mello + mel
+    # TODO: stash the runnable list (mellorun) as a element in dict_ix for cached access during runtime
+    mellorun = ModelObject.runnable_op_list(state.op_tokens, mello)
+    if only_runnable == True:
+        mello = mellorun
+    return mello
+
+
+def hsp2_domain_dependencies(state, opseq, activities, om_operations, debug=False):
     # This sets up the state entries for all state compatible HSP2 model variables
     # print("STATE initializing contexts.")
     for _, operation, segment, delt in opseq.itertuples():
@@ -640,33 +667,10 @@ def hsp2_domain_dependencies(state, opseq, activities, om_operations):
                 elif activity == "RQUAL":
                     ep_list = rqual_init_ix(state, seg_path)
                 # Register list of elements to execute if any
-                op_exec_list = model_domain_dependencies( om_operations, state, seg_path, ep_list, True)
+                op_exec_list = model_domain_dependencies( om_operations, state, seg_path, ep_list, True, debug)
                 # register the dependencies for each activity so we can load once here
                 # then just iterate through them at runtime without re-querying
                 state.op_exec_lists[activity_id] = np.pad(op_exec_list,(0,state.op_exec_lists.shape[1] - len(op_exec_list)))
-
-
-def model_domain_dependencies(om_operations, state, domain, ep_list, only_runnable=False):
-    """
-    Given an hdf5 style path to a domain, and a list of variable endpoints in that domain,
-    Find all model elements that influence the endpoints state
-    Returns them as a sorted list of index values suitable as a model_exec_list
-    """
-    mello = []
-    for ep in ep_list:
-        mel = []
-        mtl = []
-        # if the given element is NOT in model_object_cache, then nothing is acting on it, so we return empty list
-        if (domain + "/" + ep) in state.state_paths:
-            if (domain + "/" + ep) in om_operations["model_object_cache"].keys():
-                endpoint = om_operations["model_object_cache"][domain + "/" + ep]
-                model_order_recursive(endpoint, om_operations["model_object_cache"], mel, mtl)
-                mello = mello + mel
-    # TODO: stash the runnable list (mellorun) as a element in dict_ix for cached access during runtime
-    mellorun = ModelObject.runnable_op_list(state.op_tokens, mello)
-    if only_runnable == True:
-        mello = mellorun
-    return mello
 
 
 def save_object_ts(io_manager, siminfo, op_tokens, ts_ix, ts):
