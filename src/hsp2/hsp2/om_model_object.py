@@ -40,7 +40,7 @@ class ModelObject:
             model_props = {}
         self.container = container  # will be a link to another object
         self.state_path = self.handle_prop(model_props, "state_path", False, False)
-        if type(state) == None:
+        if state is None:
             # we must verify that we have a properly formatted state Dictionary, or that our parent does.
             if self.container == False:
                 raise Exception(
