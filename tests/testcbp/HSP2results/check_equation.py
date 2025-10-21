@@ -6,6 +6,7 @@ import numpy
 from hsp2.hsp2.main import *
 from hsp2.state.state import *
 from hsp2.hsp2.om import *
+from hsp2.hsp2.SPECL import *
 from hsp2.hsp2io.hdf import HDF5
 from hsp2.hsp2io.io import IOManager
 from hsp2.hsp2tools.readUCI import *
@@ -40,12 +41,12 @@ state_load_dynamics_hsp2(state, io_manager, siminfo)
 # before loading dynamic components that may reference them
 state_init_hsp2(state, opseq, activities, om_operations)
 # - finally stash specactions in state, not domain (segment) dependent so do it once
-om_operations = om_init_state()  # set up operational model specific containers
-specl_load_om(om_operations, specactions)  # load traditional special actions
+specl_load_om(om_operations, uci_obj.specactions)  # load traditional special actions
 state_load_dynamics_om(
     state, io_manager, siminfo, om_operations
 )  # operational model for custom python
 # finalize all dynamically loaded components and prepare to run the model
+hsp2_domain_dependencies(state, opseq, activities, om_operations)
 state_om_model_run_prep(state, om_operations, siminfo)
 
 # Iterate through all segments and add crucial paths to state

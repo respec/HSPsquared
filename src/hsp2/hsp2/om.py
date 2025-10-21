@@ -142,11 +142,10 @@ def om_init_state():
     # Grab globals from state for easy handling
     op_tokens, model_object_cache = init_om_dicts()
     om_operations = {}
-    om_operations["op_tokens"], om_operations["model_object_cache"], om_operations["model_exec_list"] = (
-        op_tokens,
-        model_object_cache,
-        [],
-    )
+    om_operations["op_tokens"] = op_tokens
+    om_operations["model_object_cache"] = model_object_cache
+    om_operations["model_exec_list"] = []
+    om_operations["model_data"] = {}
     return(om_operations)
 
 
@@ -631,18 +630,17 @@ def hsp2_domain_dependencies(state, opseq, activities, om_operations):
                 activity_path = seg_path + "/" + activity
                 activity_id = state.set_state(activity_path, 0.0)
                 ep_list = []
+                print("Getting init_ix for", seg_path, activity)
                 if activity == "HYDR":
-                    ep_list = hydr_init_ix(state, state.domain)
+                    ep_list = hydr_init_ix(state, seg_path)
                 elif activity == "SEDTRN":
-                    ep_list = sedtrn_init_ix(state, state.domain)
+                    ep_list = sedtrn_init_ix(state, seg_path)
                 elif activity == "SEDMNT":
-                    ep_list = sedmnt_init_ix(state, state.domain)
+                    ep_list = sedmnt_init_ix(state, seg_path)
                 elif activity == "RQUAL":
-                    ep_list = rqual_init_ix(state, state.domain)
+                    ep_list = rqual_init_ix(state, seg_path)
                 # Register list of elements to execute if any
-                op_exec_list = model_domain_dependencies(
-                    om_operations, state, state.domain, ep_list, True
-                )
+                op_exec_list = model_domain_dependencies( om_operations, state, seg_path, ep_list, True)
                 # register the dependencies for each activity so we can load once here
                 # then just iterate through them at runtime without re-querying
                 state.op_exec_lists[activity_id] = np.pad(op_exec_list,(0,state.op_exec_lists.shape[1] - len(op_exec_list)))
