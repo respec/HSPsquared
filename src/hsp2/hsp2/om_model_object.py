@@ -45,6 +45,15 @@ class ModelObject:
                 )
             else:
                 state = self.container.state
+        if model_object_cache is None:
+            # we must verify that we have a properly formatted state Dictionary, or that our parent does.
+            if self.container == False:
+                raise Exception(
+                    "Error: model_object_cache object must be available on to root object. ",
+                    + name
+                    + " cannot be created.  See state::init_state_dicts()",
+                )
+            else:
                 model_object_cache = self.container.model_object_cache
         self.state = state  # make a copy here. is this efficient?
         self.model_object_cache = model_object_cache  # make a copy here. is this efficient?
