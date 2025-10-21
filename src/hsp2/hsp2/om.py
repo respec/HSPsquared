@@ -165,7 +165,7 @@ def state_om_model_root_object(state, om_operations, siminfo):
         timer_props["state_path"] = "/STATE/timer"
         timer = SimTimer("timer", model_root_object, timer_props)
     # add base object for the HSP2 domains and other things already added to state so they can be influenced
-    for seg_path in state.hsp_segments.items():
+    for seg_name, seg_path in state.hsp_segments.items():
         if seg_path not in om_operations["model_object_cache"].keys():
             # BUG: need to figure out if this is OK, then how do we add attributes to these River Objects
             #      later when adding from json?
@@ -173,7 +173,6 @@ def state_om_model_root_object(state, om_operations, siminfo):
             # Create an object shell for this
             # just get the end of the path, which should be fine since we 
             # don't use model names for anything, but might be more appropriately made as full path
-            seg_name = seg_path.rsplit('/',1)[-1]
             segment = ModelObject(seg_name, model_root_object, {}, state)
             om_operations["model_object_cache"][segment.state_path] = segment
 
