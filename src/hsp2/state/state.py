@@ -19,6 +19,7 @@ model_exec_list = npasarray(zeros(1), dtype="int64")
 # TBD: Create a sample tindex for typing
 tindex = date_range("1984-01-01", "2020-12-31", freq=Minute(60))
 tindex_ty = ('tindex', typeof(tindex.to_numpy()))
+dict_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:, :])
 op_tokens = int32(zeros((1,64)))
 op_exec_lists = int32(zeros((1,1024)))
 # note: tested 32-bit key and saw absolutely no improvement, so go with 64 bit
@@ -33,6 +34,7 @@ model_exec_list_ty = ('model_exec_list', typeof(model_exec_list))
 hsp_segments_ty = ('hsp_segments', typeof(hsp_segments))
 op_tokens_ty = ('op_tokens', typeof(op_tokens))
 state_ix_ty = ('state_ix', typeof(state_ix))
+dict_ix_ty = ('dict_ix', typeof(dict_ix))
 ts_ix_ty = ('ts_ix', typeof(ts_ix))
 ts_paths_ty = ('ts_paths', typeof(ts_paths))
 model_root_name_ty = ('model_root_name', types.unicode_type)
@@ -52,12 +54,16 @@ state_spec = [state_paths_ty, state_ix_ty, ts_paths_ty, ts_ix_ty, last_id_ty,
               model_root_name_ty, state_step_hydr_ty, hsp2_local_py_ty,
               hsp_segments_ty, op_tokens_ty, op_exec_lists_ty, model_exec_list_ty,
               operation_ty, segment_ty, activity_ty, domain_ty, state_step_om_ty,
-              tindex_ty]
+              tindex_ty, dict_ix_ty]
 
 @jitclass(state_spec)
 class state_object:
     def __init__(self, num_ops=5000):
         self.state_ix = zeros(num_ops)
+        # this dict_ix approach is inherently slow, and should be replaced by some other np table type
+        # on an as-needed basis if possible.  Especially for dataMatrix types which are supposed to be fast
+        # state can still get values via get_state, by grabbing a reference object and then accessing it's storage
+        self.dict_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:, :])
         self.state_paths = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
         self.hsp_segments = Dict.empty(key_type=types.unicode_type, value_type=types.unicode_type)
         self.ts_paths = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
