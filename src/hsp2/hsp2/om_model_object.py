@@ -34,12 +34,6 @@ class ModelObject:
     
     def __init__(self, name, container=False, model_props=None, state=None, model_object_cache=None):
         self.name = name
-        self.handle_deprecated_args(name, container, model_props, state)
-        # END - handle deprecated
-        if model_props is None:
-            model_props = {}
-        self.container = container  # will be a link to another object
-        self.state_path = self.handle_prop(model_props, "state_path", False, False)
         if state is None:
             # we must verify that we have a properly formatted state Dictionary, or that our parent does.
             if self.container == False:
@@ -53,6 +47,12 @@ class ModelObject:
                 model_object_cache = self.container.model_object_cache
         self.state = state  # make a copy here. is this efficient?
         self.model_object_cache = model_object_cache  # make a copy here. is this efficient?
+        self.handle_deprecated_args(name, container, model_props, state)
+        # END - handle deprecated
+        if model_props is None:
+            model_props = {}
+        self.container = container  # will be a link to another object
+        self.state_path = self.handle_prop(model_props, "state_path", False, False)
         # Local properties
         self.model_props_parsed = {}  # a place to stash parse record for debugging
         self.log_path = ""  # Ex: "/RESULTS/RCHRES_001/SPECL"
