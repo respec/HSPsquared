@@ -297,11 +297,12 @@ class ModelObject:
         return kix
     def register_path(self):
         # initialize the path variable if not already set
-        # print("register_path called for", self.name, "with state_path", self.state_path)
+        print("register_path called for", self.name, "with state_path", self.state_path)
         if self.state_path == "" or self.state_path == False:
             self.make_paths()
         self.ix = self.state.set_state(self.state_path, self.default_value)
         # store object in model_object_cache - always, if we have reached this point we need to overwrite
+        print("Adding ", self.name, "with state_path", self.state_path, "to model_object_cache")
         self.model_object_cache[self.state_path] = self
         # this should check to see if this object has a parent, and if so, register the name on the parent
         # default is as a child object.
