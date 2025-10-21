@@ -28,6 +28,7 @@ hsp_segments = Dict.empty(key_type=types.unicode_type, value_type=types.unicode_
 ts_paths = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
 ts_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:])
 last_id_ty = ('last_id', types.int64)
+num_ops_ty = ('num_ops', types.int64)
 
 state_paths_ty = ('state_paths', typeof(state_paths))
 model_exec_list_ty = ('model_exec_list', typeof(model_exec_list))
@@ -54,11 +55,12 @@ state_spec = [state_paths_ty, state_ix_ty, ts_paths_ty, ts_ix_ty, last_id_ty,
               model_root_name_ty, state_step_hydr_ty, hsp2_local_py_ty,
               hsp_segments_ty, op_tokens_ty, op_exec_lists_ty, model_exec_list_ty,
               operation_ty, segment_ty, activity_ty, domain_ty, state_step_om_ty,
-              tindex_ty, dict_ix_ty]
+              tindex_ty, dict_ix_ty, num_ops_ty]
 
 @jitclass(state_spec)
 class state_object:
     def __init__(self, num_ops=5000):
+        self.num_ops = num_ops
         self.state_ix = zeros(num_ops)
         # this dict_ix approach is inherently slow, and should be replaced by some other np table type
         # on an as-needed basis if possible.  Especially for dataMatrix types which are supposed to be fast

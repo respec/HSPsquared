@@ -200,7 +200,7 @@ def state_om_model_run_prep(state, om_operations, siminfo):
             "ops_data_type"
         ]  # allow override of dat astructure settings
     model_root_object.state.op_tokens = ModelObject.make_op_tokens(
-        max(model_root_object.state.state_ix.keys()) + 1
+        len(model_root_object.state.state_ix)
     )
     model_tokenizer_recursive(model_root_object, model_object_cache, model_exec_list)
     op_tokens = model_root_object.state.op_tokens
