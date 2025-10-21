@@ -4,7 +4,7 @@ It is also used to make an implicit parent child link to insure that an object i
 during a model simulation.
 """
 
-from hsp2.state.state import state_add_ts, get_state_ix
+from hsp2.state.state import state_add_ts
 from hsp2.hsp2.om import *
 from hsp2.hsp2.om_model_object import ModelObject
 from numba import njit
@@ -139,9 +139,7 @@ class ModelLinkage(ModelObject):
 
     def write_ts(self, ts=None, ts_cols=None, write_path=None, tindex=None):
         if ts == None:
-            tix = get_state_ix(
-                self.state.state_ix, self.state.state_paths, self.left_path
-            )
+            tix = self.state.get_state_ix(self.left_path)
             # get the ts. Note, we get the ts entry that corresponds to the left_path setting
             ts = self.state.ts_ix[tix]
         if write_path == None:
@@ -187,9 +185,7 @@ class ModelLinkage(ModelObject):
         # - execution hierarchy
         # print("Linkage/link_type ", self.name, self.link_type,"created with params", self.model_props_parsed)
         if self.link_type in (2, 3):
-            src_ix = get_state_ix(
-                self.state.state_ix, self.state.state_paths, self.right_path
-            )
+            src_ix = self.state.get_state_ix(self.right_path)
             if not (src_ix == False):
                 self.ops = self.ops + [src_ix, self.link_type]
             else:
@@ -197,12 +193,8 @@ class ModelLinkage(ModelObject):
             # print(self.name,"tokenize() result", self.ops)
         if (self.link_type == 4) or (self.link_type == 5) or (self.link_type == 6):
             # we push to the remote path in this one
-            left_ix = get_state_ix(
-                self.state.state_ix, self.state.state_paths, self.left_path
-            )
-            right_ix = get_state_ix(
-                self.state.state_ix, self.state.state_paths, self.right_path
-            )
+            left_ix = self.state.get_state_ix(self.left_path)
+            right_ix = self.state.get_state_ix(self.right_path)
             if (left_ix != False) and (right_ix != False):
                 self.ops = self.ops + [left_ix, self.link_type, right_ix]
             else:

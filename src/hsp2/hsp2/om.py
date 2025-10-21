@@ -168,7 +168,7 @@ def state_om_model_root_object(state, om_operations, siminfo):
     # Create the base that everything is added to. this object does nothing except host the rest.
     if "model_root_object" not in om_operations.keys():
         model_root_object = ModelObject(
-            state["model_root_name"], False, {}, state
+            state.model_root_name, False, {}, state
         )  # we give this no name so that it does not interfer with child paths like timer, year, etc (i.e. /STATE/year, ...)
         om_operations["model_root_object"] = model_root_object
         # set up the timer as the first element
@@ -240,14 +240,7 @@ def state_om_model_run_prep(state, om_operations, siminfo):
     )
     if len(op_tokens) > 0:
         state.state_step_om = "enabled"
-
-    # print("op_tokens is type", type(op_tokens))
-    # print("state_ix is type", type(state['state_ix']))
-    # print("state_paths final", state['state_paths'])
-    # print("op_tokens final", op_tokens)
-    # print("Operational model status:", state['state_step_om'])
     if len(model_exec_list) > 0:
-        # pass
         print(
             "op_tokens has",
             len(op_tokens),
