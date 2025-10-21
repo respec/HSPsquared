@@ -10,7 +10,7 @@ import numpy as np
 import time
 from numpy import zeros
 from numba import njit  # import the types
-from hsp2.state.state import append_state, get_ix_path
+from hsp2.state.state import append_state, get_ix_path, hydr_init_ix, sedtrn_init_ix, sedmnt_init_ix, rqual_init_ix
 
 
 def get_exec_order(model_exec_list, var_ix):
