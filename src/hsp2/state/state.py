@@ -110,6 +110,7 @@ class state_object:
             print("Undefined index value,", var_ix, ", provided for set_token()")
             return False
         if var_ix not in range(np.shape(self.op_tokens)[0]):
+            print("set_token called for ix", var_ix, ", need to expand")
             self.resize_optokens()
         # in a perfect world we would insure that the length of tokens is correct
         # and if not, we would resize.  But this is only called from ModelObject
