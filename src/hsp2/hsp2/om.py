@@ -509,7 +509,7 @@ def model_tokenizer_recursive(
     # now after tokenizing all inputs this should be OK to tokenize
     model_object.add_op_tokens()
     if model_object.optype in ModelObject.runnables:
-        model_exec_list.append(model_object.ix)
+        model_exec_list = np.append(model_exec_list, model_object.ix)
 
 
 def model_order_recursive(
@@ -572,7 +572,7 @@ def model_order_recursive(
             )
             return
     # now after loading input dependencies, add this to list
-    model_exec_list.append(model_object.ix)
+    model_exec_list = np.append(model_exec_list, model_object.ix)
 
 
 def model_input_dependencies(state, exec_list, model_object_cache, only_runnable=False):
