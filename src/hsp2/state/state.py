@@ -105,6 +105,27 @@ class state_object:
         self.last_id = val_ix
         return(val_ix)
     
+    def resize_optokens(self):
+        num_ops = self.size
+        print("state_ix has", num_ops, "elements")
+        #ndims = np.resize(self.op_tokens, (self.size, np.shape(self.op_tokens)[1]) )
+        #print("Resized:", ndims)
+        #self.op_tokens = ndims
+        ops_needed = num_ops - np.shape(self.op_tokens)[0]
+        print("op_tokens needs", ops_needed, "slots")
+        add_ops = zeros( (ops_needed,64) )
+        print("created add_ops with", ops_needed, "slots")
+        # we use the 3rd param "axis=1" to prevent flattening of array
+        if self.op_tokens.size == 0:
+            print("Replacing op_tokens with", add_ops)
+            self.op_tokens = add_ops.astype(types.int32)
+        else:
+            print("Need to merge", add_ops)
+            add_ops = np.append(self.op_tokens, add_ops, 0)
+            self.op_tokens = add_ops.astype(types.int32)
+        print("merged add_ops", add_ops)
+        return
+    
     def set_state(self, var_path, var_value=0.0, debug=False):
         """
         Given an hdf5 style path to a variable, set the value
