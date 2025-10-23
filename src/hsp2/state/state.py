@@ -107,7 +107,7 @@ class state_object:
     
     def set_token(self, var_ix, tokens):
         if var_ix not in range(len(self.state_ix)):
-            print("Undefined index value provided for set_token()")
+            print("Undefined index value," var_ix, " provided for set_token()")
             return False
         if var_ix not in self.op_tokens:
             self.resize_optokens()
