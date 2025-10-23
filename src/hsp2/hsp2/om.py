@@ -212,18 +212,6 @@ def state_om_model_run_prep(state, om_operations, siminfo):
     state.state_step_om = "disabled"
     om_operations["model_object_cache"] = model_object_cache
     state.model_exec_list = np.asarray(model_exec_list, dtype="int32")
-    if model_root_object.ops_data_type == "ndarray":
-        state_keyvals = np.asarray(
-            zeros(max(model_root_object.state.state_ix.keys()) + 1), dtype="float64"
-        )
-        for ix, val in model_root_object.state.state_ix.items():
-            state_keyvals[ix] = val
-        state.state_ix = state_keyvals
-    else:
-        state.state_ix = model_root_object.state.state_ix
-    #state.op_tokens = (
-    #    op_tokens  # is this superfluous since the root object got op_tokens from state?
-    #)
     if len(op_tokens) > 0:
         state.state_step_om = "enabled"
     if len(model_exec_list) > 0:
