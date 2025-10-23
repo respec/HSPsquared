@@ -15,11 +15,12 @@ import sys
 
 # Define the complex datatypes
 state_ix = npasarray(zeros(1), dtype="float64")
-model_exec_list = npasarray(zeros(1), dtype="int64")
+model_exec_list = npasarray(zeros(1), dtype="int32")
 # TBD: Create a sample tindex for typing
 tindex = date_range("1984-01-01", "2020-12-31", freq=Minute(60))
 tindex_ty = ('tindex', typeof(tindex.to_numpy()))
 dict_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:, :])
+op_tokens_dict = Dict.empty(key_type=types.int64, value_type=types.int64[:, :])
 op_tokens = int32(zeros((1,64)))
 op_exec_lists = int32(zeros((1,1024)))
 # note: tested 32-bit key and saw absolutely no improvement, so go with 64 bit
@@ -59,9 +60,8 @@ state_spec = [state_paths_ty, state_ix_ty, ts_paths_ty, ts_ix_ty, last_id_ty,
 
 @jitclass(state_spec)
 class state_object:
-    def __init__(self, num_ops=5000):
-        self.num_ops = num_ops
-        self.state_ix = zeros(num_ops)
+    def __init__(self):
+        self.num_ops = 0
         # this dict_ix approach is inherently slow, and should be replaced by some other np table type
         # on an as-needed basis if possible.  Especially for dataMatrix types which are supposed to be fast
         # state can still get values via get_state, by grabbing a reference object and then accessing it's storage
@@ -85,17 +85,23 @@ class state_object:
         #       form 
         #         op_tokens.astype(int32) 
         #       to do the type cast
-        op_tokens = zeros( (num_ops,64) )
+        op_tokens = zeros( (self.num_ops,64) )
         self.op_tokens = op_tokens.astype(int32)
-        op_exec_lists = zeros( (num_ops,1024) )
-        self.op_exec_lists = op_exec_lists.astype(int32)
-        model_exec_list = zeros(num_ops)
-        self.model_exec_list = model_exec_list.astype(types.int64)
+        op_exec_lists = zeros( (self.num_ops,1024) )
+        # TODO: move to individual objects in OM
+        self.op_exec_lists = op_exec_lists.astype(types.int32)
+        # TODO: is this even needed?
+        model_exec_list = zeros(self.num_ops)
+        self.model_exec_list = model_exec_list.astype(types.int32)
         return
     
+    @property
+    def size(self):
+        return self.state_ix.size
+    
     def append_state(self, var_value):
-        val_ix = self.last_id + 1  # next ix value
-        self.state_ix[val_ix] = var_value
+        val_ix = self.size + 1  # next ix value
+        self.state_ix = np.append(self.state_ix, var_value)
         self.last_id = val_ix
         return(val_ix)
     
