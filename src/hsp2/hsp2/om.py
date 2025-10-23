@@ -212,14 +212,14 @@ def state_om_model_run_prep(state, om_operations, siminfo):
     state.state_step_om = "disabled"
     om_operations["model_object_cache"] = model_object_cache
     state.model_exec_list = np.asarray(model_exec_list, dtype="int32")
-    if len(op_tokens) > 0:
+    if len(state.op_tokens) > 0:
         state.state_step_om = "enabled"
-    if len(model_exec_list) > 0:
+    if len(state.model_exec_list) > 0:
         print(
             "op_tokens has",
-            len(op_tokens),
+            len(state.op_tokens),
             "elements, with ",
-            len(model_exec_list),
+            len(state.model_exec_list),
             "executable elements",
         )
         # print("Exec list:", model_exec_list)
