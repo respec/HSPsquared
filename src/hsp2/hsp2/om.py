@@ -211,7 +211,7 @@ def state_om_model_run_prep(state, om_operations, siminfo):
     # the resulting set of objects is returned.
     state.state_step_om = "disabled"
     om_operations["model_object_cache"] = model_object_cache
-    state.model_exec_list = np.asarray(model_exec_list, dtype="i8")
+    state.model_exec_list = np.asarray(model_exec_list, dtype="int32")
     if model_root_object.ops_data_type == "ndarray":
         state_keyvals = np.asarray(
             zeros(max(model_root_object.state.state_ix.keys()) + 1), dtype="float64"

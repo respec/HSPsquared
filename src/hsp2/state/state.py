@@ -5,7 +5,7 @@ from pandas import date_range
 from pandas.tseries.offsets import Minute
 from numba.typed import Dict
 from numba.experimental import jitclass
-from numpy import zeros, int32, asarray as npasarray
+from numpy import zeros, int32
 from numba import njit, types, typeof  # import the types
 import os
 import importlib.util
@@ -14,8 +14,8 @@ import sys
 
 
 # Define the complex datatypes
-state_ix = npasarray(zeros(1), dtype="float64")
-model_exec_list = npasarray(zeros(1), dtype="int32")
+state_ix = np.asarray(zeros(1), dtype="float64")
+model_exec_list = np.asarray(zeros(1), dtype="int32")
 # TBD: Create a sample tindex for typing
 tindex = date_range("1984-01-01", "2020-12-31", freq=Minute(60))
 tindex_ty = ('tindex', typeof(tindex.to_numpy()))
