@@ -100,7 +100,7 @@ class state_object:
         return self.state_ix.size
     
     def append_state(self, var_value):
-        val_ix = self.size + 1  # next ix value
+        val_ix = self.size  # next ix value= size since ix starts from zero
         self.state_ix = np.append(self.state_ix, var_value)
         self.last_id = val_ix
         return(val_ix)
