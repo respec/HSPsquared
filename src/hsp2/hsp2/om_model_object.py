@@ -469,7 +469,7 @@ class ModelObject:
                 + self.state_path
                 + "). "
             )
-        self.state.op_tokens[self.ix] = self.format_ops()
+        self.state.set_token(self.ix, self.format_ops())
     def step(self, step):
         # this tests the model for a single timestep.
         # this is not the method that is used for high-speed runs, but can theoretically be used for

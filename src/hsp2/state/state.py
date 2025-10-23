@@ -105,6 +105,18 @@ class state_object:
         self.last_id = val_ix
         return(val_ix)
     
+    def set_token(self, var_ix, tokens):
+        if var_ix not in self.state_ix:
+            print("Undefined index value provided for set_token()")
+            return False
+        if var_ix not in self.op_tokens:
+            self.resize_optokens()
+        # in a perfect world we would insure that the length of tokens is correct
+        # and if not, we would resize.  But this is only called from ModelObject
+        # and its methods add_op_tokens() and model_format_ops(ops) enforce the 
+        # length limit described by ModelObject.max_token_length (64) which must match 
+        self.op_tokens[var_ix] = tokens
+    
     def resize_optokens(self):
         num_ops = self.size
         print("state_ix has", num_ops, "elements")
