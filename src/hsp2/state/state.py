@@ -109,7 +109,7 @@ class state_object:
         if var_ix not in range(len(self.state_ix)):
             print("Undefined index value,", var_ix, ", provided for set_token()")
             return False
-        if var_ix not in self.op_tokens:
+        if var_ix not in range(np.shape(self.op_tokens)[0]):
             self.resize_optokens()
         # in a perfect world we would insure that the length of tokens is correct
         # and if not, we would resize.  But this is only called from ModelObject
@@ -123,7 +123,7 @@ class state_object:
         #ndims = np.resize(self.op_tokens, (self.size, np.shape(self.op_tokens)[1]) )
         #print("Resized:", ndims)
         #self.op_tokens = ndims
-        ops_needed = num_ops - np.shape(self.op_tokens)[0]
+        ops_needed = num_ops - (np.shape(self.op_tokens)[0] + 1)
         print("op_tokens needs", ops_needed, "slots")
         add_ops = zeros( (ops_needed,64) )
         print("created add_ops with", ops_needed, "slots")
