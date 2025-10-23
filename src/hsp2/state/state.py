@@ -123,8 +123,11 @@ class state_object:
         #ndims = np.resize(self.op_tokens, (self.size, np.shape(self.op_tokens)[1]) )
         #print("Resized:", ndims)
         #self.op_tokens = ndims
-        ops_needed = num_ops - (np.shape(self.op_tokens)[0] + 1)
+        ops_needed = num_ops - np.shape(self.op_tokens)[0]
         print("op_tokens needs", ops_needed, "slots")
+        if ops_needed == 0:
+            print("resize_options unneccesary, state has", state.size,"indices and op_tokens has", np.shape(self.op_tokens)[0], "elements")
+            return
         add_ops = zeros( (ops_needed,64) )
         print("created add_ops with", ops_needed, "slots")
         # we use the 3rd param "axis=1" to prevent flattening of array
