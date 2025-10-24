@@ -50,16 +50,7 @@ state_om_model_run_prep(state, om_operations, siminfo)
 # Set up order of execution
 hsp2_domain_dependencies(state, opseq, activities, om_operations, True)
 
-# Iterate through all segments and add crucial paths to state
-# before loading dynamic components that may reference them
-state_init_hsp2(state, opseq, activities)
-state_load_dynamics_specl(state, io_manager, siminfo)  # traditional special actions
-state_load_dynamics_om(
-    state, io_manager, siminfo
-)  # operational model for custom python
-state_om_model_run_prep(
-    state, io_manager, siminfo
-)  # this creates all objects from the UCI and previous loads
+
 # state['model_root_object'].find_var_path('RCHRES_R001')
 # Get the timeseries naked, without an object
 Rlocal = om_operations["model_object_cache"]["/STATE/RCHRES_R001/Rlocal"]

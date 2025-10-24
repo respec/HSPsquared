@@ -111,35 +111,45 @@ class state_object:
             return False
         if var_ix not in range(np.shape(self.op_tokens)[0]):
             print("set_token called for ix", var_ix, ", need to expand")
-            self.resize_optokens()
+            self.resize()
         # in a perfect world we would insure that the length of tokens is correct
         # and if not, we would resize.  But this is only called from ModelObject
         # and its methods add_op_tokens() and model_format_ops(ops) enforce the 
         # length limit described by ModelObject.max_token_length (64) which must match 
         self.op_tokens[var_ix] = tokens
     
-    def resize_optokens(self):
+    def resize(self):
         num_ops = self.size
         print("state_ix has", num_ops, "elements")
-        #ndims = np.resize(self.op_tokens, (self.size, np.shape(self.op_tokens)[1]) )
-        #print("Resized:", ndims)
-        #self.op_tokens = ndims
         ops_needed = num_ops - np.shape(self.op_tokens)[0]
         print("op_tokens needs", ops_needed, "slots")
         if ops_needed == 0:
-            print("resize_options unneccesary, state has", self.size,"indices and op_tokens has", np.shape(self.op_tokens)[0], "elements")
+            print("resize op_tokens unneccesary, state has", self.size,"indices and op_tokens has", np.shape(self.op_tokens)[0], "elements")
             return
         add_ops = zeros( (ops_needed,64) )
-        print("created add_ops with", ops_needed, "slots")
+        print("Created add_ops with", ops_needed, "slots")
         # we use the 3rd param "axis=1" to prevent flattening of array
         if self.op_tokens.size == 0:
-            print("Replacing op_tokens with", add_ops)
+            print("Creating op_tokens")
             self.op_tokens = add_ops.astype(types.int32)
         else:
-            print("Need to merge", add_ops)
+            print("Merging op_tokens")
             add_ops = np.append(self.op_tokens, add_ops, 0)
             self.op_tokens = add_ops.astype(types.int32)
-        print("merged add_ops", add_ops)
+        ops_needed = num_ops - np.shape(self.op_exec_lists)[0]
+        el_width = np.shape(self.op_exec_lists)[1]
+        print("op_exec_lists needs", ops_needed, "slots")
+        if ops_needed == 0:
+            return
+        add_ops = zeros( (ops_needed,el_width) )
+        # we use the 3rd param "axis=1" to prevent flattening of array
+        if self.op_exec_lists.size == 0:
+            print("Creating op_exec_lists")
+            self.op_tokens = add_ops.astype(types.int32)
+        else:
+            print("Merging op_exec_lists")
+            add_ops = np.append(self.op_exec_lists, add_ops, 0)
+            self.op_exec_lists = add_ops.astype(types.int32)
         return
     
     def set_state(self, var_path, var_value=0.0, debug=False):
