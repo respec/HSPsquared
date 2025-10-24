@@ -145,7 +145,7 @@ class state_object:
         # we use the 3rd param "axis=1" to prevent flattening of array
         if self.op_exec_lists.size == 0:
             print("Creating op_exec_lists")
-            self.op_tokens = add_ops.astype(types.int32)
+            self.op_exec_lists = add_ops.astype(types.int32)
         else:
             print("Merging op_exec_lists")
             add_ops = np.append(self.op_exec_lists, add_ops, 0)
