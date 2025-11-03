@@ -501,7 +501,7 @@ def model_tokenizer_recursive(
 
 
 def model_order_recursive(
-    model_object, model_object_cache, model_exec_list, model_touch_list=None
+    model_object, model_object_cache, model_exec_list, model_touch_list=None, debug=False
 ):
     """
     Given a root model_object, trace the inputs to load things in order
@@ -515,12 +515,17 @@ def model_order_recursive(
             that are sending to that broadcast?
             - Or is it better to let it as it is,
     """
+    if debug:
+        print("Handling model object:", model_object.name, "with path", model_object.state_path)
     if model_touch_list is None:
         model_touch_list = []
     if model_object.ix in model_exec_list:
+        if debug:
+            print(model_object.name,"already added to model_exec_list. Returning.")
         return
     if model_object.ix in model_touch_list:
-        # print("Already touched", model_object.name, model_object.ix, model_object.state_path)
+        if debug:
+            print("Already touched", model_object.name, model_object.ix, model_object.state_path, ". Returning.")
         return
     # record as having been called, and will ultimately return, to prevent recursions
     model_touch_list.append(model_object.ix)
@@ -560,7 +565,9 @@ def model_order_recursive(
             )
             return
     # now after loading input dependencies, add this to list
-    model_exec_list = np.append(model_exec_list, model_object.ix)
+    if debug:
+        print("Adding", model_object.ix, "to element list")
+    model_exec_list.append(model_object.ix)
 
 
 def model_input_dependencies(state, exec_list, model_object_cache, only_runnable=False):
@@ -635,9 +642,10 @@ def hsp2_domain_dependencies(state, opseq, activities, om_operations, debug=Fals
                     ep_list = rqual_init_ix(state, seg_path)
                 # Register list of elements to execute if any
                 op_exec_list = model_domain_dependencies( om_operations, state, seg_path, ep_list, True, debug)
+                op_exec_list = np.asarray(op_exec_list)
                 # register the dependencies for each activity so we can load once here
                 # then just iterate through them at runtime without re-querying
-                state.op_exec_lists[activity_id] = np.pad(op_exec_list,(0,state.op_exec_lists.shape[1] - len(op_exec_list)))
+                state.set_exec_list(activity_id, op_exec_list)
 
 
 def save_object_ts(io_manager, siminfo, op_tokens, ts_ix, ts):
