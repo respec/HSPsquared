@@ -341,7 +341,7 @@ def _hydr_(
     #######################################################################################
     # the following section (2 of 3) added by rb to HYDR, this one to prepare for dynamic state including special actions
     #######################################################################################
-    hydr_ix = hydr_get_ix(state.state_ix, state.state_paths, state.domain)
+    hydr_ix = hydr_get_ix(state, state.domain)
     # these are integer placeholders faster than calling the array look each timestep
     # TBD: These will be replaced by class properties in HYDR_class 
     o1_ix, o2_ix, o3_ix, ivol_ix = (
