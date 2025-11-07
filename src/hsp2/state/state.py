@@ -497,6 +497,7 @@ def hydr_get_ix(state_ix, state_paths, domain):
     for i in hydr_state:
         # var_path = f'{domain}/{i}'
         var_path = domain + "/" + i
+        print("looking for:", var_path)
         hydr_ix[i] = state_paths[var_path]
     return hydr_ix
 
