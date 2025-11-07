@@ -472,7 +472,7 @@ def rqual_init_ix(state, domain):
     return rqual_ix
 
 
-@njit
+#@njit
 def hydr_get_ix(state_ix, state_paths, domain):
     # get a list of keys for all hydr state variables
     hydr_state = [
