@@ -397,7 +397,7 @@ def main(
                 if operation not in ["COPY", "GENER"]:
                     if activity == "HYDR":
                         errors, errmessages = function(
-                            io_manager, siminfo, ui, ts, ftables, state
+                            siminfo, ui, ts, ftables, state
                         )
                     elif activity == "SEDTRN" or activity == "SEDMNT":
                         errors, errmessages = function(
