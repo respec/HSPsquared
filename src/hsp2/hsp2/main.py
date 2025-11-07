@@ -23,7 +23,7 @@ from hsp2.state.state import (
     state_load_dynamics_hsp2,
     state_init_hsp2,
     state_context_hsp2,
-    state_object
+    state_class
 )
 from hsp2.hsp2.om import (
     om_init_state,
@@ -87,7 +87,7 @@ def main(
     # initialize STATE dicts
     #######################################################################################
     # Set up Things in state that will be used in all modular activities like SPECL
-    state = state_object()
+    state = state_class()
     om_operations = om_init_state()  # set up operational model specific containers
     state_siminfo_hsp2(state, parameter_obj, siminfo, io_manager)
     # Add support for dynamic functions to operate on STATE

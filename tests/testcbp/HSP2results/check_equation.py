@@ -29,7 +29,7 @@ opseq = uci_obj.opseq
 # - hdf5_instance._store.keys() - all the paths in the UCI/hdf5
 # - finally stash specactions in state, not domain (segment) dependent so do it once
 # now load state and the special actions
-state = state_object()
+state = state_class()
 om_operations = om_init_state()
 
 state_siminfo_hsp2(state, uci_obj, siminfo, io_manager)
@@ -50,6 +50,10 @@ state_om_model_run_prep(state, om_operations, siminfo)
 # Set up order of execution
 hsp2_domain_dependencies(state, opseq, activities, om_operations, True)
 
+# debug loading:
+# mtl = []
+# mel = []
+# model_order_recursive(endpoint, om_operations["model_object_cache"], mel, mtl, True)
 
 # state['model_root_object'].find_var_path('RCHRES_R001')
 # Get the timeseries naked, without an object

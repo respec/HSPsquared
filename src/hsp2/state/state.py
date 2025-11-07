@@ -59,7 +59,7 @@ state_spec = [state_paths_ty, state_ix_ty, ts_paths_ty, ts_ix_ty, last_id_ty,
               tindex_ty, dict_ix_ty, num_ops_ty]
 
 @jitclass(state_spec)
-class state_object:
+class state_class:
     def __init__(self):
         self.num_ops = 0
         # this dict_ix approach is inherently slow, and should be replaced by some other np table type
