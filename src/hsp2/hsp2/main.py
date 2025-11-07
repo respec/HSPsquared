@@ -30,6 +30,7 @@ from hsp2.hsp2.om import (
     state_om_model_run_prep,
     state_load_dynamics_om,
     state_om_model_run_finish,
+    hsp2_domain_dependencies
 )
 from hsp2.hsp2.SPECL import specl_load_om
 
@@ -96,6 +97,8 @@ def main(
     # Iterate through all segments and add crucial paths to state
     # before loading dynamic components that may reference them
     state_init_hsp2(state, opseq, activities, om_operations)
+    # now initialize all state variables for mutable variables
+    hsp2_domain_dependencies(state, opseq, activities, om_operations, True)
     # - finally stash specactions in state, not domain (segment) dependent so do it once
     specl_load_om(om_operations, specactions)  # load traditional special actions
     state_load_dynamics_om(
