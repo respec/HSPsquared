@@ -391,7 +391,7 @@ def _hydr_(
             pre_step_model(model_exec_list, state.op_tokens, state.state_ix, state.dict_ix, state.ts_ix, step)
         if state.state_step_hydr == "enabled":
             state_step_hydr(
-                state_info, state.state_paths, state.state_ix, state.dict_ix, state.ts_ix, hydr_ix, step
+                state, step
             )
         if state.state_step_om == "enabled":
             # print("trying to execute state_step_om()")
