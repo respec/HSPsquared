@@ -388,17 +388,17 @@ def _hydr_(
         # - these if statements may be irrelevant if default functions simply return
         #   when no objects are defined.
         if state.state_step_om == "enabled":
-            pre_step_model(model_exec_list, state.op_tokens, state.state_ix, dict_ix, ts_ix, step)
+            pre_step_model(model_exec_list, state.op_tokens, state.state_ix, state.dict_ix, state.ts_ix, step)
         if state.state_step_hydr == "enabled":
             state_step_hydr(
-                state_info, state.state_paths, state.state_ix, dict_ix, ts_ix, hydr_ix, step
+                state_info, state.state_paths, state.state_ix, state.dict_ix, state.ts_ix, hydr_ix, step
             )
         if state.state_step_om == "enabled":
             # print("trying to execute state_step_om()")
             # model_exec_list contains the model exec list in dependency order
             # now these are all executed at once, but we need to make them only for domain end points
             step_model(
-                model_exec_list, state.op_tokens, state.state_ix, dict_ix, ts_ix, step
+                model_exec_list, state.op_tokens, state.state_ix, state.dict_ix, state.ts_ix, step
             )  # traditional 'ACTIONS' done in here
         if (state.state_step_hydr == "enabled") or (
             state.state_step_om == "enabled"
