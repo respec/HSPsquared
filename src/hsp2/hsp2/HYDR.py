@@ -143,7 +143,7 @@ def hydr(siminfo, parameters, ts, ftables, state):
     #######################################################################################
     # the following section (1 of 3) added to HYDR by rb to handle dynamic code and special actions
     #######################################################################################
-    hsp2_local_py = state.state_step_hydr
+    hsp2_local_py = state.hsp2_local_py
     # It appears necessary to load this here, instead of from main.py, otherwise,
     # _hydr_() does not recognize the function state_step_hydr()?
     if hsp2_local_py != False:
