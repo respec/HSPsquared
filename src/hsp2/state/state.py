@@ -154,7 +154,8 @@ class state_class:
         return
     
     def set_exec_list(self, ix, op_exec_list):
-        self.op_exec_lists[ix] = np.pad(op_exec_list,(0,self.op_exec_lists.shape[1] - len(op_exec_list)))
+        for i in range(len(op_exec_list)):
+            self.op_exec_lists[ix][i] = op_exec_list[i]
 
     def set_state(self, var_path, var_value=0.0, debug=False):
         """
