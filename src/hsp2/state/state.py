@@ -475,7 +475,7 @@ def rqual_init_ix(state, domain):
     return rqual_ix
 
 
-#@njit
+@njit
 def hydr_get_ix(state, domain):
     # get a list of keys for all hydr state variables
     hydr_state = [
@@ -496,12 +496,12 @@ def hydr_get_ix(state, domain):
         "VOL",
         "VOLEV",
     ]
-    print(state.state_paths)
+    #print(state.state_paths)
     hydr_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
     for i in hydr_state:
         # var_path = f'{domain}/{i}'
         var_path = domain + "/" + i
-        print("looking for:", var_path)
+        #print("looking for:", var_path)
         hydr_ix[i] = state.get_state_ix(var_path)
     return hydr_ix
 
