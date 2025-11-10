@@ -252,7 +252,7 @@ class ModelObject:
     
     def get_state(self, var_name=False):
         if var_name == False:
-            return self.state.state_ix[var_ix]
+            return self.state.state_ix[self.ix]
         else:
             var_path = self.find_var_path(var_name)
             print("Looking for state ix of:", var_path)
