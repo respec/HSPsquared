@@ -14,7 +14,7 @@ class ModelLinkage(ModelObject):
     def __init__(self, name, container=False, model_props=None, state=None):
         if model_props is None:
             model_props = {}
-        super(ModelLinkage, self).__init__(name, container, model_props, state=False)
+        super(ModelLinkage, self).__init__(name, container, model_props, state)
         # ModelLinkage copies a values from right to left
         # right_path: is the data source for the link
         # left_path: is the destination of the link
