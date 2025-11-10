@@ -224,7 +224,7 @@ def state_om_model_run_prep(opseq, activities, state, om_operations, siminfo):
         )
         # print("Exec list:", model_exec_list)
     # Now make sure that all HSP2 vars that can be affected by state have
-    hsp2_domain_dependencies(state, opseq, activities, om_operations, True)
+    hsp2_domain_dependencies(state, opseq, activities, om_operations, False)
     return
 
 

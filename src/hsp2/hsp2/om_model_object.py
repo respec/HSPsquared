@@ -230,10 +230,10 @@ class ModelObject:
             dummy_var = True
     
     def make_paths(self, base_path=False):
-        print("calling make_paths from", self.name, "with base path", base_path)
+        #print("calling make_paths from", self.name, "with base path", base_path)
         if base_path == False:  # we are NOT forcing paths
             if not (self.container == False):
-                print("Using container path as base:", self.container.state_path + "/" + str(self.name))
+                #print("Using container path as base:", self.container.state_path + "/" + str(self.name))
                 self.state_path = self.container.state_path + "/" + str(self.name)
                 self.attribute_path = (
                     self.container.attribute_path + "/" + str(self.name)
@@ -255,7 +255,7 @@ class ModelObject:
             return self.state.state_ix[self.ix]
         else:
             var_path = self.find_var_path(var_name)
-            print("Looking for state ix of:", var_path)
+            #print("Looking for state ix of:", var_path)
             var_ix = self.state.get_state_ix(var_path)
         if var_ix == False:
             return False
@@ -310,12 +310,12 @@ class ModelObject:
         return kix
     def register_path(self):
         # initialize the path variable if not already set
-        print("register_path called for", self.name, "with state_path", self.state_path)
+        #print("register_path called for", self.name, "with state_path", self.state_path)
         if self.state_path == "" or self.state_path == False:
             self.make_paths()
         self.ix = self.state.set_state(self.state_path, self.default_value)
         # store object in model_object_cache - always, if we have reached this point we need to overwrite
-        print("Adding ", self.name, "with state_path", self.state_path, "to model_object_cache")
+        #print("Adding ", self.name, "with state_path", self.state_path, "to model_object_cache")
         self.model_object_cache[self.state_path] = self
         # this should check to see if this object has a parent, and if so, register the name on the parent
         # default is as a child object.
@@ -340,7 +340,7 @@ class ModelObject:
         #       BUT this only works if both var_name and var_path are month
         #       so add_input('month', 'month', 1, True) works.
         found_path = self.find_var_path(var_path)
-        print("Searched", var_name, "with path", var_path,"found", found_path)
+        #print("Searched", var_name, "with path", var_path,"found", found_path)
         var_ix = self.state.get_state_ix(found_path)
         if var_ix == False:
             if trust == False:
