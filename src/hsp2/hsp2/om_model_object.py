@@ -255,6 +255,7 @@ class ModelObject:
             return self.state_ix[self.ix]
         else:
             var_path = self.find_var_path(var_name)
+            print("Looking for state ix of:", var_path)
             var_ix = self.state.get_state_ix(var_path)
         if var_ix == False:
             return False

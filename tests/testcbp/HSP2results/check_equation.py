@@ -99,6 +99,22 @@ print(
 
 
 # try also:
+# Must be run from the HSPsquared source directory, the h5 file has already been setup with hsp import_uci test10.uci
+# bare bones tester - must be run from the HSPsquared source directory
+
+import os
+import numpy
+from hsp2.hsp2.main import *
+from hsp2.state.state import *
+from hsp2.hsp2.om import *
+from hsp2.hsp2.SPECL import *
+from hsp2.hsp2io.hdf import HDF5
+from hsp2.hsp2io.io import IOManager
+from hsp2.hsp2tools.readUCI import *
+from src.hsp2.hsp2tools.commands import import_uci, run
+from pandas import read_hdf
+
+fpath = "./tests/testcbp/HSP2results/PL3_5250_0001.h5"
 run(fpath, saveall=True, compress=False)
 dstore_hydr = pd.HDFStore(str(fpath), mode='r')
 hsp2_specl_hydr1 = read_hdf(dstore_hydr, '/RESULTS/RCHRES_R001/HYDR')
