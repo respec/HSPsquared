@@ -338,7 +338,7 @@ class ModelObject:
         #       BUT this only works if both var_name and var_path are month
         #       so add_input('month', 'month', 1, True) works.
         found_path = self.find_var_path(var_path)
-        # print("Searched", var_name, "with path", var_path,"found", found_path)
+        print("Searched", var_name, "with path", var_path,"found", found_path)
         var_ix = self.state.get_state_ix(found_path)
         if var_ix == False:
             if trust == False:
