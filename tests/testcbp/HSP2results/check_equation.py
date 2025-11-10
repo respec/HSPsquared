@@ -118,3 +118,6 @@ fpath = "./tests/testcbp/HSP2results/PL3_5250_0001.h5"
 run(fpath, saveall=True, compress=False)
 dstore_hydr = pd.HDFStore(str(fpath), mode='r')
 hsp2_specl_hydr1 = read_hdf(dstore_hydr, '/RESULTS/RCHRES_R001/HYDR')
+np.quantile(hsp2_specl_hydr1[:]['O2'], [0,0.25,0.5,0.75,1.0])
+# To re-run:
+dstore_hydr.close()
