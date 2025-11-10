@@ -230,7 +230,7 @@ class ModelObject:
             dummy_var = True
     
     def make_paths(self, base_path=False):
-        # print("calling make_paths from", self.name, "with base path", base_path)
+        print("calling make_paths from", self.name, "with base path", base_path)
         if base_path == False:  # we are NOT forcing paths
             if not (self.container == False):
                 self.state_path = self.container.state_path + "/" + str(self.name)

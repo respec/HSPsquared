@@ -129,6 +129,7 @@ def om_init_state():
     # Grab globals from state for easy handling
     op_tokens, model_object_cache = init_om_dicts()
     om_operations = {}
+    om_operations["op_tokens"] = op_tokens
     om_operations["model_object_cache"] = model_object_cache
     om_operations["model_exec_list"] = []
     om_operations["model_data"] = {}
@@ -222,6 +223,8 @@ def state_om_model_run_prep(state, om_operations, siminfo):
             "executable elements",
         )
         # print("Exec list:", model_exec_list)
+    # Now make sure that all HSP2 vars that can be affected by state have
+    hsp2_domain_dependencies(state, opseq, activities, om_operations, True)
     return
 
 

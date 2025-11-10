@@ -10,6 +10,9 @@ from hsp2.hsp2.SPECL import *
 from hsp2.hsp2io.hdf import HDF5
 from hsp2.hsp2io.io import IOManager
 from hsp2.hsp2tools.readUCI import *
+from src.hsp2.hsp2tools.commands import import_uci, run
+from pandas import read_hdf
+
 
 fpath = "./tests/testcbp/HSP2results/PL3_5250_0001.h5"
 ucipath = "./tests/testcbp/HSP2results/PL3_5250_0001.uci"
@@ -17,11 +20,13 @@ uci = readUCI(ucipath, fpath)
 
 # try also:
 # fpath = './tests/testcbp/HSP2results/JL1_6562_6560.h5'
+
 # sometimes when testing you may need to close the file, so try:
 # f = h5py.File(fpath,'a') # use mode 'a' which allows read, write, modify
 # # f.close()
 hdf5_instance = HDF5(fpath)
 io_manager = IOManager(hdf5_instance)
+
 uci_obj = io_manager.read_parameters()
 siminfo = uci_obj.siminfo
 opseq = uci_obj.opseq
@@ -91,3 +96,9 @@ print(
     end - start,
     "seconds",
 )
+
+
+# try also:
+run(fpath, saveall=True, compress=False)
+dstore_hydr = pd.HDFStore(str(fpath), mode='r')
+hsp2_specl_hydr1 = read_hdf(dstore_hydr, '/RESULTS/RCHRES_R001/HYDR')
