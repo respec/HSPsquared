@@ -51,9 +51,8 @@ state_load_dynamics_om(
     state, io_manager, siminfo, om_operations
 )  # operational model for custom python
 # finalize all dynamically loaded components and prepare to run the model
-state_om_model_run_prep(state, om_operations, siminfo)
+state_om_model_run_prep(opseq, state, om_operations, siminfo)
 # Set up order of execution
-hsp2_domain_dependencies(state, opseq, activities, om_operations, True)
 
 # debug loading:
 # mtl = []
