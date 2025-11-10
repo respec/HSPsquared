@@ -233,6 +233,7 @@ class ModelObject:
         print("calling make_paths from", self.name, "with base path", base_path)
         if base_path == False:  # we are NOT forcing paths
             if not (self.container == False):
+                print("Using container path as base:", self.container.state_path + "/" + str(self.name))
                 self.state_path = self.container.state_path + "/" + str(self.name)
                 self.attribute_path = (
                     self.container.attribute_path + "/" + str(self.name)
