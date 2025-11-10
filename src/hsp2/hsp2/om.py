@@ -177,7 +177,7 @@ def state_om_model_root_object(state, om_operations, siminfo):
             om_operations["model_object_cache"][segment.state_path] = segment
 
 
-def state_om_model_run_prep(opseq, state, om_operations, siminfo):
+def state_om_model_run_prep(opseq, activities, state, om_operations, siminfo):
     # insure model base is set
     state_om_model_root_object(state, om_operations, siminfo)
     # now instantiate and link objects
