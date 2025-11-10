@@ -287,9 +287,9 @@ class ModelObject:
         if not (self.container == False):
             return self.container.find_var_path(var_name)
         # check for root state vars STATE + var_name
-        if ("/STATE/" + var_name) in self.state.state_paths:
+        if (state.model_root_object + "/" + var_name) in self.state.state_paths:
             # return self.state['state_paths'][("/STATE/" + var_name)]
-            return "/STATE/" + var_name
+            return state.model_root_object + "/" + var_name
         # check for full paths
         if var_name in self.state.state_paths:
             # return self.state['state_paths'][var_name]
