@@ -271,7 +271,10 @@ class ModelObject:
             return self.model_object_cache[self.state_path]
         else:
             var_path = self.find_var_path(var_name)
-            return self.model_object_cache[var_path]
+            if var_path in self.model_object_cache:
+                return self.model_object_cache[var_path]
+            else: 
+                return False
     
     def find_var_path(self, var_name, local_only=False):
         # check local inputs for name

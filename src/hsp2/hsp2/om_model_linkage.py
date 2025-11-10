@@ -97,19 +97,29 @@ class ModelLinkage(ModelObject):
         # the left path, if this is type 4 or 5, is a push, so we must require it
         if (self.link_type == 4) or (self.link_type == 5) or (self.link_type == 6):
             print("ModelLinkage", self.name, "insuring register with path", self.left_path)
-            self.insure_path(self.left_path)
             push_pieces = self.left_path.split("/")
             push_name = push_pieces[len(push_pieces) - 1]
-            var_register = self.insure_register(
-                push_name, 0.0, False, self.left_path, False
-            )
-            print(
-                "Created register",
-                var_register.name,
-                "with path",
-                var_register.state_path,
-            )
-            # add already created objects as inputs
+            left_object = self.find_object(self.left_path)
+            if left_object == False:
+                # try to fin the parent and create the register since push is allowed
+                left_parent_path = '/'.join(push_pieces[0:len(push_pieces) - 1])
+                left_parent_object = self.get_object(left_parent_path)
+                if left_parent_object == False:
+                    raise Exception(
+                        "Cannot find variable path: "
+                        + left_parent_path
+                        + " when trying to push to object "
+                        + push_name
+                var_register = self.insure_register(
+                    push_name, 0.0, left_parent_object, self.left_path, False
+                )
+                print(
+                    "Created register",
+                    var_register.name,
+                    "with path",
+                    var_register.state_path,
+                )
+                # add already created objects as inputs
             var_register.add_object_input(self.name, self, 1)
         # Now, make sure that all time series paths can be found and loaded
         if self.link_type == 3:
