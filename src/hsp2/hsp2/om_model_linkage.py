@@ -99,7 +99,7 @@ class ModelLinkage(ModelObject):
             print("ModelLinkage", self.name, "insuring register with path", self.left_path)
             push_pieces = self.left_path.split("/")
             push_name = push_pieces[len(push_pieces) - 1]
-            left_object = self.find_object(self.left_path)
+            left_object = self.get_object(self.left_path)
             if not left_object:
                 # try to fin the parent and create the register since push is allowed
                 left_parent_path = '/'.join(push_pieces[0:len(push_pieces) - 1])
