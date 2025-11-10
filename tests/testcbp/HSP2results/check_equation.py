@@ -10,6 +10,7 @@ from hsp2.hsp2.SPECL import *
 from hsp2.hsp2io.hdf import HDF5
 from hsp2.hsp2io.io import IOManager
 from hsp2.hsp2tools.readUCI import *
+from hsp2.hsp2.configuration import activities
 from src.hsp2.hsp2tools.commands import import_uci, run
 from pandas import read_hdf
 
@@ -51,7 +52,7 @@ state_load_dynamics_om(
     state, io_manager, siminfo, om_operations
 )  # operational model for custom python
 # finalize all dynamically loaded components and prepare to run the model
-state_om_model_run_prep(opseq, state, om_operations, siminfo)
+state_om_model_run_prep(opseq, activities, state, om_operations, siminfo)
 # Set up order of execution
 
 # debug loading:

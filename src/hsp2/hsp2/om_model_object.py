@@ -259,7 +259,7 @@ class ModelObject:
             var_ix = self.state.get_state_ix(var_path)
         if var_ix == False:
             return False
-        return self.state_ix[var_ix]
+        return self.state.state_ix[var_ix]
     
     def get_tindex(self):
         timer = self.get_object('timer')
@@ -482,7 +482,7 @@ class ModelObject:
         step_one(
             self.state.op_tokens,
             self.state.op_tokens[self.ix],
-            self.state_ix,
+            self.state.state_ix,
             self.state.dict_ix,
             self.state.state_ix,
             self.state.ts_ix,
