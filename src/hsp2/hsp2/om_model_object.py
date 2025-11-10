@@ -49,9 +49,9 @@ class ModelObject:
             # we must verify that we have a properly formatted state Dictionary, or that our parent does.
             if self.container == False:
                 raise Exception(
-                    "Error: model_object_cache object must be available on to root object. ",
+                    "Error: model_object_cache object must be available on to root object. "
                     + name
-                    + " cannot be created.  See state::init_state_dicts()",
+                    + " cannot be created.  See state::init_state_dicts()"
                 )
             else:
                 model_object_cache = self.container.model_object_cache
