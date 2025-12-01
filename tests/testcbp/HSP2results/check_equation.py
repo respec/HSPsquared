@@ -101,9 +101,12 @@ print(
 # try also:
 # Must be run from the HSPsquared source directory, the h5 file has already been setup with hsp import_uci test10.uci
 # bare bones tester - must be run from the HSPsquared source directory
-
+# sometimes when testing you may need to close the file, so try:
+# import h5py;f = h5py.File(fpath,'a') # use mode 'a' which allows read, write, modify
+# # f.close()
 import os
 import numpy
+import h5py
 from hsp2.hsp2.main import *
 from hsp2.state.state import *
 from hsp2.hsp2.om import *
@@ -117,7 +120,24 @@ from pandas import read_hdf
 fpath = "./tests/testcbp/HSP2results/PL3_5250_0001.h5"
 run(fpath, saveall=True, compress=False)
 dstore_hydr = pd.HDFStore(str(fpath), mode='r')
-hsp2_specl_hydr1 = read_hdf(dstore_hydr, '/RESULTS/RCHRES_R001/HYDR')
-np.quantile(hsp2_specl_hydr1[:]['O2'], [0,0.25,0.5,0.75,1.0])
+hsp2_hydr = read_hdf(dstore_hydr, '/RESULTS/RCHRES_R001/HYDR')
+np.quantile(hsp2_hydr[:]['O3'], [0,0.25,0.5,0.75,1.0])
+# To re-run:
+dstore_hydr.close()
+
+fpath = "./tests/testcbp/HSP2results/PL3_5250_0001wd.h5"
+run(fpath, saveall=True, compress=False)
+dstore_hydr = pd.HDFStore(str(fpath), mode='r')
+hsp2_wd_hydr = read_hdf(dstore_hydr, '/RESULTS/RCHRES_R001/HYDR')
+dstore_hydr.close()
+np.quantile(hsp2_wd_hydr[:]['O2'], [0,0.25,0.5,0.75,1.0])
+# To re-run:
+
+
+fpath = "./tests/testcbp/HSP2results/PL3_5250_0001eq.h5"
+run(fpath, saveall=True, compress=False)
+dstore_hydr = pd.HDFStore(str(fpath), mode='r')
+hsp2_eq_hydr = read_hdf(dstore_hydr, '/RESULTS/RCHRES_R001/HYDR')
+np.quantile(hsp2_eq_hydr[:]['O2'], [0,0.25,0.5,0.75,1.0])
 # To re-run:
 dstore_hydr.close()
