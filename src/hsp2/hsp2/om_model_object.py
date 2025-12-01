@@ -4,12 +4,13 @@ It handles all Dict management functions, but provides for no runtime execution 
 All runtime exec is done by child classes.
 """
 
-from hsp2.state.state import set_state, get_state_ix
-from numba.typed import Dict
-from hsp2.hsp2.om import is_float_digit
-from pandas import HDFStore
-from numpy import pad, asarray, zeros, int32
 from numba import njit, types
+from numba.typed import Dict
+from numpy import asarray, int32, pad, zeros
+from pandas import HDFStore
+
+from hsp2.hsp2.om import is_float_digit
+from hsp2.state.state import get_state_ix, set_state
 
 
 class ModelObject:
@@ -31,8 +32,15 @@ class ModelObject:
         100,
     ]  # runnable components important for optimization
     ops_data_type = "ndarray"  # options are ndarray or Dict - Dict appears slower, but unsure of the cause, so keep as option.
-    
-    def __init__(self, name, container=False, model_props=None, state=None, model_object_cache=None):
+
+    def __init__(
+        self,
+        name,
+        container=False,
+        model_props=None,
+        state=None,
+        model_object_cache=None,
+    ):
         self.name = name
         self.container = container  # will be a link to another object
         if state is None:
@@ -40,8 +48,7 @@ class ModelObject:
             if self.container == False:
                 raise Exception(
                     "Error: State object must be passed to root object. ",
-                    + name
-                    + " cannot be created.  See state::init_state_dicts()",
+                    +name + " cannot be created.  See state::init_state_dicts()",
                 )
             else:
                 state = self.container.state
@@ -56,7 +63,9 @@ class ModelObject:
             else:
                 model_object_cache = self.container.model_object_cache
         self.state = state  # make a copy here. is this efficient?
-        self.model_object_cache = model_object_cache  # make a copy here. is this efficient?
+        self.model_object_cache = (
+            model_object_cache  # make a copy here. is this efficient?
+        )
         self.handle_deprecated_args(name, container, model_props, state)
         # END - handle deprecated
         if model_props is None:
@@ -87,7 +96,7 @@ class ModelObject:
         #                 100 - SpecialAction, 101 - UVNAME, 102 - UVQUAN, 103 - DISTRB
         self.register_path()  # note this registers the path AND stores the object in model_object_cache
         self.parse_model_props(model_props)
-    
+
     def handle_deprecated_args(self, name, container, model_props, state):
         # Handle old deprecated format for Register, Constant and Variable
         state_path = False
@@ -105,7 +114,7 @@ class ModelObject:
             print(
                 "WARNING: deprecated 4th argument for ModelObject. Use: [Model class](name, container, model_props, state)"
             )
-    
+
     @staticmethod
     def required_properties():
         # returns a list or minimum properties to create.
@@ -114,7 +123,7 @@ class ModelObject:
         # req_props = super(DataMatrix, DataMatrix).required_properties()
         req_props = ["name"]
         return req_props
-    
+
     @staticmethod
     def make_op_tokens(num_ops=5000):
         if ModelObject.ops_data_type == "ndarray":
@@ -124,7 +133,7 @@ class ModelObject:
         else:
             op_tokens = Dict.empty(key_type=types.int64, value_type=types.i8[:])
         return op_tokens
-    
+
     @staticmethod
     def runnable_op_list(op_tokens, meo, debug=False):
         # only return those objects that do something at runtime
@@ -141,7 +150,7 @@ class ModelObject:
                 rmeo.append(ix)
         rmeo = asarray(rmeo, dtype="i8")
         return rmeo
-    
+
     @staticmethod
     def model_format_ops(ops):
         if ModelObject.ops_data_type == "ndarray":
@@ -151,12 +160,12 @@ class ModelObject:
         else:
             ops = asarray(ops, dtype="i8")
         return ops
-    
+
     def format_ops(self):
         # this can be sub-classed if needed, but should not be since it is based on the ops_data_type
         # See ModelObject.model_format_ops()
         return ModelObject.model_format_ops(self.ops)
-    
+
     @classmethod
     def check_properties(cls, model_props):
         # this is for pre-screening properties for validity in model creation routines
@@ -167,13 +176,13 @@ class ModelObject:
         if len(matching_props) < len(req_props):
             return False
         return True
-    
+
     def handle_path_aliases(self, object_path):
         if not (self.container == False):
             object_path = object_path.replace("[parent]", self.container.state_path)
         object_path = object_path.replace("[self]", self.state_path)
         return object_path
-    
+
     def handle_inputs(self, model_props):
         if "inputs" in model_props.keys():
             for i_pair in model_props["inputs"]:
@@ -181,7 +190,7 @@ class ModelObject:
                 i_target = i_pair[1]
                 i_target = handle_path_aliases(i_target)
                 self.add_input(i_name, i_target)
-    
+
     def handle_prop(self, model_props, prop_name, strict=False, default_value=None):
         # this checks to see if the prop is in dict with value form, or just a value
         # strict = True causes an exception if property is missing from model_props dict
@@ -200,11 +209,13 @@ class ModelObject:
                 + self.name
                 + " and strict = True.  Object creation halted. Path to object with error is "
                 + self.state_path
+                + "This objects inputs are:",
+                self.inputs,
             )
         if (prop_val == None) and not (default_value == None):
             prop_val = default_value
         return prop_val
-    
+
     def parse_model_props(self, model_props, strict=False):
         # sub-classes will allow an create argument "model_props" and handle them here.
         #  - subclasses should insure that they call super().parse_model_props() or include all code below
@@ -214,26 +225,26 @@ class ModelObject:
         self.handle_inputs(model_props)
         self.model_props_parsed = model_props
         return True
-    
+
     def set_state(self, set_value):
         var_ix = self.state.set_state(
             self.state_path,
             set_value,
         )
         return var_ix
-    
+
     def save_object_hdf(self, hdfname, overwrite=False):
         # save the object in the full hdf5 path
         # if overwrite = True replace this and all children, otherwise, just save this.
         # note: "with" statement helps prevent unclosed resources, see: https://www.geeksforgeeks.org/with-statement-in-python/
         with HDFStore(hdfname, mode="a") as store:
             dummy_var = True
-    
+
     def make_paths(self, base_path=False):
-        #print("calling make_paths from", self.name, "with base path", base_path)
+        # print("calling make_paths from", self.name, "with base path", base_path)
         if base_path == False:  # we are NOT forcing paths
             if not (self.container == False):
-                #print("Using container path as base:", self.container.state_path + "/" + str(self.name))
+                # print("Using container path as base:", self.container.state_path + "/" + str(self.name))
                 self.state_path = self.container.state_path + "/" + str(self.name)
                 self.attribute_path = (
                     self.container.attribute_path + "/" + str(self.name)
@@ -249,23 +260,23 @@ class ModelObject:
             self.state_path = base_path["STATE"] + self.name
             self.attribute_path = base_path["OBJECTS"] + self.name
         return self.state_path
-    
+
     def get_state(self, var_name=False):
         if var_name == False:
             return self.state.state_ix[self.ix]
         else:
             var_path = self.find_var_path(var_name)
-            #print("Looking for state ix of:", var_path)
+            # print("Looking for state ix of:", var_path)
             var_ix = self.state.get_state_ix(var_path)
         if var_ix == False:
             return False
         return self.state.state_ix[var_ix]
-    
+
     def get_tindex(self):
-        timer = self.get_object('timer')
+        timer = self.get_object("timer")
         tindex = self.state.dict_ix[timer.ix]
-        return(tindex)
-    
+        return tindex
+
     def get_object(self, var_name=False):
         if var_name == False:
             return self.model_object_cache[self.state_path]
@@ -273,9 +284,9 @@ class ModelObject:
             var_path = self.find_var_path(var_name)
             if var_path in self.model_object_cache:
                 return self.model_object_cache[var_path]
-            else: 
+            else:
                 return False
-    
+
     def find_var_path(self, var_name, local_only=False):
         # check local inputs for name
         if type(var_name) == str:
@@ -284,10 +295,15 @@ class ModelObject:
         # print(self.name, "called", "find_var_path(self, ", var_name, ", local_only = False)")
         if var_name in self.inputs.keys():
             return self.inputs[var_name]
+        # check for state vars in my path + var_name
+        if (self.state_path + "/" + var_name) in self.state.state_paths:
+            return self.state_path + "/" + var_name
         if local_only:
+            print("Cannot find var in local scope", var_name)
             return False  # we are limiting the scope, so just return
         # check parent for name
         if not (self.container == False):
+            print("Searching for var in container scope", var_name)
             return self.container.find_var_path(var_name)
         # check for root state vars STATE + var_name
         if ("/STATE/" + var_name) in self.state.state_paths:
@@ -296,7 +312,9 @@ class ModelObject:
         if var_name in self.state.state_paths:
             # return self.state['state_paths'][var_name]
             return var_name
+        print("Cannot find var in global scope", self.state_path, "var", var_name)
         return False
+
     def constant_or_path(self, keyname, keyval, trust=False):
         if is_float_digit(keyval):
             # we are given a constant value, not a variable reference
@@ -308,14 +326,15 @@ class ModelObject:
         else:
             kix = self.add_input(keyname, keyval, 2, trust)
         return kix
+
     def register_path(self):
         # initialize the path variable if not already set
-        #print("register_path called for", self.name, "with state_path", self.state_path)
+        # print("register_path called for", self.name, "with state_path", self.state_path)
         if self.state_path == "" or self.state_path == False:
             self.make_paths()
         self.ix = self.state.set_state(self.state_path, self.default_value)
         # store object in model_object_cache - always, if we have reached this point we need to overwrite
-        #print("Adding ", self.name, "with state_path", self.state_path, "to model_object_cache")
+        # print("Adding ", self.name, "with state_path", self.state_path, "to model_object_cache")
         self.model_object_cache[self.state_path] = self
         # this should check to see if this object has a parent, and if so, register the name on the parent
         # default is as a child object.
@@ -324,6 +343,7 @@ class ModelObject:
             # print("Adding", self.name, "as input to", self.container.name)
             return self.container.add_input(self.name, self.state_path, 1, True)
         return self.ix
+
     def add_input(self, var_name, var_path, input_type=1, trust=False):
         # this will add to the inputs, but also insure that this
         # requested path gets added to the state/exec stack via an input object if it does
@@ -340,8 +360,10 @@ class ModelObject:
         #       BUT this only works if both var_name and var_path are month
         #       so add_input('month', 'month', 1, True) works.
         found_path = self.find_var_path(var_path)
-        #print("Searched", var_name, "with path", var_path,"found", found_path)
-        var_ix = self.state.get_state_ix(found_path)
+        if found_path == False:
+            var_ix = False
+        else:
+            var_ix = self.state.get_state_ix(found_path)
         if var_ix == False:
             if trust == False:
                 raise Exception(
@@ -353,6 +375,10 @@ class ModelObject:
                     + var_name
                     + " ... process terminated. Path to object with error is "
                     + self.state_path
+                    + "This objects inputs are:",
+                    self.inputs,
+                    "State paths=",
+                    self.state.state_paths,
                 )
             var_ix = self.insure_path(var_path)
         else:
@@ -371,12 +397,14 @@ class ModelObject:
         # to find the data in /STATE/RCHRES_R001/Qin ???  It is redundant data and writing
         # but matches a complete data model and prevents stale data?
         return self.inputs_ix[var_name]
+
     def add_object_input(self, var_name, var_object, link_type=1):
         # See above for details.
         # this adds an object as a link to another object
         self.inputs[var_name] = var_object.state_path
         self.inputs_ix[var_name] = var_object.ix
         return self.inputs_ix[var_name]
+
     def create_parent_var(self, parent_var_name, source):
         # see decision points: https://github.com/HARPgroup/HSPsquared/issues/78
         # This is used when an object sets an additional property on its parent
@@ -389,16 +417,19 @@ class ModelObject:
             self.container.add_input(parent_var_name, source, 1, False)
         elif isinstance(source, ModelObject):
             self.container.add_object_input(parent_var_name, source, 1)
+
     def insure_path(self, var_path):
         # if this path can be found in the hdf5 make sure that it is registered in state
         # and that it has needed object class to render it at runtime (some are automatic)
         # RIGHT NOW THIS DOES NOTHING TO CHECK IF THE VAR EXISTS THIS MUST BE FIXED
         var_ix = self.state.set_state(var_path, 0.0)
         return var_ix
+
     def get_dict_state(self, ix=-1):
         if ix >= 0:
             return self.state.dict_ix[ix]
         return self.state.dict_ix[self.ix]
+
     def find_paths(self):
         # Note: every single piece of data used by objects, even constants, are resolved to a PATH in the hdf5
         # find_paths() is called to insure that all of these can be found, and then, are added to inputs/inputs_ix
@@ -414,6 +445,7 @@ class ModelObject:
         #   and should also handle deciding if this is a constant, like a numeric value
         #   or a variable data and should handle them accordingly
         return True
+
     def insure_register(
         self,
         var_name,
@@ -448,6 +480,7 @@ class ModelObject:
         else:
             var_register = self.model_object_cache[register_path]
         return var_register
+
     def tokenize(self):
         # renders tokens for high speed execution
         if self.paths_found == False:
@@ -460,6 +493,7 @@ class ModelObject:
                 + "Tokens cannot be generated until method '.find_paths()' is run for all model objects ... process terminated. (see function `model_path_loader(model_object_cache)`)"
             )
         self.ops = [self.optype, self.ix]
+
     def add_op_tokens(self):
         # this puts the tokens into the global simulation queue
         # can be customized by subclasses to add multiple lines if needed.
@@ -474,6 +508,7 @@ class ModelObject:
                 + "). "
             )
         self.state.set_token(self.ix, self.format_ops())
+
     def step(self, step):
         # this tests the model for a single timestep.
         # this is not the method that is used for high-speed runs, but can theoretically be used for
@@ -489,20 +524,17 @@ class ModelObject:
             step,
         )
         # step_model({self.state['op_tokens'][self.ix]}, self.state['state_ix'], self.state['dict_ix'], self.state['ts_ix'], step)
+
     def finish(self):
         # Do end of model activities here
         # we do this in the object context if it involves IO and other complex actions
         return True
 
 
-"""
-The class ModelVariable is a base cass for storing numerical values.  Used for UVQUAN and misc numerical constants...
-"""
-
-
 class ModelVariable(ModelObject):
+    #:The class ModelVariable is a base cass for storing numerical values.  Used for UVQUAN and misc numerical constants...
     def __init__(self, name, container=False, model_props=None, state=None):
-        super(ModelVariable, self).__init__(name, container, model_props, state)
+        super().__init__(name, container, model_props, state)
         # print("ModelVariable named", name, "with path", self.state_path,"beginning")
         value = self.handle_prop(model_props, "value")
         self.default_value = float(value)
@@ -511,36 +543,30 @@ class ModelVariable(ModelObject):
         var_ix = self.set_state(float(value))
         self.paths_found = True
         # self.state['state_ix'][self.ix] = self.default_value
+
     def required_properties():
         req_props = super(ModelVariable, ModelVariable).required_properties()
         req_props.extend(["value"])
         return req_props
 
 
-"""
-The class ModelConstant is for storing non-changing values.
-"""
-
-
 class ModelConstant(ModelVariable):
+    #: The class ModelConstant is for storing non-changing values.
     def __init__(self, name, container=False, model_props=None, state=None):
-        super(ModelConstant, self).__init__(name, container, model_props, state)
+        super().__init__(name, container, model_props, state)
         self.optype = 16  # 0 - shell object, 1 - equation, 2 - datamatrix, 3 - input, 4 - broadcastChannel, 5 - SimTimer, 6 - Conditional, 7 - ModelVariable (numeric)
         # print("ModelVariable named",self.name, "with path", self.state_path,"and ix", self.ix, "value", value)
 
 
-"""
-The class ModelRegister is for storing push values.
-Behavior is to zero each timestep.  This could be amended later.
-Maybe combined with stack behavior?  Or accumulator?
-"""
-
-
 class ModelRegister(ModelVariable):
+    #: The class ModelRegister is for storing push values.
+    #: Behavior is to zero each timestep.  This could be amended later.
+    #: Maybe combined with stack behavior?  Or accumulator?
     def __init__(self, name, container=None, model_props=False, state=False):
-        super(ModelRegister, self).__init__(name, container, model_props, state)
+        super().__init__(name, container, model_props, state)
         self.optype = 12  #
         # self.state['state_ix'][self.ix] = self.default_value
+
     def required_properties():
         req_props = super(ModelVariable, ModelVariable).required_properties()
         req_props.extend(["value"])

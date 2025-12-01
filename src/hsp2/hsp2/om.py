@@ -5,12 +5,22 @@
 #       defined aove that are called by the object classes
 import json
 import os
-import pandas as pd
-import numpy as np
 import time
-from numpy import zeros
+
+import numpy as np
+import pandas as pd
 from numba import njit  # import the types
-from hsp2.state.state import append_state, get_ix_path, hydr_init_ix, sedtrn_init_ix, sedmnt_init_ix, rqual_init_ix
+from numpy import zeros
+
+from hsp2.state.state import (
+    append_state,
+    get_ix_path,
+    hydr_init_ix,
+    rqual_init_ix,
+    sedmnt_init_ix,
+    sedtrn_init_ix,
+)
+
 
 def init_op_tokens(op_tokens, tops, eq_ix):
     """
@@ -51,11 +61,12 @@ def model_element_paths(mel, state):
 
 
 # Import Code Classes
-from hsp2.hsp2.om_model_object import ModelObject, ModelVariable, pre_step_register
-from hsp2.hsp2.om_sim_timer import SimTimer, step_sim_timer
 from hsp2.hsp2.om_equation import Equation, step_equation
 from hsp2.hsp2.om_model_linkage import ModelLinkage, step_model_link
+from hsp2.hsp2.om_model_object import ModelObject, ModelVariable, pre_step_register
+from hsp2.hsp2.om_sim_timer import SimTimer, step_sim_timer
 from hsp2.hsp2.om_special_action import SpecialAction, step_special_action
+
 # from hsp2.hsp2.om_data_matrix import *
 # from hsp2.hsp2.om_model_broadcast import *
 # from hsp2.hsp2.om_simple_channel import *
@@ -133,7 +144,7 @@ def om_init_state():
     om_operations["model_object_cache"] = model_object_cache
     om_operations["model_exec_list"] = []
     om_operations["model_data"] = {}
-    return(om_operations)
+    return om_operations
 
 
 def state_load_dynamics_om(state, io_manager, siminfo, om_operations):
@@ -155,7 +166,7 @@ def state_om_model_root_object(state, om_operations, siminfo):
     # Create the base that everything is added to. this object does nothing except host the rest.
     if "model_root_object" not in om_operations.keys():
         model_root_object = ModelObject(
-            state.model_root_name, False, {}, state, om_operations['model_object_cache']
+            state.model_root_name, False, {}, state, om_operations["model_object_cache"]
         )  # we give this no name so that it does not interfer with child paths like timer, year, etc (i.e. /STATE/year, ...)
         om_operations["model_root_object"] = model_root_object
         # set up the timer as the first element
@@ -171,7 +182,7 @@ def state_om_model_root_object(state, om_operations, siminfo):
             #      later when adding from json?
             #      Can we simply check the model_object_cache during load step?
             # Create an object shell for this
-            # just get the end of the path, which should be fine since we 
+            # just get the end of the path, which should be fine since we
             # don't use model names for anything, but might be more appropriately made as full path
             segment = ModelObject(seg_name, model_root_object, {})
             om_operations["model_object_cache"][segment.state_path] = segment
@@ -184,7 +195,9 @@ def state_om_model_run_prep(opseq, activities, state, om_operations, siminfo):
     # om_operations['model_data'] has alread been prepopulated from json, .py files, hdf5, etc.
     model_root_object = om_operations["model_root_object"]
     model_object_cache = om_operations["model_object_cache"]
-    model_loader_recursive(om_operations["model_data"], model_root_object, state, model_object_cache)
+    model_loader_recursive(
+        om_operations["model_data"], model_root_object, state, model_object_cache
+    )
     # print("Loaded objects & paths: insures all paths are valid, connects models as inputs")
     # both state['model_object_cache'] and the model_object_cache property of the ModelObject class def
     # will hold a global repo for this data this may be redundant?  They DO point to the same datset?
@@ -199,11 +212,11 @@ def state_om_model_run_prep(opseq, activities, state, om_operations, siminfo):
         model_root_object.ops_data_type = siminfo[
             "ops_data_type"
         ]  # allow override of dat astructure settings
-    #model_root_object.state.op_tokens = ModelObject.make_op_tokens(
+    # model_root_object.state.op_tokens = ModelObject.make_op_tokens(
     #    len(model_root_object.state.state_ix)
-    #)
+    # )
     model_tokenizer_recursive(model_root_object, model_object_cache, model_exec_list)
-    #op_tokens = model_root_object.state.op_tokens
+    # op_tokens = model_root_object.state.op_tokens
     # print("op_tokens afer tokenizing", op_tokens)
     # model_exec_list is the ordered list of component operations
     # print("model_exec_list(", len(model_exec_list),"items):", model_exec_list)
@@ -483,7 +496,7 @@ def model_tokenizer_recursive(
                 input_object, model_object_cache, model_exec_list, model_touch_list
             )
         else:
-            if input_path in model_object.state_paths.keys():
+            if input_path in model_object.state.state_paths:
                 # this is a valid state reference without an object
                 # thus, it is likely part of internals that are manually added
                 # which should be fine.  tho perhaps we should have an object for these too.
@@ -503,7 +516,11 @@ def model_tokenizer_recursive(
 
 
 def model_order_recursive(
-    model_object, model_object_cache, model_exec_list, model_touch_list=None, debug=False
+    model_object,
+    model_object_cache,
+    model_exec_list,
+    model_touch_list=None,
+    debug=False,
 ):
     """
     Given a root model_object, trace the inputs to load things in order
@@ -518,16 +535,27 @@ def model_order_recursive(
             - Or is it better to let it as it is,
     """
     if debug:
-        print("Handling model object:", model_object.name, "with path", model_object.state_path)
+        print(
+            "Handling model object:",
+            model_object.name,
+            "with path",
+            model_object.state_path,
+        )
     if model_touch_list is None:
         model_touch_list = []
     if model_object.ix in model_exec_list:
         if debug:
-            print(model_object.name,"already added to model_exec_list. Returning.")
+            print(model_object.name, "already added to model_exec_list. Returning.")
         return
     if model_object.ix in model_touch_list:
         if debug:
-            print("Already touched", model_object.name, model_object.ix, model_object.state_path, ". Returning.")
+            print(
+                "Already touched",
+                model_object.name,
+                model_object.ix,
+                model_object.state_path,
+                ". Returning.",
+            )
         return
     # record as having been called, and will ultimately return, to prevent recursions
     model_touch_list.append(model_object.ix)
@@ -553,7 +581,7 @@ def model_order_recursive(
                 input_object, model_object_cache, model_exec_list, model_touch_list
             )
         else:
-            if input_path in model_object.state_paths.keys():
+            if input_path in model_object.state.state_paths:
                 # this is a valid state reference without an object
                 # thus, it is likely part of internals that are manually added
                 # which should be fine.  tho perhaps we should have an object for these too.
@@ -584,9 +612,7 @@ def model_input_dependencies(state, exec_list, model_object_cache, only_runnable
             input_ix = get_state_ix(state.state_ix, state.state_paths, input_path)
             if input_ix in exec_list:
                 # do a recursive pull of factors affecting this element
-                model_order_recursive(
-                    model_element, model_object_cache, mel, mtl
-                )
+                model_order_recursive(model_element, model_object_cache, mel, mtl)
                 mello = mello + mel
     if only_runnable == True:
         mello = ModelObject.runnable_op_list(state.op_tokens, mello)
@@ -594,7 +620,9 @@ def model_input_dependencies(state, exec_list, model_object_cache, only_runnable
     return mello
 
 
-def model_domain_dependencies(om_operations, state, domain, ep_list, only_runnable=False, debug=False):
+def model_domain_dependencies(
+    om_operations, state, domain, ep_list, only_runnable=False, debug=False
+):
     """
     Given an hdf5 style path to a domain, and a list of variable endpoints in that domain,
     Find all model elements that influence the endpoints state
@@ -605,14 +633,16 @@ def model_domain_dependencies(om_operations, state, domain, ep_list, only_runnab
         mel = []
         mtl = []
         if debug:
-            print("Searching for", (domain + "/" + ep), "in state_paths" )
+            print("Searching for", (domain + "/" + ep), "in state_paths")
         # if the given element is NOT in model_object_cache, then nothing is acting on it, so we return empty list
         if (domain + "/" + ep) in state.state_paths.keys():
             if (domain + "/" + ep) in om_operations["model_object_cache"].keys():
                 if debug:
-                    print("Found", (domain + "/" + ep), "in om_operations" )
+                    print("Found", (domain + "/" + ep), "in om_operations")
                 endpoint = om_operations["model_object_cache"][domain + "/" + ep]
-                model_order_recursive(endpoint, om_operations["model_object_cache"], mel, mtl)
+                model_order_recursive(
+                    endpoint, om_operations["model_object_cache"], mel, mtl
+                )
                 mello = mello + mel
     # TODO: stash the runnable list (mellorun) as a element in dict_ix for cached access during runtime
     mellorun = ModelObject.runnable_op_list(state.op_tokens, mello)
@@ -643,7 +673,9 @@ def hsp2_domain_dependencies(state, opseq, activities, om_operations, debug=Fals
                 elif activity == "RQUAL":
                     ep_list = rqual_init_ix(state, seg_path)
                 # Register list of elements to execute if any
-                op_exec_list = model_domain_dependencies( om_operations, state, seg_path, ep_list, True, debug)
+                op_exec_list = model_domain_dependencies(
+                    om_operations, state, seg_path, ep_list, True, debug
+                )
                 op_exec_list = np.asarray(op_exec_list)
                 # register the dependencies for each activity so we can load once here
                 # then just iterate through them at runtime without re-querying
@@ -691,7 +723,9 @@ def step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
 def finish_model(state, io_manager, siminfo):
     # print("Model object cache list", om_operations["model_object_cache"].keys())
     for i in state.model_exec_list:
-        model_object = om_operations["model_object_cache"][get_ix_path(state.state_paths, i)]
+        model_object = om_operations["model_object_cache"][
+            get_ix_path(state.state_paths, i)
+        ]
         if "io_manager" in dir(model_object):
             model_object.io_manager = io_manager
         model_object.finish()

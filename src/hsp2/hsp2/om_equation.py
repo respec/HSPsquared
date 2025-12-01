@@ -6,25 +6,19 @@ the variable name in question.  Ultimately, everyting becomes either an operator
 in the state_ix Dict for runtime execution.
 """
 
-from hsp2.hsp2.om import is_float_digit
-from hsp2.state.state import set_state, get_state_ix
-from hsp2.hsp2.om_model_object import ModelObject, ModelConstant
 from numba import njit
-from numpy import array, append
+from numpy import append, array
 
-# from hsp2.state.state import set_state, get_state_ix
-# from numba.typed import Dict
-# from pandas import Series, DataFrame, concat, HDFStore, set_option, to_numeric
-# from pandas import Timestamp, Timedelta, read_hdf, read_csv
-# from numpy import pad, asarray, zeros, int32
-# from numba import njit, types
+from hsp2.hsp2.om import is_float_digit
+from hsp2.hsp2.om_model_object import ModelConstant, ModelObject
+from hsp2.state.state import get_state_ix, set_state
 
 
 class Equation(ModelObject):
     # the following are supplied by the parent class: name, log_path, attribute_path, state_path, inputs
 
     def __init__(self, name, container=False, model_props={}, state=None):
-        super(Equation, self).__init__(name, container, model_props)
+        super().__init__(name, container, model_props)
         self.equation = self.handle_prop(model_props, "equation")
         self.ps = False
         self.ps_names = []  # Intermediate with constants turned into variable references in state_paths
@@ -136,9 +130,7 @@ class Equation(ModelObject):
             elif is_float_digit(self.var_ops[j]):
                 # must add this to the state array as a constant
                 constant_path = self.state_path + "/_ops/_op" + str(j)
-                s_ix = set_state(
-                    self.state.state_ix,
-                    self.state.state_paths,
+                s_ix = self.state.set_state(
                     constant_path,
                     float(self.var_ops[j]),
                 )
@@ -146,9 +138,7 @@ class Equation(ModelObject):
             else:
                 # this is a variable, must find it's data path index
                 var_path = self.find_var_path(self.var_ops[j])
-                s_ix = get_state_ix(
-                    self.state.state_ix, self.state.state_paths, var_path
-                )
+                s_ix = self.state.get_state_ix(var_path)
                 if s_ix == False:
                     print(
                         "Error: unknown variable ",
@@ -158,9 +148,7 @@ class Equation(ModelObject):
                         "index",
                         s_ix,
                     )
-                    print(
-                        "searched: ", self.state.state_paths, self.state.state_ix
-                    )
+                    print("searched: ", self.state.state_paths, self.state.state_ix)
                     return
                 else:
                     self.var_ops[j] = s_ix
@@ -177,20 +165,21 @@ class Equation(ModelObject):
         self.ops = self.ops + [self.non_neg, self.min_value_ix] + self.var_ops
 
 
-from pyparsing import (
-    Literal,
-    Word,
-    Group,
-    Forward,
-    alphas,
-    alphanums,
-    Regex,
-    CaselessKeyword,
-    Suppress,
-    delimitedList,
-)
 import math
 import operator
+
+from pyparsing import (
+    CaselessKeyword,
+    Forward,
+    Group,
+    Literal,
+    Regex,
+    Suppress,
+    Word,
+    alphanums,
+    alphas,
+    delimitedList,
+)
 
 exprStack = []
 

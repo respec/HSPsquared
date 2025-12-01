@@ -1,4 +1,5 @@
 RUN
+*** This UCI will load a companion file with JSON in it
 
 GLOBAL
   PL3_5250_0 riv | P5 | hsp2_2022  | Occoquan

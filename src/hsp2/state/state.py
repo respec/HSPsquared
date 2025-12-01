@@ -1,16 +1,18 @@
 """General routines for SPECL"""
 
+import importlib.util
+import os
+import sys
+
 import numpy as np
+from numba import njit, typeof, types  # import the types
+from numba.experimental import jitclass
+from numba.typed import Dict
+from numpy import int32, zeros
 from pandas import date_range
 from pandas.tseries.offsets import Minute
-from numba.typed import Dict
-from numba.experimental import jitclass
-from numpy import zeros, int32
-from numba import njit, types, typeof  # import the types
-import os
-import importlib.util
-import sys
-#from hsp2.hsp2.utilities import make_class_spec
+
+# from hsp2.hsp2.utilities import make_class_spec
 
 
 # Define the complex datatypes
@@ -18,45 +20,63 @@ state_ix = np.asarray(zeros(1), dtype="float64")
 model_exec_list = np.asarray(zeros(1), dtype="int32")
 # TBD: Create a sample tindex for typing
 tindex = date_range("1984-01-01", "2020-12-31", freq=Minute(60))
-tindex_ty = ('tindex', typeof(tindex.to_numpy()))
+tindex_ty = ("tindex", typeof(tindex.to_numpy()))
 dict_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:, :])
 op_tokens_dict = Dict.empty(key_type=types.int64, value_type=types.int64[:, :])
-op_tokens = int32(zeros((1,64)))
-op_exec_lists = int32(zeros((1,1024)))
+op_tokens = int32(zeros((1, 64)))
+op_exec_lists = int32(zeros((1, 1024)))
 # note: tested 32-bit key and saw absolutely no improvement, so go with 64 bit
 state_paths = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
 hsp_segments = Dict.empty(key_type=types.unicode_type, value_type=types.unicode_type)
 ts_paths = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
 ts_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:])
-last_id_ty = ('last_id', types.int64)
-num_ops_ty = ('num_ops', types.int64)
+last_id_ty = ("last_id", types.int64)
+num_ops_ty = ("num_ops", types.int64)
 
-state_paths_ty = ('state_paths', typeof(state_paths))
-model_exec_list_ty = ('model_exec_list', typeof(model_exec_list))
-hsp_segments_ty = ('hsp_segments', typeof(hsp_segments))
-op_tokens_ty = ('op_tokens', typeof(op_tokens))
-state_ix_ty = ('state_ix', typeof(state_ix))
-dict_ix_ty = ('dict_ix', typeof(dict_ix))
-ts_ix_ty = ('ts_ix', typeof(ts_ix))
-ts_paths_ty = ('ts_paths', typeof(ts_paths))
-model_root_name_ty = ('model_root_name', types.unicode_type)
-# these are likely to be located in model objects when we go fully to that level. 
+state_paths_ty = ("state_paths", typeof(state_paths))
+model_exec_list_ty = ("model_exec_list", typeof(model_exec_list))
+hsp_segments_ty = ("hsp_segments", typeof(hsp_segments))
+op_tokens_ty = ("op_tokens", typeof(op_tokens))
+state_ix_ty = ("state_ix", typeof(state_ix))
+dict_ix_ty = ("dict_ix", typeof(dict_ix))
+ts_ix_ty = ("ts_ix", typeof(ts_ix))
+ts_paths_ty = ("ts_paths", typeof(ts_paths))
+model_root_name_ty = ("model_root_name", types.unicode_type)
+# these are likely to be located in model objects when we go fully to that level.
 # But for now, they are here to maintain compatiility with the existing code base
-state_step_hydr_ty = ('state_step_hydr', types.unicode_type)
-state_step_om_ty = ('state_step_om', types.unicode_type)
-operation_ty = ('operation', types.unicode_type)
-segment_ty = ('segment', types.unicode_type)
-activity_ty = ('activity', types.unicode_type)
-domain_ty = ('domain', types.unicode_type)
-hsp2_local_py_ty = ('hsp2_local_py', types.boolean)
-op_exec_lists_ty = ('op_exec_lists', typeof(op_exec_lists))
+state_step_hydr_ty = ("state_step_hydr", types.unicode_type)
+state_step_om_ty = ("state_step_om", types.unicode_type)
+operation_ty = ("operation", types.unicode_type)
+segment_ty = ("segment", types.unicode_type)
+activity_ty = ("activity", types.unicode_type)
+domain_ty = ("domain", types.unicode_type)
+hsp2_local_py_ty = ("hsp2_local_py", types.boolean)
+op_exec_lists_ty = ("op_exec_lists", typeof(op_exec_lists))
 
 # Combine these into a spec to create the class
-state_spec = [state_paths_ty, state_ix_ty, ts_paths_ty, ts_ix_ty, last_id_ty,
-              model_root_name_ty, state_step_hydr_ty, hsp2_local_py_ty,
-              hsp_segments_ty, op_tokens_ty, op_exec_lists_ty, model_exec_list_ty,
-              operation_ty, segment_ty, activity_ty, domain_ty, state_step_om_ty,
-              tindex_ty, dict_ix_ty, num_ops_ty]
+state_spec = [
+    state_paths_ty,
+    state_ix_ty,
+    ts_paths_ty,
+    ts_ix_ty,
+    last_id_ty,
+    model_root_name_ty,
+    state_step_hydr_ty,
+    hsp2_local_py_ty,
+    hsp_segments_ty,
+    op_tokens_ty,
+    op_exec_lists_ty,
+    model_exec_list_ty,
+    operation_ty,
+    segment_ty,
+    activity_ty,
+    domain_ty,
+    state_step_om_ty,
+    tindex_ty,
+    dict_ix_ty,
+    num_ops_ty,
+]
+
 
 @jitclass(state_spec)
 class state_class:
@@ -66,9 +86,15 @@ class state_class:
         # on an as-needed basis if possible.  Especially for dataMatrix types which are supposed to be fast
         # state can still get values via get_state, by grabbing a reference object and then accessing it's storage
         self.dict_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:, :])
-        self.state_paths = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
-        self.hsp_segments = Dict.empty(key_type=types.unicode_type, value_type=types.unicode_type)
-        self.ts_paths = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
+        self.state_paths = Dict.empty(
+            key_type=types.unicode_type, value_type=types.int64
+        )
+        self.hsp_segments = Dict.empty(
+            key_type=types.unicode_type, value_type=types.unicode_type
+        )
+        self.ts_paths = Dict.empty(
+            key_type=types.unicode_type, value_type=types.float64[:]
+        )
         self.ts_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:])
         self.state_step_om = "disabled"
         self.state_step_hydr = "disabled"
@@ -81,31 +107,31 @@ class state_class:
         self.hsp2_local_py = False
         # Note: in the type declaration above we are alloweed to use the shortened form
         #         op_tokens = int32(zeros((1,64)))
-        #       but in jited class that throws an error and we have to use the 
-        #       form 
-        #         op_tokens.astype(int32) 
+        #       but in jited class that throws an error and we have to use the
+        #       form
+        #         op_tokens.astype(int32)
         #       to do the type cast
-        op_tokens = zeros( (self.num_ops,64) )
+        op_tokens = zeros((self.num_ops, 64))
         self.op_tokens = op_tokens.astype(int32)
-        op_exec_lists = zeros( (self.num_ops,1024) )
+        op_exec_lists = zeros((self.num_ops, 1024))
         # TODO: move to individual objects in OM
         self.op_exec_lists = op_exec_lists.astype(types.int32)
         # TODO: is this even needed?
         model_exec_list = zeros(self.num_ops)
         self.model_exec_list = model_exec_list.astype(types.int32)
         return
-    
+
     @property
     def size(self):
         return self.state_ix.size
-    
+
     def append_state(self, var_value):
         val_ix = self.size  # next ix value= size since ix starts from zero
         self.state_ix = np.append(self.state_ix, var_value)
         self.last_id = val_ix
         self.resize()
-        return(val_ix)
-    
+        return val_ix
+
     def set_token(self, var_ix, tokens, debug=False):
         if var_ix not in range(len(self.state_ix)):
             if debug:
@@ -117,21 +143,21 @@ class state_class:
             self.resize()
         # in a perfect world we would insure that the length of tokens is correct
         # and if not, we would resize.  But this is only called from ModelObject
-        # and its methods add_op_tokens() and model_format_ops(ops) enforce the 
-        # length limit described by ModelObject.max_token_length (64) which must match 
+        # and its methods add_op_tokens() and model_format_ops(ops) enforce the
+        # length limit described by ModelObject.max_token_length (64) which must match
         self.op_tokens[var_ix] = tokens
-    
+
     def resize(self, debug=False):
         num_ops = self.size
-        #print("state_ix has", num_ops, "elements")
+        # print("state_ix has", num_ops, "elements")
         ops_needed = num_ops - np.shape(self.op_tokens)[0]
         if ops_needed == 0:
-            #print("resize op_tokens unneccesary, state has", self.size,"indices and op_tokens has", np.shape(self.op_tokens)[0], "elements")
+            # print("resize op_tokens unneccesary, state has", self.size,"indices and op_tokens has", np.shape(self.op_tokens)[0], "elements")
             return
         if debug:
             print("op_tokens needs", ops_needed, "slots")
-        add_ops = zeros( (ops_needed,64) )
-        #print("Created add_ops with", ops_needed, "slots")
+        add_ops = zeros((ops_needed, 64))
+        # print("Created add_ops with", ops_needed, "slots")
         # we use the 3rd param "axis=1" to prevent flattening of array
         if self.op_tokens.size == 0:
             if debug:
@@ -148,7 +174,7 @@ class state_class:
             print("op_exec_lists needs", ops_needed, "slots")
         if ops_needed == 0:
             return
-        add_ops = zeros( (ops_needed,el_width) )
+        add_ops = zeros((ops_needed, el_width))
         # we use the 3rd param "axis=1" to prevent flattening of array
         if self.op_exec_lists.size == 0:
             if debug:
@@ -160,7 +186,7 @@ class state_class:
             add_ops = np.append(self.op_exec_lists, add_ops, 0)
             self.op_exec_lists = add_ops.astype(types.int32)
         return
-    
+
     def set_exec_list(self, ix, op_exec_list):
         for i in range(len(op_exec_list)):
             self.op_exec_lists[ix][i] = op_exec_list[i]
@@ -180,19 +206,20 @@ class state_class:
             self.state_ix[var_ix] = var_value
         if debug:
             print("Setting state_ix[", var_ix, "], to", var_value)
-        return(var_ix)
-    
+        return var_ix
+
     def get_state_ix(self, var_path):
         """
         Find the integer key of a variable name in state_ix
         """
+        if var_path == False:
+            # handle a bad path with False
+            return False
         if var_path not in self.state_paths:
             # we need to add this to the state
             return False  # should throw an error
         var_ix = self.state_paths[var_path]
-        return(var_ix)
-
-
+        return var_ix
 
 
 def op_path_name(operation, id):
@@ -314,6 +341,7 @@ def state_context_hsp2(state, operation, segment, activity):
         state.hsp_segments[seg_name] = seg_path
     state.domain = seg_path  # + "/" + activity   # may want to comment out activity?
 
+
 def state_init_hsp2(state, opseq, activities, om_operations):
     # This sets up the state entries for all state compatible HSP2 model variables
     # print("STATE initializing contexts.")
@@ -334,12 +362,14 @@ def state_init_hsp2(state, opseq, activities, om_operations):
                     state_context_hsp2(state, operation, segment, activity)
 
 
-
 def state_load_dynamics_hsp2(state, io_manager, siminfo):
     # Load any dynamic components if present, and store variables on objects
     # if a local file with state_step_hydr() was found in load_dynamics(), we add it to state
-    state.hsp2_local_py = load_dynamics(io_manager, siminfo)  # Stores the actual function in state
-    state.state_step_hydr = siminfo['state_step_hydr']  # enabled or disabled
+    state.hsp2_local_py = load_dynamics(
+        io_manager, siminfo
+    )  # Stores the actual function in state
+    state.state_step_hydr = siminfo["state_step_hydr"]  # enabled or disabled
+
 
 def state_load_hdf5_components(
     io_manager,
@@ -353,7 +383,6 @@ def state_load_hdf5_components(
 ):
     # Implement population of model_object_cache etc from components in a hdf5 such as Special ACTIONS
     return
-
 
 
 @njit
@@ -504,12 +533,12 @@ def hydr_get_ix(state, domain):
         "VOL",
         "VOLEV",
     ]
-    #print(state.state_paths)
+    # print(state.state_paths)
     hydr_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
     for i in hydr_state:
         # var_path = f'{domain}/{i}'
         var_path = domain + "/" + i
-        #print("looking for:", var_path)
+        # print("looking for:", var_path)
         hydr_ix[i] = state.get_state_ix(var_path)
     return hydr_ix
 
@@ -594,9 +623,9 @@ def load_dynamics(io_manager, siminfo):
     # see if there is a code module with custom python
     # print("Looking for SPECL with custom python code ", (fbase + ".py"))
     hsp2_local_py = dynamic_module_import(fbase, fbase + ".py", "hsp2_local_py")
-    siminfo['state_step_hydr'] = "disabled"
+    siminfo["state_step_hydr"] = "disabled"
     if "state_step_hydr" in dir(hsp2_local_py):
-        siminfo['state_step_hydr'] = "enabled"
+        siminfo["state_step_hydr"] = "enabled"
         print("state_step_hydr function defined, using custom python code")
     else:
         # print("state_step_hydr function not defined. Using default")
