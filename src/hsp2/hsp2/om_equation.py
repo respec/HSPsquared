@@ -458,11 +458,16 @@ def step_equation(op_token, state_ix, step):
         print(num_ops, " operations")
     # is the below faster since it avoids a brief loop and a couple ifs for 2 op equations?
     if num_ops == 1:
+        print("op tokens",  op_token[op_loc], op_token[op_loc + 1], op_token[op_loc + 2])
+        if step < 2:
+            print("Ops to eval", op_token[op_loc], state_ix[op_token[op_loc + 1]], state_ix[op_token[op_loc + 2]])
         result = evaluate_eq_ops(
             op_token[op_loc],
             state_ix[op_token[op_loc + 1]],
             state_ix[op_token[op_loc + 2]],
         )
+        if step < 2:
+            print("result = ", result)
     else:
         for i in range(num_ops):
             # the number of ops common to all classes + 1 (the counter for math operators) is offset for this
@@ -470,7 +475,6 @@ def step_equation(op_token, state_ix, step):
             op = op_token[op_loc + 3 * i]
             t1 = op_token[op_loc + 3 * i + 1]
             t2 = op_token[op_loc + 3 * i + 2]
-            print("op tokens",  op, t1, t2)
             # if val1 or val2 are < 0 this means they are to come from the stack
             # if token is negative, means we need to use a stack value
             # print("s", s)
@@ -484,11 +488,7 @@ def step_equation(op_token, state_ix, step):
                 s_ix -= 1
             else:
                 val2 = state_ix[t2]
-            if step < 2:
-                print("Ops to eval", s_ix, op, val1, val2)
             result = evaluate_eq_ops(op, val1, val2)
-            if step < 2:
-                print("result = ", result)
             s_ix += 1
             if s_ix >= s_len:
                 s = append(s, 0)
