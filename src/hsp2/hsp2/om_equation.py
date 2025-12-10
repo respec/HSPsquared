@@ -458,8 +458,8 @@ def step_equation(op_token, state_ix, step):
         print(num_ops, " operations")
     # is the below faster since it avoids a brief loop and a couple ifs for 2 op equations?
     if num_ops == 1:
-        print("op tokens",  op_token[op_loc], op_token[op_loc + 1], op_token[op_loc + 2])
         if step < 2:
+            print("op tokens",  op_token[op_loc], op_token[op_loc + 1], op_token[op_loc + 2])
             print("Ops to eval", op_token[op_loc], state_ix[op_token[op_loc + 1]], state_ix[op_token[op_loc + 2]])
         result = evaluate_eq_ops(
             op_token[op_loc],
