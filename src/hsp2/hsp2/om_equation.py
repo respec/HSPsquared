@@ -442,7 +442,7 @@ def evaluate_eq_ops(op, val1, val2):
 
 
 @njit
-def step_equation(op_token, state_ix):
+def step_equation(op_token, state_ix, step):
     result = 0
     s = array([0.0])
     s_ix = -1  # pointer to the top of the stack
@@ -454,7 +454,8 @@ def step_equation(op_token, state_ix):
         4
     ]  # this index is equal to the number of ops common to all classes + 1.  See om_model_object for base ops and adjust
     op_loc = 5  # where do the operators and operands start in op_token
-    # print(num_ops, " operations")
+    if step < 2:
+        print(num_ops, " operations")
     # is the below faster since it avoids a brief loop and a couple ifs for 2 op equations?
     if num_ops == 1:
         result = evaluate_eq_ops(
@@ -482,8 +483,11 @@ def step_equation(op_token, state_ix):
                 s_ix -= 1
             else:
                 val2 = state_ix[t2]
-            # print(s_ix, op, val1, val2)
+            if step < 2:
+                print("Ops to eval", s_ix, op, val1, val2)
             result = evaluate_eq_ops(op, val1, val2)
+            if step < 2:
+                print("result = ", result)
             s_ix += 1
             if s_ix >= s_len:
                 s = append(s, 0)

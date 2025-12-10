@@ -745,7 +745,7 @@ def step_one(op_tokens, ops, state_ix, dict_ix, ts_ix, step, debug=0):
             print("DEBUG: Operator ID", ops[1], "is op type", ops[0])
             print("DEBUG: ops: ", ops)
             print("DEBUG: calling: step_equation()", ops,state_ix)
-        step_equation(ops, state_ix)
+        step_equation(ops, state_ix, step)
     elif ops[0] == 2:
         # todo: this should be moved into a single function,
         # with the conforming name step_matrix(op_tokens, ops, state_ix, dict_ix)
