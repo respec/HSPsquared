@@ -470,6 +470,7 @@ def step_equation(op_token, state_ix, step):
             op = op_token[op_loc + 3 * i]
             t1 = op_token[op_loc + 3 * i + 1]
             t2 = op_token[op_loc + 3 * i + 2]
+            print("op tokens",  op, t1, t2)
             # if val1 or val2 are < 0 this means they are to come from the stack
             # if token is negative, means we need to use a stack value
             # print("s", s)
