@@ -220,6 +220,16 @@ class state_class:
             return False  # should throw an error
         var_ix = self.state_paths[var_path]
         return var_ix
+    
+    def get_ix_path(state_paths, var_ix):
+        """
+        Find the path of a variable with integer key in state_ix
+        """
+        for spath, ix in state_paths.items():
+            if var_ix == ix:
+                # we need to add this to the state
+                return spath
+        return False
 
 
 def op_path_name(operation, id):
@@ -240,17 +250,6 @@ def get_state_ix(state_ix, state_paths, var_path):
         return False  # should throw an error
     var_ix = state_paths[var_path]
     return var_ix
-
-
-def get_ix_path(state_paths, var_ix):
-    """
-    Find the path of a variable with integer key in state_ix
-    """
-    for spath, ix in state_paths.items():
-        if var_ix == ix:
-            # we need to add this to the state
-            return spath
-    return False
 
 
 def set_state(state_ix, state_paths, var_path, default_value=0.0, debug=False):
