@@ -15,8 +15,8 @@ from src.hsp2.hsp2tools.commands import import_uci, run
 from pandas import read_hdf
 
 
-fpath = "./tests/testcbp/HSP2results/PL3_5250_0001.h5"
-ucipath = "./tests/testcbp/HSP2results/PL3_5250_0001.uci"
+fpath = "./tests/testcbp/HSP2results/PL3_5250_0001eq.h5"
+ucipath = "./tests/testcbp/HSP2results/PL3_5250_0001eq.uci"
 uci = readUCI(ucipath, fpath)
 
 # try also:
@@ -59,6 +59,8 @@ state_om_model_run_prep(opseq, activities, state, om_operations, siminfo)
 # mtl = []
 # mel = []
 # model_order_recursive(endpoint, om_operations["model_object_cache"], mel, mtl, True)
+O3 = om_operations["model_object_cache"]["/STATE/RCHRES_R001/O3"]
+wd_cfs = om_operations["model_object_cache"]["/STATE/PL3_5250_0001eq/RCHRES_R001/wd_cfs"]
 
 # state['model_root_object'].find_var_path('RCHRES_R001')
 # Get the timeseries naked, without an object
@@ -138,6 +140,6 @@ fpath = "./tests/testcbp/HSP2results/PL3_5250_0001eq.h5"
 run(fpath, saveall=True, compress=False)
 dstore_hydr = pd.HDFStore(str(fpath), mode='r')
 hsp2_eq_hydr = read_hdf(dstore_hydr, '/RESULTS/RCHRES_R001/HYDR')
+dstore_hydr.close()
 np.quantile(hsp2_eq_hydr[:]['O2'], [0,0.25,0.5,0.75,1.0])
 # To re-run:
-dstore_hydr.close()

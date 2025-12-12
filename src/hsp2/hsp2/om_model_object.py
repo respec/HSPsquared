@@ -299,11 +299,11 @@ class ModelObject:
         if (self.state_path + "/" + var_name) in self.state.state_paths:
             return self.state_path + "/" + var_name
         if local_only:
-            print("Cannot find var in local scope", var_name)
+            print("Cannot find var", var_name, "in local scope", self.name)
             return False  # we are limiting the scope, so just return
         # check parent for name
         if not (self.container == False):
-            print("Searching for var in container scope", var_name)
+            print("Searching for var", var_name, "in container scope", self.container.name, self.container.state_path)
             return self.container.find_var_path(var_name)
         # check for root state vars STATE + var_name
         if ("/STATE/" + var_name) in self.state.state_paths:
