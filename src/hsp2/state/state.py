@@ -225,7 +225,7 @@ class state_class:
         """
         Find the path of a variable with integer key in state_ix
         """
-        for spath, ix in np.ndenumerate(state_paths):
+        for spath, ix in self.state_paths.items():
             if var_ix == ix:
                 # we need to add this to the state
                 return spath
