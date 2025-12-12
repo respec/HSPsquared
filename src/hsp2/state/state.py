@@ -221,7 +221,7 @@ class state_class:
         var_ix = self.state_paths[var_path]
         return var_ix
     
-    def get_ix_path(state_paths, var_ix):
+    def get_ix_path(self, var_ix):
         """
         Find the path of a variable with integer key in state_ix
         """
