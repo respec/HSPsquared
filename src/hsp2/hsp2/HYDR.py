@@ -381,6 +381,8 @@ def _hydr_(
         # Note: we pass IVOL0, not IVOL here since IVOL has been converted to different units
         state.state_ix[ro_ix], state.state_ix[rovol_ix] = ro, rovol
         di = 0
+        if step <= 2:
+            print("Number of exits nexits = ",nexits)
         for oi in range(nexits):
             if step <= 2:
                 print("Setting O var", oi, "to", outdgt[oi])
