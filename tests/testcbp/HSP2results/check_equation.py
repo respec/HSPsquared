@@ -63,6 +63,9 @@ state_om_model_run_prep(opseq, activities, state, om_operations, siminfo)
 # model_order_recursive(endpoint, om_operations["model_object_cache"], mel, mtl, True)
 O3 = om_operations["model_object_cache"]["/STATE/RCHRES_R001/O3"]
 wd_cfs = om_operations["model_object_cache"]["/STATE/PL3_5250_0001eq/RCHRES_R001/wd_cfs"]
+state.get_ix_path(wd_cfs.ops[6]) 
+state.get_ix_path(wd_cfs.ops[7]) 
+
 wd_cfs.find_var_path("O3")
 
 # state['model_root_object'].find_var_path('RCHRES_R001')
@@ -140,7 +143,7 @@ np.quantile(hsp2_wd_hydr[:]['O2'], [0,0.25,0.5,0.75,1.0])
 
 
 fpath = "./tests/testcbp/HSP2results/PL3_5250_0001eq.h5"
-run(fpath, saveall=True, compress=False)
+#run(fpath, saveall=True, compress=False)
 dstore_hydr = pd.HDFStore(str(fpath), mode='r')
 hsp2_eq_hydr = read_hdf(dstore_hydr, '/RESULTS/RCHRES_R001/HYDR')
 dstore_hydr.close()

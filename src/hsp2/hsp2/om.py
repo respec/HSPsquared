@@ -14,7 +14,6 @@ from numpy import zeros
 
 from hsp2.state.state import (
     append_state,
-    get_ix_path,
     hydr_init_ix,
     rqual_init_ix,
     sedmnt_init_ix,
@@ -53,7 +52,7 @@ def model_element_paths(mel, state):
     """
     ixn = 1
     for ix in mel:
-        ip = get_ix_path(state.state_paths, ix)
+        ip = state.get_ix_path(ix)
         im = om_operations["model_object_cache"][ip]
         print(ixn, ":", im.name, "->", im.state_path, "=", im.get_state())
         ixn = ixn + 1
@@ -724,7 +723,7 @@ def finish_model(state, io_manager, siminfo):
     # print("Model object cache list", om_operations["model_object_cache"].keys())
     for i in state.model_exec_list:
         model_object = om_operations["model_object_cache"][
-            get_ix_path(state.state_paths, i)
+            state.get_ix_path(i)
         ]
         if "io_manager" in dir(model_object):
             model_object.io_manager = io_manager
