@@ -39,6 +39,8 @@ state = state_class()
 om_operations = om_init_state()
 
 state_siminfo_hsp2(state, uci_obj, siminfo, io_manager)
+# now initialize all state variables for mutable variables
+hsp2_domain_dependencies(state, opseq, activities, om_operations, True)
 # Add support for dynamic functions to operate on STATE
 # - Load any dynamic components if present, and store variables on objects
 state_load_dynamics_hsp2(state, io_manager, siminfo)
@@ -61,6 +63,7 @@ state_om_model_run_prep(opseq, activities, state, om_operations, siminfo)
 # model_order_recursive(endpoint, om_operations["model_object_cache"], mel, mtl, True)
 O3 = om_operations["model_object_cache"]["/STATE/RCHRES_R001/O3"]
 wd_cfs = om_operations["model_object_cache"]["/STATE/PL3_5250_0001eq/RCHRES_R001/wd_cfs"]
+wd_cfs.find_var_path("O3")
 
 # state['model_root_object'].find_var_path('RCHRES_R001')
 # Get the timeseries naked, without an object

@@ -382,7 +382,10 @@ def _hydr_(
         state.state_ix[ro_ix], state.state_ix[rovol_ix] = ro, rovol
         di = 0
         for oi in range(nexits):
+            if step <= 2:
+                print("Setting O var", oi, "to", outdgt[oi])
             state.state_ix[out_ix[oi]] = outdgt[oi]
+        
         state.state_ix[vol_ix], state.state_ix[ivol_ix] = vol, IVOL0[step]
         state.state_ix[volev_ix] = volev
         # - these if statements may be irrelevant if default functions simply return
