@@ -61,7 +61,7 @@ state_om_model_run_prep(opseq, activities, state, om_operations, siminfo)
 # mtl = []
 # mel = []
 # model_order_recursive(endpoint, om_operations["model_object_cache"], mel, mtl, True)
-O3 = om_operations["model_object_cache"]["/STATE/RCHRES_R001/O3"]
+O3 = om_operations["model_object_cache"]["/STATE/PL3_5250_0001eq/RCHRES_R001/O3"]
 wd_cfs = om_operations["model_object_cache"]["/STATE/PL3_5250_0001eq/RCHRES_R001/wd_cfs"]
 state.get_ix_path(wd_cfs.ops[6]) 
 state.get_ix_path(wd_cfs.ops[7]) 

@@ -384,7 +384,7 @@ def _hydr_(
         if step <= 2:
             print("Number of exits nexits = ",nexits)
         for oi in range(nexits):
-            if step <= 2:
+            if step <= 5:
                 print("Setting O var", oi, "with state index", out_ix[oi], "and path", state.get_ix_path(out_ix[oi]), "to", outdgt[oi])
             state.state_ix[out_ix[oi]] = outdgt[oi]
         
