@@ -6,7 +6,7 @@
         "wd_cfs": {
             "name": "wd_cfs",
             "object_class": "Equation",
-            "value": "0.1 * O3"
+            "value": "0.1 * OVOL3"
         },
         "IVOLwrite": {
             "name": "IVOLwrite",
