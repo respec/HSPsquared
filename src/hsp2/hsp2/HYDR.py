@@ -350,6 +350,11 @@ def _hydr_(
         hydr_ix["O3"],
         hydr_ix["IVOL"],
     )
+    ovol1_ix, ovol2_ix, ovol3_ix = (
+        hydr_ix["OVOL1"],
+        hydr_ix["OVOL2"],
+        hydr_ix["OVOL3"],
+    )
     ro_ix, rovol_ix, volev_ix, vol_ix = (
         hydr_ix["RO"],
         hydr_ix["ROVOL"],
@@ -358,12 +363,16 @@ def _hydr_(
     )
     # handle varying length outdgt
     out_ix = arange(nexits)
+    ovol_ix = arange(nexits)
     if nexits > 0:
         out_ix[0] = o1_ix
+        ovol_ix[0] = ovol1_ix
     if nexits > 1:
         out_ix[1] = o2_ix
+        ovol_ix[1] = ovol2_ix
     if nexits > 2:
         out_ix[2] = o3_ix
+        ovol_ix[2] = ovol3_ix
     #######################################################################################
 
     # HYDR (except where noted)
@@ -387,6 +396,8 @@ def _hydr_(
             if step <= 5:
                 print("Setting O var", oi, "with state index", out_ix[oi], "and path", state.get_ix_path(out_ix[oi]), "to", outdgt[oi])
             state.state_ix[out_ix[oi]] = outdgt[oi]
+            # Write OVOL for use in equations/specacts.  Note: this must be improved! too much code...
+            state.state_ix[ovol_ix[oi]] = ovol[oi]
         
         state.state_ix[vol_ix], state.state_ix[ivol_ix] = vol, IVOL0[step]
         state.state_ix[volev_ix] = volev
@@ -408,6 +419,10 @@ def _hydr_(
         if (state.state_step_hydr == "enabled") or (
             state.state_step_om == "enabled"
         ):
+            for oi in range(nexits):
+                if step <= 5:
+                    print("Copying O var", oi, "with state index", out_ix[oi], "from state to outdgt", outdgt[oi])
+                state.state_ix[out_ix[oi]] = outdgt[oi]
             # Do write-backs for editable STATE variables
             # OUTDGT is writeable
             for oi in range(nexits):
