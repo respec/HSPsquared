@@ -419,10 +419,6 @@ def _hydr_(
         if (state.state_step_hydr == "enabled") or (
             state.state_step_om == "enabled"
         ):
-            for oi in range(nexits):
-                if step <= 5:
-                    print("Copying O var", oi, "with state index", out_ix[oi], "from state to outdgt", outdgt[oi])
-                state.state_ix[out_ix[oi]] = outdgt[oi]
             # Do write-backs for editable STATE variables
             # OUTDGT is writeable
             for oi in range(nexits):
