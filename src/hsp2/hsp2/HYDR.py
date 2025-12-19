@@ -394,7 +394,7 @@ def _hydr_(
             # Write OVOL for use in equations/specacts.  Note: this must be improved! too much code...
             state.state_ix[ovol_ix[oi]] = ovol[oi]
         
-        state.state_ix[vol_ix], state.state_ix[ivol_ix] = vol, IVOL0[step]
+        state.state_ix[vol_ix], state.state_ix[ivol_ix] = vol, IVOL[step]
         state.state_ix[volev_ix] = volev
         # - these if statements may be irrelevant if default functions simply return
         #   when no objects are defined.
@@ -423,7 +423,7 @@ def _hydr_(
             # IVOL is writeable.
             # Note: we must convert IVOL to the units expected in _hydr_
             # maybe routines should do this, and this is not needed (but pass VFACT in state)
-            IVOL[step] = state.state_ix[ivol_ix] * VFACT
+            IVOL[step] = state.state_ix[ivol_ix]
         # End dynamic code step()
         #######################################################################################
 
