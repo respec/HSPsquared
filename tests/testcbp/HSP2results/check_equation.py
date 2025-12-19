@@ -129,7 +129,7 @@ fpath = "./tests/testcbp/HSP2results/PL3_5250_0001.h5"
 run(fpath, saveall=True, compress=False)
 dstore_hydr = pd.HDFStore(str(fpath), mode='r')
 hsp2_hydr = read_hdf(dstore_hydr, '/RESULTS/RCHRES_R001/HYDR')
-np.quantile(hsp2_hydr[:]['O3'], [0,0.25,0.5,0.75,1.0])
+np.quantile(hsp2_hydr[:]['O2'], [0,0.25,0.5,0.75,1.0])
 # To re-run:
 dstore_hydr.close()
 
@@ -143,9 +143,9 @@ np.quantile(hsp2_wd_hydr[:]['O2'], [0,0.25,0.5,0.75,1.0])
 
 
 fpath = "./tests/testcbp/HSP2results/PL3_5250_0001eq.h5"
-#run(fpath, saveall=True, compress=False)
-dstore_hydr = pd.HDFStore(str(fpath), mode='r')
-hsp2_eq_hydr = read_hdf(dstore_hydr, '/RESULTS/RCHRES_R001/HYDR')
-dstore_hydr.close()
+run(fpath, saveall=True, compress=False)
+dstore_hydreq = pd.HDFStore(str(fpath), mode='r')
+hsp2_eq_hydr = read_hdf(dstore_hydreq, '/RESULTS/RCHRES_R001/HYDR')
+dstore_hydreq.close()
 np.quantile(hsp2_eq_hydr[:]['O2'], [0,0.25,0.5,0.75,1.0])
 # To re-run:
