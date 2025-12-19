@@ -251,6 +251,8 @@ def step_model_link(op_token, state_ix, ts_ix, step):
         return True
     elif op_token[3] == 5:
         # overwrite remote variable state with value in another paths state
+        if step <= 2:
+            print("Copying op id", op_token[4], "with value", state_ix[op_token[4]], "to id", op_token[2])
         state_ix[op_token[2]] = state_ix[op_token[4]]
         return True
     elif op_token[3] == 6:
