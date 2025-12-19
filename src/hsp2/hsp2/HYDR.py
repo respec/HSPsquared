@@ -390,12 +390,7 @@ def _hydr_(
         # Note: we pass IVOL0, not IVOL here since IVOL has been converted to different units
         state.state_ix[ro_ix], state.state_ix[rovol_ix] = ro, rovol
         di = 0
-        if step <= 2:
-            print("Number of exits nexits = ",nexits)
         for oi in range(nexits):
-            if step <= 5:
-                print("Setting O var", oi, "with state index", out_ix[oi], "and path", state.get_ix_path(out_ix[oi]), "to", outdgt[oi])
-            state.state_ix[out_ix[oi]] = outdgt[oi]
             # Write OVOL for use in equations/specacts.  Note: this must be improved! too much code...
             state.state_ix[ovol_ix[oi]] = ovol[oi]
         
@@ -422,6 +417,8 @@ def _hydr_(
             # Do write-backs for editable STATE variables
             # OUTDGT is writeable
             for oi in range(nexits):
+                if step <= 5:
+                    print("Getting O var", oi, "with state index", out_ix[oi], "and path", state.get_ix_path(out_ix[oi]), "from state ix", out_ix[oi],"val=", state.state_ix[out_ix[oi]]
                 outdgt[oi] = state.state_ix[out_ix[oi]]
             # IVOL is writeable.
             # Note: we must convert IVOL to the units expected in _hydr_
