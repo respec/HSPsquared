@@ -404,7 +404,7 @@ def main(
                         )
                     elif activity == "SEDTRN" or activity == "SEDMNT":
                         errors, errmessages = function(
-                            io_manager, siminfo, ui, ts, state
+                            siminfo, ui, ts, state
                         )
                     elif activity != "RQUAL":
                         errors, errmessages = function(io_manager, siminfo, ui, ts)
