@@ -336,7 +336,6 @@ def _hydr_(
     # other initial vars
     rovol = 0.0
     volev = 0.0
-    IVOL0 = ts["IVOL"]  # the actual inflow in simulation native units
 
     #######################################################################################
     # the following section (2 of 3) added by rb to HYDR, this one to prepare for dynamic state including special actions
@@ -387,7 +386,6 @@ def _hydr_(
         # the following section (3 of 3) added by rb to accommodate dynamic code, operations models, and special actions
         #######################################################################################
         # set state.state_ix with value of local state variables and/or needed vars
-        # Note: we pass IVOL0, not IVOL here since IVOL has been converted to different units
         state.state_ix[ro_ix], state.state_ix[rovol_ix] = ro, rovol
         di = 0
         for oi in range(nexits):

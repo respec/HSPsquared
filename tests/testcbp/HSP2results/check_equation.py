@@ -126,7 +126,8 @@ from src.hsp2.hsp2tools.commands import import_uci, run
 from pandas import read_hdf
 
 fpath = "./tests/testcbp/HSP2results/PL3_5250_0001.h5"
-run(fpath, saveall=True, compress=False)
+# to run use this:
+# run(fpath, saveall=True, compress=False)
 dstore_hydr = pd.HDFStore(str(fpath), mode='r')
 hsp2_hydr = read_hdf(dstore_hydr, '/RESULTS/RCHRES_R001/HYDR')
 np.quantile(hsp2_hydr[:]['O2'], [0,0.25,0.5,0.75,1.0])
@@ -134,7 +135,8 @@ np.quantile(hsp2_hydr[:]['O2'], [0,0.25,0.5,0.75,1.0])
 dstore_hydr.close()
 
 fpath = "./tests/testcbp/HSP2results/PL3_5250_0001wd.h5"
-run(fpath, saveall=True, compress=False)
+# to run use this:
+# run(fpath, saveall=True, compress=False)
 dstore_hydr = pd.HDFStore(str(fpath), mode='r')
 hsp2_wd_hydr = read_hdf(dstore_hydr, '/RESULTS/RCHRES_R001/HYDR')
 dstore_hydr.close()
@@ -143,7 +145,8 @@ np.quantile(hsp2_wd_hydr[:]['O2'], [0,0.25,0.5,0.75,1.0])
 
 
 fpath = "./tests/testcbp/HSP2results/PL3_5250_0001eq.h5"
-run(fpath, saveall=True, compress=False)
+# to run use this:
+# run(fpath, saveall=True, compress=False)
 dstore_hydreq = pd.HDFStore(str(fpath), mode='r')
 hsp2_eq_hydr = read_hdf(dstore_hydreq, '/RESULTS/RCHRES_R001/HYDR')
 dstore_hydreq.close()
