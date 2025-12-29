@@ -392,7 +392,7 @@ def _sedtrn_(
         state.state_ix[rsed6_ix] = clay_wt_rsed6
         if state.state_step_om == "enabled":
             pre_step_model(
-                model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step=loop
+                model_exec_list, state.op_tokens, state.state_ix, state.dict_ix, state.ts_ix, step=loop
             )
 
         # (todo) Insert code hook for dynamic python modification of state
