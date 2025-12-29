@@ -373,7 +373,7 @@ def _sedtrn_(
     #######################################################################################
     # the following section (2 of 3) added by pbd to SEDTRN, this one to prepare for special actions
     #######################################################################################
-    sedtrn_ix = sedtrn_get_ix(state, state_info.domain)
+    sedtrn_ix = sedtrn_get_ix(state, state.domain)
     # these are integer placeholders faster than calling the array look each timestep
     rsed4_ix, rsed5_ix, rsed6_ix = (
         sedtrn_ix["RSED4"],
