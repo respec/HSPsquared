@@ -8,6 +8,11 @@
             "object_class": "Equation",
             "value": "0.1 * IVOL"
         },
+        "Qout": {
+            "name": "Qout",
+            "object_class": "Equation",
+            "value": "OVOL3 * 12.1"
+        },
         "IVOLwrite": {
             "name": "IVOLwrite",
             "object_class": "ModelLinkage",
