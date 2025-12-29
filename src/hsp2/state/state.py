@@ -544,13 +544,13 @@ def hydr_get_ix(state, domain):
 
 
 @njit
-def sedtrn_get_ix(state_ix, state_paths, domain):
+def sedtrn_get_ix(state, domain):
     # get a list of keys for all sedtrn state variables
     sedtrn_state = ["RSED4", "RSED5", "RSED6"]
     sedtrn_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
     for i in sedtrn_state:
         var_path = domain + "/" + i
-        sedtrn_ix[i] = state_paths[var_path]
+        sedtrn_ix[i] = state.get_state_ix(var_path)
     return sedtrn_ix
 
 
