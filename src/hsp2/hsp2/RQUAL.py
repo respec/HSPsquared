@@ -267,17 +267,10 @@ def rqual(
     # must split dicts out of state Dict since numba cannot handle mixed-type nested Dicts
     # initialize the rqual paths in case they don't already reside here
     rqual_init_ix(state, state.domain)
-    state_ix, dict_ix, ts_ix = state.state_ix, state.dict_ix, state.ts_ix
-    state_paths = state.state_paths
-    op_tokens = state.op_tokens
-    # Aggregate the list of all RQUAL end point dependencies
-    ep_list = (
-        rqual_state_vars()
-    )  # define all eligibile for state integration in state.py
-    model_exec_list = model_domain_dependencies(
-        state, state_info["domain"], ep_list, True
-    )
-    model_exec_list = asarray(model_exec_list, dtype="i8")
+    # Aggregate the list of all SEDTRN end point dependencies
+    activity_path = state.domain + "/" + 'SEDTRN'
+    activity_id = state.get_state_ix(activity_path)
+    model_exec_list = state.op_exec_lists[activity_id]
     #######################################################################################
 
     # ---------------------------------------------------------------------
@@ -292,12 +285,7 @@ def rqual(
         ui_plank,
         ui_phcarb,
         ts,
-        state_info,
-        state_paths,
-        state_ix,
-        dict_ix,
-        ts_ix,
-        op_tokens,
+        state,
         model_exec_list,
     )
 
@@ -364,12 +352,7 @@ def _rqual_run(
     ui_plank,
     ui_phcarb,
     ts,
-    state_info,
-    state_paths,
-    state_ix,
-    dict_ix,
-    ts_ix,
-    op_tokens,
+    state,
     model_exec_list,
 ):
     nutrx_errors = zeros((0), dtype=np.int64)
@@ -382,12 +365,7 @@ def _rqual_run(
     # run WQ simulation:
     RQUAL.simulate(
         ts,
-        state_info,
-        state_paths,
-        state_ix,
-        dict_ix,
-        ts_ix,
-        op_tokens,
+        state,
         model_exec_list,
     )
 

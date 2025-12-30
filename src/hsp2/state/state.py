@@ -555,18 +555,18 @@ def sedtrn_get_ix(state, domain):
 
 
 @njit
-def sedmnt_get_ix(state_ix, state_paths, domain):
+def sedmnt_get_ix(state, domain):
     # get a list of keys for all sedmnt state variables
     sedmnt_state = ["DETS"]
     sedmnt_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
     for i in sedmnt_state:
         var_path = domain + "/" + i
-        sedmnt_ix[i] = state_paths[var_path]
+        sedmnt_ix[i] = state.get_state_ix(var_path)
     return sedmnt_ix
 
 
 @njit
-def rqual_get_ix(state_ix, state_paths, domain):
+def rqual_get_ix(state, domain):
     # get a list of keys for all sedmnt state variables
     rqual_state = [
         "DOX",
@@ -584,7 +584,7 @@ def rqual_get_ix(state_ix, state_paths, domain):
     rqual_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
     for i in rqual_state:
         var_path = domain + "/" + i
-        rqual_ix[i] = state_paths[var_path]
+        rqual_ix[i] = state.get_state_ix(var_path)
     return rqual_ix
 
 
