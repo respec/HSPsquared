@@ -225,7 +225,7 @@ def state_om_model_run_prep(opseq, activities, state, om_operations, siminfo):
     om_operations["model_object_cache"] = model_object_cache
     state.model_exec_list = np.asarray(model_exec_list, dtype="int32")
     if len(state.op_tokens) > 0:
-        state.state_step_om = "enabled"
+        state.state_step_om = "disabled"
     if len(state.model_exec_list) > 0:
         print(
             "op_tokens has",
