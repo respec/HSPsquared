@@ -232,13 +232,9 @@ class ModelLinkage(ModelObject):
 # Function for use during model simulations of tokenized objects
 @njit
 def step_model_link(op_token, state_ix, ts_ix, step):
-    if step <= 2:
-        print("step_model_link() called at step 2 with op_token=", op_token)
     if op_token[3] == 1:
         return True
     elif op_token[3] == 2:
-        if step <= 2:
-            print("Copying op id", op_token[2], "with value", state_ix[op_token[2]], "to id", op_token[1])
         state_ix[op_token[1]] = state_ix[op_token[2]]
         return True
     elif op_token[3] == 3:
@@ -251,21 +247,10 @@ def step_model_link(op_token, state_ix, ts_ix, step):
         return True
     elif op_token[3] == 5:
         # overwrite remote variable state with value in another paths state
-        if step <= 2:
-            print("Copying op id", op_token[4], "with value", state_ix[op_token[4]], "to id", op_token[2])
         state_ix[op_token[2]] = state_ix[op_token[4]]
         return True
     elif op_token[3] == 6:
         # set value in a timerseries
-        if step < 10:
-            print(
-                "Writing ",
-                state_ix[op_token[4]],
-                "from ix=",
-                op_token[4],
-                "to",
-                op_token[2],
-            )
         ts_ix[op_token[2]][step] = state_ix[op_token[4]]
         return True
 
