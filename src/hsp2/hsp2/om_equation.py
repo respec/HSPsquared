@@ -454,20 +454,13 @@ def step_equation(op_token, state_ix, step):
         4
     ]  # this index is equal to the number of ops common to all classes + 1.  See om_model_object for base ops and adjust
     op_loc = 5  # where do the operators and operands start in op_token
-    if step < 2:
-        print(num_ops, " operations")
     # is the below faster since it avoids a brief loop and a couple ifs for 2 op equations?
     if num_ops == 1:
-        if step < 2:
-            print("op tokens",  op_token[op_loc], op_token[op_loc + 1], op_token[op_loc + 2])
-            print("Ops to eval", op_token[op_loc], state_ix[op_token[op_loc + 1]], state_ix[op_token[op_loc + 2]])
         result = evaluate_eq_ops(
             op_token[op_loc],
             state_ix[op_token[op_loc + 1]],
             state_ix[op_token[op_loc + 2]],
         )
-        if step < 2:
-            print("result = ", result)
     else:
         for i in range(num_ops):
             # the number of ops common to all classes + 1 (the counter for math operators) is offset for this

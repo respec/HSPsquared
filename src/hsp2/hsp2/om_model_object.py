@@ -303,7 +303,7 @@ class ModelObject:
             return False  # we are limiting the scope, so just return
         # check parent for name
         if not (self.container == False):
-            print("Searching for var", var_name, "in container scope", self.container.name, self.container.state_path)
+            #print("Searching for var", var_name, "in container scope", self.container.name, self.container.state_path)
             return self.container.find_var_path(var_name)
         # check for root state vars STATE + var_name
         if ("/STATE/" + var_name) in self.state.state_paths:
