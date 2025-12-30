@@ -415,8 +415,6 @@ def _hydr_(
             # Do write-backs for editable STATE variables
             # OUTDGT is writeable
             for oi in range(nexits):
-                if step <= 5:
-                    print("Getting O var", oi, "with state index", out_ix[oi], "and path", state.get_ix_path(out_ix[oi]), "from state ix", out_ix[oi],"val=", state.state_ix[out_ix[oi]])
                 outdgt[oi] = state.state_ix[out_ix[oi]]
             # IVOL is writeable.
             # Note: we must convert IVOL to the units expected in _hydr_

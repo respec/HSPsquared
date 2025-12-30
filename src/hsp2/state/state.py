@@ -442,14 +442,15 @@ def hydr_state_vars():
     ]
 
 
-def hydr_init_ix(state, domain):
+def hydr_init_ix(state, domain, debug = False):
     # get a list of keys for all hydr state variables
     hydr_state = hydr_state_vars()
     hydr_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
     for i in hydr_state:
         # var_path = f'{domain}/{i}'
         var_path = domain + "/" + i
-        print("initializing", var_path)
+        if debug:
+            print("initializing", var_path)
         hydr_ix[i] = state.set_state(var_path, 0.0)
     return hydr_ix
 
