@@ -98,7 +98,7 @@ def main(
     # before loading dynamic components that may reference them
     state_init_hsp2(state, opseq, activities, om_operations)
     # now initialize all state variables for mutable variables
-    hsp2_domain_dependencies(state, opseq, activities, om_operations, True)
+    hsp2_domain_dependencies(state, opseq, activities, om_operations, False)
     # - finally stash specactions in state, not domain (segment) dependent so do it once
     specl_load_om(om_operations, specactions)  # load traditional special actions
     state_load_dynamics_om(
