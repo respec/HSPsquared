@@ -57,3 +57,28 @@ def import_uci(ucifile, h5file):
             wdmfile = (uci_dir / nline[16:].strip()).resolve()
             if wdmfile.exists():
                 readWDM(wdmfile, h5file)
+
+
+
+
+def update_uci(ucifile, h5file):
+    """Import UCI only into HDF5 file.
+
+    Parameters
+    ----------
+    ucifile: str
+        The UCI file to import into HDF file.
+    h5file: str
+        The destination HDF5 file.
+    """
+
+    readUCI(ucifile, h5file)
+
+    with open(ucifile) as fp:
+        uci = []
+        for line in fp.readlines():
+            if "***" in line[:81]:
+                continue
+            if not line[:81].strip():
+                continue
+            uci.append(line[:81].rstrip())
