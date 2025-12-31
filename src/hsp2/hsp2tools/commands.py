@@ -71,8 +71,8 @@ def update_uci(ucifile, h5file):
     h5file: str
         The destination HDF5 file.
     """
-
-    readUCI(ucifile, h5file)
+    # we send False here to prevent deleting and recreating the UCI
+    readUCI(ucifile, h5file, False)
 
     with open(ucifile) as fp:
         uci = []
