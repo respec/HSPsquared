@@ -72,10 +72,10 @@ def update_uci(ucifile, h5file):
         The destination HDF5 file.
     """
     # we send False here to prevent deleting and recreating the UCI
-    readUCI(ucifile, h5file, False)
     print("Updating parameters in h5 file from UCI.", ucifile)
     print("Note: this will NOT update external data such as WDM, mutsin etc.")
     print("To update all data, use the command 'hsp2 import_uci ...' ")
+    readUCI(ucifile, h5file, False)
     with open(ucifile) as fp:
         uci = []
         for line in fp.readlines():
