@@ -1,4 +1,4 @@
-https://github.com/HARPgroup/HSPsquared/blob/develop-state-class/src/hsp2/hsp2tools/data/rename.csvfrom pathlib import Path
+from pathlib import Path
 
 from hsp2.hsp2.main import main
 from hsp2.hsp2io.hdf import HDF5
