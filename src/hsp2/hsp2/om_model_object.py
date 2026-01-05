@@ -6,7 +6,7 @@ All runtime exec is done by child classes.
 
 from numba import njit, types
 from numba.typed import Dict
-from numpy import asarray, int32, pad, zeros
+from numpy import asarray, int64, pad, zeros
 from pandas import HDFStore
 
 from hsp2.hsp2.om import is_float_digit
@@ -127,7 +127,7 @@ class ModelObject:
     @staticmethod
     def make_op_tokens(num_ops=5000):
         if ModelObject.ops_data_type == "ndarray":
-            op_tokens = int32(
+            op_tokens = int64(
                 zeros((num_ops, 64))
             )  # was Dict.empty(key_type=types.int64, value_type=types.i8[:])
         else:
