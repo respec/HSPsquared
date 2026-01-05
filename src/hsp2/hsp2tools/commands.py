@@ -1,4 +1,4 @@
-from pathlib import Path
+https://github.com/HARPgroup/HSPsquared/blob/develop-state-class/src/hsp2/hsp2tools/data/rename.csvfrom pathlib import Path
 
 from hsp2.hsp2.main import main
 from hsp2.hsp2io.hdf import HDF5
@@ -76,11 +76,3 @@ def update_uci(ucifile, h5file):
     print("Note: this will NOT update external data such as WDM, mutsin etc.")
     print("To update all data, use the command 'hsp2 import_uci ...' ")
     readUCI(ucifile, h5file, False)
-    with open(ucifile) as fp:
-        uci = []
-        for line in fp.readlines():
-            if "***" in line[:81]:
-                continue
-            if not line[:81].strip():
-                continue
-            uci.append(line[:81].rstrip())
