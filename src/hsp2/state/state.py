@@ -33,7 +33,7 @@ ts_ix = ntdict.empty(key_type=types.int64, value_type=types.float64[:])
 last_id_ty = ("last_id", types.int64)
 num_ops_ty = ("num_ops", types.int64)
 
-state_paths_ty = ("state_paths", typeof(state_paths))
+state_paths_ty = ("state_paths", types.DictType(types.unicode_type, value_type=types.int64))
 model_exec_list_ty = ("model_exec_list", typeof(model_exec_list))
 hsp_segments_ty = ("hsp_segments", typeof(hsp_segments))
 op_tokens_ty = ("op_tokens", typeof(op_tokens))
@@ -55,6 +55,7 @@ op_exec_lists_ty = ("op_exec_lists", typeof(op_exec_lists))
 
 # Combine these into a spec to create the class
 state_spec = [
+ #   ("state_paths", types.DictType(types.unicode_type, value_type=types.int64)),
     state_paths_ty,
     state_ix_ty,
     ts_paths_ty,
