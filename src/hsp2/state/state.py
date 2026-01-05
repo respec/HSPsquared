@@ -85,7 +85,7 @@ class state_class:
         self.op_exec_lists = op_exec_lists.astype(int64)
         # TODO: is this even needed? Since each domain has it's own exec list?
         model_exec_list = zeros(self.num_ops)
-        self.model_exec_list = model_exec_list.astype(types.int64)
+        self.model_exec_list = model_exec_list.astype(int64)
         return
     
     @property
