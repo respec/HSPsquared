@@ -129,12 +129,12 @@ class state_class:
         if self.op_tokens.size == 0:
             if debug:
                 print("Creating op_tokens")
-            self.op_tokens = add_ops.astype(types.int64)
+            self.op_tokens = add_ops.astype(npint64)
         else:
             if debug:
                 print("Merging op_tokens")
             add_ops = np.append(self.op_tokens, add_ops, 0)
-            self.op_tokens = add_ops.astype(types.int64)
+            self.op_tokens = add_ops.astype(npint64)
         ops_needed = num_ops - np.shape(self.op_exec_lists)[0]
         el_width = np.shape(self.op_exec_lists)[1]
         if debug:
@@ -146,12 +146,12 @@ class state_class:
         if self.op_exec_lists.size == 0:
             if debug:
                 print("Creating op_exec_lists")
-            self.op_exec_lists = add_ops.astype(types.int64)
+            self.op_exec_lists = add_ops.astype(npint64)
         else:
             if debug:
                 print("Merging op_exec_lists")
             add_ops = np.append(self.op_exec_lists, add_ops, 0)
-            self.op_exec_lists = add_ops.astype(types.int64)
+            self.op_exec_lists = add_ops.astype(npint64)
         return
     
     def set_exec_list(self, ix, op_exec_list):
