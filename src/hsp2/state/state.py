@@ -5,77 +5,42 @@ import os
 import sys
 
 import numpy as np
-from numba import njit, typeof, types  # import the types
+from numba import njit, types, typeof  # import the types
 from numba.experimental import jitclass
 from numba.typed import Dict as ntdict
-from numpy import int32, zeros
+from numpy import int64, zeros
 from pandas import date_range
 from pandas.tseries.offsets import Minute
 
-# from hsp2.hsp2.utilities import make_class_spec
-
-
-# Define the complex datatypes
-state_ix = np.asarray(zeros(1), dtype="float64")
-model_exec_list = np.asarray(zeros(1), dtype="int32")
-# TBD: Create a sample tindex for typing
-tindex = date_range("1984-01-01", "2020-12-31", freq=Minute(60))
-tindex_ty = ("tindex", typeof(tindex.to_numpy()))
-dict_ix = ntdict.empty(key_type=types.int64, value_type=types.float64[:, :])
-op_tokens_dict = ntdict.empty(key_type=types.int64, value_type=types.int64[:, :])
-op_tokens = int32(zeros((1, 64)))
-op_exec_lists = int32(zeros((1, 1024)))
-# note: tested 32-bit key and saw absolutely no improvement, so go with 64 bit
-state_paths = ntdict.empty(key_type=types.unicode_type, value_type=types.int64)
-hsp_segments = ntdict.empty(key_type=types.unicode_type, value_type=types.unicode_type)
-ts_paths = ntdict.empty(key_type=types.unicode_type, value_type=types.float64[:])
-ts_ix = ntdict.empty(key_type=types.int64, value_type=types.float64[:])
-last_id_ty = ("last_id", types.int64)
-num_ops_ty = ("num_ops", types.int64)
-
-state_paths_ty = ("state_paths", types.DictType(types.unicode_type, types.int64))
-model_exec_list_ty = ("model_exec_list", typeof(model_exec_list))
-hsp_segments_ty = ("hsp_segments", typeof(hsp_segments))
-op_tokens_ty = ("op_tokens", typeof(op_tokens))
-state_ix_ty = ("state_ix", typeof(state_ix))
-dict_ix_ty = ("dict_ix", typeof(dict_ix))
-ts_ix_ty = ("ts_ix", typeof(ts_ix))
-ts_paths_ty = ("ts_paths", typeof(ts_paths))
-model_root_name_ty = ("model_root_name", types.unicode_type)
-# these are likely to be located in model objects when we go fully to that level.
+# Beginning in operation these are likely to be located in model objects when we go fully to that level.
 # But for now, they are here to maintain compatiility with the existing code base
-state_step_hydr_ty = ("state_step_hydr", types.unicode_type)
-state_step_om_ty = ("state_step_om", types.unicode_type)
-operation_ty = ("operation", types.unicode_type)
-segment_ty = ("segment", types.unicode_type)
-activity_ty = ("activity", types.unicode_type)
-domain_ty = ("domain", types.unicode_type)
-hsp2_local_py_ty = ("hsp2_local_py", types.boolean)
-op_exec_lists_ty = ("op_exec_lists", typeof(op_exec_lists))
-
 # Combine these into a spec to create the class
+tindex = date_range("1984-01-01", "2020-12-31", freq=Minute(60))
+
 state_spec = [
- #   ("state_paths", types.DictType(types.unicode_type, value_type=types.int64)),
-    state_paths_ty,
-    state_ix_ty,
-    ts_paths_ty,
-    ts_ix_ty,
-    last_id_ty,
-    model_root_name_ty,
-    state_step_hydr_ty,
-    hsp2_local_py_ty,
-    hsp_segments_ty,
-    op_tokens_ty,
-    op_exec_lists_ty,
-    model_exec_list_ty,
-    operation_ty,
-    segment_ty,
-    activity_ty,
-    domain_ty,
-    state_step_om_ty,
-    tindex_ty,
-    dict_ix_ty,
-    num_ops_ty,
+    # the first entries here are NP arrays, fixed dimenstions, and fast
+    ("state_ix", typeof(np.asarray(zeros(1), dtype="float64")) ),
+    ("op_tokens", typeof(int64(zeros((1, 64)))) ),
+    ("op_exec_lists", typeof(int64(zeros((1, 1024)))) ),
+    ("model_exec_list", typeof(np.asarray(zeros(1), dtype="int64")) ),
+    ("tindex", typeof(tindex.to_numpy()) ),
+    # dict_ix SHOULD BE an array, this is TBD.  Likely defer till OM class runtimes
+    ("dict_ix", types.DictType(types.int64, types.float64[:, :]) ),
+    # below here are dictionaries as they are not used in runtime and can be slow
+    ("state_paths", types.DictType(types.unicode_type, types.int64) ),
+    ("ts_paths", types.DictType(types.unicode_type, types.float64[:]) ),
+    ("ts_ix", types.DictType(types.int64, types.float64[:]) ),
+    ("last_id", types.int64),
+    ("model_root_name", types.unicode_type),
+    ("state_step_hydr", types.unicode_type),
+    ("hsp2_local_py", types.boolean),
+    ("num_ops", types.int64),
+    ("operation", types.unicode_type),
+    ("segment", types.unicode_type),
+    ("activity", types.unicode_type),
+    ("domain", types.unicode_type),
+    ("state_step_om", types.unicode_type),
+    ("hsp_segments", types.DictType(types.unicode_type, types.unicode_type) )
 ]
 
 
@@ -107,32 +72,33 @@ class state_class:
         self.last_id = 0
         self.hsp2_local_py = False
         # Note: in the type declaration above we are alloweed to use the shortened form
-        #         op_tokens = int32(zeros((1,64)))
+        #         op_tokens = int64(zeros((1,64)))
         #       but in jited class that throws an error and we have to use the
         #       form
-        #         op_tokens.astype(int32)
+        #         op_tokens.astype(int64)
         #       to do the type cast
+        # Also - IT IS IMPORTANT that these are handled as nparray as numba Dict would be super slow. 
         op_tokens = zeros((self.num_ops, 64))
-        self.op_tokens = op_tokens.astype(int32)
+        self.op_tokens = op_tokens.astype(int64)
+        # TODO: move to individual objects in OM/RCHRES/PERLND/...
         op_exec_lists = zeros((self.num_ops, 1024))
-        # TODO: move to individual objects in OM
-        self.op_exec_lists = op_exec_lists.astype(types.int32)
-        # TODO: is this even needed?
+        self.op_exec_lists = op_exec_lists.astype(int64)
+        # TODO: is this even needed? Since each domain has it's own exec list?
         model_exec_list = zeros(self.num_ops)
-        self.model_exec_list = model_exec_list.astype(types.int32)
+        self.model_exec_list = model_exec_list.astype(types.int64)
         return
-
+    
     @property
     def size(self):
         return self.state_ix.size
-
+    
     def append_state(self, var_value):
         val_ix = self.size  # next ix value= size since ix starts from zero
         self.state_ix = np.append(self.state_ix, var_value)
         self.last_id = val_ix
         self.resize()
         return val_ix
-
+    
     def set_token(self, var_ix, tokens, debug=False):
         if var_ix not in range(len(self.state_ix)):
             if debug:
@@ -147,7 +113,7 @@ class state_class:
         # and its methods add_op_tokens() and model_format_ops(ops) enforce the
         # length limit described by ModelObject.max_token_length (64) which must match
         self.op_tokens[var_ix] = tokens
-
+    
     def resize(self, debug=False):
         num_ops = self.size
         # print("state_ix has", num_ops, "elements")
@@ -163,12 +129,12 @@ class state_class:
         if self.op_tokens.size == 0:
             if debug:
                 print("Creating op_tokens")
-            self.op_tokens = add_ops.astype(types.int32)
+            self.op_tokens = add_ops.astype(types.int64)
         else:
             if debug:
                 print("Merging op_tokens")
             add_ops = np.append(self.op_tokens, add_ops, 0)
-            self.op_tokens = add_ops.astype(types.int32)
+            self.op_tokens = add_ops.astype(types.int64)
         ops_needed = num_ops - np.shape(self.op_exec_lists)[0]
         el_width = np.shape(self.op_exec_lists)[1]
         if debug:
@@ -180,18 +146,18 @@ class state_class:
         if self.op_exec_lists.size == 0:
             if debug:
                 print("Creating op_exec_lists")
-            self.op_exec_lists = add_ops.astype(types.int32)
+            self.op_exec_lists = add_ops.astype(types.int64)
         else:
             if debug:
                 print("Merging op_exec_lists")
             add_ops = np.append(self.op_exec_lists, add_ops, 0)
-            self.op_exec_lists = add_ops.astype(types.int32)
+            self.op_exec_lists = add_ops.astype(types.int64)
         return
-
+    
     def set_exec_list(self, ix, op_exec_list):
         for i in range(len(op_exec_list)):
             self.op_exec_lists[ix][i] = op_exec_list[i]
-
+    
     def set_state(self, var_path, var_value=0.0, debug=False):
         """
         Given an hdf5 style path to a variable, set the value
@@ -208,7 +174,7 @@ class state_class:
         if debug:
             print("Setting state_ix[", var_ix, "], to", var_value)
         return var_ix
-
+    
     def get_state_ix(self, var_path):
         """
         Find the integer key of a variable name in state_ix
