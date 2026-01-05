@@ -8,7 +8,7 @@ import numpy as np
 from numba import njit, types, typeof  # import the types
 from numba.experimental import jitclass
 from numba.typed import Dict as ntdict
-from numpy import int64, zeros
+from numpy import int64, zeros, float64
 from pandas import date_range
 from pandas.tseries.offsets import Minute
 
@@ -48,6 +48,21 @@ state_spec = [
 class state_class:
     def __init__(self):
         self.num_ops = 0
+        # IMPORTANT these are handled as nparray as numba Dict would be super slow. 
+        # Note: in the type declaration above we are alloweed to use the shortened form op_tokens = int64(zeros((1,64)))
+        #       but in jited class that throws an error and we have to use the form op_tokens.astype(int64)
+        #       to do the type cast
+        state_ix = zeros(self.num_ops)
+        self.state_ix = state_ix.astype(float64)
+        op_tokens = zeros((self.num_ops, 64))
+        self.op_tokens = op_tokens.astype(int64)
+        # TODO: move to individual objects in OM/RCHRES/PERLND/...
+        op_exec_lists = zeros((self.num_ops, 1024))
+        self.op_exec_lists = op_exec_lists.astype(int64)
+        # TODO: is this even needed? Since each domain has it's own exec list?
+        model_exec_list = zeros(self.num_ops)
+        self.model_exec_list = model_exec_list.astype(int64)
+        # Done with nparray initializations
         # this dict_ix approach is inherently slow, and should be replaced by some other np table type
         # on an as-needed basis if possible.  Especially for dataMatrix types which are supposed to be fast
         # state can still get values via get_state, by grabbing a reference object and then accessing it's storage
@@ -71,21 +86,6 @@ class state_class:
         self.domain = ""
         self.last_id = 0
         self.hsp2_local_py = False
-        # Note: in the type declaration above we are alloweed to use the shortened form
-        #         op_tokens = int64(zeros((1,64)))
-        #       but in jited class that throws an error and we have to use the
-        #       form
-        #         op_tokens.astype(int64)
-        #       to do the type cast
-        # Also - IT IS IMPORTANT that these are handled as nparray as numba Dict would be super slow. 
-        op_tokens = zeros((self.num_ops, 64))
-        self.op_tokens = op_tokens.astype(int64)
-        # TODO: move to individual objects in OM/RCHRES/PERLND/...
-        op_exec_lists = zeros((self.num_ops, 1024))
-        self.op_exec_lists = op_exec_lists.astype(int64)
-        # TODO: is this even needed? Since each domain has it's own exec list?
-        model_exec_list = zeros(self.num_ops)
-        self.model_exec_list = model_exec_list.astype(int64)
         return
     
     @property
