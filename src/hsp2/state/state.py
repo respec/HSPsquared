@@ -5,10 +5,10 @@ import os
 import sys
 
 import numpy as np
-from numba import njit, types, typeof  # import the types
+from numba import njit, types, typeof  # import the types supplies int64, float64
 from numba.experimental import jitclass
 from numba.typed import Dict as ntdict
-from numpy import int64, zeros, float64
+from numpy import zeros
 from pandas import date_range
 from pandas.tseries.offsets import Minute
 
@@ -20,8 +20,8 @@ tindex = date_range("1984-01-01", "2020-12-31", freq=Minute(60))
 state_spec = [
     # the first entries here are NP arrays, fixed dimenstions, and fast
     ("state_ix", typeof(np.asarray(zeros(1), dtype="float64")) ),
-    ("op_tokens", typeof(int64(zeros((1, 64)))) ),
-    ("op_exec_lists", typeof(int64(zeros((1, 1024)))) ),
+    ("op_tokens", typeof(types.int64(zeros((1, 64)))) ),
+    ("op_exec_lists", typeof(types.int64(zeros((1, 1024)))) ),
     ("model_exec_list", typeof(np.asarray(zeros(1), dtype="int64")) ),
     ("tindex", typeof(tindex.to_numpy()) ),
     # dict_ix SHOULD BE an array, this is TBD.  Likely defer till OM class runtimes
@@ -53,15 +53,15 @@ class state_class:
         #       but in jited class that throws an error and we have to use the form op_tokens.astype(int64)
         #       to do the type cast
         state_ix = zeros(self.num_ops)
-        self.state_ix = state_ix.astype(float64)
+        self.state_ix = state_ix.astype(types.float64)
         op_tokens = zeros((self.num_ops, 64))
-        self.op_tokens = op_tokens.astype(int64)
+        self.op_tokens = op_tokens.astype(types.int64)
         # TODO: move to individual objects in OM/RCHRES/PERLND/...
         op_exec_lists = zeros((self.num_ops, 1024))
-        self.op_exec_lists = op_exec_lists.astype(int64)
+        self.op_exec_lists = op_exec_lists.astype(types.int64)
         # TODO: is this even needed? Since each domain has it's own exec list?
         model_exec_list = zeros(self.num_ops)
-        self.model_exec_list = model_exec_list.astype(int64)
+        self.model_exec_list = model_exec_list.astype(types.int64)
         # Done with nparray initializations
         # this dict_ix approach is inherently slow, and should be replaced by some other np table type
         # on an as-needed basis if possible.  Especially for dataMatrix types which are supposed to be fast
