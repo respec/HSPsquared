@@ -13,11 +13,11 @@ from numpy import int64
 
 
 class SimTimer(ModelObject):
-    def __init__(self, name, container, model_props=None):
+    def __init__(self, name, container, model_props=None, state=None):
         if model_props is None:
             model_props = {}
         # Note: hsp2 siminfo will match model_props here
-        super(SimTimer, self).__init__(name, container, model_props)
+        super(SimTimer, self).__init__(name, container, model_props, state)
         self.state_path = "/STATE/timer"
         self.time_array = self.dti_to_time_array(
             model_props

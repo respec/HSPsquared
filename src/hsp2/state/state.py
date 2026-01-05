@@ -7,7 +7,7 @@ import sys
 import numpy as np
 from numba import njit, typeof, types  # import the types
 from numba.experimental import jitclass
-from numba.typed import Dict
+from numba.typed import Dict as ntdict
 from numpy import int32, zeros
 from pandas import date_range
 from pandas.tseries.offsets import Minute
@@ -21,15 +21,15 @@ model_exec_list = np.asarray(zeros(1), dtype="int32")
 # TBD: Create a sample tindex for typing
 tindex = date_range("1984-01-01", "2020-12-31", freq=Minute(60))
 tindex_ty = ("tindex", typeof(tindex.to_numpy()))
-dict_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:, :])
-op_tokens_dict = Dict.empty(key_type=types.int64, value_type=types.int64[:, :])
+dict_ix = ntdict.empty(key_type=types.int64, value_type=types.float64[:, :])
+op_tokens_dict = ntdict.empty(key_type=types.int64, value_type=types.int64[:, :])
 op_tokens = int32(zeros((1, 64)))
 op_exec_lists = int32(zeros((1, 1024)))
 # note: tested 32-bit key and saw absolutely no improvement, so go with 64 bit
-state_paths = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
-hsp_segments = Dict.empty(key_type=types.unicode_type, value_type=types.unicode_type)
-ts_paths = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
-ts_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:])
+state_paths = ntdict.empty(key_type=types.unicode_type, value_type=types.int64)
+hsp_segments = ntdict.empty(key_type=types.unicode_type, value_type=types.unicode_type)
+ts_paths = ntdict.empty(key_type=types.unicode_type, value_type=types.float64[:])
+ts_ix = ntdict.empty(key_type=types.int64, value_type=types.float64[:])
 last_id_ty = ("last_id", types.int64)
 num_ops_ty = ("num_ops", types.int64)
 
@@ -85,17 +85,17 @@ class state_class:
         # this dict_ix approach is inherently slow, and should be replaced by some other np table type
         # on an as-needed basis if possible.  Especially for dataMatrix types which are supposed to be fast
         # state can still get values via get_state, by grabbing a reference object and then accessing it's storage
-        self.dict_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:, :])
-        self.state_paths = Dict.empty(
+        self.dict_ix = ntdict.empty(key_type=types.int64, value_type=types.float64[:, :])
+        self.state_paths = ntdict.empty(
             key_type=types.unicode_type, value_type=types.int64
         )
-        self.hsp_segments = Dict.empty(
+        self.hsp_segments = ntdict.empty(
             key_type=types.unicode_type, value_type=types.unicode_type
         )
-        self.ts_paths = Dict.empty(
+        self.ts_paths = ntdict.empty(
             key_type=types.unicode_type, value_type=types.float64[:]
         )
-        self.ts_ix = Dict.empty(key_type=types.int64, value_type=types.float64[:])
+        self.ts_ix = ntdict.empty(key_type=types.int64, value_type=types.float64[:])
         self.state_step_om = "disabled"
         self.state_step_hydr = "disabled"
         self.model_root_name = ""
@@ -445,7 +445,7 @@ def hydr_state_vars():
 def hydr_init_ix(state, domain, debug = False):
     # get a list of keys for all hydr state variables
     hydr_state = hydr_state_vars()
-    hydr_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
+    hydr_ix = ntdict.empty(key_type=types.unicode_type, value_type=types.int64)
     for i in hydr_state:
         # var_path = f'{domain}/{i}'
         var_path = domain + "/" + i
@@ -463,7 +463,7 @@ def sedtrn_state_vars():
 def sedtrn_init_ix(state, domain):
     # get a list of keys for all sedtrn state variables
     sedtrn_state = sedtrn_state_vars()
-    sedtrn_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
+    sedtrn_ix = ntdict.empty(key_type=types.unicode_type, value_type=types.int64)
     for i in sedtrn_state:
         # var_path = f'{domain}/{i}'
         var_path = domain + "/" + i
@@ -479,7 +479,7 @@ def sedmnt_state_vars():
 def sedmnt_init_ix(state, domain):
     # get a list of keys for all sedmnt state variables
     sedmnt_state = sedmnt_state_vars()
-    sedmnt_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
+    sedmnt_ix = ntdict.empty(key_type=types.unicode_type, value_type=types.int64)
     for i in sedmnt_state:
         var_path = domain + "/" + i
         sedmnt_ix[i] = state.set_state(var_path, 0.0)
@@ -506,7 +506,7 @@ def rqual_state_vars():
 def rqual_init_ix(state, domain):
     # get a list of keys for all rqual state variables
     rqual_state = rqual_state_vars()
-    rqual_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
+    rqual_ix = ntdict.empty(key_type=types.unicode_type, value_type=types.int64)
     for i in rqual_state:
         var_path = domain + "/" + i
         rqual_ix[i] = state.set_state(var_path, 0.0)
@@ -535,7 +535,7 @@ def hydr_get_ix(state, domain):
         "VOLEV",
     ]
     # print(state.state_paths)
-    hydr_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
+    hydr_ix = ntdict.empty(key_type=types.unicode_type, value_type=types.int64)
     for i in hydr_state:
         # var_path = f'{domain}/{i}'
         var_path = domain + "/" + i
@@ -548,7 +548,7 @@ def hydr_get_ix(state, domain):
 def sedtrn_get_ix(state, domain):
     # get a list of keys for all sedtrn state variables
     sedtrn_state = ["RSED4", "RSED5", "RSED6"]
-    sedtrn_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
+    sedtrn_ix = ntdict.empty(key_type=types.unicode_type, value_type=types.int64)
     for i in sedtrn_state:
         var_path = domain + "/" + i
         sedtrn_ix[i] = state.get_state_ix(var_path)
@@ -559,7 +559,7 @@ def sedtrn_get_ix(state, domain):
 def sedmnt_get_ix(state, domain):
     # get a list of keys for all sedmnt state variables
     sedmnt_state = ["DETS"]
-    sedmnt_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
+    sedmnt_ix = ntdict.empty(key_type=types.unicode_type, value_type=types.int64)
     for i in sedmnt_state:
         var_path = domain + "/" + i
         sedmnt_ix[i] = state.get_state_ix(var_path)
@@ -582,7 +582,7 @@ def rqual_get_ix(state, domain):
         "BRPO42",
         "CFOREA",
     ]
-    rqual_ix = Dict.empty(key_type=types.unicode_type, value_type=types.int64)
+    rqual_ix = ntdict.empty(key_type=types.unicode_type, value_type=types.int64)
     for i in rqual_state:
         var_path = domain + "/" + i
         rqual_ix[i] = state.get_state_ix(var_path)
