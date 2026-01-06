@@ -75,8 +75,8 @@ class state_class_lite:
         #self.model_exec_list = model_exec_list.astype(npint64)
 
 @njit(cache=True)
-def make_state_lite():
-    sc = state_class_lite()
+def make_state_lite(num_ops):
+    sc = state_class_lite(num_ops)
 #    return sc
 
 @jitclass(state_spec)
