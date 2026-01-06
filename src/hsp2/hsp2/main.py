@@ -98,8 +98,6 @@ def main(
     # Set up Things in state that will be used in all modular activities like SPECL
     state = state_class()
     print("state_class() call", timer.split(), "seconds")
-    scl = make_state_lite(0)
-    print("Made state_class_lite", timer.split())
     om_operations = om_init_state()  # set up operational model specific containers
     print("om_init_state() call", timer.split(), "seconds")
     state_siminfo_hsp2(state, parameter_obj, siminfo, io_manager)
@@ -125,6 +123,8 @@ def main(
     # finalize all dynamically loaded components and prepare to run the model
     state_om_model_run_prep(opseq, activities, state, om_operations, siminfo)
     print("state_om_model_run_prep", timer.split(), "seconds")
+    scl = make_state_lite(0)
+    print("make_state_lite", timer.split())
     #######################################################################################
 
     # main processing loop
