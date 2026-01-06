@@ -47,7 +47,7 @@ state_load_dynamics_hsp2(state, io_manager, siminfo)
 
 # Iterate through all segments and add crucial paths to state
 # before loading dynamic components that may reference them
-state_init_hsp2(state, opseq, activities, om_operations)
+state_init_hsp2(state, opseq, activities)
 # - finally stash specactions in state, not domain (segment) dependent so do it once
 specl_load_om(om_operations, uci_obj.specactions)  # load traditional special actions
 state_load_dynamics_om(
