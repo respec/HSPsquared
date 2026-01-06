@@ -230,7 +230,7 @@ class ModelLinkage(ModelObject):
 
 
 # Function for use during model simulations of tokenized objects
-@njit
+@njit(cache=True)
 def step_model_link(op_token, state_ix, ts_ix, step):
     if op_token[3] == 1:
         return True

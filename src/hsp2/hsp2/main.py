@@ -23,7 +23,7 @@ from hsp2.state.state import (
     state_load_dynamics_hsp2,
     state_init_hsp2,
     state_context_hsp2,
-    state_class
+    make_state_class
 )
 from hsp2.hsp2.om import (
     om_init_state,
@@ -94,7 +94,7 @@ def main(
     # initialize STATE dicts
     #######################################################################################
     # Set up Things in state that will be used in all modular activities like SPECL
-    state = state_class()
+    state = make_state_class()
     print("state_class() call", timer.split(), "seconds")
     om_operations = om_init_state()  # set up operational model specific containers
     print("om_init_state() call", timer.split(), "seconds")
@@ -107,7 +107,7 @@ def main(
     # Iterate through all segments and add crucial paths to state
     # before loading dynamic components that may reference them
     state_init_hsp2(state, opseq, activities, om_operations)
-    print("state_class() to state_init_hsp2() call", timer.split(), "seconds")
+    print("state_init_hsp2() call", timer.split(), "seconds")
     # now initialize all state variables for mutable variables
     hsp2_domain_dependencies(state, opseq, activities, om_operations, False)
     # - finally stash specactions in state, not domain (segment) dependent so do it once

@@ -67,6 +67,7 @@ class state_class:
         # on an as-needed basis if possible.  Especially for dataMatrix types which are supposed to be fast
         # state can still get values via get_state, by grabbing a reference object and then accessing it's storage
         self.dict_ix = ntdict.empty(key_type=types.int64, value_type=types.float64[:, :])
+        self.dict_ix = ntdict.empty(key_type=types.int64, value_type=types.float64[:, :])
         self.state_paths = ntdict.empty(
             key_type=types.unicode_type, value_type=types.int64
         )
@@ -199,6 +200,9 @@ class state_class:
                 return spath
         return spath
 
+@njit(cache=True)
+def make_state_class():
+    return(state_class())
 
 def op_path_name(operation, id):
     """
