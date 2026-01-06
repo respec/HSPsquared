@@ -4,13 +4,15 @@ It is also used to make an implicit parent child link to insure that an object i
 during a model simulation.
 """
 
-from hsp2.state.state import set_state
+from hsp2.state.state import state
 from hsp2.hsp2.om import ModelObject
 from hsp2.hsp2.om_model_object import ModelObject
 from pandas import DataFrame
-from numba import njit
-from numpy import int64
-
+from numba import njit, types
+from numpy import int64, float64
+from numba.experimental import jitclass
+import ctypes
+import time
 
 class SimTimer(ModelObject):
     def __init__(self, name, container, model_props=None, state=None):
@@ -67,7 +69,7 @@ class SimTimer(ModelObject):
         # returns an array of data pointers
         super().tokenize()  # resets ops to common base
         self.ops = self.ops + self.date_path_ix  # adds timer specific items
-
+    
     def add_op_tokens(self):
         # this puts the tokens into the global simulation queue
         # can be customized by subclasses to add multiple lines if needed.
@@ -118,3 +120,38 @@ def step_sim_timer(op_token, state_ix, dict_ix, ts_ix, step):
     state_ix[op_token[11]] = dict_ix[op_token[1]][step][10]  # modays
     state_ix[op_token[12]] = dict_ix[op_token[1]][step][11]  # dts
     return
+
+# Access the _PyTime_AsSecondsDouble and _PyTime_GetSystemClock functions from pythonapi
+get_system_clock = ctypes.pythonapi._PyTime_GetSystemClock
+as_seconds_double = ctypes.pythonapi._PyTime_AsSecondsDouble
+# Set the argument types and return types of the functions
+get_system_clock.argtypes = []
+get_system_clock.restype = ctypes.c_int64
+as_seconds_double.argtypes = [ctypes.c_int64]
+as_seconds_double.restype = ctypes.c_double
+
+timer_spec = [
+     ("tstart", types.float64),
+     ("tend", types.float64),
+     ("tsplit", types.float64)
+]
+
+@njit
+def jitime():
+    system_clock = get_system_clock()
+    current_time = as_seconds_double(system_clock)
+    return current_time
+
+@jitclass(timer_spec)
+class timer_class():
+    def __init__(self):
+        self.tstart = jitime()
+    
+    def split(self):
+        self.tend = jitime()
+        self.tsplit = self.tend - self.tstart
+        self.tstart = jitime()
+        split = 0
+        if (self.tsplit > 0):
+            split = self.tsplit
+        return split

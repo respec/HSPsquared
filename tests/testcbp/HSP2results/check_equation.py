@@ -1,7 +1,7 @@
 # Must be run from the HSPsquared source directory, the h5 file has already been setup with hsp import_uci test10.uci
 # bare bones tester - must be run from the HSPsquared source directory
-import os
 
+import os
 import numpy
 from hsp2.hsp2.main import *
 from hsp2.state.state import *
@@ -61,12 +61,12 @@ state_om_model_run_prep(opseq, activities, state, om_operations, siminfo)
 # mtl = []
 # mel = []
 # model_order_recursive(endpoint, om_operations["model_object_cache"], mel, mtl, True)
-O3 = om_operations["model_object_cache"]["/STATE/PL3_5250_0001eq/RCHRES_R001/O3"]
+O2 = om_operations["model_object_cache"]["/STATE/PL3_5250_0001eq/RCHRES_R001/O2"]
 wd_cfs = om_operations["model_object_cache"]["/STATE/PL3_5250_0001eq/RCHRES_R001/wd_cfs"]
 state.get_ix_path(wd_cfs.ops[6]) 
 state.get_ix_path(wd_cfs.ops[7]) 
 
-wd_cfs.find_var_path("O3")
+wd_cfs.find_var_path("O2")
 
 # state['model_root_object'].find_var_path('RCHRES_R001')
 # Get the timeseries naked, without an object
@@ -152,3 +152,8 @@ hsp2_eq_hydr = read_hdf(dstore_hydreq, '/RESULTS/RCHRES_R001/HYDR')
 dstore_hydreq.close()
 np.quantile(hsp2_eq_hydr[:]['O2'], [0,0.25,0.5,0.75,1.0])
 # To re-run:
+
+np.mean(hsp2_hydr[:]['IVOL'])
+np.mean(hsp2_eq_hydr[:]['IVOL'])
+np.mean(hsp2_hydr[:]['OVOL3'])
+np.mean(hsp2_eq_hydr[:]['OVOL3'])

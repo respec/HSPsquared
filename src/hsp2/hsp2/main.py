@@ -32,6 +32,7 @@ from hsp2.hsp2.om import (
     state_om_model_run_finish,
     hsp2_domain_dependencies
 )
+from hsp2.hsp2.om_sim_timer import timer_class
 from hsp2.hsp2.SPECL import specl_load_om
 
 from hsp2.hsp2io.io import IOManager, SupportsReadTS, Category
@@ -56,6 +57,10 @@ def main(
     None
 
     """
+    
+    timer = timer_class()
+    print("main() call", timer.split(), "seconds")
+
     if isinstance(io_manager, str):
         hdf5_instance = HDF5(io_manager)
         io_manager = IOManager(hdf5_instance)
@@ -68,6 +73,7 @@ def main(
 
     # read user control, parameters, states, and flags parameters and map to local variables
     parameter_obj = io_manager.read_parameters()
+    print("Load io_manager parameters", timer.split(), "seconds")
     opseq = parameter_obj.opseq
     ddlinks = parameter_obj.ddlinks
     ddmasslinks = parameter_obj.ddmasslinks
@@ -106,6 +112,7 @@ def main(
     )  # operational model for custom python
     # finalize all dynamically loaded components and prepare to run the model
     state_om_model_run_prep(opseq, activities, state, om_operations, siminfo)
+    print("Load all state + om", timer.split(), "seconds")
     #######################################################################################
 
     # main processing loop
@@ -519,6 +526,7 @@ def main(
                             jupyterlab,
                             outstep_phcarb,
                         )
+        print(operation, segment, timer.split(), 'seconds')
 
     msglist = msg(1, "Done", final=True)
 
