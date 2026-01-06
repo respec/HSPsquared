@@ -110,18 +110,21 @@ def main(
     print("state_load_dynamics_hsp2() call", timer.split(), "seconds")
     # Iterate through all segments and add crucial paths to state
     # before loading dynamic components that may reference them
-    state_init_hsp2(state, opseq, activities, om_operations)
+    state_init_hsp2(state, opseq, activities)
     print("state_init_hsp2() call", timer.split(), "seconds")
     # now initialize all state variables for mutable variables
     hsp2_domain_dependencies(state, opseq, activities, om_operations, False)
+    print("hsp2_domain_dependencies", timer.split(), "seconds")
     # - finally stash specactions in state, not domain (segment) dependent so do it once
     specl_load_om(om_operations, specactions)  # load traditional special actions
+    print("specl_load_om", timer.split(), "seconds")
     state_load_dynamics_om(
         state, io_manager, siminfo, om_operations
     )  # operational model for custom python
+    print("state_load_dynamics_om", timer.split(), "seconds")
     # finalize all dynamically loaded components and prepare to run the model
     state_om_model_run_prep(opseq, activities, state, om_operations, siminfo)
-    print("Load all state + om", timer.split(), "seconds")
+    print("state_om_model_run_prep", timer.split(), "seconds")
     #######################################################################################
 
     # main processing loop
