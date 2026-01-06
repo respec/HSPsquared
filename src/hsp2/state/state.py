@@ -90,7 +90,7 @@ def make_state_lite(num_ops):
 
 def state_copy(statesrc, statedest):
     # copies from a non-jit to a jit or vice versa
-    statedest.num_ops = statesrc.numops
+    statedest.num_ops = statesrc.num_ops
     statedest.state_ix = statesrc.state_ix
     statedest.op_tokens = statesrc.op_tokens
     statedest.op_exec_lists = statesrc.op_exec_lists
