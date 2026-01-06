@@ -79,7 +79,7 @@ def make_state_lite(num_ops):
     sc = state_class_lite(num_ops)
     #return sc
 
-@jitclass(state_spec)
+@jitclass(state_spec, cache=True)
 class state_class:
     def __init__(self):
         self.num_ops = 0
