@@ -103,6 +103,7 @@ def main(
     # Iterate through all segments and add crucial paths to state
     # before loading dynamic components that may reference them
     state_init_hsp2(state, opseq, activities, om_operations)
+    print("state_class() to state_init_hsp2() call", timer.split(), "seconds")
     # now initialize all state variables for mutable variables
     hsp2_domain_dependencies(state, opseq, activities, om_operations, False)
     # - finally stash specactions in state, not domain (segment) dependent so do it once
