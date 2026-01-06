@@ -340,7 +340,8 @@ def state_context_hsp2(state, operation, segment, activity):
     # insure that there is a model object container
     seg_name = operation + "_" + segment
     seg_path = "/STATE/" + state.model_root_name + "/" + seg_name
-    if seg_name not in state.hsp_segments.keys():
+    #if seg_name not in state.hsp_segments.keys():
+    if seg_name not in state.hsp_segments: # test this for njit
         state.hsp_segments[seg_name] = seg_path
     state.domain = seg_path  # + "/" + activity   # may want to comment out activity?
 
