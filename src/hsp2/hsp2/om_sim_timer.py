@@ -4,7 +4,6 @@ It is also used to make an implicit parent child link to insure that an object i
 during a model simulation.
 """
 
-from hsp2.state.state import state
 from hsp2.hsp2.om import ModelObject
 from hsp2.hsp2.om_model_object import ModelObject
 from pandas import DataFrame
