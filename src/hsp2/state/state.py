@@ -202,7 +202,8 @@ class state_class:
 
 @njit(cache=True)
 def make_state_class():
-    return(state_class())
+    sc = state_class()
+    return(sc)
 
 def op_path_name(operation, id):
     """
