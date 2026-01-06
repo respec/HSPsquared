@@ -45,6 +45,7 @@ state_spec = [
 
 
 state_lite = [
+    ("num_ops", types.int64),
     # the first entries here are NP arrays, fixed dimenstions, and fast
     ("state_ix", typeof(np.asarray(zeros(1), dtype="float64")) ),
     ("op_tokens", typeof(types.int64(zeros((1, 64)))) ),
