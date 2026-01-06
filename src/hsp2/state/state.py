@@ -330,7 +330,7 @@ def state_siminfo_hsp2(state, parameter_obj, siminfo, io_manager):
     (fbase, fext) = os.path.splitext(hdf5_path)
     state.model_root_name = os.path.split(fbase)[1]  # takes the text before .h5
 
-
+@njit(cache=True)
 def state_context_hsp2(state, operation, segment, activity):
     # this establishes domain info so that a module can know its paths
     state.operation = operation
