@@ -24,7 +24,8 @@ from hsp2.state.state import (
     state_init_hsp2,
     state_context_hsp2,
     state_class,
-    make_state_lite
+    state_class_lite,
+    state_copy
 
 )
 from hsp2.hsp2.om import (
@@ -123,7 +124,8 @@ def main(
     # finalize all dynamically loaded components and prepare to run the model
     state_om_model_run_prep(opseq, activities, state, om_operations, siminfo)
     print("state_om_model_run_prep", timer.split(), "seconds")
-    scl = make_state_lite(0)
+    statenb = state_class_lite(0)
+    state_copy(state, statenb)
     print("make_state_lite", timer.split())
     #######################################################################################
 
@@ -225,7 +227,7 @@ def main(
 
                 msg(3, f"{activity}")
                 # Set context for dynamic executables and special actions
-                state_context_hsp2(state, operation, segment, activity)
+                state_context_hsp2(statenb, operation, segment, activity)
 
                 ui = model[(operation, activity, segment)]  # ui is a dictionary
                 if operation == "PERLND" and activity == "SEDMNT":
@@ -419,11 +421,11 @@ def main(
                 if operation not in ["COPY", "GENER"]:
                     if activity == "HYDR":
                         errors, errmessages = function(
-                            siminfo, ui, ts, ftables, state
+                            siminfo, ui, ts, ftables, statenb
                         )
                     elif activity == "SEDTRN" or activity == "SEDMNT":
                         errors, errmessages = function(
-                            siminfo, ui, ts, state
+                            siminfo, ui, ts, statenb
                         )
                     elif activity != "RQUAL":
                         errors, errmessages = function(io_manager, siminfo, ui, ts)
@@ -438,7 +440,7 @@ def main(
                             ui_phcarb,
                             ts,
                             monthdata,
-                            state,
+                            statenb
                         )
                 ###############################################################
 
@@ -543,6 +545,9 @@ def main(
     msglist = msg(1, "Done", final=True)
 
     # Finish operational models
+    (state.num_ops, state.state_ix, state.op_tokens, state.op_exec_lists, state.model_exec_list) = (
+        statenb.num_ops, statenb.state_ix, statenb.op_tokens, statenb.op_exec_lists, statenb.model_exec_list
+    )
     state_om_model_run_finish(state, io_manager, siminfo)
 
     df = DataFrame(msglist, columns=["logfile"])

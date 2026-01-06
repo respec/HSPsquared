@@ -88,6 +88,14 @@ def make_state_lite(num_ops):
     sc = state_class_lite(num_ops)
     return sc
 
+def state_copy(statesrc, statedest):
+    # copies from a non-jit to a jit or vice versa
+    statedest.num_ops = statesrc.numops
+    statedest.state_ix = statesrc.state_ix
+    statedest.op_tokens = statesrc.op_tokens
+    statedest.op_exec_lists = statesrc.op_exec_lists
+    statedest.model_exec_list = statesrc.model_exec_list
+
 @jitclass(state_spec)
 class state_class:
     def __init__(self):
