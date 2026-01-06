@@ -350,12 +350,13 @@ def state_init_hsp2(state, opseq, activities):
     # This sets up the state entries for all state compatible HSP2 model variables
     # print("STATE initializing contexts.")
     for _, operation, segment, delt in opseq.itertuples():
+        seg_name = operation + "_" + segment
+        seg_path = "/STATE/" + state.model_root_name + "/" + seg_name
+        # set up named paths for model operations
+        state.set_state(seg_path, 0.0)
+        #print("adding", seg_path)
         if operation != "GENER" and operation != "COPY":
             for activity, function in activities[operation].items():
-                # set up named paths for model operations
-                seg_name = operation + "_" + segment
-                seg_path = "/STATE/" + state.model_root_name + "/" + seg_name
-                state.set_state(seg_path, 0.0)
                 if activity == "HYDR":
                     state_context_hsp2(state, operation, segment, activity)
                 elif activity == "SEDTRN":
