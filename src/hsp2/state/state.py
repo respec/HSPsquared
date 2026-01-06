@@ -47,9 +47,8 @@ state_spec = [
 
 state_lite = [
     ("num_ops", nb.int64),
-    ("state_ix", nb.float64[:]),
     # the first entries here are NP arrays, fixed dimenstions, and fast
-    #("state_ix", typeof(np.asarray(zeros(1), dtype="float64")) ),
+    ("state_ix", nb.float64[:]),
     #("op_tokens", typeof(types.int64(zeros((1, 64)))) ),
     #("op_exec_lists", typeof(types.int64(zeros((1, 1024)))) ),
     #("model_exec_list", typeof(np.asarray(zeros(1), dtype="int64")) ),
@@ -63,8 +62,8 @@ state_lite = [
 class state_class_lite:
     def __init__(self, num_ops):
         self.num_ops = num_ops
-        #state_ix = zeros(self.num_ops)
-        #self.state_ix = state_ix.astype(npfloat64)
+        state_ix = zeros(self.num_ops)
+        self.state_ix = state_ix.astype(npfloat64)
         #op_tokens = zeros((self.num_ops, 64))
         #self.op_tokens = op_tokens.astype(npint64)
         # TODO: move to individual objects in OM/RCHRES/PERLND/...
