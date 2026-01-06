@@ -226,6 +226,7 @@ def main(
 
                 msg(3, f"{activity}")
                 # Set context for dynamic executables and special actions
+                print("trying state_domain()")
                 statenb.domain = state_domain(statenb, operation, segment, activity)
                 print("set domain to", statenb.domain)
                 (statenb.operation, statenb.segment, statenb.activity) = (operation, segment, activity)
