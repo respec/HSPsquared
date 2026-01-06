@@ -96,6 +96,7 @@ def state_copy(statesrc, statedest):
     statedest.op_tokens = statesrc.op_tokens
     statedest.op_exec_lists = statesrc.op_exec_lists
     statedest.model_exec_list = statesrc.model_exec_list
+    statedest.state_paths = statesrc.state_paths
 
 @jitclass(state_spec)
 class state_class:
