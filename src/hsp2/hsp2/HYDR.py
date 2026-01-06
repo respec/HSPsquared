@@ -185,7 +185,7 @@ def hydr(siminfo, parameters, ts, ftables, state):
     return errors, ERRMSGS
 
 
-#@njit(cache=True)
+@njit(cache=True)
 def _hydr_(
     ui,
     ts,
