@@ -105,7 +105,6 @@ def state_copy(statesrc, statedest):
     statedest.hsp2_local_py = statesrc.hsp2_local_py
     statedest.model_root_name = statesrc.model_root_name
 
-@jitclass(state_spec)
 class state_class:
     def __init__(self):
         self.num_ops = 0

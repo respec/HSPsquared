@@ -51,7 +51,6 @@ def hydr(siminfo, parameters, ts, ftables, state):
     # TBD: These operations are all preparatory in nature, and will be replaced by code
     #      in the RCHRES_handler class, which will set properties on RCHRES_class for fast
     #      and concide run-time execution and memory management.
-    print("Running hydr()")
     steps = siminfo["steps"]  # number of simulation points
     uunits = siminfo["units"]
     nexits = int(parameters["PARAMETERS"]["NEXITS"])
@@ -153,7 +152,6 @@ def hydr(siminfo, parameters, ts, ftables, state):
     # note: get executable dynamic operation model components
     # TBD: this will be set as a property on each RCHRES object when we move to a class framework
     activity_path = state.domain + "/" + 'HYDR'
-    print("Getting activity id from", activity_path)
     activity_id = get_state_ix(state.state_paths, activity_path)
     model_exec_list = state.op_exec_lists[activity_id]
     #######################################################################################
@@ -200,7 +198,6 @@ def _hydr_(
     model_exec_list
 ):
     errors = zeros(int(ui["errlen"])).astype(int64)
-    print("DEBUG: _hydr_ Called with:", model_exec_list)
     steps = int(ui["steps"])  # number of simulation steps
     delts = ui["delt"] * 60.0  # seconds in simulation interval
     uunits = ui["uunits"]
@@ -341,7 +338,7 @@ def _hydr_(
     #######################################################################################
     # the following section (2 of 3) added by rb to HYDR, this one to prepare for dynamic state including special actions
     #######################################################################################
-    hydr_ix = hydr_get_ix(state, state.domain)
+    hydr_ix = hydr_get_ix(state.state_paths, state.domain)
     # these are integer placeholders faster than calling the array look each timestep
     # TBD: These will be replaced by class properties in HYDR_class 
     o1_ix, o2_ix, o3_ix, ivol_ix = (
