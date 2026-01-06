@@ -270,7 +270,7 @@ def op_path_name(operation, id):
     path_name = f"{operation}_{operation[0]}{tid}"
     return path_name
 
-
+@njit(cache=True)
 def get_state_ix(state_paths, var_path):
     """
     Find the integer key of a variable name in state_ix
@@ -554,7 +554,7 @@ def rqual_init_ix(state, domain):
     return rqual_ix
 
 
-@njit
+@njit(cache=True)
 def hydr_get_ix(state, domain):
     # get a list of keys for all hydr state variables
     hydr_state = [
