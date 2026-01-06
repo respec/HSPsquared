@@ -48,10 +48,10 @@ state_lite = [
     ("num_ops", types.int64),
     # the first entries here are NP arrays, fixed dimenstions, and fast
     ("state_ix", typeof(np.asarray(zeros(1), dtype="float64")) ),
-    ("op_tokens", typeof(types.int64(zeros((1, 64)))) ),
-    ("op_exec_lists", typeof(types.int64(zeros((1, 1024)))) ),
-    ("model_exec_list", typeof(np.asarray(zeros(1), dtype="int64")) ),
-    ("tindex", typeof(tindex.to_numpy()) ),
+    #("op_tokens", typeof(types.int64(zeros((1, 64)))) ),
+    #("op_exec_lists", typeof(types.int64(zeros((1, 1024)))) ),
+    #("model_exec_list", typeof(np.asarray(zeros(1), dtype="int64")) ),
+    #("tindex", typeof(tindex.to_numpy()) ),
     # dict_ix SHOULD BE an array, this is TBD.  Likely defer till OM class runtimes
     #("dict_ix", types.DictType(types.int64, types.float64[:, :]) ),
     #("ts_ix", types.DictType(types.int64, types.float64[:]) )
