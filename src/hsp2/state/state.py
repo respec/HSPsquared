@@ -55,7 +55,17 @@ state_lite = [
     ("tindex", typeof(tindex.to_numpy()) ),
     # dict_ix SHOULD BE an array, this is TBD.  Likely defer till OM class runtimes
     ("dict_ix", types.DictType(types.int64, types.float64[:, :]) ),
-    ("ts_ix", types.DictType(types.int64, types.float64[:]) )
+    ("ts_ix", types.DictType(types.int64, types.float64[:]) ),
+    ("last_id", types.int64),
+    ("model_root_name", types.unicode_type),
+    ("state_step_hydr", types.unicode_type),
+    ("hsp2_local_py", types.boolean),
+    ("num_ops", types.int64),
+    ("operation", types.unicode_type),
+    ("segment", types.unicode_type),
+    ("activity", types.unicode_type),
+    ("domain", types.unicode_type),
+    ("state_step_om", types.unicode_type),
 ]
 
 @jitclass(state_lite)
