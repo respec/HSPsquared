@@ -11,16 +11,16 @@ Conversion of no category version of HSPF HRCHHYD.FOR into Python"""
 """
 
 
-from numpy import zeros, any, full, nan, array, int64, arange, asarray
+from numpy import zeros, any, full, nan, array, int64, arange
 from pandas import DataFrame
 from math import sqrt, log10
-from numba import njit, types
+from numba import njit
 from numba.typed import List
 from hsp2.hsp2.utilities import initm, make_numba_dict
 
 # the following imports added by rb to handle dynamic code and special actions
-from hsp2.state.state import hydr_get_ix, hydr_init_ix, hydr_state_vars
-from hsp2.hsp2.om import pre_step_model, step_model, model_domain_dependencies
+from hsp2.state.state import hydr_get_ix, get_state_ix
+from hsp2.hsp2.om import pre_step_model, step_model
 from numba.typed import Dict
 
 
@@ -153,7 +153,7 @@ def hydr(siminfo, parameters, ts, ftables, state):
     # note: get executable dynamic operation model components
     # TBD: this will be set as a property on each RCHRES object when we move to a class framework
     activity_path = state.domain + "/" + 'HYDR'
-    activity_id = state.get_state_ix(activity_path)
+    activity_id = get_state_ix(state.state_paths, activity_path)
     model_exec_list = state.op_exec_lists[activity_id]
     #######################################################################################
 
