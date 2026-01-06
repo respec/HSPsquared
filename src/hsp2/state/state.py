@@ -77,7 +77,7 @@ class state_class_lite:
 @njit(cache=True)
 def make_state_lite():
     sc = state_class_lite()
-#    return sc
+    return sc
 
 @jitclass(state_spec)
 class state_class:
