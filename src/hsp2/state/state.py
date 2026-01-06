@@ -50,7 +50,7 @@ state_lite = [
     # the first entries here are NP arrays, fixed dimenstions, and fast
     ("state_ix", nb.float64[:]),
     ("op_tokens", typeof(types.int64(zeros((1, 64)))) ),
-    #("op_exec_lists", typeof(types.int64(zeros((1, 1024)))) ),
+    ("op_exec_lists", typeof(types.int64(zeros((1, 1024)))) ),
     #("model_exec_list", typeof(np.asarray(zeros(1), dtype="int64")) ),
     #("tindex", typeof(tindex.to_numpy()) ),
     # dict_ix SHOULD BE an array, this is TBD.  Likely defer till OM class runtimes
@@ -67,8 +67,8 @@ class state_class_lite:
         op_tokens = zeros((self.num_ops, 64))
         self.op_tokens = op_tokens.astype(npint64)
         # TODO: move to individual objects in OM/RCHRES/PERLND/...
-        #op_exec_lists = zeros((self.num_ops, 1024))
-        #self.op_exec_lists = op_exec_lists.astype(npint64)
+        op_exec_lists = zeros((self.num_ops, 1024))
+        self.op_exec_lists = op_exec_lists.astype(npint64)
         # TODO: is this even needed? Since each domain has it's own exec list?
         #model_exec_list = zeros(self.num_ops)
         #self.model_exec_list = model_exec_list.astype(npint64)
