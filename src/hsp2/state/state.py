@@ -344,7 +344,7 @@ def state_context_hsp2(state, operation, segment, activity):
         state.hsp_segments[seg_name] = seg_path
     state.domain = seg_path  # + "/" + activity   # may want to comment out activity?
 
-
+@njit(cache=True)
 def state_init_hsp2(state, opseq, activities, om_operations):
     # This sets up the state entries for all state compatible HSP2 model variables
     # print("STATE initializing contexts.")
