@@ -87,6 +87,7 @@ class state_class_lite:
         self.segment = ""
         self.operation = ""
         self.domain = ""
+        self.model_root_name = ""
 
 @njit(cache=True)
 def make_state_lite(num_ops):
