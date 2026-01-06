@@ -95,11 +95,15 @@ def main(
     #######################################################################################
     # Set up Things in state that will be used in all modular activities like SPECL
     state = state_class()
+    print("state_class() call", timer.split(), "seconds")
     om_operations = om_init_state()  # set up operational model specific containers
+    print("om_init_state() call", timer.split(), "seconds")
     state_siminfo_hsp2(state, parameter_obj, siminfo, io_manager)
+    print("state_siminfo_hsp2() call", timer.split(), "seconds")
     # Add support for dynamic functions to operate on STATE
     # - Load any dynamic components if present, and store variables on objects
     state_load_dynamics_hsp2(state, io_manager, siminfo)
+    print("state_load_dynamics_hsp2() call", timer.split(), "seconds")
     # Iterate through all segments and add crucial paths to state
     # before loading dynamic components that may reference them
     state_init_hsp2(state, opseq, activities, om_operations)
