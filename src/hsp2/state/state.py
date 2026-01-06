@@ -83,6 +83,10 @@ class state_class_lite:
         # TODO: is this even needed? Since each domain has it's own exec list?
         model_exec_list = zeros(self.num_ops)
         self.model_exec_list = model_exec_list.astype(npint64)
+        self.activity = ""
+        self.segment = ""
+        self.operation = ""
+        self.domain = ""
 
 @njit(cache=True)
 def make_state_lite(num_ops):

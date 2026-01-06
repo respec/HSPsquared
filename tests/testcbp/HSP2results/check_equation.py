@@ -56,6 +56,8 @@ state_load_dynamics_om(
 # finalize all dynamically loaded components and prepare to run the model
 state_om_model_run_prep(opseq, activities, state, om_operations, siminfo)
 # Set up order of execution
+statenb = state_class_lite(0)
+state_copy(state, statenb)
 
 # debug loading:
 # mtl = []
