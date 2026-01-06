@@ -98,7 +98,7 @@ def main(
     # Set up Things in state that will be used in all modular activities like SPECL
     state = state_class()
     scl = make_state_lite()
-    print("Made state_class_lite", scl.num_ops)
+    print("Made state_class_lite", scl)
     print("state_class() call", timer.split(), "seconds")
     om_operations = om_init_state()  # set up operational model specific containers
     print("om_init_state() call", timer.split(), "seconds")
