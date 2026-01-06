@@ -22,11 +22,10 @@ from hsp2.state.state import (
     state_siminfo_hsp2,
     state_load_dynamics_hsp2,
     state_init_hsp2,
-    state_context_hsp2,
     state_class,
     state_class_lite,
-    state_copy
-
+    state_copy,
+    state_domain
 )
 from hsp2.hsp2.om import (
     om_init_state,
@@ -227,8 +226,8 @@ def main(
 
                 msg(3, f"{activity}")
                 # Set context for dynamic executables and special actions
-                state_context_hsp2(statenb, operation, segment, activity)
-
+                state.domain = state_domain(statenb, operation, segment, activity)
+                (state.operation, state.segment, state.activity) = (operation, segment, activity)
                 ui = model[(operation, activity, segment)]  # ui is a dictionary
                 if operation == "PERLND" and activity == "SEDMNT":
                     # special exception here to make CSNOFG available
