@@ -22,7 +22,10 @@ from hsp2.state.state import (
     state_siminfo_hsp2,
     state_load_dynamics_hsp2,
     state_init_hsp2,
-    state_context_hsp2
+    state_context_hsp2,
+    state_class,
+    make_state_lite
+
 )
 from hsp2.hsp2.om import (
     om_init_state,
@@ -94,6 +97,8 @@ def main(
     #######################################################################################
     # Set up Things in state that will be used in all modular activities like SPECL
     state = state_class()
+    scl = make_state_lite()
+    print("Made state_class_lite", scl.num_ops)
     print("state_class() call", timer.split(), "seconds")
     om_operations = om_init_state()  # set up operational model specific containers
     print("om_init_state() call", timer.split(), "seconds")
