@@ -51,7 +51,7 @@ def hydr(siminfo, parameters, ts, ftables, state):
     # TBD: These operations are all preparatory in nature, and will be replaced by code
     #      in the RCHRES_handler class, which will set properties on RCHRES_class for fast
     #      and concide run-time execution and memory management.
-
+    print("Running hydr()")
     steps = siminfo["steps"]  # number of simulation points
     uunits = siminfo["units"]
     nexits = int(parameters["PARAMETERS"]["NEXITS"])
