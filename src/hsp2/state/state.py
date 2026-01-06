@@ -56,6 +56,7 @@ state_lite = [
     # dict_ix SHOULD BE an array, this is TBD.  Likely defer till OM class runtimes
     ("dict_ix", types.DictType(types.int64, types.float64[:, :]) ),
     ("ts_ix", types.DictType(types.int64, types.float64[:]) ),
+    ("state_paths", types.DictType(types.unicode_type, types.int64) ),
     ("last_id", types.int64),
     ("model_root_name", types.unicode_type),
     ("state_step_hydr", types.unicode_type),
@@ -262,7 +263,7 @@ def op_path_name(operation, id):
     return path_name
 
 
-def get_state_ix(state_ix, state_paths, var_path):
+def get_state_ix(state_paths, var_path):
     """
     Find the integer key of a variable name in state_ix
     """
