@@ -62,7 +62,7 @@ class state_class_lite:
     def __init__(self):
         self.num_ops = 0
         state_ix = zeros(self.num_ops)
-        self.state_ix = state_ix.astype(npfloat64)
+        #self.state_ix = state_ix.astype(npfloat64)
         #op_tokens = zeros((self.num_ops, 64))
         #self.op_tokens = op_tokens.astype(npint64)
         # TODO: move to individual objects in OM/RCHRES/PERLND/...
