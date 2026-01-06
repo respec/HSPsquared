@@ -52,41 +52,6 @@ class state_class:
         # Note: in the type declaration above we are alloweed to use the shortened form op_tokens = int64(zeros((1,64)))
         #       but in jited class that throws an error and we have to use the form op_tokens.astype(int64)
         #       to do the type cast
-        state_ix = zeros(self.num_ops)
-        self.state_ix = state_ix.astype(npfloat64)
-        op_tokens = zeros((self.num_ops, 64))
-        self.op_tokens = op_tokens.astype(npint64)
-        # TODO: move to individual objects in OM/RCHRES/PERLND/...
-        op_exec_lists = zeros((self.num_ops, 1024))
-        self.op_exec_lists = op_exec_lists.astype(npint64)
-        # TODO: is this even needed? Since each domain has it's own exec list?
-        model_exec_list = zeros(self.num_ops)
-        self.model_exec_list = model_exec_list.astype(npint64)
-        # Done with nparray initializations
-        # this dict_ix approach is inherently slow, and should be replaced by some other np table type
-        # on an as-needed basis if possible.  Especially for dataMatrix types which are supposed to be fast
-        # state can still get values via get_state, by grabbing a reference object and then accessing it's storage
-        self.dict_ix = ntdict.empty(key_type=types.int64, value_type=types.float64[:, :])
-        self.dict_ix = ntdict.empty(key_type=types.int64, value_type=types.float64[:, :])
-        self.state_paths = ntdict.empty(
-            key_type=types.unicode_type, value_type=types.int64
-        )
-        self.hsp_segments = ntdict.empty(
-            key_type=types.unicode_type, value_type=types.unicode_type
-        )
-        self.ts_paths = ntdict.empty(
-            key_type=types.unicode_type, value_type=types.float64[:]
-        )
-        self.ts_ix = ntdict.empty(key_type=types.int64, value_type=types.float64[:])
-        self.state_step_om = "disabled"
-        self.state_step_hydr = "disabled"
-        self.model_root_name = ""
-        self.operation = ""
-        self.segment = ""
-        self.activity = ""
-        self.domain = ""
-        self.last_id = 0
-        self.hsp2_local_py = False
         return
     
     @property
@@ -199,6 +164,44 @@ class state_class:
                 # we need to add this to the state
                 return spath
         return spath
+
+def init_state(state_class):
+    state_ix = zeros(state_class.num_ops)
+    state_class.state_ix = state_ix.astype(npfloat64)
+    op_tokens = zeros((state_class.num_ops, 64))
+    state_class.op_tokens = op_tokens.astype(npint64)
+    # TODO: move to individual objects in OM/RCHRES/PERLND/...
+    op_exec_lists = zeros((state_class.num_ops, 1024))
+    state_class.op_exec_lists = op_exec_lists.astype(npint64)
+    # TODO: is this even needed? Since each domain has it's own exec list?
+    model_exec_list = zeros(state_class.num_ops)
+    state_class.model_exec_list = model_exec_list.astype(npint64)
+    # Done with nparray initializations
+    # this dict_ix approach is inherently slow, and should be replaced by some other np table type
+    # on an as-needed basis if possible.  Especially for dataMatrix types which are supposed to be fast
+    # state can still get values via get_state, by grabbing a reference object and then accessing it's storage
+    state_class.dict_ix = ntdict.empty(key_type=types.int64, value_type=types.float64[:, :])
+    state_class.dict_ix = ntdict.empty(key_type=types.int64, value_type=types.float64[:, :])
+    state_class.state_paths = ntdict.empty(
+        key_type=types.unicode_type, value_type=types.int64
+    )
+    state_class.hsp_segments = ntdict.empty(
+        key_type=types.unicode_type, value_type=types.unicode_type
+    )
+    state_class.ts_paths = ntdict.empty(
+        key_type=types.unicode_type, value_type=types.float64[:]
+    )
+    state_class.ts_ix = ntdict.empty(key_type=types.int64, value_type=types.float64[:])
+    state_class.state_step_om = "disabled"
+    state_class.state_step_hydr = "disabled"
+    state_class.model_root_name = ""
+    state_class.operation = ""
+    state_class.segment = ""
+    state_class.activity = ""
+    state_class.domain = ""
+    state_class.last_id = 0
+    state_class.hsp2_local_py = False
+
 
 @njit(cache=True)
 def make_state_class():
