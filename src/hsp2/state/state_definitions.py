@@ -27,5 +27,5 @@ rqual_state_vars = [
 ]
 
 @njit
-def state_step_hydr(state_info, state_paths, state_ix, dict_ix, ts_ix, hydr_ix, step):
+def state_step_hydr(state, step):
     return
