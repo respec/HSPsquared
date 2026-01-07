@@ -709,9 +709,6 @@ def pre_step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
     for i in model_exec_list:
         if op_tokens[i][0] == 12:
             # register type data (like broadcast accumulators)
-            if step < 3:
-                print("Calling pre_step_register")
-            
             pre_step_register(op_tokens[i], state_ix)
     return
 
