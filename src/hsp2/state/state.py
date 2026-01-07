@@ -67,6 +67,7 @@ state_lite = [
     ("activity", types.unicode_type),
     ("domain", types.unicode_type),
     ("state_step_om", types.unicode_type),
+    ("hsp_segments", types.DictType(types.unicode_type, types.unicode_type) )
 ]
 
 @jitclass(state_lite)
@@ -104,6 +105,7 @@ def state_copy(statesrc, statedest):
     statedest.state_paths = statesrc.state_paths
     statedest.hsp2_local_py = statesrc.hsp2_local_py
     statedest.model_root_name = statesrc.model_root_name
+    statedest.hsp_segments = statesrc.hsp_segments
 
 class state_class:
     def __init__(self, state_ix, op_tokens, state_paths, op_exec_lists, model_exec_list, dict_ix, ts_ix, hsp_segments):
