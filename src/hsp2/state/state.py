@@ -375,7 +375,7 @@ def state_segname(state, operation, segment, activity):
     return (seg_name, seg_path)
 
 #@njit(cache=True)
-def state_init_hsp2(state, opseq, activities):
+def state_init_hsp2(state, opseq, activities, timer):
     # This sets up the state entries for all state compatible HSP2 model variables
     print("STATE initializing contexts.")
     for _, operation, segment, delt in opseq.itertuples():
@@ -387,12 +387,16 @@ def state_init_hsp2(state, opseq, activities):
         if operation != "GENER" and operation != "COPY":
             for activity, function in activities[operation].items():
                 if activity == "HYDR":
+                    print("HYDR state_init_hsp2()", timer.split(), "seconds")
                     state_context_hsp2(state, operation, segment, activity)
                 elif activity == "SEDTRN":
+                    print("SEDTRN state_init_hsp2()", timer.split(), "seconds")
                     state_context_hsp2(state, operation, segment, activity)
                 elif activity == "SEDMNT":
+                    print("SEDMNT state_init_hsp2()", timer.split(), "seconds")
                     state_context_hsp2(state, operation, segment, activity)
                 elif activity == "RQUAL":
+                    print("RQUAL state_init_hsp2()", timer.split(), "seconds")
                     state_context_hsp2(state, operation, segment, activity)
 
 
