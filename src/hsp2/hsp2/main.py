@@ -18,7 +18,6 @@ from hsp2.hsp2.utilities import (
     get_gener_timeseries,
 )
 from hsp2.hsp2.configuration import activities, noop, expand_masslinks
-from hsp2.state.state_definitions import state_empty
 from hsp2.state.state import (
     state_siminfo_hsp2,
     state_load_dynamics_hsp2,
@@ -31,9 +30,10 @@ from hsp2.hsp2.om import (
     state_om_model_run_prep,
     state_load_dynamics_om,
     state_om_model_run_finish,
+    hsp2_domain_dependencies
 )
-from hsp2.hsp2.SPECL import specl_load_state
 from hsp2.hsp2.om_sim_timer import timer_class
+from hsp2.hsp2.SPECL import specl_load_om
 
 from hsp2.hsp2io.io import IOManager, SupportsReadTS, Category
 
@@ -57,8 +57,6 @@ def main(
     None
 
     """
-    timer = timer_class()
-    print("main() call", timer.split(), "seconds")
     if isinstance(io_manager, str):
         hdf5_instance = HDF5(io_manager)
         io_manager = IOManager(hdf5_instance)
@@ -86,6 +84,7 @@ def main(
 
     copy_instances = {}
     gener_instances = {}
+
     print("io_manager.read_parameters() call and config", timer.split(), "seconds")
     #######################################################################################
     # initialize STATE dicts
@@ -96,34 +95,30 @@ def main(
         state_empty["op_exec_lists"], state_empty["model_exec_list"], state_empty["dict_ix"], 
         state_empty["ts_ix"], state_empty["hsp_segments"]
     )
-    print("init_state_dicts()", timer.split(), "seconds")
+    print("state_class()", timer.split(), "seconds")
+    om_operations = om_init_state()  # set up operational model specific containers
+    print("om_operations()", timer.split(), "seconds")
     state_siminfo_hsp2(state, parameter_obj, siminfo, io_manager)
+    print("state_siminfo_hsp2()", timer.split(), "seconds")
     # Add support for dynamic functions to operate on STATE
     # - Load any dynamic components if present, and store variables on objects
     state_load_dynamics_hsp2(state, io_manager, siminfo)
-    print("state_load_dynamics_hsp2() call and config", timer.split(), "seconds")
     # Iterate through all segments and add crucial paths to state
     # before loading dynamic components that may reference them
-    state_init_hsp2(state, opseq, activities)
-    print("state_init_hsp2() call and config", timer.split(), "seconds")
+    state_init_hsp2(state, opseq, activities, om_operations)
+    # now initialize all state variables for mutable variables
+    hsp2_domain_dependencies(state, opseq, activities, om_operations, False)
     # - finally stash specactions in state, not domain (segment) dependent so do it once
-    state["specactions"] = specactions  # stash the specaction dict in state
-    om_init_state(state)  # set up operational model specific state entries
-    print("om_init_state() call and config", timer.split(), "seconds")
-    specl_load_state(state, io_manager, siminfo)  # traditional special actions
-    print("specl_load_state() call and config", timer.split(), "seconds")
+    specl_load_om(om_operations, specactions)  # load traditional special actions
     state_load_dynamics_om(
-        state, io_manager, siminfo
+        state, io_manager, siminfo, om_operations
     )  # operational model for custom python
-    print("state_load_dynamics_om() call and config", timer.split(), "seconds")
     # finalize all dynamically loaded components and prepare to run the model
-    state_om_model_run_prep(state, io_manager, siminfo)
-    print("state_om_model_run_prep() call and config", timer.split(), "seconds")
+    state_om_model_run_prep(opseq, activities, state, om_operations, siminfo)
     #######################################################################################
 
     # main processing loop
     msg(1, f"Simulation Start: {start}, Stop: {stop}")
-    tscat = {}
     for _, operation, segment, delt in opseq.itertuples():
         msg(2, f"{operation} {segment} DELT(minutes): {delt}")
         siminfo["delt"] = delt
@@ -414,11 +409,11 @@ def main(
                 if operation not in ["COPY", "GENER"]:
                     if activity == "HYDR":
                         errors, errmessages = function(
-                            io_manager, siminfo, ui, ts, ftables, state
+                            siminfo, ui, ts, ftables, state
                         )
                     elif activity == "SEDTRN" or activity == "SEDMNT":
                         errors, errmessages = function(
-                            io_manager, siminfo, ui, ts, state
+                            siminfo, ui, ts, state
                         )
                     elif activity != "RQUAL":
                         errors, errmessages = function(io_manager, siminfo, ui, ts)
