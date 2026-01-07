@@ -704,10 +704,14 @@ def iterate_models(
     return checksum
 
 
-@njit
+#@njit
 def pre_step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
+    if step < 3:
+        print("pre_step_model()")
     for i in model_exec_list:
         if op_tokens[i][0] == 12:
+            if step < 3:
+                print("pre_step_register() element", i)
             # register type data (like broadcast accumulators)
             pre_step_register(op_tokens[i], state_ix)
     return
