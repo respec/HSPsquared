@@ -111,6 +111,11 @@ def state_copy(statesrc, statedest):
     statedest.state_step_hydr = statesrc.state_step_hydr
     statedest.state_step_om = statesrc.state_step_om
 
+@njit(cache=True)
+def append_state_path(state_paths, var_path, var_ix):
+    state_paths[var_path] = var_ix
+    return state_paths
+
 class state_class:
     def __init__(self, state_ix, op_tokens, state_paths, op_exec_lists, model_exec_list, dict_ix, ts_ix, hsp_segments):
         self.num_ops = 0
@@ -222,7 +227,8 @@ class state_class:
         if var_path not in self.state_paths:
             # we need to add this to the state
             var_ix = self.append_state(var_value)
-            self.state_paths[var_path] = var_ix
+            self.state_paths = append_state_path(self.state_paths, var_path, var_ix)
+            
         else:
             var_ix = self.get_state_ix(var_path)
             self.state_ix[var_ix] = var_value
