@@ -226,8 +226,8 @@ def main(
 
                 msg(3, f"{activity}")
                 # Set context for dynamic executables and special actions
-                state_context_hsp2(statenb, operation, segment, activity)
-
+                state_context_hsp2(state, operation, segment, activity)
+                state_copy(state, statenb)
                 ui = model[(operation, activity, segment)]  # ui is a dictionary
                 if operation == "PERLND" and activity == "SEDMNT":
                     # special exception here to make CSNOFG available
