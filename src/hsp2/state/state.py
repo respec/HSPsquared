@@ -373,7 +373,7 @@ def state_context_hsp2(state, operation, segment, activity):
     (seg_name, seg_path) = state_segname(state, operation, segment, activity)
     #if seg_name not in state.hsp_segments.keys():
     if seg_name not in state.hsp_segments: # test this for njit
-        state.hsp_segments[seg_name] = append_numba_dict(state.hsp_segments, seg_path)
+        state.hsp_segments[seg_name] = append_numba_dict(state.hsp_segments[seg_name], state.hsp_segments, seg_path)
     state.domain = state_domain(state, operation, segment, activity)
     
 def state_domain(state, operation, segment, activity):
