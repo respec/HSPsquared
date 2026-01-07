@@ -400,17 +400,17 @@ def state_init_hsp2(state, opseq, activities, timer):
         if operation != "GENER" and operation != "COPY":
             for activity, function in activities[operation].items():
                 if activity == "HYDR":
+                    state_context_hsp2(state, operation, segment, activity)
                     print("HYDR state_init_hsp2()", timer.split(), "seconds")
-                    state_context_hsp2(state, operation, segment, activity)
                 elif activity == "SEDTRN":
+                    state_context_hsp2(state, operation, segment, activity)
                     print("SEDTRN state_init_hsp2()", timer.split(), "seconds")
-                    state_context_hsp2(state, operation, segment, activity)
                 elif activity == "SEDMNT":
+                    state_context_hsp2(state, operation, segment, activity)
                     print("SEDMNT state_init_hsp2()", timer.split(), "seconds")
-                    state_context_hsp2(state, operation, segment, activity)
                 elif activity == "RQUAL":
-                    print("RQUAL state_init_hsp2()", timer.split(), "seconds")
                     state_context_hsp2(state, operation, segment, activity)
+                    print("RQUAL state_init_hsp2()", timer.split(), "seconds")
 
 
 def state_load_dynamics_hsp2(state, io_manager, siminfo):
