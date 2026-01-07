@@ -96,7 +96,6 @@ def main(
         state_empty["op_exec_lists"], state_empty["model_exec_list"], state_empty["dict_ix"], 
         state_empty["ts_ix"], state_empty["hsp_segments"]
     )
-    state = state_empty # init_state_dicts() # automatically imported from state_fn_defaults
     print("init_state_dicts()", timer.split(), "seconds")
     state_siminfo_hsp2(state, parameter_obj, siminfo, io_manager)
     # Add support for dynamic functions to operate on STATE

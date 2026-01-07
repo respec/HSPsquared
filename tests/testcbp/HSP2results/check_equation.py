@@ -17,7 +17,7 @@ from hsp2.hsp2.om_sim_timer import timer_class
 
 timer = timer_class()
 
-fpath = "./tests/testcbp/HSP2results/PL3_5250_0001eq.h5"
+fpath = "./tests/testcbp/HSP2results/PL3_5250_0001.h5"
 # try also:
 # fpath = './tests/testcbp/HSP2results/JL1_6562_6560.h5'
 
@@ -55,7 +55,7 @@ state = state_class(
 )
 state = state_empty # init_state_dicts() # automatically imported from state_fn_defaults
 print("init_state_dicts()", timer.split(), "seconds")
-state_siminfo_hsp2(parameter_obj, siminfo, io_manager, state)
+state_siminfo_hsp2(state, parameter_obj, siminfo, io_manager)
 # Add support for dynamic functions to operate on STATE
 # - Load any dynamic components if present, and store variables on objects
 state_load_dynamics_hsp2(state, io_manager, siminfo)
