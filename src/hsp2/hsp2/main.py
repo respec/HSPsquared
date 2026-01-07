@@ -109,7 +109,7 @@ def main(
     print("state_load_dynamics_hsp2()", timer.split(), "seconds")
     # Iterate through all segments and add crucial paths to state
     # before loading dynamic components that may reference them
-    state_init_hsp2(state, opseq, activities)
+    state_init_hsp2(state, opseq, activities, timer)
     print("state_init_hsp2()", timer.split(), "seconds")
     # now initialize all state variables for mutable variables
     hsp2_domain_dependencies(state, opseq, activities, om_operations, False)
