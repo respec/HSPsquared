@@ -7,7 +7,7 @@ state_empty = {}  # shared state Dictionary, contains numba-ready Dicts
 state_empty["state_paths"] = Dict.empty(
     key_type=types.unicode_type, value_type=types.int64
 )
-state_empty["state_ix"] = float64(zeros(0))
+state_empty["state_ix"] = types.float64(zeros(0))
 state_empty["dict_ix"] = Dict.empty(key_type=types.int64, value_type=types.float64[:, :])
 state_empty["ts_ix"] = Dict.empty(key_type=types.int64, value_type=types.float64[:])
 state_empty["hsp_segments"] = Dict.empty(key_type=types.unicode_type, value_type=types.unicode_type)
