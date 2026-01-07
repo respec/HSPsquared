@@ -13,13 +13,11 @@ from hsp2.hsp2tools.readUCI import *
 from hsp2.hsp2.configuration import activities
 from src.hsp2.hsp2tools.commands import import_uci, run
 from pandas import read_hdf
-import time
+from hsp2.hsp2.om_sim_timer import timer_class
 
+timer = timer_class()
 
 fpath = "./tests/testcbp/HSP2results/PL3_5250_0001eq.h5"
-ucipath = "./tests/testcbp/HSP2results/PL3_5250_0001eq.uci"
-uci = readUCI(ucipath, fpath)
-
 # try also:
 # fpath = './tests/testcbp/HSP2results/JL1_6562_6560.h5'
 

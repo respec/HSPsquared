@@ -98,7 +98,7 @@ def main(
     )
     state = state_empty # init_state_dicts() # automatically imported from state_fn_defaults
     print("init_state_dicts()", timer.split(), "seconds")
-    state_siminfo_hsp2(parameter_obj, siminfo, io_manager, state)
+    state_siminfo_hsp2(state, parameter_obj, siminfo, io_manager, state)
     # Add support for dynamic functions to operate on STATE
     # - Load any dynamic components if present, and store variables on objects
     state_load_dynamics_hsp2(state, io_manager, siminfo)
