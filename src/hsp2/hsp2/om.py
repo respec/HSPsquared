@@ -704,7 +704,7 @@ def iterate_models(
     return checksum
 
 
-#@njit
+@njit(cache=True)
 def pre_step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
     if step < 3:
         print("pre_step_model()")
