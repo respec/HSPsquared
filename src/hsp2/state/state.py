@@ -106,38 +106,26 @@ def state_copy(statesrc, statedest):
     statedest.model_root_name = statesrc.model_root_name
 
 class state_class:
-    def __init__(self):
+    def __init__(self, state_ix, op_tokens, state_paths, op_exec_lists, model_exec_list, dict_ix, ts_ix, hsp_segments):
         self.num_ops = 0
         # IMPORTANT these are handled as nparray as numba Dict would be super slow. 
         # Note: in the type declaration above we are alloweed to use the shortened form op_tokens = int64(zeros((1,64)))
         #       but in jited class that throws an error and we have to use the form op_tokens.astype(int64)
         #       to do the type cast
-        state_ix = zeros(self.num_ops)
         self.state_ix = state_ix.astype(npfloat64)
-        op_tokens = zeros((self.num_ops, 64))
         self.op_tokens = op_tokens.astype(npint64)
         # TODO: move to individual objects in OM/RCHRES/PERLND/...
-        op_exec_lists = zeros((self.num_ops, 1024))
         self.op_exec_lists = op_exec_lists.astype(npint64)
         # TODO: is this even needed? Since each domain has it's own exec list?
-        model_exec_list = zeros(self.num_ops)
         self.model_exec_list = model_exec_list.astype(npint64)
         # Done with nparray initializations
         # this dict_ix approach is inherently slow, and should be replaced by some other np table type
         # on an as-needed basis if possible.  Especially for dataMatrix types which are supposed to be fast
         # state can still get values via get_state, by grabbing a reference object and then accessing it's storage
-        self.dict_ix = ntdict.empty(key_type=types.int64, value_type=types.float64[:, :])
-        self.dict_ix = ntdict.empty(key_type=types.int64, value_type=types.float64[:, :])
-        self.state_paths = ntdict.empty(
-            key_type=types.unicode_type, value_type=types.int64
-        )
-        self.hsp_segments = ntdict.empty(
-            key_type=types.unicode_type, value_type=types.unicode_type
-        )
-        self.ts_paths = ntdict.empty(
-            key_type=types.unicode_type, value_type=types.float64[:]
-        )
-        self.ts_ix = ntdict.empty(key_type=types.int64, value_type=types.float64[:])
+        self.dict_ix = dict_ix
+        self.ts_ix = ts_ix
+        self.state_paths = state_paths
+        self.hsp_segments = hsp_segments
         self.state_step_om = "disabled"
         self.state_step_hydr = "disabled"
         self.model_root_name = ""
