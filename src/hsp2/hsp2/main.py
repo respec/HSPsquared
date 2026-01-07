@@ -104,7 +104,7 @@ def main(
     print("state_load_dynamics_hsp2() call and config", timer.split(), "seconds")
     # Iterate through all segments and add crucial paths to state
     # before loading dynamic components that may reference them
-    state_init_hsp2(state, opseq, activities, timer)
+    state_init_hsp2(state, opseq, activities)
     print("state_init_hsp2() call and config", timer.split(), "seconds")
     # - finally stash specactions in state, not domain (segment) dependent so do it once
     state["specactions"] = specactions  # stash the specaction dict in state
