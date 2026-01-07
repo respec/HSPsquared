@@ -11,6 +11,7 @@ from numba import njit, types
 from numpy import int64
 from numba.experimental import jitclass
 import ctypes
+import time
 
 class SimTimer(ModelObject):
     def __init__(self, name, container, model_props=None, state=None):
@@ -141,7 +142,7 @@ def jitime():
     return current_time
 
 @jitclass(timer_spec)
-class timer_class():
+class timer_class_jit():
     def __init__(self):
         self.tstart = jitime()
     
@@ -149,6 +150,19 @@ class timer_class():
         self.tend = jitime()
         self.tsplit = self.tend - self.tstart
         self.tstart = jitime()
+        split = 0
+        if (self.tsplit > 0):
+            split = self.tsplit
+        return split
+
+class timer_class():
+    def __init__(self):
+        self.tstart = time.time()
+    
+    def split(self):
+        self.tend = time.time()
+        self.tsplit = self.tend - self.tstart
+        self.tstart = time.time()
         split = 0
         if (self.tsplit > 0):
             split = self.tsplit

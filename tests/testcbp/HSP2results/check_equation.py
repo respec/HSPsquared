@@ -13,6 +13,7 @@ from hsp2.hsp2tools.readUCI import *
 from hsp2.hsp2.configuration import activities
 from src.hsp2.hsp2tools.commands import import_uci, run
 from pandas import read_hdf
+import time
 
 
 fpath = "./tests/testcbp/HSP2results/PL3_5250_0001eq.h5"
@@ -28,33 +29,59 @@ uci = readUCI(ucipath, fpath)
 hdf5_instance = HDF5(fpath)
 io_manager = IOManager(hdf5_instance)
 
-uci_obj = io_manager.read_parameters()
-siminfo = uci_obj.siminfo
-opseq = uci_obj.opseq
-# Note: now that the UCI is read in and hdf5 loaded, you can see things like:
-# - hdf5_instance._store.keys() - all the paths in the UCI/hdf5
-# - finally stash specactions in state, not domain (segment) dependent so do it once
-# now load state and the special actions
-state = state_class()
-om_operations = om_init_state()
+parameter_obj = io_manager.read_parameters()
+opseq = parameter_obj.opseq
+ddlinks = parameter_obj.ddlinks
+ddmasslinks = parameter_obj.ddmasslinks
+ddext_sources = parameter_obj.ddext_sources
+ddgener = parameter_obj.ddgener
+model = parameter_obj.model
+siminfo = parameter_obj.siminfo
+ftables = parameter_obj.ftables
+specactions = parameter_obj.specactions
+monthdata = parameter_obj.monthdata
 
-state_siminfo_hsp2(state, uci_obj, siminfo, io_manager)
-# now initialize all state variables for mutable variables
-hsp2_domain_dependencies(state, opseq, activities, om_operations, True)
+start, stop = siminfo["start"], siminfo["stop"]
+
+copy_instances = {}
+gener_instances = {}
+print("io_manager.read_parameters() call and config", timer.split(), "seconds")
+#######################################################################################
+# initialize STATE dicts
+#######################################################################################
+# Set up Things in state that will be used in all modular activities like SPECL
+state = state_class(
+    state_empty["state_ix"], state_empty["op_tokens"], state_empty["state_paths"], 
+    state_empty["op_exec_lists"], state_empty["model_exec_list"], state_empty["dict_ix"], 
+    state_empty["ts_ix"], state_empty["hsp_segments"]
+)
+state = state_empty # init_state_dicts() # automatically imported from state_fn_defaults
+print("init_state_dicts()", timer.split(), "seconds")
+state_siminfo_hsp2(parameter_obj, siminfo, io_manager, state)
 # Add support for dynamic functions to operate on STATE
 # - Load any dynamic components if present, and store variables on objects
 state_load_dynamics_hsp2(state, io_manager, siminfo)
-
+print("state_load_dynamics_hsp2() call and config", timer.split(), "seconds")
 # Iterate through all segments and add crucial paths to state
 # before loading dynamic components that may reference them
-state_init_hsp2(state, opseq, activities)
+state_init_hsp2(state, opseq, activities, timer)
+print("state_init_hsp2() call and config", timer.split(), "seconds")
 # - finally stash specactions in state, not domain (segment) dependent so do it once
-specl_load_om(om_operations, uci_obj.specactions)  # load traditional special actions
+state["specactions"] = specactions  # stash the specaction dict in state
+om_init_state(state)  # set up operational model specific state entries
+print("om_init_state() call and config", timer.split(), "seconds")
+specl_load_state(state, io_manager, siminfo)  # traditional special actions
+print("specl_load_state() call and config", timer.split(), "seconds")
 state_load_dynamics_om(
-    state, io_manager, siminfo, om_operations
+    state, io_manager, siminfo
 )  # operational model for custom python
+print("state_load_dynamics_om() call and config", timer.split(), "seconds")
 # finalize all dynamically loaded components and prepare to run the model
-state_om_model_run_prep(opseq, activities, state, om_operations, siminfo)
+state_om_model_run_prep(state, io_manager, siminfo)
+print("state_om_model_run_prep() call and config", timer.split(), "seconds")
+#######################################################################################
+
+
 # Set up order of execution
 statenb = state_class_lite(0)
 state_copy(state, statenb)
