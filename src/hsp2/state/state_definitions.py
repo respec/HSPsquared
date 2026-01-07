@@ -2,6 +2,7 @@
 from numba import njit  # import the types
 from numba.typed import Dict
 from numba import types  # import the types
+from numpy import zeros
 
 state_empty = {}  # shared state Dictionary, contains numba-ready Dicts
 state_empty["state_paths"] = Dict.empty(
