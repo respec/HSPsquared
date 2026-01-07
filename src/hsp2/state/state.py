@@ -106,6 +106,8 @@ def state_copy(statesrc, statedest):
     statedest.hsp2_local_py = statesrc.hsp2_local_py
     statedest.model_root_name = statesrc.model_root_name
     statedest.hsp_segments = statesrc.hsp_segments
+    statedest.state_step_hydr = statesrc.state_step_hydr
+    statedest.state_step_om = statesrc.state_step_om
 
 class state_class:
     def __init__(self, state_ix, op_tokens, state_paths, op_exec_lists, model_exec_list, dict_ix, ts_ix, hsp_segments):
