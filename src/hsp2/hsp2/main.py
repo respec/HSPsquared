@@ -57,6 +57,7 @@ def main(
     None
 
     """
+    timer = timer_class()
     if isinstance(io_manager, str):
         hdf5_instance = HDF5(io_manager)
         io_manager = IOManager(hdf5_instance)
