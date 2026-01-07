@@ -99,11 +99,9 @@ def sedtrn(siminfo, parameters, ts, state):
     # else:
     #     from hsp2.state.state_fn_defaults import state_step_hydr
     # must split dicts out of state Dict since numba cannot handle mixed-type nested Dicts
-    # initialize the sedtrn paths in case they don't already reside here
-    sedtrn_init_ix(state, state.domain)
     # Aggregate the list of all SEDTRN end point dependencies
     activity_path = state.domain + "/" + 'SEDTRN'
-    activity_id = state.get_state_ix(activity_path)
+    activity_id = get_state_ix(state.state_paths, activity_path)
     model_exec_list = state.op_exec_lists[activity_id]
     #######################################################################################
 

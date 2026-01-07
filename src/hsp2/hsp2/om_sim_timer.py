@@ -8,10 +8,9 @@ from hsp2.hsp2.om import ModelObject
 from hsp2.hsp2.om_model_object import ModelObject
 from pandas import DataFrame
 from numba import njit, types
-from numpy import int64, float64
+from numpy import int64
 from numba.experimental import jitclass
 import ctypes
-import time
 
 class SimTimer(ModelObject):
     def __init__(self, name, container, model_props=None, state=None):

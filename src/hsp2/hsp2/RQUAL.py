@@ -6,14 +6,13 @@ License: LGPL2
 import numpy as np
 from numba import njit, types
 from numba.typed import Dict
-from numpy import full, zeros, asarray
+from numpy import full, zeros
 
 from hsp2.hsp2.RQUAL_Class import RQUAL_Class
 from hsp2.hsp2.utilities import initm, initmd, make_numba_dict
 
 # the following imports added to handle special actions
-from hsp2.state.state import rqual_init_ix, rqual_state_vars
-from hsp2.hsp2.om import model_domain_dependencies
+from hsp2.state.state import get_state_ix
 
 ERRMSGS_oxrx = (
     "OXRX: Warning -- SATDO is less than zero. This usually occurs when water temperature is very high (above ~66 deg. C). This usually indicates an error in input GATMP (or TW, if HTRCH is not being simulated).",
@@ -251,11 +250,9 @@ def rqual(
     #######################################################################################
     # the following section (1 of 3) added to RQUAL by pbd to handle special actions
     #######################################################################################
-    # initialize the rqual paths in case they don't already reside here
-    rqual_init_ix(state, state.domain)
     # Aggregate the list of all SEDTRN end point dependencies
     activity_path = state.domain + "/" + 'SEDTRN'
-    activity_id = state.get_state_ix(activity_path)
+    activity_id = get_state_ix(state.state_paths, activity_path)
     model_exec_list = state.op_exec_lists[activity_id]
     #######################################################################################
 
