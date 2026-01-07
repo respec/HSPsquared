@@ -111,10 +111,17 @@ def state_copy(statesrc, statedest):
     statedest.state_step_hydr = statesrc.state_step_hydr
     statedest.state_step_om = statesrc.state_step_om
 
+"""
+This function is a simple numba compiled fn to append to a numba dict quickly
+This is necessary because there is no way to just cast a normal dictionary to a numba Dict
+And appending a numba Dict in regular python is super super slow.
+If this does not provide good enough performance when adding a large amount of variables
+We may consider using a jitted loop to copy all elements from a dictionary to Dict
+"""
 @njit(cache=True)
-def append_state_path(state_paths, var_path, var_ix):
-    state_paths[var_path] = var_ix
-    return state_paths
+def append_numba_dict(var_dict, var_key, var_val):
+    var_dict[var_key] = var_val
+    return var_dict
 
 class state_class:
     def __init__(self, state_ix, op_tokens, state_paths, op_exec_lists, model_exec_list, dict_ix, ts_ix, hsp_segments):
@@ -227,7 +234,7 @@ class state_class:
         if var_path not in self.state_paths:
             # we need to add this to the state
             var_ix = self.append_state(var_value)
-            self.state_paths = append_state_path(self.state_paths, var_path, var_ix)
+            self.state_paths = append_numba_dict(self.state_paths, var_path, var_ix)
             
         else:
             var_ix = self.get_state_ix(var_path)
@@ -366,7 +373,7 @@ def state_context_hsp2(state, operation, segment, activity):
     (seg_name, seg_path) = state_segname(state, operation, segment, activity)
     #if seg_name not in state.hsp_segments.keys():
     if seg_name not in state.hsp_segments: # test this for njit
-        state.hsp_segments[seg_name] = seg_path
+        state.hsp_segments[seg_name] = append_numba_dict(state.hsp_segments, seg_path)
     state.domain = state_domain(state, operation, segment, activity)
     
 def state_domain(state, operation, segment, activity):
@@ -380,7 +387,6 @@ def state_segname(state, operation, segment, activity):
     seg_path = "/STATE/" + state.model_root_name + "/" + seg_name 
     return (seg_name, seg_path)
 
-#@njit(cache=True)
 def state_init_hsp2(state, opseq, activities, timer):
     # This sets up the state entries for all state compatible HSP2 model variables
     print("STATE initializing contexts.")
