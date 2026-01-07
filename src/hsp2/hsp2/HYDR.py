@@ -394,12 +394,18 @@ def _hydr_(
         state.state_ix[volev_ix] = volev
         # - these if statements may be irrelevant if default functions simply return
         #   when no objects are defined.
+        if step < 3:
+            print("Calling pre_step_model")
         if state.state_step_om == "enabled":
             pre_step_model(model_exec_list, state.op_tokens, state.state_ix, state.dict_ix, state.ts_ix, step)
+        if step < 3:
+            print("Calling state_step_hydr")
         if state.state_step_hydr == "enabled":
             state_step_hydr(
                 state, step
             )
+        if step < 3:
+            print("Calling step_model")
         if state.state_step_om == "enabled":
             # print("trying to execute state_step_om()")
             # model_exec_list contains the model exec list in dependency order
