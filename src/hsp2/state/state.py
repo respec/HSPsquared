@@ -383,6 +383,7 @@ def state_init_hsp2(state, opseq, activities, timer):
         seg_path = "/STATE/" + state.model_root_name + "/" + seg_name
         # set up named paths for model operations
         state.set_state(seg_path, 0.0)
+        print("set_state()", seg_path, timer.split(), "seconds")
         print("adding", seg_path)
         if operation != "GENER" and operation != "COPY":
             for activity, function in activities[operation].items():
