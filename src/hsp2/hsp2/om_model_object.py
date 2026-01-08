@@ -10,7 +10,7 @@ from numpy import asarray, int64, pad, zeros
 from pandas import HDFStore
 
 from hsp2.hsp2.om import is_float_digit
-from hsp2.state.state import get_state_ix, set_state
+from hsp2.state.state import nkey_exists
 
 
 class ModelObject:
