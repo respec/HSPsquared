@@ -87,8 +87,9 @@ def main(
 
     copy_instances = {}
     gener_instances = {}
+    section_timing = {}
 
-    print("io_manager.read_parameters() call and config", timer.split(), "seconds")
+    section_timing["io_manager.read_parameters() call and config"] = str(timer.split()) + "seconds"
     #######################################################################################
     # initialize STATE dicts
     #######################################################################################
@@ -98,32 +99,24 @@ def main(
         state_empty["op_exec_lists"], state_empty["model_exec_list"], state_empty["dict_ix"], 
         state_empty["ts_ix"], state_empty["hsp_segments"]
     )
-    print("state_class()", timer.split(), "seconds")
     om_operations = om_init_state()  # set up operational model specific containers
-    print("om_operations()", timer.split(), "seconds")
     state_siminfo_hsp2(state, parameter_obj, siminfo, io_manager)
-    print("state_siminfo_hsp2()", timer.split(), "seconds")
     # Add support for dynamic functions to operate on STATE
     # - Load any dynamic components if present, and store variables on objects
     state_load_dynamics_hsp2(state, io_manager, siminfo)
-    print("state_load_dynamics_hsp2()", timer.split(), "seconds")
     # Iterate through all segments and add crucial paths to state
     # before loading dynamic components that may reference them
     state_init_hsp2(state, opseq, activities, timer)
-    print("state_init_hsp2()", timer.split(), "seconds")
     # now initialize all state variables for mutable variables
     hsp2_domain_dependencies(state, opseq, activities, om_operations, False)
-    print("hsp2_domain_dependencies()", timer.split(), "seconds")
     # - finally stash specactions in state, not domain (segment) dependent so do it once
     specl_load_om(om_operations, specactions)  # load traditional special actions
-    print("specl_load_om()", timer.split(), "seconds")
     state_load_dynamics_om(
         state, io_manager, siminfo, om_operations
     )  # operational model for custom python
-    print("state_load_dynamics_om()", timer.split(), "seconds")
     # finalize all dynamically loaded components and prepare to run the model
     state_om_model_run_prep(opseq, activities, state, om_operations, siminfo)
-    print("state_om_model_run_prep()", timer.split(), "seconds")
+    section_timing["state om initialization()"] = str(timer.split()) + "seconds"
     statenb = state_class_lite(0)
     state_copy(state, statenb)
     #######################################################################################
@@ -539,6 +532,7 @@ def main(
                             jupyterlab,
                             outstep_phcarb,
                         )
+        section_timing[operation + segment] = str(timer.split()) + "seconds"
 
     msglist = msg(1, "Done", final=True)
 
