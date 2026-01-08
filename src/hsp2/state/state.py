@@ -248,7 +248,7 @@ class state_class:
         else:
             var_ix = self.get_state_ix(var_path)
             #self.state_ix[var_ix] = var_value
-            set_numba_value(self.state_ix, var_value, var_ix)
+            set_numba_value(self.state_ix, var_ix, var_value)
             #append_numba_dict(self.state_ix, var_value, var_ix)
         if debug:
             print("Setting state_ix[", var_ix, "], to", var_value)
