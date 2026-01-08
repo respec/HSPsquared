@@ -96,7 +96,7 @@ class ModelLinkage(ModelObject):
         # self.insure_path(self, self.right_path)
         # the left path, if this is type 4 or 5, is a push, so we must require it
         if (self.link_type == 4) or (self.link_type == 5) or (self.link_type == 6):
-            print("ModelLinkage", self.name, "insuring register with path", self.left_path)
+            #print("ModelLinkage", self.name, "insuring register with path", self.left_path)
             push_pieces = self.left_path.split("/")
             push_name = push_pieces[len(push_pieces) - 1]
             left_object = self.get_object(self.left_path)
