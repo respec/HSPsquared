@@ -114,12 +114,7 @@ class ModelLinkage(ModelObject):
                 var_register = self.insure_register(
                     push_name, 0.0, left_parent_object, self.left_path, False
                 )
-                print(
-                    "Created register",
-                    var_register.name,
-                    "with path",
-                    var_register.state_path,
-                )
+                #print("Created register", var_register.name, "with path", var_register.state_path)
                 # add already created objects as inputs
             var_register.add_object_input(self.name, self, 1)
         # Now, make sure that all time series paths can be found and loaded
