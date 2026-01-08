@@ -683,7 +683,7 @@ def hsp2_domain_dependencies(state, opseq, activities, om_operations, debug=Fals
                 # register the dependencies for each activity so we can load once here
                 # then just iterate through them at runtime without re-querying
                 state.set_exec_list(activity_id, op_exec_list)
-            print(seg_name, timer.split(), 'seconds')
+            print("hsp2_domain_dependencies:", seg_name, timer.split(), 'seconds')
 
 
 def save_object_ts(io_manager, siminfo, op_tokens, ts_ix, ts):
