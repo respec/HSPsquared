@@ -6,6 +6,7 @@ during a model simulation.
 
 from hsp2.hsp2.om import ModelObject
 from hsp2.hsp2.om_model_object import ModelObject
+from hsp2.state.state import set_numba_value
 from pandas import DataFrame
 from numba import njit
 from numpy import int64
@@ -56,7 +57,7 @@ class SimTimer(ModelObject):
             md_ix,
             dts_ix,
         ]
-        self.state.dict_ix[self.ix] = self.time_array
+        self.state.dict_ix = set_numba_value(self.state.dict_ix, self.ix, self.time_array)
 
         return self.ix
 
@@ -70,7 +71,7 @@ class SimTimer(ModelObject):
         # this puts the tokens into the global simulation queue
         # can be customized by subclasses to add multiple lines if needed.
         super().add_op_tokens()
-        self.state.dict_ix[self.ix] = self.time_array
+        self.state.dict_ix = set_numba_value(self.state.dict_ix, self.ix, self.time_array)
 
     def dti_to_time_array(self, siminfo):
         dateindex = siminfo["tindex"]
