@@ -8,7 +8,7 @@ import os
 import time
 
 import numpy as np
-import pandas as pd
+from pandas import Series, DataFrame
 from numba import njit  # import the types
 from numpy import zeros
 
@@ -615,7 +615,7 @@ def model_input_dependencies(state, exec_list, model_object_cache, only_runnable
                 mello = mello + mel
     if only_runnable == True:
         mello = ModelObject.runnable_op_list(state.op_tokens, mello)
-    mello = pd.Series(mello).drop_duplicates().tolist()
+    mello = Series(mello).drop_duplicates().tolist()
     return mello
 
 
@@ -661,7 +661,7 @@ def hsp2_domain_dependencies(state, opseq, activities, om_operations, debug=Fals
                 seg_path = "/STATE/" + state.model_root_name + "/" + seg_name
                 activity_path = seg_path + "/" + activity
                 activity_id = state.set_state(activity_path, 0.0)
-                ep_list = []
+                ep_list = DataFrame()
                 if debug: 
                     print("Getting init_ix for", seg_path, activity)
                 if activity == "HYDR":
@@ -687,7 +687,7 @@ def save_object_ts(io_manager, siminfo, op_tokens, ts_ix, ts):
     # Decide on using from utilities.py:
     # - save_timeseries(io_manager, ts, savedict, siminfo, saveall, operation, segment, activity, compress=True)
     # Or, skip the save_timeseries wrapper and call write_ts() directly in io.py:
-    #  write_ts(self, data_frame:pd.DataFrame, save_columns: List[str], category:Category, operation:Union[str,None]=None, segment:Union[str,None]=None, activity:Union[str,None]=None)
+    #  write_ts(self, data_frame:DataFrame, save_columns: List[str], category:Category, operation:Union[str,None]=None, segment:Union[str,None]=None, activity:Union[str,None]=None)
     # see line 317 in utilities.py for use example of write_ts()
     x = 0  # dummy
     return
