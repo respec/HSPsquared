@@ -190,7 +190,9 @@ def state_om_model_root_object(state, om_operations, siminfo):
 
 def state_om_model_run_prep(opseq, activities, state, om_operations, siminfo):
     # insure model base is set
+    timer = timer_class()
     state_om_model_root_object(state, om_operations, siminfo)
+    print("state_om_model_root_object", timer.split())
     # now instantiate and link objects
     # om_operations['model_data'] has alread been prepopulated from json, .py files, hdf5, etc.
     model_root_object = om_operations["model_root_object"]
@@ -198,12 +200,14 @@ def state_om_model_run_prep(opseq, activities, state, om_operations, siminfo):
     model_loader_recursive(
         om_operations["model_data"], model_root_object, state, model_object_cache
     )
+    print("model_loader_recursive", timer.split())
     # print("Loaded objects & paths: insures all paths are valid, connects models as inputs")
     # both state['model_object_cache'] and the model_object_cache property of the ModelObject class def
     # will hold a global repo for this data this may be redundant?  They DO point to the same datset?
     # since this is a function that accepts state as an argument and these were both set in state_load_dynamics_om
     # we can assume they are there and functioning
     model_path_loader(model_object_cache)
+    print("model_path_loader", timer.split())
     # len() will be 1 if we only have a simtimer, but > 1 if we have a river being added
     model_exec_list = state.model_exec_list
     # put all objects in token form for fast runtime execution and sort according to dependency order
@@ -216,6 +220,7 @@ def state_om_model_run_prep(opseq, activities, state, om_operations, siminfo):
     #    len(model_root_object.state.state_ix)
     # )
     model_tokenizer_recursive(model_root_object, model_object_cache, model_exec_list)
+    print("model_tokenizer_recursive", timer.split())
     # op_tokens = model_root_object.state.op_tokens
     # print("op_tokens afer tokenizing", op_tokens)
     # model_exec_list is the ordered list of component operations
@@ -237,7 +242,9 @@ def state_om_model_run_prep(opseq, activities, state, om_operations, siminfo):
         )
         # print("Exec list:", model_exec_list)
     # Now make sure that all HSP2 vars that can be affected by state have
+    print("remaining hsp2 settings", timer.split())
     hsp2_domain_dependencies(state, opseq, activities, om_operations, False)
+    print("hsp2_domain_dependencies", timer.split())
     return
 
 
@@ -654,7 +661,6 @@ def model_domain_dependencies(
 def hsp2_domain_dependencies(state, opseq, activities, om_operations, debug=False):
     # This sets up the state entries for all state compatible HSP2 model variables
     # print("STATE initializing contexts.")
-    timer = timer_class()
     for _, operation, segment, delt in opseq.itertuples():
         if operation != "GENER" and operation != "COPY":
             for activity, function in activities[operation].items():
@@ -683,7 +689,6 @@ def hsp2_domain_dependencies(state, opseq, activities, om_operations, debug=Fals
                 # register the dependencies for each activity so we can load once here
                 # then just iterate through them at runtime without re-querying
                 state.set_exec_list(activity_id, op_exec_list)
-            print("hsp2_domain_dependencies:", seg_name, timer.split(), 'seconds')
 
 
 def save_object_ts(io_manager, siminfo, op_tokens, ts_ix, ts):
