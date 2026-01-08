@@ -519,7 +519,7 @@ def sedtrn_state_vars():
 def sedtrn_init_ix(state, domain):
     # get a list of keys for all sedtrn state variables
     sedtrn_state = sedtrn_state_vars()
-    sedtrn_ix = ntdict.empty(key_type=types.unicode_type, value_type=types.int64)
+    sedtrn_ix = DataFrame()
     for i in sedtrn_state:
         # var_path = f'{domain}/{i}'
         var_path = domain + "/" + i
@@ -535,7 +535,7 @@ def sedmnt_state_vars():
 def sedmnt_init_ix(state, domain):
     # get a list of keys for all sedmnt state variables
     sedmnt_state = sedmnt_state_vars()
-    sedmnt_ix = ntdict.empty(key_type=types.unicode_type, value_type=types.int64)
+    sedmnt_ix = DataFrame()
     for i in sedmnt_state:
         var_path = domain + "/" + i
         sedmnt_ix[i] = state.set_state(var_path, 0.0)

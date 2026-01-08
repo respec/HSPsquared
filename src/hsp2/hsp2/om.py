@@ -666,7 +666,6 @@ def hsp2_domain_dependencies(state, opseq, activities, om_operations, debug=Fals
                     print("Getting init_ix for", seg_path, activity)
                 if activity == "HYDR":
                     ep_list = hydr_init_ix(state, seg_path)
-                    ep_list - ep_list.to_numpy()
                 elif activity == "SEDTRN":
                     ep_list = sedtrn_init_ix(state, seg_path)
                 elif activity == "SEDMNT":
@@ -674,6 +673,7 @@ def hsp2_domain_dependencies(state, opseq, activities, om_operations, debug=Fals
                 elif activity == "RQUAL":
                     ep_list = rqual_init_ix(state, seg_path)
                 # Register list of elements to execute if any
+                ep_list = ep_list.to_numpy()
                 op_exec_list = model_domain_dependencies(
                     om_operations, state, seg_path, ep_list, True, debug
                 )
