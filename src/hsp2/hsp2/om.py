@@ -164,17 +164,21 @@ def state_load_dynamics_om(state, io_manager, siminfo, om_operations):
 
 def state_om_model_root_object(state, om_operations, siminfo):
     # Create the base that everything is added to. this object does nothing except host the rest.
+    timer = timer_class()
     if "model_root_object" not in om_operations.keys():
         model_root_object = ModelObject(
             state.model_root_name, False, {}, state, om_operations["model_object_cache"]
         )  # we give this no name so that it does not interfer with child paths like timer, year, etc (i.e. /STATE/year, ...)
         om_operations["model_root_object"] = model_root_object
         # set up the timer as the first element
-    model_root_object = om_operations["model_root_object"]
+    else:
+        model_root_object = om_operations["model_root_object"]
+    print("model_root_object", timer.split())
     if "/STATE/timer" not in state.state_paths.keys():
         timer_props = siminfo
         timer_props["state_path"] = "/STATE/timer"
         timer = SimTimer("timer", model_root_object, timer_props)
+    print("timer", timer.split())
     # add base object for the HSP2 domains and other things already added to state so they can be influenced
     for seg_name, seg_path in state.hsp_segments.items():
         if seg_path not in om_operations["model_object_cache"].keys():
@@ -186,6 +190,7 @@ def state_om_model_root_object(state, om_operations, siminfo):
             # don't use model names for anything, but might be more appropriately made as full path
             segment = ModelObject(seg_name, model_root_object, {})
             om_operations["model_object_cache"][segment.state_path] = segment
+    print("Segment Objects", timer.split())
 
 
 def state_om_model_run_prep(opseq, activities, state, om_operations, siminfo):
