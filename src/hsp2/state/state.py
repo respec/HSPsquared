@@ -235,11 +235,10 @@ class state_class:
         If the variable does not yet exist, create it.
         Returns the integer key of the variable in the state_ix Dict
         """
-        if var_path not in self.state_paths:
+        if not nkey_exists(self.state_paths, var_path):
             # we need to add this to the state
             var_ix = self.append_state(var_value)
             self.state_paths = append_numba_dict(self.state_paths, var_path, var_ix)
-            
         else:
             var_ix = self.get_state_ix(var_path)
             self.state_ix[var_ix] = var_value
@@ -399,21 +398,16 @@ def state_init_hsp2(state, opseq, activities, timer):
         seg_path = "/STATE/" + state.model_root_name + "/" + seg_name
         # set up named paths for model operations
         state.set_state(seg_path, 0.0)
-        print("set_state()", seg_path, timer.split(), "seconds")
         if operation != "GENER" and operation != "COPY":
             for activity, function in activities[operation].items():
                 if activity == "HYDR":
                     state_context_hsp2(state, operation, segment, activity)
-                    print("HYDR state_init_hsp2()", timer.split(), "seconds")
                 elif activity == "SEDTRN":
                     state_context_hsp2(state, operation, segment, activity)
-                    print("SEDTRN state_init_hsp2()", timer.split(), "seconds")
                 elif activity == "SEDMNT":
                     state_context_hsp2(state, operation, segment, activity)
-                    print("SEDMNT state_init_hsp2()", timer.split(), "seconds")
                 elif activity == "RQUAL":
                     state_context_hsp2(state, operation, segment, activity)
-                    print("RQUAL state_init_hsp2()", timer.split(), "seconds")
 
 
 def state_load_dynamics_hsp2(state, io_manager, siminfo):
