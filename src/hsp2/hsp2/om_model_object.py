@@ -312,7 +312,7 @@ class ModelObject:
         if nkey_exists(self.state.state_paths, var_name):
             # return self.state['state_paths'][var_name]
             return var_name
-        print("Cannot find var in global scope", self.state_path, "var", var_name)
+        #print("Cannot find var in global scope", self.state_path, "var", var_name)
         return False
 
     def constant_or_path(self, keyname, keyval, trust=False):
