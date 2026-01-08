@@ -501,7 +501,7 @@ def hydr_state_vars():
 def hydr_init_ix(state, domain, debug = False):
     # get a list of keys for all hydr state variables
     hydr_state = hydr_state_vars()
-    hydr_ix = ntdict.empty(key_type=types.unicode_type, value_type=types.int64)
+    hydr_ix = np.asarray(zeros(1), dtype="int64") #ntdict.empty(key_type=types.unicode_type, value_type=types.int64)
     for i in hydr_state:
         # var_path = f'{domain}/{i}'
         var_path = domain + "/" + i
