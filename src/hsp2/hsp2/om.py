@@ -666,6 +666,7 @@ def hsp2_domain_dependencies(state, opseq, activities, om_operations, debug=Fals
                     print("Getting init_ix for", seg_path, activity)
                 if activity == "HYDR":
                     ep_list = hydr_init_ix(state, seg_path)
+                    ep_list - ep_list.to_numpy()
                 elif activity == "SEDTRN":
                     ep_list = sedtrn_init_ix(state, seg_path)
                 elif activity == "SEDMNT":
