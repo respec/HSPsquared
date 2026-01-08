@@ -235,7 +235,8 @@ class state_class:
         If the variable does not yet exist, create it.
         Returns the integer key of the variable in the state_ix Dict
         """
-        if not nkey_exists(self.state_paths, var_path):
+        #if not nkey_exists(self.state_paths, var_path):
+        if var_path not in self.state_paths:
             # we need to add this to the state
             var_ix = self.append_state(var_value)
             self.state_paths = append_numba_dict(self.state_paths, var_path, var_ix)
