@@ -34,7 +34,7 @@ from hsp2.hsp2.om import (
     state_om_model_run_finish,
     hsp2_domain_dependencies
 )
-from hsp2.hsp2.om_sim_timer import timer_class
+from hsp2.hsp2.om_timer import timer_class
 from hsp2.hsp2.SPECL import specl_load_om
 from hsp2.state.state_definitions import state_empty
 from hsp2.hsp2io.io import IOManager, SupportsReadTS, Category

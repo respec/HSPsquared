@@ -11,7 +11,7 @@ import numpy as np
 from pandas import Series, DataFrame
 from numba import njit  # import the types
 from numpy import zeros
-from hsp2.hsp2.om_sim_timer import timer_class
+from hsp2.hsp2.om_timer import timer_class
 
 from hsp2.state.state import (
     append_state,
