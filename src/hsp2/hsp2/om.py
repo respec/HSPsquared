@@ -11,6 +11,7 @@ import numpy as np
 from pandas import Series, DataFrame
 from numba import njit  # import the types
 from numpy import zeros
+from hsp2.hsp2.om_sim_timer import timer_class
 
 from hsp2.state.state import (
     append_state,
@@ -653,6 +654,7 @@ def model_domain_dependencies(
 def hsp2_domain_dependencies(state, opseq, activities, om_operations, debug=False):
     # This sets up the state entries for all state compatible HSP2 model variables
     # print("STATE initializing contexts.")
+    timer = timer_class()
     for _, operation, segment, delt in opseq.itertuples():
         if operation != "GENER" and operation != "COPY":
             for activity, function in activities[operation].items():
@@ -681,6 +683,7 @@ def hsp2_domain_dependencies(state, opseq, activities, om_operations, debug=Fals
                 # register the dependencies for each activity so we can load once here
                 # then just iterate through them at runtime without re-querying
                 state.set_exec_list(activity_id, op_exec_list)
+            print(seg_name, timer.split(), 'seconds')
 
 
 def save_object_ts(io_manager, siminfo, op_tokens, ts_ix, ts):
