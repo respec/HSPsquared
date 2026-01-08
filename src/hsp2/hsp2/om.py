@@ -173,12 +173,12 @@ def state_om_model_root_object(state, om_operations, siminfo):
         # set up the timer as the first element
     else:
         model_root_object = om_operations["model_root_object"]
-    print("model_root_object", timer.split())
+    #print("model_root_object", timer.split())
     if "/STATE/timer" not in state.state_paths.keys():
         timer_props = siminfo
         timer_props["state_path"] = "/STATE/timer"
         sim_timer = SimTimer("timer", model_root_object, timer_props)
-    print("timer", timer.split())
+    #print("timer", timer.split())
     # add base object for the HSP2 domains and other things already added to state so they can be influenced
     for seg_name, seg_path in state.hsp_segments.items():
         if seg_path not in om_operations["model_object_cache"].keys():
@@ -190,14 +190,12 @@ def state_om_model_root_object(state, om_operations, siminfo):
             # don't use model names for anything, but might be more appropriately made as full path
             segment = ModelObject(seg_name, model_root_object, {})
             om_operations["model_object_cache"][segment.state_path] = segment
-    print("Segment Objects", timer.split())
 
 
 def state_om_model_run_prep(opseq, activities, state, om_operations, siminfo):
     # insure model base is set
     timer = timer_class()
     state_om_model_root_object(state, om_operations, siminfo)
-    print("state_om_model_root_object", timer.split())
     # now instantiate and link objects
     # om_operations['model_data'] has alread been prepopulated from json, .py files, hdf5, etc.
     model_root_object = om_operations["model_root_object"]
@@ -205,14 +203,13 @@ def state_om_model_run_prep(opseq, activities, state, om_operations, siminfo):
     model_loader_recursive(
         om_operations["model_data"], model_root_object, state, model_object_cache
     )
-    print("model_loader_recursive", timer.split())
+    #print("model_loader_recursive", timer.split())
     # print("Loaded objects & paths: insures all paths are valid, connects models as inputs")
     # both state['model_object_cache'] and the model_object_cache property of the ModelObject class def
     # will hold a global repo for this data this may be redundant?  They DO point to the same datset?
     # since this is a function that accepts state as an argument and these were both set in state_load_dynamics_om
     # we can assume they are there and functioning
     model_path_loader(model_object_cache)
-    print("model_path_loader", timer.split())
     # len() will be 1 if we only have a simtimer, but > 1 if we have a river being added
     model_exec_list = state.model_exec_list
     # put all objects in token form for fast runtime execution and sort according to dependency order
@@ -225,7 +222,7 @@ def state_om_model_run_prep(opseq, activities, state, om_operations, siminfo):
     #    len(model_root_object.state.state_ix)
     # )
     model_tokenizer_recursive(model_root_object, model_object_cache, model_exec_list)
-    print("model_tokenizer_recursive", timer.split())
+    #print("model_tokenizer_recursive", timer.split())
     # op_tokens = model_root_object.state.op_tokens
     # print("op_tokens afer tokenizing", op_tokens)
     # model_exec_list is the ordered list of component operations
@@ -247,9 +244,7 @@ def state_om_model_run_prep(opseq, activities, state, om_operations, siminfo):
         )
         # print("Exec list:", model_exec_list)
     # Now make sure that all HSP2 vars that can be affected by state have
-    print("remaining hsp2 settings", timer.split())
     hsp2_domain_dependencies(state, opseq, activities, om_operations, False)
-    print("hsp2_domain_dependencies", timer.split())
     return
 
 
