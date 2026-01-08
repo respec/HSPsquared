@@ -562,7 +562,7 @@ def rqual_state_vars():
 def rqual_init_ix(state, domain):
     # get a list of keys for all rqual state variables
     rqual_state = rqual_state_vars()
-    rqual_ix = ntdict.empty(key_type=types.unicode_type, value_type=types.int64)
+    rqual_ix = DataFrame()
     for i in rqual_state:
         var_path = domain + "/" + i
         rqual_ix[i] = state.set_state(var_path, 0.0)
