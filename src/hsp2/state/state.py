@@ -123,6 +123,10 @@ def append_numba_dict(var_dict, var_key, var_val):
     var_dict[var_key] = var_val
     return var_dict
 
+@njit(cache=True)
+def nkey_exists(var_dict, var_key):
+    return (var_key in var_dict)
+
 class state_class:
     def __init__(self, state_ix, op_tokens, state_paths, op_exec_lists, model_exec_list, dict_ix, ts_ix, hsp_segments):
         self.num_ops = 0
@@ -372,7 +376,7 @@ def state_context_hsp2(state, operation, segment, activity):
     # insure that there is a model object container
     (seg_name, seg_path) = state_segname(state, operation, segment, activity)
     #if seg_name not in state.hsp_segments.keys():
-    if seg_name not in state.hsp_segments: # test this for njit
+    if not nkey_exists(state.hsp_segments, seg_name): # test this for njit
         state.hsp_segments = append_numba_dict(state.hsp_segments, seg_name, seg_path)
     state.domain = state_domain(state, operation, segment, activity)
     
