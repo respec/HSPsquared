@@ -299,7 +299,7 @@ class ModelObject:
         if nkey_exists(self.state.state_paths, self.state_path + "/" + var_name):
             return self.state_path + "/" + var_name
         if local_only:
-            print("Cannot find var", var_name, "in local scope", self.name)
+            #print("Cannot find var", var_name, "in local scope", self.name)
             return False  # we are limiting the scope, so just return
         # check parent for name
         if not (self.container == False):
