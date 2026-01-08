@@ -501,7 +501,7 @@ def hydr_state_vars():
 def hydr_init_ix(state, domain, debug = False):
     # get a list of keys for all hydr state variables
     hydr_state = hydr_state_vars()
-    hydr_ix = DataFrame
+    hydr_ix = DataFrame()
     for i in hydr_state:
         # var_path = f'{domain}/{i}'
         var_path = domain + "/" + i
