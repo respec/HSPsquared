@@ -296,7 +296,7 @@ class ModelObject:
         if var_name in self.inputs.keys():
             return self.inputs[var_name]
         # check for state vars in my path + var_name
-        if (self.state_path + "/" + var_name) in self.state.state_paths:
+        if nkey_exists(self.state.state_paths, self.state_path + "/" + var_name):
             return self.state_path + "/" + var_name
         if local_only:
             print("Cannot find var", var_name, "in local scope", self.name)
@@ -309,7 +309,7 @@ class ModelObject:
         if ("/STATE/" + var_name) in self.state.state_paths:
             return "/STATE/" + var_name
         # check for full paths
-        if var_name in self.state.state_paths:
+        if nkey_exists(self.state.state_paths, var_name):
             # return self.state['state_paths'][var_name]
             return var_name
         print("Cannot find var in global scope", self.state_path, "var", var_name)
