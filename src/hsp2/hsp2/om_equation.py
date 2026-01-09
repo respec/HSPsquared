@@ -450,9 +450,9 @@ def step_equation(op_token, state_ix, step):
     # handle special equation settings like "non-negative", etc.
     non_neg = op_token[2]
     min_ix = op_token[3]
-    num_ops = op_token[
-        4
-    ]  # this index is equal to the number of ops common to all classes + 1.  See om_model_object for base ops and adjust
+    # this index is equal to the number of ops common to all classes + 1.
+    #  See om_model_object for base ops and adjust
+    num_ops = op_token[4] 
     op_loc = 5  # where do the operators and operands start in op_token
     # is the below faster since it avoids a brief loop and a couple ifs for 2 op equations?
     if num_ops == 1:
