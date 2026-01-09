@@ -546,6 +546,7 @@ def sedmnt_init_ix(state, domain):
     return sedmnt_ix
 
 
+@njit(cache=True)
 def rqual_state_vars():
     rqual_state = [
         "DOX",
@@ -562,8 +563,6 @@ def rqual_state_vars():
     ]
     return rqual_state
 
-
-@njit(cache=True)
 def rqual_init_ix(state, domain):
     # get a list of keys for all rqual state variables
     rqual_state = rqual_state_vars()
