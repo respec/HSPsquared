@@ -154,6 +154,7 @@ def hydr(siminfo, parameters, ts, ftables, state):
     activity_path = state.domain + "/" + 'HYDR'
     activity_id = get_state_ix(state.state_paths, activity_path)
     model_exec_list = state.op_exec_lists[activity_id]
+    print(state.domain, "HYDR called with", state.domain, len(model_exec_list), "op elements.")
     #######################################################################################
 
     # Do the simulation with _hydr_   (ie run reaches simulation code)
