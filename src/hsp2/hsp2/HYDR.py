@@ -148,7 +148,7 @@ def hydr(siminfo, parameters, ts, ftables, state):
     if hsp2_local_py != False:
         from hsp2_local_py import state_step_hydr
     else:
-        from hsp2.state.state_fn_defaults import state_step_hydr
+        from hsp2.state.state_definitions import state_step_hydr
     # note: get executable dynamic operation model components
     # TBD: this will be set as a property on each RCHRES object when we move to a class framework
     activity_path = state.domain + "/" + 'HYDR'
