@@ -10,7 +10,7 @@ from hsp2.hsp2.ADCALC import advect
 from hsp2.hsp2.utilities import make_numba_dict
 
 # the following imports added to handle special actions
-from hsp2.state.state import sedtrn_get_ix, sedtrn_init_ix
+from hsp2.state.state import sedtrn_get_ix, get_state_ix
 from hsp2.hsp2.om import pre_step_model, step_model
 from numba.typed import Dict
 
