@@ -8,8 +8,8 @@
             "object_class": "Equation",
             "value": "0.1 * O3"
         },
-        "IVOLwrite": {
-            "name": "IVOLwrite",
+        "O2write": {
+            "name": "O2write",
             "object_class": "ModelLinkage",
             "left_path": "/STATE/PL3_5250_0001/RCHRES_R001/O2",
             "right_path": "/STATE/PL3_5250_0001/RCHRES_R001/wd_cfs",

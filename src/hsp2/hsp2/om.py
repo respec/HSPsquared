@@ -238,10 +238,13 @@ def state_om_model_run_prep(opseq, activities, state, om_operations, siminfo):
         print(
             "op_tokens has",
             len(state.op_tokens),
-            "elements, with ",
-            len(state.model_exec_list),
-            "executable elements",
+            "elements",
         )
+# No longer relevant, need to sum up the executables for each domain in op_exec_lists
+#            "with",
+#            len(state.model_exec_list),
+#            "executable elements",
+#        )
         # print("Exec list:", model_exec_list)
     # Now make sure that all HSP2 vars that can be affected by state have
     hsp2_domain_dependencies(state, opseq, activities, om_operations, False)
