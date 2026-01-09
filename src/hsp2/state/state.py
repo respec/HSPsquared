@@ -611,7 +611,7 @@ def sedtrn_get_ix(state, domain):
     sedtrn_ix = ntdict.empty(key_type=types.unicode_type, value_type=types.int64)
     for i in sedtrn_state:
         var_path = domain + "/" + i
-        sedtrn_ix[i] = get_state_ix(var_path)
+        sedtrn_ix[i] = get_state_ix(state.state_paths, var_path)
     return sedtrn_ix
 
 
@@ -622,7 +622,7 @@ def sedmnt_get_ix(state, domain):
     sedmnt_ix = ntdict.empty(key_type=types.unicode_type, value_type=types.int64)
     for i in sedmnt_state:
         var_path = domain + "/" + i
-        sedmnt_ix[i] = get_state_ix(var_path)
+        sedmnt_ix[i] = get_state_ix(state.state_paths, var_path)
     return sedmnt_ix
 
 
@@ -645,7 +645,7 @@ def rqual_get_ix(state, domain):
     rqual_ix = ntdict.empty(key_type=types.unicode_type, value_type=types.int64)
     for i in rqual_state:
         var_path = domain + "/" + i
-        rqual_ix[i] = get_state_ix(var_path)
+        rqual_ix[i] = get_state_ix(state.state_paths, var_path)
     return rqual_ix
 
 
