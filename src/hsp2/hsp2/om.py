@@ -732,8 +732,6 @@ def step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
         # that the first zero item is the end of the active components
         if op_tokens[i][0] == 0: 
             continue
-        if n < 20 and step < 2:
-            print(op_tokens[i])
         step_one(op_tokens, op_tokens[i], state_ix, dict_ix, ts_ix, step, 0)
         n = n + 1
     return
