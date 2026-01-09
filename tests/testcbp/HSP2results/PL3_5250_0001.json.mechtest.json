@@ -1296,16 +1296,10 @@
             }
         },
         "value": "0",
-        "IVOLin": {
-            "name": "IVOLin",
-            "object_class": "ModelLinkage",
-            "right_path": "/STATE/JL1_6560_6440/RCHRES_R001/IVOL",
-            "link_type": 2
-        },
         "Runit": {
             "name": "Runit",
             "object_class": "Equation",
-            "value": "IVOLin / drainage_area_sqmi"
+            "value": "IVOL / drainage_area_sqmi"
         }
     }
 }
