@@ -110,6 +110,7 @@ def state_copy(statesrc, statedest):
     statedest.hsp_segments = statesrc.hsp_segments
     statedest.state_step_hydr = statesrc.state_step_hydr
     statedest.state_step_om = statesrc.state_step_om
+    statedest.domain = statesrc.domain
 
 """
 This function is a simple numba compiled fn to append to a numba dict quickly
