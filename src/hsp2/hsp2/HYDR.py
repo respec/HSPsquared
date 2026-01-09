@@ -152,10 +152,10 @@ def hydr(siminfo, parameters, ts, ftables, state):
     # note: get executable dynamic operation model components
     # TBD: this will be set as a property on each RCHRES object when we move to a class framework
     activity_path = state.domain + "/" + 'HYDR'
-    print("HYDR activity_path", activity_path)
+    #print("HYDR activity_path", activity_path)
     activity_id = get_state_ix(state.state_paths, activity_path)
     model_exec_list = state.op_exec_lists[activity_id]
-    print("model_exec_list", model_exec_list)
+    #print("model_exec_list", model_exec_list)
     #print(state.domain, "HYDR called with", state.domain, len(model_exec_list), "op elements.")
     #######################################################################################
 
