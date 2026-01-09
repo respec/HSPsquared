@@ -730,7 +730,7 @@ def step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
     for i in model_exec_list:
         # skip these - we could optimize performance and return assuming
         # that the first -1 item is the end of the active components
-        if op_tokens[i][0] < 0: 
+        if op_tokens[i][0] == -1: 
             return
         step_one(op_tokens, op_tokens[i], state_ix, dict_ix, ts_ix, step, 0)
         n = n + 1
