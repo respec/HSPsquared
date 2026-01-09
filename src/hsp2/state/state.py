@@ -202,7 +202,8 @@ class state_class:
             return
         if debug:
             print("op_tokens needs", ops_needed, "slots")
-        add_ops = np.full(self.op_len,-1) # fill with -1
+        add_ops = np.full((ops_needed,self.op_len),-1) # fill with -1
+        zeros((ops_needed, 64))
         # print("Created add_ops with", ops_needed, "slots")
         # we use the 3rd param "axis=1" to prevent flattening of array
         if self.op_tokens.size == 0:
