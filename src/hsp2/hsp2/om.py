@@ -726,8 +726,12 @@ def pre_step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
 
 @njit
 def step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
+    m = 0
     for i in model_exec_list:
+        if n < 20 and step < 2:
+            print op_tokens[i]
         step_one(op_tokens, op_tokens[i], state_ix, dict_ix, ts_ix, step, 0)
+        n = n + 1
     return
 
 
@@ -748,7 +752,7 @@ def step_one(op_tokens, ops, state_ix, dict_ix, ts_ix, step, debug=0):
     # op_tokens is passed in for ops like matrices that have lookups from other
     # locations.  All others rely only on ops
     # todo: decide if all step_[class() functions should set value in state_ix instead of returning value?
-    if step < 2:
+    if debug:
         print("DEBUG: Operator ID", ops[1], "is op type", ops[0])
         print("DEBUG: ops: ", ops)
     if ops[0] == 1:
