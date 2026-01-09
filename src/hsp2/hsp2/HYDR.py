@@ -407,6 +407,8 @@ def _hydr_(
             # print("trying to execute state_step_om()")
             # model_exec_list contains the model exec list in dependency order
             # now these are all executed at once, but we need to make them only for domain end points
+            if step < 2:
+                print("Calling step_model with", len(model_exec_list), "out of", len(state.op_tokens), "tokens")
             step_model(
                 model_exec_list, state.op_tokens, state.state_ix, state.dict_ix, state.ts_ix, step
             )  # traditional 'ACTIONS' done in here
