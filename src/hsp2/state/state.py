@@ -36,6 +36,7 @@ state_spec = [
     ("state_step_hydr", types.unicode_type),
     ("hsp2_local_py", types.boolean),
     ("num_ops", types.int64),
+    ("op_len", types.int64),
     ("operation", types.unicode_type),
     ("segment", types.unicode_type),
     ("activity", types.unicode_type),
@@ -163,6 +164,7 @@ class state_class:
         self.domain = ""
         self.last_id = 0
         self.hsp2_local_py = False
+        self.op_len = 64 # how wide is an op list array
         return
     
     @property
@@ -200,7 +202,7 @@ class state_class:
             return
         if debug:
             print("op_tokens needs", ops_needed, "slots")
-        add_ops = zeros((ops_needed, 64))
+        add_ops = np.full(self.op_len,-1) # fill with -1
         # print("Created add_ops with", ops_needed, "slots")
         # we use the 3rd param "axis=1" to prevent flattening of array
         if self.op_tokens.size == 0:
