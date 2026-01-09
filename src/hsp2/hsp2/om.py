@@ -748,7 +748,7 @@ def step_one(op_tokens, ops, state_ix, dict_ix, ts_ix, step, debug=0):
     # op_tokens is passed in for ops like matrices that have lookups from other
     # locations.  All others rely only on ops
     # todo: decide if all step_[class() functions should set value in state_ix instead of returning value?
-    if debug > 0:
+    if step < 2:
         print("DEBUG: Operator ID", ops[1], "is op type", ops[0])
         print("DEBUG: ops: ", ops)
     if ops[0] == 1:

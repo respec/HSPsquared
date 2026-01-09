@@ -77,21 +77,29 @@ state_om_model_run_prep(opseq, activities, state, om_operations, siminfo)
 print("state_om_model_run_prep() call and config", timer.split(), "seconds")
 #######################################################################################
 
-
-# Set up order of execution
-statenb = state_class_lite(0)
-state_copy(state, statenb)
-
 # debug loading:
 # mtl = []
 # mel = []
 # model_order_recursive(endpoint, om_operations["model_object_cache"], mel, mtl, True)
+
+RCHRES = om_operations["model_object_cache"]["/STATE/PL3_5250_0001/RCHRES_R001"]
 O2 = om_operations["model_object_cache"]["/STATE/PL3_5250_0001eq/RCHRES_R001/O2"]
+wd_500 = om_operations["model_object_cache"][RCHRES.find_var_path('wd_500')]
+
 wd_cfs = om_operations["model_object_cache"]["/STATE/PL3_5250_0001eq/RCHRES_R001/wd_cfs"]
+
 state.get_ix_path(wd_cfs.ops[6]) 
 state.get_ix_path(wd_cfs.ops[7]) 
 
 wd_cfs.find_var_path("O2")
+
+
+##### Check exec list
+ep_list = hydr_init_ix(state, RCHRES.state_path)
+op_exec_list = model_domain_dependencies(
+    om_operations, state, RCHRES.state_path, ep_list, True, False
+)
+op_exec_list = np.asarray(op_exec_list)
 
 # state['model_root_object'].find_var_path('RCHRES_R001')
 # Get the timeseries naked, without an object
