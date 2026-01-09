@@ -490,7 +490,7 @@ def step_equation(op_token, state_ix, step):
         result = s[s_ix]
     if (non_neg == 1) and (result < 0):
         result = state_ix[min_ix]
-    if step < 2:
-        print("Eq:", op_token[1], result)
+    #if step < 2:
+    #    print("Eq:", op_token[1], result)
     state_ix[op_token[1]] = result
     return True
