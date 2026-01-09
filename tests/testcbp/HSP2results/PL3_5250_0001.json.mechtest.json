@@ -8,6 +8,11 @@
             "object_class": "ModelConstant",
             "value": 0.2689586532
         },
+        "drainage_area_sqmi": {
+            "name": "drainage_area_sqmi",
+            "object_class": "Constant",
+            "value": null
+        },
         "Qlocal": {
             "name": "Qlocal",
             "object_class": "Equation",
