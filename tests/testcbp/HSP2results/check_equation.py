@@ -9,13 +9,7 @@ from hsp2.hsp2.om import *
 from hsp2.hsp2.SPECL import *
 from hsp2.hsp2io.hdf import HDF5
 from hsp2.hsp2io.io import IOManager
-from hsp2.hsp2tools.readUCI import *
-from hsp2.hsp2.configuration import activities
-from src.hsp2.hsp2tools.commands import import_uci, run
-from pandas import read_hdf
-from hsp2.hsp2.om_timer import timer_class
-
-timer = timer_class()
+from hsp2.state.state import *
 
 fpath = "./tests/testcbp/HSP2results/PL3_5250_0001.h5"
 # try also:
