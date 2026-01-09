@@ -289,6 +289,8 @@ class ModelObject:
 
     def find_var_path(self, var_name, local_only=False):
         # check local inputs for name
+        if var_name is None:
+            print("NULL var searched from", self.name, "child of", self.container.name)
         if type(var_name) == str:
             # print("Expanding aliases for", var_name)
             var_name = self.handle_path_aliases(var_name)  # sub out any wildcards
