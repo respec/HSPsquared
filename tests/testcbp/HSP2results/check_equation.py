@@ -13,7 +13,7 @@ from hsp2.hsp2tools.readUCI import *
 from hsp2.hsp2.configuration import activities
 from src.hsp2.hsp2tools.commands import import_uci, run
 from pandas import read_hdf
-from hsp2.hsp2.om_sim_timer import timer_class
+from hsp2.hsp2.om_timer import timer_class
 
 timer = timer_class()
 
@@ -53,8 +53,8 @@ state = state_class(
     state_empty["op_exec_lists"], state_empty["model_exec_list"], state_empty["dict_ix"], 
     state_empty["ts_ix"], state_empty["hsp_segments"]
 )
-state = state_empty # init_state_dicts() # automatically imported from state_fn_defaults
 print("init_state_dicts()", timer.split(), "seconds")
+om_operations = om_init_state()  # set up operational model specific containers
 state_siminfo_hsp2(state, parameter_obj, siminfo, io_manager)
 # Add support for dynamic functions to operate on STATE
 # - Load any dynamic components if present, and store variables on objects
@@ -64,18 +64,16 @@ print("state_load_dynamics_hsp2() call and config", timer.split(), "seconds")
 # before loading dynamic components that may reference them
 state_init_hsp2(state, opseq, activities, timer)
 print("state_init_hsp2() call and config", timer.split(), "seconds")
-# - finally stash specactions in state, not domain (segment) dependent so do it once
-state["specactions"] = specactions  # stash the specaction dict in state
-om_init_state(state)  # set up operational model specific state entries
-print("om_init_state() call and config", timer.split(), "seconds")
-specl_load_state(state, io_manager, siminfo)  # traditional special actions
-print("specl_load_state() call and config", timer.split(), "seconds")
+hsp2_domain_dependencies(state, opseq, activities, om_operations, False)
+print("hsp2_domain_dependencies() call and config", timer.split(), "seconds")
+specl_load_om(om_operations, specactions)  # load traditional special actions
+print("specl_load_om() call and config", timer.split(), "seconds")
 state_load_dynamics_om(
-    state, io_manager, siminfo
-)  # operational model for custom python
+    state, io_manager, siminfo, om_operations
+) # operational model for custom python
 print("state_load_dynamics_om() call and config", timer.split(), "seconds")
 # finalize all dynamically loaded components and prepare to run the model
-state_om_model_run_prep(state, io_manager, siminfo)
+state_om_model_run_prep(opseq, activities, state, om_operations, siminfo)
 print("state_om_model_run_prep() call and config", timer.split(), "seconds")
 #######################################################################################
 

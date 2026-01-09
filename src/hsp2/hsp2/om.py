@@ -684,7 +684,6 @@ def hsp2_domain_dependencies(state, opseq, activities, om_operations, debug=Fals
                 elif activity == "RQUAL":
                     ep_list = rqual_init_ix(state, seg_path)
                 # Register list of elements to execute if any
-                ep_list = ep_list.to_numpy()
                 op_exec_list = model_domain_dependencies(
                     om_operations, state, seg_path, ep_list, True, debug
                 )
@@ -749,7 +748,7 @@ def step_one(op_tokens, ops, state_ix, dict_ix, ts_ix, step, debug=0):
     # op_tokens is passed in for ops like matrices that have lookups from other
     # locations.  All others rely only on ops
     # todo: decide if all step_[class() functions should set value in state_ix instead of returning value?
-    if step < 2:
+    if debug > 0:
         print("DEBUG: Operator ID", ops[1], "is op type", ops[0])
         print("DEBUG: ops: ", ops)
     if ops[0] == 1:
