@@ -563,6 +563,7 @@ def rqual_state_vars():
     return rqual_state
 
 
+@njit(cache=True)
 def rqual_init_ix(state, domain):
     # get a list of keys for all rqual state variables
     rqual_state = rqual_state_vars()
@@ -604,7 +605,7 @@ def hydr_get_ix(state, domain):
     return hydr_ix
 
 
-@njit
+@njit(cache=True)
 def sedtrn_get_ix(state, domain):
     # get a list of keys for all sedtrn state variables
     sedtrn_state = ["RSED4", "RSED5", "RSED6"]
@@ -615,7 +616,7 @@ def sedtrn_get_ix(state, domain):
     return sedtrn_ix
 
 
-@njit
+@njit(cache=True)
 def sedmnt_get_ix(state, domain):
     # get a list of keys for all sedmnt state variables
     sedmnt_state = ["DETS"]
