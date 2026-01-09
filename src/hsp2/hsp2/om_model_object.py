@@ -141,7 +141,7 @@ class ModelObject:
         run_ops = {}
         for ops in op_tokens:
             # the base class defines the type of objects that are runnable (i.e. have a step() method)
-            print("Handling ops", ops)
+            #print("Handling ops", ops)
             if ops[0] in ModelObject.runnables:
                 run_ops[ops[1]] = ops
                 if debug == True:
