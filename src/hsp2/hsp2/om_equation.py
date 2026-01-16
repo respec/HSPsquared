@@ -251,7 +251,6 @@ def tokenize_ops(ps):
 
 bnf = None
 
-
 def BNF():
     """
     expop   :: '^'

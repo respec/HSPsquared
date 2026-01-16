@@ -646,6 +646,7 @@ def specactions(info, llines):
     head_uvquan = []
     sa_conditional = []
     head_conditional = []
+    open_conditionals = []
     sa_distrb = []
     head_distrb = []
     sa_uvname = []
@@ -653,29 +654,61 @@ def specactions(info, llines):
     sa_if = []
     head_if = []
     in_if = False  # are we in an if block?
-    curlvl = 0
+    active_conditional = 0
     for line in lines:
         if line[2:5] == "MULT":
             sa_mult.append(line)
         elif line[2:8] == "UVQUAN":
             sa_uvquan.append(line)
-        elif line[2:13] == "CONDITIONAL":
+        # this is NOT a table
+        elif line[2:13] == "CONDITIONAL": 
+            # should lower case this since it is NOT a UCI table
             sa_conditional.append(line)
         elif line[2:8] == "DISTRB":
             sa_distrb.append(line)
         elif line[2:8] == "UVNAME":
             sa_uvname.append(line)
-        # This CURLVL code is a place-holder. This has not been thought through.
+        # - This CURLVL code is a place-holder. This has not been thought through.
+        # - IF statements may span multiple lines, so need to 
+        #   continue to parse till a "THEN" is reached
+        # - The variable to evaluate in a IF-THEN MUST BE A UVQUAN
+        #   since UVQUAN must refer to a variable and UVQUAN is the ONLY
+        #   allowable 
+        #  - IF may appear anywhere on the line as long as there are only
+        #   blanks preceding IF
+        # - Any IF/ELSE statement may have a "conditional"
+        #   like AND OR at the end of an "IF" line, 
+        #   and that
+        # - Do the IF-THEN parsing built off the equation parser
+        #   using Tim's assembled CONDTIONAL statement 
+        #   Reminder: special action allows 3 kinds of parenthese
+        #     do a global search and replace all to ()
         elif line[0:2] == "IF":
+            # parses till it reaches a THEN
+            # todo: create a function to take our lines and parse till
+            #       reching a THEN based on Tim's code
+            #       Note: Tim's code combines all levels of an IF tree
+            #         but this method requires that each IF ... THEN is a 
+            #         single entity, just potentially nested.
+            #   function uci_parse_specl_if_then()
+            # maybe these sa_if should be keyed with the h5 name
+            # like /SPEC_ATIONS/CONDITIONALS/COND_1
             sa_if.append(line)
-            curlvl = len(sa_if)
+            active_conditional = len(sa_if) - 1 # this is the numerical pointer to the current level
+            open_conditionals.append(active_conditional)
         elif line[0:7] == "END IF":
-            sa_if.append(line)
-            curlvl = curlvl - 1
+            # must replace this with a stack to push/pop
+            # in order to track nested conditionals.
+            open_conditionals.pop()
+            if (active_conditional >= 0):
+                active_conditional = open_conditionals[-1] # -1 is last entry in list
+            else:
+                active_conditional = -1
         else:
             # ACTIONS block
+            # todo: TIm has a single function that parses a line
             d = parseD(line, parse["SPEC-ACTIONS", "ACTIONS"])
-            d["CURLVL"] = curlvl
+            d["CURLVL"] = active_conditional
             sa_actions.append(d.copy())
     if sa_actions:
         dfftable = pd.DataFrame(sa_actions, columns=head_actions).replace("na", "")
