@@ -45,7 +45,7 @@ def specactions_parse(info, llines):
         #     do a global search and replace all to ()
         elif (line.strip()[:2] == "IF") or (line.strip()[:7] == "ELSE IF"):
             # now we have at least 1 prior condition (maybe the opening IF)
-            line = get_ifs(lines, line, 'THEN') 
+            line = get_ifs(lines, line, 'THEN').strip()
             d = ucifn.parseD(line, parse["SPEC-ACTIONS", "conditions"])
             print("Found d:", d)
             # IF cant have siblings, only ELSE/ELSE IF can
