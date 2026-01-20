@@ -9,7 +9,7 @@ from collections import defaultdict
 import pandas as pd
 
 from hsp2 import hsp2tools
-frpm hsp2.hsp2tools.uci_parse_specactions import specactions_parse
+from hsp2.hsp2tools.uci_parse_specactions import specactions_parse
 
 pd.set_option("io.hdf.default_format", "table")
 
