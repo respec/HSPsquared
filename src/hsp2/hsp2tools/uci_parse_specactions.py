@@ -55,7 +55,7 @@ def specactions_parse(info, llines):
                 sibling_id =  sa_conditions[-1,]['cond_id']
             d['cond_id'] = len(sa_conditions) # set to next index value
             d['sibling_id'] = sibling_id
-            d["parent_id"] = specl_get_parent_condition(open_conditions)
+            d["condition"] = specl_get_parent_condition(open_conditions)
             open_conditions.append(d["cond_id"])
             sa_conditions.append(d)
         elif line.strip()[:4] == "ELSE":

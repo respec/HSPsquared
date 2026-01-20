@@ -17,7 +17,7 @@ from hsp2.hsp2.om_timer import timer_class
 
 timer = timer_class()
 
-fpath = "./tests/testcbp/HSP2results/PL3_5250_0001.h5"
+fpath = "./tests/land_spec/HSP2Results/hwmA51800.h5"
 # try also:
 # fpath = './tests/testcbp/HSP2results/JL1_6562_6560.h5'
 
