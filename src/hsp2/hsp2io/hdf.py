@@ -88,7 +88,6 @@ class HDF5:
             elif op == "FTABLES":
                 model.ftables[module] = self._store[path]
             elif op == "SPEC_ACTIONS":
-                print(op, "Reading module", module, "from path", path)
                 model.specactions[module] = self._store[path]
             elif op == "MONTHDATA":
                 if not model.monthdata:
