@@ -38,6 +38,8 @@ siminfo = parameter_obj.siminfo
 ftables = parameter_obj.ftables
 specactions = parameter_obj.specactions
 monthdata = parameter_obj.monthdata
+conditions = specactions['conditions']
+actions = specactions['ACTIONS']
 
 start, stop = siminfo["start"], siminfo["stop"]
 
