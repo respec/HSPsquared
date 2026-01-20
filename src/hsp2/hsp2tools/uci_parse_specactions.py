@@ -30,7 +30,7 @@ def specactions_parse(info, llines):
     sa_uvname = []
     head_uvname = []
     sa_conditions = []
-    head_conditions = ["cond_id", "parent_id", "sibling_id", "expression"]
+    head_conditions = ["cond_id", "parent_id", "sibling_id", "condition"]
     active_condition = -1
     for line in lines:
         if line[2:5] == "MULT":
@@ -57,7 +57,7 @@ def specactions_parse(info, llines):
             d['sibling_id'] = sibling_id
             d["parent_id"] = specl_get_parent_condition(open_conditions)
             open_conditions.append(d["cond_id"])
-            sa_conditions.append(line)
+            sa_conditions.append(d)
         elif line.strip()[:4] == "ELSE":
             # now we have at least 1 prior condition (maybe the opening IF)
             d = ucifn.parseD(line, parse["SPEC-ACTIONS", "conditions"])
