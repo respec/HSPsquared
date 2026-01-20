@@ -695,6 +695,7 @@ def specactions(info, llines):
             # like /SPEC_ATIONS/CONDITIONALS/COND_1
             sa_if.append(line)
             active_conditional = len(sa_if) - 1 # this is the numerical pointer to the current level
+            
             open_conditionals.append(active_conditional)
         elif line[0:7] == "END IF":
             # must replace this with a stack to push/pop
