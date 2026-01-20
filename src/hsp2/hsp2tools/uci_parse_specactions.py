@@ -40,20 +40,6 @@ def specactions_parse(info, llines):
         elif line[2:8] == "DISTRB":
             sa_distrb.append(line)
         elif line[2:8] == "UVNAME":
-            sa_uvname.append(line)
-        # - IF statements may span multiple lines, so need to 
-        #   continue to parse till a "THEN" is reached
-        # - The variable to evaluate in a IF-THEN MUST BE A UVQUAN
-        #   since UVQUAN must refer to a variable and UVQUAN is the ONLY
-        #   allowable 
-        #  - IF may appear anywhere on the line as long as there are only
-        #   blanks preceding IF
-        # - Any IF/ELSE statement may have a "condition"
-        #   like AND OR at the end of an "IF" line, 
-        #   and that indicates continuing to the next line
-        # - Do the IF-THEN parsing built off the equation parser
-        #   using Tim's assembled CONDTIONAL statement 
-        #   to populate the spec actions exec op_tokens
         #   Reminder: special action allows 3 kinds of parentheses
         #     do a global search and replace all to ()
         elif (line.strip()[:2] == "IF") or (line.strip()[:7] == "ELSE IF"):
@@ -85,7 +71,8 @@ def specactions_parse(info, llines):
                 open_conditions.pop()
         else:
             # ACTIONS block
-            # todo: TIm has a single function that parses a line
+            # todo: Tim has a single function that parses a line
+            print("trYING ACtion PARSER", line)
             d = ucifn.parseD(line, parse["SPEC-ACTIONS", "ACTIONS"])
             d["parent_id"] = specl_get_parent_condition(open_conditions)
             sa_actions.append(d)
