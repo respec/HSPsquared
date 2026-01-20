@@ -40,6 +40,7 @@ def specactions_parse(info, llines):
         elif line[2:8] == "DISTRB":
             sa_distrb.append(line)
         elif line[2:8] == "UVNAME":
+            sa_uvname.append(line)
         #   Reminder: special action allows 3 kinds of parentheses
         #     do a global search and replace all to ()
         elif (line.strip()[:2] == "IF") or (line.strip()[:7] == "ELSE IF"):
