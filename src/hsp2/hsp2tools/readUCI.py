@@ -100,10 +100,10 @@ def reader(filename):
             yield f"{nline: <90}"  # prevent short line problems
 
 
-def getlines(f):
+def getlines(f, line_end="END"):
     lines = []
     for line in f:
-        if line.startswith("END"):
+        if line.startswith(line_end):
             break
         lines.append(line)
     return lines
@@ -276,7 +276,7 @@ def readUCI(uciname, hdfname, overwrite=True):
             elif line.startswith("MONTH-DATA"):
                 monthdata(info, getlines(f))
             elif line.startswith("SPEC-ACTIONS"):
-                specactions_parse(info, getlines(f))
+                specactions_parse(info, getlines(f, "END SPEC-ACTIONS"))
 
         colnames = (
             "AFACTR",
