@@ -109,6 +109,6 @@ def get_ifs(lines, line, line_end='THEN'):
     end_ln = len(line_end)
     while line[-end_ln:] != line_end:
         nline = next(lines).strip()
-        print(nline)
+        print(line, nline)
         line = line + " " + nline
     return(line)
