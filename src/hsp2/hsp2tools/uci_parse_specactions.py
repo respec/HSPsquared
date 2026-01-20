@@ -2,7 +2,7 @@
 Provides tools to support parsing of SPEC-ACTIONS blocks from UCI files.
 """
 import pandas as pd
-from hsp2.hsp2tools import readUCI ucifn
+from hsp2.hsp2tools import readUCI as ucifn
 
 def specactions_parse(info, llines):
     store, parse, path, *_ = info
