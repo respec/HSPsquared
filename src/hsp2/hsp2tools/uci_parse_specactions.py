@@ -2,7 +2,7 @@
 Provides tools to support parsing of SPEC-ACTIONS blocks from UCI files.
 """
 import pandas as pd
-from hsp2.hsp2tools.readUCI import parseD
+from hsp2.hsp2tools import readUCI ucifn
 
 def specactions_parse(info, llines):
     store, parse, path, *_ = info
@@ -59,7 +59,7 @@ def specactions_parse(info, llines):
         elif (line.strip()[:2] == "IF") or (line.strip()[:7] == "ELSE IF"):
             # now we have at least 1 prior condition (maybe the opening IF)
             line = get_ifs(lines, line, 'THEN') 
-            d = parseD(line, parse["SPEC-ACTIONS", "conditions"])
+            d = ucifn.parseD(line, parse["SPEC-ACTIONS", "conditions"])
             # IF cant have siblings, only ELSE/ELSE IF can
             if not (line.strip()[:7] == "ELSE IF"):
                 sibling_id = -1 
@@ -71,7 +71,7 @@ def specactions_parse(info, llines):
             sa_conditions.append(line)
         elif line.strip()[:4] == "ELSE":
             # now we have at least 1 prior condition (maybe the opening IF)
-            d = parseD(line, parse["SPEC-ACTIONS", "conditions"])
+            d = ucifn.parseD(line, parse["SPEC-ACTIONS", "conditions"])
             sibling_id =  sa_conditions[-1,]['cond_id']
             d['sibling_id'] = sibling_id
             d["parent_id"] = parent_condition
@@ -84,7 +84,7 @@ def specactions_parse(info, llines):
         else:
             # ACTIONS block
             # todo: TIm has a single function that parses a line
-            d = parseD(line, parse["SPEC-ACTIONS", "ACTIONS"])
+            d = ucifn.parseD(line, parse["SPEC-ACTIONS", "ACTIONS"])
             d["parent_id"] = specl_get_parent_condition(open_conditions)
             sa_actions.append(d)
     
