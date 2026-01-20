@@ -60,6 +60,7 @@ def specactions_parse(info, llines):
             # now we have at least 1 prior condition (maybe the opening IF)
             line = get_ifs(lines, line, 'THEN') 
             d = ucifn.parseD(line, parse["SPEC-ACTIONS", "conditions"])
+            print("Found d:", d)
             # IF cant have siblings, only ELSE/ELSE IF can
             if not (line.strip()[:7] == "ELSE IF"):
                 sibling_id = -1 
