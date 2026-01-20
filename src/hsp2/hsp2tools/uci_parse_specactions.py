@@ -82,6 +82,8 @@ def specactions_parse(info, llines):
         dfftable = pd.DataFrame(sa_actions, columns=head_actions).replace("na", "")
         dfftable.to_hdf(store, key=f"/SPEC_ACTIONS/ACTIONS", data_columns=True)
     if sa_conditions:
+        print("Saving conditions to h5", sa_conditions)
+        print("With Haader", head_conditions)
         dfftable = pd.DataFrame(sa_conditions, columns=head_conditions).replace("na", "")
         # indicate this as a lower case since it is NOT an actual TABLE in HSPF
         dfftable.to_hdf(store, key=f"/SPEC_ACTIONS/conditions", data_columns=True)
