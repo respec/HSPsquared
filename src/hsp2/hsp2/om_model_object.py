@@ -63,7 +63,7 @@ class ModelObject:
             self.state_path = (
                 ""  # Ex: "/STATE/RCHRES_001" # the pointer to this object state
             )
-        self.inputs = {}  # associative array with key=local_variable_name, value=hdf5_path Ex: [ 'Qin' : '/STATE/mtn_lake/RCHRES_001/IVOL' ]
+        self.inputs = {}  # associative array with key=local_variable_name, value=hdf5_path Ex: [ 'Qin' : '/STATE/RCHRES_001/IVOL' ]
         self.inputs_ix = {}  # associative array with key=local_variable_name, value=state_ix integer key
         self.ix = False
         self.paths_found = False  # this should be False at start
