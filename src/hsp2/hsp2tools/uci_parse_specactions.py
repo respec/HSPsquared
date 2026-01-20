@@ -107,6 +107,8 @@ def specl_get_parent_condition(open_conditions):
 
 def get_ifs(lines, line, line_end='THEN'):
     end_ln = len(line_end)
+    print("Start line:", line)
+    print("********************")
     while line[-end_ln:] != line_end:
         nline = next(lines).strip()
         print(line, nline)
