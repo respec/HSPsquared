@@ -45,9 +45,8 @@ def specactions_parse(info, llines):
         #     do a global search and replace all to ()
         elif (line.strip()[:2] == "IF") or (line.strip()[:7] == "ELSE IF"):
             # now we have at least 1 prior condition (maybe the opening IF)
-            line = get_ifs(lines, line, 'THEN')
+            line = get_til_end(lines, line, 'THEN')
             d = ucifn.parseD(line, parse["SPEC-ACTIONS", "conditions"])
-            print("Found d:", d)
             # IF cant have siblings, only ELSE/ELSE IF can
             if not (line.strip()[:7] == "ELSE IF"):
                 sibling_id = -1 
@@ -65,15 +64,12 @@ def specactions_parse(info, llines):
             d['sibling_id'] = sibling_id
             d["parent_id"] = specl_get_parent_condition(open_conditions)
         elif line.strip() == "END IF":
-            #print("found END IF")
-            # must replace this with a stack to push/pop
-            # in order to track nested conditions.
+            # must pop stack to track nested conditions.
             if (len(open_conditions) > 0):
                 open_conditions.pop()
         else:
             # ACTIONS block
             # todo: Tim has a single function that parses a line
-            print("trYING ACtion PARSER", line)
             d = ucifn.parseD(line, parse["SPEC-ACTIONS", "ACTIONS"])
             d["condition"] = specl_get_parent_condition(open_conditions)
             sa_actions.append(d)
@@ -82,8 +78,6 @@ def specactions_parse(info, llines):
         dfftable = pd.DataFrame(sa_actions, columns=head_actions).replace("na", "")
         dfftable.to_hdf(store, key=f"/SPEC_ACTIONS/ACTIONS", data_columns=True)
     if sa_conditions:
-        print("Saving conditions to h5", sa_conditions)
-        print("With Haader", head_conditions)
         dfftable = pd.DataFrame(sa_conditions, columns=head_conditions).replace("na", "")
         # indicate this as a lower case since it is NOT an actual TABLE in HSPF
         dfftable.to_hdf(store, key=f"/SPEC_ACTIONS/conditions", data_columns=True)
@@ -98,10 +92,9 @@ def specl_get_parent_condition(open_conditions):
         parent_condition = -1
     return(parent_condition)
 
-def get_ifs(lines, line, line_end='THEN'):
+def get_til_end(lines, line, line_end='THEN'):
     end_ln = len(line_end)
     while line.strip()[-end_ln:] != line_end:
         nline = next(lines).strip()
-        print(line, nline)
         line = line + " " + nline
     return(line)
