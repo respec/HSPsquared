@@ -63,7 +63,9 @@ class ModelObject:
             else:
                 model_object_cache = self.container.model_object_cache
         self.state = state  # make a copy here. is this efficient?
-        self.model_object_cache =  model_object_cache  # make a copy here. is this efficient?
+        self.model_object_cache = (
+            model_object_cache  # make a copy here. is this efficient?
+        )
         self.handle_deprecated_args(name, container, model_props, state)
         # END - handle deprecated
         if model_props is None:
