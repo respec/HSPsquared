@@ -47,13 +47,14 @@ class RegressTest:
         for test_dir in test_dirs:
             if test_dir == self.compare_case:
                 test_root = os.path.join(tests_root_dir, test_dir)
-        print("Paths loaded, getting hdf5 data")
+        print("Paths loaded, getting hdf5 data from", test_root)
         self._get_hdf5_data(test_root)
-        print("hdf5 loaded, getting hbn data")
+        print("hdf5 loaded, getting hbn data from", test_root)
         self._get_hbn_data(test_root)
 
     def _get_hbn_data(self, test_dir: str) -> None:
         sub_dir = os.path.join(test_dir, "HSPFresults")
+        print("Loading hbn data from", sub_dir)
         self.hspf_data_collection = {}
         for file in os.listdir(sub_dir):
             if file.lower().endswith(".hbn"):
@@ -73,6 +74,7 @@ class RegressTest:
 
     def _get_hdf5_data(self, test_dir: str) -> None:
         sub_dir = os.path.join(test_dir, "HSP2results")
+        print("Loading hdf5 data from", sub_dir)
         for file in os.listdir(sub_dir):
             if file.lower().endswith(".h5") or file.lower().endswith(".hdf"):
                 self.hsp2_data = HDF5(os.path.join(sub_dir, file))
