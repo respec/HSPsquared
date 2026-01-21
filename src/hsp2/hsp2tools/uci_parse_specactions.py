@@ -1,0 +1,100 @@
+"""
+Provides tools to support parsing of SPEC-ACTIONS blocks from UCI files.
+"""
+import pandas as pd
+from hsp2.hsp2tools import readUCI as ucifn
+
+def specactions_parse(info, llines):
+    store, parse, path, *_ = info
+    lines = iter(llines)
+    # Notes:
+    # - Only "classic" special actions are currently active.
+    # - Other type of SA are recognized by the parser, but not stored in hdf5
+    # - The condition shows parent IF-THEN-ELSE entries if applicable
+    #   - Each action "head_[action type]" should include an "condition"
+    #     column to match with condition expression if applicable
+    #   - The condition matches an index in /SPECACTIONS/conditions table
+    sa_actions = []  # referred to as "classic" in old HSPF code comments
+    head_actions = [
+        "OPTYP", "RANGE1", "RANGE2", "DC", "DS", "YR", "MO", "DA",
+        "HR", "MN", "D", "T", "VARI", "S1", "S2", "AC", "VALUE",
+        "TC", "TS", "NUM", "condition",
+    ]
+    sa_mult = []
+    head_mult = []
+    sa_uvquan = []
+    head_uvquan = []
+    open_conditions = []
+    sa_distrb = []
+    head_distrb = []
+    sa_uvname = []
+    head_uvname = []
+    sa_conditions = []
+    head_conditions = ["cond_id", "parent_id", "sibling_id", "condition"]
+    active_condition = -1
+    for line in lines:
+        if line[2:5] == "MULT":
+            sa_mult.append(line)
+        elif line[2:8] == "UVQUAN":
+            sa_uvquan.append(line)
+        elif line[2:8] == "DISTRB":
+            sa_distrb.append(line)
+        elif line[2:8] == "UVNAME":
+            sa_uvname.append(line)
+        #   Reminder: special action allows 3 kinds of parentheses
+        #     do a global search and replace all to ()
+        elif (line.strip()[:2] == "IF") or (line.strip()[:7] == "ELSE IF"):
+            # now we have at least 1 prior condition (maybe the opening IF)
+            line = get_til_end(lines, line, 'THEN')
+            d = ucifn.parseD(line, parse["SPEC-ACTIONS", "conditions"])
+            # IF cant have siblings, only ELSE/ELSE IF can
+            if not (line.strip()[:7] == "ELSE IF"):
+                sibling_id = -1 
+            else:
+                sibling_id =  sa_conditions[-1,]['cond_id']
+            d['cond_id'] = len(sa_conditions) # set to next index value
+            d['sibling_id'] = sibling_id
+            d["parent_id"] = specl_get_parent_condition(open_conditions)
+            open_conditions.append(d["cond_id"])
+            sa_conditions.append(d)
+        elif line.strip()[:4] == "ELSE":
+            # now we have at least 1 prior condition (maybe the opening IF)
+            d = ucifn.parseD(line, parse["SPEC-ACTIONS", "conditions"])
+            sibling_id =  sa_conditions[-1,]['cond_id']
+            d['sibling_id'] = sibling_id
+            d["parent_id"] = specl_get_parent_condition(open_conditions)
+        elif line.strip() == "END IF":
+            # must pop stack to track nested conditions.
+            if (len(open_conditions) > 0):
+                open_conditions.pop()
+        else:
+            # ACTIONS block
+            # todo: Tim has a single function that parses a line
+            d = ucifn.parseD(line, parse["SPEC-ACTIONS", "ACTIONS"])
+            d["condition"] = specl_get_parent_condition(open_conditions)
+            sa_actions.append(d)
+    
+    if sa_actions:
+        dfftable = pd.DataFrame(sa_actions, columns=head_actions).replace("na", "")
+        dfftable.to_hdf(store, key=f"/SPEC_ACTIONS/ACTIONS", data_columns=True)
+    if sa_conditions:
+        dfftable = pd.DataFrame(sa_conditions, columns=head_conditions).replace("na", "")
+        # indicate this as a lower case since it is NOT an actual TABLE in HSPF
+        dfftable.to_hdf(store, key=f"/SPEC_ACTIONS/conditions", data_columns=True)
+
+
+def specl_get_parent_condition(open_conditions):
+    # if there are open conditiosn on the stack, then, any new 
+    # IF or ELSE IF will use this to find it
+    if len(open_conditions) > 0:
+        parent_condition = open_conditions[-1]
+    else:
+        parent_condition = -1
+    return(parent_condition)
+
+def get_til_end(lines, line, line_end='THEN'):
+    end_ln = len(line_end)
+    while line.strip()[-end_ln:] != line_end:
+        nline = next(lines).strip()
+        line = line + " " + nline
+    return(line)

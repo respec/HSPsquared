@@ -9,6 +9,7 @@ from collections import defaultdict
 import pandas as pd
 
 from hsp2 import hsp2tools
+from hsp2.hsp2tools.uci_parse_specactions import specactions_parse
 
 pd.set_option("io.hdf.default_format", "table")
 
@@ -99,10 +100,10 @@ def reader(filename):
             yield f"{nline: <90}"  # prevent short line problems
 
 
-def getlines(f):
+def getlines(f, line_end="END"):
     lines = []
     for line in f:
-        if line.startswith("END"):
+        if line.startswith(line_end):
             break
         lines.append(line)
     return lines
@@ -275,7 +276,7 @@ def readUCI(uciname, hdfname, overwrite=True):
             elif line.startswith("MONTH-DATA"):
                 monthdata(info, getlines(f))
             elif line.startswith("SPEC-ACTIONS"):
-                specactions(info, getlines(f))
+                specactions_parse(info, getlines(f, "END SPEC-ACTIONS"))
 
         colnames = (
             "AFACTR",
@@ -604,117 +605,6 @@ def ftables(info, llines):
             dfftable.to_hdf(store, key=f"/FTABLES/{name}", data_columns=True)
         else:
             lst.append(parseD(line, parse["FTABLES", "FTABLE"]))
-
-
-def specactions(info, llines):
-    store, parse, path, *_ = info
-    lines = iter(llines)
-    # Notes:
-    # - Only "classic" special actions are handled here.
-    # - Other type of SA are recognized by the parser, but not stored in hdf5
-    # - The CURLVL code is a place-holder. This has not been thought through.
-    #   - Each type of actions "head_[action type]" should include an "CURLVL"
-    #     column to match with conditional expression if applicable
-    #   - The value of CURLVL matches with an expression
-    sa_actions = []  # referred to as "classic" in old HSPF code comments
-    head_actions = [
-        "OPTYP",
-        "RANGE1",
-        "RANGE2",
-        "DC",
-        "DS",
-        "YR",
-        "MO",
-        "DA",
-        "HR",
-        "MN",
-        "D",
-        "T",
-        "VARI",
-        "S1",
-        "S2",
-        "AC",
-        "VALUE",
-        "TC",
-        "TS",
-        "NUM",
-        "CURLVL",
-    ]
-    sa_mult = []
-    head_mult = []
-    sa_uvquan = []
-    head_uvquan = []
-    sa_conditional = []
-    head_conditional = []
-    open_conditionals = []
-    sa_distrb = []
-    head_distrb = []
-    sa_uvname = []
-    head_uvname = []
-    sa_if = []
-    head_if = []
-    in_if = False  # are we in an if block?
-    active_conditional = 0
-    for line in lines:
-        if line[2:5] == "MULT":
-            sa_mult.append(line)
-        elif line[2:8] == "UVQUAN":
-            sa_uvquan.append(line)
-        # this is NOT a table
-        elif line[2:13] == "CONDITIONAL": 
-            # should lower case this since it is NOT a UCI table
-            sa_conditional.append(line)
-        elif line[2:8] == "DISTRB":
-            sa_distrb.append(line)
-        elif line[2:8] == "UVNAME":
-            sa_uvname.append(line)
-        # - This CURLVL code is a place-holder. This has not been thought through.
-        # - IF statements may span multiple lines, so need to 
-        #   continue to parse till a "THEN" is reached
-        # - The variable to evaluate in a IF-THEN MUST BE A UVQUAN
-        #   since UVQUAN must refer to a variable and UVQUAN is the ONLY
-        #   allowable 
-        #  - IF may appear anywhere on the line as long as there are only
-        #   blanks preceding IF
-        # - Any IF/ELSE statement may have a "conditional"
-        #   like AND OR at the end of an "IF" line, 
-        #   and that
-        # - Do the IF-THEN parsing built off the equation parser
-        #   using Tim's assembled CONDTIONAL statement 
-        #   Reminder: special action allows 3 kinds of parenthese
-        #     do a global search and replace all to ()
-        elif line[0:2] == "IF":
-            # parses till it reaches a THEN
-            # todo: create a function to take our lines and parse till
-            #       reching a THEN based on Tim's code
-            #       Note: Tim's code combines all levels of an IF tree
-            #         but this method requires that each IF ... THEN is a 
-            #         single entity, just potentially nested.
-            #   function uci_parse_specl_if_then()
-            # maybe these sa_if should be keyed with the h5 name
-            # like /SPEC_ATIONS/CONDITIONALS/COND_1
-            sa_if.append(line)
-            active_conditional = len(sa_if) - 1 # this is the numerical pointer to the current level
-            
-            open_conditionals.append(active_conditional)
-        elif line[0:7] == "END IF":
-            # must replace this with a stack to push/pop
-            # in order to track nested conditionals.
-            open_conditionals.pop()
-            if (active_conditional >= 0):
-                active_conditional = open_conditionals[-1] # -1 is last entry in list
-            else:
-                active_conditional = -1
-        else:
-            # ACTIONS block
-            # todo: TIm has a single function that parses a line
-            d = parseD(line, parse["SPEC-ACTIONS", "ACTIONS"])
-            d["CURLVL"] = active_conditional
-            sa_actions.append(d.copy())
-    if sa_actions:
-        dfftable = pd.DataFrame(sa_actions, columns=head_actions).replace("na", "")
-        dfftable.to_hdf(store, key=f"/SPEC_ACTIONS/ACTIONS", data_columns=True)
-
 
 def ext(info, lines):
     store, parse, path, *_ = info

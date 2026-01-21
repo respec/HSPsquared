@@ -12,7 +12,8 @@ from hsp2.hsp2io.io import IOManager
 from hsp2.state.state import *
 from hsp2.hsp2.om_timer import timer_class
 
-fpath = "./tests/testcbp/HSP2results/PL3_5250_0001.h5"
+fbase = "PL3_5250_0001eq"
+fpath = "./tests/testcbp/HSP2results/" + fbase + ".h5"
 # try also:
 # fpath = './tests/testcbp/HSP2results/JL1_6562_6560.h5'
 timer = timer_class()
@@ -22,6 +23,8 @@ timer = timer_class()
 hdf5_instance = HDF5(fpath)
 io_manager = IOManager(hdf5_instance)
 
+
+# read user control, parameters, states, and flags parameters and map to local variables
 parameter_obj = io_manager.read_parameters()
 opseq = parameter_obj.opseq
 ddlinks = parameter_obj.ddlinks
@@ -38,7 +41,9 @@ start, stop = siminfo["start"], siminfo["stop"]
 
 copy_instances = {}
 gener_instances = {}
-print("io_manager.read_parameters() call and config", timer.split(), "seconds")
+section_timing = {}
+
+section_timing["io_manager.read_parameters() call and config"] = str(timer.split()) + "seconds"
 #######################################################################################
 # initialize STATE dicts
 #######################################################################################
@@ -48,37 +53,38 @@ state = state_class(
     state_empty["op_exec_lists"], state_empty["model_exec_list"], state_empty["dict_ix"], 
     state_empty["ts_ix"], state_empty["hsp_segments"]
 )
-print("init_state_dicts()", timer.split(), "seconds")
 om_operations = om_init_state()  # set up operational model specific containers
 state_siminfo_hsp2(state, parameter_obj, siminfo, io_manager)
 state_om_model_root_object(state, om_operations, siminfo)
-# Add support for dynamic functions to operate on STATE
-# - Load any dynamic components if present, and store variables on objects
-state_load_dynamics_hsp2(state, io_manager, siminfo)
-print("state_load_dynamics_hsp2() call and config", timer.split(), "seconds")
 # Iterate through all segments and add crucial paths to state
 # before loading dynamic components that may reference them
 state_init_hsp2(state, opseq, activities, timer)
-print("state_init_hsp2() call and config", timer.split(), "seconds")
+om_init_hsp2_segments(state, om_operations)
+# now initialize all state variables for mutable variables
 hsp2_domain_dependencies(state, opseq, activities, om_operations, False)
-print("hsp2_domain_dependencies() call and config", timer.split(), "seconds")
+# Add support for dynamic functions to operate on STATE
+# - Load any dynamic components if present, and store variables on objects
+state_load_dynamics_hsp2(state, io_manager, siminfo)
+# - finally stash specactions in state, not domain (segment) dependent so do it once
 specl_load_om(om_operations, specactions)  # load traditional special actions
-print("specl_load_om() call and config", timer.split(), "seconds")
 state_load_dynamics_om(
     state, io_manager, siminfo, om_operations
-) # operational model for custom python
-print("state_load_dynamics_om() call and config", timer.split(), "seconds")
+)  # operational model for custom python
 # finalize all dynamically loaded components and prepare to run the model
 state_om_model_run_prep(opseq, activities, state, om_operations, siminfo)
-print("state_om_model_run_prep() call and config", timer.split(), "seconds")
+section_timing["state om initialization()"] = str(timer.split()) + "seconds"
+statenb = state_class_lite(0)
+state_copy(state, statenb)
+#######################################################################################
 #######################################################################################
 
 # debug loading:
 # mtl = []
 # mel = []
 # model_order_recursive(endpoint, om_operations["model_object_cache"], mel, mtl, True)
-
-RCHRES = om_operations["model_object_cache"]["/STATE/PL3_5250_0001/RCHRES_R001"]
+basepath = "/STATE/" + fbase
+RCHRES = om_operations["model_object_cache"][basepath + "/RCHRES_R001"]
+O2 = RCHRES.get_object('O2')
 O2 = om_operations["model_object_cache"]["/STATE/PL3_5250_0001eq/RCHRES_R001/O2"]
 wd_500 = om_operations["model_object_cache"][RCHRES.find_var_path('wd_500')]
 
