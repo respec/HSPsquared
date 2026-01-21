@@ -35,3 +35,4 @@ conditions = specactions["conditions"]
 actions = specactions["ACTIONS"]
 
 start, stop = siminfo["start"], siminfo["stop"]
+hdf5_instance._store.close()
