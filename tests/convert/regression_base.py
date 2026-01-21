@@ -47,7 +47,7 @@ class RegressTest:
         for test_dir in test_dirs:
             if test_dir == self.compare_case:
                 test_root = os.path.join(tests_root_dir, test_dir)
-
+        print("Paths loaded, getting hdf5 ad hbn data")
         self._get_hdf5_data(test_root)
         self._get_hbn_data(test_root)
 
