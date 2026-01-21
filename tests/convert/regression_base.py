@@ -23,6 +23,7 @@ class RegressTest:
         tcodes: List[str] = ["2"],
         ids: List[str] = [],
         threads: int = os.cpu_count() - 1,
+        tests_root_dir = None
     ) -> None:
         self.compare_case = compare_case
         self.operations = operations
@@ -30,31 +31,31 @@ class RegressTest:
         self.tcodes = tcodes
         self.ids = ids
         self.threads = threads
-
+        if tests_root_dir is None:
+            current_directory = os.path.dirname(
+                os.path.abspath(inspect.getframeinfo(inspect.currentframe()).filename)
+            )
+            source_root_path = os.path.split(os.path.split(current_directory)[0])[0]
+            self.tests_root_dir = os.path.join(source_root_path, "tests")
+        else:
+            self.tests_root_dir = tests_root_dir
         self._init_files()
 
     def _init_files(self):
-        current_directory = os.path.dirname(
-            os.path.abspath(inspect.getframeinfo(inspect.currentframe()).filename)
-        )
-        source_root_path = os.path.split(os.path.split(current_directory)[0])[0]
-        tests_root_dir = os.path.join(source_root_path, "tests")
         self.html_file = os.path.join(
-            tests_root_dir, f"HSPF_HSP2_{self.compare_case}.html"
+            self.tests_root_dir, f"HSPF_HSP2_{self.compare_case}.html"
         )
 
         test_dirs = os.listdir(tests_root_dir)
         for test_dir in test_dirs:
             if test_dir == self.compare_case:
                 test_root = os.path.join(tests_root_dir, test_dir)
-        print("Paths loaded, getting hdf5 data from", test_root)
+
         self._get_hdf5_data(test_root)
-        print("hdf5 loaded, getting hbn data from", test_root)
         self._get_hbn_data(test_root)
 
     def _get_hbn_data(self, test_dir: str) -> None:
         sub_dir = os.path.join(test_dir, "HSPFresults")
-        print("Loading hbn data from", sub_dir)
         self.hspf_data_collection = {}
         for file in os.listdir(sub_dir):
             if file.lower().endswith(".hbn"):
@@ -74,7 +75,6 @@ class RegressTest:
 
     def _get_hdf5_data(self, test_dir: str) -> None:
         sub_dir = os.path.join(test_dir, "HSP2results")
-        print("Loading hdf5 data from", sub_dir)
         for file in os.listdir(sub_dir):
             if file.lower().endswith(".h5") or file.lower().endswith(".hdf"):
                 self.hsp2_data = HDF5(os.path.join(sub_dir, file))
