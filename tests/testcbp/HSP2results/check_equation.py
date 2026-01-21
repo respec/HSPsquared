@@ -10,11 +10,12 @@ from hsp2.hsp2.SPECL import *
 from hsp2.hsp2io.hdf import HDF5
 from hsp2.hsp2io.io import IOManager
 from hsp2.state.state import *
+from hsp2.hsp2.om_timer import timer_class
 
 fpath = "./tests/testcbp/HSP2results/PL3_5250_0001.h5"
 # try also:
 # fpath = './tests/testcbp/HSP2results/JL1_6562_6560.h5'
-
+timer = timer_class()
 # sometimes when testing you may need to close the file, so try:
 # f = h5py.File(fpath,'a') # use mode 'a' which allows read, write, modify
 # # f.close()

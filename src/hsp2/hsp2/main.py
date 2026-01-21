@@ -33,7 +33,8 @@ from hsp2.hsp2.om import (
     state_load_dynamics_om,
     state_om_model_run_finish,
     hsp2_domain_dependencies,
-    state_om_model_root_object
+    state_om_model_root_object,
+    om_init_hsp2_segments
 )
 from hsp2.hsp2.om_timer import timer_class
 from hsp2.hsp2.SPECL import specl_load_om
@@ -109,6 +110,7 @@ def main(
     # Iterate through all segments and add crucial paths to state
     # before loading dynamic components that may reference them
     state_init_hsp2(state, opseq, activities, timer)
+    om_init_hsp2_segments(state, om_operations)
     # now initialize all state variables for mutable variables
     hsp2_domain_dependencies(state, opseq, activities, om_operations, False)
     # - finally stash specactions in state, not domain (segment) dependent so do it once

@@ -164,7 +164,6 @@ def state_load_dynamics_om(state, io_manager, siminfo, om_operations):
 
 def state_om_model_root_object(state, om_operations, siminfo):
     # Create the base that everything is added to. this object does nothing except host the rest.
-    timer = timer_class()
     if "model_root_object" not in om_operations.keys():
         model_root_object = ModelObject(
             state.model_root_name, False, {}, state, om_operations["model_object_cache"]
@@ -180,6 +179,9 @@ def state_om_model_root_object(state, om_operations, siminfo):
         sim_timer = SimTimer("timer", model_root_object, timer_props)
     #print("timer", timer.split())
     # add base object for the HSP2 domains and other things already added to state so they can be influenced
+
+
+def om_init_hsp2_segments(state, om_operations):
     for seg_name, seg_path in state.hsp_segments.items():
         if seg_path not in om_operations["model_object_cache"].keys():
             # BUG: need to figure out if this is OK, then how do we add attributes to these River Objects
