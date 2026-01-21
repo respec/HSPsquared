@@ -195,39 +195,23 @@ def state_om_model_root_object(state, om_operations, siminfo):
 def state_om_model_run_prep(opseq, activities, state, om_operations, siminfo):
     # instantiate and link objects
     # om_operations['model_data'] has alread been prepopulated from json, .py files, hdf5, etc.
-    model_root_object = om_operations["model_root_object"]
-    model_object_cache = om_operations["model_object_cache"]
     model_loader_recursive(
-        om_operations["model_data"], model_root_object, state, model_object_cache
+        om_operations["model_data"], om_operations["model_root_object"], state, om_operations["model_object_cache"]
     )
     #print("model_loader_recursive", timer.split())
-    # print("Loaded objects & paths: insures all paths are valid, connects models as inputs")
-    # both state['model_object_cache'] and the model_object_cache property of the ModelObject class def
-    # will hold a global repo for this data this may be redundant?  They DO point to the same datset?
-    # since this is a function that accepts state as an argument and these were both set in state_load_dynamics_om
-    # we can assume they are there and functioning
-    model_path_loader(model_object_cache)
+    model_path_loader(om_operations["model_object_cache"])
     # len() will be 1 if we only have a simtimer, but > 1 if we have a river being added
     model_exec_list = state.model_exec_list
     # put all objects in token form for fast runtime execution and sort according to dependency order
     # print("Tokenizing models")
     if "ops_data_type" in siminfo.keys():
-        model_root_object.ops_data_type = siminfo[
+        om_operations["model_root_object"].ops_data_type = siminfo[
             "ops_data_type"
         ]  # allow override of dat astructure settings
-    # model_root_object.state.op_tokens = ModelObject.make_op_tokens(
-    #    len(model_root_object.state.state_ix)
-    # )
-    model_tokenizer_recursive(model_root_object, model_object_cache, model_exec_list)
-    #print("model_tokenizer_recursive", timer.split())
-    # op_tokens = model_root_object.state.op_tokens
-    # print("op_tokens afer tokenizing", op_tokens)
-    # model_exec_list is the ordered list of component operations
-    # print("model_exec_list(", len(model_exec_list),"items):", model_exec_list)
+    model_tokenizer_recursive(om_operations["model_root_object"], om_operations["model_object_cache"], model_exec_list)
     # This is used to stash the model_exec_list in the dict_ix, this might be slow, need to verify.
     # the resulting set of objects is returned.
     state.state_step_om = "disabled"
-    om_operations["model_object_cache"] = model_object_cache
     state.model_exec_list = np.asarray(model_exec_list, dtype="int64")
     if len(state.op_tokens) > 0:
         state.state_step_om = "enabled"
@@ -237,12 +221,6 @@ def state_om_model_run_prep(opseq, activities, state, om_operations, siminfo):
             len(state.op_tokens),
             "elements",
         )
-# No longer relevant, need to sum up the executables for each domain in op_exec_lists
-#            "with",
-#            len(state.model_exec_list),
-#            "executable elements",
-#        )
-        # print("Exec list:", model_exec_list)
     # Now make sure that all HSP2 vars that can be affected by state have
     hsp2_domain_dependencies(state, opseq, activities, om_operations, False)
     return

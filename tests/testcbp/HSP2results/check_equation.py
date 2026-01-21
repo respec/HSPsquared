@@ -50,6 +50,7 @@ state = state_class(
 print("init_state_dicts()", timer.split(), "seconds")
 om_operations = om_init_state()  # set up operational model specific containers
 state_siminfo_hsp2(state, parameter_obj, siminfo, io_manager)
+state_om_model_root_object(state, om_operations, siminfo)
 # Add support for dynamic functions to operate on STATE
 # - Load any dynamic components if present, and store variables on objects
 state_load_dynamics_hsp2(state, io_manager, siminfo)
