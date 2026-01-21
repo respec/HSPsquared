@@ -32,7 +32,8 @@ from hsp2.hsp2.om import (
     state_om_model_run_prep,
     state_load_dynamics_om,
     state_om_model_run_finish,
-    hsp2_domain_dependencies
+    hsp2_domain_dependencies,
+    state_om_model_root_object
 )
 from hsp2.hsp2.om_timer import timer_class
 from hsp2.hsp2.SPECL import specl_load_om
@@ -101,6 +102,7 @@ def main(
     )
     om_operations = om_init_state()  # set up operational model specific containers
     state_siminfo_hsp2(state, parameter_obj, siminfo, io_manager)
+    state_om_model_root_object(state, om_operations, siminfo)
     # Add support for dynamic functions to operate on STATE
     # - Load any dynamic components if present, and store variables on objects
     state_load_dynamics_hsp2(state, io_manager, siminfo)

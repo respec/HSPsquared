@@ -193,10 +193,7 @@ def state_om_model_root_object(state, om_operations, siminfo):
 
 
 def state_om_model_run_prep(opseq, activities, state, om_operations, siminfo):
-    # insure model base is set
-    timer = timer_class()
-    state_om_model_root_object(state, om_operations, siminfo)
-    # now instantiate and link objects
+    # instantiate and link objects
     # om_operations['model_data'] has alread been prepopulated from json, .py files, hdf5, etc.
     model_root_object = om_operations["model_root_object"]
     model_object_cache = om_operations["model_object_cache"]
