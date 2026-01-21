@@ -190,7 +190,7 @@ def om_init_hsp2_segments(state, om_operations):
             # Create an object shell for this
             # just get the end of the path, which should be fine since we
             # don't use model names for anything, but might be more appropriately made as full path
-            segment = ModelObject(seg_name, model_root_object, {})
+            segment = ModelObject(seg_name, om_operations["model_root_object"], {})
             om_operations["model_object_cache"][segment.state_path] = segment
 
 

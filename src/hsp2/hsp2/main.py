@@ -104,15 +104,15 @@ def main(
     om_operations = om_init_state()  # set up operational model specific containers
     state_siminfo_hsp2(state, parameter_obj, siminfo, io_manager)
     state_om_model_root_object(state, om_operations, siminfo)
-    # Add support for dynamic functions to operate on STATE
-    # - Load any dynamic components if present, and store variables on objects
-    state_load_dynamics_hsp2(state, io_manager, siminfo)
     # Iterate through all segments and add crucial paths to state
     # before loading dynamic components that may reference them
     state_init_hsp2(state, opseq, activities, timer)
     om_init_hsp2_segments(state, om_operations)
     # now initialize all state variables for mutable variables
     hsp2_domain_dependencies(state, opseq, activities, om_operations, False)
+    # Add support for dynamic functions to operate on STATE
+    # - Load any dynamic components if present, and store variables on objects
+    state_load_dynamics_hsp2(state, io_manager, siminfo)
     # - finally stash specactions in state, not domain (segment) dependent so do it once
     specl_load_om(om_operations, specactions)  # load traditional special actions
     state_load_dynamics_om(
