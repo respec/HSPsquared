@@ -4,6 +4,7 @@ import os
 import pytest
 from hsp2.hsp2tools.commands import import_uci, run
 from hsp2.hsp2tools.HDF5 import HDF5
+from typing import Dict, List, Tuple, Union
 
 from .convert.regression_base import RegressTest as RegressTestBase
 
