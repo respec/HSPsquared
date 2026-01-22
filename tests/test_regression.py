@@ -8,6 +8,23 @@ from .convert.regression_base import RegressTest as RegressTestBase
 
 
 class RegressTest(RegressTestBase):
+    def __init__(
+        self,
+        compare_case: str,
+        operations: List[str] = [],
+        activities: List[str] = [],
+        tcodes: List[str] = ["2"],
+        ids: List[str] = [],
+        threads: int = os.cpu_count() - 1,
+        tests_root_dir = None
+    ) -> None:
+        if tests_root_dir is None:
+            tests_root_dir = Path(__file__).resolve().parent
+        super(RegressTest, self).__init__(
+            compare_case, operations, activities, 
+            tcodes, ids, threads, tests_root_dir
+        )
+
     def _get_hsp2_data(self, test_root) -> None:
         test_root_hspf = Path(test_root) / "HSPFresults"
         hspf_uci = test_root_hspf.resolve() / f"{self.compare_case}.uci"
@@ -24,10 +41,9 @@ class RegressTest(RegressTestBase):
         self.hsp2_data = HDF5(str(self.temp_h5file))
 
     def _init_files(self):
-        test_dir = Path(__file__).resolve().parent
-        assert test_dir.name == "tests"
+        assert self.tests_root_dir.name == "tests"
 
-        test_root = test_dir / self.compare_case
+        test_root = self.tests_root_dir / self.compare_case
         assert test_root.exists()
 
         self._get_hbn_data(str(test_root))

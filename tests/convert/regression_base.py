@@ -46,10 +46,10 @@ class RegressTest:
             self.tests_root_dir, f"HSPF_HSP2_{self.compare_case}.html"
         )
 
-        test_dirs = os.listdir(tests_root_dir)
+        test_dirs = os.listdir(self.tests_root_dir)
         for test_dir in test_dirs:
             if test_dir == self.compare_case:
-                test_root = os.path.join(tests_root_dir, test_dir)
+                test_root = os.path.join(self.tests_root_dir, test_dir)
 
         self._get_hdf5_data(test_root)
         self._get_hbn_data(test_root)
