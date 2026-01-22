@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 import pytest
 from hsp2.hsp2tools.commands import import_uci, run
