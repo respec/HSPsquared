@@ -41,9 +41,10 @@ class RegressTest(RegressTestBase):
         self.hsp2_data = HDF5(str(self.temp_h5file))
 
     def _init_files(self):
+        print("Checking tests_root_dir has tests in the name")
         assert self.tests_root_dir.name == "tests"
-
         test_root = self.tests_root_dir / self.compare_case
+        print("Checking case tests_dir exists:", test_root)
         assert test_root.exists()
 
         self._get_hbn_data(str(test_root))
