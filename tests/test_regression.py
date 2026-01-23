@@ -10,14 +10,9 @@ from .convert.regression_base import RegressTest as RegressTestBase
 
 
 class RegressTest(RegressTestBase):
-    def __init__(
-        self,
-        compare_case: str,
-        operations: List[str] = [],
-        activities: List[str] = [],
-        tcodes: List[str] = ["2"],
-        ids: List[str] = [],
-        threads: int = os.cpu_count() - 1,
+    def __init__(self,  compare_case: str, operations: List[str] = [],
+        activities: List[str] = [], tcodes: List[str] = ["2"],
+        ids: List[str] = [], threads: int = os.cpu_count() - 1,
         tests_root_dir = None
     ) -> None:
         if tests_root_dir is None:

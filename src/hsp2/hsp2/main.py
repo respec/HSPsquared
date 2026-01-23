@@ -541,7 +541,7 @@ def main(
     msglist = msg(1, "Done", final=True)
 
     # Finish operational models
-    state_om_model_run_finish(statenb, io_manager, siminfo)
+    state_om_model_run_finish(statenb, io_manager, om_operations)
 
     df = DataFrame(msglist, columns=["logfile"])
     io_manager.write_log(df)

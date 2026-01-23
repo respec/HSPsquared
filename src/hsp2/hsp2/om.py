@@ -227,10 +227,9 @@ def state_om_model_run_prep(opseq, activities, state, om_operations, siminfo):
     hsp2_domain_dependencies(state, opseq, activities, om_operations, False)
     return
 
-
-def state_om_model_run_finish(state, io_manager, siminfo):
+def state_om_model_run_finish(state, io_manager, om_operations):
     # write logs and other post-processing steps (if any)
-    finish_model(state, io_manager, siminfo)
+    finish_model(state, io_manager, om_operations)
     return True
 
 
@@ -714,7 +713,7 @@ def step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step):
     return
 
 
-def finish_model(state, io_manager, siminfo):
+def finish_model(state, io_manager, om_operations):
     # print("Model object cache list", om_operations["model_object_cache"].keys())
     for i in state.model_exec_list:
         model_object = om_operations["model_object_cache"][
