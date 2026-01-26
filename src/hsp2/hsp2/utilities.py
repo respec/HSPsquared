@@ -270,7 +270,7 @@ def transform(ts, name, how, siminfo):
                 ratio = freq.delta / tsfreq.delta
             ts = (ratio * ts).resample(freq).ffill()  # HSP2 how = div
         else:
-            ts = (ts * (freq / ts.index.freq)).resample(freq).ffill()
+            ts = (ts * (freq.delta / ts.index.freq.delta)).resample(freq).ffill()
     elif how == "ZEROFILL":
         ts = ts.resample(freq).fillna(0.0)
     elif how == "INTERPOLATE":
