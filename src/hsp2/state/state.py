@@ -1,18 +1,19 @@
 """General routines for state variable storage.
 
 Provides a facility for sharing information among different
-Model domains and entities.
+model domains and entities.
 """
 
+import importlib.util
+import os
+import sys
+
 import numpy as np
-from pandas import date_range
-from pandas.tseries.offsets import Minute
+from numba import njit, types  # import the types
 from numba.typed import Dict
 from numpy import zeros
-from numba import njit, types  # import the types
-import os
-import importlib.util
-import sys
+from pandas import date_range
+from pandas.tseries.offsets import Minute
 
 
 def init_state_dicts():
