@@ -345,9 +345,9 @@ def dayval(siminfo, monthly):
     dr = date_range(start=f"{start.year}-01-01", end=f"{stop.year}-12-31", freq="MS")
     ts = Series(months, index=dr).resample("D").interpolate("time")
 
-    if ts.index.freq > freq:  # upsample
+    if ts.index.freq.delta > freq.delta:  # upsample
         ts = ts.resample(freq).ffill()
-    elif ts.index.freq < freq:  # downsample
+    elif ts.index.freq.delta < freq.delta:  # downsample
         ts = ts.resample(freq).mean()
     return ts.truncate(start, stop).to_numpy()
 
