@@ -1,6 +1,7 @@
 """Copyright (c) 2020 by RESPEC, INC.
 Author: Robert Heaphy, Ph.D.
 License: LGPL2
+This is the main routine for running the full hsp2 model.
 """
 
 from numpy import float64
