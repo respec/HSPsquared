@@ -1,6 +1,6 @@
 """General routines for shared STATE environment
 
-This will provide data sharing across domains, i.e.,
+This provides data sharing across domains, i.e.,
 among different tables and hsp functional areas
 like PERLND, RCHRES, RQUAL etc.
 Used by Special Actions and advanced operational modeling (OM)
