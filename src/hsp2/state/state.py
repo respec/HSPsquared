@@ -1,4 +1,8 @@
-"""General routines for SPECL"""
+"""General routines for state variable storage.
+
+Provides a facility for sharing information among different
+Model domains and entities.
+"""
 
 import numpy as np
 from pandas import date_range
