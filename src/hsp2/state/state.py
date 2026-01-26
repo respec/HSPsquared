@@ -1,9 +1,9 @@
 """General routines for shared STATE environment
 
 This will provide data sharing across domains, i.e.,
-among different tables and hsp functional areas 
-like PERLND, RCHRES, etc.Used by Special Actions
-and advanced operational modeling (OM) 
+among different tables and hsp functional areas
+like PERLND, RCHRES, RQUAL etc.
+Used by Special Actions and advanced operational modeling (OM)
 """
 
 import numpy as np
