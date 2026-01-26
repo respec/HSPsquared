@@ -229,18 +229,18 @@ def transform(ts, name, how, siminfo):
         ts = ts.resample(freq).ffill()  # tsfreq >= freq assumed, or bad user choice
     elif not how:
         if name in flowtype:
-            if "Y" in str(tsfreq) or "M" in str(tsfreq) or tsfreq > freq:
+            if "Y" in str(tsfreq) or "M" in str(tsfreq) or tsfreq.delta > freq.delta:
                 if "M" in str(tsfreq):
                     ratio = 1.0 / 730.5
                 elif "Y" in str(tsfreq):
                     ratio = 1.0 / 8766.0
                 else:
-                    ratio = freq / tsfreq
+                    ratio = freq.delta / tsfreq.delta
                 ts = (ratio * ts).resample(freq).ffill()  # HSP2 how = div
             else:
                 ts = ts.resample(freq).sum()
         else:
-            if "Y" in str(tsfreq) or "M" in str(tsfreq) or tsfreq > freq:
+            if "Y" in str(tsfreq) or "M" in str(tsfreq) or tsfreq.delta > freq.delta:
                 ts = ts.resample(freq).ffill()
             else:
                 ts = ts.resample(freq).mean()
@@ -267,7 +267,7 @@ def transform(ts, name, how, siminfo):
             elif "Y" in str(tsfreq):
                 ratio = 1.0 / (8766.0 * mult)
             else:
-                ratio = freq / tsfreq
+                ratio = freq.delta / tsfreq.delta
             ts = (ratio * ts).resample(freq).ffill()  # HSP2 how = div
         else:
             ts = (ts * (freq / ts.index.freq)).resample(freq).ffill()
