@@ -24,6 +24,7 @@ def run(h5file, saveall=True, compress=True):
     hdf5_instance = HDF5(h5file)
     io_manager = IOManager(hdf5_instance)
     main(io_manager, saveall=saveall, jupyterlab=compress)
+    hdf5_instance.close()
 
 
 def import_uci(ucifile, h5file):
@@ -57,3 +58,22 @@ def import_uci(ucifile, h5file):
             wdmfile = (uci_dir / nline[16:].strip()).resolve()
             if wdmfile.exists():
                 readWDM(wdmfile, h5file)
+
+
+
+
+def update_uci(ucifile, h5file):
+    """Import UCI only into HDF5 file.
+
+    Parameters
+    ----------
+    ucifile: str
+        The UCI file to import into HDF file.
+    h5file: str
+        The destination HDF5 file.
+    """
+    # we send False here to prevent deleting and recreating the UCI
+    print("Updating parameters in h5 file from UCI.", ucifile)
+    print("Note: this will NOT update external data such as WDM, mutsin etc.")
+    print("To update all data, use the command 'hsp2 import_uci ...' ")
+    readUCI(ucifile, h5file, False)
