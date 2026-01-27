@@ -302,14 +302,14 @@ def hoursval(siminfo, hours24, dofirst=False, lapselike=False):
     tsfreq = Timedelta("1 " + ts.index.freqstr)
     if lapselike:
         if tsfreq > freq:  # upsample
-            ts = ts.resample(freq).asfreq().ffill()
+            ts = ts.resample(fmins).asfreq().ffill()
         elif tsfreq < freq:  # downsample
-            ts = ts.resample(freq).mean()
+            ts = ts.resample(fmins).mean()
     else:
         if tsfreq > freq:  # upsample
-            ts = ts.resample(freq).asfreq().fillna(0.0)
+            ts = ts.resample(fmins).asfreq().fillna(0.0)
         elif tsfreq < freq:  # downsample
-            ts = ts.resample(freq).max()
+            ts = ts.resample(fmins).max()
     return ts.truncate(start, stop).to_numpy()
 
 
@@ -324,7 +324,8 @@ def monthval(siminfo, monthly):
     """returns value at start of month for all times within the month"""
     start = siminfo["start"]
     stop = siminfo["stop"]
-    freq = Timedelta(Minute(siminfo["delt"])).to_timedelta64()
+    fmins = Minute(siminfo["delt"])
+    freq = Timedelta(fmins).to_timedelta64()
 
     months = tile(monthly, stop.year - start.year + 1).astype(float)
     dr = date_range(start=f"{start.year}-01-01", end=f"{stop.year}-12-31", freq="MS")
@@ -332,9 +333,9 @@ def monthval(siminfo, monthly):
     tsfreq = Timedelta("1 " + ts.index.freqstr)
 
     if tsfreq > freq:  # upsample
-        ts = ts.resample(freq).asfreq().ffill()
+        ts = ts.resample(fmins).asfreq().ffill()
     elif tsfreq < freq:  # downsample
-        ts = ts.resample(freq).mean()
+        ts = ts.resample(fmins).mean()
     return ts.truncate(start, stop).to_numpy()
 
 
@@ -343,7 +344,8 @@ def dayval(siminfo, monthly):
     interpolation to day, but constant within day"""
     start = siminfo["start"]
     stop = siminfo["stop"]
-    freq = Timedelta(Minute(siminfo["delt"])).to_timedelta64()
+    fmins = Minute(siminfo["delt"])
+    freq = Timedelta(fmins).to_timedelta64()
 
     months = tile(monthly, stop.year - start.year + 1).astype(float)
     dr = date_range(start=f"{start.year}-01-01", end=f"{stop.year}-12-31", freq="MS")
@@ -352,9 +354,9 @@ def dayval(siminfo, monthly):
 
 
     if tsfreq > freq:  # upsample
-        ts = ts.resample(freq).ffill()
+        ts = ts.resample(fmins).ffill()
     elif tsfreq < freq:  # downsample
-        ts = ts.resample(freq).mean()
+        ts = ts.resample(fmins).mean()
     return ts.truncate(start, stop).to_numpy()
 
 
