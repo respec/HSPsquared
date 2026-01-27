@@ -1,7 +1,6 @@
 """Copyright (c) 2020 by RESPEC, INC.
 Author: Robert Heaphy, Ph.D.
 License: LGPL2
-This is the main routine for running the full hsp2 model.
 """
 
 from numpy import float64
@@ -19,7 +18,7 @@ from hsp2.hsp2.utilities import (
     get_gener_timeseries,
 )
 from hsp2.hsp2.configuration import activities, noop, expand_masslinks
-from hsp2.hsp2.state import (
+from hsp2.state.state import (
     init_state_dicts,
     state_siminfo_hsp2,
     state_load_dynamics_hsp2,
@@ -705,23 +704,23 @@ def get_flows(
                         t = data_frame[smemn].astype(float64).to_numpy()[0:steps]
 
                     if MFname in ts and AFname in ts:
-                        t *= ts[MFname][:steps] * ts[AFname][0:steps]
+                        t = t * ts[MFname][:steps] * ts[AFname][0:steps]
                         msg(4, f"MFACTOR modified by timeseries {MFname}")
                         msg(4, f"AFACTR modified by timeseries {AFname}")
                     elif MFname in ts:
-                        t *= afactr * ts[MFname][0:steps]
+                        t = t * afactr * ts[MFname][0:steps]
                         msg(4, f"MFACTOR modified by timeseries {MFname}")
                     elif AFname in ts:
-                        t *= mfactor * ts[AFname][0:steps]
+                        t = t * mfactor * ts[AFname][0:steps]
                         msg(4, f"AFACTR modified by timeseries {AFname}")
                     else:
-                        t *= factor
+                        t = t * factor
 
                     # if poht to iheat, imprecision in hspf conversion factor requires a slight adjustment
                     if (smemn == "POHT" or smemn == "SOHT") and tmemn == "IHEAT":
-                        t *= 0.998553
+                        t = t * 0.998553
                     if (smemn == "PODOXM" or smemn == "SODOXM") and tmemn == "OXIF1":
-                        t *= 1.000565
+                        t = t * 1.000565
 
                     # ??? ISSUE: can fetched data be at different frequency - don't know how to transform.
                     if tmemn in ts:
