@@ -13,8 +13,11 @@ class HDF5:
         self._store = pd.HDFStore(file_path)
         None
 
-    def __del__(self):
+    def close(self):
         self._store.close()
+
+    def __del__(self):
+        self.close()
 
     def __enter__(self):
         return self
