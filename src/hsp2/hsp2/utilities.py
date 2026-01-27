@@ -214,7 +214,7 @@ def transform(ts, name, how, siminfo):
     """
 
     tsfreq = ts.index.freq
-    freq = Minute(siminfo["delt"])
+    freq = Timedelta(Minute(siminfo["delt"])).to_timedelta64()
     stop = siminfo["stop"]
 
     # append duplicate of last point to force processing last full interval
@@ -229,18 +229,18 @@ def transform(ts, name, how, siminfo):
         ts = ts.resample(freq).ffill()  # tsfreq >= freq assumed, or bad user choice
     elif not how:
         if name in flowtype:
-            if "Y" in str(tsfreq) or "M" in str(tsfreq) or tsfreq.delta > freq.delta:
+            if "Y" in str(tsfreq) or "M" in str(tsfreq) or tsfreq > freq:
                 if "M" in str(tsfreq):
                     ratio = 1.0 / 730.5
                 elif "Y" in str(tsfreq):
                     ratio = 1.0 / 8766.0
                 else:
-                    ratio = freq.delta / tsfreq.delta
+                    ratio = freq / tsfreq
                 ts = (ratio * ts).resample(freq).ffill()  # HSP2 how = div
             else:
                 ts = ts.resample(freq).sum()
         else:
-            if "Y" in str(tsfreq) or "M" in str(tsfreq) or tsfreq.delta > freq.delta:
+            if "Y" in str(tsfreq) or "M" in str(tsfreq) or tsfreq > freq:
                 ts = ts.resample(freq).ffill()
             else:
                 ts = ts.resample(freq).mean()
@@ -267,10 +267,10 @@ def transform(ts, name, how, siminfo):
             elif "Y" in str(tsfreq):
                 ratio = 1.0 / (8766.0 * mult)
             else:
-                ratio = freq.delta / tsfreq.delta
+                ratio = freq / tsfreq
             ts = (ratio * ts).resample(freq).ffill()  # HSP2 how = div
         else:
-            ts = (ts * (freq.delta / ts.index.freq.delta)).resample(freq).ffill()
+            ts = (ts * (freq / ts.index.freq)).resample(freq).ffill()
     elif how == "ZEROFILL":
         ts = ts.resample(freq).fillna(0.0)
     elif how == "INTERPOLATE":
@@ -287,7 +287,7 @@ def hoursval(siminfo, hours24, dofirst=False, lapselike=False):
     """create hours flags, flag on the hour or lapse table over full simulation"""
     start = siminfo["start"]
     stop = siminfo["stop"]
-    freq = Minute(siminfo["delt"])
+    freq = Timedelta(Minute(siminfo["delt"])).to_timedelta64()
 
     dr = date_range(
         start=f"{start.year}-01-01", end=f"{stop.year}-12-31", freq=Minute(60)
@@ -321,7 +321,7 @@ def monthval(siminfo, monthly):
     """returns value at start of month for all times within the month"""
     start = siminfo["start"]
     stop = siminfo["stop"]
-    freq = Minute(siminfo["delt"])
+    freq = Timedelta(Minute(siminfo["delt"])).to_timedelta64()
 
     months = tile(monthly, stop.year - start.year + 1).astype(float)
     dr = date_range(start=f"{start.year}-01-01", end=f"{stop.year}-12-31", freq="MS")
@@ -339,15 +339,15 @@ def dayval(siminfo, monthly):
     interpolation to day, but constant within day"""
     start = siminfo["start"]
     stop = siminfo["stop"]
-    freq = Minute(siminfo["delt"])
+    freq = Timedelta(Minute(siminfo["delt"])).to_timedelta64()
 
     months = tile(monthly, stop.year - start.year + 1).astype(float)
     dr = date_range(start=f"{start.year}-01-01", end=f"{stop.year}-12-31", freq="MS")
     ts = Series(months, index=dr).resample("D").interpolate("time")
 
-    if ts.index.freq.delta > freq.delta:  # upsample
+    if ts.index.freq > freq:  # upsample
         ts = ts.resample(freq).ffill()
-    elif ts.index.freq.delta < freq.delta:  # downsample
+    elif ts.index.freq < freq:  # downsample
         ts = ts.resample(freq).mean()
     return ts.truncate(start, stop).to_numpy()
 
