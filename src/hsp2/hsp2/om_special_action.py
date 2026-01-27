@@ -78,7 +78,7 @@ class SpecialAction(ModelObject):
         if prop_name == "when":
             # when to perform this?  timestamp or time-step index
             prop_val = -1  # prevent a 0 indexed value from triggering return, default means execute every step
-            si = self.get_object(self, "timer")
+            si = self.get_object("timer")
             if len(model_props["YR"]) > 0:
                 # translate date to equivalent model step
                 datestring = (
