@@ -268,10 +268,10 @@ def transform(ts, name, how, siminfo):
             elif "Y" in str(tsfreq):
                 ratio = 1.0 / (8766.0 * mult)
             else:
-                ratio = freq / tsfreq.delta
+                ratio = freq / tsfreq
             ts = (ratio * ts).resample(fmins).ffill()  # HSP2 how = div
         else:
-            ts = (ts * (freq / tsfreq.delta)).resample(fmins).ffill()
+            ts = (ts * (freq / tsfreq)).resample(fmins).ffill()
     elif how == "ZEROFILL":
         ts = ts.resample(fmins).fillna(0.0)
     elif how == "INTERPOLATE":
