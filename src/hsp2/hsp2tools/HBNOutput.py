@@ -178,13 +178,13 @@ class HBNOutput:
     ) -> pd.DataFrame:
         # returns a single pandas dataframe of the entire table
         # time_unit matches self.tcodes = {1: 'Minutely', 2: 'Hourly', 3: 'Daily', 4: 'Monthly', 5: 'Yearly'}
-        table_path = '_'.join([t_opn, t_activity, t_opn_id, self._get_tcode_key(time_unit)])
+        table_path = '_'.join([t_opn, t_activity, t_opn_id, str(self._get_tcode_key(time_unit))])
         data_frame = self.data_frames[self.summaryindx.index(table_path)]
         return data_frame
     
     def _get_tcode_key(self, time_unit: str) -> int:
         for tcode_key in self.tcodes.keys():
-            if self.tcodes[tcode_key].lower() == time_unit:
+            if self.tcodes[tcode_key].lower() == time_unit.lower():
                 return tcode_key
         raise Exception(f"time_unit {time_unit} Not Found. Valid values are", self.tcodes)
     
