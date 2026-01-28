@@ -147,6 +147,9 @@ class HBNOutput:
         3.     t_cons: target constituent name
         4. t_activity: HYDR, IQUAL, etc
         5.  time_unit: yearly, monthly, full (default is 'full' simulation duration)
+        # todo: the "full" doesnt have a match in the table, and is hard coded below 
+                as target_code = 2, which is hourly, but some HSP simulations will
+                be Minutes, therefore this is misleading. 
         """
         target_tcode = 2
         for tcode_key in self.tcodes.keys():
@@ -183,7 +186,7 @@ class HBNOutput:
         for tcode_key in self.tcodes.keys():
             if self.tcodes[tcode_key].lower() == time_unit:
                 return tcode_key
-        return default
+        raise Exception(f"time_unit {time_unit} Not Found. Valid values are", self.tcodes)
     
     # PRT - I think we'll deprecate this method
     @staticmethod
