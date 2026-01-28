@@ -1,55 +1,69 @@
 # Note: This code must be run from the tests dir due to importing
 # the `convert` directory where the regression_base file lives
 # todo: make this convert path passable by argument 
-from pathlib import Path
-import os
-import pandas as pd
 import numpy as np
-from hsp2.hsp2tools.commands import import_uci, run
-from hsp2.hsp2tools.HDF5 import HDF5 # note: has handy function get_time_series() 
-from hsp2.hsp2tools.HBNOutput import HBNOutput # Also has function get_time_series()
-
 from tests.convert.regression_base import RegressTest
 
 
-case = "test10"
+case = "test10specl"
+base_case = "test10"
 #case = "testcbp"
 tdir = "/opt/model/HSPsquared/tests"
 #import_uci(str(hsp2_specl_uci), str(temp_specl_h5file))
 #run(temp_specl_h5file, saveall=True, compress=False)
 
-## Manual Data outside of RegressTest
-
-############# HSPF RCHRES 1 HYDR (manual)
-hspf_hbn_path = os.path.join(tdir, case, "HSPFresults", case + 'R.hbn')
-hspf_hbn = HBNOutput(hspf_hbn_path)
-hspf_hbn.read_data()
-rchres_hydr_hspf_ovol = hspf_hbn.get_time_series('RCHRES', 1, 'OVOL', 'HYDR', 'full')
-rchres_hydr_hspf = hspf_hbn._read_table('RCHRES', '001', 'HYDR', 'Hourly')
-
-############# HSP2 RCHRES 1 HYDR (manual)
-hsp2_hdf_path = os.path.join(tdir, case, "HSP2results", case + '.h5')
-dstore_hsp2 = pd.HDFStore(hsp2_hdf_path, mode='r')
-rchres_hydr_hsp2 = pd.read_hdf(dstore_hsp2, '/RESULTS/RCHRES_R001/HYDR')
-perlnd_pwater_hsp2 = pd.read_hdf(dstore_hsp2, '/RESULTS/PERLND_P001/PWATER')
-dstore_hsp2.close() # tidy up
-
 ############# RegressTest data loader
+## TEST CASE
 test = RegressTest(case, threads=1, tests_root_dir = tdir)
-#results = test.run_test()
-
 # test object hydr
-rchres_hydr_hsp2_test = test.hsp2_data.data[('RCHRES', '001', 'HYDR')]
-test_dir = os.path.join(test.tests_root_dir, test.compare_case)
+rchres_hydr_hsp2_test_table = test.hsp2_data._read_table('RCHRES', '001', 'HYDR')
+perlnd_pwat_hsp2_test_table = test.hsp2_data._read_table('PERLND', '001', 'PWATER')
+rchres_hydr_hsp2_test = test.hsp2_data.get_time_series('RCHRES', '001', 'RO', 'HYDR')
+rchres_hydr_hspf_test = test.get_hspf_time_series( ('RCHRES', 'HYDR', '001', 'RO', 2)) #Note: the order of arguments is wonky in Regressbase
+rchres_hydr_hsp2_test_mo = rchres_hydr_hsp2_test.resample('MS').mean()
+rchres_hydr_hspf_test_mo = rchres_hydr_hspf_test.resample('MS').mean()
+## BASE CASE
+base = RegressTest(base_case, threads=1, tests_root_dir = tdir)
+# base object hydr
+rchres_hydr_hsp2_base_table = base.hsp2_data._read_table('RCHRES', '001', 'HYDR')
+perlnd_pwat_hsp2_base_table = base.hsp2_data._read_table('PERLND', '001', 'PWATER')
+rchres_hydr_hsp2_base = base.hsp2_data.get_time_series('RCHRES', '001', 'RO', 'HYDR')
+rchres_hydr_hspf_base = base.get_hspf_time_series( ('RCHRES', 'HYDR', '001', 'RO', 2))  #Note: the order of arguments is wonky in Regressbase
+rchres_hydr_hsp2_base_mo = rchres_hydr_hsp2_base.resample('MS').mean()
+rchres_hydr_hspf_base_mo = rchres_hydr_hspf_base.resample('MS').mean()
 
-np.quantile(perlnd_pwater_hsp2['SURO'], [0,0.25,0.5,0.75,1.0])
+# Show quantiles
+np.quantile(rchres_hydr_hsp2_test, [0,0.25,0.5,0.75,1.0])
+np.quantile(rchres_hydr_hspf_test, [0,0.25,0.5,0.75,1.0])
+np.quantile(rchres_hydr_hsp2_base, [0,0.25,0.5,0.75,1.0])
+np.quantile(rchres_hydr_hspf_base, [0,0.25,0.5,0.75,1.0])
+# Monthly mean value comparisons
+rchres_hydr_hsp2_test_mo
+rchres_hydr_hspf_test_mo
+rchres_hydr_hsp2_base_mo
+rchres_hydr_hspf_base_mo
 
-# Compare the hydr
-np.quantile(rchres_hydr_hspf['ROVOL'], [0,0.25,0.5,0.75,1.0])
-np.quantile(rchres_hydr_hsp2['ROVOL'], [0,0.25,0.5,0.75,1.0])
-np.quantile(rchres_hydr_hsp2_test['ROVOL'], [0,0.25,0.5,0.75,1.0])
+# Compare ANY arbitrary timeseries, not just the ones coded into the RegressTest object
+# 3rd argument is tolerance to use
+test.compare_time_series(rchres_hydr_hsp2_base_table['RO'], rchres_hydr_hsp2_test_table['RO'], 10.0)
+# Example:  (True, 8.7855425)
 
+# Compare inflows and outflows
+np.mean(perlnd_pwat_hsp2_test_table['PERO']) * 6000 * 0.0833
+np.mean(rchres_hydr_hsp2_test_table['IVOL'])
+np.mean(rchres_hydr_hsp2_test_table['ROVOL'])
+np.mean(perlnd_pwat_hsp2_base_table['PERO']) * 6000 * 0.0833
+np.mean(rchres_hydr_hsp2_base_table['IVOL'])
+np.mean(rchres_hydr_hsp2_base_table['ROVOL'])
 
+# now do a comparison
+# HYDR diff should be almost nonexistent
+test.check_con(params = ('RCHRES', 'HYDR', '001', 'ROVOL', 2))
+# this is very large for PWTGAS
+test.check_con(params = ('PERLND', 'PWTGAS', '001', 'POHT', '2'))
+
+# Now run the full test
+results = test.run_test()
 found = False
 mismatches = []
 for key, results in results.items():
