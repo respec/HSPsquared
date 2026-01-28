@@ -45,7 +45,8 @@ rchres_hydr_hspf_base_mo
 
 # Compare ANY arbitrary timeseries, not just the ones coded into the RegressTest object
 # 3rd argument is tolerance to use
-test.compare_time_series(rchres_hydr_hsp2_base_table['RO'], rchres_hydr_hsp2_test_table['RO'], 10.0)
+tol = 10.0
+test.compare_time_series(rchres_hydr_hsp2_base_table['RO'], rchres_hydr_hsp2_test_table['RO'], tol)
 # Example:  (True, 8.7855425)
 
 # Compare inflows and outflows

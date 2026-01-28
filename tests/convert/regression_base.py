@@ -57,7 +57,7 @@ class RegressTest:
     def _get_hbn_data(self, test_dir: str) -> None:
         sub_dir = os.path.join(test_dir, "HSPFresults")
         self.hspf_data_collection = {}
-        print("Loading hbs files from hspf data path", sub_dir)
+        print("Loading hbn files from hspf data path", sub_dir)
         for file in os.listdir(sub_dir):
             if file.lower().endswith(".hbn"):
                 hspf_data = HBNOutput(os.path.join(test_dir, sub_dir, file))
