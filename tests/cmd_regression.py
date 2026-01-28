@@ -12,38 +12,42 @@ from hsp2.hsp2tools.HBNOutput import HBNOutput # Also has function get_time_seri
 from tests.convert.regression_base import RegressTest
 
 
-#case = "test10"
-case = "testcbp"
+case = "test10"
+#case = "testcbp"
 tdir = "/opt/model/HSPsquared/tests"
 #import_uci(str(hsp2_specl_uci), str(temp_specl_h5file))
 #run(temp_specl_h5file, saveall=True, compress=False)
 
 ## Manual Data outside of RegressTest
 
-############# HSPF NO SPECL
+############# HSPF RCHRES 1 HYDR (manual)
 hspf_hbn_path = os.path.join(tdir, case, "HSPFresults", case + 'R.hbn')
-hsp2_hdf_path = os.path.join(tdir, case, "HSP2results", case + '.h5')
 hspf_hbn = HBNOutput(hspf_hbn_path)
 hspf_hbn.read_data()
 rchres_hydr_hspf_ovol = hspf_hbn.get_time_series('RCHRES', 1, 'OVOL', 'HYDR', 'full')
 rchres_hydr_hspf = hspf_hbn._read_table('RCHRES', '001', 'HYDR', 'Hourly')
-np.quantile(rchres_hydr_hsp2['ROVOL'], [0,0.25,0.5,0.75,1.0])
 
-
-test = RegressTest(case, threads=1, tests_root_dir = tdir)
-results = test.run_test()
-test.temp_h5file.unlink()
-
-# test object hydr
-rchres_hydr_test = test.hsp2_data.data[('RCHRES', '005', 'HYDR')]
-test_dir = os.path.join(test.tests_root_dir, test.compare_case)
-# test_dir=tdir + '/' + case 
-dstore_hsp2 = pd.HDFStore(str(tdir) + '/HSP2results/' + case + '.h5', mode='r')
+############# HSP2 RCHRES 1 HYDR (manual)
+hsp2_hdf_path = os.path.join(tdir, case, "HSP2results", case + '.h5')
+dstore_hsp2 = pd.HDFStore(hsp2_hdf_path, mode='r')
 rchres_hydr_hsp2 = pd.read_hdf(dstore_hsp2, '/RESULTS/RCHRES_R001/HYDR')
 perlnd_pwater_hsp2 = pd.read_hdf(dstore_hsp2, '/RESULTS/PERLND_P001/PWATER')
 dstore_hsp2.close() # tidy up
-np.quantile(rchres_hydr_hsp2['ROVOL'], [0,0.25,0.5,0.75,1.0])
+
+############# RegressTest data loader
+test = RegressTest(case, threads=1, tests_root_dir = tdir)
+#results = test.run_test()
+
+# test object hydr
+rchres_hydr_hsp2_test = test.hsp2_data.data[('RCHRES', '001', 'HYDR')]
+test_dir = os.path.join(test.tests_root_dir, test.compare_case)
+
 np.quantile(perlnd_pwater_hsp2['SURO'], [0,0.25,0.5,0.75,1.0])
+
+# Compare the hydr
+np.quantile(rchres_hydr_hspf['ROVOL'], [0,0.25,0.5,0.75,1.0])
+np.quantile(rchres_hydr_hsp2['ROVOL'], [0,0.25,0.5,0.75,1.0])
+np.quantile(rchres_hydr_hsp2_test['ROVOL'], [0,0.25,0.5,0.75,1.0])
 
 
 found = False
