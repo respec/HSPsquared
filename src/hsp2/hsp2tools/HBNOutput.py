@@ -179,7 +179,7 @@ class HBNOutput:
         data_frame = self.data_frames[self.summaryindx.index(table_path)]
         return data_frame
     
-    def _get_tcode_key(self, time_unit: str, default: int) -> int:
+    def _get_tcode_key(self, time_unit: str) -> int:
         for tcode_key in self.tcodes.keys():
             if self.tcodes[tcode_key].lower() == time_unit:
                 return tcode_key
