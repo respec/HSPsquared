@@ -4,15 +4,16 @@
 from pathlib import Path
 import os
 import pandas as pd
+import numpy as np
 from hsp2.hsp2tools.commands import import_uci, run
 from hsp2.hsp2tools.HDF5 import HDF5 # note: has handy function get_time_series() 
 from hsp2.hsp2tools.HBNOutput import HBNOutput # Also has function get_time_series()
 
-from convert.regression_base import RegressTest
+from tests.convert.regression_base import RegressTest
 
 
-case = "test10"
-#case = "testcbp"
+#case = "test10"
+case = "testcbp"
 tdir = "/opt/model/HSPsquared/tests"
 #import_uci(str(hsp2_specl_uci), str(temp_specl_h5file))
 #run(temp_specl_h5file, saveall=True, compress=False)
@@ -21,9 +22,12 @@ tdir = "/opt/model/HSPsquared/tests"
 
 ############# HSPF NO SPECL
 hspf_hbn_path = os.path.join(tdir, case, "HSPFresults", case + 'R.hbn')
+hsp2_hdf_path = os.path.join(tdir, case, "HSP2results", case + '.h5')
 hspf_hbn = HBNOutput(hspf_hbn_path)
 hspf_hbn.read_data()
-rcres_hydr_hsp2 = hspf_hbn.get_time_series('RCHRES', 1, 'OVOL', 'HYDR', 'full')
+rchres_hydr_hspf_ovol = hspf_hbn.get_time_series('RCHRES', 1, 'OVOL', 'HYDR', 'full')
+rchres_hydr_hspf = hspf_hbn._read_table('RCHRES', '001', 'HYDR', 'Hourly')
+np.quantile(rchres_hydr_hsp2['ROVOL'], [0,0.25,0.5,0.75,1.0])
 
 
 test = RegressTest(case, threads=1, tests_root_dir = tdir)
@@ -34,7 +38,7 @@ test.temp_h5file.unlink()
 rchres_hydr_test = test.hsp2_data.data[('RCHRES', '005', 'HYDR')]
 test_dir = os.path.join(test.tests_root_dir, test.compare_case)
 # test_dir=tdir + '/' + case 
-dstore_hsp2 = pd.HDFStore(str(test_dir) + '/HSP2results/' + case + '.h5', mode='r')
+dstore_hsp2 = pd.HDFStore(str(tdir) + '/HSP2results/' + case + '.h5', mode='r')
 rchres_hydr_hsp2 = pd.read_hdf(dstore_hsp2, '/RESULTS/RCHRES_R001/HYDR')
 perlnd_pwater_hsp2 = pd.read_hdf(dstore_hsp2, '/RESULTS/PERLND_P001/PWATER')
 dstore_hsp2.close() # tidy up
