@@ -89,46 +89,11 @@ state_load_dynamics_om(
 state_om_model_run_prep(state, io_manager, siminfo)
 #######################################################################################
 
-# main processing loop
-print(1, f"Simulation Start: {start}, Stop: {stop}")
-
-# Test functions pandas
-# this is from PWATER, should be easy?
-ts_HRFG = hoursval(siminfo, ones(24), dofirst=True).astype(float)
-# do import to allow dev of hoursval3 - temporary
-from numpy import float64, full, tile, zeros
-ts_HRFG3 = hoursval3(siminfo, ones(24), dofirst=True).astype(float)
-from hsp2.hsp2.utilities import LAPSE
-ts_LAPSE = hoursval(siminfo, LAPSE, lapselike=True)
-ts_LAPSE3 = hoursval3(siminfo, LAPSE, lapselike=True)
-
-# check these transform() calls inside of get_timeseries()
-(operation, segment) = ('PERLND', 'P001')
-psrc = ddext_sources[('PERLND', 'P001')]
-
-ts = get_timeseries(
-    io_manager, psrc, siminfo
+perland_ext = ddext_sources[('PERLND', 'P001')]
+perlnd_ts = get_timeseries(io_manager, perland_ext, siminfo)
+precip = perlnd_ts['PREC']
+# go another way and get the raw TS to compare to the perlnd_ts which has been converted to simulation
+# intervals
+precip_df = io_manager.read_ts(
+    category=Category.INPUTS, segment='TS039'
 )
-prec_orig = ts['PREC']
-
-row = psrc[0] # 0 is PRCP
-data_frame = io_manager.read_ts(
-    category=Category.INPUTS, segment=row.SVOLNO
-)
-# are they the same?
-(prec_orig == data_frame).all()
-# True - so we don't expect transform to do anything?
-precip_pandas2 = transform(data_frame, row.TMEMN, row.TRAN, siminfo)
-precip_pandas3 = transform3(data_frame, row.TMEMN, row.TRAN, siminfo)
-
-# precip was fine, so iterate through them all and check the difference
-for row in psrc:
-
-
-# replicate with new code
-data_frame = io_manager.read_ts(
-    category=Category.INPUTS, segment=segment
-)
-tsfreq = ts.index.freq
-freq = Minute(siminfo["delt"])
-stop = siminfo["stop"]
