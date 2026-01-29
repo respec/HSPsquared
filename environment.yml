@@ -10,7 +10,7 @@ dependencies:
   # Running HSP2
   - scipy  # Scipy also installs numpy
   # Pandas installs most scientific Python modules, such as Numpy, etc.
-  - pandas <3.0
+  - pandas
   - numba
   - numpy
   - hdf5
