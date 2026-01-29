@@ -213,7 +213,7 @@ def transform(ts, name, how, siminfo):
     NOTE: these routines work for both regular and sparse timeseries input
     """
 
-    tsfreq = Timedelta("1 " + ts.index.freqstr)
+    tsfreq = Timedelta(ts.index.freq).to_timedelta64()
     fmins = Minute(siminfo["delt"])
     freq = Timedelta(fmins).to_timedelta64()
     stop = siminfo["stop"]
@@ -299,7 +299,7 @@ def hoursval(siminfo, hours24, dofirst=False, lapselike=False):
         hours[0] = 1
 
     ts = Series(hours[0 : len(dr)], dr)
-    tsfreq = Timedelta("1 " + ts.index.freqstr)
+    tsfreq = Timedelta(ts.index.freq).to_timedelta64()
     if lapselike:
         if tsfreq > freq:  # upsample
             ts = ts.resample(fmins).asfreq().ffill()
@@ -330,7 +330,7 @@ def monthval(siminfo, monthly):
     months = tile(monthly, stop.year - start.year + 1).astype(float)
     dr = date_range(start=f"{start.year}-01-01", end=f"{stop.year}-12-31", freq="MS")
     ts = Series(months, index=dr).resample("D").ffill()
-    tsfreq = Timedelta("1 " + ts.index.freqstr)
+    tsfreq = Timedelta(ts.index.freq).to_timedelta64()
 
     if tsfreq > freq:  # upsample
         ts = ts.resample(fmins).asfreq().ffill()
@@ -350,7 +350,7 @@ def dayval(siminfo, monthly):
     months = tile(monthly, stop.year - start.year + 1).astype(float)
     dr = date_range(start=f"{start.year}-01-01", end=f"{stop.year}-12-31", freq="MS")
     ts = Series(months, index=dr).resample("D").interpolate("time")
-    tsfreq = Timedelta("1 " + ts.index.freqstr)
+    tsfreq = Timedelta(ts.index.freq).to_timedelta64()
 
 
     if tsfreq > freq:  # upsample

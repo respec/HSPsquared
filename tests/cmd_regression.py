@@ -1,4 +1,3 @@
-# This is code to be executed in a python shell to run regressions tests
 # Note: This code must be run from the tests dir due to importing
 # the `convert` directory where the regression_base file lives
 # todo: make this convert path passable by argument 
@@ -33,10 +32,10 @@ rchres_hydr_hsp2_base_mo = rchres_hydr_hsp2_base.resample('MS').mean()
 rchres_hydr_hspf_base_mo = rchres_hydr_hspf_base.resample('MS').mean()
 
 # Show quantiles
-np.quantile(rchres_hydr_hsp2_test, [0,0.25,0.5,0.75,1.0])
-np.quantile(rchres_hydr_hspf_test, [0,0.25,0.5,0.75,1.0])
-np.quantile(rchres_hydr_hsp2_base, [0,0.25,0.5,0.75,1.0])
-np.quantile(rchres_hydr_hspf_base, [0,0.25,0.5,0.75,1.0])
+print("hsp2", case, np.quantile(rchres_hydr_hsp2_test, [0,0.25,0.5,0.75,1.0]))
+print("hspf", case, np.quantile(rchres_hydr_hspf_test, [0,0.25,0.5,0.75,1.0]))
+print("hsp2", base_case, np.quantile(rchres_hydr_hsp2_base, [0,0.25,0.5,0.75,1.0]))
+print("hspf", base_case, np.quantile(rchres_hydr_hspf_base, [0,0.25,0.5,0.75,1.0]))
 # Monthly mean value comparisons
 rchres_hydr_hsp2_test_mo
 rchres_hydr_hspf_test_mo
@@ -61,11 +60,13 @@ np.mean(rchres_hydr_hsp2_base_table['ROVOL'])
 # HYDR diff should be almost nonexistent
 test.check_con(params = ('RCHRES', 'HYDR', '001', 'ROVOL', 2))
 # this is very large for PWTGAS
-test.check_con(params = ('PERLND', 'PWTGAS', '001', 'POHT', '2'))\
+# git: test10specl ('PERLND', 'PWTGAS', '001', 'POHT', '2') 1163640%
+test.check_con(params = ('PERLND', 'PWTGAS', '001', 'POHT', '2'))
 # Other mismatches in PERLND
 test.check_con(params = ('PERLND', 'PWATER', '001', 'AGWS', '2'))
 test.check_con(params = ('PERLND', 'PWATER', '001', 'PERO', '2'))
 # Now run the full test
+test.quiet = True # this lets us test without overwhelming the console
 results = test.run_test()
 found = False
 mismatches = []
@@ -83,4 +84,5 @@ if mismatches:
     for case, key, results in mismatches:
         diff = results
         print(case, key, f"{diff:0.00%}")
-
+else:
+    print("No mismatches found. Success!")
