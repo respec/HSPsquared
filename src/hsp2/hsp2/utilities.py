@@ -14,7 +14,7 @@ import pandas as pd
 from numba import types
 from numba.typed import Dict
 from numpy import float64, full, tile, zeros
-from pandas import Series, date_range, Timedelta
+from pandas import Series, date_range
 from pandas.tseries.offsets import Minute
 
 from hsp2.hsp2io.protocols import Category, SupportsReadTS, SupportsWriteTS
@@ -212,16 +212,16 @@ def transform(ts, name, how, siminfo):
          aggregate: MEAN, SUM, MAX, MIN
     NOTE: these routines work for both regular and sparse timeseries input
     """
-
+    
     tsfreq = Timedelta("1 " + ts.index.freqstr)
     fmins = Minute(siminfo["delt"])
     freq = Timedelta(fmins).to_timedelta64()
     stop = siminfo["stop"]
-
+    
     # append duplicate of last point to force processing last full interval
     if ts.index[-1] < stop:
         ts[stop] = ts.iloc[-1]
-
+    
     if freq == tsfreq:
         pass
     elif tsfreq is None:  # Sparse time base, frequency not defined
@@ -279,7 +279,7 @@ def transform(ts, name, how, siminfo):
     else:
         print(f"UNKNOWN method in TRANS, {how}")
         return zeros(1)
-
+    
     start, steps = siminfo["start"], siminfo["steps"]
     return ts[start:stop].to_numpy().astype(float64)[0:steps]
 
@@ -288,8 +288,7 @@ def hoursval(siminfo, hours24, dofirst=False, lapselike=False):
     """create hours flags, flag on the hour or lapse table over full simulation"""
     start = siminfo["start"]
     stop = siminfo["stop"]
-    fmins = Minute(siminfo["delt"])
-    freq = Timedelta(fmins).to_timedelta64()
+    freq = Minute(siminfo["delt"])
 
     dr = date_range(
         start=f"{start.year}-01-01", end=f"{stop.year}-12-31", freq=Minute(60)
@@ -299,17 +298,16 @@ def hoursval(siminfo, hours24, dofirst=False, lapselike=False):
         hours[0] = 1
 
     ts = Series(hours[0 : len(dr)], dr)
-    tsfreq = Timedelta("1 " + ts.index.freqstr)
     if lapselike:
-        if tsfreq > freq:  # upsample
-            ts = ts.resample(fmins).asfreq().ffill()
-        elif tsfreq < freq:  # downsample
-            ts = ts.resample(fmins).mean()
+        if ts.index.freq > freq:  # upsample
+            ts = ts.resample(freq).asfreq().ffill()
+        elif ts.index.freq < freq:  # downsample
+            ts = ts.resample(freq).mean()
     else:
-        if tsfreq > freq:  # upsample
-            ts = ts.resample(fmins).asfreq().fillna(0.0)
-        elif tsfreq < freq:  # downsample
-            ts = ts.resample(fmins).max()
+        if ts.index.freq > freq:  # upsample
+            ts = ts.resample(freq).asfreq().fillna(0.0)
+        elif ts.index.freq < freq:  # downsample
+            ts = ts.resample(freq).max()
     return ts.truncate(start, stop).to_numpy()
 
 
@@ -324,18 +322,16 @@ def monthval(siminfo, monthly):
     """returns value at start of month for all times within the month"""
     start = siminfo["start"]
     stop = siminfo["stop"]
-    fmins = Minute(siminfo["delt"])
-    freq = Timedelta(fmins).to_timedelta64()
+    freq = Minute(siminfo["delt"])
 
     months = tile(monthly, stop.year - start.year + 1).astype(float)
     dr = date_range(start=f"{start.year}-01-01", end=f"{stop.year}-12-31", freq="MS")
     ts = Series(months, index=dr).resample("D").ffill()
-    tsfreq = Timedelta("1 " + ts.index.freqstr)
 
-    if tsfreq > freq:  # upsample
-        ts = ts.resample(fmins).asfreq().ffill()
-    elif tsfreq < freq:  # downsample
-        ts = ts.resample(fmins).mean()
+    if ts.index.freq > freq:  # upsample
+        ts = ts.resample(freq).asfreq().ffill()
+    elif ts.index.freq < freq:  # downsample
+        ts = ts.resample(freq).mean()
     return ts.truncate(start, stop).to_numpy()
 
 
@@ -344,19 +340,16 @@ def dayval(siminfo, monthly):
     interpolation to day, but constant within day"""
     start = siminfo["start"]
     stop = siminfo["stop"]
-    fmins = Minute(siminfo["delt"])
-    freq = Timedelta(fmins).to_timedelta64()
+    freq = Minute(siminfo["delt"])
 
     months = tile(monthly, stop.year - start.year + 1).astype(float)
     dr = date_range(start=f"{start.year}-01-01", end=f"{stop.year}-12-31", freq="MS")
     ts = Series(months, index=dr).resample("D").interpolate("time")
-    tsfreq = Timedelta("1 " + ts.index.freqstr)
 
-
-    if tsfreq > freq:  # upsample
-        ts = ts.resample(fmins).ffill()
-    elif tsfreq < freq:  # downsample
-        ts = ts.resample(fmins).mean()
+    if ts.index.freq > freq:  # upsample
+        ts = ts.resample(freq).ffill()
+    elif ts.index.freq < freq:  # downsample
+        ts = ts.resample(freq).mean()
     return ts.truncate(start, stop).to_numpy()
 
 
