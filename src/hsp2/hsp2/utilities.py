@@ -242,7 +242,7 @@ def transform(ts, name, how, siminfo):
                 ts = ts.resample(fmins).sum()
         else:
             if "Y" in str(tsfreq) or "M" in str(tsfreq) or tsfreq > freq:
-                ts = ts.resample(fmins).ffiio_managerll()
+                ts = ts.resample(fmins).ffill()
             else:
                 ts = ts.resample(fmins).mean()
     elif how == "MEAN":
