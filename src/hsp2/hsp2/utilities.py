@@ -322,16 +322,18 @@ def monthval(siminfo, monthly):
     """returns value at start of month for all times within the month"""
     start = siminfo["start"]
     stop = siminfo["stop"]
-    freq = Minute(siminfo["delt"])
+    fmins = Minute(siminfo["delt"])
+    freq = Timedelta(fmins).to_timedelta64()
 
     months = tile(monthly, stop.year - start.year + 1).astype(float)
     dr = date_range(start=f"{start.year}-01-01", end=f"{stop.year}-12-31", freq="MS")
     ts = Series(months, index=dr).resample("D").ffill()
+    tsfreq = Timedelta("1 " + ts.index.freqstr)
 
-    if ts.index.freq > freq:  # upsample
-        ts = ts.resample(freq).asfreq().ffill()
-    elif ts.index.freq < freq:  # downsample
-        ts = ts.resample(freq).mean()
+    if tsfreq > freq:  # upsample
+        ts = ts.resample(fmins).asfreq().ffill()
+    elif tsfreq < freq:  # downsample
+        ts = ts.resample(fmins).mean()
     return ts.truncate(start, stop).to_numpy()
 
 
