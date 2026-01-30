@@ -1,4 +1,5 @@
 # if testing manually you may need to os.chdir('./tests/test10specl/HSP2results')
+# todo: make sure thsi is path independent.
 import os
 import pandas as pd
 import numpy as np

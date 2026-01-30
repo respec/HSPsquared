@@ -24,6 +24,7 @@ def run(h5file, saveall=True, compress=True):
     hdf5_instance = HDF5(h5file)
     io_manager = IOManager(hdf5_instance)
     main(io_manager, saveall=saveall, jupyterlab=compress)
+    hdf5_instance.close()
 
 
 def import_uci(ucifile, h5file):
