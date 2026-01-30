@@ -23,6 +23,7 @@ class RegressTest:
         tcodes: List[str] = ["2"],
         ids: List[str] = [],
         threads: int = os.cpu_count() - 1,
+        tests_root_dir = None
     ) -> None:
         self.compare_case = compare_case
         self.operations = operations
@@ -34,19 +35,14 @@ class RegressTest:
         self._init_files()
 
     def _init_files(self):
-        current_directory = os.path.dirname(
-            os.path.abspath(inspect.getframeinfo(inspect.currentframe()).filename)
-        )
-        source_root_path = os.path.split(os.path.split(current_directory)[0])[0]
-        tests_root_dir = os.path.join(source_root_path, "tests")
         self.html_file = os.path.join(
-            tests_root_dir, f"HSPF_HSP2_{self.compare_case}.html"
+            self.tests_root_dir, f"HSPF_HSP2_{self.compare_case}.html"
         )
 
-        test_dirs = os.listdir(tests_root_dir)
+        test_dirs = os.listdir(self.tests_root_dir)
         for test_dir in test_dirs:
             if test_dir == self.compare_case:
-                test_root = os.path.join(tests_root_dir, test_dir)
+                test_root = os.path.join(self.tests_root_dir, test_dir)
 
         self._get_hdf5_data(test_root)
         self._get_hbn_data(test_root)

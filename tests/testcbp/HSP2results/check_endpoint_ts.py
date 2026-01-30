@@ -17,7 +17,7 @@ fpath = "./tests/test10/HSP2results/test10.h5"
 # # f.close()
 hdf5_instance = HDF5(fpath)
 io_manager = IOManager(hdf5_instance)
-uci_obj = io_manager.read_uci()
+uci_obj = io_manager.read_parameters()
 siminfo = uci_obj.siminfo
 opseq = uci_obj.opseq
 # Note: now that the UCI is read in and hdf5 loaded, you can see things like:
@@ -44,7 +44,7 @@ state_om_model_run_prep(
 )  # this creates all objects from the UCI and previous loads
 # state['model_root_object'].find_var_path('RCHRES_R001')
 # Get the timeseries naked, without an object
-rchres1 = state["model_object_cache"]["/STATE/RCHRES_R001"]
+rchres1 = om_operations["model_object_cache"]["/STATE/RCHRES_R001"]
 precip_ts = ModelLinkage(
     "PRCP",
     rchres1,
