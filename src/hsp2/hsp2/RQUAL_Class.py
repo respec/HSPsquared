@@ -823,13 +823,18 @@ class RQUAL_Class:
     def simulate(
         self,
         ts,
-        state,
+        state_info,
+        state_paths,
+        state_ix,
+        dict_ix,
+        ts_ix,
+        op_tokens,
         model_exec_list,
     ):
         #######################################################################################
         # the following section (2 of 3) added by pbd to RQUAL, this one to prepare for special actions
         #######################################################################################
-        rqual_ix = rqual_get_ix(state, state.domain)
+        rqual_ix = rqual_get_ix(state_ix, state_paths, state_info["domain"])
         # these are integer placeholders faster than calling the array look each timestep
         dox_ix = rqual_ix["DOX"]
         bod_ix = rqual_ix["BOD"]
@@ -849,41 +854,40 @@ class RQUAL_Class:
             # the following section (3 of 3) added by pbd to accommodate special actions
             #######################################################################################
             # set state_ix with value of local state variables and/or needed vars
-            state.state_ix[dox_ix] = self.OXRX.dox
-            state.state_ix[bod_ix] = self.OXRX.bod
-            state.state_ix[no3_ix] = self.NUTRX.no3
-            state.state_ix[tam_ix] = self.NUTRX.tam
-            state.state_ix[no2_ix] = self.NUTRX.no2
-            state.state_ix[po4_ix] = self.NUTRX.po4
-            state.state_ix[brtam1_ix] = self.NUTRX.brtam[0]
-            state.state_ix[brtam2_ix] = self.NUTRX.brtam[1]
-            state.state_ix[brpo41_ix] = self.NUTRX.brpo4[0]
-            state.state_ix[brpo42_ix] = self.NUTRX.brpo4[1]
-            state.state_ix[cforea_ix] = self.OXRX.cforea
-            if state.state_step_om == "enabled":
+            state_ix[dox_ix] = self.OXRX.dox
+            state_ix[bod_ix] = self.OXRX.bod
+            state_ix[no3_ix] = self.NUTRX.no3
+            state_ix[tam_ix] = self.NUTRX.tam
+            state_ix[no2_ix] = self.NUTRX.no2
+            state_ix[po4_ix] = self.NUTRX.po4
+            state_ix[brtam1_ix] = self.NUTRX.brtam[0]
+            state_ix[brtam2_ix] = self.NUTRX.brtam[1]
+            state_ix[brpo41_ix] = self.NUTRX.brpo4[0]
+            state_ix[brpo42_ix] = self.NUTRX.brpo4[1]
+            state_ix[cforea_ix] = self.OXRX.cforea
+            if state_info["state_step_om"] == "enabled":
                 pre_step_model(
-                    model_exec_list, state.op_tokens, state.state_ix, state.dict_ix, state.ts_ix, step=loop
+                    model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step=loop
                 )
 
             # (todo) Insert code hook for dynamic python modification of state
 
-            if state.state_step_om == "enabled":
-                # (todo) migrate runtime jit code to new state object model
+            if state_info["state_step_om"] == "enabled":
                 step_model(
-                    model_exec_list, state.op_tokens, state.state_ix, state.dict_ix, state.ts_ix, step=loop
+                    model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step=loop
                 )  # traditional 'ACTIONS' done in here
                 # Do write-backs for editable STATE variables
-                self.OXRX.dox = state.state_ix[dox_ix]
-                self.OXRX.bod = state.state_ix[bod_ix]
-                self.NUTRX.no3 = state.state_ix[no3_ix]
-                self.NUTRX.tam = state.state_ix[tam_ix]
-                self.NUTRX.no2 = state.state_ix[no2_ix]
-                self.NUTRX.po4 = state.state_ix[po4_ix]
-                self.NUTRX.brtam[0] = state.state_ix[brtam1_ix]
-                self.NUTRX.brtam[1] = state.state_ix[brtam2_ix]
-                self.NUTRX.brpo4[0] = state.state_ix[brpo41_ix]
-                self.NUTRX.brpo4[1] = state.state_ix[brpo42_ix]
-                self.OXRX.cforea = state.state_ix[cforea_ix]
+                self.OXRX.dox = state_ix[dox_ix]
+                self.OXRX.bod = state_ix[bod_ix]
+                self.NUTRX.no3 = state_ix[no3_ix]
+                self.NUTRX.tam = state_ix[tam_ix]
+                self.NUTRX.no2 = state_ix[no2_ix]
+                self.NUTRX.po4 = state_ix[po4_ix]
+                self.NUTRX.brtam[0] = state_ix[brtam1_ix]
+                self.NUTRX.brtam[1] = state_ix[brtam2_ix]
+                self.NUTRX.brpo4[0] = state_ix[brpo41_ix]
+                self.NUTRX.brpo4[1] = state_ix[brpo42_ix]
+                self.OXRX.cforea = state_ix[cforea_ix]
             #######################################################################################
 
             # -------------------------------------------------------

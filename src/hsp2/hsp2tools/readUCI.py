@@ -606,6 +606,7 @@ def ftables(info, llines):
         else:
             lst.append(parseD(line, parse["FTABLES", "FTABLE"]))
 
+
 def ext(info, lines):
     store, parse, path, *_ = info
     lst = []

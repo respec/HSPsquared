@@ -6,19 +6,26 @@ the variable name in question.  Ultimately, everyting becomes either an operator
 in the state_ix Dict for runtime execution.
 """
 
-from numba import njit
-from numpy import append, array
-
 from hsp2.hsp2.om import is_float_digit
-from hsp2.hsp2.om_model_object import ModelConstant, ModelObject
-from hsp2.state.state import get_state_ix, set_state
+from hsp2.state.state import set_state, get_state_ix
+from hsp2.hsp2.om_model_object import ModelObject, ModelConstant
+from numba import njit
+from numpy import array, append
+
+# from hsp2.state.state import set_state, get_state_ix
+# from numba.typed import Dict
+# from hsp2.hsp2.om import get_exec_order, is_float_digit
+# from pandas import Series, DataFrame, concat, HDFStore, set_option, to_numeric
+# from pandas import Timestamp, Timedelta, read_hdf, read_csv
+# from numpy import pad, asarray, zeros, int32
+# from numba import njit, types
 
 
 class Equation(ModelObject):
     # the following are supplied by the parent class: name, log_path, attribute_path, state_path, inputs
 
     def __init__(self, name, container=False, model_props={}, state=None):
-        super().__init__(name, container, model_props)
+        super(Equation, self).__init__(name, container, model_props)
         self.equation = self.handle_prop(model_props, "equation")
         self.ps = False
         self.ps_names = []  # Intermediate with constants turned into variable references in state_paths
@@ -130,7 +137,9 @@ class Equation(ModelObject):
             elif is_float_digit(self.var_ops[j]):
                 # must add this to the state array as a constant
                 constant_path = self.state_path + "/_ops/_op" + str(j)
-                s_ix = self.state.set_state(
+                s_ix = set_state(
+                    self.state["state_ix"],
+                    self.state["state_paths"],
                     constant_path,
                     float(self.var_ops[j]),
                 )
@@ -138,7 +147,9 @@ class Equation(ModelObject):
             else:
                 # this is a variable, must find it's data path index
                 var_path = self.find_var_path(self.var_ops[j])
-                s_ix = self.state.get_state_ix(var_path)
+                s_ix = get_state_ix(
+                    self.state["state_ix"], self.state["state_paths"], var_path
+                )
                 if s_ix == False:
                     print(
                         "Error: unknown variable ",
@@ -148,7 +159,9 @@ class Equation(ModelObject):
                         "index",
                         s_ix,
                     )
-                    print("searched: ", self.state.state_paths, self.state.state_ix)
+                    print(
+                        "searched: ", self.state["state_paths"], self.state["state_ix"]
+                    )
                     return
                 else:
                     self.var_ops[j] = s_ix
@@ -165,21 +178,20 @@ class Equation(ModelObject):
         self.ops = self.ops + [self.non_neg, self.min_value_ix] + self.var_ops
 
 
-import math
-import operator
-
 from pyparsing import (
-    CaselessKeyword,
-    Forward,
-    Group,
     Literal,
-    Regex,
-    Suppress,
     Word,
-    alphanums,
+    Group,
+    Forward,
     alphas,
+    alphanums,
+    Regex,
+    CaselessKeyword,
+    Suppress,
     delimitedList,
 )
+import math
+import operator
 
 exprStack = []
 
@@ -250,6 +262,7 @@ def tokenize_ops(ps):
 
 
 bnf = None
+
 
 def BNF():
     """
@@ -441,7 +454,7 @@ def evaluate_eq_ops(op, val1, val2):
 
 
 @njit
-def step_equation(op_token, state_ix, step):
+def step_equation(op_token, state_ix):
     result = 0
     s = array([0.0])
     s_ix = -1  # pointer to the top of the stack
@@ -449,10 +462,11 @@ def step_equation(op_token, state_ix, step):
     # handle special equation settings like "non-negative", etc.
     non_neg = op_token[2]
     min_ix = op_token[3]
-    # this index is equal to the number of ops common to all classes + 1.
-    #  See om_model_object for base ops and adjust
-    num_ops = op_token[4] 
+    num_ops = op_token[
+        4
+    ]  # this index is equal to the number of ops common to all classes + 1.  See om_model_object for base ops and adjust
     op_loc = 5  # where do the operators and operands start in op_token
+    # print(num_ops, " operations")
     # is the below faster since it avoids a brief loop and a couple ifs for 2 op equations?
     if num_ops == 1:
         result = evaluate_eq_ops(
@@ -480,6 +494,7 @@ def step_equation(op_token, state_ix, step):
                 s_ix -= 1
             else:
                 val2 = state_ix[t2]
+            # print(s_ix, op, val1, val2)
             result = evaluate_eq_ops(op, val1, val2)
             s_ix += 1
             if s_ix >= s_len:
@@ -489,7 +504,5 @@ def step_equation(op_token, state_ix, step):
         result = s[s_ix]
     if (non_neg == 1) and (result < 0):
         result = state_ix[min_ix]
-    #if step < 2:
-    #    print("Eq:", op_token[1], result)
     state_ix[op_token[1]] = result
     return True
