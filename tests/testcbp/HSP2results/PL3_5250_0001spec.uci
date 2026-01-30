@@ -224,4 +224,13 @@ PLTGEN
   END CURV-DATA
 END PLTGEN
 
+SPEC-ACTIONS
+*** test special actions 
+*** I don't think this does anything because CBP is hydro only?
+*** They should LOAD into the STATE context but not be executed
+  RCHRES 1                                RSED    4       +=  2.50E+05
+  RCHRES 1                                RSED    5       +=  6.89E+05
+  RCHRES 1                                RSED    6       +=  4.01E+05
+END SPEC-ACTIONS
+
 END RUN
