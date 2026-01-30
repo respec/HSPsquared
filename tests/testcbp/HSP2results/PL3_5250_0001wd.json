@@ -11,8 +11,8 @@
         "IVOLwrite": {
             "name": "IVOLwrite",
             "object_class": "ModelLinkage",
-            "left_path": "/STATE/RCHRES_R001/O2",
-            "right_path": "/STATE/RCHRES_R001/wd_cfs",
+            "left_path": "/STATE/PL3_5250_0001wd/RCHRES_R001/O2",
+            "right_path": "/STATE/PL3_5250_0001wd/RCHRES_R001/wd_cfs",
             "link_type": 5
         }
     }

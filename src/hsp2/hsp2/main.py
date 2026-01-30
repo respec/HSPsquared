@@ -19,20 +19,26 @@ from hsp2.hsp2.utilities import (
 )
 from hsp2.hsp2.configuration import activities, noop, expand_masslinks
 from hsp2.state.state import (
-    init_state_dicts,
     state_siminfo_hsp2,
     state_load_dynamics_hsp2,
     state_init_hsp2,
     state_context_hsp2,
+    state_class,
+    state_class_lite,
+    state_copy
 )
 from hsp2.hsp2.om import (
     om_init_state,
     state_om_model_run_prep,
     state_load_dynamics_om,
     state_om_model_run_finish,
+    hsp2_domain_dependencies,
+    state_om_model_root_object,
+    om_init_hsp2_segments
 )
-from hsp2.hsp2.SPECL import specl_load_state
-
+from hsp2.hsp2.om_timer import timer_class
+from hsp2.hsp2.SPECL import specl_load_om
+from hsp2.state.state_definitions import state_empty
 from hsp2.hsp2io.io import IOManager, SupportsReadTS, Category
 
 
@@ -55,6 +61,7 @@ def main(
     None
 
     """
+    timer = timer_class()
     if isinstance(io_manager, str):
         hdf5_instance = HDF5(io_manager)
         io_manager = IOManager(hdf5_instance)
@@ -82,33 +89,44 @@ def main(
 
     copy_instances = {}
     gener_instances = {}
+    section_timing = {}
 
+    section_timing["io_manager.read_parameters() call and config"] = str(timer.split()) + "seconds"
     #######################################################################################
     # initialize STATE dicts
     #######################################################################################
     # Set up Things in state that will be used in all modular activities like SPECL
-    state = init_state_dicts()
-    state_siminfo_hsp2(parameter_obj, siminfo, io_manager, state)
+    state = state_class(
+        state_empty["state_ix"], state_empty["op_tokens"], state_empty["state_paths"], 
+        state_empty["op_exec_lists"], state_empty["model_exec_list"], state_empty["dict_ix"], 
+        state_empty["ts_ix"], state_empty["hsp_segments"]
+    )
+    om_operations = om_init_state()  # set up operational model specific containers
+    state_siminfo_hsp2(state, parameter_obj, siminfo, io_manager)
+    state_om_model_root_object(state, om_operations, siminfo)
+    # Iterate through all segments and add crucial paths to state
+    # before loading dynamic components that may reference them
+    state_init_hsp2(state, opseq, activities, timer)
+    om_init_hsp2_segments(state, om_operations)
+    # now initialize all state variables for mutable variables
+    hsp2_domain_dependencies(state, opseq, activities, om_operations, False)
     # Add support for dynamic functions to operate on STATE
     # - Load any dynamic components if present, and store variables on objects
     state_load_dynamics_hsp2(state, io_manager, siminfo)
-    # Iterate through all segments and add crucial paths to state
-    # before loading dynamic components that may reference them
-    state_init_hsp2(state, opseq, activities)
     # - finally stash specactions in state, not domain (segment) dependent so do it once
-    state["specactions"] = specactions  # stash the specaction dict in state
-    om_init_state(state)  # set up operational model specific state entries
-    specl_load_state(state, io_manager, siminfo)  # traditional special actions
+    specl_load_om(om_operations, specactions)  # load traditional special actions
     state_load_dynamics_om(
-        state, io_manager, siminfo
+        state, io_manager, siminfo, om_operations
     )  # operational model for custom python
     # finalize all dynamically loaded components and prepare to run the model
-    state_om_model_run_prep(state, io_manager, siminfo)
+    state_om_model_run_prep(opseq, activities, state, om_operations, siminfo)
+    section_timing["state om initialization()"] = str(timer.split()) + "seconds"
+    statenb = state_class_lite(0)
+    state_copy(state, statenb)
     #######################################################################################
 
     # main processing loop
     msg(1, f"Simulation Start: {start}, Stop: {stop}")
-    tscat = {}
     for _, operation, segment, delt in opseq.itertuples():
         msg(2, f"{operation} {segment} DELT(minutes): {delt}")
         siminfo["delt"] = delt
@@ -206,7 +224,7 @@ def main(
                 msg(3, f"{activity}")
                 # Set context for dynamic executables and special actions
                 state_context_hsp2(state, operation, segment, activity)
-
+                state_copy(state, statenb)
                 ui = model[(operation, activity, segment)]  # ui is a dictionary
                 if operation == "PERLND" and activity == "SEDMNT":
                     # special exception here to make CSNOFG available
@@ -399,11 +417,11 @@ def main(
                 if operation not in ["COPY", "GENER"]:
                     if activity == "HYDR":
                         errors, errmessages = function(
-                            io_manager, siminfo, ui, ts, ftables, state
+                            siminfo, ui, ts, ftables, statenb
                         )
                     elif activity == "SEDTRN" or activity == "SEDMNT":
                         errors, errmessages = function(
-                            io_manager, siminfo, ui, ts, state
+                            siminfo, ui, ts, statenb
                         )
                     elif activity != "RQUAL":
                         errors, errmessages = function(io_manager, siminfo, ui, ts)
@@ -418,7 +436,7 @@ def main(
                             ui_phcarb,
                             ts,
                             monthdata,
-                            state,
+                            statenb,
                         )
                 ###############################################################
 
@@ -518,11 +536,12 @@ def main(
                             jupyterlab,
                             outstep_phcarb,
                         )
+        section_timing[operation + segment] = str(timer.split()) + "seconds"
 
     msglist = msg(1, "Done", final=True)
 
     # Finish operational models
-    state_om_model_run_finish(state, io_manager, siminfo)
+    state_om_model_run_finish(statenb, io_manager, om_operations)
 
     df = DataFrame(msglist, columns=["logfile"])
     io_manager.write_log(df)

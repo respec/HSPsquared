@@ -1,0 +1,24 @@
+{
+    "RCHRES_R001": {
+        "name": "RCHRES_R001",
+        "object_class": "ModelObject",
+        "value": "0",
+        "wd_cfs": {
+            "name": "wd_cfs",
+            "object_class": "Equation",
+            "value": "0.1 * IVOL"
+        },
+        "Qout": {
+            "name": "Qout",
+            "object_class": "Equation",
+            "value": "OVOL3 * 12.1"
+        },
+        "IVOLwrite": {
+            "name": "IVOLwrite",
+            "object_class": "ModelLinkage",
+            "left_path": "/STATE/PL3_5250_0001eq/RCHRES_R001/O2",
+            "right_path": "/STATE/PL3_5250_0001eq/RCHRES_R001/wd_cfs",
+            "link_type": 5
+        }
+    }
+}

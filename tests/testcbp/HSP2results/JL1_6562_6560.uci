@@ -1,21 +1,21 @@
 RUN
-
+ 
 GLOBAL
-  PL3_5250_0 riv | P5 | hsp2_2022  | Occoquan
-  START       2001/01/01        END    2001/12/31
+  JL1_6562_6 riv | P5 | subsheds   | Beaver
+  START       1984/01/01        END    2020/12/31
   RUN INTERP OUTPUT LEVEL    1    1
   RESUME     0 RUN     1                   UNIT SYSTEM     1
 END GLOBAL
 
 FILES
 <FILE>  <UN#>***<----FILE NAME------------------------------------------------->
-WDM1       21   met_A51059.wdm
-WDM2       22   prad_A51059.wdm
-WDM3       23   ps_sep_div_ams_hsp2_2022_PL3_5250_0001.wdm
-WDM4       24   PL3_5250_0001.wdm
-MESSU      25   PL3_5250_0001.ech
-           26   PL3_5250_0001.out
-           31   PL3_5250_0001.tau
+WDM1       21   met_N51003.wdm
+WDM2       22   prad_N51003.wdm
+WDM3       23   ps_sep_div_ams_subsheds_JL1_6562_6560.wdm
+WDM4       24   JL1_6562_6560.wdm
+MESSU      25   JL1_6562_6560.ech
+           26   JL1_6562_6560.out
+           31   JL1_6562_6560.tau
 END FILES
 
 OPN SEQUENCE
@@ -39,7 +39,7 @@ RCHRES
   GEN-INFO
     RCHRES<-------Name------->Nexit   Unit Systems   Printer      ***
     # -  #                          User t-series  Engl Metr LKFG ***
-    1      PL3_5250_0001          3    1    1    1   26    0    1
+    1      JL1_6562_6560          3    1    1    1   26    0    0
   END GEN-INFO
 
   HYDR-PARM1
@@ -54,7 +54,7 @@ RCHRES
   HYDR-PARM2
     RCHRES                                                             ***
     # -  #    FTABNO       LEN     DELTH     STCOR        KS      DB50 ***
-    1             1.       10.        2.                 0.5
+    1             1.     17.01    249.28                 0.5                    
   END HYDR-PARM2
 
   HYDR-INIT
@@ -62,43 +62,44 @@ RCHRES
     # -  #       VOL       Initial value of COLIND  ***  Initial value of OUTDGT
              (ac-ft)       for each  possible exit  ***  for each  possible exit
                  VOL      CEX1 CEX2 CEX3 CEX4 CEX5  *** DEX1 DEX2 DEX3 DEX4 DEX5
-    1      12175.000
+    1      293.16000
   END HYDR-INIT
 
   ADCALC-DATA
     RCHRES  Data for section ADCALC ***
     # -  #     CRRAT       VOL      ***
-    1            1.5    12175.
+    1            1.5    293.16                                                  
   END ADCALC-DATA
 
 END RCHRES
 
 FTABLES
   FTABLE      1
+NOTE: FLOODPLAIN BASE = 5*BANKFULL WIDTH ***
+      FLOODPLAIN SIDE-SLOPE = SAME AS CHANNEL'S ***
  ROWS COLS ***
-   20    4
-     DEPTH      AREA    VOLUME     DISCH ***
-      (FT)   (ACRES)   (AC-FT)     (CFS) ***
-         0         0         0         0
-        20       124      1007         0
-        30       240      2781         0
-        40       444      6106         0
-        50       804     12175         0
-        52       909     13886        39
-        54      1024     15819        78
-        56      1155     17999       117
-        57      1226     19227       136
-        58      1296     20456       137
-        60      1413     23180       138
-        62      1524     26140       140
-        63      1586     27745      1922
-        64      1647     29351      5179
-        65      1701     31247      9398
-        66      1755     33143     14393
-        67      1803     34984     20645
-        69      1879     38705     36532
-        70      1908     40585     44603
-        76      2100     54000    103071
+   19    4
+     DEPTH      AREA    VOLUME     DISCH  ***
+      (FT)   (ACRES)   (AC-FT)     (CFS)  ***
+     0.000     0.000      0.00      0.00
+     0.423    11.894      4.78     23.85
+     0.846    13.061     10.06     77.00
+     1.269    14.227     15.83    154.23
+     1.691    15.393     22.09    254.22
+     2.114    16.560     28.85    376.68
+     2.537    17.726     36.10    521.75
+     2.960    18.893     43.84    689.83
+     3.383    20.059     52.07    881.43
+     3.806    21.225     60.80   1097.15
+     4.806   108.886    168.31   1305.89
+     6.108   112.478    312.43   3577.19
+     7.410   116.069    461.23   6694.41
+     8.712   119.661    614.71  10572.52
+    10.014   123.253    772.86  15161.71
+    11.316   126.845    935.69  20429.73
+    12.618   130.437   1103.20  26354.64
+    13.921   134.028   1275.38  32921.26
+    15.223   137.620   1452.24  40119.05
   END FTABLE  1
 END FTABLES
 
@@ -136,12 +137,31 @@ WDM3  3022 TSSX     ENGLZERO  0.0005  DIV  RCHRES   1     INFLOW ISED   3
 WDM3  3023 DOXX     ENGLZERO          DIV  RCHRES   1     INFLOW OXIF   1
 WDM3  3024 TOCX     ENGLZERO          DIV  RCHRES   1     INFLOW PKIF   5
 
+*** RPA LOAD
+WDM3  3031 NH3R     ENGLZERO  1.0000  DIV  RCHRES   1     INFLOW NUIF1  2
+WDM3  3032 NO3R     ENGLZERO  1.0000  DIV  RCHRES   1     INFLOW NUIF1  1
+WDM3  3033 RONR     ENGLZERO  1.0000  DIV  RCHRES   1     INFLOW PKIF   3
+WDM3  3034 PO4R     ENGLZERO  1.0000  DIV  RCHRES   1     INFLOW NUIF1  4
+WDM3  3035 ROPR     ENGLZERO  1.0000  DIV  RCHRES   1     INFLOW PKIF   4
+WDM3  3036 BODR     ENGLZERO  1.0000  DIV  RCHRES   1     INFLOW OXIF   2
+WDM3  3037 SNDR     ENGLZERO  1.0000  DIV  RCHRES   1     INFLOW ISED   1
+WDM3  3038 SLTR     ENGLZERO  1.0000  DIV  RCHRES   1     INFLOW ISED   2
+WDM3  3039 CLYR     ENGLZERO  1.0000  DIV  RCHRES   1     INFLOW ISED   3
+
 *** DIVERSIONS
 WDM3  3007 DIVR     ENGLZERO          SAME RCHRES   1     EXTNL  OUTDGT 1
 WDM3  3008 DIVA     ENGLZERO          SAME RCHRES   1     EXTNL  OUTDGT 2
 
 *** SEPTIC
 WDM3  3010 SNO3     ENGLZERO  1.0000  DIV  RCHRES   1     INFLOW NUIF1  1
+
+*** RIB
+WDM3  3012 NH3X     ENGLZERO          DIV  RCHRES   1     INFLOW NUIF1  2
+WDM3  3013 NO3X     ENGLZERO          DIV  RCHRES   1     INFLOW NUIF1  1
+WDM3  3014 ORNX     ENGLZERO          DIV  RCHRES   1     INFLOW PKIF   3
+WDM3  3015 PO4X     ENGLZERO          DIV  RCHRES   1     INFLOW NUIF1  4
+WDM3  3016 ORPX     ENGLZERO          DIV  RCHRES   1     INFLOW PKIF   4
+WDM3  3017 BODX     ENGLZERO          DIV  RCHRES   1     INFLOW OXIF   2
 
 *** AEOLIAN SEDIMENT
 WDM3  3061 SFAS     ENGLZERO 7.027e-06DIV  RCHRES   1     INFLOW ISED   2
@@ -160,11 +180,13 @@ WDM4    33 NH3A     ENGLZERO          SAME RCHRES   1     INFLOW NUIF2  1 1
 WDM4    34 NH3I     ENGLZERO          SAME RCHRES   1     INFLOW NUIF2  2 1
 WDM4    35 NH3C     ENGLZERO          SAME RCHRES   1     INFLOW NUIF2  3 1
 WDM4    36 RORN     ENGLZERO          SAME RCHRES   1     INFLOW PKIF   3
+WDM4    37 LORN     ENGLZERO          SAME RCHRES   1     INFLOW PKIF   3
 WDM4    41 PO4D     ENGLZERO          SAME RCHRES   1     INFLOW NUIF1  4
 WDM4    42 PO4A     ENGLZERO          SAME RCHRES   1     INFLOW NUIF2  1 2
 WDM4    43 PO4I     ENGLZERO          SAME RCHRES   1     INFLOW NUIF2  2 2
 WDM4    44 PO4C     ENGLZERO          SAME RCHRES   1     INFLOW NUIF2  3 2
 WDM4    45 RORP     ENGLZERO          SAME RCHRES   1     INFLOW PKIF   4
+WDM4    47 LORP     ENGLZERO          SAME RCHRES   1     INFLOW PKIF   4
 WDM4    51 BODA     ENGLZERO          SAME RCHRES   1     INFLOW OXIF   2
 WDM4    52 TORC     ENGLZERO          SAME RCHRES   1     INFLOW PKIF   5
 WDM4    53 PHYT     ENGLZERO          SAME RCHRES   1     INFLOW PKIF   1
@@ -185,14 +207,17 @@ RCHRES   1 OFLOW  OSNH4  3 1          SAME WDM4   133 NH3A     ENGL      REPL
 RCHRES   1 OFLOW  OSNH4  3 2          SAME WDM4   134 NH3I     ENGL      REPL
 RCHRES   1 OFLOW  OSNH4  3 3          SAME WDM4   135 NH3C     ENGL      REPL
 RCHRES   1 OFLOW  PKCF2  3 3          SAME WDM4   136 RORN     ENGL      REPL
+RCHRES   1 OFLOW  PKCF2  3 3   0.     SAME WDM4   137 LORN     ENGL      REPL
 RCHRES   1 OFLOW  NUCF9  3 4          SAME WDM4   141 PO4D     ENGL      REPL
 RCHRES   1 OFLOW  OSPO4  3 1          SAME WDM4   142 PO4A     ENGL      REPL
 RCHRES   1 OFLOW  OSPO4  3 2          SAME WDM4   143 PO4I     ENGL      REPL
 RCHRES   1 OFLOW  OSPO4  3 3          SAME WDM4   144 PO4C     ENGL      REPL
 RCHRES   1 OFLOW  PKCF2  3 4          SAME WDM4   145 RORP     ENGL      REPL
+RCHRES   1 OFLOW  PKCF2  3 4   0.     SAME WDM4   147 LORP     ENGL      REPL
 RCHRES   1 OFLOW  OXCF2  3 2          SAME WDM4   151 BODA     ENGL      REPL
 RCHRES   1 OFLOW  PKCF2  3 5          SAME WDM4   152 TORC     ENGL      REPL
 RCHRES   1 OFLOW  PKCF2  3 1          SAME WDM4   153 PHYT     ENGL      REPL
+RCHRES   1 SEDTRN DEPSCR 4            SAME WDM4   124 SSCR     ENGL      REPL
 END EXT TARGETS
 
 NETWORK
@@ -209,7 +234,7 @@ PLTGEN
 
   GEN-LABELS
     # -  #<----------------Title----------------->   ***
-    1         PL3_5250_0001 daily_shear_stress_lbsft2
+    1         JL1_6562_6560 daily_shear_stress_lbsft2
   END GEN-LABELS
 
   SCALING
@@ -223,5 +248,14 @@ PLTGEN
     1         daily_shear_stre         1    1 AVER
   END CURV-DATA
 END PLTGEN
+
+ 
+
+SPEC-ACTIONS
+*** test special actions
+  RCHRES 1                                RSED    4       +=  2.50E+05
+  RCHRES 1                                RSED    5       +=  6.89E+05
+  RCHRES 1                                RSED    6       +=  4.01E+05
+END SPEC-ACTIONS
 
 END RUN
