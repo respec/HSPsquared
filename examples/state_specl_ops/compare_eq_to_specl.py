@@ -11,7 +11,6 @@ from pathlib import Path
 from src.hsp2.hsp2tools.commands import import_uci, run
 from src.hsp2.hsp2tools.HDF5 import HDF5
 from src.hsp2.hsp2tools.HBNOutput import HBNOutput
-import tabulate
 
 def test_h5_file_exists():
     assert os.path.exists('test10.h5')
@@ -26,7 +25,7 @@ hspf_data.read_data()
 # get RCHRES 5 sedtrn silt
 ts_silt_hspf = hspf_data.get_time_series('RCHRES', 5, 'RSEDTOTSILT', 'SEDTRN', 'full')
 total_silt_hspf = ts_silt_hspf.mean()
-quantile_silt_hspf = np.quantile(ts_silt_hspf,[0.0,0.25,0.5,0.75,1.0])
+quantile_silt_hspf = np.quantile(ts_silt_hspf,[0.0,0.10,0.5,0.5,0.75,0.9,0.95,1.0])
 
 ############# HSPF NO SPECL
 hspf_nospecl_root = Path("tests/test10/HSPFresults")
@@ -34,7 +33,7 @@ hspf_nospecl_data = HBNOutput(os.path.join(hspf_nospecl_root, 'test10R.hbn'))
 hspf_nospecl_data.read_data()
 ts_silt_nospecl_hspf = hspf_nospecl_data.get_time_series('RCHRES', 5, 'RSEDTOTSILT', 'SEDTRN', 'full')
 total_silt_nospecl_hspf = ts_silt_nospecl_hspf.mean()
-quantile_silt_nospecl_hspf = np.quantile(ts_silt_nospecl_hspf,[0.0,0.25,0.5,0.75,1.0])
+quantile_silt_nospecl_hspf = np.quantile(ts_silt_nospecl_hspf,[0.0,0.10,0.5,0.5,0.75,0.9,0.95,1.0])
 
 ############# hsp2 SPECL 
 # Run and Analyze hsp2 WITH SPECL actions
@@ -56,8 +55,8 @@ dstore_specl = pd.HDFStore(str(temp_specl_h5file), mode='r')
 hsp2_specl_hydr5 = read_hdf(dstore_specl, '/RESULTS/RCHRES_R005/HYDR')
 hsp2_specl_sedtrn5 = read_hdf(dstore_specl, '/RESULTS/RCHRES_R005/SEDTRN')
 hsp2_specl_rsed5 = hsp2_specl_sedtrn5['RSED5']
-quantile_silt_hsp2 = np.quantile(hsp2_specl_rsed5,[0.0,0.25,0.5,0.75,1.0])
-quantile_ro_hsp2 = np.quantile(hsp2_specl_hydr5['RO'],[0.0,0.25,0.5,0.75,1.0])
+quantile_silt_hsp2 = np.quantile(hsp2_specl_rsed5,[0.0,0.10,0.5,0.5,0.75,0.9,0.95,1.0])
+quantile_ro_hsp2 = np.quantile(hsp2_specl_hydr5['RO'],[0.0,0.10,0.5,0.5,0.75,0.9,0.95,1.0])
 total_silt_hsp2 = hsp2_specl_rsed5.mean()
 dstore_specl.close()
 
@@ -65,10 +64,10 @@ dstore_specl.close()
 # Run and Analyze hsp2 without SPECL actions
 nospecl_root = Path("tests/test10")
 nospecl_root.exists()
-nospecl_root_hsp2 = Path(nospecl_root) / "HSP2results"
-hsp2_nospecl_uci = nospecl_root_hsp2.resolve() / "test10.uci"
+nospecl_root_hspf = Path(nospecl_root) / "HSPFresults"
+hsp2_nospecl_uci = nospecl_root_hspf.resolve() / "test10.uci"
 hsp2_nospecl_uci.exists()
-temp_nospecl_h5file = nospecl_root_hsp2 / "test10.h5"
+temp_nospecl_h5file = nospecl_root_hspf / "nospecl_case.h5"
 
 # IF we want to run it from python, do this:
     #if temp_nospecl_h5file.exists():
@@ -81,8 +80,8 @@ dstore_nospecl = pd.HDFStore(str(temp_nospecl_h5file), mode='r')
 hsp2_nospecl_hydr5 = read_hdf(dstore_nospecl, '/RESULTS/RCHRES_R005/HYDR')
 hsp2_nospecl_sedtrn5 = read_hdf(dstore_nospecl, '/RESULTS/RCHRES_R005/SEDTRN')
 hsp2_nospecl_rsed5 = hsp2_nospecl_sedtrn5['RSED5']
-quantile_silt_nospecl_hsp2 = np.quantile(hsp2_nospecl_rsed5,[0.0,0.25,0.5,0.75,1.0])
-np.quantile(hsp2_nospecl_hydr5['RO'],[0.0,0.25,0.5,0.75,1.0])
+np.quantile(hsp2_nospecl_rsed5,[0.0,0.10,0.5,0.5,0.75,0.9,0.95,1.0])
+np.quantile(hsp2_nospecl_hydr5['RO'],[0.0,0.10,0.5,0.5,0.75,0.9,0.95,1.0])
 total_silt_nospecl_hsp2 = hsp2_nospecl_rsed5.mean()
 dstore_nospecl.close()
 
@@ -107,8 +106,8 @@ dstore_eq_specl = pd.HDFStore(str(temp_eq_h5file), mode='r')
 hsp2_eq_hydr5 = read_hdf(dstore_eq_specl, '/RESULTS/RCHRES_R005/HYDR')
 hsp2_eq_sedtrn5 = read_hdf(dstore_eq_specl, '/RESULTS/RCHRES_R005/SEDTRN')
 hsp2_eq_rsed5 = hsp2_eq_sedtrn5['RSED5']
-quantile_silt_eq_hsp2 = np.quantile(hsp2_eq_rsed5,[0.0,0.25,0.5,0.75,1.0])
-quantile_ro_eq_hsp2 = np.quantile(hsp2_eq_hydr5['RO'],[0.0,0.25,0.5,0.75,1.0])
+quantile_silt_eq_hsp2 = np.quantile(hsp2_eq_rsed5,[0.0,0.10,0.5,0.5,0.75,0.9,0.95,1.0])
+quantile_ro_eq_hsp2 = np.quantile(hsp2_eq_hydr5['RO'],[0.0,0.10,0.5,0.5,0.75,0.9,0.95,1.0])
 total_silt_eq_hsp2 = hsp2_eq_rsed5.mean()
 dstore_eq_specl.close()
 
@@ -135,19 +134,3 @@ pct_dif_nospecl = round(100.0 * (total_silt_nospecl_hsp2.mean() - total_silt_nos
 print("Total SiltHSP2 vs. HSPF, % difference = ", pct_dif_specl, "%")
 print("No SPECL: Total SiltHSP2 vs. HSPF, % difference = ", pct_dif_nospecl, "%")
 
-
-a = pd.DataFrame(
-    {
-        'HSP2 no specl':quantile_silt_nospecl_hsp2,
-        'HSPF no specl':quantile_silt_nospecl_hspf,
-        'HSPF w/specl':quantile_silt_hspf,
-        'HSP2 w/specl':quantile_silt_hsp2,
-        'HSP2 w/EQ':quantile_silt_eq_hsp2
-    }
-)
-
-
-tabulate(a, headers='keys', tablefmt='markdown')
-tabulate(a, headers='keys', tablefmt='psql')
-# Thi is better, it USES the tabulate lib but has usable format
-a.to_markdown(index=False)

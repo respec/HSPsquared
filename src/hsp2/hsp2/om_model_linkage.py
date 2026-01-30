@@ -4,7 +4,7 @@ It is also used to make an implicit parent child link to insure that an object i
 during a model simulation.
 """
 
-from hsp2.state.state import state_add_ts
+from hsp2.state.state import state_add_ts, get_state_ix
 from hsp2.hsp2.om import *
 from hsp2.hsp2.om_model_object import ModelObject
 from numba import njit
@@ -14,7 +14,7 @@ class ModelLinkage(ModelObject):
     def __init__(self, name, container=False, model_props=None, state=None):
         if model_props is None:
             model_props = {}
-        super(ModelLinkage, self).__init__(name, container, model_props, state)
+        super(ModelLinkage, self).__init__(name, container, model_props, state=False)
         # ModelLinkage copies a values from right to left
         # right_path: is the data source for the link
         # left_path: is the destination of the link
@@ -49,8 +49,8 @@ class ModelLinkage(ModelObject):
             self.left_path = self.state_path
         if self.link_type == 0:
             # if this is a simple input  we remove the object from the model_object_cache, and pass back to parent as an input
-            del self.om_operations["model_object_cache"][self.state_path]
-            del self.state.state_ix[self.ix]
+            del self.state["model_object_cache"][self.state_path]
+            del self.state["state_ix"][self.ix]
             container.add_input(self.name, self.right_path)
         if self.link_type == 6:
             # add an entry into time series dataframe
@@ -96,26 +96,19 @@ class ModelLinkage(ModelObject):
         # self.insure_path(self, self.right_path)
         # the left path, if this is type 4 or 5, is a push, so we must require it
         if (self.link_type == 4) or (self.link_type == 5) or (self.link_type == 6):
-            #print("ModelLinkage", self.name, "insuring register with path", self.left_path)
+            self.insure_path(self.left_path)
             push_pieces = self.left_path.split("/")
             push_name = push_pieces[len(push_pieces) - 1]
-            left_object = self.get_object(self.left_path)
-            if not left_object:
-                # try to fin the parent and create the register since push is allowed
-                left_parent_path = '/'.join(push_pieces[0:len(push_pieces) - 1])
-                left_parent_object = self.get_object(left_parent_path)
-                if not left_parent_object:
-                    raise Exception(
-                        "Cannot find variable path: "
-                        + left_parent_path
-                        + " when trying to push to object "
-                        + push_name
-                    )
-                var_register = self.insure_register(
-                    push_name, 0.0, left_parent_object, self.left_path, False
-                )
-                #print("Created register", var_register.name, "with path", var_register.state_path)
-                # add already created objects as inputs
+            var_register = self.insure_register(
+                push_name, 0.0, False, self.left_path, False
+            )
+            print(
+                "Created register",
+                var_register.name,
+                "with path",
+                var_register.state_path,
+            )
+            # add already created objects as inputs
             var_register.add_object_input(self.name, self, 1)
         # Now, make sure that all time series paths can be found and loaded
         if self.link_type == 3:
@@ -146,16 +139,18 @@ class ModelLinkage(ModelObject):
 
     def write_ts(self, ts=None, ts_cols=None, write_path=None, tindex=None):
         if ts == None:
-            tix = self.state.get_state_ix(self.left_path)
+            tix = get_state_ix(
+                self.state["state_ix"], self.state["state_paths"], self.left_path
+            )
             # get the ts. Note, we get the ts entry that corresponds to the left_path setting
-            ts = self.state.ts_ix[tix]
+            ts = self.state["ts_ix"][tix]
         if write_path == None:
             if self.left_path != None:
                 write_path = self.left_path
             else:
                 return False
         if tindex == None:
-            tindex = self.get_tindex()
+            tindex = self.state["model_data"]["siminfo"]["tindex"]
         tsdf = self.format_ts(ts, ts_cols, tindex)
         if self.io_manager == False:
             # to do: allow object to specify hdf path name and if so, can open and read/write
@@ -192,7 +187,9 @@ class ModelLinkage(ModelObject):
         # - execution hierarchy
         # print("Linkage/link_type ", self.name, self.link_type,"created with params", self.model_props_parsed)
         if self.link_type in (2, 3):
-            src_ix = self.state.get_state_ix(self.right_path)
+            src_ix = get_state_ix(
+                self.state["state_ix"], self.state["state_paths"], self.right_path
+            )
             if not (src_ix == False):
                 self.ops = self.ops + [src_ix, self.link_type]
             else:
@@ -200,8 +197,12 @@ class ModelLinkage(ModelObject):
             # print(self.name,"tokenize() result", self.ops)
         if (self.link_type == 4) or (self.link_type == 5) or (self.link_type == 6):
             # we push to the remote path in this one
-            left_ix = self.state.get_state_ix(self.left_path)
-            right_ix = self.state.get_state_ix(self.right_path)
+            left_ix = get_state_ix(
+                self.state["state_ix"], self.state["state_paths"], self.left_path
+            )
+            right_ix = get_state_ix(
+                self.state["state_ix"], self.state["state_paths"], self.right_path
+            )
             if (left_ix != False) and (right_ix != False):
                 self.ops = self.ops + [left_ix, self.link_type, right_ix]
             else:
@@ -225,8 +226,11 @@ class ModelLinkage(ModelObject):
 
 
 # Function for use during model simulations of tokenized objects
-@njit(cache=True)
+@njit
 def step_model_link(op_token, state_ix, ts_ix, step):
+    # if step == 2:
+    #    print("step_model_link() called at step 2 with op_token=", op_token)
+    # print("step_model_link() called at step 2 with op_token=", op_token)
     if op_token[3] == 1:
         return True
     elif op_token[3] == 2:
@@ -246,6 +250,15 @@ def step_model_link(op_token, state_ix, ts_ix, step):
         return True
     elif op_token[3] == 6:
         # set value in a timerseries
+        if step < 10:
+            print(
+                "Writing ",
+                state_ix[op_token[4]],
+                "from ix=",
+                op_token[4],
+                "to",
+                op_token[2],
+            )
         ts_ix[op_token[2]][step] = state_ix[op_token[4]]
         return True
 
