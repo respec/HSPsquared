@@ -14,8 +14,9 @@ dependencies = [
     "cltoolbox",
     "numba",
     "numpy<2.0",
-    "pandas",
-    "tables"
+    "pandas<3.0.0",
+    "tables",
+    "pyparsing"
 ]
 authors = [
     {name = "RESPEC, Inc", email = "Paul.Duda@respec.com"}
@@ -42,7 +43,7 @@ keywords = [
     "hydraulic",
     "hspf",
     "simulation",
-    "python",
+    "python"
 ]
 license = {file = "LICENSE"}
 requires-python = ">=3.9"
@@ -67,8 +68,8 @@ include-package-data = true
 readme = {file = "README.rst"}
 version = {file = "VERSION"}
 
-[tool.setuptools.packages.find]
-where = ["src"]
-
 [tool.setuptools.package-data]
 "hsp2.hsp2tools.data" = ["*"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
