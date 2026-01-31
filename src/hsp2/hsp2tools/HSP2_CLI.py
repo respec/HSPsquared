@@ -1,11 +1,12 @@
 import cltoolbox
 
-from hsp2.hsp2tools.commands import import_uci, run
+from hsp2.hsp2tools.commands import import_uci, update_uci, run
 
 
 def main():
     cltoolbox.command(run)
     cltoolbox.command(import_uci)
+    cltoolbox.command(update_uci)
     cltoolbox.main()
 
 

@@ -7,7 +7,7 @@ GLOBAL
   RESUME     0 RUN     1                   UNIT SYSTEM     1
 END GLOBAL
 
-FILES      
+FILES
 <FILE>  <UN#>***<----FILE NAME------------------------------------------------->
 WDM        21   test.wdm
 MESSU      22   test09.ech
@@ -43,7 +43,7 @@ PERLND
     # -  # ATMP SNOW PWAT  SED  PST  PWG PQAL MSTL PEST NITR PHOS TRAC       ***
     1              4    4                                                     12
   END PRINT-INFO
-  
+
   BINARY-INFO
     <PLS >          Print-flags                                    *** PIVL  PYR
     # -  # ATMP SNOW PWAT  SED  PST  PWG PQAL MSTL PEST NITR PHOS TRAC       ***
@@ -371,4 +371,3 @@ RCHRES   4 HYDR   ROVOL          12.1      PLTGEN   1     INPUT  MEAN   3
 END NETWORK
 
 END RUN
-

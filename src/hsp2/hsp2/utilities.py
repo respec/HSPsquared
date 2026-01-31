@@ -14,7 +14,7 @@ import pandas as pd
 from numba import types
 from numba.typed import Dict
 from numpy import float64, full, tile, zeros
-from pandas import Series, date_range, Timedelta, to_timedelta
+from pandas import Series, date_range
 from pandas.tseries.offsets import Minute
 
 from hsp2.hsp2io.protocols import Category, SupportsReadTS, SupportsWriteTS

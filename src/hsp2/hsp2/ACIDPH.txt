@@ -8,8 +8,8 @@ ERRMSG:  [warning, fatal error]
 
 def ACIDPH (FSTCAL):
 	VOL = ts['VOL']
-	
-	
+
+
 	''' Simulate acid-base chemistry of mine drainage-affected reaches'''
 	ACFLAG = ui['ACFLAG']   # table-type acid-flags;  returns 14 values  AC01 to AC14
 	ACPARM = ui['ACPARM']   # table-type acid-parms;  returns 7 values ACPARM1 to ACPARM7
@@ -32,7 +32,7 @@ def ACIDPH (FSTCAL):
 
 
 	'''
-C     IMETHOD - method 
+C     IMETHOD - method
 C     NCHEMS - number of chemical species
 C     NCONS  - number of CONServatives
 C     NGQLS  - number of GQUALs
@@ -291,7 +291,7 @@ def ACCAL1 (TOTAL,TOTFE,ST,FT,CO2, RKAL1,RKAL2,RKAL3,RKAL4,RKALS1,RKALS2,
 	AAL4 = RKAL4 / H * AAL3
 
 	# Fe(+3) __ feoh(+2) __ fe(oh)2(+1) __ fe(oh)3(0) __ fe(oh)4(-)
-	AFE0 = 1.0 / (1.0 + RKFE1 / H * (1.0 + RKFE2 / H * (1.0 + RKFE3 / H * (1.0 + RKFE4/H)))) 
+	AFE0 = 1.0 / (1.0 + RKFE1 / H * (1.0 + RKFE2 / H * (1.0 + RKFE3 / H * (1.0 + RKFE4/H))))
 	AFE1 = RKFE1 / H * AFE0
 	AFE2 = RKFE2 / H * AFE1
 	AFE3 = RKFE3 / H * AFE2
@@ -752,9 +752,9 @@ def accal4 (total,totfe,totmn,totac,cond, rmlwal,rmlwfe,rmlwmn,rcoefm,rcoefh,
 		rih = h
 	else:                 # use ph=6.5
 		rih = 10.0**(-6.5)
-	riph = -log10(h)   # calculate initial ph 
+	riph = -log10(h)   # calculate initial ph
 
-	# compute free aluMIN_um conc. 
+	# compute free aluMIN_um conc.
 	rion = cond * rfactb
 	rkpow  = -rfacta * (ivalal**2.0) * ((sqrt(rion) / (1.0 + sqrt(rion))) - rfactc * rion)
 	rgamma = 10.0**rkpow
@@ -796,9 +796,9 @@ def accal4 (total,totfe,totmn,totac,cond, rmlwal,rmlwfe,rmlwmn,rcoefm,rcoefh,
 	# compute manganese concentration
 	rkpow = -rfacta * (ivalmn**2.0) * ((sqrt(rion) / (1.0 + sqrt(rion))) - rfactc * rion)
 	rgamma = 10.0**rkpow
-	racth  = h 
+	racth  = h
 	rk     = 10.0**(2.e0 * rstdpot / rfacta)
-	rmn    = (rk * (racth**2.0)) / (rgamma * (rpartps**(0.5))) 
+	rmn    = (rk * (racth**2.0)) / (rgamma * (rpartps**(0.5)))
 	if rih < 10.0e-7:
 		tmpmn = totmn * (1.0 - rcoefm)
 		rcmn = tmpmn
@@ -832,7 +832,7 @@ def accal4 (total,totfe,totmn,totac,cond, rmlwal,rmlwfe,rmlwmn,rcoefm,rcoefh,
 
 	if ph > 7.0:
 		newac = 0.0
-	else: 
+	else:
 		if ph < 2.0:
 			# use the new acidity calculated from the recalculated conc. of metals
 			newac = rcac
@@ -845,11 +845,11 @@ def conv(hMIN, hMAX, erMIN, erMAX, error, h)
 	''' convergence algorithm for acid ph module'''
 	MIN_ = 0
 	MAX_ = 0
-	if (error < 0.0) 
+	if (error < 0.0)
 		MIN_ = 1
 	elif (error > 0.0)
 		MAX_ = 1
-		
+
 	sMIN = (erMIN - error) / (hMIN - h)
 	sMAX = (erMAX - error) / (hMAX - h)
 	xMIN = hMIN - erMIN / sMIN
@@ -890,4 +890,3 @@ def newton(m, xMAX, a, b, c, d, e, f, g)
 		slope = b + 2.0 * c * xton[0] + 3.0 * d * xton[1] + 4.0 * e * xton[2] + 5.0 * f * xton[3] + 6.0 * g * xton[4]
 		x     = x0 - y0 / slope
 	return x
-

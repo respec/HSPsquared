@@ -1,19 +1,19 @@
 from collections import defaultdict
-from pandas import DataFrame
+import warnings
 
-class UCI():
-
-	def __init__(self) -> None:
-		self.uci = defaultdict(dict)
-		self.ddlinks = defaultdict(list)
-		self.ddmasslinks = defaultdict(list)
-		self.ddext_sources = defaultdict(list)
-		self.ddgener = defaultdict(dict)
-		self.siminfo = {}
-		self.opseq = DataFrame()
-		self.ftables = {}
-		self.specactions = {}
-		self.monthdata = None
+from .model import Model
 
 
-
+class UCI(Model):
+    def __init__(self) -> None:
+        warnings.warn(
+            """
+*
+* UCI class is deprecated, use Model class in hsp2.model instead.
+* The UCI class will be deleted sometime in the future.
+*
+""",
+            DeprecationWarning,
+        )
+        super().__init__()
+        self.uci = defaultdict(dict)

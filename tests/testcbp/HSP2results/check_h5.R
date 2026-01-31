@@ -1,11 +1,10 @@
-#!/usr/bin/R
 library("rhdf5") #https://bioc.ism.ac.jp/packages/3.4/bioc/vignettes/rhdf5/inst/doc/rhdf5.pdf
 
 # Find and load the h5 file
 # dir()
 
 # specify .h5 file
-h5_file_name = "PL3_5250_0001.h5" 
+h5_file_name = "PL3_5250_0001.h5"
 
 # open the file in R
 h5f = H5Fopen(h5_file_name)
