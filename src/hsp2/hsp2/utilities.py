@@ -14,7 +14,7 @@ import pandas as pd
 from numba import types
 from numba.typed import Dict
 from numpy import float64, full, tile, zeros
-from pandas import Series, date_range
+from pandas import Series, date_range, Timedelta
 from pandas.tseries.offsets import Minute
 
 from hsp2.hsp2io.protocols import Category, SupportsReadTS, SupportsWriteTS
@@ -213,8 +213,8 @@ def transform(ts, name, how, siminfo):
     NOTE: these routines work for both regular and sparse timeseries input
     """
 
-    tsfreq = ts.index.freq
-    freq = Minute(siminfo["delt"])
+    tsfreq = Timedelta(ts.index.freq.nanos, unit="ns")
+    freq = Timedelta(siminfo["delt"], unit="minutes")
     stop = siminfo["stop"]
 
     # append duplicate of last point to force processing last full interval
@@ -270,7 +270,7 @@ def transform(ts, name, how, siminfo):
                 ratio = freq / tsfreq
             ts = (ratio * ts).resample(freq).ffill()  # HSP2 how = div
         else:
-            ts = (ts * (freq / ts.index.freq)).resample(freq).ffill()
+            ts = (ts * (freq / tsfreq)).resample(freq).ffill()
     elif how == "ZEROFILL":
         ts = ts.resample(freq).fillna(0.0)
     elif how == "INTERPOLATE":
@@ -287,7 +287,7 @@ def hoursval(siminfo, hours24, dofirst=False, lapselike=False):
     """create hours flags, flag on the hour or lapse table over full simulation"""
     start = siminfo["start"]
     stop = siminfo["stop"]
-    freq = Minute(siminfo["delt"])
+    freq = Timedelta(siminfo["delt"], unit="minutes")
 
     dr = date_range(
         start=f"{start.year}-01-01", end=f"{stop.year}-12-31", freq=Minute(60)
@@ -297,15 +297,17 @@ def hoursval(siminfo, hours24, dofirst=False, lapselike=False):
         hours[0] = 1
 
     ts = Series(hours[0 : len(dr)], dr)
+    tsfreq = Timedelta(ts.index.freq.nanos, unit="ns")
+
     if lapselike:
-        if ts.index.freq > freq:  # upsample
+        if tsfreq > freq:  # upsample
             ts = ts.resample(freq).asfreq().ffill()
-        elif ts.index.freq < freq:  # downsample
+        elif tsfreq < freq:  # downsample
             ts = ts.resample(freq).mean()
     else:
-        if ts.index.freq > freq:  # upsample
+        if tsfreq > freq:  # upsample
             ts = ts.resample(freq).asfreq().fillna(0.0)
-        elif ts.index.freq < freq:  # downsample
+        elif tsfreq < freq:  # downsample
             ts = ts.resample(freq).max()
     return ts.truncate(start, stop).to_numpy()
 
@@ -321,15 +323,16 @@ def monthval(siminfo, monthly):
     """returns value at start of month for all times within the month"""
     start = siminfo["start"]
     stop = siminfo["stop"]
-    freq = Minute(siminfo["delt"])
+    freq = Timedelta(siminfo["delt"], unit="minutes")
 
     months = tile(monthly, stop.year - start.year + 1).astype(float)
     dr = date_range(start=f"{start.year}-01-01", end=f"{stop.year}-12-31", freq="MS")
     ts = Series(months, index=dr).resample("D").ffill()
+    tsfreq = Timedelta(ts.index.freq.nanos, unit="ns")
 
-    if ts.index.freq > freq:  # upsample
+    if tsfreq > freq:  # upsample
         ts = ts.resample(freq).asfreq().ffill()
-    elif ts.index.freq < freq:  # downsample
+    elif tsfreq < freq:  # downsample
         ts = ts.resample(freq).mean()
     return ts.truncate(start, stop).to_numpy()
 
@@ -339,15 +342,16 @@ def dayval(siminfo, monthly):
     interpolation to day, but constant within day"""
     start = siminfo["start"]
     stop = siminfo["stop"]
-    freq = Minute(siminfo["delt"])
+    freq = Timedelta(siminfo["delt"], unit="minutes")
 
     months = tile(monthly, stop.year - start.year + 1).astype(float)
     dr = date_range(start=f"{start.year}-01-01", end=f"{stop.year}-12-31", freq="MS")
     ts = Series(months, index=dr).resample("D").interpolate("time")
+    tsfreq = Timedelta(ts.index.freq.nanos, unit="ns")
 
-    if ts.index.freq > freq:  # upsample
+    if tsfreq > freq:  # upsample
         ts = ts.resample(freq).ffill()
-    elif ts.index.freq < freq:  # downsample
+    elif tsfreq < freq:  # downsample
         ts = ts.resample(freq).mean()
     return ts.truncate(start, stop).to_numpy()
 
