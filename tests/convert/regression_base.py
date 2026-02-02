@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 from hsp2.hsp2tools.HBNOutput import HBNOutput
 from hsp2.hsp2tools.HDF5 import HDF5
+import hsp2.hsp2tools as hsp2tools
 
 OperationsTuple = Tuple[str, str, str, str, str]
 ResultsTuple = Tuple[bool, bool, bool, float]
@@ -31,6 +32,7 @@ class RegressTest:
         self.ids = ids
         self.threads = threads
         self.quiet = False # allows users to set this later
+        self.aliases = self._read_aliases_csv() # compatibility map btwn hspf:hsp2
         self._init_files()
 
     def _init_files(self):
@@ -341,3 +343,10 @@ class RegressTest:
 
         match = np.allclose(ts_hspf, ts_hsp2, rtol=1e-2, atol=tol, equal_nan=False)
         return (match, max_diff)
+    
+    def _read_aliases_csv(self) -> Dict[Tuple[str, str, str], str]:
+        datapath = os.path.join(hsp2tools.__path__[0], "data", "HBNAliases.csv")
+        df = pd.read_csv(datapath)
+        df = df.set_index(["operation", "activity", "hspf_name"])
+        df_dict = df["hsp2_name"].to_dict()
+        return df_dict
