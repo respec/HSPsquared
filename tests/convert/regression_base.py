@@ -8,7 +8,7 @@ from typing import Dict, List, Tuple, Union
 import numpy as np
 import pandas as pd
 from hsp2.hsp2tools.HBNOutput import HBNOutput
-from hsp2.hsp2tools.HDF5 import HDF5
+from hsp2.hsp2tools.HDF5 import HDF5, hsp2_hspf_aliases
 import hsp2.hsp2tools as hsp2tools
 
 OperationsTuple = Tuple[str, str, str, str, str]
@@ -32,7 +32,7 @@ class RegressTest:
         self.ids = ids
         self.threads = threads
         self.quiet = False # allows users to set this later
-        self.aliases = self._read_aliases_csv() # compatibility map btwn hspf:hsp2
+        self.aliases = hsp2_hspf_aliases() # compatibility map btwn hspf:hsp2
         self._init_files()
 
     def _init_files(self):
