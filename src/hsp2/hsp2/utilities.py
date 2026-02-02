@@ -214,46 +214,47 @@ def transform(ts, name, how, siminfo):
     """
 
     tsfreq = ts.index.freq
-    freq = Minute(siminfo["delt"])
+    fmins = Minute(siminfo["delt"])
+    freq = fmins.nanos
     stop = siminfo["stop"]
 
     # append duplicate of last point to force processing last full interval
     if ts.index[-1] < stop:
         ts[stop] = ts.iloc[-1]
 
-    if freq == tsfreq:
+    if freq == tsfreq.nanos:
         pass
     elif tsfreq is None:  # Sparse time base, frequency not defined
         ts = ts.reindex(siminfo["tbase"]).ffill().bfill()
     elif how == "SAME":
-        ts = ts.resample(freq).ffill()  # tsfreq >= freq assumed, or bad user choice
+        ts = ts.resample(fmins).ffill()  # tsfreq.nanos >= freq assumed, or bad user choice
     elif not how:
         if name in flowtype:
-            if "Y" in str(tsfreq) or "M" in str(tsfreq) or tsfreq > freq:
+            if "Y" in str(tsfreq) or "M" in str(tsfreq) or tsfreq.nanos > freq:
                 if "M" in str(tsfreq):
                     ratio = 1.0 / 730.5
                 elif "Y" in str(tsfreq):
                     ratio = 1.0 / 8766.0
                 else:
-                    ratio = freq / tsfreq
-                ts = (ratio * ts).resample(freq).ffill()  # HSP2 how = div
+                    ratio = freq / tsfreq.nanos
+                ts = (ratio * ts).resample(fmins).ffill()  # HSP2 how = div
             else:
-                ts = ts.resample(freq).sum()
+                ts = ts.resample(fmins).sum()
         else:
-            if "Y" in str(tsfreq) or "M" in str(tsfreq) or tsfreq > freq:
-                ts = ts.resample(freq).ffill()
+            if "Y" in str(tsfreq) or "M" in str(tsfreq) or tsfreq.nanos > freq:
+                ts = ts.resample(fmins).ffill()
             else:
-                ts = ts.resample(freq).mean()
+                ts = ts.resample(fmins).mean()
     elif how == "MEAN":
-        ts = ts.resample(freq).mean()
+        ts = ts.resample(fmins).mean()
     elif how == "SUM":
-        ts = ts.resample(freq).sum()
+        ts = ts.resample(fmins).sum()
     elif how == "MAX":
-        ts = ts.resample(freq).max()
+        ts = ts.resample(fmins).max()
     elif how == "MIN":
-        ts = ts.resample(freq).min()
+        ts = ts.resample(fmins).min()
     elif how == "LAST":
-        ts = ts.resample(freq).ffill()
+        ts = ts.resample(fmins).ffill()
     elif how == "DIV":
         if "Y" in str(tsfreq) or "M" in str(tsfreq):
             mult = 1
@@ -267,14 +268,14 @@ def transform(ts, name, how, siminfo):
             elif "Y" in str(tsfreq):
                 ratio = 1.0 / (8766.0 * mult)
             else:
-                ratio = freq / tsfreq
-            ts = (ratio * ts).resample(freq).ffill()  # HSP2 how = div
+                ratio = freq / tsfreq.nanos
+            ts = (ratio * ts).resample(fmins).ffill()  # HSP2 how = div
         else:
-            ts = (ts * (freq / ts.index.freq)).resample(freq).ffill()
+            ts = (ts * (freq / tsfreq.nanos)).resample(fmins).ffill()
     elif how == "ZEROFILL":
-        ts = ts.resample(freq).fillna(0.0)
+        ts = ts.resample(fmins).fillna(0.0)
     elif how == "INTERPOLATE":
-        ts = ts.resample(freq).interpolate()
+        ts = ts.resample(fmins).interpolate()
     else:
         print(f"UNKNOWN method in TRANS, {how}")
         return zeros(1)
@@ -287,7 +288,8 @@ def hoursval(siminfo, hours24, dofirst=False, lapselike=False):
     """create hours flags, flag on the hour or lapse table over full simulation"""
     start = siminfo["start"]
     stop = siminfo["stop"]
-    freq = Minute(siminfo["delt"])
+    fmins = Minute(siminfo["delt"])
+    freq = fmins.nanos
 
     dr = date_range(
         start=f"{start.year}-01-01", end=f"{stop.year}-12-31", freq=Minute(60)
@@ -297,16 +299,17 @@ def hoursval(siminfo, hours24, dofirst=False, lapselike=False):
         hours[0] = 1
 
     ts = Series(hours[0 : len(dr)], dr)
+    tsfreq = ts.index.freq
     if lapselike:
-        if ts.index.freq > freq:  # upsample
-            ts = ts.resample(freq).asfreq().ffill()
-        elif ts.index.freq < freq:  # downsample
-            ts = ts.resample(freq).mean()
+        if tsfreq.nanos > freq:  # upsample
+            ts = ts.resample(fmins).asfreq().ffill()
+        elif tsfreq.nanos < freq:  # downsample
+            ts = ts.resample(fmins).mean()
     else:
-        if ts.index.freq > freq:  # upsample
-            ts = ts.resample(freq).asfreq().fillna(0.0)
-        elif ts.index.freq < freq:  # downsample
-            ts = ts.resample(freq).max()
+        if tsfreq.nanos > freq:  # upsample
+            ts = ts.resample(fmins).asfreq().fillna(0.0)
+        elif tsfreq.nanos < freq:  # downsample
+            ts = ts.resample(fmins).max()
     return ts.truncate(start, stop).to_numpy()
 
 
@@ -321,16 +324,18 @@ def monthval(siminfo, monthly):
     """returns value at start of month for all times within the month"""
     start = siminfo["start"]
     stop = siminfo["stop"]
-    freq = Minute(siminfo["delt"])
+    fmins = Minute(siminfo["delt"])
+    freq = fmins.nanos
 
     months = tile(monthly, stop.year - start.year + 1).astype(float)
     dr = date_range(start=f"{start.year}-01-01", end=f"{stop.year}-12-31", freq="MS")
     ts = Series(months, index=dr).resample("D").ffill()
+    tsfreq = ts.index.freq
 
-    if ts.index.freq > freq:  # upsample
-        ts = ts.resample(freq).asfreq().ffill()
-    elif ts.index.freq < freq:  # downsample
-        ts = ts.resample(freq).mean()
+    if tsfreq.nanos > freq:  # upsample
+        ts = ts.resample(fmins).asfreq().ffill()
+    elif tsfreq.nanos < freq:  # downsample
+        ts = ts.resample(fmins).mean()
     return ts.truncate(start, stop).to_numpy()
 
 
@@ -339,16 +344,19 @@ def dayval(siminfo, monthly):
     interpolation to day, but constant within day"""
     start = siminfo["start"]
     stop = siminfo["stop"]
-    freq = Minute(siminfo["delt"])
+    fmins = Minute(siminfo["delt"])
+    freq = fmins.nanos
 
     months = tile(monthly, stop.year - start.year + 1).astype(float)
     dr = date_range(start=f"{start.year}-01-01", end=f"{stop.year}-12-31", freq="MS")
     ts = Series(months, index=dr).resample("D").interpolate("time")
+    tsfreq = ts.index.freq
 
-    if ts.index.freq > freq:  # upsample
-        ts = ts.resample(freq).ffill()
-    elif ts.index.freq < freq:  # downsample
-        ts = ts.resample(freq).mean()
+
+    if tsfreq.nanos > freq:  # upsample
+        ts = ts.resample(fmins).ffill()
+    elif tsfreq.nanos < freq:  # downsample
+        ts = ts.resample(fmins).mean()
     return ts.truncate(start, stop).to_numpy()
 
 

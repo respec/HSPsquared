@@ -30,7 +30,7 @@ class RegressTest:
         self.tcodes = tcodes
         self.ids = ids
         self.threads = threads
-
+        self.quiet = False # allows users to set this later
         self._init_files()
 
     def _init_files(self):
@@ -185,7 +185,8 @@ class RegressTest:
     def check_con(self, params: OperationsTuple) -> ResultsTuple:
         """Performs comparision of single constituent"""
         operation, activity, id, constituent, tcode = params
-        print(f"    {operation}_{id}  {activity}  {constituent}\n")
+        if not self.quiet:
+            print(f"    {operation}_{id}  {activity}  {constituent}\n")
 
         ts_hsp2 = self.hsp2_data.get_time_series(operation, id, constituent, activity)
         ts_hspf = self.get_hspf_time_series(params)
