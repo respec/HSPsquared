@@ -16,7 +16,7 @@ class HDF5:
 
     def __init__(self, file_name: str) -> None:
         self.file_name = file_name
-        self.aliases = hsp2_hspf_aliases()
+        self.aliases = self._read_aliases_csv()
         self.data = {}
         self.lock = Lock()
 
@@ -60,6 +60,13 @@ class HDF5:
     def _read_pqual_mapping(self) -> Dict[str, str]:
         return self._read_nqual_mapping(R"PERLND/PQUAL/PQUAL", "QUALID", 10)
 
+    def _read_aliases_csv(self) -> Dict[Tuple[str, str, str], str]:
+        datapath = os.path.join(hsp2tools.__path__[0], "data", "HBNAliases.csv")
+        df = pd.read_csv(datapath)
+        df = df.set_index(["operation", "activity", "hspf_name"])
+        df_dict = df["hsp2_name"].to_dict()
+        return df_dict
+
     def get_time_series(
         self, operation: str, id: str, constituent: str, activity: str
     ) -> Union[pd.Series, None]:
@@ -93,7 +100,7 @@ class HDF5:
             if constituent_prefix + constituent in df.columns:
                 return df[constituent_prefix + constituent]
             else:
-                constituent_alias = self.aliases.get_alias((operation, activity, constituent))
+                constituent_alias = self.aliases[(operation, activity, constituent)]
                 return df[constituent_prefix + constituent_alias]
         except KeyError:
             return None
@@ -109,24 +116,3 @@ class HDF5:
                 return df
         except KeyError:
             return pd.DataFrame()
-
-
-
-class hsp2_hspf_aliases:
-    REQUIRES_MAPPING = ["GQUAL", "CONS", "IQUAL", "PQUAL"]
-
-    def __init__(self) -> None:
-        self.aliases = self._read_aliases_csv()
-    
-    def _read_aliases_csv(self) -> Dict[Tuple[str, str, str], str]:
-        datapath = os.path.join(hsp2tools.__path__[0], "data", "HBNAliases.csv")
-        df = pd.read_csv(datapath)
-        df = df.set_index(["operation", "activity", "hspf_name"])
-        df_dict = df["hsp2_name"].to_dict()
-        return df_dict
-    
-    def get_alias(self, params):
-       if params in self.aliases
-           return self.aliases[params]
-       else:
-           return False
