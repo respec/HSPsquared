@@ -18,17 +18,9 @@ from hsp2.hsp2.utilities import (
     get_gener_timeseries,
 )
 from hsp2.hsp2.configuration import activities, noop, expand_masslinks
-from hsp2.state.state import (
-    init_state_dicts,
-    state_siminfo_hsp2,
-    state_load_dynamics_hsp2,
-    state_init_hsp2,
-    state_context_hsp2,
-)
+from hsp2.state.state import state_context_hsp2, state_copy
 from hsp2.hsp2.om import (
-    om_init_state,
-    state_om_model_run_prep,
-    state_load_dynamics_om,
+    om_state_hsp2_run_setup,
     state_om_model_run_finish,
 )
 from hsp2.hsp2.SPECL import specl_load_state
@@ -87,23 +79,7 @@ def main(
     # initialize STATE dicts
     #######################################################################################
     # Set up Things in state that will be used in all modular activities like SPECL
-    state = init_state_dicts()
-    state_siminfo_hsp2(parameter_obj, siminfo, io_manager, state)
-    # Add support for dynamic functions to operate on STATE
-    # - Load any dynamic components if present, and store variables on objects
-    state_load_dynamics_hsp2(state, io_manager, siminfo)
-    # Iterate through all segments and add crucial paths to state
-    # before loading dynamic components that may reference them
-    state_init_hsp2(state, opseq, activities)
-    # - finally stash specactions in state, not domain (segment) dependent so do it once
-    state["specactions"] = specactions  # stash the specaction dict in state
-    om_init_state(state)  # set up operational model specific state entries
-    specl_load_state(state, io_manager, siminfo)  # traditional special actions
-    state_load_dynamics_om(
-        state, io_manager, siminfo
-    )  # operational model for custom python
-    # finalize all dynamically loaded components and prepare to run the model
-    state_om_model_run_prep(state, io_manager, siminfo)
+    (state, om_operations, statenb) = om_state_hsp2_run_setup(parameter_obj, io_manager, activities)
     #######################################################################################
 
     # main processing loop
@@ -206,6 +182,7 @@ def main(
                 msg(3, f"{activity}")
                 # Set context for dynamic executables and special actions
                 state_context_hsp2(state, operation, segment, activity)
+                state_copy(state, statenb)
 
                 ui = model[(operation, activity, segment)]  # ui is a dictionary
                 if operation == "PERLND" and activity == "SEDMNT":
@@ -399,11 +376,11 @@ def main(
                 if operation not in ["COPY", "GENER"]:
                     if activity == "HYDR":
                         errors, errmessages = function(
-                            io_manager, siminfo, ui, ts, ftables, state
+                            siminfo, ui, ts, ftables, statenb
                         )
                     elif activity == "SEDTRN" or activity == "SEDMNT":
                         errors, errmessages = function(
-                            io_manager, siminfo, ui, ts, state
+                            siminfo, ui, ts, statenb
                         )
                     elif activity != "RQUAL":
                         errors, errmessages = function(io_manager, siminfo, ui, ts)
@@ -418,7 +395,7 @@ def main(
                             ui_phcarb,
                             ts,
                             monthdata,
-                            state,
+                            statenb,
                         )
                 ###############################################################
 
@@ -522,7 +499,7 @@ def main(
     msglist = msg(1, "Done", final=True)
 
     # Finish operational models
-    state_om_model_run_finish(state, io_manager, siminfo)
+    state_om_model_run_finish(statenb, io_manager, om_operations)
 
     df = DataFrame(msglist, columns=["logfile"])
     io_manager.write_log(df)
