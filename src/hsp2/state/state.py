@@ -152,23 +152,24 @@ def state_siminfo_hsp2(parameter_obj, siminfo, io_manager, state):
     state["model_root_name"] = os.path.split(fbase)[1]  # takes the text before .h5
 
 
-def state_init_hsp2(state, model):
+def state_init_hsp2(state, opseq, activities):
     # This sets up the state entries for all state compatible HSP2 model variables
     # print("STATE initializing contexts.")
-    for operation, activity, segment in model.keys():
+    for _, operation, segment, delt in opseq.itertuples():
         if operation != "GENER" and operation != "COPY":
-            if activity == "HYDR":
-                state_context_hsp2(state, operation, segment, activity)
-                hydr_init_ix(state, state["domain"])
-            elif activity == "SEDTRN":
-                state_context_hsp2(state, operation, segment, activity)
-                sedtrn_init_ix(state, state["domain"])
-            elif activity == "SEDMNT":
-                state_context_hsp2(state, operation, segment, activity)
-                sedmnt_init_ix(state, state["domain"])
-            elif activity == "RQUAL":
-                state_context_hsp2(state, operation, segment, activity)
-                rqual_init_ix(state, state["domain"])
+            for activity, function in activities[operation].items():
+                if activity == "HYDR":
+                    state_context_hsp2(state, operation, segment, activity)
+                    hydr_init_ix(state, state["domain"])
+                elif activity == "SEDTRN":
+                    state_context_hsp2(state, operation, segment, activity)
+                    sedtrn_init_ix(state, state["domain"])
+                elif activity == "SEDMNT":
+                    state_context_hsp2(state, operation, segment, activity)
+                    sedmnt_init_ix(state, state["domain"])
+                elif activity == "RQUAL":
+                    state_context_hsp2(state, operation, segment, activity)
+                    rqual_init_ix(state, state["domain"])
 
 
 def state_load_hdf5_components(
