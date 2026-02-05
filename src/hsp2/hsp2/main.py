@@ -67,7 +67,6 @@ def main(
     model = parameter_obj.model
     siminfo = parameter_obj.siminfo
     ftables = parameter_obj.ftables
-    specactions = parameter_obj.specactions
     monthdata = parameter_obj.monthdata
 
     start, stop = siminfo["start"], siminfo["stop"]
