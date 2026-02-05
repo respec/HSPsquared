@@ -7,7 +7,8 @@ Notes:
 """
 
 from numba import njit
-
+from hsp2.hsp2tools.names import hsp2_sequence_id
+from hsp2.state import get_state_ix
 
 def specl_load_om(state, io_manager, siminfo):
     if "ACTIONS" in state["specactions"]:
@@ -19,6 +20,10 @@ def specl_load_om(state, io_manager, siminfo):
             opname = "SPEC" + "ACTION" + str(ix)
             state["model_data"][opname] = {}
             state["model_data"][opname]["name"] = opname
+            # must check to see if the action refers to an active OPSEQ segment
+            # since hsp* allows segments to be defined but not OPNed
+            id = hsp2_sequence_id(speca['OPTYP'], speca['RANGE1'])
+            ix = get_state_ix(state['state_ix'], state['state_paths'], id)
             for ik in speca.keys():
                 # print("looking for speca key ", ik)
                 state["model_data"][opname][ik] = speca.to_dict()[ik][
