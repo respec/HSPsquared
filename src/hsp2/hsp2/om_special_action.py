@@ -159,7 +159,8 @@ class SpecialAction(ModelObject):
 
     def find_paths(self):
         # this makes sure that the source prop (and destination prop) exists in the model.
-        # NOTE: since the spec-action modifies the same quantity that is it's input, it does *not* set it as a proper "input" since that would create a circular dependency
+        # NOTE: since the spec-action modifies the same quantity that is it's input, 
+        # it does *not* set it as a proper "input" since that would create a circular dependency
         domain_path = (
             self.container.state_path
             + "/"

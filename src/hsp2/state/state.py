@@ -400,29 +400,30 @@ def state_domain(state, operation, segment, activity):
     # like + "/" + activity 
     return domain
     
-def state_segname(state, operation, segment, activity):
+def state_segname(state, operation, segment):
     seg_name = operation + "_" + segment
     seg_path = "/STATE/" + state.model_root_name + "/" + seg_name 
     return (seg_name, seg_path)
 
 
-def state_init_hsp2(state, model):
+def state_init_hsp2(state, opseq, activities):
     # This sets up the state entries for all state compatible HSP2 model variables
     # print("STATE initializing contexts.")
-    for operation, activity, segment in model.keys():
+    for _, operation, segment, delt in opseq.itertuples():
         if operation != "GENER" and operation != "COPY":
-            if activity == "HYDR":
-                state_context_hsp2(state, operation, segment, activity)
-                hydr_init_ix(state, state["domain"])
-            elif activity == "SEDTRN":
-                state_context_hsp2(state, operation, segment, activity)
-                sedtrn_init_ix(state, state["domain"])
-            elif activity == "SEDMNT":
-                state_context_hsp2(state, operation, segment, activity)
-                sedmnt_init_ix(state, state["domain"])
-            elif activity == "RQUAL":
-                state_context_hsp2(state, operation, segment, activity)
-                rqual_init_ix(state, state["domain"])
+            for activity, function in activities[operation].items():
+                if activity == "HYDR":
+                    state_context_hsp2(state, operation, segment, activity)
+                    hydr_init_ix(state, state["domain"])
+                elif activity == "SEDTRN":
+                    state_context_hsp2(state, operation, segment, activity)
+                    sedtrn_init_ix(state, state["domain"])
+                elif activity == "SEDMNT":
+                    state_context_hsp2(state, operation, segment, activity)
+                    sedmnt_init_ix(state, state["domain"])
+                elif activity == "RQUAL":
+                    state_context_hsp2(state, operation, segment, activity)
+                    rqual_init_ix(state, state["domain"])
 
 
 def state_load_dynamics_hsp2(state, io_manager, siminfo):

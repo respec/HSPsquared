@@ -19,6 +19,10 @@ def specl_load_om(om_operations, specactions):
             opname = "SPEC" + "ACTION" + str(ix)
             om_operations["model_data"][opname] = {}
             om_operations["model_data"][opname]["name"] = opname
+            # now, by this point the model domain should have been loaded to include all active segments
+            # so, because HSP* allows SPEC-ACTIONS and other items to exist in the UCI even if they are 
+            # not ACTIVE (i.e. not in the OPN SEQUENCE block), then we must screen out those SPECACTIONS
+            # that operate on an inactive endpoint
             for ik in speca.keys():
                 # print("looking for speca key ", ik)
                 om_operations["model_data"][opname][ik] = speca.to_dict()[ik][

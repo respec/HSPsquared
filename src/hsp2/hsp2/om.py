@@ -257,7 +257,7 @@ def om_state_hsp2_run_setup(parameter_obj, io_manager, activities):
     state_om_model_root_object(state, om_operations, parameter_obj.siminfo)
     # Iterate through all segments and add crucial paths to state
     # before loading dynamic components that may reference them
-    state_init_hsp2(state, parameter_obj.opseq, activities, timer)
+    state_init_hsp2(state, parameter_obj.opseq, activities)
     om_init_hsp2_segments(state, om_operations)
     # now initialize all state variables for mutable variables
     hsp2_domain_dependencies(state, parameter_obj.opseq, activities, om_operations, False)
