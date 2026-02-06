@@ -25,9 +25,9 @@ def specl_load_om(state, parameter_obj):
             id = hsp2_sequence_id(speca['OPTYP'], speca['RANGE1'])
             if id not in parameter_obj.opseq:
                 warnings.warn(
-                    "Missing/inactive segment", speca['OPTYP'], speca['RANGE1'], "referenced."
-                    "Special Actions referencing inactive/missing segments will be a fatal error",
-                    "by default in future version."
+                    "Missing/inactive segment" + speca['OPTYP'] + ' ' + str(speca['RANGE1']), "referenced." +
+                    "Special Actions referencing inactive/missing segments will be a fatal error" + 
+                    "by default in future version.",
                     DeprecationWarning)
                 continue
             for ik in speca.keys():
