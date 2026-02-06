@@ -10,7 +10,7 @@ from numba import njit
 from hsp2.hsp2tools.names import hsp2_sequence_id
 import warnings
 
-def specl_load_om(state, parameter_obj.opseq):
+def specl_load_om(state, parameter_obj):
     if "ACTIONS" in state["specactions"]:
         dc = state["specactions"]["ACTIONS"]
         for ix in dc.index:
@@ -45,8 +45,8 @@ def specl_load_om(state, parameter_obj.opseq):
     return
 
 
-def specl_load_state(state, parameter_obj.opseq):
-    specl_load_om(state, io_manager, siminfo)
+def specl_load_state(state, parameter_obj):
+    specl_load_om(state, parameter_obj)
     # others defined below, like:
     # specl_load_uvnames(state, io_manager, siminfo)
     # ...
