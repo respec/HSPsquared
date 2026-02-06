@@ -22,10 +22,12 @@ def specl_load_om(state, parameter_obj):
             # since hsp* allows segments to be defined but not OPNed
             id = hsp2_sequence_id(speca['OPTYP'].iloc[0], speca['RANGE1'].iloc[0])
             if id not in parameter_obj.opseq:
-                warnings.warn(
-                    "Missing/inactive segment" + id + "referenced.",
-                    DeprecationWarning)
-                continue
+                raise Exception("Missing/inactive segment" + id + "referenced.")
+                + prop_name
+#                warnings.warn(
+#                    "Missing/inactive segment" + id + "referenced.",
+#                    DeprecationWarning)
+#                continue
             state["model_data"][opname] = {}
             state["model_data"][opname]["name"] = opname
             for ik in speca.keys():
