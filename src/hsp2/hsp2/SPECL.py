@@ -25,8 +25,8 @@ def specl_load_om(state, parameter_obj):
             id = hsp2_sequence_id(segtype, segno)
             if id not in parameter_obj.opseq:
                 raise Exception(
-                    "Missing/inactive segment" + segtype + " " + segno + "referenced" +
-                    " in SPECIAL ACTIONS. Quitting."
+                    "HSP* ERROR - Missing/inactive segment " + segtype + " " + 
+                    segno + " referenced in SPECIAL ACTIONS. Quitting."
                 )
 #                warnings.warn(
 #                    "Missing/inactive segment" + id + "referenced.",
