@@ -8,7 +8,7 @@ Notes:
 
 from numba import njit
 from hsp2.hsp2tools.names import hsp2_sequence_id
-from hsp2.state import get_state_ix
+from hsp2.state.state import get_state_ix
 
 def specl_load_om(state, io_manager, siminfo):
     if "ACTIONS" in state["specactions"]:

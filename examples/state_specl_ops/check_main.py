@@ -1,5 +1,4 @@
-# this is a simple tester that should be kept up to date with the code in main.py 
-# alternative to step debugger
+# Bare bones cli tester - must be run from the HSPsquared source directory
 fpath = "./tests/testcbp/HSP2results/JL1_6562_6560.h5"
 
 from hsp2.hsp2.main import *
@@ -8,18 +7,15 @@ from hsp2.hsp2io.hdf import HDF5
 from hsp2.hsp2io.io import IOManager
 from hsp2.state.state import *
 
-# try also:
-# fpath = './tests/testcbp/HSP2results/JL1_6562_6560.h5'
-# sometimes when testing you may need to close the file, so try:
-# f = h5py.File(fpath,'a') # use mode 'a' which allows read, write, modify
-# # f.close()
+# sets up the model plumbing and reads parameters
 hdf5_instance = HDF5(fpath)
-io_manager = IOManager(hdf5_instance)
-parameter_obj = io_manager.read_parameters()
-siminfo = parameter_obj.siminfo
-opseq = parameter_obj.opseq
 # Note: now that the UCI is read in and hdf5 loaded, you can see things like:
 # - hdf5_instance._store.keys() - all the paths in the UCI/hdf5
+io_manager = IOManager(hdf5_instance)
+parameter_obj = io_manager.read_uci()
+hdf5_instance.close()
+siminfo = parameter_obj.siminfo
+opseq = parameter_obj.opseq
 # - finally stash specactions in state, not domain (segment) dependent so do it once
 # now load state and the special actions
 state = init_state_dicts()
