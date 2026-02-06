@@ -28,7 +28,6 @@ def specl_load_om(state, parameter_obj):
                     "Missing/inactive segment" + segtype + " " + segno + "referenced" +
                     " in SPECIAL ACTIONS. Quitting."
                 )
-                + prop_name
 #                warnings.warn(
 #                    "Missing/inactive segment" + id + "referenced.",
 #                    DeprecationWarning)
