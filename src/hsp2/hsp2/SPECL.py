@@ -8,9 +8,9 @@ Notes:
 
 from numba import njit
 from hsp2.hsp2tools.names import hsp2_sequence_id
-from hsp2.state.state import get_state_ix
+import warnings
 
-def specl_load_om(state, io_manager, siminfo):
+def specl_load_om(state, parameter_obj.opseq):
     if "ACTIONS" in state["specactions"]:
         dc = state["specactions"]["ACTIONS"]
         for ix in dc.index:
@@ -23,7 +23,13 @@ def specl_load_om(state, io_manager, siminfo):
             # must check to see if the action refers to an active OPSEQ segment
             # since hsp* allows segments to be defined but not OPNed
             id = hsp2_sequence_id(speca['OPTYP'], speca['RANGE1'])
-            ix = get_state_ix(state['state_ix'], state['state_paths'], id)
+            if id not in parameter_obj.opseq:
+                warnings.warn(
+                    "Missing/inactive segment", speca['OPTYP'], speca['RANGE1'], "referenced."
+                    "Special Actions referencing inactive/missing segments will be a fatal error",
+                    "by default in future version."
+                    DeprecationWarning)
+                continue
             for ik in speca.keys():
                 # print("looking for speca key ", ik)
                 state["model_data"][opname][ik] = speca.to_dict()[ik][
@@ -39,7 +45,7 @@ def specl_load_om(state, io_manager, siminfo):
     return
 
 
-def specl_load_state(state, io_manager, siminfo):
+def specl_load_state(state, parameter_obj.opseq):
     specl_load_om(state, io_manager, siminfo)
     # others defined below, like:
     # specl_load_uvnames(state, io_manager, siminfo)

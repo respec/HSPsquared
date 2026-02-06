@@ -8,12 +8,12 @@ from hsp2.hsp2io.io import IOManager
 from hsp2.state.state import *
 
 # sets up the model plumbing and reads parameters
-hdf5_instance = HDF5(fpath)
-# Note: now that the UCI is read in and hdf5 loaded, you can see things like:
-# - hdf5_instance._store.keys() - all the paths in the UCI/hdf5
-io_manager = IOManager(hdf5_instance)
-parameter_obj = io_manager.read_uci()
-hdf5_instance.close()
+with HDF5(fpath) as hdf5_instance:
+    # Note: now that the UCI is read in and hdf5 loaded, you can see things like:
+    # - hdf5_instance._store.keys() - all the paths in the UCI/hdf5
+    io_manager = IOManager(hdf5_instance)
+    parameter_obj = io_manager.read_parameters()
+
 siminfo = parameter_obj.siminfo
 opseq = parameter_obj.opseq
 # - finally stash specactions in state, not domain (segment) dependent so do it once
