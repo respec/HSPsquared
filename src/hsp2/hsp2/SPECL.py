@@ -18,11 +18,16 @@ def specl_load_om(state, parameter_obj):
             speca = dc[ix : (ix + 1)]
             # need to add a name attribute
             opname = "SPEC" + "ACTION" + str(ix)
+            segtype = speca['OPTYP'].iloc[0]
+            segno = speca['RANGE1'].iloc[0]
             # must check to see if the action refers to an active OPSEQ segment
             # since hsp* allows segments to be defined but not OPNed
-            id = hsp2_sequence_id(speca['OPTYP'].iloc[0], speca['RANGE1'].iloc[0])
+            id = hsp2_sequence_id(segtype, segno)
             if id not in parameter_obj.opseq:
-                raise Exception("Missing/inactive segment" + id + "referenced.")
+                raise Exception(
+                    "Missing/inactive segment" + segtype + " " + segno + "referenced" +
+                    " in SPECIAL ACTIONS. Quitting."
+                )
                 + prop_name
 #                warnings.warn(
 #                    "Missing/inactive segment" + id + "referenced.",
