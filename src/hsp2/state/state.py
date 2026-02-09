@@ -388,14 +388,14 @@ def state_context_hsp2(state, operation, segment, activity):
     state.activity = activity
     # give shortcut to state path for the upcoming function
     # insure that there is a model object container
-    (seg_name, seg_path) = state_segname(state, operation, segment, activity)
+    (seg_name, seg_path) = state_segname(state, operation, segment)
     #if seg_name not in state.hsp_segments.keys():
     if not nkey_exists(state.hsp_segments, seg_name): # test this for njit
         state.hsp_segments = append_numba_dict(state.hsp_segments, seg_name, seg_path)
     state.domain = state_domain(state, operation, segment, activity)
     
 def state_domain(state, operation, segment, activity):
-    (seg_name, seg_path) = state_segname(state, operation, segment, activity)
+    (seg_name, seg_path) = state_segname(state, operation, segment)
     domain = seg_path # later we may make his custom depending on the operation/activity
     # like + "/" + activity 
     return domain
