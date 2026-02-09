@@ -530,6 +530,8 @@ def opn(info, lines):
             s = tokens[2].split(":")
             indelt = int(s[0]) if len(s) == 1 else 60 * int(s[0]) + int(s[1])
         elif tokens[0] in ops:
+            # this line makes the unique system wide name for the OPN SEQUENCE
+            # it is so important that it deserves to be its own function.
             s = f"{tokens[0][0]}{int(tokens[1]):03d}"
             lst.append((tokens[0], s, indelt))
     dfopn = pd.DataFrame(lst, columns=["OPERATION", "SEGMENT", "INDELT_minutes"])

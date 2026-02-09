@@ -78,7 +78,7 @@ class SpecialAction(ModelObject):
         if prop_name == "when":
             # when to perform this?  timestamp or time-step index
             prop_val = -1  # prevent a 0 indexed value from triggering return, default means execute every step
-            si = self.state["model_object_cache"][self.find_var_path("timer")]
+            si = self.get_object("timer")
             if len(model_props["YR"]) > 0:
                 # translate date to equivalent model step
                 datestring = (
@@ -159,7 +159,8 @@ class SpecialAction(ModelObject):
 
     def find_paths(self):
         # this makes sure that the source prop (and destination prop) exists in the model.
-        # NOTE: since the spec-action modifies the same quantity that is it's input, it does *not* set it as a proper "input" since that would create a circular dependency
+        # NOTE: since the spec-action modifies the same quantity that is it's input, 
+        # it does *not* set it as a proper "input" since that would create a circular dependency
         domain_path = (
             self.container.state_path
             + "/"
@@ -168,7 +169,7 @@ class SpecialAction(ModelObject):
             + self.op_type[0]
             + str(self.range1).zfill(3)
         )
-        domain = self.state["model_object_cache"][domain_path]
+        domain = self.model_object_cache[domain_path]
         var_register = self.insure_register(self.vari, 0.0, domain, False, False)
         # print("Created register", var_register.name, "with path", var_register.state_path)
         # add already created objects as inputs

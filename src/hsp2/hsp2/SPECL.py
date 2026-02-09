@@ -9,33 +9,37 @@ Notes:
 from numba import njit
 
 
-def specl_load_om(state, io_manager, siminfo):
-    if "ACTIONS" in state["specactions"]:
-        dc = state["specactions"]["ACTIONS"]
+def specl_load_om(om_operations, specactions):
+    if "ACTIONS" in specactions:
+        dc = specactions["ACTIONS"]
         for ix in dc.index:
             # add the items to the state['model_data'] dict
             speca = dc[ix : (ix + 1)]
             # need to add a name attribute
             opname = "SPEC" + "ACTION" + str(ix)
-            state["model_data"][opname] = {}
-            state["model_data"][opname]["name"] = opname
+            om_operations["model_data"][opname] = {}
+            om_operations["model_data"][opname]["name"] = opname
+            # now, by this point the model domain should have been loaded to include all active segments
+            # so, because HSP* allows SPEC-ACTIONS and other items to exist in the UCI even if they are 
+            # not ACTIVE (i.e. not in the OPN SEQUENCE block), then we must screen out those SPECACTIONS
+            # that operate on an inactive endpoint
             for ik in speca.keys():
                 # print("looking for speca key ", ik)
-                state["model_data"][opname][ik] = speca.to_dict()[ik][
+                om_operations["model_data"][opname][ik] = speca.to_dict()[ik][
                     ix
                 ]  # add subscripts?
                 if ik == "VARI":
                     if len(speca.to_dict()["S1"][ix]) > 0:
-                        state["model_data"][opname][ik] += speca.to_dict()["S1"][ix]
+                        om_operations["model_data"][opname][ik] += speca.to_dict()["S1"][ix]
                     if len(speca.to_dict()["S2"][ix]) > 0:
-                        state["model_data"][opname][ik] += speca.to_dict()["S2"][ix]
-            state["model_data"][opname]["object_class"] = "SpecialAction"
+                        om_operations["model_data"][opname][ik] += speca.to_dict()["S2"][ix]
+            om_operations["model_data"][opname]["object_class"] = "SpecialAction"
             # print("model_data", ix, " = ", state['model_data'][opname])
     return
 
 
-def specl_load_state(state, io_manager, siminfo):
-    specl_load_om(state, io_manager, siminfo)
+def specl_load_state(om_operations, specactions):
+    specl_load_om(om_operations, specactions)
     # others defined below, like:
     # specl_load_uvnames(state, io_manager, siminfo)
     # ...
