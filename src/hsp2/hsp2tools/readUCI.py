@@ -9,6 +9,7 @@ from collections import defaultdict
 import pandas as pd
 
 from hsp2 import hsp2tools
+from hsp2.hsp2tools.names import hsp2_sequence_id
 from hsp2.hsp2tools.uci_parse_specactions import specactions_parse
 
 pd.set_option("io.hdf.default_format", "table")
@@ -530,7 +531,7 @@ def opn(info, lines):
             s = tokens[2].split(":")
             indelt = int(s[0]) if len(s) == 1 else 60 * int(s[0]) + int(s[1])
         elif tokens[0] in ops:
-            s = f"{tokens[0][0]}{int(tokens[1]):03d}"
+            s = hsp2_sequence_id(tokens[0][0], tokens[1])
             lst.append((tokens[0], s, indelt))
     dfopn = pd.DataFrame(lst, columns=["OPERATION", "SEGMENT", "INDELT_minutes"])
     dfopn.to_hdf(store, key="/CONTROL/OP_SEQUENCE", data_columns=True)
