@@ -46,7 +46,7 @@ def pwater(io_manager, siminfo, parameters, ts):
         if name not in ts:
             ts[name] = zeros(steps)
 
-    # insure defined, but not usable accidently
+    # ensure defined, but not usable accidentally
     for name in ("AIRTMP", "PACKI", "PETINP", "PREC", "RAINF", "SNOCOV", "WYIELD"):
         if name not in ts:
             ts[name] = full(steps, nan)
@@ -92,11 +92,9 @@ def pwater(io_manager, siminfo, parameters, ts):
     ui["uunits"] = siminfo["units"]
 
     # kludge to make ICEFG available from SNOW to PWATER
-    ui["ICEFG"] = siminfo["ICEFG"] if "ICEFG" in siminfo else 0.0
+    ui["ICEFG"] = siminfo["ICEFG"] if "ICEFG" in siminfo else 0
 
-    CSNOFG = 0
-    if "CSNOFG" in ui:
-        CSNOFG = int(ui["CSNOFG"])
+    CSNOFG = int(ui["CSNOFG"]) if "CSNOFG" in ui else 0
     # make CSNOFG available to other sections
     u["CSNOFG"] = CSNOFG
 
@@ -112,10 +110,9 @@ def _pwater_(ui, ts):
     """simulate the water budget for a pervious land segment"""
     errors = zeros(int(ui["errlen"])).astype(int64)
 
-    if "HWTFG" in ui:
-        if int(ui["HWTFG"]):
-            errors[9] += 1
-            return
+    if "HWTFG" in ui and int(ui["HWTFG"]):
+        errors[9] += 1
+        return
 
     delt60 = ui["delt"] / 60.0  # simulation interval in hours
     steps = int(ui["steps"])
@@ -256,8 +253,7 @@ def _pwater_(ui, ts):
     rlzrat = -1.0e30
     lzfrac = -1.0e30
     rparm = -1.0e30
-    if agws < 0.0:  # no gw storage is active
-        agws = 0.0
+    agws = max(agws, 0.0)
     TGWS[0] = agws
 
     msupy = 0.0
@@ -425,8 +421,7 @@ def _pwater_(ui, ts):
                         0.0, uzi
                     )  # negative inflow shouldn't happen, but does for extremely small pdro
 
-                if uzi > pdro:
-                    uzi = pdro
+                uzi = min(uzi, pdro)
                 uzfrac = uzi / pdro
 
                 # the prefix "ii" is used on variables on second divisn
@@ -456,7 +451,7 @@ def _pwater_(ui, ts):
 
                     # determine how much of this potential surface detention/outflow will run off in this time interval
                     suro, surs = proute(psur, RTOPFG, delt60, dec, src, surs, errors)
-            # END DISPOS
+                    # END DISPOS
         # END SURFAC
 
         # INTFLW  to simulate interflow, irc only daily interpolation????
@@ -670,7 +665,7 @@ def _pwater_(ui, ts):
                     )  # reduce the et to account for area devoid of vegetation
             else:  #  VLEFG >= 2:   # et constant over whole land seg
                 lzpet = lzetp * lzrat * rempet if lzrat < 1.0 else lzetp * rempet
-            lzet = lzpet if lzpet < (lzs - 0.02) else lzs - 0.02
+            lzet = min(lzpet, lzs - 0.02)
             lzs -= lzet
             taet += lzet
             rempet -= lzet
@@ -813,7 +808,7 @@ def proute(psur, RTOPFG, delt60, dec, src, surs, errors):
 
             # check the temporary calculation of surface outflow
             tsuro = delt60 * src * dummy**1.667
-            suro = psur if tsuro > psur else tsuro
+            suro = min(tsuro, psur)
             surs = 0.0 if tsuro > psur else psur - suro
     else:
         # send what is on the overland flow plane straight to the channel

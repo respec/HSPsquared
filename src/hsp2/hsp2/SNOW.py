@@ -3,7 +3,7 @@ Author: Robert Heaphy, Ph.D.
 License: LGPL2
 Conversion of HSPF 12.2 HPERSNO module into Python
 
-pack, pakin, pakdif not saved since trival recalulation from saved data
+pack, pakin, pakdif not saved since trivial recalculation from saved data
     pack = packf + packw
     pakin = snowf + prain
     pakdif = pakin - (snowe + wyield)
@@ -14,14 +14,7 @@ from math import floor, sqrt
 from numba import njit
 from numpy import full, int64, nan, ones, zeros
 
-from hsp2.hsp2.utilities import (
-    SEASONS,
-    SVP,
-    hoursval,
-    initm,
-    make_numba_dict,
-    monthval,
-)
+from hsp2.hsp2.utilities import SEASONS, SVP, hoursval, initm, make_numba_dict, monthval
 from hsp2.hsp2io.protocols import SupportsReadTS
 
 ERRMSGS = (
@@ -265,7 +258,6 @@ def _snow_(ui, ts):
 
         reltmp = airtmp - 32.0  # needed in many places, compute once
 
-        ""
         # METEOR
         if prec > 0.0:
             fprfg = oldprec == 0.0
@@ -298,8 +290,7 @@ def _snow_(ui, ts):
             snowf = 0.0
             if snopfg == 0 and skyclr < 1.0:
                 skyclr += 0.0004 * delt
-                if skyclr > 1.0:
-                    skyclr = 1.0
+                skyclr = min(skyclr, 1.0)
 
         if snopfg == 0 and cloudfg:
             skyclr = max(0.15, 1.0 - (CLOUD[step] / 10.0))
@@ -358,8 +349,7 @@ def _snow_(ui, ts):
                     pdepth *= 1.0 - snowep / packf
                     packf -= snowep
                     snowe = snowep
-                    if packi > packf:
-                        packi = packf
+                    packi = min(packi, packf)
                 # END SNOWEV
             else:
                 snowe = 0.0
@@ -434,8 +424,7 @@ def _snow_(ui, ts):
                         neghts -= prain
                         packf += prain
 
-                    if packf > pdepth:
-                        pdepth = packf
+                    pdepth = max(pdepth, packf)
                 else:
                     rnfrz = 0.0
             else:
@@ -451,8 +440,7 @@ def _snow_(ui, ts):
                 melt = sumht
                 pdepth *= 1.0 - melt / packf
                 packf -= melt
-                if packi > packf:
-                    packi = packf
+                packi = min(packi, packf)
             else:
                 melt = 0.0
 
@@ -480,8 +468,7 @@ def _snow_(ui, ts):
                     if hr6fg != 0:
                         if snocov < 1.0:
                             xlnem = -reltmp * 0.01
-                            if xlnem > xlnmlt:
-                                xlnmlt = xlnem
+                            xlnmlt = max(xlnmlt, xlnem)
                         hr6fg = 0
                 else:
                     # set the flag so that the freezing capacity will be updated next time 6 am is passed
@@ -603,7 +590,7 @@ def _snow_(ui, ts):
 
 
 @njit(cache=True)
-def vapor(SVP, temp):
+def vapor(lsvp, temp):
     indx = (temp + 100.0) * 0.2 - 1.0
     lower = int(floor(indx))
     if lower < 0:
@@ -611,7 +598,7 @@ def vapor(SVP, temp):
     upper = lower + 1
     if upper > 39:
         return 64.9
-    return SVP[lower] + (indx - lower) * (SVP[upper] - SVP[lower])
+    return lsvp[lower] + (indx - lower) * (lsvp[upper] - lsvp[lower])
 
 
 def hour6flag(siminfo, dofirst=False):

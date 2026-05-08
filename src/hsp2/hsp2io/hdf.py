@@ -1,9 +1,9 @@
 from typing import Any, Union
-import warnings
 
 import pandas as pd
 
 from hsp2.hsp2.model import Model
+from hsp2.hsp2.utilities import deprecated
 from hsp2.hsp2io.protocols import Category
 
 
@@ -22,19 +22,13 @@ class HDF5:
     def __exit__(self, exc_type, exc_value, trace):
         self.__del__()
 
+    @deprecated("""
+
+Use "read_parameters" instead of "read_uci". "read_uci" will be removed in
+future releases.
+
+""")
     def read_uci(self) -> Model:
-        """
-        DEPRECATED: use read_parameters instead
-        """
-        warnings.warn(
-            """
-* 
-* DEPRECATED: use read_parameters instead
-* read_uci will be removed in future releases
-*
-""",
-            DeprecationWarning,
-        )
         return self.read_parameters()
 
     def read_parameters(self) -> Model:
@@ -74,17 +68,11 @@ class HDF5:
                     model.model[(op, module, id)][s] = vdict
             elif op == "GENER":
                 for row in self._store[path].itertuples():
-                    if len(row.OPNID.split()) == 1:
-                        start = int(row.OPNID)
-                        stop = start
+                    if module != "COEFFS":
+                        model.ddgener[module][row.Index] = row[1]
                     else:
-                        start, stop = row.OPNID.split()
-                    for i in range(int(start), int(stop) + 1):
-                        if module != "COEFFS":
-                            model.ddgener[module][f"G{i:03d}"] = row[2]
-                        else:
-                            for it in range(1, 8):
-                                model.ddgener[f"K{it:01d}"][f"G{i:03d}"] = row[it + 1]
+                        for it in range(1, 8):
+                            model.ddgener[f"K{it:01d}"][row.Index] = row[it]
             elif op == "FTABLES":
                 model.ftables[module] = self._store[path]
             elif op == "SPEC_ACTIONS":

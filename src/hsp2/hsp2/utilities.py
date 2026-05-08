@@ -4,9 +4,11 @@ License: LGPL2
 General routines for HSP2"""
 
 import datetime
+import functools
 import importlib
 import platform
 import sys
+import warnings
 from typing import List
 
 import numpy as np
@@ -212,7 +214,6 @@ def transform(ts, name, how, siminfo):
          aggregate: MEAN, SUM, MAX, MIN
     NOTE: these routines work for both regular and sparse timeseries input
     """
-
     tsfreq = ts.index.freq
     freq = Minute(siminfo["delt"])
     stop = siminfo["stop"]
@@ -422,14 +423,13 @@ def versions(import_list=[]):
 
 
 def get_timeseries(timeseries_inputs: SupportsReadTS, ext_sourcesdd, siminfo):
-    """makes timeseries for the current timestep and trucated to the sim interval"""
+    """makes timeseries for the current timestep and truncated to the sim interval"""
     # explicit creation of Numba dictionary with signatures
     ts = Dict.empty(key_type=types.unicode_type, value_type=types.float64[:])
     for row in ext_sourcesdd:
         data_frame = timeseries_inputs.read_ts(
             category=Category.INPUTS, segment=row.SVOLNO
         )
-
         if row.MFACTOR != 1.0:
             data_frame *= row.MFACTOR
         t = transform(data_frame, row.TMEMN, row.TRAN, siminfo)
@@ -460,16 +460,16 @@ def save_timeseries(
     ):
         for y in savedict.keys():
             for z in set(ts.keys()):
-                if "/" + y in z:
+                if f"/{y}" in z:
                     zrep = z.replace("/", "_")
                     zrep2 = zrep.replace(" ", "")
                     df[zrep2] = ts[z]
-                if "_" + y in z:
+                if f"_{y}" in z:
                     df[z] = ts[z]
     elif operation == "RCHRES" and (activity == "CONS" or activity == "GQUAL"):
         for y in savedict.keys():
             for z in set(ts.keys()):
-                if "_" + y in z:
+                if f"_{y}" in z:
                     df[z] = ts[z]
         for y in savedict.keys() & set(ts.keys()):
             df[y] = ts[y]
@@ -499,110 +499,127 @@ def save_timeseries(
     return
 
 
+def _normalize_memsb(memsb):
+    # smemsb* and tmemsb* can be int, int as a str, or str (if and when HSP2
+    # supports categories).
+    # Need to convert 1.0, '1', '1.0' -> '1', and if using categories "SF" ->
+    # "SF", ...etc.
+    if not memsb:
+        return ""
+    if isinstance(memsb, str):
+        memsb = memsb.strip()
+        try:
+            return int(float(memsb))
+        except ValueError:
+            return memsb
+    return int(float(memsb))
+
+
 def expand_timeseries_names(sgrp, smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmemsb2):
-    # special cases to expand timeseries names to resolve with output names in hdf5 file
+    # special cases to expand timeseries names to resolve with output names in
+    # hdf5 file
+    tmemsb1 = _normalize_memsb(tmemsb1)
+    tmemsb2 = _normalize_memsb(tmemsb2)
+    smemsb1 = _normalize_memsb(smemsb1)
+    smemsb2 = _normalize_memsb(smemsb2)
     if tmemn == "ICON":
         if tmemsb1 == "":
             tmemn = "CONS1_ICON"
         else:
-            tmemn = "CONS" + tmemsb1 + "_ICON"
+            tmemn = f"CONS{tmemsb1}_ICON"
     if smemn == "OCON":
         if smemsb2 == "":
-            smemn = "CONS1_OCON" + smemsb1
+            smemn = f"CONS1_OCON{smemsb1}"
         else:
-            smemn = "CONS" + smemsb2 + "_OCON" + smemsb1
+            smemn = f"CONS{smemsb2}_OCON{smemsb1}"
     if smemn == "ROCON":
         if smemsb1 == "":
             smemn = "CONS1_ROCON"
         else:
-            smemn = "CONS" + smemsb1 + "_ROCON"
+            smemn = f"CONS{smemsb1}_ROCON"
 
     # GQUAL:
     if tmemn == "IDQAL":
         if tmemsb1 == "":
             tmemn = "GQUAL1_IDQAL"
         else:
-            tmemn = "GQUAL" + tmemsb1 + "_IDQAL"
+            tmemn = f"GQUAL{tmemsb1}_IDQAL"
     if tmemn == "ISQAL1" or tmemn == "ISQAL2" or tmemn == "ISQAL3":
         if tmemsb2 == "":
-            tmemn = "GQUAL1_" + tmemn
+            tmemn = f"GQUAL1_{tmemn}"
         else:
-            tmemn = "GQUAL" + tmemsb2 + "_" + tmemn
+            tmemn = f"GQUAL{tmemsb2}_{tmemn}"
     if tmemn == "ISQAL":
         if tmemsb2 == "":
-            tmemn = "GQUAL1_" + "ISQAL" + tmemsb1
+            tmemn = f"GQUAL1_ISQAL{tmemsb1}"
         else:
-            tmemn = "GQUAL" + tmemsb2 + "_" + "ISQAL" + tmemsb1
+            tmemn = f"GQUAL{tmemsb2}_ISQAL{tmemsb1}"
     if smemn == "ODQAL":
-        smemn = "GQUAL" + smemsb1 + "_ODQAL" + smemsb2  # smemsb2 is exit number
+        smemn = f"GQUAL{smemsb1}_ODQAL{smemsb2}"  # smemsb2 is exit number
     if smemn == "OSQAL":
-        smemn = (
-            "GQUAL" + smemsb1 + "_OSQAL" + smemsb2
-        )  # smemsb2 is ssc plus exit number
+        smemn = f"GQUAL{smemsb1}_OSQAL{smemsb2}"  # smemsb2 is ssc plus exit number
     if smemn == "RODQAL":
-        smemn = "GQUAL" + smemsb1 + "_RODQAL"
+        smemn = f"GQUAL{smemsb1}_RODQAL"
     if smemn == "ROSQAL":
-        smemn = "GQUAL" + smemsb2 + "_ROSQAL" + smemsb1  # smemsb1 is ssc
+        smemn = f"GQUAL{smemsb2}_ROSQAL{smemsb1}"  # smemsb1 is ssc
     if smemn == "RSQAL":
-        smemn = "GQUAL" + smemsb2 + "_RSQAL" + smemsb1
+        smemn = f"GQUAL{smemsb2}_RSQAL{smemsb1}"
 
     # OXRX:
     if smemn == "OXCF1":
-        smemn = "OXCF1_" + smemsb1
+        smemn = f"OXCF1_{smemsb1}"
     if smemn == "OXCF2":
-        smemn = "OXCF2_" + smemsb1 + smemsb2  # smemsb1 is exit #
+        smemn = f"OXCF2_{smemsb1}{smemsb2}"  # smemsb1 is exit #
     if tmemn == "OXIF":
-        tmemn = "OXIF" + tmemsb1
+        tmemn = f"OXIF{tmemsb1}"
         if sgrp == "PQUAL" or sgrp == "IQUAL":  # could be from pqual or iqual
             if smemsb1 == "":
                 smemsb1 = "1"
-            smemn = sgrp + smemsb1 + "_" + smemn
+            smemn = f"{sgrp}{smemsb1}_{smemn}"
 
     # NUTRX - dissolved species:
     if smemn == "NUCF1":  # total outflow
-        smemn = "NUCF1_" + smemsb1
+        smemn = f"NUCF1_{smemsb1}"
 
     if smemn == "NUCF9":  # exit-specific outflow
-        smemn = "NUCF9_" + smemsb1 + smemsb2  # smemsb1 is exit #
+        smemn = f"NUCF9_{smemsb1}{smemsb2}"  # smemsb1 is exit #
 
     if tmemn == "NUIF1":
-        tmemn = "NUIF1_" + tmemsb1
+        tmemn = f"NUIF1_{tmemsb1}"
         if sgrp == "PQUAL" or sgrp == "IQUAL":  # could be from pqual or iqual
             if smemsb1 == "":
                 smemsb1 = "1"
-            smemn = sgrp + smemsb1 + "_" + smemn
+            smemn = f"{sgrp}{smemsb1}_{smemn}"
 
     # NUTRX - particulate species:
     if smemn == "NUCF2":  # total outflow
-        smemn = "NUCF2_" + smemsb1 + smemsb2  # smemsb1 is sediment class
+        smemn = f"NUCF2_{smemsb1}{smemsb2}"  # smemsb1 is sediment class
 
     if smemn == "OSNH4" or smemn == "OSPO4":  # exit-specific outflow
-        smemn = (
-            smemn + "_" + smemsb1 + smemsb2
-        )  # smemsb1 is exit #, smemsb2 is sed class
+        smemn = f"{smemn}_{smemsb1}{smemsb2}"  # smemsb1 is exit #, smemsb2 is sed class
 
     if tmemn == "NUIF2":
-        tmemn = "NUIF2_" + tmemsb1 + tmemsb2
+        tmemn = f"NUIF2_{tmemsb1}{tmemsb2}"
         if sgrp == "PQUAL" or sgrp == "IQUAL":  # could be from pqual or iqual
             if smemsb1 == "":
                 smemsb1 = "1"
-            smemn = sgrp + smemsb1 + "_" + smemn
+            smemn = f"{sgrp}{smemsb1}_{smemn}"
 
     # PLANK:
     if smemn == "PKCF1":  # total outflow
-        smemn = "PKCF1_" + smemsb1  # smemsb1 is species index
+        smemn = f"PKCF1_{smemsb1}"  # smemsb1 is species index
 
     if smemn == "PKCF2":  # exit-specific outflow
         smemn = (
-            "PKCF2_" + smemsb1 + smemsb2
-        )  # smemsb1 is exit #, smemsb2 is species index
+            f"PKCF2_{smemsb1}{smemsb2}"  # smemsb1 is exit #, smemsb2 is species index
+        )
 
     if tmemn == "PKIF":
-        tmemn = "PKIF" + tmemsb1  # tmemsb1 is species index
+        tmemn = f"PKIF{tmemsb1}"  # tmemsb1 is species index
         if sgrp == "PQUAL" or sgrp == "IQUAL":  # could be from pqual or iqual
             if smemsb1 == "":
                 smemsb1 = "1"
-            smemn = sgrp + smemsb1 + "_" + smemn
+            smemn = f"{sgrp}{smemsb1}_{smemn}"
 
     # PHCARB:
     if smemn == "PHCF1" and smemsb1 == 1:  # total outflow
@@ -611,13 +628,32 @@ def expand_timeseries_names(sgrp, smemn, smemsb1, smemsb2, tmemn, tmemsb1, tmems
         smemn = "ROCO2"
 
     if smemn == "PHCF2" and smemsb2 == 1:  # exit-specific outflow
-        smemn = "OTIC" + smemsb1  # smemsb1 is exit #, smemsb2 is species index
+        smemn = f"OTIC{smemsb1}"  # smemsb1 is exit #, smemsb2 is species index
     if smemn == "PHCF2" and smemsb2 == 2:  # exit-specific outflow
-        smemn = "OCO2" + smemsb1  # smemsb1 is exit #, smemsb2 is species index
+        smemn = f"OCO2{smemsb1}"  # smemsb1 is exit #, smemsb2 is species index
 
     if tmemn == "PHIF":
-        tmemn = "PHIF" + tmemsb1  # tmemsb1 is species index
+        tmemn = f"PHIF{tmemsb1}"  # tmemsb1 is species index
 
+    if smemn == "OTIC":
+        smemn = f"OTIC{smemsb1}"
+
+    if smemn == "OCO2":
+        smemn = f"OCO2{smemsb1}"
+
+    # sediment:
+    if smemn == "RSED":
+        smemn = f"RSED{smemsb1}"  # smemsb1 is sediment class
+    if smemn == "OSED":
+        smemn = f"OSED{smemsb1}{smemsb2}"
+
+    # OVOL
+    if smemn == "OVOL":
+        smemn = f"OVOL{smemsb1}"
+
+    # HTRCH
+    if smemn == "OHEAT":
+        smemn = f"OHEAT{smemsb1}"
     return smemn, tmemn
 
 
@@ -671,6 +707,7 @@ def get_gener_timeseries(
 def clean_name(TMEMN, TMEMSB):
     # in some cases the subscript is irrelevant, like '1' or '1 1', and we can leave it off.
     # there are other cases where it is needed to distinguish, such as ISED and '1' or '1 1'.
+    TMEMSB = _normalize_memsb(TMEMSB)
     tname = f"{TMEMN}{TMEMSB}"
     if TMEMN in {
         "GATMP",
@@ -690,28 +727,36 @@ def clean_name(TMEMN, TMEMSB):
     }:
         tname = f"{TMEMN}"
     elif TMEMN == "ISED":
-        if TMEMSB == "1 1" or TMEMSB == "1" or TMEMSB == "":
+        if TMEMSB in ["1 1", "1", "", 1]:
             tname = "ISED1"
         else:
-            tname = "ISED" + TMEMSB[0]
+            tname = f"ISED{TMEMSB}"
     elif TMEMN == "NUIF1":
-        if len(TMEMSB) > 0:
-            tname = TMEMN + "_" + TMEMSB[0]
+        if TMEMSB:
+            tname = f"{TMEMN}_{TMEMSB}"
         else:
-            tname = TMEMN + "_1"
+            tname = f"{TMEMN}_1"
     elif TMEMN in {"ICON", "IDQAL", "ISQAL"}:
-        tmemsb1 = "1"
-        tmemsb2 = "1"
-        if len(TMEMSB) > 0:
-            tmemsb1 = TMEMSB[0]
-        if len(TMEMSB) > 2:
-            tmemsb2 = TMEMSB[-1]
+        if isinstance(TMEMSB, str):
+            tmemsb1 = (TMEMSB.strip() + "    ")[:2].strip()
+            tmemsb2 = (TMEMSB.strip() + "    ")[2:4].strip()
+            try:
+                tmemsb1 = int(float(tmemsb1))
+            except ValueError:
+                pass
+            try:
+                tmemsb2 = int(float(tmemsb2))
+            except ValueError:
+                pass
+        else:
+            tmemsb1 = TMEMSB
+            tmemsb2 = ""
         sname, tname = expand_timeseries_names("", "", "", "", TMEMN, tmemsb1, tmemsb2)
     elif TMEMN == "PKIF":
-        if len(TMEMSB) > 0:
-            tname = TMEMN + TMEMSB[0]
+        if TMEMSB:
+            tname = TMEMN + TMEMSB
         else:
-            tname = TMEMN + "1"
+            tname = f"{TMEMN}1"
 
     return tname
 
@@ -765,3 +810,34 @@ def pandas_offset_by_version(new_offset: str) -> str:
             "YE-DEC": "A-DEC",
         }
     return new_to_old_freq.get(new_offset, new_offset)
+
+
+def deprecated(reason):
+    """
+    A decorator to mark functions as deprecated.
+
+    Emits a warning when the function is invoked.
+
+    Parameters
+    ----------
+    reason : str
+        The reason why the function is deprecated.
+    """
+
+    def decorator(func):
+        fmt = "Call to deprecated function {name} ({reason})."
+
+        @functools.wraps(func)
+        def new_func(*args, **kwargs):
+            warnings.simplefilter("always", DeprecationWarning)
+            warnings.warn(
+                fmt.format(name=func.__name__, reason=reason),
+                category=DeprecationWarning,
+                stacklevel=2,
+            )
+            warnings.simplefilter("default", DeprecationWarning)
+            return func(*args, **kwargs)
+
+        return new_func
+
+    return decorator

@@ -60,6 +60,12 @@ hsp2 = "hsp2.hsp2tools.HSP2_CLI:main"
 documentation = "http://www.respec.com/product/hydrologic-simulation-program-python-hsp%C2%B2/"
 github = "https://github.com/respec/HSPsquared"
 
+[tool.ruff]
+fix = true
+
+[tool.ruff.lint]
+extend-select = ["I"]
+
 [tool.setuptools]
 license-files = ["LICENSE"]
 include-package-data = true
@@ -69,7 +75,7 @@ readme = {file = "README.rst"}
 version = {file = "VERSION"}
 
 [tool.setuptools.package-data]
-"hsp2.hsp2tools.data" = ["*"]
+"hsp2.data" = ["*"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

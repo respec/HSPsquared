@@ -37,10 +37,7 @@ def gqual(io_manager, siminfo, parameters, ts):
     delts = siminfo["delt"] * 60
     uunits = siminfo["units"]
 
-    AFACT = 43560.0
-    if uunits == 2:
-        # si units conversion
-        AFACT = 1000000.0
+    AFACT = 43560.0 if uunits == 1 else 1000000.0
 
     advectData = parameters["advectData"]
     (nexits, vol, VOL, SROVOL, EROVOL, SOVOL, EOVOL) = advectData
@@ -50,8 +47,8 @@ def gqual(io_manager, siminfo, parameters, ts):
     ts["SROVOL"] = SROVOL
     ts["EROVOL"] = EROVOL
     for i in range(nexits):
-        ts["SOVOL" + str(i + 1)] = SOVOL[:, i]
-        ts["EOVOL" + str(i + 1)] = EOVOL[:, i]
+        ts[f"SOVOL{str(i + 1)}"] = SOVOL[:, i]
+        ts[f"EOVOL{str(i + 1)}"] = EOVOL[:, i]
 
     ui = make_numba_dict(parameters)
     ui["simlen"] = siminfo["steps"]
@@ -90,7 +87,7 @@ def gqual(io_manager, siminfo, parameters, ts):
         ui = ui_base
         ui["index"] = index
         # update UI values for this constituent here!
-        ui_parms = parameters["GQUAL" + str(index)]
+        ui_parms = parameters[f"GQUAL{str(index)}"]
 
         if "GQADFG" + str((index * 2) - 1) in ui_parms:
             # get atmos dep timeseries
@@ -100,7 +97,7 @@ def gqual(io_manager, siminfo, parameters, ts):
                     siminfo,
                     parameters,
                     gqadfgf,
-                    "GQUAL" + str(index) + "_MONTHLY/GQADFX",
+                    f"GQUAL{str(index)}_MONTHLY/GQADFX",
                     0.0,
                 )
             elif gqadfgf == -1:
@@ -111,7 +108,7 @@ def gqual(io_manager, siminfo, parameters, ts):
                     siminfo,
                     parameters,
                     gqadfgc,
-                    "GQUAL" + str(index) + "_MONTHLY/GQADCN",
+                    f"GQUAL{str(index)}" + "_MONTHLY/GQADCN",
                     0.0,
                 )
             elif gqadfgc == -1:
@@ -145,72 +142,53 @@ def gqual(io_manager, siminfo, parameters, ts):
             ts["BIO"] = zeros(simlen)
             ts["BIO"].fill(biop)
             # specifies source of biomass data using GQPM2(7,I)
-            if gqpm2[7] == 1 or gqpm2[7] == 3:
+            if gqpm2[7] in [1, 3]:
                 # BIOM = # from ts, monthly, constant
                 ts["BIO"] = initm(
                     siminfo,
                     parameters,
                     ui_parms["GQPM27"],
-                    "GQUAL" + str(index) + "_MONTHLY/BIO",
+                    f"GQUAL{str(index)}_MONTHLY/BIO",
                     ui_parms["BIO"],
                 )
 
         # table-type gq-values
-        if tempfg == 2 and "TWAT" in ui_parms:
-            twat = ui_parms["TWAT"]
-        else:
-            twat = 60.0
-        if phflag == 2 and "PHVAL" in ui_parms:
-            phval = ui_parms["PHVAL"]
-        else:
-            phval = 7.0
-        if roxfg == 2 and "ROC" in ui_parms:
-            roc = ui_parms["ROC"]
-        else:
-            roc = 0.0
-        if cldfg == 2 and "CLD" in ui_parms:
-            cld = ui_parms["CLD"]
-        else:
-            cld = 0.0
-        if sdfg == 2 and "SDCNC" in ui_parms:
-            sdcnc = ui_parms["SDCNC"]
-        else:
-            sdcnc = 0.0
-        if phytfg == 2 and "PHY" in ui_parms:
-            phy = ui_parms["PHY"]
-        else:
-            phy = 0.0
-
+        twat = ui_parms["TWAT"] if tempfg == 2 and "TWAT" in ui_parms else 60.0
+        phval = ui_parms["PHVAL"] if phflag == 2 and "PHVAL" in ui_parms else 7.0
+        roc = ui_parms["ROC"] if roxfg == 2 and "ROC" in ui_parms else 0.0
+        cld = ui_parms["CLD"] if cldfg == 2 and "CLD" in ui_parms else 0.0
+        sdcnc = ui_parms["SDCNC"] if sdfg == 2 and "SDCNC" in ui_parms else 0.0
+        phy = ui_parms["PHY"] if phytfg == 2 and "PHY" in ui_parms else 0.0
         # for the following, if the flag value is 1 the timeseries should already be available as input
-        if tempfg == 2 or tempfg == 3:
+        if tempfg in [2, 3]:
             ts["TW_GQ"] = initm(
                 siminfo,
                 parameters,
                 tempfg,
-                "GQUAL" + str(index) + "_MONTHLY/WATEMP",
+                f"GQUAL{str(index)}_MONTHLY/WATEMP",
                 twat,
             )
-        if phflag == 2 or phflag == 3:
+        if phflag in [2, 3]:
             ts["PHVAL_GQ"] = initm(
                 siminfo,
                 parameters,
                 phflag,
-                "GQUAL" + str(index) + "_MONTHLY/PHVAL",
+                f"GQUAL{str(index)}_MONTHLY/PHVAL",
                 phval,
             )
-        if roxfg == 2 or roxfg == 3:
+        if roxfg in [2, 3]:
             ts["ROC_GQ"] = initm(
                 siminfo,
                 parameters,
                 roxfg,
-                "GQUAL" + str(index) + "_MONTHLY/ROXYGEN",
+                f"GQUAL{str(index)}_MONTHLY/ROXYGEN",
                 roc,
             )
-        if cldfg == 2 or cldfg == 3:
+        if cldfg in [2, 3]:
             ts["CLOUD_GQ"] = initm(
                 siminfo, parameters, cldfg, "GQUAL" + str(index) + "_MONTHLY/CLOUD", cld
             )
-        if sdfg == 2 or sdfg == 3:
+        if sdfg in [2, 3]:
             ts["SDCNC_GQ"] = initm(
                 siminfo,
                 parameters,
@@ -218,7 +196,7 @@ def gqual(io_manager, siminfo, parameters, ts):
                 "GQUAL" + str(index) + "_MONTHLY/SEDCONC",
                 sdcnc,
             )
-        if phytfg == 2 or phytfg == 3:
+        if phytfg in [2, 3]:
             ts["PHYTO_GQ"] = initm(
                 siminfo,
                 parameters,
@@ -293,7 +271,6 @@ def gqual(io_manager, siminfo, parameters, ts):
     return errors, ERRMSGS
 
 
-# @njit(cache=True)
 def _gqual_(ui, ts):
     """Simulate the behavior of a generalized quality constituent"""
     errors = zeros(int(ui["errlen"])).astype(int64)
@@ -349,7 +326,6 @@ def _gqual_(ui, ts):
     vol = ui["vol"]
     svol = ui["svol"]
     rdqal = dqal * vol
-    cinv = 1.0 / conv  # get reciprocal of unit conversion factor
 
     # process flags for this constituent
 
@@ -395,11 +371,9 @@ def _gqual_(ui, ts):
         thox = ui["THOX"]
 
     photpm = zeros(21)
-    if qalfg[3] == 1:  # qual undergoes photolysis
-        # PHOTPM(1,I) # table-type gq-photpm
-        if "photpm1" in ui:
-            for i in range(1, 21):
-                photpm[i] = ui["photpm" + str(i)]
+    if qalfg[3] == 1 and "photpm1" in ui:
+        for i in range(1, 21):
+            photpm[i] = ui["photpm" + str(i)]
 
     cfgas = 0.0
     if qalfg[4] == 1:  # qual undergoes volatilization
@@ -535,47 +509,6 @@ def _gqual_(ui, ts):
 
     # find total quantity of qual in the rchres
     rrqal = rdqal + rsqal12
-    gqst1 = rrqal
-
-    # find values for global flags
-
-    # gqalfg indicates whether any qual undergoes each of the decay processes or is sediment-associated
-
-    # qalgfg indicates whether a qual undergoes any of the 6 decay processes
-    qalgfg = 0
-    if (
-        qalfg[1] > 0
-        or qalfg[2] > 0
-        or qalfg[3] > 0
-        or qalfg[4] > 0
-        or qalfg[5] > 0
-        or qalfg[6] > 0
-    ):
-        qalgfg = 1
-
-    # gdaufg indicates whether any constituent is a "daughter" compound through each of the 6 possible decay processes
-    gdaufg = 0
-    if (
-        gqpm2[1] > 0
-        or gqpm2[2] > 0
-        or gqpm2[3] > 0
-        or gqpm2[4] > 0
-        or gqpm2[5] > 0
-        or gqpm2[6] > 0
-    ):
-        gdaufg = 1
-
-    # daugfg indicates whether or not a given qual is a daughter compound
-    daugfg = 0
-    if (
-        gqpm2[1] > 0
-        or gqpm2[2] > 0
-        or gqpm2[3] > 0
-        or gqpm2[4] > 0
-        or gqpm2[5] > 0
-        or gqpm2[6] > 0
-    ):
-        daugfg = 1
 
     # get initial value for all inputs which can be constant,
     # vary monthly, or be a time series-some might be over-ridden by
@@ -632,14 +565,6 @@ def _gqual_(ui, ts):
         reamfg = 2
         if "REAMFG" in ui:
             reamfg = ui["REAMFG"]
-        dopfg = 0
-        if "DOPFG" in ui:
-            dopfg = ui["DOPFG"]
-
-        htfg = int(ui["HTFG"])
-        if htfg == 0:
-            elev = ui["ELEV"]
-            cfpres = ((288.0 - 0.001981 * elev) / 288.0) ** 5.256
 
         lkfg = int(ui["LKFG"])
         if lkfg == 1:
@@ -987,12 +912,16 @@ def _gqual_(ui, ts):
                     if lset > 4:
                         lset -= 4
 
-                for l in range(1, 19):
+                for coeff_index in range(1, 19):
                     # evaluate the light extinction exponent- 2.76*klamda*d
-                    kl = alph[l] + gamm[l] * sdcnc + delta[l] * phy
+                    kl = (
+                        alph[coeff_index]
+                        + gamm[coeff_index] * sdcnc
+                        + delta[coeff_index] * phy
+                    )
                     expnt = 2.76 * kl * avdepm * 100.0
                     # evaluate the cloud factor
-                    cldl = (10.0 - cld * kcld[l]) / 10.0
+                    cldl = (10.0 - cld * kcld[coeff_index]) / 10.0
                     if expnt <= -20.0:
                         expnt = -20.0
                     if expnt >= 20.0:
@@ -1000,9 +929,9 @@ def _gqual_(ui, ts):
                     # evaluate the precalculated factors fact2
                     # lit is data from the seq file
                     # fact2[l] = cldl * lit[l,lset] * (1.0 - exp(-expnt)) / expnt
-                    fact2[l] = (
+                    fact2[coeff_index] = (
                         cldl
-                        * light_factor(l, lset, light)
+                        * light_factor(coeff_index, lset, light)
                         * (1.0 - exp(-expnt))
                         / expnt
                     )
@@ -1094,14 +1023,12 @@ def _gqual_(ui, ts):
                 hr,
                 delt60,
             )
-            # ddqal[1,index] = DDECAY(QALFG(1,I),TW20,HYDPM(1,I),PHVAL,ROXPM(1,I),ROC,FACT2(1),FACT1,PHOTPM(1,I),KOREA,CFGAS(I),
-            # 						BIOPM(1,I),BIO(I),GENPM(1,I),VOLSP,DQAL(I),HR,DELT60,DDQAL(1,I))
 
             pdqal = 0.0
             for k in range(1, 7):
-                if (
-                    gqpm2[k] == 1
-                ):  # this compound is a "daughter"-compute the contribution to it from its "parent(s)"
+                if gqpm2[k] == 1:
+                    # this compound is a "daughter"-compute the contribution to
+                    # it from its "parent(s)"
                     itobe = index - 1
                     for j in range(1, itobe):
                         pdqal = pdqal + ddqal[k, j] * c[j, k]
@@ -1111,10 +1038,10 @@ def _gqual_(ui, ts):
             if vol > 0:
                 dqal = dqal + (pdqal - ddqal[7, index]) / vol
         else:
-            # rchres depth is less than two inches - dissolved decay is not considered
-            for l in range(1, 8):
-                ddqal[l, index] = 0.0
-            # 320      CONTINUE
+            # RCHRES depth is less than two inches - dissolved decay is not
+            # considered
+            for coeff_index in range(1, 8):
+                ddqal[coeff_index, index] = 0.0
             pdqal = 0.0
 
         adqal = zeros(8)
@@ -1125,7 +1052,6 @@ def _gqual_(ui, ts):
         osqal1 = zeros(nexits)
         osqal2 = zeros(nexits)
         osqal3 = zeros(nexits)
-        osqal4 = zeros(nexits)
         rosqal1 = 0.0
         rosqal2 = 0.0
         rosqal3 = 0.0
@@ -1141,7 +1067,8 @@ def _gqual_(ui, ts):
         dsqal4 = 0.0
         rosqal4 = 0.0
 
-        if qalfg[7] == 1:  # this constituent is associated with sediment
+        if qalfg[7] == 1:
+            # this constituent is associated with sediment
             if nexits > 1:
                 for n in range(1, nexits):
                     tosqal[n] = 0.0
@@ -1150,7 +1077,8 @@ def _gqual_(ui, ts):
             # get data on inflow of sediment-associated material
 
             # sand
-            # advect this material, including calculation of deposition and scour
+            # advect this material, including calculation of deposition and
+            # scour
             errors, sqal[1], sqal[4], dsqal1, rosqal1, osqal1 = advqal(
                 isqal1 * conv,
                 rsed[1],
@@ -1165,9 +1093,6 @@ def _gqual_(ui, ts):
             )
             rosqal1 = rosqal1 / conv
             osqal1 = osqal1 / conv
-            # GQECNT(1),SQAL(J,I),SQAL(J + 3,I),DSQAL(J,I), ROSQAL(J,I),OSQAL(1,J,I)) = ADVQAL (ISQAL(J,I),RSED(J),RSED(J + 3),\
-            # DEPSCR(J),ROSED(J),OSED(1,J),NEXITS,RCHNO, MESSU,MSGFL,DATIM, GQID(1,I),J,RSQAL(J,I),RSQAL(J + 4,I),GQECNT(1),
-            # SQAL(J,I),SQAL(J + 3,I),DSQAL(J,I),ROSQAL(J,I),OSQAL(1,J,I))
 
             isqal4 = isqal4 + isqal1
             dsqal4 = dsqal4 + dsqal1
@@ -1177,7 +1102,8 @@ def _gqual_(ui, ts):
                     tosqal[n] = tosqal[n] + osqal1[n]
 
             # silt
-            # advect this material, including calculation of deposition and scour
+            # advect this material, including calculation of deposition and
+            # scour
             errors, sqal[2], sqal[5], dsqal2, rosqal2, osqal2 = advqal(
                 isqal2 * conv,
                 rsed[2],
@@ -1192,11 +1118,6 @@ def _gqual_(ui, ts):
             )
             rosqal2 = rosqal2 / conv
             osqal2 = osqal2 / conv
-            # GQECNT(1), SQAL(J, I), SQAL(J + 3, I), DSQAL(J, I), ROSQAL(J, I), OSQAL(1, J, I)) = ADVQAL(
-            # 	ISQAL(J, I), RSED(J), RSED(J + 3), \
-            # 	DEPSCR(J), ROSED(J), OSED(1, J), NEXITS, RCHNO, MESSU, MSGFL, DATIM, GQID(1, I), J, RSQAL(J, I),
-            # 	RSQAL(J + 4, I), GQECNT(1),
-            # 	SQAL(J, I), SQAL(J + 3, I), DSQAL(J, I), ROSQAL(J, I), OSQAL(1, J, I))
 
             isqal4 = isqal4 + isqal2
             dsqal4 = dsqal4 + dsqal2
@@ -1206,7 +1127,8 @@ def _gqual_(ui, ts):
                     tosqal[n] = tosqal[n] + osqal2[n]
 
             # clay
-            # advect this material, including calculation of deposition and scour
+            # advect this material, including calculation of deposition and
+            # scour
             errors, sqal[3], sqal[6], dsqal3, rosqal3, osqal3 = advqal(
                 isqal3 * conv,
                 rsed[3],
@@ -1221,11 +1143,6 @@ def _gqual_(ui, ts):
             )
             rosqal3 = rosqal3 / conv
             osqal3 = osqal3 / conv
-            # GQECNT(1), SQAL(J, I), SQAL(J + 3, I), DSQAL(J, I), ROSQAL(J, I), OSQAL(1, J, I)) = ADVQAL(
-            # 	ISQAL(J, I), RSED(J), RSED(J + 3), \
-            # 	DEPSCR(J), ROSED(J), OSED(1, J), NEXITS, RCHNO, MESSU, MSGFL, DATIM, GQID(1, I), J, RSQAL(J, I),
-            # 	RSQAL(J + 4, I), GQECNT(1),
-            # 	SQAL(J, I), SQAL(J + 3, I), DSQAL(J, I), ROSQAL(J, I), OSQAL(1, J, I))
 
             isqal4 = isqal4 + isqal3
             dsqal4 = dsqal4 + dsqal3
@@ -1237,10 +1154,11 @@ def _gqual_(ui, ts):
             tiqal = idqal + isqal4
             troqal = (rodqal / conv) + rosqal4
             if nexits > 1:
-                for n in range(0, nexits - 1):
+                for n in range(nexits - 1):
                     toqal[n] = odqal[n] + tosqal[n]
 
-            if avdepe > 0.17:  # simulate decay on suspended sediment
+            if avdepe > 0.17:
+                # simulate decay on suspended sediment
                 sqal[1], sqal[2], sqal[3], sqdec1, sqdec2, sqdec3 = adecay(
                     addcpm1,
                     addcpm2,
@@ -1252,7 +1170,6 @@ def _gqual_(ui, ts):
                     sqal[2],
                     sqal[3],
                 )
-                # SQAL((1),I), SQDEC((1),I)) =  ADECAY(ADDCPM(1,I),TW20,RSED(1),SQAL((1),I),SQDEC((1),I))
             else:
                 # rchres depth is less than two inches - decay of qual
                 # associated with suspended sediment is not considered
@@ -1272,16 +1189,15 @@ def _gqual_(ui, ts):
                 sqal[5],
                 sqal[6],
             )
-            # SQAL((4),I), SQDEC((4),I)) = ADECAY(ADDCPM(3,I),TW20,RSED(4),SQAL((4),I),SQDEC((4),I))
 
             # get total decay
             sqdec7 = sqdec1 + sqdec2 + sqdec3 + sqdec4 + sqdec5 + sqdec6
 
-            if avdepe > 0.17:  # simulate exchange due to adsorption and desorption
+            if avdepe > 0.17:
+                # simulate exchange due to adsorption and desorption
                 dqal, sqal, adqal = adsdes(
                     vol, rsed, adpm1, adpm2, adpm3, tw20, dqal, sqal
                 )
-                # DQAL(I), SQAL(1,I), ADQAL(1,I) = ADSDES(VOLSP,RSED(1),ADPM(1,1,I),TW20,DQAL(I),SQAL(1,I),ADQAL(1,I))
             else:
                 # rchres depth is less than two inches - adsorption and
                 # desorption of qual is not considered
@@ -1325,9 +1241,11 @@ def _gqual_(ui, ts):
         else:
             rrqal = rdqal
 
-        svol = vol  # svol is volume at start of time step, update for next time thru
+        # svol is volume at start of time step, update for next time thru
+        svol = vol
 
-        ADQAL1[loop] = adqal[1] / conv  # put values for this time step back into TS
+        # put values for this time step back into TS
+        ADQAL1[loop] = adqal[1] / conv
         ADQAL2[loop] = adqal[2] / conv
         ADQAL3[loop] = adqal[3] / conv
         ADQAL4[loop] = adqal[4] / conv
@@ -1414,13 +1332,13 @@ def adecay(
     sqal_silt,
     sqal_clay,
 ):
-    # real  addcpm(2),rsed(3),sqal(3),sqdec(3),tw20
     """simulate decay of material in adsorbed state"""
 
     sqdec_sand = 0.0
     sqdec_silt = 0.0
     sqdec_clay = 0.0
-    if addcpm1 > 0.0:  # calculate temp-adjusted decay rate
+    if addcpm1 > 0.0:
+        # calculate temp-adjusted decay rate
         dk = addcpm1 * addcpm2**tw20
         fact = 1.0 - exp(-dk)
 
@@ -1442,8 +1360,6 @@ def adecay(
 
 @njit(cache=True)
 def adsdes(vol, rsed, adpm1, adpm2, adpm3, tw20, dqal, sqal):
-    #  adpm(6,3),adqal(7),dqal,rsed(6),sqal(6),tw20,vol
-
     """simulate exchange of a constituent between the dissolved
     state and adsorbed state-note that 6 adsorption site classes are
     considered: 1- suspended sand  2- susp. silt  3- susp. clay
@@ -1452,12 +1368,16 @@ def adsdes(vol, rsed, adpm1, adpm2, adpm3, tw20, dqal, sqal):
     ainv = zeros(7)
     cainv = zeros(7)
     adqal = zeros(8)
-    if vol > 0.0:  # adsorption/desorption can take place
+    if vol > 0.0:
+        # adsorption/desorption can take place
+
         # first find the new dissolved conc.
         num = vol * dqal
         denom = vol
         for j in range(1, 7):
-            if rsed[j] > 0.0:  # this sediment class is present-evaluate terms due to it
+            if rsed[j] > 0.0:
+                # this sediment class is present-evaluate terms due to it
+
                 # transfer rate, corrected for water temp
                 akj = adpm2[j] * adpm3[j] ** tw20
                 temp = 1.0 / (1.0 + akj)
@@ -1466,20 +1386,21 @@ def adsdes(vol, rsed, adpm1, adpm2, adpm3, tw20, dqal, sqal):
                 ainv[j] = akj * adpm1[j] * temp
                 cainv[j] = sqal[j] * temp
 
-                # accumulate terms for numerator and denominator in dqal equation
+                # accumulate terms for numerator and denominator in dqal
+                # equation
                 num = num + (sqal[j] - cainv[j]) * rsed[j]
                 denom = denom + rsed[j] * ainv[j]
 
         # calculate new dissolved concentration-units are conc/l
         dqal = num / denom
 
-        # calculate new conc on each sed class and the corresponding adsorption/desorption flux
+        # calculate new conc on each sed class and the corresponding
+        # adsorption/desorption flux
         adqal[7] = 0.0
         for j in range(1, 7):
-            if (
-                rsed[j] > 0.0
-            ):  # this sediment class is present-calculate data pertaining to it
-                # new concentration
+            if rsed[j] > 0.0:
+                # this sediment class is present-calculate data pertaining to
+                # it new concentration
                 temp = cainv[j] + dqal * ainv[j]
 
                 # quantity of material transferred
@@ -1487,14 +1408,17 @@ def adsdes(vol, rsed, adpm1, adpm2, adpm3, tw20, dqal, sqal):
                 sqal[j] = temp
 
                 # accumulate total adsorption/desorption flux
-                adqal[7] = adqal[7] + adqal[j]
-            else:  # this sediment class is absent
+                adqal[7] += adqal[j]
+            else:
+                # this sediment class is absent
                 adqal[j] = 0.0
                 # sqal(j) is unchanged-"undefined"
-    else:  # no water, no adsorption/desorption
+    else:
+        # no water, no adsorption/desorption
         for j in range(1, 7):
             adqal[j] = 0.0
-            # sqal(1 thru 3) and dqal should already have been set to undefined values
+            # sqal(1 thru 3) and dqal should already have been set to undefined
+            # values
 
     return dqal, sqal, adqal
 
@@ -1504,34 +1428,37 @@ def advqal(isqal, rsed, bsed, depscr, rosed, osed, nexits, rsqals, rbqals, error
     """simulate the advective processes, including deposition and
     scour for the quality constituent attached to one sediment size fraction"""
 
-    if depscr < 0.0:  # there was scour during the interval
-        if bsed <= 0.0:  #  bed was scoured "clean"
+    if depscr < 0.0:
+        # there was scour during the interval
+        if bsed <= 0.0:
+            #  bed was scoured "clean"
             bqal = -1.0e30
-            dsqal = (
-                -1.0 * rbqals
-            )  # cbrb changed sign of dsqal; it should be negative for scour; fixed 4/2007
-        else:  # there is still bed material left
+            # cbrb changed sign of dsqal; it should be negative for scour;
+            # fixed 4/2007
+            dsqal = -1.0 * rbqals
+        else:
+            # there is still bed material left
             bqal = rbqals / (bsed - depscr)
             dsqal = bqal * depscr
 
         # calculate concentration in suspension-under these conditions,
         # denominator should never be zero
-        if rsed + rosed > 0.0:
-            sqal = (isqal + rsqals - dsqal) / (rsed + rosed)
-        else:
-            sqal = 0.0
+        sqal = (isqal + rsqals - dsqal) / (rsed + rosed) if rsed + rosed > 0.0 else 0.0
         rosqal = rosed * sqal
-    else:  # there was deposition or no scour/deposition during the interval
+    else:
+        # there was deposition or no scour/deposition during the interval
         denom = rsed + depscr + rosed
-        if denom <= 0.0:  # there was no sediment in suspension during the interval
+        if denom <= 0.0:
+            # there was no sediment in suspension during the interval
             sqal = -1.0e30
             rosqal = 0.0
             dsqal = 0.0
             if abs(isqal) > 0.0 or abs(rsqals) > 0.0:
-                errors[4] += (
-                    1  # ERRMSG4: error-under these conditions these values should be zero
-                )
-        else:  # there was some suspended sediment during the interval
+                # ERRMSG4: error-under these conditions these values should be zero
+                errors[4] += 1
+        else:
+            # there was some suspended sediment during the interval
+
             # calculate conc on suspended sed
             sqal = (isqal + rsqals) / denom
             rosqal = rosed * sqal
@@ -1543,20 +1470,23 @@ def advqal(isqal, rsed, bsed, depscr, rosed, osed, nexits, rsqals, rbqals, error
                 sqal = -1.0e30
 
         # calculate conditions on the bed
-        if bsed <= 0.0:  # no bed sediments at end of interval
+        if bsed <= 0.0:
+            # no bed sediments at end of interval
             bqal = -1.0e30
             if abs(dsqal) > 0.0 or abs(rbqals > 0.0):
-                errors[5] += (
-                    1  # ERRMSG4: error-under these conditions these values should be zero
-                )
-        else:  # there is bed sediment at the end of the interval
+                # ERRMSG4: error-under these conditions these values should be zero
+                errors[5] += 1
+        else:
+            # there is bed sediment at the end of the interval
             rbqal = dsqal + rbqals
             bqal = rbqal / bsed
 
     osqal = zeros(nexits)
     # osqal = array([0.0, 0.0, 0.0, 0.0, 0.0])
-    if nexits > 1:  # we need to compute outflow through each individual exit
-        if rosed <= 0.0:  # all zero
+    if nexits > 1:
+        # we need to compute outflow through each individual exit
+        if rosed <= 0.0:
+            # all zero
             for i in range(nexits):
                 osqal[i] = 0.0
         else:
@@ -1595,35 +1525,38 @@ def ddecay(
 ):
     """estimate decay of dissolved constituent"""
 
-    # bio,biopm(2),cfgas,ddqal(7),delt60,dqal,fact1,fact2(18),genpm(2),hydpm(4),korea,photpm(20),phval, roc,roxpm(2),tw20,volsp
-
     ddqal = array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-    if dqal > 1.0e-25:  # simulate decay
+    if dqal > 1.0e-25:
+        # simulate decay
         k = array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 
         k[1] = 0.0
-        if qalfg[1] == 1:  # simulate hydrolysis
+        if qalfg[1] == 1:
+            # simulate hydrolysis
             khyd = ka * 10.0 ** (-phval) + kb * 10.0 ** (phval - 14.0) + kn
             k[1] = khyd * thhyd**tw20  # adjust for temperature
 
         k[2] = 0.0
-        if qalfg[2] == 1:  # simulate oxidation by free radical processes
+        if qalfg[2] == 1:
+            # simulate oxidation by free radical processes
             krox = kox * roc
             k[2] = krox * thox**tw20  # adjust for temperature
 
         k[3] = 0.0
-        if qalfg[3] == 1:  # simulate photolysis
+        if qalfg[3] == 1:
+            # simulate photolysis
             # go through summation over 18 wave-length intervals
             fact3 = 0.0
-            for l in range(1, 19):
-                fact3 = fact3 + fact2[l] * photpm[l]
+            for photpm_coeffs in range(1, 19):
+                fact3 = fact3 + fact2[photpm_coeffs] * photpm[photpm_coeffs]
             k[3] = fact1 * photpm[19] * fact3 * photpm[20] ** tw20
         if delt60 < 24.0:
-            if (
-                17 > hr >= 5
-            ):  # it is a daylight hour; photolysis rate is doubled for this interval
+            # it is a daylight hour; photolysis rate is doubled for this
+            # interval
+            if 17 > hr >= 5:
                 k[3] = 2.0 * k[3]
-            else:  # it is not a daylight hour; photolysis does not occur
+            else:
+                # it is not a daylight hour; photolysis does not occur
                 k[3] = 0.0
         # else:
         # simulation interval is greater than 24 hours;
@@ -1649,16 +1582,12 @@ def ddecay(
         # for proration is linear, which is not strictly correct, but
         # should be a good approximation under most conditions
         for i in range(1, 7):
-            if k7 > 0.0:
-                ddqal[i] = k[i] / k7 * ddqal[7]
-            else:
-                ddqal[i] = 0.0
-
+            ddqal[i] = k[i] / k7 * ddqal[7] if k7 > 0.0 else 0.0
     return ddqal
 
 
 @njit(cache=True)
-def light_factor(l, lset, light):
+def light_factor(lf_index, lset, light):
     # light factors for photolysis, in hspf read from seq file
     vals = [
         0.0,
@@ -2105,7 +2034,7 @@ def light_factor(l, lset, light):
                 0.710,
                 0.690,
             ]
-    return vals[l - 1]
+    return vals[lf_index - 1]
 
 
 def expand_GQUAL_masslinks(flags, parameters, dat, recs):
@@ -2133,6 +2062,7 @@ def expand_GQUAL_masslinks(flags, parameters, dat, recs):
             rec["TMEMSB2"] = dat.TMEMSB2
             rec["SVOL"] = dat.SVOL
             recs.append(rec)
+
             # ISQAL1
             rec = {}
             rec["MFACTOR"] = dat.MFACTOR
@@ -2150,6 +2080,7 @@ def expand_GQUAL_masslinks(flags, parameters, dat, recs):
             rec["TMEMSB2"] = dat.TMEMSB2
             rec["SVOL"] = dat.SVOL
             recs.append(rec)
+
             # ISQAL2
             rec = {}
             rec["MFACTOR"] = dat.MFACTOR
@@ -2167,6 +2098,7 @@ def expand_GQUAL_masslinks(flags, parameters, dat, recs):
             rec["TMEMSB2"] = dat.TMEMSB2
             rec["SVOL"] = dat.SVOL
             recs.append(rec)
+
             # ISQAL3
             rec = {}
             rec["MFACTOR"] = dat.MFACTOR
@@ -2191,6 +2123,6 @@ def expand_GQUAL_masslinks(flags, parameters, dat, recs):
 def hour24Flag(siminfo, dofirst=False):
     """timeseries with hour values"""
     hours24 = zeros(24)
-    for i in range(0, 24):
+    for i in range(24):
         hours24[i] = i
     return hoursval(siminfo, hours24, dofirst)

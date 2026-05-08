@@ -11,7 +11,7 @@ END GLOBAL
 
 FILES
 <type>  <fun>***<------------fname--------------------------------------------->
-WDM1       21   calleg.wdm
+WDM        21   calleg.wdm
 MESSU      22   calleg.ech
             1   calleg.out
 BINO       92   calleg.hbn
@@ -1380,7 +1380,7 @@ IMPLND
   IWAT-STATE1
 *** <ILS >  IWATER state variables (inches)
 *** x -  x      RETS      SURS
-   11  301       0.0       0.0
+   11  301     0.001     0.001
   END IWAT-STATE1
 END IMPLND
 
@@ -1720,209 +1720,209 @@ EXT SOURCES
 <Name>   x <Name> x tem strg<-factor->strg <Name>   x   x        <Name> x x  ***
 *** Potential ET (hourly) ***
 *** Thousand Oaks Weather Station
-WDM1  1169 EVAP     ENGL        0.74       PERLND  11  26 EXTNL  PETINP
-WDM1  1169 EVAP     ENGL        0.74       PERLND  61  86 EXTNL  PETINP
-WDM1  1169 EVAP     ENGL        0.74       PERLND 121 196 EXTNL  PETINP
-WDM1  1169 EVAP     ENGL        0.74       PERLND 221 246 EXTNL  PETINP
-WDM1  1169 EVAP     ENGL        0.74       IMPLND  11  21 EXTNL  PETINP
-WDM1  1169 EVAP     ENGL        0.74       IMPLND  61  81 EXTNL  PETINP
-WDM1  1169 EVAP     ENGL        0.74       IMPLND 121 191 EXTNL  PETINP
-WDM1  1169 EVAP     ENGL        0.74       IMPLND 221 241 EXTNL  PETINP
+WDM   1169 EVAP     ENGL        0.74       PERLND  11  26 EXTNL  PETINP
+WDM   1169 EVAP     ENGL        0.74       PERLND  61  86 EXTNL  PETINP
+WDM   1169 EVAP     ENGL        0.74       PERLND 121 196 EXTNL  PETINP
+WDM   1169 EVAP     ENGL        0.74       PERLND 221 246 EXTNL  PETINP
+WDM   1169 EVAP     ENGL        0.74       IMPLND  11  21 EXTNL  PETINP
+WDM   1169 EVAP     ENGL        0.74       IMPLND  61  81 EXTNL  PETINP
+WDM   1169 EVAP     ENGL        0.74       IMPLND 121 191 EXTNL  PETINP
+WDM   1169 EVAP     ENGL        0.74       IMPLND 221 241 EXTNL  PETINP
 
 *** El Rio-UWCD Spreading Grounds
-WDM1  1239 EVAP     ENGL        0.74       PERLND 251 256 EXTNL  PETINP
-WDM1  1239 EVAP     ENGL        0.74       PERLND 271 306 EXTNL  PETINP
-WDM1  1239 EVAP     ENGL        0.74       IMPLND 251 256 EXTNL  PETINP
-WDM1  1239 EVAP     ENGL        0.74       IMPLND 271 306 EXTNL  PETINP
+WDM   1239 EVAP     ENGL        0.74       PERLND 251 256 EXTNL  PETINP
+WDM   1239 EVAP     ENGL        0.74       PERLND 271 306 EXTNL  PETINP
+WDM   1239 EVAP     ENGL        0.74       IMPLND 251 256 EXTNL  PETINP
+WDM   1239 EVAP     ENGL        0.74       IMPLND 271 306 EXTNL  PETINP
 
 *** Fillmore-Fish Hatchery
-WDM1  1171 EVAP     ENGL        0.74       PERLND  31  56 EXTNL  PETINP
-WDM1  1171 EVAP     ENGL        0.74       PERLND  91 116 EXTNL  PETINP
-WDM1  1171 EVAP     ENGL        0.74       PERLND 201 216 EXTNL  PETINP
-WDM1  1171 EVAP     ENGL        0.74       PERLND 261 266 EXTNL  PETINP
-WDM1  1171 EVAP     ENGL        0.74       IMPLND  31  51 EXTNL  PETINP
-WDM1  1171 EVAP     ENGL        0.74       IMPLND  91 111 EXTNL  PETINP
-WDM1  1171 EVAP     ENGL        0.74       IMPLND 201 211 EXTNL  PETINP
-WDM1  1171 EVAP     ENGL        0.74       IMPLND 261     EXTNL  PETINP
+WDM   1171 EVAP     ENGL        0.74       PERLND  31  56 EXTNL  PETINP
+WDM   1171 EVAP     ENGL        0.74       PERLND  91 116 EXTNL  PETINP
+WDM   1171 EVAP     ENGL        0.74       PERLND 201 216 EXTNL  PETINP
+WDM   1171 EVAP     ENGL        0.74       PERLND 261 266 EXTNL  PETINP
+WDM   1171 EVAP     ENGL        0.74       IMPLND  31  51 EXTNL  PETINP
+WDM   1171 EVAP     ENGL        0.74       IMPLND  91 111 EXTNL  PETINP
+WDM   1171 EVAP     ENGL        0.74       IMPLND 201 211 EXTNL  PETINP
+WDM   1171 EVAP     ENGL        0.74       IMPLND 261     EXTNL  PETINP
 
 *** For Reaches Just using Average Evaporation (0.74 / 3) ~= 0.25
-***WDM1  1169 EVAP     ENGL        0.25       RCHRES   1 964 EXTNL  POTEV
-***WDM1  1171 EVAP     ENGL        0.25       RCHRES   1 964 EXTNL  POTEV
-***WDM1  1239 EVAP     ENGL        0.25       RCHRES   1 964 EXTNL  POTEV
-WDM1  2239 EVAP     ENGL        1.00       RCHRES   1 964 EXTNL  POTEV
+***WDM   1169 EVAP     ENGL        0.25       RCHRES   1 964 EXTNL  POTEV
+***WDM   1171 EVAP     ENGL        0.25       RCHRES   1 964 EXTNL  POTEV
+***WDM   1239 EVAP     ENGL        0.25       RCHRES   1 964 EXTNL  POTEV
+WDM   2239 EVAP     ENGL        1.00       RCHRES   1 964 EXTNL  POTEV
 
 *** Precipitation (hourly) ***
 *** Segment 1 - Susana Knolls - Upper Arroyo Simi Steep
-WDM1   187 PREC     ENGL        1.00       PERLND  11  15 EXTNL  PREC
-WDM1   187 PREC     ENGL        1.00       IMPLND  11  15 EXTNL  PREC
-WDM1   187 PREC     ENGL        1.00       RCHRES   1     EXTNL  PREC
-WDM1   187 PREC     ENGL        1.00       RCHRES  11     EXTNL  PREC
+WDM    187 PREC     ENGL        1.00       PERLND  11  15 EXTNL  PREC
+WDM    187 PREC     ENGL        1.00       IMPLND  11  15 EXTNL  PREC
+WDM    187 PREC     ENGL        1.00       RCHRES   1     EXTNL  PREC
+WDM    187 PREC     ENGL        1.00       RCHRES  11     EXTNL  PREC
 *** Segment 2 - Susana Knolls - Upper Arroyo Simi Flat
-WDM1   187 PREC     ENGL        0.94       PERLND  21  25 EXTNL  PREC
-WDM1   187 PREC     ENGL        0.94       IMPLND  21  25 EXTNL  PREC
-WDM1   187 PREC     ENGL        0.94       RCHRES   2     EXTNL  PREC
+WDM    187 PREC     ENGL        0.94       PERLND  21  25 EXTNL  PREC
+WDM    187 PREC     ENGL        0.94       IMPLND  21  25 EXTNL  PREC
+WDM    187 PREC     ENGL        0.94       RCHRES   2     EXTNL  PREC
 *** Segment 3 - Las Llajas - Upper Las Llajas/Chivo - Steep
-WDM1   242 PREC     ENGL        0.98       PERLND  31  35 EXTNL  PREC
-WDM1   242 PREC     ENGL        0.98       IMPLND  31  35 EXTNL  PREC
+WDM    242 PREC     ENGL        0.98       PERLND  31  35 EXTNL  PREC
+WDM    242 PREC     ENGL        0.98       IMPLND  31  35 EXTNL  PREC
 *** Segment 4 - Las Llajas - Middle Las Llajas/Chivo - Steep
-WDM1   234 PREC     ENGL        1.15       PERLND  41  45 EXTNL  PREC
-WDM1   234 PREC     ENGL        1.15       IMPLND  41  45 EXTNL  PREC
-WDM1   234 PREC     ENGL        1.15       RCHRES  21  23 EXTNL  PREC
+WDM    234 PREC     ENGL        1.15       PERLND  41  45 EXTNL  PREC
+WDM    234 PREC     ENGL        1.15       IMPLND  41  45 EXTNL  PREC
+WDM    234 PREC     ENGL        1.15       RCHRES  21  23 EXTNL  PREC
 *** Segment 5 - Las Llajas - Lower Las Llajas - Moderate
-WDM1   234 PREC     ENGL        1.00       PERLND  51  55 EXTNL  PREC
-WDM1   234 PREC     ENGL        1.00       IMPLND  51  55 EXTNL  PREC
-WDM1   234 PREC     ENGL        1.00       RCHRES  24  25 EXTNL  PREC
+WDM    234 PREC     ENGL        1.00       PERLND  51  55 EXTNL  PREC
+WDM    234 PREC     ENGL        1.00       IMPLND  51  55 EXTNL  PREC
+WDM    234 PREC     ENGL        1.00       RCHRES  24  25 EXTNL  PREC
 *** Segment 6 - Rocketdyne - Upper Meier Canyon - Steep
-WDM1   249 PREC     ENGL        0.94       PERLND  61  65 EXTNL  PREC
-WDM1   249 PREC     ENGL        0.94       IMPLND  61  65 EXTNL  PREC
-WDM1   249 PREC     ENGL        0.94       RCHRES  31     EXTNL  PREC
+WDM    249 PREC     ENGL        0.94       PERLND  61  65 EXTNL  PREC
+WDM    249 PREC     ENGL        0.94       IMPLND  61  65 EXTNL  PREC
+WDM    249 PREC     ENGL        0.94       RCHRES  31     EXTNL  PREC
 *** Segment 7 - Santa Susana - Southern Canyons Moderate
-WDM1   193 PREC     ENGL        1.10       PERLND  71  75 EXTNL  PREC
-WDM1   193 PREC     ENGL        1.10       IMPLND  71  75 EXTNL  PREC
-WDM1   193 PREC     ENGL        1.10       RCHRES 952     EXTNL  PREC
-WDM1   193 PREC     ENGL        1.10       RCHRES  52     EXTNL  PREC
-WDM1   193 PREC     ENGL        1.10       RCHRES  71     EXTNL  PREC
+WDM    193 PREC     ENGL        1.10       PERLND  71  75 EXTNL  PREC
+WDM    193 PREC     ENGL        1.10       IMPLND  71  75 EXTNL  PREC
+WDM    193 PREC     ENGL        1.10       RCHRES 952     EXTNL  PREC
+WDM    193 PREC     ENGL        1.10       RCHRES  52     EXTNL  PREC
+WDM    193 PREC     ENGL        1.10       RCHRES  71     EXTNL  PREC
 *** Segment 8 - Santa Susana - East Simi Valley - Flat
-WDM1   193 PREC     ENGL        1.00       PERLND  81  85 EXTNL  PREC
-WDM1   193 PREC     ENGL        1.00       IMPLND  81  85 EXTNL  PREC
-WDM1   193 PREC     ENGL        1.00       RCHRES   3     EXTNL  PREC
-WDM1   193 PREC     ENGL        1.00       RCHRES   4     EXTNL  PREC
+WDM    193 PREC     ENGL        1.00       PERLND  81  85 EXTNL  PREC
+WDM    193 PREC     ENGL        1.00       IMPLND  81  85 EXTNL  PREC
+WDM    193 PREC     ENGL        1.00       RCHRES   3     EXTNL  PREC
+WDM    193 PREC     ENGL        1.00       RCHRES   4     EXTNL  PREC
 *** Segment 9 - Tripas - Upper Tripas Cyn - Steep
-WDM1   242 PREC     ENGL        0.98       PERLND  91  95 EXTNL  PREC
-WDM1   242 PREC     ENGL        0.98       IMPLND  91  95 EXTNL  PREC
-WDM1   242 PREC     ENGL        0.98       RCHRES  41     EXTNL  PREC
+WDM    242 PREC     ENGL        0.98       PERLND  91  95 EXTNL  PREC
+WDM    242 PREC     ENGL        0.98       IMPLND  91  95 EXTNL  PREC
+WDM    242 PREC     ENGL        0.98       RCHRES  41     EXTNL  PREC
 *** Segment 10 - Tapo - Lower Tripas/Windmill/Gillibrand - Steep
-WDM1   196 PREC     ENGL        1.00       PERLND 101 105 EXTNL  PREC
-WDM1   196 PREC     ENGL        1.00       IMPLND 101 105 EXTNL  PREC
-WDM1   196 PREC     ENGL        1.00       RCHRES  42     EXTNL  PREC
-WDM1   196 PREC     ENGL        1.00       RCHRES  44  45 EXTNL  PREC
+WDM    196 PREC     ENGL        1.00       PERLND 101 105 EXTNL  PREC
+WDM    196 PREC     ENGL        1.00       IMPLND 101 105 EXTNL  PREC
+WDM    196 PREC     ENGL        1.00       RCHRES  42     EXTNL  PREC
+WDM    196 PREC     ENGL        1.00       RCHRES  44  45 EXTNL  PREC
 *** Segment 11 - Tapo - Middle Tapo Hills - Moderate
-WDM1   196 PREC     ENGL        0.89       PERLND 111 115 EXTNL  PREC
-WDM1   196 PREC     ENGL        0.89       IMPLND 111 115 EXTNL  PREC
-WDM1   196 PREC     ENGL        0.89       RCHRES  43     EXTNL  PREC
-WDM1   196 PREC     ENGL        0.89       RCHRES  64     EXTNL  PREC
+WDM    196 PREC     ENGL        0.89       PERLND 111 115 EXTNL  PREC
+WDM    196 PREC     ENGL        0.89       IMPLND 111 115 EXTNL  PREC
+WDM    196 PREC     ENGL        0.89       RCHRES  43     EXTNL  PREC
+WDM    196 PREC     ENGL        0.89       RCHRES  64     EXTNL  PREC
 *** Segment 12 - Simi Fire - North Simi Valley - Flat
-WDM1   154 PREC     ENGL        1.00       PERLND 121 125 EXTNL  PREC
-WDM1   154 PREC     ENGL        1.00       IMPLND 121 125 EXTNL  PREC
-WDM1   154 PREC     ENGL        1.00       RCHRES  46     EXTNL  PREC
+WDM    154 PREC     ENGL        1.00       PERLND 121 125 EXTNL  PREC
+WDM    154 PREC     ENGL        1.00       IMPLND 121 125 EXTNL  PREC
+WDM    154 PREC     ENGL        1.00       RCHRES  46     EXTNL  PREC
 *** Segment 13 - Simi Fire - Lower Tapo Hills - Moderate
-WDM1   154 PREC     ENGL        1.00       PERLND 131 135 EXTNL  PREC
-WDM1   154 PREC     ENGL        1.00       IMPLND 131 135 EXTNL  PREC
-WDM1   154 PREC     ENGL        1.00       RCHRES  61  63 EXTNL  PREC
-WDM1   154 PREC     ENGL        1.00       RCHRES  91     EXTNL  PREC
+WDM    154 PREC     ENGL        1.00       PERLND 131 135 EXTNL  PREC
+WDM    154 PREC     ENGL        1.00       IMPLND 131 135 EXTNL  PREC
+WDM    154 PREC     ENGL        1.00       RCHRES  61  63 EXTNL  PREC
+WDM    154 PREC     ENGL        1.00       RCHRES  91     EXTNL  PREC
 *** Segment 14 - Santa Susana - Central Simi Valley - Flat
-WDM1   193 PREC     ENGL        0.98       PERLND 141 145 EXTNL  PREC
-WDM1   193 PREC     ENGL        0.98       IMPLND 141 145 EXTNL  PREC
-WDM1   193 PREC     ENGL        0.98       RCHRES 904     EXTNL  PREC
-WDM1   193 PREC     ENGL        0.98       RCHRES   5   7 EXTNL  PREC
-WDM1   193 PREC     ENGL        0.98       RCHRES  65     EXTNL  PREC
-WDM1   193 PREC     ENGL        0.98       RCHRES  72     EXTNL  PREC
-WDM1   193 PREC     ENGL        0.98       RCHRES  92     EXTNL  PREC
+WDM    193 PREC     ENGL        0.98       PERLND 141 145 EXTNL  PREC
+WDM    193 PREC     ENGL        0.98       IMPLND 141 145 EXTNL  PREC
+WDM    193 PREC     ENGL        0.98       RCHRES 904     EXTNL  PREC
+WDM    193 PREC     ENGL        0.98       RCHRES   5   7 EXTNL  PREC
+WDM    193 PREC     ENGL        0.98       RCHRES  65     EXTNL  PREC
+WDM    193 PREC     ENGL        0.98       RCHRES  72     EXTNL  PREC
+WDM    193 PREC     ENGL        0.98       RCHRES  92     EXTNL  PREC
 *** Segment 15 - Rocketdyne - Upper Bus/Erringer - Steep
-WDM1   249 PREC     ENGL        0.94       PERLND 151 155 EXTNL  PREC
-WDM1   249 PREC     ENGL        0.94       IMPLND 151 155 EXTNL  PREC
-WDM1   249 PREC     ENGL        0.94       RCHRES  81     EXTNL  PREC
+WDM    249 PREC     ENGL        0.94       PERLND 151 155 EXTNL  PREC
+WDM    249 PREC     ENGL        0.94       IMPLND 151 155 EXTNL  PREC
+WDM    249 PREC     ENGL        0.94       RCHRES  81     EXTNL  PREC
 *** Segment 16 - Lake Bard - Upper Sycamore/Oak/Middle Bus - Steep
-WDM1   227 PREC     ENGL        1.09       PERLND 161 165 EXTNL  PREC
-WDM1   227 PREC     ENGL        1.09       IMPLND 161 165 EXTNL  PREC
-WDM1   227 PREC     ENGL        1.09       RCHRES 101 105 EXTNL  PREC
-WDM1   227 PREC     ENGL        1.09       RCHRES 107 108 EXTNL  PREC
+WDM    227 PREC     ENGL        1.09       PERLND 161 165 EXTNL  PREC
+WDM    227 PREC     ENGL        1.09       IMPLND 161 165 EXTNL  PREC
+WDM    227 PREC     ENGL        1.09       RCHRES 101 105 EXTNL  PREC
+WDM    227 PREC     ENGL        1.09       RCHRES 107 108 EXTNL  PREC
 *** Segment 17 - Lake Bard - West Sycamore Cyn - Moderate
-WDM1   227 PREC     ENGL        0.98       PERLND 171 175 EXTNL  PREC
-WDM1   227 PREC     ENGL        0.98       IMPLND 171 175 EXTNL  PREC
-WDM1   227 PREC     ENGL        0.98       RCHRES 109     EXTNL  PREC
+WDM    227 PREC     ENGL        0.98       PERLND 171 175 EXTNL  PREC
+WDM    227 PREC     ENGL        0.98       IMPLND 171 175 EXTNL  PREC
+WDM    227 PREC     ENGL        0.98       RCHRES 109     EXTNL  PREC
 *** Segment 18 - Lake Bard - West Simi Valley - Flat
-WDM1   227 PREC     ENGL        0.98       PERLND 181 185 EXTNL  PREC
-WDM1   227 PREC     ENGL        0.98       IMPLND 181 185 EXTNL  PREC
-WDM1   227 PREC     ENGL        0.98       RCHRES  82     EXTNL  PREC
-WDM1   227 PREC     ENGL        0.98       RCHRES   8  10 EXTNL  PREC
-WDM1   227 PREC     ENGL        0.98       RCHRES 106     EXTNL  PREC
+WDM    227 PREC     ENGL        0.98       PERLND 181 185 EXTNL  PREC
+WDM    227 PREC     ENGL        0.98       IMPLND 181 185 EXTNL  PREC
+WDM    227 PREC     ENGL        0.98       RCHRES  82     EXTNL  PREC
+WDM    227 PREC     ENGL        0.98       RCHRES   8  10 EXTNL  PREC
+WDM    227 PREC     ENGL        0.98       RCHRES 106     EXTNL  PREC
 *** Segment 19 - Lake Bard
-WDM1   227 PREC     ENGL        1.05       PERLND 191 196 EXTNL  PREC
-WDM1   227 PREC     ENGL        1.05       IMPLND 191     EXTNL  PREC
-WDM1   227 PREC     ENGL        1.05       RCHRES 201     EXTNL  PREC
-WDM1   227 PREC     ENGL        1.05       RCHRES 431     EXTNL  PREC
-WDM1   227 PREC     ENGL        1.05       RCHRES 441     EXTNL  PREC
-WDM1   227 PREC     ENGL        1.05       RCHRES 443     EXTNL  PREC
+WDM    227 PREC     ENGL        1.05       PERLND 191 196 EXTNL  PREC
+WDM    227 PREC     ENGL        1.05       IMPLND 191     EXTNL  PREC
+WDM    227 PREC     ENGL        1.05       RCHRES 201     EXTNL  PREC
+WDM    227 PREC     ENGL        1.05       RCHRES 431     EXTNL  PREC
+WDM    227 PREC     ENGL        1.05       RCHRES 441     EXTNL  PREC
+WDM    227 PREC     ENGL        1.05       RCHRES 443     EXTNL  PREC
 *** Segment 20 - Moorpark-Happy Camp
-WDM1   250 PREC     ENGL        1.04       PERLND 201 206 EXTNL  PREC
-WDM1   250 PREC     ENGL        1.04       IMPLND 201     EXTNL  PREC
-WDM1   250 PREC     ENGL        1.04       RCHRES 190 191 EXTNL  PREC
-WDM1   250 PREC     ENGL        1.04       RCHRES 211     EXTNL  PREC
+WDM    250 PREC     ENGL        1.04       PERLND 201 206 EXTNL  PREC
+WDM    250 PREC     ENGL        1.04       IMPLND 201     EXTNL  PREC
+WDM    250 PREC     ENGL        1.04       RCHRES 190 191 EXTNL  PREC
+WDM    250 PREC     ENGL        1.04       RCHRES 211     EXTNL  PREC
 *** Segment 21 - Moorpark
-WDM1   141 PREC     ENGL        1.04       PERLND 211 216 EXTNL  PREC
-WDM1   141 PREC     ENGL        1.04       IMPLND 211     EXTNL  PREC
-WDM1   141 PREC     ENGL        1.04       RCHRES 192 193 EXTNL  PREC
-WDM1   141 PREC     ENGL        1.04       RCHRES 202 204 EXTNL  PREC
-WDM1   141 PREC     ENGL        1.04       RCHRES 212     EXTNL  PREC
-WDM1   141 PREC     ENGL        1.04       RCHRES 221 223 EXTNL  PREC
-WDM1   141 PREC     ENGL        1.04       RCHRES 225     EXTNL  PREC
+WDM    141 PREC     ENGL        1.04       PERLND 211 216 EXTNL  PREC
+WDM    141 PREC     ENGL        1.04       IMPLND 211     EXTNL  PREC
+WDM    141 PREC     ENGL        1.04       RCHRES 192 193 EXTNL  PREC
+WDM    141 PREC     ENGL        1.04       RCHRES 202 204 EXTNL  PREC
+WDM    141 PREC     ENGL        1.04       RCHRES 212     EXTNL  PREC
+WDM    141 PREC     ENGL        1.04       RCHRES 221 223 EXTNL  PREC
+WDM    141 PREC     ENGL        1.04       RCHRES 225     EXTNL  PREC
 *** Segment 22 - Santa Rosa Valley
-WDM1    49 PREC     ENGL        1.03       PERLND 221 226 EXTNL  PREC
-WDM1    49 PREC     ENGL        1.03       IMPLND 221     EXTNL  PREC
-WDM1    49 PREC     ENGL        1.03       RCHRES 194     EXTNL  PREC
-WDM1    49 PREC     ENGL        1.03       RCHRES 205 206 EXTNL  PREC
-WDM1    49 PREC     ENGL        1.03       RCHRES 405     EXTNL  PREC
-WDM1    49 PREC     ENGL        1.03       RCHRES 442     EXTNL  PREC
+WDM     49 PREC     ENGL        1.03       PERLND 221 226 EXTNL  PREC
+WDM     49 PREC     ENGL        1.03       IMPLND 221     EXTNL  PREC
+WDM     49 PREC     ENGL        1.03       RCHRES 194     EXTNL  PREC
+WDM     49 PREC     ENGL        1.03       RCHRES 205 206 EXTNL  PREC
+WDM     49 PREC     ENGL        1.03       RCHRES 405     EXTNL  PREC
+WDM     49 PREC     ENGL        1.03       RCHRES 442     EXTNL  PREC
 *** Segment 23 - Thousand Oaks-WS
-WDM1   169 PREC     ENGL        0.99       PERLND 231 236 EXTNL  PREC
-WDM1   169 PREC     ENGL        0.99       IMPLND 231     EXTNL  PREC
-WDM1   169 PREC     ENGL        0.99       RCHRES 401 402 EXTNL  PREC
-WDM1   169 PREC     ENGL        0.99       RCHRES 411     EXTNL  PREC
+WDM    169 PREC     ENGL        0.99       PERLND 231 236 EXTNL  PREC
+WDM    169 PREC     ENGL        0.99       IMPLND 231     EXTNL  PREC
+WDM    169 PREC     ENGL        0.99       RCHRES 401 402 EXTNL  PREC
+WDM    169 PREC     ENGL        0.99       RCHRES 411     EXTNL  PREC
 *** Segment 24 - Newbury Park-Jenny Drive
-WDM1   188 PREC     ENGL        1.00       PERLND 241 246 EXTNL  PREC
-WDM1   188 PREC     ENGL        1.00       IMPLND 241     EXTNL  PREC
-WDM1   188 PREC     ENGL        1.00       RCHRES 403 404 EXTNL  PREC
-WDM1   188 PREC     ENGL        1.00       RCHRES 421 423 EXTNL  PREC
+WDM    188 PREC     ENGL        1.00       PERLND 241 246 EXTNL  PREC
+WDM    188 PREC     ENGL        1.00       IMPLND 241     EXTNL  PREC
+WDM    188 PREC     ENGL        1.00       RCHRES 403 404 EXTNL  PREC
+WDM    188 PREC     ENGL        1.00       RCHRES 421 423 EXTNL  PREC
 *** Segment 25 - Camirillo-Adohr
-WDM1   194 PREC     ENGL        1.06       PERLND 251 256 EXTNL  PREC
-WDM1   194 PREC     ENGL        1.06       IMPLND 251     EXTNL  PREC
-WDM1   194 PREC     ENGL        1.06       RCHRES 195     EXTNL  PREC
-WDM1   194 PREC     ENGL        1.06       RCHRES 301 304 EXTNL  PREC
-WDM1   194 PREC     ENGL        1.06       RCHRES 311     EXTNL  PREC
-WDM1   194 PREC     ENGL        1.06       RCHRES 406 408 EXTNL  PREC
+WDM    194 PREC     ENGL        1.06       PERLND 251 256 EXTNL  PREC
+WDM    194 PREC     ENGL        1.06       IMPLND 251     EXTNL  PREC
+WDM    194 PREC     ENGL        1.06       RCHRES 195     EXTNL  PREC
+WDM    194 PREC     ENGL        1.06       RCHRES 301 304 EXTNL  PREC
+WDM    194 PREC     ENGL        1.06       RCHRES 311     EXTNL  PREC
+WDM    194 PREC     ENGL        1.06       RCHRES 406 408 EXTNL  PREC
 *** Segment 26 - South Mountain-Shell-Oil
-WDM1   238 PREC     ENGL        0.90       PERLND 261 266 EXTNL  PREC
-WDM1   238 PREC     ENGL        0.90       IMPLND 261     EXTNL  PREC
-WDM1   238 PREC     ENGL        0.90       RCHRES 500     EXTNL  PREC
+WDM    238 PREC     ENGL        0.90       PERLND 261 266 EXTNL  PREC
+WDM    238 PREC     ENGL        0.90       IMPLND 261     EXTNL  PREC
+WDM    238 PREC     ENGL        0.90       RCHRES 500     EXTNL  PREC
 *** Segment 27 - Somis-Bard
-WDM1   190 PREC     ENGL        1.01       PERLND 271 276 EXTNL  PREC
-WDM1   190 PREC     ENGL        1.01       IMPLND 271     EXTNL  PREC
-WDM1   190 PREC     ENGL        1.01       RCHRES 207     EXTNL  PREC
-WDM1   190 PREC     ENGL        1.01       RCHRES 227     EXTNL  PREC
-WDM1   190 PREC     ENGL        1.01       RCHRES 231 233 EXTNL  PREC
-WDM1   190 PREC     ENGL        1.01       RCHRES 241 243 EXTNL  PREC
-WDM1   190 PREC     ENGL        1.01       RCHRES 501     EXTNL  PREC
+WDM    190 PREC     ENGL        1.01       PERLND 271 276 EXTNL  PREC
+WDM    190 PREC     ENGL        1.01       IMPLND 271     EXTNL  PREC
+WDM    190 PREC     ENGL        1.01       RCHRES 207     EXTNL  PREC
+WDM    190 PREC     ENGL        1.01       RCHRES 227     EXTNL  PREC
+WDM    190 PREC     ENGL        1.01       RCHRES 231 233 EXTNL  PREC
+WDM    190 PREC     ENGL        1.01       RCHRES 241 243 EXTNL  PREC
+WDM    190 PREC     ENGL        1.01       RCHRES 501     EXTNL  PREC
 *** Segment 28 - Saticoy FS
-WDM1   175 PREC     ENGL        0.90       PERLND 281 286 EXTNL  PREC
-WDM1   175 PREC     ENGL        0.90       IMPLND 281     EXTNL  PREC
-WDM1   175 PREC     ENGL        0.90       RCHRES 502 504 EXTNL  PREC
-WDM1   175 PREC     ENGL        0.90       RCHRES 510 512 EXTNL  PREC
+WDM    175 PREC     ENGL        0.90       PERLND 281 286 EXTNL  PREC
+WDM    175 PREC     ENGL        0.90       IMPLND 281     EXTNL  PREC
+WDM    175 PREC     ENGL        0.90       RCHRES 502 504 EXTNL  PREC
+WDM    175 PREC     ENGL        0.90       RCHRES 510 512 EXTNL  PREC
 *** Segment 29 - Camirollo-PVWD
-WDM1   259 PREC     ENGL        1.04       PERLND 291 296 EXTNL  PREC
-WDM1   259 PREC     ENGL        1.04       IMPLND 291     EXTNL  PREC
-WDM1   259 PREC     ENGL        1.04       RCHRES 505     EXTNL  PREC
-WDM1   259 PREC     ENGL        1.04       RCHRES 513 514 EXTNL  PREC
-WDM1   259 PREC     ENGL        1.04       RCHRES 521 526 EXTNL  PREC
-WDM1   259 PREC     ENGL        1.04       RCHRES 531     EXTNL  PREC
+WDM    259 PREC     ENGL        1.04       PERLND 291 296 EXTNL  PREC
+WDM    259 PREC     ENGL        1.04       IMPLND 291     EXTNL  PREC
+WDM    259 PREC     ENGL        1.04       RCHRES 505     EXTNL  PREC
+WDM    259 PREC     ENGL        1.04       RCHRES 513 514 EXTNL  PREC
+WDM    259 PREC     ENGL        1.04       RCHRES 521 526 EXTNL  PREC
+WDM    259 PREC     ENGL        1.04       RCHRES 531     EXTNL  PREC
 *** Segment 30 - Camiroll-Pacific Sod
-WDM1   177 PREC     ENGL        1.06       PERLND 301 306 EXTNL  PREC
-WDM1   177 PREC     ENGL        1.06       IMPLND 301     EXTNL  PREC
-WDM1   177 PREC     ENGL        1.06       RCHRES 305 307 EXTNL  PREC
-WDM1   177 PREC     ENGL        1.06       RCHRES 541 542 EXTNL  PREC
-WDM1   177 PREC     ENGL        1.06       RCHRES 506     EXTNL  PREC
+WDM    177 PREC     ENGL        1.06       PERLND 301 306 EXTNL  PREC
+WDM    177 PREC     ENGL        1.06       IMPLND 301     EXTNL  PREC
+WDM    177 PREC     ENGL        1.06       RCHRES 305 307 EXTNL  PREC
+WDM    177 PREC     ENGL        1.06       RCHRES 541 542 EXTNL  PREC
+WDM    177 PREC     ENGL        1.06       RCHRES 506     EXTNL  PREC
 
 *** Point Sources ***
-*** Location         DSN                UNITS          TSTEP   DISCHARGES TO
-*** ----------------------------------------------------------------------------
-*** 1.  Camrosa          301                 MGD              D     Q to Ck 305
-***     Camrosa          335                 MGD              M     Q to Ponds 195
-*** 2.  Hill Canyon      302                 MGD              D     431
-*** 3.  Camarillo        303                 MGD              D     408
-*** 4.  Moorpark         304                 MGD              D     Q to Ck 206
-***     Moorpark         325                 MGD              D     Q to Ponds 194
-*** 5.  Olsen Rd         305                 MGD              D     431
-*** 6.  Simi Valley      307                 MGD              M     201
+*** Location         DSN     UNITS          TSTEP   DISCHARGES TO
+*** -----------------------------------------------------------------
+*** 1.  Camrosa      301      MGD              D     Q to Ck 305
+***     Camrosa      335      MGD              M     Q to Ponds 195
+*** 2.  Hill Canyon  302      MGD              D     431
+*** 3.  Camarillo    303      MGD              D     408
+*** 4.  Moorpark     304      MGD              D     Q to Ck 206
+***     Moorpark     325      MGD              D     Q to Ponds 194
+*** 5.  Olsen Rd     305      MGD              D     431
+*** 6.  Simi Valley  307      MGD              M     201
 
 *** DSNs will be multiplied by 3.0689 to convert to ac-ft/day and /24 to get hourly
 *** interval of the run --> (ac-ft/hr)
@@ -1941,18 +1941,18 @@ WDM    307 FLOW     ENGL      0.1279  SAME RCHRES 201     INFLOW IVOL
 *** Pumping ***
 *** Pumping from downstream dewatering wells is removed from AGWS
 *** divide cfs by Area (717.75 ac) * 1.008333 to convert to inches
-WDM1   401 PUMP     ENGL    -1.382e-3 SAME PERLND 185     EXTNL  AGWLI
+WDM    401 PUMP     ENGL    -1.382e-3 SAME PERLND 185     EXTNL  AGWLI
 *** and added to local reaches based on location
 *** multiply monthly average cfs by 0.0826 to convert to ac-ft/hr
-WDM1   403 PUMP     ENGL      0.0826  SAME RCHRES   7     INFLOW IVOL
-WDM1   404 PUMP     ENGL      0.0826  SAME RCHRES   8     INFLOW IVOL
-WDM1   405 PUMP     ENGL      0.0826  SAME RCHRES 109     INFLOW IVOL
-WDM1   406 PUMP     ENGL      0.0826  SAME RCHRES  82     INFLOW IVOL
-WDM1   407 PUMP     ENGL      0.0826  SAME RCHRES  92     INFLOW IVOL
+WDM    403 PUMP     ENGL      0.0826  SAME RCHRES   7     INFLOW IVOL
+WDM    404 PUMP     ENGL      0.0826  SAME RCHRES   8     INFLOW IVOL
+WDM    405 PUMP     ENGL      0.0826  SAME RCHRES 109     INFLOW IVOL
+WDM    406 PUMP     ENGL      0.0826  SAME RCHRES  82     INFLOW IVOL
+WDM    407 PUMP     ENGL      0.0826  SAME RCHRES  92     INFLOW IVOL
 
 *** Pumping from supply wells in Tapo Canyon is removed from AGWS
 *** Divide cfs by Area (6863.43 ac) * 1.008333 to convert to inches
-WDM1   402 PUMP     ENGL    -1.445e-4 SAME PERLND 101     EXTNL  AGWLI
+WDM    402 PUMP     ENGL    -1.445e-4 SAME PERLND 101     EXTNL  AGWLI
 *** Water is exported to water treatment plant
 
 *** Conejo Diversion out of Reach 407 (diversion is in cfs stored daily)
@@ -1963,166 +1963,166 @@ WDM    311 FLOW     ENGL      1.00    SAME RCHRES 407     EXTNL  OUTDGT 2
 WDM   1311 FLOW     ENGL              SAME RCHRES 407     EXTNL  COLIND 1
 
 *** Urban Irrigation
-WDM1  6001 IRRG     ENGL      0.50         PERLND  12     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND  13     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND  14     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND  15     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND  12     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND  13     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND  14     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND  15     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND  22     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND  23     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND  24     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND  25     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND  22     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND  23     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND  24     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND  25     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND  32     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND  33     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND  34     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND  35     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND  32     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND  33     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND  34     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND  35     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND  42     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND  43     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND  44     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND  45     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND  42     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND  43     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND  44     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND  45     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND  52     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND  53     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND  54     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND  55     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND  52     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND  53     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND  54     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND  55     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND  62     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND  63     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND  64     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND  65     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND  62     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND  63     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND  64     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND  65     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND  72     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND  73     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND  74     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND  75     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND  72     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND  73     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND  74     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND  75     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND  82     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND  83     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND  84     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND  85     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND  82     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND  83     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND  84     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND  85     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND  92     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND  93     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND  94     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND  95     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND  92     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND  93     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND  94     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND  95     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND 102     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND 103     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND 104     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND 105     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND 102     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND 103     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND 104     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND 105     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND 112     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND 113     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND 114     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND 115     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND 112     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND 113     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND 114     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND 115     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND 122     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND 123     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND 124     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND 125     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND 122     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND 123     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND 124     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND 125     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND 132     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND 133     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND 134     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND 135     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND 132     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND 133     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND 134     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND 135     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND 142     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND 143     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND 144     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND 145     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND 142     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND 143     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND 144     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND 145     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND 152     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND 153     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND 154     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND 155     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND 152     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND 153     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND 154     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND 155     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND 162     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND 163     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND 164     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND 165     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND 162     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND 163     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND 164     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND 165     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND 172     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND 173     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND 174     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND 175     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND 172     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND 173     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND 174     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND 175     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND 182     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND 183     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND 184     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND 185     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND 182     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND 183     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND 184     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND 185     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND 192     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND 193     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND 194     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND 195     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND 192     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND 193     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND 194     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND 195     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND 202     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND 203     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND 204     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND 205     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND 202     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND 203     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND 204     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND 205     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND 212     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND 213     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND 214     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND 215     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND 212     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND 213     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND 214     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND 215     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND 222     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND 223     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND 224     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND 225     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND 222     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND 223     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND 224     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND 225     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND 232     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND 233     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND 234     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND 235     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND 232     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND 233     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND 234     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND 235     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND 242     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND 243     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND 244     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND 245     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND 242     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND 243     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND 244     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND 245     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND 252     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND 253     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND 254     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND 255     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND 252     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND 253     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND 254     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND 255     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND 262     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND 263     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND 264     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND 265     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND 262     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND 263     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND 264     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND 265     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND 272     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND 273     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND 274     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND 275     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND 272     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND 273     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND 274     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND 275     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND 282     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND 283     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND 284     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND 285     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND 282     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND 283     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND 284     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND 285     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND 292     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND 293     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND 294     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND 295     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND 292     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND 293     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND 294     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND 295     EXTNL  SURLI
 
-WDM1  6001 IRRG     ENGL      0.50         PERLND 302     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.70         PERLND 303     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.80         PERLND 304     EXTNL  SURLI
-WDM1  6001 IRRG     ENGL      0.85         PERLND 305     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.50         PERLND 302     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.70         PERLND 303     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.80         PERLND 304     EXTNL  SURLI
+WDM   6001 IRRG     ENGL      0.85         PERLND 305     EXTNL  SURLI
 
 *** Ag Irrigation
-WDM1  6049 IRRG     ENGL      0.50         PERLND 226     EXTNL  SURLI
-WDM1  6141 IRRG     ENGL      0.50         PERLND 216     EXTNL  SURLI
-WDM1  6175 IRRG     ENGL      0.60         PERLND 286     EXTNL  SURLI
-WDM1  6177 IRRG     ENGL      0.65         PERLND 306     EXTNL  SURLI
-WDM1  6190 IRRG     ENGL      0.50         PERLND 276     EXTNL  SURLI
-WDM1  6194 IRRG     ENGL      0.50         PERLND 256     EXTNL  SURLI
-WDM1  6238 IRRG     ENGL      0.50         PERLND 266     EXTNL  SURLI
-WDM1  6250 IRRG     ENGL      0.50         PERLND 206     EXTNL  SURLI
-WDM1  6259 IRRG     ENGL      0.65         PERLND 296     EXTNL  SURLI
+WDM   6049 IRRG     ENGL      0.50         PERLND 226     EXTNL  SURLI
+WDM   6141 IRRG     ENGL      0.50         PERLND 216     EXTNL  SURLI
+WDM   6175 IRRG     ENGL      0.60         PERLND 286     EXTNL  SURLI
+WDM   6177 IRRG     ENGL      0.65         PERLND 306     EXTNL  SURLI
+WDM   6190 IRRG     ENGL      0.50         PERLND 276     EXTNL  SURLI
+WDM   6194 IRRG     ENGL      0.50         PERLND 256     EXTNL  SURLI
+WDM   6238 IRRG     ENGL      0.50         PERLND 266     EXTNL  SURLI
+WDM   6250 IRRG     ENGL      0.50         PERLND 206     EXTNL  SURLI
+WDM   6259 IRRG     ENGL      0.65         PERLND 296     EXTNL  SURLI
 
 END EXT SOURCES
 
@@ -3726,7 +3726,7 @@ EXT TARGETS
 <-Volume-> <-Grp> <-Member-><--Mult-->Tran <-Volume-> <Member> Tsys Aggr Amd ***
 <Name>   x        <Name> x x<-factor->strg <Name>   x <Name>qf  tem strg strg***
 *** HSPEXP Timeseries are stored in the WDM as daily with TSFORM=1 (mean)
-*** The default aggregration for mean to mean when sdelt < tdelt is sum,
+*** The default aggregation for mean to mean when sdelt < tdelt is sum,
 *** thus all timsers are summed to inches/day
 *** Reaches 301 and 205 only pass flows from gate 1 downstream
 RCHRES 904 HYDR   OVOL   1 1 5.9049e-4     WDM   9101 SIMQ   1 ENGL AGGR REPL

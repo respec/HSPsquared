@@ -3,37 +3,38 @@ Author: Robert Heaphy, Ph.D.
 License: LGPL2
 """
 
+import os
+from datetime import datetime as dt
+from typing import Union
+
 from numpy import float64
 from pandas import DataFrame, date_range
 from pandas.tseries.offsets import Minute
-from datetime import datetime as dt
-from typing import Union
-import os
-from hsp2.hsp2io.hdf import HDF5
-from hsp2.hsp2.utilities import (
-    versions,
-    get_timeseries,
-    expand_timeseries_names,
-    save_timeseries,
-    get_gener_timeseries,
-)
-from hsp2.hsp2.configuration import activities, noop, expand_masslinks
-from hsp2.state.state import (
-    init_state_dicts,
-    state_siminfo_hsp2,
-    state_load_dynamics_hsp2,
-    state_init_hsp2,
-    state_context_hsp2,
-)
+
+from hsp2.hsp2.configuration import activities, expand_masslinks, noop
 from hsp2.hsp2.om import (
     om_init_state,
-    state_om_model_run_prep,
     state_load_dynamics_om,
     state_om_model_run_finish,
+    state_om_model_run_prep,
 )
 from hsp2.hsp2.SPECL import specl_load_state
-
-from hsp2.hsp2io.io import IOManager, SupportsReadTS, Category
+from hsp2.hsp2.utilities import (
+    expand_timeseries_names,
+    get_gener_timeseries,
+    get_timeseries,
+    save_timeseries,
+    versions,
+)
+from hsp2.hsp2io.hdf import HDF5
+from hsp2.hsp2io.io import Category, IOManager, SupportsReadTS
+from hsp2.state.state import (
+    init_state_dicts,
+    state_context_hsp2,
+    state_init_hsp2,
+    state_load_dynamics_hsp2,
+    state_siminfo_hsp2,
+)
 
 
 def main(
@@ -108,12 +109,16 @@ def main(
 
     # main processing loop
     msg(1, f"Simulation Start: {start}, Stop: {stop}")
-    tscat = {}
     for _, operation, segment, delt in opseq.itertuples():
         msg(2, f"{operation} {segment} DELT(minutes): {delt}")
         siminfo["delt"] = delt
         siminfo["tindex"] = date_range(start, stop, freq=Minute(delt))[1:]
         siminfo["steps"] = len(siminfo["tindex"])
+
+        if operation in ["DISPLY", "PLTGEN"]:
+            # HSPF only operations that are kept in HSP2 only in order to be
+            # able to move parameters from UCI -> HDF5 -> UCI.
+            continue
 
         if operation == "COPY":
             copy_instances[segment] = activities[operation](
@@ -208,19 +213,15 @@ def main(
                 state_context_hsp2(state, operation, segment, activity)
 
                 ui = model[(operation, activity, segment)]  # ui is a dictionary
-                if operation == "PERLND" and activity == "SEDMNT":
-                    # special exception here to make CSNOFG available
-                    ui["PARAMETERS"]["CSNOFG"] = model[(operation, "PWATER", segment)][
-                        "PARAMETERS"
-                    ]["CSNOFG"]
-                if operation == "PERLND" and activity == "PSTEMP":
-                    # special exception here to make AIRTFG available
-                    ui["PARAMETERS"]["AIRTFG"] = flags["ATEMP"]
-                if operation == "PERLND" and activity == "PWTGAS":
-                    # special exception here to make CSNOFG available
-                    ui["PARAMETERS"]["CSNOFG"] = model[(operation, "PWATER", segment)][
-                        "PARAMETERS"
-                    ]["CSNOFG"]
+                if operation == "PERLND":
+                    if activity == "PSTEMP":
+                        # special exception here to make AIRTFG available
+                        ui["PARAMETERS"]["AIRTFG"] = flags["ATEMP"]
+                    elif activity in ["SEDMNT", "PWTGAS"]:
+                        # special exception here to make CSNOFG available
+                        ui["PARAMETERS"]["CSNOFG"] = model[
+                            (operation, "PWATER", segment)
+                        ]["PARAMETERS"]["CSNOFG"]
                 if operation == "RCHRES":
                     if "PARAMETERS" not in ui:
                         ui["PARAMETERS"] = {}
@@ -242,41 +243,14 @@ def main(
                             "NEXITS"
                         ]
                         for index in range(nexits):
-                            ui["PARAMETERS"]["OS" + str(index + 1)] = model[
+                            ui["PARAMETERS"][f"OS{str(index + 1)}"] = model[
                                 (operation, "HYDR", segment)
-                            ]["PARAMETERS"]["OS" + str(index + 1)]
-                    if activity == "HTRCH":
-                        ui["PARAMETERS"]["ADFG"] = flags["ADCALC"]
+                            ]["PARAMETERS"][f"OS{str(index + 1)}"]
+                    elif activity == "CONS":
                         ui["advectData"] = model[(operation, "ADCALC", segment)][
                             "adcalcData"
                         ]
-                        # ui['STATES']['VOL'] = parameters[(operation, 'HYDR', segment)]['STATES']['VOL']
-                    if activity == "CONS":
-                        ui["advectData"] = model[(operation, "ADCALC", segment)][
-                            "adcalcData"
-                        ]
-                    if activity == "SEDTRN":
-                        ui["PARAMETERS"]["ADFG"] = flags["ADCALC"]
-                        ui["advectData"] = model[(operation, "ADCALC", segment)][
-                            "adcalcData"
-                        ]
-                        # ui['STATES']['VOL'] = parameters[(operation, 'HYDR', segment)]['STATES']['VOL']
-                        ui["PARAMETERS"]["HTFG"] = flags["HTRCH"]
-                        ui["PARAMETERS"]["AUX3FG"] = 0
-                        if flags["HYDR"]:
-                            ui["PARAMETERS"]["LEN"] = model[
-                                (operation, "HYDR", segment)
-                            ]["PARAMETERS"]["LEN"]
-                            ui["PARAMETERS"]["DELTH"] = model[
-                                (operation, "HYDR", segment)
-                            ]["PARAMETERS"]["DELTH"]
-                            ui["PARAMETERS"]["DB50"] = model[
-                                (operation, "HYDR", segment)
-                            ]["PARAMETERS"]["DB50"]
-                            ui["PARAMETERS"]["AUX3FG"] = model[
-                                (operation, "HYDR", segment)
-                            ]["PARAMETERS"]["AUX3FG"]
-                    if activity == "GQUAL":
+                    elif activity == "GQUAL":
                         ui["advectData"] = model[(operation, "ADCALC", segment)][
                             "adcalcData"
                         ]
@@ -330,7 +304,12 @@ def main(
                                     (operation, "PLANK", segment)
                                 ]["PARAMETERS"]["CFSAEX"]
 
-                    if activity == "RQUAL":
+                    elif activity == "HTRCH":
+                        ui["PARAMETERS"]["ADFG"] = flags["ADCALC"]
+                        ui["advectData"] = model[(operation, "ADCALC", segment)][
+                            "adcalcData"
+                        ]
+                    elif activity == "RQUAL":
                         # RQUAL inputs:
                         ui["advectData"] = model[(operation, "ADCALC", segment)][
                             "adcalcData"
@@ -343,19 +322,20 @@ def main(
                         ui["FLAGS"]["HTFG"] = flags["HTRCH"]
                         ui["FLAGS"]["SEDFG"] = flags["SEDTRN"]
                         ui["FLAGS"]["GQFG"] = flags["GQUAL"]
-                        ui["FLAGS"]["OXFG"] = flags["OXFG"]
+                        ui["FLAGS"]["OXFG"] = flags["OXRX"]
                         ui["FLAGS"]["NUTFG"] = flags["NUTRX"]
                         ui["FLAGS"]["PLKFG"] = flags["PLANK"]
                         ui["FLAGS"]["PHFG"] = flags["PHCARB"]
-                        if flags["CONS"]:
-                            if "PARAMETERS" in model[(operation, "CONS", segment)]:
-                                if (
-                                    "NCONS"
-                                    in model[(operation, "CONS", segment)]["PARAMETERS"]
-                                ):
-                                    ui["PARAMETERS"]["NCONS"] = model[
-                                        (operation, "CONS", segment)
-                                    ]["PARAMETERS"]["NCONS"]
+                        if flags["CONS"] and (
+                            "PARAMETERS" in model[(operation, "CONS", segment)]
+                            and (
+                                "NCONS"
+                                in model[(operation, "CONS", segment)]["PARAMETERS"]
+                            )
+                        ):
+                            ui["PARAMETERS"]["NCONS"] = model[
+                                (operation, "CONS", segment)
+                            ]["PARAMETERS"]["NCONS"]
 
                         # OXRX module inputs:
                         ui_oxrx = model[(operation, "OXRX", segment)]
@@ -395,13 +375,34 @@ def main(
                         ui_plank = model[(operation, "PLANK", segment)]
                         ui_phcarb = model[(operation, "PHCARB", segment)]
 
+                    elif activity == "SEDTRN":
+                        ui["PARAMETERS"]["ADFG"] = flags["ADCALC"]
+                        ui["advectData"] = model[(operation, "ADCALC", segment)][
+                            "adcalcData"
+                        ]
+                        # ui['STATES']['VOL'] = parameters[(operation, 'HYDR', segment)]['STATES']['VOL']
+                        ui["PARAMETERS"]["HTFG"] = flags["HTRCH"]
+                        ui["PARAMETERS"]["AUX3FG"] = 0
+                        if flags["HYDR"]:
+                            ui["PARAMETERS"]["LEN"] = model[
+                                (operation, "HYDR", segment)
+                            ]["PARAMETERS"]["LEN"]
+                            ui["PARAMETERS"]["DELTH"] = model[
+                                (operation, "HYDR", segment)
+                            ]["PARAMETERS"]["DELTH"]
+                            ui["PARAMETERS"]["DB50"] = model[
+                                (operation, "HYDR", segment)
+                            ]["PARAMETERS"]["DB50"]
+                            ui["PARAMETERS"]["AUX3FG"] = model[
+                                (operation, "HYDR", segment)
+                            ]["PARAMETERS"]["AUX3FG"]
                 ############ calls activity function like snow() ##############
                 if operation not in ["COPY", "GENER"]:
                     if activity == "HYDR":
                         errors, errmessages = function(
                             io_manager, siminfo, ui, ts, ftables, state
                         )
-                    elif activity == "SEDTRN" or activity == "SEDMNT":
+                    elif activity in ["SEDTRN", "SEDMNT"]:
                         errors, errmessages = function(
                             io_manager, siminfo, ui, ts, state
                         )
@@ -569,36 +570,36 @@ def get_flows(
         if x.SVOL != "GENER":  # gener already handled in get_gener_timeseries
             recs = []
             if x.MLNO == "":  # Data from NETWORK part of Links table
-                rec = {}
-                rec["MFACTOR"] = x.MFACTOR
-                rec["SGRPN"] = x.SGRPN
-                rec["SMEMN"] = x.SMEMN
-                rec["SMEMSB1"] = x.SMEMSB1
-                rec["SMEMSB2"] = x.SMEMSB2
-                rec["TMEMN"] = x.TMEMN
-                rec["TMEMSB1"] = x.TMEMSB1
-                rec["TMEMSB2"] = x.TMEMSB2
-                rec["SVOL"] = x.SVOL
+                rec = {
+                    "MFACTOR": x.MFACTOR,
+                    "SGRPN": x.SGRPN,
+                    "SMEMN": x.SMEMN,
+                    "SMEMSB1": x.SMEMSB1,
+                    "SMEMSB2": x.SMEMSB2,
+                    "TMEMN": x.TMEMN,
+                    "TMEMSB1": x.TMEMSB1,
+                    "TMEMSB2": x.TMEMSB2,
+                    "SVOL": x.SVOL,
+                }
                 recs.append(rec)
             else:  # Data from SCHEMATIC part of Links table
                 mldata = ddmasslinks[x.MLNO]
                 for dat in mldata:
                     if dat.SMEMN != "":
-                        rec = {}
-                        rec["MFACTOR"] = dat.MFACTOR
-                        rec["SGRPN"] = dat.SGRPN
-                        rec["SMEMN"] = dat.SMEMN
-                        rec["SMEMSB1"] = dat.SMEMSB1
-                        rec["SMEMSB2"] = dat.SMEMSB2
-                        rec["TMEMN"] = dat.TMEMN
-                        rec["TMEMSB1"] = dat.TMEMSB1
-                        rec["TMEMSB2"] = dat.TMEMSB2
-                        rec["SVOL"] = dat.SVOL
+                        rec = {
+                            "MFACTOR": dat.MFACTOR,
+                            "SGRPN": dat.SGRPN,
+                            "SMEMN": dat.SMEMN,
+                            "SMEMSB1": dat.SMEMSB1,
+                            "SMEMSB2": dat.SMEMSB2,
+                            "TMEMN": dat.TMEMN,
+                            "TMEMSB1": dat.TMEMSB1,
+                            "TMEMSB2": dat.TMEMSB2,
+                            "SVOL": dat.SVOL,
+                        }
                         recs.append(rec)
-                    else:
-                        # this is the kind that needs to be expanded
-                        if dat.SGRPN == "ROFLOW" or dat.SGRPN == "OFLOW":
-                            recs = expand_masslinks(flags, parameters, dat, recs)
+                    elif dat.SGRPN in ["ROFLOW", "OFLOW"]:
+                        recs = expand_masslinks(flags, parameters, dat, recs)
 
             for rec in recs:
                 mfactor = rec["MFACTOR"]
@@ -664,8 +665,9 @@ def get_flows(
                     sgrpn = "OXRX"
                 if (
                     sgrpn == "OFLOW"
-                    and (smemn == "NUCF9" or smemn == "OSNH4" or smemn == "OSPO4")
-                ) or (sgrpn == "ROFLOW" and (smemn == "NUCF1" or smemn == "NUFCF2")):
+                    and smemn in ["NUCF9", "OSNH4", "OSPO4"]
+                    or (sgrpn == "ROFLOW" and smemn in ["NUCF1", "NUFCF2"])
+                ):
                     sgrpn = "NUTRX"
                 if (sgrpn == "OFLOW" and smemn == "PKCF2") or (
                     sgrpn == "ROFLOW" and smemn == "PKCF1"
@@ -676,8 +678,10 @@ def get_flows(
                 ):
                     sgrpn = "PHCARB"
 
-                if tmemn == "ISED" or tmemn == "ISQAL":
-                    tmemn = tmemn + tmemsb1  # need to add sand, silt, clay subscript
+                if tmemn in ["ISED", "ISQAL"]:
+                    tmemn = tmemn + str(
+                        int(float(tmemsb1))
+                    )  # need to add sand, silt, clay subscript
                 if (sgrpn == "HYDR" and smemn == "OVOL") or (
                     sgrpn == "HTRCH" and smemn == "OHEAT"
                 ):
@@ -699,27 +703,27 @@ def get_flows(
                 )
                 try:
                     if data in data_frame.columns:
-                        t = data_frame[data].astype(float64).to_numpy()[0:steps]
+                        t = data_frame[data].astype(float64).to_numpy()[:steps]
                     else:
-                        t = data_frame[smemn].astype(float64).to_numpy()[0:steps]
+                        t = data_frame[smemn].astype(float64).to_numpy()[:steps]
 
                     if MFname in ts and AFname in ts:
-                        t *= ts[MFname][:steps] * ts[AFname][0:steps]
+                        t *= ts[MFname][:steps] * ts[AFname][:steps]
                         msg(4, f"MFACTOR modified by timeseries {MFname}")
                         msg(4, f"AFACTR modified by timeseries {AFname}")
                     elif MFname in ts:
-                        t *= afactr * ts[MFname][0:steps]
+                        t *= afactr * ts[MFname][:steps]
                         msg(4, f"MFACTOR modified by timeseries {MFname}")
                     elif AFname in ts:
-                        t *= mfactor * ts[AFname][0:steps]
+                        t *= mfactor * ts[AFname][:steps]
                         msg(4, f"AFACTR modified by timeseries {AFname}")
                     else:
                         t *= factor
 
                     # if poht to iheat, imprecision in hspf conversion factor requires a slight adjustment
-                    if (smemn == "POHT" or smemn == "SOHT") and tmemn == "IHEAT":
+                    if smemn in ["POHT", "SOHT"] and tmemn == "IHEAT":
                         t *= 0.998553
-                    if (smemn == "PODOXM" or smemn == "SODOXM") and tmemn == "OXIF1":
+                    if smemn in ["PODOXM", "SODOXM"] and tmemn == "OXIF1":
                         t *= 1.000565
 
                     # ??? ISSUE: can fetched data be at different frequency - don't know how to transform.
@@ -732,25 +736,3 @@ def get_flows(
                     print("ERROR in FLOWS, cant resolve ", path + " " + smemn)
 
     return
-
-
-"""
-
-    # This table defines the expansion to INFLOW, ROFLOW, OFLOW for RCHRES networks
-    d = [
-        ['IVOL',  'ROVOL',  'OVOL',  'HYDRFG', 'HYDR'],
-        ['ICON',  'ROCON',  'OCON',  'CONSFG', 'CONS'],
-        ['IHEAT', 'ROHEAT', 'OHEAT', 'HTFG',   'HTRCH'],
-        ['ISED',  'ROSED',  'OSED',  'SEDFG',  'SEDTRN'],
-        ['IDQAL', 'RODQAL', 'ODQAL', 'GQALFG', 'GQUAL'],
-        ['ISQAL', 'ROSQAL', 'OSQAL', 'GQALFG', 'GQUAL'],
-        ['OXIF',  'OXCF1',  'OXCF2', 'OXFG',   'OXRX'],
-        ['NUIF1', 'NUCF1',  'NUCF1', 'NUTFG',  'NUTRX'],
-        ['NUIF2', 'NUCF2',  'NUCF9', 'NUTFG',  'NUTRX'],
-        ['PKIF',  'PKCF1',  'PKCH2', 'PLKFG',  'PLANK'],
-        ['PHIF',  'PHCF1',  'PHCF2', 'PHFG',   'PHCARB']]
-    df = pd.DataFrame(d, columns=['INFLOW', 'ROFLOW', 'OFLOW', 'Flag', 'Name'])
-    df.to_hdf(h2name, '/FLOWEXPANSION', format='t', data_columns=True)
-
-
-"""
