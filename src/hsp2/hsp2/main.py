@@ -99,7 +99,7 @@ def main(
     # - finally stash specactions in state, not domain (segment) dependent so do it once
     state["specactions"] = specactions  # stash the specaction dict in state
     om_init_state(state)  # set up operational model specific state entries
-    specl_load_state(state, io_manager, siminfo)  # traditional special actions
+    specl_load_state(state, parameter_obj)  # traditional special actions
     state_load_dynamics_om(
         state, io_manager, siminfo
     )  # operational model for custom python
@@ -718,7 +718,7 @@ def get_flows(
                         t *= mfactor * ts[AFname][:steps]
                         msg(4, f"AFACTR modified by timeseries {AFname}")
                     else:
-                        t *= factor
+                        t = t * factor
 
                     # if poht to iheat, imprecision in hspf conversion factor requires a slight adjustment
                     if smemn in ["POHT", "SOHT"] and tmemn == "IHEAT":

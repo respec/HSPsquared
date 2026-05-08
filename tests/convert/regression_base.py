@@ -30,7 +30,7 @@ class RegressTest:
         self.tcodes = tcodes
         self.ids = ids
         self.threads = threads
-
+        self.quiet = False # allows users to set this later
         self._init_files()
 
     def _init_files(self):

@@ -31,9 +31,9 @@ def run(h5file, saveall=True, compress=True):
         [optional] Default is True.
         use compression on the save h5 file.
     """
-    hdf5_instance = HDF5(h5file)
-    io_manager = IOManager(hdf5_instance)
-    main(io_manager, saveall=saveall, jupyterlab=compress)
+    with HDF5(h5file) as hdf5_instance:
+        io_manager = IOManager(hdf5_instance)
+        main(io_manager, saveall=saveall, jupyterlab=compress)
 
 
 def import_uci(ucifile, h5file):
