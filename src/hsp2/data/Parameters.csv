@@ -112,9 +112,9 @@ BMPRAC,CONS-FLAG,CONFFG10,int,55,60,,0,0,999,0,0,999,,"*** Value of 0 indicates 
 *** the monthly removal factors."
 BMPRAC,CONS-FRAC,OPNID,int,0,5,,,1,,,1,,,*** BMPRAC to which these data apply.
 BMPRAC,CONS-FRAC,OPNIDLAST,int,5,10,,,1,,,1,,,*** BMPRAC to which these data apply.
-BMPRAC,CONS-FRAC,CONID,string,10,30,,,,,,,,,"*** Any string of up to 20 characters may be supplied as the name of the
+BMPRAC,CONS-FRAC,CONID,str,10,30,,,,,,,,,"*** Any string of up to 20 characters may be supplied as the name of the
 *** conservative constituent."
-BMPRAC,CONS-FRAC,CQTYID,string,32,40,,,,,,,,,"*** CQTYID is a string of up to 8 characters which specifies the units in
+BMPRAC,CONS-FRAC,CQTYID,str,32,40,,,,,,,,,"*** CQTYID is a string of up to 8 characters which specifies the units in
 *** which the inflows and outflows of constituent will be expressed, eg
 *** ""kg""."
 BMPRAC,CONS-FRAC,CONFRC,float,40,50,,0,0,1,0,0,1,,*** CONFRC(*) is the BMP removal fraction for this conservative constituent.
@@ -135,7 +135,7 @@ BMPRAC,FLOW-FRAC,OPNIDLAST,int,5,10,,,1,,,1,,,*** BMPRAC to which these data app
 BMPRAC,FLOW-FRAC,VOLFRC,float,10,20,,0,0,1,0,0,1,,*** VOLFRC is the BMP removal fraction for flow.
 BMPRAC,GEN-INFO,OPNID,int,0,5,,,1,,,1,,,*** BMPRAC to which these data apply.
 BMPRAC,GEN-INFO,OPNIDLAST,int,5,10,,,1,,,1,,,*** BMPRAC to which these data apply.
-BMPRAC,GEN-INFO,BMPID,string,10,30,,,,,,,,,"*** Any string of up to 20 characters may be supplied as the identifier for
+BMPRAC,GEN-INFO,BMPID,str,10,30,,,,,,,,,"*** Any string of up to 20 characters may be supplied as the identifier for
 *** a BMPRAC."
 BMPRAC,GEN-INFO,BMPTYP,int,30,35,,1,1,1,1,1,1,,"*** BMPTYP is the type of BMP implementation. 1 means simple removal
 *** fractions. No other type is currently supported."
@@ -224,9 +224,9 @@ BMPRAC,GQ-FLAG,GQFFG12,int,65,70,,0,0,999,0,0,999,,"*** Value of 0 indicates tha
 *** removal factors."
 BMPRAC,GQ-FRAC,OPNID,int,0,5,,,1,,,1,,,*** BMPRAC to which these data apply.
 BMPRAC,GQ-FRAC,OPNIDLAST,int,5,10,,,1,,,1,,,*** BMPRAC to which these data apply.
-BMPRAC,GQ-FRAC,GQID,string,10,28,,,,,,,,,"*** Any string of up to 20 characters may be supplied as the name of the
+BMPRAC,GQ-FRAC,GQID,str,10,28,,,,,,,,,"*** Any string of up to 20 characters may be supplied as the name of the
 *** generalized quality constituent."
-BMPRAC,GQ-FRAC,GQTYID,string,30,38,,,,,,,,,"*** GQTYID is a string of up to 8 characters which specifies the units in
+BMPRAC,GQ-FRAC,GQTYID,str,30,38,,,,,,,,,"*** GQTYID is a string of up to 8 characters which specifies the units in
 *** which the inflows and outflows of the qual will be expressed, eg
 *** ""kg""."
 BMPRAC,GQ-FRAC,GQDFRC,float,38,48,,0,0,1,0,0,1,,*** GQDFRC is the BMP removal fraction for this qual in solution.
@@ -384,17 +384,17 @@ BMPRAC,SED-FRAC,OPNIDLAST,int,5,10,,,1,,,1,,,*** BMPRAC to which these data appl
 BMPRAC,SED-FRAC,SEDFRC1,float,10,20,,0,0,1,0,0,1,,*** SEDFRC(1) is the BMP removal fraction for sand.
 BMPRAC,SED-FRAC,SEDFRC2,float,20,30,,0,0,1,0,0,1,,*** SEDFRC(2) is the BMP removal fraction for silt.
 BMPRAC,SED-FRAC,SEDFRC3,float,30,40,,0,0,1,0,0,1,,*** SEDFRC(3) is the BMP removal fraction for clay.
-CATEGORY,,TAG,string,3,5,,,,,,,,,
-CATEGORY,,CATNAM,string,6,22,,,,,,,,,
+CATEGORY,,TAG,str,3,5,,,,,,,,,
+CATEGORY,,CATNAM,str,6,22,,,,,,,,,
 COPY,TIMESERIES,OPNID,int,0,5,,,1,,,1,,,*** COPY operations to which these data apply.
 COPY,TIMESERIES,OPNIDLAST,int,5,10,,,1,,,1,,,*** COPY operations to which these data apply.
 COPY,TIMESERIES,NPT,int,10,15,,0,0,20,0,0,20,,*** NPT is the number of point-valued time series to be copied.
 COPY,TIMESERIES,NMN,int,15,20,,0,0,20,0,0,20,,*** NMN is the number of mean-valued time series to be copied.
 DISPLY,DISPLY-INFO1,OPNID,int,0,5,,,1,,,1,,,*** DISPLY to which these data apply.
 DISPLY,DISPLY-INFO1,OPNIDLAST,int,5,10,,,1,,,1,,,*** DISPLY to which these data apply.
-DISPLY,DISPLY-INFO1,TITLE,string,10,38,,,,,,,,,"*** TITLE is the title (up to 28 characters) that will be printed at the top
+DISPLY,DISPLY-INFO1,TITLE,str,10,38,,,,,,,,,"*** TITLE is the title (up to 28 characters) that will be printed at the top
 *** of each page of the display."
-DISPLY,DISPLY-INFO1,TRAN,string,41,45,SUM,,,,,,,"['SUM', 'AVER', 'MAX', 'MIN', 'LAST']","*** TRAN is the ""transformation code"", used to aggregate data from the basic
+DISPLY,DISPLY-INFO1,TRAN,str,41,45,SUM,,,,,,,"['SUM', 'AVER', 'MAX', 'MIN', 'LAST']","*** TRAN is the ""transformation code"", used to aggregate data from the basic
 *** interval (internal time step) to the various display intervals (for both
 *** short- and long-span displays). Valid values are: SUM, AVER, MAX, MIN,
 *** LAST."
@@ -444,7 +444,7 @@ DURANL,DURATIONS,DURAT9,int,50,55,,2,2,,2,2,,,
 DURANL,DURATIONS,DURA10,int,55,60,,2,2,,2,2,,,
 DURANL,GEN-DURDATA,OPNID,int,0,5,,,,,,,,,*** DURANL to which these data apply.
 DURANL,GEN-DURDATA,OPNIDLAST,int,5,10,,,,,,,,,*** DURANL to which these data apply.
-DURANL,GEN-DURDATA,TITLE,string,10,50,,,,,,,,,"*** TITLE is the title which the user gives to the duration analysis
+DURANL,GEN-DURDATA,TITLE,str,10,50,,,,,,,,,"*** TITLE is the title which the user gives to the duration analysis
 *** operation."
 DURANL,GEN-DURDATA,NDUR,int,50,55,,1,1,10,1,1,10,,"*** NDUR is the no. of durations for which the time series will be
 *** analyzed."
@@ -502,58 +502,58 @@ DURANL,SEASON,SESOE3,int,42,44,,31,1,31,31,1,31,,"*** EDAY is the ending day for
 DURANL,SEASON,SESOE4,int,45,47,,24,0,24,24,0,24,,"*** EHOUR is the ending hour for the ""analysis season"". Default value is 24
 *** only if EMIN is zero."
 DURANL,SEASON,SESOE5,int,48,50,,0,0,59,0,0,59,,"*** EMIN is the ending minute for the ""analysis season""."
-EXT SOURCES,,SVOL,string,0,6,,,,,,,,"['WDM', 'WDM1', 'WDM2', 'WDM3', 'WDM4', 'DSS', 'SEQ']",*** External source volume.
+EXT SOURCES,,SVOL,str,0,6,,,,,,,,"['WDM', 'WDM1', 'WDM2', 'WDM3', 'WDM4', 'DSS', 'SEQ']",*** External source volume.
 EXT SOURCES,,SVOLNO,int,6,10,,,1,,,1,,,*** Dataset No. (TVOL = TSS or WDM); or Fortran unit No. (TVOL = SEQ)
-EXT SOURCES,,SMEMN,string,11,15,,,,,,,,,"*** Dataset name (TVOL = TSS); or Dataset TSTYP attribute (TVOL = WDM).
+EXT SOURCES,,SMEMN,str,11,15,,,,,,,,,"*** Dataset name (TVOL = TSS); or Dataset TSTYP attribute (TVOL = WDM).
 *** SFCLAS is a string indicating the class of format used in the sequential
 *** file."
 EXT SOURCES,,QLFG,int,17,19,,31,0,31,31,0,31,,"*** Quality-of-data flag (SVOL = WDM); specifies the minimum quality WDMS
 *** data which will be accepted by HSPF; valid values = 0-31. Identifies an
 *** object-time format supplied in the FORMATS Block."
-EXT SOURCES,,SSYST,string,20,24,ENGL,,,,,,,"['ENGL', 'METR']","*** Unit system of data in the source (SVOL = SEQ or WDM); valid values ENGL
+EXT SOURCES,,SSYST,str,20,24,ENGL,,,,,,,"['ENGL', 'METR']","*** Unit system of data in the source (SVOL = SEQ or WDM); valid values ENGL
 *** and METR."
-EXT SOURCES,,SGAPST,string,24,28,,,,,,,,"['ZERO', 'UNDF', 'DEF', '']","*** String indicating how missing ""cards"" in the sequential file, or WDMS
+EXT SOURCES,,SGAPST,str,24,28,,,,,,,,"['ZERO', 'UNDF', 'DEF', '']","*** String indicating how missing ""cards"" in the sequential file, or WDMS
 *** data having insufficient 'quality' will be regarded. Used in SVOL=SEQ or
 *** WDM."
 EXT SOURCES,,MFACTOR,float,28,38,,1,,,1,,,,"*** The factor by which data from the source will be multiplied before being
 *** added to the target."
-EXT SOURCES,,TRAN,string,38,42,,,,,,,,"['SAME', 'AVER', 'DIV', 'INTP', 'LAST', 'MAX', 'MIN', 'SUM', 'DEF', '']","*** String indicating which transformation function to use in transf time
+EXT SOURCES,,TRAN,str,38,42,,,,,,,,"['SAME', 'AVER', 'DIV', 'INTP', 'LAST', 'MAX', 'MIN', 'SUM', 'DEF', '']","*** String indicating which transformation function to use in transf time
 *** series from source to target."
-EXT SOURCES,,TVOL,string,43,49,,,,,,,,"['PERLND', 'IMPLND', 'RCHRES', 'COPY', 'PLTGEN', 'DISPLY', 'DURANL', 'GENER', 'MUTSIN']",*** Operation-type of the target opn.
+EXT SOURCES,,TVOL,str,43,49,,,,,,,,"['PERLND', 'IMPLND', 'RCHRES', 'COPY', 'PLTGEN', 'DISPLY', 'DURANL', 'GENER', 'MUTSIN']",*** Operation-type of the target opn.
 EXT SOURCES,,TOPFST,int,50,54,,,1,,,1,,,*** TOPFST is the first target Operation-type No.
 EXT SOURCES,,TOPLST,int,54,58,,,1,,,1,,,*** TOPFST is the first target Operation-type No.
-EXT SOURCES,,TGRPN,string,58,64,,,,,,,,,*** Group to which the target time series belongs.
-EXT SOURCES,,TMEMN,string,65,71,,,,,,,,,"*** Target member name. Default: all members. Refer to Time Series Catalog
+EXT SOURCES,,TGRPN,str,58,64,,,,,,,,,*** Group to which the target time series belongs.
+EXT SOURCES,,TMEMN,str,65,71,,,,,,,,,"*** Target member name. Default: all members. Refer to Time Series Catalog
 *** for more information."
-EXT SOURCES,,TMEMSB1,string,71,73,1,,,,,,,,*** Target member name first subscript.
-EXT SOURCES,,TMEMSB2,string,73,75,1,,,,,,,,*** Target member name second subscript.
-EXT SOURCES,,TMEMSB,string,71,75,,,,,,,,,*** Target member name second subscript.
-EXT TARGETS,,SVOL,string,0,6,,,,,,,,"['PERLND', 'IMPLND', 'RCHRES', 'COPY', 'PLTGEN', 'DISPLY', 'DURANL', 'GENER', 'MUTSIN']",*** Operation-type of the source opn.
+EXT SOURCES,,TMEMSB1,str,71,73,1,,,,,,,,*** Target member name first subscript.
+EXT SOURCES,,TMEMSB2,str,73,75,1,,,,,,,,*** Target member name second subscript.
+EXT SOURCES,,TMEMSB,str,71,75,,,,,,,,,*** Target member name second subscript.
+EXT TARGETS,,SVOL,str,0,6,,,,,,,,"['PERLND', 'IMPLND', 'RCHRES', 'COPY', 'PLTGEN', 'DISPLY', 'DURANL', 'GENER', 'MUTSIN']",*** Operation-type of the source opn.
 EXT TARGETS,,SVOLNO,int,6,10,,,1,,,1,,,*** Source Operation-type No.
-EXT TARGETS,,SGRPN,string,11,17,,,,,,,,,*** Group to which the source time series belongs.
-EXT TARGETS,,SMEMN,string,18,24,,,,,,,,,"*** Source member name. Default: all members. Refer to time series catalogue
+EXT TARGETS,,SGRPN,str,11,17,,,,,,,,,*** Group to which the source time series belongs.
+EXT TARGETS,,SMEMN,str,18,24,,,,,,,,,"*** Source member name. Default: all members. Refer to time series catalogue
 *** for more information."
-EXT TARGETS,,SMEMSB1,string,24,26,1,,,,,,,,*** Source member name first subscript.
-EXT TARGETS,,SMEMSB2,string,26,28,1,,,,,,,,*** Source member name second subscript.
+EXT TARGETS,,SMEMSB1,str,24,26,1,,,,,,,,*** Source member name first subscript.
+EXT TARGETS,,SMEMSB2,str,26,28,1,,,,,,,,*** Source member name second subscript.
 EXT TARGETS,,MFACTOR,float,28,38,,1,,,1,,,,"*** The factor by which data from the source will be multiplied before being
 *** added to the target."
-EXT TARGETS,,TRAN,string,38,42,,,,,,,,"['SAME', 'AVER', 'DIV', 'INTP', 'LAST', 'MAX', 'MIN', 'SUM', 'DEF', '']","*** String indicating which transformation function to use in transferring
+EXT TARGETS,,TRAN,str,38,42,,,,,,,,"['SAME', 'AVER', 'DIV', 'INTP', 'LAST', 'MAX', 'MIN', 'SUM', 'DEF', '']","*** String indicating which transformation function to use in transferring
 *** time series from source to target."
-EXT TARGETS,,TVOL,string,43,49,,,,,,,,"['WDM', 'WDM1', 'WDM2', 'WDM3', 'WDM4', 'DSS']",*** External target volume.
-EXT TARGETS,,TVOLNO,string,49,53,,,,,,,,,*** Dataset Number.
-EXT TARGETS,,TMEMN,string,54,58,,,,,,,,,*** Dataset name or dataset TSTYP attribute.
+EXT TARGETS,,TVOL,str,43,49,,,,,,,,"['WDM', 'WDM1', 'WDM2', 'WDM3', 'WDM4', 'DSS']",*** External target volume.
+EXT TARGETS,,TVOLNO,str,49,53,,,,,,,,,*** Dataset Number.
+EXT TARGETS,,TMEMN,str,54,58,,,,,,,,,*** Dataset name or dataset TSTYP attribute.
 EXT TARGETS,,QLFG,int,60,62,,0,0,31,0,0,31,,"*** Quality-of-data (TVOL=WDM); specifies the quality tag to be attached to
 *** data placed in a WDMS dataset."
-EXT TARGETS,,TSYST,string,63,67,ENGL,,,,,,,"['ENGL', 'METR']",*** Unit system of data to be written to WDM dataset.
-EXT TARGETS,,AGGST,string,68,72,,,,,,,,"['AGGR', 'DEF', '']","*** String indicating whether the data should be aggregated when placed in a
+EXT TARGETS,,TSYST,str,63,67,ENGL,,,,,,,"['ENGL', 'METR']",*** Unit system of data to be written to WDM dataset.
+EXT TARGETS,,AGGST,str,68,72,,,,,,,,"['AGGR', 'DEF', '']","*** String indicating whether the data should be aggregated when placed in a
 *** WDMS dataset having a timestep greater than the source timestep. Valid
 *** value is AGG; default value is no aggregation."
-EXT TARGETS,,AMDST,string,73,77,,,,,,,,"['ADD', 'INS', 'REPL']","*** String indicating how the target dataset is to be accessed. Valid values
+EXT TARGETS,,AMDST,str,73,77,,,,,,,,"['ADD', 'INS', 'REPL']","*** String indicating how the target dataset is to be accessed. Valid values
 *** are: ADD, INS, and REP for the TSS file; and ADD or REP for a WDMS
 *** file."
-FILES,,FTYPE,string,0,6,,,,,,,,"['BINO', 'MESSU', 'WDM', 'WDM1', 'WDM2', 'WDM3', 'WDM4', 'DSS1', 'DSS2', 'DSS3', 'DSS4', 'DSS5', 'FEQTSF', 'PESTSU', '']",
+FILES,,FTYPE,str,0,6,,,,,,,,"['BINO', 'MESSU', 'WDM', 'WDM1', 'WDM2', 'WDM3', 'WDM4', 'DSS1', 'DSS2', 'DSS3', 'DSS4', 'DSS5', 'FEQTSF', 'PESTSU', '']",
 FILES,,FUNIT,int,8,13,,,1,98,,1,98,,
-FILES,,FNAME,string,16,80,,,,,,,,,
+FILES,,FNAME,str,16,80,,,,,,,,,
 FTABLES,FTABLE,Depth,float,0,10,,0,0,,0,0,,,
 FTABLES,FTABLE,Area,float,10,20,,0,0,,0,0,,,
 FTABLES,FTABLE,Volume,float,20,30,,0,0,,0,0,,,
@@ -585,7 +585,7 @@ GENER,OPCODE,OPCODE,int,10,15,,,1,26,,1,26,,"*** OPCODE is the GENER operation c
 GENER,PARM,OPNID,int,0,5,,,,,,,,,*** GENER operations to which these data apply.
 GENER,PARM,OPNIDLAST,int,5,10,,,,,,,,,*** GENER operations to which these data apply.
 GENER,PARM,K,float,10,20,,1,,,1,,,,"*** K is the constant required in the operation. (OPCODE = 9,10,11)"
-GLOBAL,,COMMENT,string,0,80,,,,,,,,,
+GLOBAL,,COMMENT,str,0,80,,,,,,,,,
 GLOBAL,,SYR,int,90,98,,1900,1,32767,1900,1,32767,,
 GLOBAL,,SMO,int,99,101,,1,1,12,1,1,12,,
 GLOBAL,,SDA,int,102,104,,1,1,31,1,1,31,,
@@ -634,7 +634,7 @@ IMPLND,BINARY-INFO,PYREND,int,45,50,,9,1,12,9,1,12,,"*** PYREND is the calendar 
 *** past water year or the past calendar year, etc."
 IMPLND,GEN-INFO,OPNID,int,0,5,,,,,,,,,*** ILS to which these data apply.
 IMPLND,GEN-INFO,OPNIDLAST,int,5,10,,,,,,,,,*** ILS to which these data apply.
-IMPLND,GEN-INFO,LSID,string,10,30,,,,,,,,,"*** Any string of up to 20 characters may be supplied as the identifier for
+IMPLND,GEN-INFO,LSID,str,10,30,,,,,,,,,"*** Any string of up to 20 characters may be supplied as the identifier for
 *** an ILS."
 IMPLND,GEN-INFO,IUNITS,int,35,40,,1,1,2,1,1,2,,"*** IUNITS indicates the system of units for data in the input time series;
 *** 1 means English units, 2 means Metric units."
@@ -1006,9 +1006,9 @@ IMPLND,QUAL-INPUT,WSQOP,float,42,50,,1.64,0.25,,1.64,0.25,,,"*** WSQOP is the ra
 *** stored QUALOF per hour."
 IMPLND,QUAL-PROPS,OPNID,int,0,5,,,,,,,,,*** ILS to which these data apply.
 IMPLND,QUAL-PROPS,OPNIDLAST,int,5,10,,,,,,,,,*** ILS to which these data apply.
-IMPLND,QUAL-PROPS,QUALID,string,10,22,,,,,,,,,"*** QUALID is a string of up to 10 characters which identifies the quality
+IMPLND,QUAL-PROPS,QUALID,str,10,22,,,,,,,,,"*** QUALID is a string of up to 10 characters which identifies the quality
 *** constituent."
-IMPLND,QUAL-PROPS,QTYID,string,26,30,,,,,,,,,"*** QTYID is a string of up to 4 characters which identifies the units
+IMPLND,QUAL-PROPS,QTYID,str,26,30,,,,,,,,,"*** QTYID is a string of up to 4 characters which identifies the units
 *** associated with this constituent (e. g., kg,(for coliforms)). These are
 *** the units refered to as ""qty"" in subsequent tables (eg. Table-type
 *** QUAL-INPUT)."
@@ -1105,21 +1105,21 @@ IMPLND,SNOW-PARM2,MWATER,float,50,60,,0.03,0,1,0.03,0,1,,"*** MWATER is the maxi
 IMPLND,SNOW-PARM2,MGMELT,float,60,70,,0.25,0,25,0.01,0,1,,"*** MGMELT is the maximum rate of snowmelt by ground heat, in depth of water
 *** equivalent per day. This is the value which applies when the pack
 *** temperature is at freezing point."
-MASS-LINK,MASS-LINK,SVOL,string,0,6,,,,,,,,"['PERLND', 'IMPLND', 'RCHRES', 'COPY', 'PLTGEN', 'DISPLY', 'DURANL', 'GENER', 'MUTSIN']",*** Operation-type of the source opn.
-MASS-LINK,MASS-LINK,SGRPN,string,11,17,,,,,,,,,*** Group to which the source time series belongs.
-MASS-LINK,MASS-LINK,SMEMN,string,18,24,,,,,,,,,"*** Source member name. Default: all members. Refer to Time Series Catalogue
+MASS-LINK,MASS-LINK,SVOL,str,0,6,,,,,,,,"['PERLND', 'IMPLND', 'RCHRES', 'COPY', 'PLTGEN', 'DISPLY', 'DURANL', 'GENER', 'MUTSIN']",*** Operation-type of the source opn.
+MASS-LINK,MASS-LINK,SGRPN,str,11,17,,,,,,,,,*** Group to which the source time series belongs.
+MASS-LINK,MASS-LINK,SMEMN,str,18,24,,,,,,,,,"*** Source member name. Default: all members. Refer to Time Series Catalogue
 *** for more information."
-MASS-LINK,MASS-LINK,SMEMSB1,string,24,26,1,,,,,,,,*** Source member name first subscript.
-MASS-LINK,MASS-LINK,SMEMSB2,string,26,28,1,,,,,,,,*** Source member name second subscript.
+MASS-LINK,MASS-LINK,SMEMSB1,str,24,26,1,,,,,,,,*** Source member name first subscript.
+MASS-LINK,MASS-LINK,SMEMSB2,str,26,28,1,,,,,,,,*** Source member name second subscript.
 MASS-LINK,MASS-LINK,MFACTOR,float,28,38,,1,,,1,,,,"*** The factor by which data from the source will be multiplied before being
 *** added to the target."
-MASS-LINK,MASS-LINK,TVOL,string,43,49,,,,,,,,"['PERLND', 'IMPLND', 'RCHRES', 'COPY', 'PLTGEN', 'DISPLY', 'DURANL', 'GENER', 'MUTSIN']",*** Operation-type of the target.
-MASS-LINK,MASS-LINK,TGRPN,string,58,64,,,,,,,,,*** Group to which the target time series belongs.
-MASS-LINK,MASS-LINK,TMEMN,string,65,71,,,,,,,,,"*** Target member name. Default: all members. Refer to Time Series Catalogue
+MASS-LINK,MASS-LINK,TVOL,str,43,49,,,,,,,,"['PERLND', 'IMPLND', 'RCHRES', 'COPY', 'PLTGEN', 'DISPLY', 'DURANL', 'GENER', 'MUTSIN']",*** Operation-type of the target.
+MASS-LINK,MASS-LINK,TGRPN,str,58,64,,,,,,,,,*** Group to which the target time series belongs.
+MASS-LINK,MASS-LINK,TMEMN,str,65,71,,,,,,,,,"*** Target member name. Default: all members. Refer to Time Series Catalogue
 *** for more information."
-MASS-LINK,MASS-LINK,TMEMSB1,string,71,73,1,,,,,,,,*** Target member name first subscript.
-MASS-LINK,MASS-LINK,TMEMSB2,string,73,75,1,,,,,,,,*** Target member name second subscript.
-MASS-LINK,MASS-LINK,MLNO,string,80,85,,,1,,,1,,,*** Mass link number
+MASS-LINK,MASS-LINK,TMEMSB1,str,71,73,1,,,,,,,,*** Target member name first subscript.
+MASS-LINK,MASS-LINK,TMEMSB2,str,73,75,1,,,,,,,,*** Target member name second subscript.
+MASS-LINK,MASS-LINK,MLNO,str,80,85,,,1,,,1,,,*** Mass link number
 MONTH-DATA,MONTH-DATA,MTHVAL1,float,0,6,,,,,,,,,
 MONTH-DATA,MONTH-DATA,MTHVAL2,float,6,12,,,,,,,,,
 MONTH-DATA,MONTH-DATA,MTHVAL3,float,12,18,,,,,,,,,
@@ -1140,29 +1140,29 @@ MUTSIN,MUTSINFO,NMN,int,20,25,,0,0,20,0,0,20,,*** NMN is the number of mean-valu
 MUTSIN,MUTSINFO,NLINES,int,25,30,,25,1,,25,1,,,*** NLINES is the number of lines to skip at the beginning of MUTFL.
 MUTSIN,MUTSINFO,MISSFG,int,30,35,,0,0,3,0,0,3,,"*** MISSFG is 0 to stop on missing data, 1 to fill missing data with 0, 2 to
 *** fill missing data with -1. 0E30."
-NETWORK,,SVOL,string,0,6,,,,,,,,"['PERLND', 'IMPLND', 'RCHRES', 'COPY', 'PLTGEN', 'DISPLY', 'DURANL', 'GENER', 'MUTSIN']",*** Operation-type of the source opn.
+NETWORK,,SVOL,str,0,6,,,,,,,,"['PERLND', 'IMPLND', 'RCHRES', 'COPY', 'PLTGEN', 'DISPLY', 'DURANL', 'GENER', 'MUTSIN']",*** Operation-type of the source opn.
 NETWORK,,SVOLNO,int,6,10,,,1,,,1,,,*** Source Operation-type No.
-NETWORK,,SGRPN,string,11,17,,,,,,,,,*** Group to which the source time series belongs.
-NETWORK,,SMEMN,string,18,24,,,,,,,,,"*** Source member name. Default: all members. Refer to Time Series Catalogue
+NETWORK,,SGRPN,str,11,17,,,,,,,,,*** Group to which the source time series belongs.
+NETWORK,,SMEMN,str,18,24,,,,,,,,,"*** Source member name. Default: all members. Refer to Time Series Catalogue
 *** for more information."
-NETWORK,,SMEMSB1,string,24,26,1,,,,,,,,*** Source member name first subscript.
-NETWORK,,SMEMSB2,string,26,28,1,,,,,,,,*** Source member name second subscript.
+NETWORK,,SMEMSB1,str,24,26,1,,,,,,,,*** Source member name first subscript.
+NETWORK,,SMEMSB2,str,26,28,1,,,,,,,,*** Source member name second subscript.
 NETWORK,,MFACTOR,float,28,38,,1,,,1,,,,"*** The factor by which data from the source will be multiplied before being
 *** added to the target."
-NETWORK,,TRAN,string,38,42,,,,,,,,"['SAME', 'AVER', 'DIV', 'INTP', 'LAST', 'MAX', 'MIN', 'SUM', 'DEF', '']","*** String indicating which transformation function to use in transferring
+NETWORK,,TRAN,str,38,42,,,,,,,,"['SAME', 'AVER', 'DIV', 'INTP', 'LAST', 'MAX', 'MIN', 'SUM', 'DEF', '']","*** String indicating which transformation function to use in transferring
 *** time series from source to target."
-NETWORK,,TVOL,string,43,49,,,,,,,,"['PERLND', 'IMPLND', 'RCHRES', 'COPY', 'PLTGEN', 'DISPLY', 'DURANL', 'GENER', 'MUTSIN']",*** Operation-type of the target.
+NETWORK,,TVOL,str,43,49,,,,,,,,"['PERLND', 'IMPLND', 'RCHRES', 'COPY', 'PLTGEN', 'DISPLY', 'DURANL', 'GENER', 'MUTSIN']",*** Operation-type of the target.
 NETWORK,,TOPFST,int,50,54,,,1,,,1,,,*** TOPFST is the first target Operation-type No.
 NETWORK,,TOPLST,int,54,58,,,1,,,1,,,*** TOPFST is the first target Operation-type No.
-NETWORK,,TGRPN,string,58,64,,,,,,,,,*** Group to which the target time series belongs.
-NETWORK,,TMEMN,string,65,71,,,,,,,,,"*** Target member name. Default: all members. Refer to Time Series Catalogue
+NETWORK,,TGRPN,str,58,64,,,,,,,,,*** Group to which the target time series belongs.
+NETWORK,,TMEMN,str,65,71,,,,,,,,,"*** Target member name. Default: all members. Refer to Time Series Catalogue
 *** for more information."
-NETWORK,,TMEMSB1,string,71,73,1,,,,,,,,*** Target member name first subscript.
-NETWORK,,TMEMSB2,string,73,75,1,,,,,,,,*** Target member name second subscript.
-OPN SEQUENCE,INGRP,OPERATION,string,6,12,,,,,,,,,
-OPN SEQUENCE,INGRP,SEGMENT,string,17,20,,,,,,,,,
+NETWORK,,TMEMSB1,str,71,73,1,,,,,,,,*** Target member name first subscript.
+NETWORK,,TMEMSB2,str,73,75,1,,,,,,,,*** Target member name second subscript.
+OPN SEQUENCE,INGRP,OPERATION,str,6,12,,,,,,,,,
+OPN SEQUENCE,INGRP,SEGMENT,str,17,20,,,,,,,,,
 OPN SEQUENCE,INGRP,INDELT_minutes,int,80,90,,,1,1440,,1,1440,,
-OPN SEQUENCE,,OPERATION,string,6,12,,,,,,,,,
+OPN SEQUENCE,,OPERATION,str,6,12,,,,,,,,,
 OPN SEQUENCE,,SEGMENT,int,17,20,,,,,,,,,
 OPN SEQUENCE,,INDELT_minutes,int,80,90,,,1,1440,,1,1440,,
 PERLND,ACTIVITY,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
@@ -1250,7 +1250,7 @@ PERLND,CROP-STAGES,CRPST4,float,40,50,,0,0,1,0,0,1,,"*** CRPST4 is the fraction 
 *** of the growing season. _PNAME CRPST4"
 PERLND,GEN-INFO,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
 PERLND,GEN-INFO,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,GEN-INFO,LSID,string,10,30,,,,,,,,,"*** Any string of up to 20 characters may be supplied as the identifier for
+PERLND,GEN-INFO,LSID,str,10,30,,,,,,,,,"*** Any string of up to 20 characters may be supplied as the identifier for
 *** a PLS."
 PERLND,GEN-INFO,IUNITS,int,40,45,,1,1,2,1,1,2,,"*** IUNITS indicates the system of units for data in the input time series;
 *** 1 means English units, 2 means Metric units."
@@ -3033,15 +3033,15 @@ PERLND,PEST-FLAGS,ADOPF3,int,40,45,,2,1,3,2,1,3,,"*** ADOPFG(3) is the flag whic
 *** means non-single value Freundlich method."
 PERLND,PEST-ID01,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
 PERLND,PEST-ID01,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-ID01,PESTID,string,10,30,,,,,,,,,"*** PESTID(*) is a string of up to 20 characters which specifies the
+PERLND,PEST-ID01,PESTID,str,10,30,,,,,,,,,"*** PESTID(*) is a string of up to 20 characters which specifies the
 *** pesticide name."
 PERLND,PEST-ID02,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
 PERLND,PEST-ID02,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-ID02,PESTID,string,10,30,,,,,,,,,"*** PESTID(*) is a string of up to 20 characters which specifies the
+PERLND,PEST-ID02,PESTID,str,10,30,,,,,,,,,"*** PESTID(*) is a string of up to 20 characters which specifies the
 *** pesticide name."
 PERLND,PEST-ID03,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
 PERLND,PEST-ID03,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-ID03,PESTID,string,10,30,,,,,,,,,"*** PESTID(*) is a string of up to 20 characters which specifies the
+PERLND,PEST-ID03,PESTID,str,10,30,,,,,,,,,"*** PESTID(*) is a string of up to 20 characters which specifies the
 *** pesticide name."
 PERLND,PEST-NONSVPMgroundwater01,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
 PERLND,PEST-NONSVPMgroundwater01,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
@@ -3774,7 +3774,7 @@ PERLND,PWAT-CANOPY,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
 PERLND,PWAT-CANOPY,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
 PERLND,PWAT-CANOPY,CANOPY,float,10,20,,1,1,5,1,1,5,,"*** Canopy layer to which these parameters apply. This table is only
 *** necessary if NCANOPY > 0."
-PERLND,PWAT-CANOPY,CANNAM,string,23,35,,,,,,,,,*** A string of up to 12 characters which identifies this canopy layer.
+PERLND,PWAT-CANOPY,CANNAM,str,23,35,,,,,,,,,*** A string of up to 12 characters which identifies this canopy layer.
 PERLND,PWAT-CANOPY,CEPSC,float,35,45,,0,0,250,0,0,250,,*** CEPSC is the interception storage capacity.
 PERLND,PWAT-CANOPY,CEPS,float,45,55,,0,0,2500,0,0,2500,,*** CEPS is the initial interception storage.
 PERLND,PWAT-PARM1,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
@@ -3960,9 +3960,9 @@ PERLND,QUAL-INPUT,AOQC,float,66,74,,0,0,,0,0,,,"*** AOQC is the concentration of
 *** outflow (meaningful only if this is a QUALGW)."
 PERLND,QUAL-PROPS,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
 PERLND,QUAL-PROPS,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,QUAL-PROPS,QUALID,string,10,22,,,,,,,,,"*** QUALID is a string of up to 10 characters which identifies the quality
+PERLND,QUAL-PROPS,QUALID,str,10,22,,,,,,,,,"*** QUALID is a string of up to 10 characters which identifies the quality
 *** constituent."
-PERLND,QUAL-PROPS,QTYID,string,26,30,,,,,,,,,"*** QTYID is a string of up to 4 characters which identifies the units
+PERLND,QUAL-PROPS,QTYID,str,26,30,,,,,,,,,"*** QTYID is a string of up to 4 characters which identifies the units
 *** associated with this constituent (e. g., kg, (for coliforms)). These are
 *** the units refered to as ""qty"" in subsequent tables (eg. Table-type
 *** QUAL-INPUT)."
@@ -4133,7 +4133,7 @@ PERLND,TRAC-AD-FLAGS,TRADFG4,int,21,24,,0,-1,999,0,-1,999,,"*** Value of 0 indic
 *** deposition data. _PNAME TRADFG(4)"
 PERLND,TRAC-ID,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
 PERLND,TRAC-ID,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,TRAC-ID,TRACID,string,10,30,,0,,,0,,,,"*** Any 20 character string can be supplied as the name of the tracer
+PERLND,TRAC-ID,TRACID,str,10,30,,0,,,0,,,,"*** Any 20 character string can be supplied as the name of the tracer
 *** substance."
 PERLND,TRAC-SUBSTOR,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
 PERLND,TRAC-SUBSTOR,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
@@ -4165,7 +4165,7 @@ PERLND,VUZFG,VUZFG,int,10,15,,0,0,1,0,0,1,,"*** VUZFG is a flag which indicates 
 *** (Table-type PWAT-PARM1)"
 PLTGEN,CURV-DATA,OPNID,int,0,5,,,,,,,,,*** PLTGEN to which these data apply.
 PLTGEN,CURV-DATA,OPNIDLAST,int,5,10,,,,,,,,,*** PLTGEN to which these data apply.
-PLTGEN,CURV-DATA,LABEL,string,14,30,,,,,,,,,"*** LABEL is the label (descriptor) for this particular curve. It is also
+PLTGEN,CURV-DATA,LABEL,str,14,30,,,,,,,,,"*** LABEL is the label (descriptor) for this particular curve. It is also
 *** used in the FEQ DTSF header."
 PLTGEN,CURV-DATA,LINTYP,int,30,35,,0,,,0,,,,"*** LINTYP describes the type of line to be drawn for this curve. It also
 *** determines the frequency of plotted symbols: A zero value means points
@@ -4181,14 +4181,14 @@ PLTGEN,CURV-DATA,INTEQ,int,35,40,,0,0,13,0,0,13,,"*** INTEQ is the ""integer equ
 PLTGEN,CURV-DATA,COLCOD,int,40,45,,0,0,10,0,0,10,,"*** COLCOD is the color code for this curve. The meaning depends on how the
 *** stand-alone plot program is set up; eg. 1 might mean red pen, 2 blue
 *** pen, etc."
-PLTGEN,CURV-DATA,TRAN,string,46,50,SUM,,,,,,,"['SUM', 'AVER', 'MAX', 'MIN', 'LAST']","*** TRAN is the ""transformation code"" used to aggregate data from the basic
+PLTGEN,CURV-DATA,TRAN,str,46,50,SUM,,,,,,,"['', 'SUM', 'AVER', 'MAX', 'MIN', 'LAST']","*** TRAN is the ""transformation code"" used to aggregate data from the basic
 *** interval (internal time step) to the PLOTFL Interval. Valid values are:
 *** SUM, AVER, MAX, MIN, and LAST."
 PLTGEN,GEN-LABELS,OPNID,int,0,5,,,,,,,,,*** PLTGEN to which these data apply.
 PLTGEN,GEN-LABELS,OPNIDLAST,int,5,10,,,,,,,,,*** PLTGEN to which these data apply.
-PLTGEN,GEN-LABELS,TITLE,string,10,50,,,,,,,,,"*** TITLE is the general plot title. It is also used in the FEQ DTSF
+PLTGEN,GEN-LABELS,TITLE,str,10,50,,,,,,,,,"*** TITLE is the general plot title. It is also used in the FEQ DTSF
 *** header."
-PLTGEN,GEN-LABELS,YLABL,string,60,80,,,,,,,,,*** YLABL is the label to be placed on the Y-axis.
+PLTGEN,GEN-LABELS,YLABL,str,60,80,,,,,,,,,*** YLABL is the label to be placed on the Y-axis.
 PLTGEN,PLOTINFO,OPNID,int,0,5,,,,,,,,,*** PLTGEN to which these data apply.
 PLTGEN,PLOTINFO,OPNIDLAST,int,5,10,,,,,,,,,*** PLTGEN to which these data apply.
 PLTGEN,PLOTINFO,PLOTFL,int,10,15,,30,30,99,30,30,99,,"*** PLOTFL is the Fortran unit number of the plot file (output of this
@@ -4434,8 +4434,8 @@ RCHRES,BINARY-INFO,PYREND,int,65,70,,9,1,12,9,1,12,,"*** PYREND is the calendar 
 *** past water year or the past calendar year, etc."
 RCHRES,CONDUIT-PARM,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,CONDUIT-PARM,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,CONDUIT-PARM,FNODE,string,11,15,,,,,,,,,*** Starting node id for this conduit.
-RCHRES,CONDUIT-PARM,TNODE,string,16,20,,,,,,,,,*** Ending node id for this conduit.
+RCHRES,CONDUIT-PARM,FNODE,str,11,15,,,,,,,,,*** Starting node id for this conduit.
+RCHRES,CONDUIT-PARM,TNODE,str,16,20,,,,,,,,,*** Ending node id for this conduit.
 RCHRES,CONDUIT-PARM,CLEN,float,20,30,,0,0,,0,0,,,*** Length of this conduit.
 RCHRES,CONDUIT-PARM,CMANN,float,30,40,,0.1,0.001,1,0.1,0.001,1,,*** Manning's n for this conduit.
 RCHRES,CONDUIT-PARM,COFF1,float,40,50,,0,0,,0,0,,,*** Inlet offset for this conduit.
@@ -4443,7 +4443,7 @@ RCHRES,CONDUIT-PARM,COFF2,float,50,60,,0,0,,0,0,,,*** Outlet offset for this con
 RCHRES,CONDUIT-PARM,CINIT,float,60,70,,0,0,,0,0,,,*** Initial flow for this conduit.
 RCHRES,CONDUIT-XS,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,CONDUIT-XS,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,CONDUIT-XS,CTYPE,string,10,30,,,,,,,,,*** Type of cross-section. Valid values include:
+RCHRES,CONDUIT-XS,CTYPE,str,10,30,,,,,,,,,*** Type of cross-section. Valid values include:
 RCHRES,CONDUIT-XS,GEOM1,float,30,40,,0,0,,0,0,,,*** GEOM1 is the first geometry parameter.
 RCHRES,CONDUIT-XS,GEOM2,float,40,50,,0,0,,0,0,,,*** GEOM2 is the first geometry parameter.
 RCHRES,CONDUIT-XS,GEOM3,float,50,60,,0,0,,0,0,,,*** GEOM3 is the first geometry parameter.
@@ -4552,15 +4552,15 @@ RCHRES,CONS-AD-FLAGS,COADFG20,int,77,80,,0,-1,999,0,-1,999,,"*** Value of 0 indi
 *** _PNAME COADFG(20)"
 RCHRES,CONS-DATA,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,CONS-DATA,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,CONS-DATA,CONID,string,10,30,,,,,,,,,"*** Any string of up to 20 characters may be supplied as the name of the
+RCHRES,CONS-DATA,CONID,str,10,30,,,,,,,,,"*** Any string of up to 20 characters may be supplied as the name of the
 *** conservative constituent."
 RCHRES,CONS-DATA,CON,float,30,40,,0,0,,0,0,,,*** CON is the initial concentration of the conservative.
-RCHRES,CONS-DATA,CONCID,string,42,50,,,,,,,,,"*** CONCID is a string of up to 8 characters which specifies the concentration
+RCHRES,CONS-DATA,CONCID,str,42,50,,,,,,,,,"*** CONCID is a string of up to 8 characters which specifies the concentration
 *** units for the conservative constituent."
 RCHRES,CONS-DATA,CONV,float,50,60,,,1E-30,,,1E-30,,,"*** CONV is the conversion factor from QTYID/VOL to the desired concentration
 *** units (CONCID): CONC = CONV*(QTY/VOL). If UUNITS is 1, VOL is in ft3; if
 *** it is 2, VOL is in m3."
-RCHRES,CONS-DATA,QTYID,string,62,70,,,,,,,,,"*** QTYID is a string of up to 8 characters which specifies the units in
+RCHRES,CONS-DATA,QTYID,str,62,70,,,,,,,,,"*** QTYID is a string of up to 8 characters which specifies the units in
 *** which the total flow of constituent into, or out of, the RCHRES will be
 *** expressed, eg ""kg""."
 RCHRES,CONV-VAL1,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
@@ -4573,8 +4573,8 @@ RCHRES,CONV-VAL1,CVBPN,float,30,40,,16,10,50,16,10,50,,"*** CVBPN is the convers
 RCHRES,CONV-VAL1,BPCNTC,float,40,50,,49,10,100,49,10,100,,"*** BPCNTC is the percentage, by weight, of biomass which is carbon."
 RCHRES,DW-POLLUTANT,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,DW-POLLUTANT,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,DW-POLLUTANT,DWWQNM,string,12,20,,,,,,,,,"*** Name of pollutant, may not be flow."
-RCHRES,DW-POLLUTANT,DWWQUN,string,26,30,,,,,,,,,"*** Units of pollutant: mg/l, ug/l, #/l."
+RCHRES,DW-POLLUTANT,DWWQNM,str,12,20,,,,,,,,,"*** Name of pollutant, may not be flow."
+RCHRES,DW-POLLUTANT,DWWQUN,str,26,30,,,,,,,,,"*** Units of pollutant: mg/l, ug/l, #/l."
 RCHRES,DW-POLLUTANT,DWDECA,float,30,40,,0,0,,0,0,,,*** First order decay rate.
 RCHRES,DYNAMIC-WAVE,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,DYNAMIC-WAVE,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
@@ -4590,7 +4590,7 @@ RCHRES,ELEV,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,ELEV,ELEV,float,10,20,,0,0,10000,0,0,30000,,*** ELEV is the elevation above sea level.
 RCHRES,GEN-INFO,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,GEN-INFO,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,GEN-INFO,RCHID,string,10,30,,,,,,,,,"*** Any string of up to 20 characters may be supplied as the identifier for
+RCHRES,GEN-INFO,RCHID,str,10,30,,,,,,,,,"*** Any string of up to 20 characters may be supplied as the identifier for
 *** a RCHRES."
 RCHRES,GEN-INFO,NEXITS,int,30,35,,1,1,5,1,1,5,,*** NEXITS is the no. of exits from the RCHRES.
 RCHRES,GEN-INFO,IUNITS,int,40,45,,1,1,2,1,1,2,,"*** IUNITS indicates the system of units for data in the input time series;
@@ -5066,15 +5066,15 @@ RCHRES,GQ-PHOTPM,PHOTPM18,float,210,220,,1,0.0001,10,1,0.0001,10,,
 RCHRES,GQ-PHOTPM,PHOTPM19,float,220,230,,1,1,2,1,1,2,,
 RCHRES,GQ-QALDATA,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,GQ-QALDATA,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,GQ-QALDATA,GQID,string,10,30,,,,,,,,,"*** Any string of up to 20 characters may be supplied as the name of the
+RCHRES,GQ-QALDATA,GQID,str,10,30,,,,,,,,,"*** Any string of up to 20 characters may be supplied as the name of the
 *** quality constituent (qual)."
 RCHRES,GQ-QALDATA,DQAL,float,30,40,,0,0,,0,0,,,*** DQAL is the initial concentration of the qual.
-RCHRES,GQ-QALDATA,CONCID,string,46,50,,,,,,,,,"*** Any string of up to 8 characters may be supplied as the concentration
+RCHRES,GQ-QALDATA,CONCID,str,46,50,,,,,,,,,"*** Any string of up to 8 characters may be supplied as the concentration
 *** units (implied that it is ""per liter""), eg. ""mg""(/l)."
 RCHRES,GQ-QALDATA,CONV,float,50,60,,,1E-30,,,1E-30,,,"*** CONV is the factor to convert from Qty/Vol to concentration units: Conc=
 *** CONV* Qty/Vol (in English system, Vol is in ft3) (in Metric system, Vol
 *** is in m3)."
-RCHRES,GQ-QALDATA,QTYID,string,62,70,,,,,,,,,"*** Any string of up to 8 characters may be supplied as the ""qty"" unit for
+RCHRES,GQ-QALDATA,QTYID,str,62,70,,,,,,,,,"*** Any string of up to 8 characters may be supplied as the ""qty"" unit for
 *** the qual. QTYID specifies the units in which the total flow of qual
 *** into, or out of the RCHRES will be expressed."
 RCHRES,GQ-QALFG,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
@@ -5190,37 +5190,37 @@ RCHRES,HT-BED-PARM,KGRND,float,40,50,,1.4,0,,1.4,0,,,"*** Heat conductance coeff
 *** if BEDFLG = 2)."
 RCHRES,HYDR-CATEGORY,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,HYDR-CATEGORY,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,HYDR-CATEGORY,CPREC,string,11,15,,,,,,,,,"*** If a category tag is given, precipitation is added to the specified
+RCHRES,HYDR-CATEGORY,CPREC,str,11,15,,,,,,,,,"*** If a category tag is given, precipitation is added to the specified
 *** category. If an integer is given, then that number of categories will be
 *** specified in Table-Type HYDR-CPREC. If blank or zero, precipitation will
 *** be added to all active categories according to their current storage
 *** fraction."
-RCHRES,HYDR-CATEGORY,CEVAP,string,16,20,,,,,,,,,"*** If a category tag is given, evaporation is taken first from the
+RCHRES,HYDR-CATEGORY,CEVAP,str,16,20,,,,,,,,,"*** If a category tag is given, evaporation is taken first from the
 *** specified category. If an integer is given, then that number of
 *** categories will be specified in Table-Type HYDR-CEVAP. If blank or zero,
 *** evaporation will be taken from all active categories according to their
 *** current storage fraction."
-RCHRES,HYDR-CATEGORY,CFVOL1,string,21,25,,,,,,,,,"*** If a category tag is given, then F(VOL) outflows from this exit will be
+RCHRES,HYDR-CATEGORY,CFVOL1,str,21,25,,,,,,,,,"*** If a category tag is given, then F(VOL) outflows from this exit will be
 *** taken from the specified category first. If an integer is given, then
 *** that number of categories will be specified in Table-type HYDR-CFVOL for
 *** that exit. If blank or 0, outflows will be taken from all active
 *** categories according to their current storage fraction."
-RCHRES,HYDR-CATEGORY,CFVOL2,string,26,30,,,,,,,,,"*** If a category tag is given, then F(VOL) outflows from this exit will be
+RCHRES,HYDR-CATEGORY,CFVOL2,str,26,30,,,,,,,,,"*** If a category tag is given, then F(VOL) outflows from this exit will be
 *** taken from the specified category first. If an integer is given, then
 *** that number of categories will be specified in Table-type HYDR-CFVOL for
 *** that exit. If blank or 0, outflows will be taken from all active
 *** categories according to their current storage fraction."
-RCHRES,HYDR-CATEGORY,CFVOL3,string,31,35,,,,,,,,,"*** If a category tag is given, then F(VOL) outflows from this exit will be
+RCHRES,HYDR-CATEGORY,CFVOL3,str,31,35,,,,,,,,,"*** If a category tag is given, then F(VOL) outflows from this exit will be
 *** taken from the specified category first. If an integer is given, then
 *** that number of categories will be specified in Table-type HYDR-CFVOL for
 *** that exit. If blank or 0, outflows will be taken from all active
 *** categories according to their current storage fraction."
-RCHRES,HYDR-CATEGORY,CFVOL4,string,36,40,,,,,,,,,"*** If a category tag is given, then F(VOL) outflows from this exit will be
+RCHRES,HYDR-CATEGORY,CFVOL4,str,36,40,,,,,,,,,"*** If a category tag is given, then F(VOL) outflows from this exit will be
 *** taken from the specified category first. If an integer is given, then
 *** that number of categories will be specified in Table-type HYDR-CFVOL for
 *** that exit. If blank or 0, outflows will be taken from all active
 *** categories according to their current storage fraction."
-RCHRES,HYDR-CATEGORY,CFVOL5,string,41,45,,,,,,,,,"*** If a category tag is given, then F(VOL) outflows from this exit will be
+RCHRES,HYDR-CATEGORY,CFVOL5,str,41,45,,,,,,,,,"*** If a category tag is given, then F(VOL) outflows from this exit will be
 *** taken from the specified category first. If an integer is given, then
 *** that number of categories will be specified in Table-type HYDR-CFVOL for
 *** that exit. If blank or 0, outflows will be taken from all active
@@ -5228,7 +5228,7 @@ RCHRES,HYDR-CATEGORY,CFVOL5,string,41,45,,,,,,,,,"*** If a category tag is given
 RCHRES,HYDR-CATEGORY,NOCGT,int,45,50,,0,0,20,0,0,20,,*** Number of category G(T) demands to be specified in Table-Type HYDR-CDEMAND.
 RCHRES,HYDR-CDEMAND,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,HYDR-CDEMAND,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,HYDR-CDEMAND,CTAG1_CDEMAND,string,12,14,,,,,,,,,*** Category for this fraction.
+RCHRES,HYDR-CDEMAND,CTAG1_CDEMAND,str,12,14,,,,,,,,,*** Category for this fraction.
 RCHRES,HYDR-CDEMAND,CEXIT1_CDEMAND,int,14,16,,0,0,5,0,0,5,,*** Exit from which this demand is drawn.
 RCHRES,HYDR-CDEMAND,CPRI1YR,int,17,21,,,,,,,,,"*** Priority of this category. This can be either a real number or a date in
 *** the format ' YYYY/MM/DD '. Earlier dates are higher priority. Blank or
@@ -5236,7 +5236,7 @@ RCHRES,HYDR-CDEMAND,CPRI1YR,int,17,21,,,,,,,,,"*** Priority of this category. Th
 RCHRES,HYDR-CDEMAND,CPRI1MO,int,22,24,,1,1,12,1,1,12,,*** Initial value of the COTDGT timeseries.
 RCHRES,HYDR-CDEMAND,CPRI1DY,int,25,27,,1,1,31,1,1,31,,*** Category for this fraction.
 RCHRES,HYDR-CDEMAND,CDEM1,float,28,34,,0,0,,0,0,,,*** Exit from which this demand is drawn.
-RCHRES,HYDR-CDEMAND,CTAG2_CDEMAND,string,36,38,,,,,,,,,*** Category for this fraction.
+RCHRES,HYDR-CDEMAND,CTAG2_CDEMAND,str,36,38,,,,,,,,,*** Category for this fraction.
 RCHRES,HYDR-CDEMAND,CEXIT2_CDEMAND,int,38,40,,0,0,5,0,0,5,,*** Exit from which this demand is drawn.
 RCHRES,HYDR-CDEMAND,CPRI2YR,int,41,45,,,,,,,,,"*** Priority of this category. This can be either a real number or a date in
 *** the format ' YYYY/MM/DD '. Earlier dates are higher priority. Blank or
@@ -5246,86 +5246,86 @@ RCHRES,HYDR-CDEMAND,CPRI2DY,int,49,51,,1,1,31,1,1,31,,*** Category for this frac
 RCHRES,HYDR-CDEMAND,CDEM2,float,52,58,,0,0,,0,0,,,*** Exit from which this demand is drawn.
 RCHRES,HYDR-CEVAP,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,HYDR-CEVAP,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,HYDR-CEVAP,CTAG1_CEVAP,string,10,14,,,,,,,,,*** Category for this fraction.
+RCHRES,HYDR-CEVAP,CTAG1_CEVAP,str,10,14,,,,,,,,,*** Category for this fraction.
 RCHRES,HYDR-CEVAP,CPRI1_CEVAP,float,14,17,,0,0,,0,0,,,*** Priority of this category.
 RCHRES,HYDR-CEVAP,CEVAP1,float,17,23,,0,0,1,0,0,1,,"*** Fraction of evaporation which is taken from specified category at this
 *** priority level."
-RCHRES,HYDR-CEVAP,CTAG2_CEVAP,string,23,27,,,,,,,,,*** Category for this fraction.
+RCHRES,HYDR-CEVAP,CTAG2_CEVAP,str,23,27,,,,,,,,,*** Category for this fraction.
 RCHRES,HYDR-CEVAP,CPRI2_CEVAP,float,27,30,,0,0,,0,0,,,*** Priority of this category.
 RCHRES,HYDR-CEVAP,CEVAP2,float,30,36,,0,0,1,0,0,1,,"*** Fraction of evaporation which is taken from specified category at this
 *** priority level."
-RCHRES,HYDR-CEVAP,CTAG3_CEVAP,string,36,40,,,,,,,,,*** Category for this fraction.
+RCHRES,HYDR-CEVAP,CTAG3_CEVAP,str,36,40,,,,,,,,,*** Category for this fraction.
 RCHRES,HYDR-CEVAP,CPRI3_CEVAP,float,40,43,,0,0,,0,0,,,*** Priority of this category.
 RCHRES,HYDR-CEVAP,CEVAP3,float,43,49,,0,0,1,0,0,1,,"*** Fraction of evaporation which is taken from specified category at this
 *** priority level."
-RCHRES,HYDR-CEVAP,CTAG4_CEVAP,string,49,53,,,,,,,,,*** Category for this fraction.
+RCHRES,HYDR-CEVAP,CTAG4_CEVAP,str,49,53,,,,,,,,,*** Category for this fraction.
 RCHRES,HYDR-CEVAP,CPRI4_CEVAP,float,53,56,,0,0,,0,0,,,*** Priority of this category.
 RCHRES,HYDR-CEVAP,CEVAP4,float,56,62,,0,0,1,0,0,1,,"*** Fraction of evaporation which is taken from specified category at this
 *** priority level."
-RCHRES,HYDR-CEVAP,CTAG5_CEVAP,string,62,66,,,,,,,,,*** Category for this fraction.
+RCHRES,HYDR-CEVAP,CTAG5_CEVAP,str,62,66,,,,,,,,,*** Category for this fraction.
 RCHRES,HYDR-CEVAP,CPRI5_CEVAP,float,66,69,,0,0,,0,0,,,*** Priority of this category.
 RCHRES,HYDR-CEVAP,CEVAP5,float,69,75,,0,0,1,0,0,1,,"*** Fraction of evaporation which is taken from specified category at this
 *** priority level."
 RCHRES,HYDR-CFVOL,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,HYDR-CFVOL,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,HYDR-CFVOL,CTAG1_CFVOL,string,10,14,,,,,,,,,*** Category for this fraction.
+RCHRES,HYDR-CFVOL,CTAG1_CFVOL,str,10,14,,,,,,,,,*** Category for this fraction.
 RCHRES,HYDR-CFVOL,CEXIT1_CFVOL,float,14,16,,0,0,5,0,0,5,,*** Exit to which this priority applies.
 RCHRES,HYDR-CFVOL,CPRI1,float,16,19,,0,0,,0,0,,,*** Priority of this category.
 RCHRES,HYDR-CFVOL,CFVOL1,float,19,25,,0,0,1,0,0,1,,"*** Fraction of FVOL flow which is taken from specified category at this
 *** priority level."
-RCHRES,HYDR-CFVOL,CTAG2_CFVOL,string,25,29,,,,,,,,,*** Category for this fraction.
+RCHRES,HYDR-CFVOL,CTAG2_CFVOL,str,25,29,,,,,,,,,*** Category for this fraction.
 RCHRES,HYDR-CFVOL,CEXIT2_CFVOL,float,29,31,,0,0,5,0,0,5,,*** Exit to which this priority applies.
 RCHRES,HYDR-CFVOL,CPRI2,float,31,34,,0,0,,0,0,,,*** Priority of this category.
 RCHRES,HYDR-CFVOL,CFVOL2,float,34,40,,0,0,1,0,0,1,,"*** Fraction of FVOL flow which is taken from specified category at this
 *** priority level."
-RCHRES,HYDR-CFVOL,CTAG3_CFVOL,string,40,44,,,,,,,,,*** Category for this fraction.
+RCHRES,HYDR-CFVOL,CTAG3_CFVOL,str,40,44,,,,,,,,,*** Category for this fraction.
 RCHRES,HYDR-CFVOL,CEXIT3_CFVOL,float,44,46,,0,0,5,0,0,5,,*** Exit to which this priority applies.
 RCHRES,HYDR-CFVOL,CPRI3,float,46,49,,0,0,,0,0,,,*** Priority of this category.
 RCHRES,HYDR-CFVOL,CFVOL3,float,49,55,,0,0,1,0,0,1,,"*** Fraction of FVOL flow which is taken from specified category at this
 *** priority level."
-RCHRES,HYDR-CFVOL,CTAG4_CFVOL,string,55,59,,,,,,,,,*** Category for this fraction.
+RCHRES,HYDR-CFVOL,CTAG4_CFVOL,str,55,59,,,,,,,,,*** Category for this fraction.
 RCHRES,HYDR-CFVOL,CEXIT4_CFVOL,float,59,61,,0,0,5,0,0,5,,*** Exit to which this priority applies.
 RCHRES,HYDR-CFVOL,CPRI4,float,61,64,,0,0,,0,0,,,*** Priority of this category.
 RCHRES,HYDR-CFVOL,CFVOL,float,64,70,,0,0,1,0,0,1,,"*** Fraction of FVOL flow which is taken from specified category at this
 *** priority level."
 RCHRES,HYDR-CINIT,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,HYDR-CINIT,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,HYDR-CINIT,CTAG1_CINIT,string,10,14,,,,,,,,,*** Category for this fraction.
+RCHRES,HYDR-CINIT,CTAG1_CINIT,str,10,14,,,,,,,,,*** Category for this fraction.
 RCHRES,HYDR-CINIT,CFRAC1,float,14,20,,0,0,1,0,0,1,,"*** Fraction of initial storage VOL in Table-type HYDR-INIT which belongs to
 *** specified category."
-RCHRES,HYDR-CINIT,CTAG2_CINIT,string,20,24,,,,,,,,,*** Category for this fraction.
+RCHRES,HYDR-CINIT,CTAG2_CINIT,str,20,24,,,,,,,,,*** Category for this fraction.
 RCHRES,HYDR-CINIT,CFRAC2,float,24,30,,0,0,1,0,0,1,,"*** Fraction of initial storage VOL in Table-type HYDR-INIT which belongs to
 *** specified category."
-RCHRES,HYDR-CINIT,CTAG3_CINIT,string,30,34,,,,,,,,,*** Category for this fraction.
+RCHRES,HYDR-CINIT,CTAG3_CINIT,str,30,34,,,,,,,,,*** Category for this fraction.
 RCHRES,HYDR-CINIT,CFRAC3,float,34,40,,0,0,1,0,0,1,,"*** Fraction of initial storage VOL in Table-type HYDR-INIT which belongs to
 *** specified category."
-RCHRES,HYDR-CINIT,CTAG4_CINIT,string,40,44,,,,,,,,,*** Category for this fraction.
+RCHRES,HYDR-CINIT,CTAG4_CINIT,str,40,44,,,,,,,,,*** Category for this fraction.
 RCHRES,HYDR-CINIT,CFRAC4,float,44,50,,0,0,1,0,0,1,,"*** Fraction of initial storage VOL in Table-type HYDR-INIT which belongs to
 *** specified category."
-RCHRES,HYDR-CINIT,CTAG5_CINIT,string,50,54,,,,,,,,,*** Category for this fraction.
+RCHRES,HYDR-CINIT,CTAG5_CINIT,str,50,54,,,,,,,,,*** Category for this fraction.
 RCHRES,HYDR-CINIT,CFRAC5,float,54,60,,0,0,1,0,0,1,,"*** Fraction of initial storage VOL in Table-type HYDR-INIT which belongs to
 *** specified category."
-RCHRES,HYDR-CINIT,CTAG6_CINIT,string,60,64,,,,,,,,,*** Category for this fraction.
+RCHRES,HYDR-CINIT,CTAG6_CINIT,str,60,64,,,,,,,,,*** Category for this fraction.
 RCHRES,HYDR-CINIT,CFRAC6,float,64,70,,0,0,1,0,0,1,,"*** Fraction of initial storage VOL in Table-type HYDR-INIT which belongs to
 *** specified category."
-RCHRES,HYDR-CINIT,CTAG7_CINIT,string,70,74,,,,,,,,,*** Category for this fraction.
+RCHRES,HYDR-CINIT,CTAG7_CINIT,str,70,74,,,,,,,,,*** Category for this fraction.
 RCHRES,HYDR-CINIT,CFRAC7,float,74,80,,0,0,1,0,0,1,,"*** Fraction of initial storage VOL in Table-type HYDR-INIT which belongs to
 *** specified category."
 RCHRES,HYDR-CPREC,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,HYDR-CPREC,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,HYDR-CPREC,CTAG1_CPREC,string,10,14,,,,,,,,,*** Category for this fraction.
+RCHRES,HYDR-CPREC,CTAG1_CPREC,str,10,14,,,,,,,,,*** Category for this fraction.
 RCHRES,HYDR-CPREC,CPREC1,float,14,20,,0,0,1,0,0,1,,*** Fraction of precipitation which is added to specified category.
-RCHRES,HYDR-CPREC,CTAG2_CPREC,string,20,24,,,,,,,,,*** Category for this fraction.
+RCHRES,HYDR-CPREC,CTAG2_CPREC,str,20,24,,,,,,,,,*** Category for this fraction.
 RCHRES,HYDR-CPREC,CPREC2,float,24,30,,0,0,1,0,0,1,,*** Fraction of precipitation which is added to specified category.
-RCHRES,HYDR-CPREC,CTAG3_CPREC,string,30,34,,,,,,,,,*** Category for this fraction.
+RCHRES,HYDR-CPREC,CTAG3_CPREC,str,30,34,,,,,,,,,*** Category for this fraction.
 RCHRES,HYDR-CPREC,CPREC3,float,34,40,,0,0,1,0,0,1,,*** Fraction of precipitation which is added to specified category.
-RCHRES,HYDR-CPREC,CTAG4_CPREC,string,40,44,,,,,,,,,*** Category for this fraction.
+RCHRES,HYDR-CPREC,CTAG4_CPREC,str,40,44,,,,,,,,,*** Category for this fraction.
 RCHRES,HYDR-CPREC,CPREC4,float,44,50,,0,0,1,0,0,1,,*** Fraction of precipitation which is added to specified category.
-RCHRES,HYDR-CPREC,CTAG5_CPREC,string,50,54,,,,,,,,,*** Category for this fraction.
+RCHRES,HYDR-CPREC,CTAG5_CPREC,str,50,54,,,,,,,,,*** Category for this fraction.
 RCHRES,HYDR-CPREC,CPREC5,float,54,60,,0,0,1,0,0,1,,*** Fraction of precipitation which is added to specified category.
-RCHRES,HYDR-CPREC,CTAG6_CPREC,string,60,64,,,,,,,,,*** Category for this fraction.
+RCHRES,HYDR-CPREC,CTAG6_CPREC,str,60,64,,,,,,,,,*** Category for this fraction.
 RCHRES,HYDR-CPREC,CPREC6,float,64,70,,0,0,1,0,0,1,,*** Fraction of precipitation which is added to specified category.
-RCHRES,HYDR-CPREC,CTAG7_CPREC,string,70,74,,,,,,,,,*** Category for this fraction.
+RCHRES,HYDR-CPREC,CTAG7_CPREC,str,70,74,,,,,,,,,*** Category for this fraction.
 RCHRES,HYDR-CPREC,CPREC7,float,74,80,,0,0,1,0,0,1,,*** Fraction of precipitation which is added to specified category.
 RCHRES,HYDR-INIT,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,HYDR-INIT,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
@@ -5574,7 +5574,7 @@ RCHRES,NCONS,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,NCONS,NCONS,int,10,15,,1,1,10,1,1,10,,*** NCONS is the no. of conservative constituents simulated.
 RCHRES,NODE-PARM,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,NODE-PARM,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,NODE-PARM,NODE,string,16,20,,,,,,,,,*** Node id.
+RCHRES,NODE-PARM,NODE,str,16,20,,,,,,,,,*** Node id.
 RCHRES,NODE-PARM,NELEV,float,20,30,,0,0,,0,0,,,*** Invert elevation for this node.
 RCHRES,NODE-PARM,NMAX,float,30,40,,0,0,,0,0,,,*** Max depth for this node.
 RCHRES,NODE-PARM,NDEP,float,40,50,,0,0,,0,0,,,*** Initial depth for this node.
@@ -5691,16 +5691,16 @@ RCHRES,NUT-NITDENIT,DENOXT,float,60,70,,2,0,,2,0,,,"*** DENOXT is the dissolved 
 *** denitrification ceases."
 RCHRES,ORIFICE-PARM,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,ORIFICE-PARM,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,ORIFICE-PARM,ONODE1,string,11,15,,,,,,,,,*** Starting node id for this orifice.
-RCHRES,ORIFICE-PARM,ONODE2,string,16,20,,,,,,,,,*** Ending node id for this orifice.
-RCHRES,ORIFICE-PARM,OTYPE,string,22,30,,,,,,,,,*** Orifice type: side or bottom
+RCHRES,ORIFICE-PARM,ONODE1,str,11,15,,,,,,,,,*** Starting node id for this orifice.
+RCHRES,ORIFICE-PARM,ONODE2,str,16,20,,,,,,,,,*** Ending node id for this orifice.
+RCHRES,ORIFICE-PARM,OTYPE,str,22,30,,,,,,,,,*** Orifice type: side or bottom
 RCHRES,ORIFICE-PARM,OOFF,float,30,40,,0,0.001,100,0,0.001,100,,*** Amt orifice bottom is offset above the invert of inlet node.
 RCHRES,ORIFICE-PARM,OCD,float,40,50,,0,0,,0,0,,,*** weir dicharge coefficient.
-RCHRES,ORIFICE-PARM,OFLAP,string,55,59,,,,,,,,,*** Flap gate present: yes or no
+RCHRES,ORIFICE-PARM,OFLAP,str,55,59,,,,,,,,,*** Flap gate present: yes or no
 RCHRES,ORIFICE-PARM,ORAT,float,60,70,,0,0,,0,0,,,*** Time in decimal hours to open orifice.
 RCHRES,ORIFICE-XS,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,ORIFICE-XS,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,ORIFICE-XS,OSHAPE,string,18,30,,,,,,,,,*** Type of cross-section: circular or rect_closed.
+RCHRES,ORIFICE-XS,OSHAPE,str,18,30,,,,,,,,,*** Type of cross-section: circular or rect_closed.
 RCHRES,ORIFICE-XS,GEOM1,float,30,40,,0,0,,0,0,,,*** GEOM1 is the first geometry parameter.
 RCHRES,ORIFICE-XS,GEOM2,float,40,50,,0,0,,0,0,,,*** GEOM2 is the first geometry parameter.
 RCHRES,ORIFICE-XS,GEOM3,float,50,60,,0,0,,0,0,,,*** GEOM3 is the first geometry parameter.
@@ -6015,17 +6015,17 @@ RCHRES,SURF-EXPOSED,CFSAEX,float,10,20,,1,0.001,1,1,0.001,1,,"*** CFSAEX is a fa
 *** surface by trees or buildings."
 RCHRES,WEIR-PARM,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,WEIR-PARM,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,WEIR-PARM,WNODE1,string,11,15,,,,,,,,,*** Starting node id for this weir.
-RCHRES,WEIR-PARM,WNODE2,string,16,20,,,,,,,,,*** Ending node id for this weir.
-RCHRES,WEIR-PARM,WTYPE,string,22,30,,,,,,,,,"*** Weir type: transver(se), sideflow, v-notch, or trapez(oidal)"
+RCHRES,WEIR-PARM,WNODE1,str,11,15,,,,,,,,,*** Starting node id for this weir.
+RCHRES,WEIR-PARM,WNODE2,str,16,20,,,,,,,,,*** Ending node id for this weir.
+RCHRES,WEIR-PARM,WTYPE,str,22,30,,,,,,,,,"*** Weir type: transver(se), sideflow, v-notch, or trapez(oidal)"
 RCHRES,WEIR-PARM,WOFF,float,30,40,,0,0.001,100,0,0.001,100,,*** Amt weir crest is offset above the invert of inlet node.
 RCHRES,WEIR-PARM,WCD,float,40,50,,0,0,,0,0,,,*** weir dicharge coefficient.
-RCHRES,WEIR-PARM,WFLAP,string,51,55,,,,,,,,,*** Flap gate present: yes or no
+RCHRES,WEIR-PARM,WFLAP,str,51,55,,,,,,,,,*** Flap gate present: yes or no
 RCHRES,WEIR-PARM,WEC,float,55,60,,0,0,,0,0,,,*** Number of end contractions for tranv or trapez weir.
 RCHRES,WEIR-PARM,WCD2,float,60,70,,0,0,,0,0,,,*** Discharge coeff for triangular ends of trapez weir.
 RCHRES,WEIR-XS,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,WEIR-XS,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,WEIR-XS,WSHAPE,string,18,30,,,,,,,,,"*** Type of cross-section: rect_open, triangular, trapezoidal."
+RCHRES,WEIR-XS,WSHAPE,str,18,30,,,,,,,,,"*** Type of cross-section: rect_open, triangular, trapezoidal."
 RCHRES,WEIR-XS,GEOM1,float,30,40,,0,0,,0,0,,,*** GEOM1 is the first geometry parameter.
 RCHRES,WEIR-XS,GEOM2,float,40,50,,0,0,,0,0,,,*** GEOM2 is the first geometry parameter.
 RCHRES,WEIR-XS,GEOM3,float,50,60,,0,0,,0,0,,,*** GEOM3 is the first geometry parameter.
@@ -6047,8 +6047,8 @@ RCHRES,ZOO-PARM2,ZEXDEL,float,30,40,,0.7,0.001,1,0.7,0.001,1,,"*** ZEXDEL is the
 RCHRES,ZOO-PARM2,ZOMASS,float,40,50,,0.0003,0.000001,1,0.0003,0.000001,1,,*** ZOMASS is the average weight of a zooplankton organism.
 REPORT,REPORT-CON,OPNID,int,0,5,,,,,,,,,*** REPORT operations to which these data apply.
 REPORT,REPORT-CON,OPNIDLAST,int,5,10,,,,,,,,,*** REPORT operations to which these data apply.
-REPORT,REPORT-CON,CONID,string,10,30,,,,,,,,,*** CONID is a 20-character name for each constituent.
-REPORT,REPORT-CON,TRAN,string,31,35,SUM,,,,,,,"['SUM', 'AVER', 'MAX', 'MIN', 'LAST']","*** TRAN is the ""transformation code"" used to aggregate data from the basic
+REPORT,REPORT-CON,CONID,str,10,30,,,,,,,,,*** CONID is a 20-character name for each constituent.
+REPORT,REPORT-CON,TRAN,str,31,35,SUM,,,,,,,"['SUM', 'AVER', 'MAX', 'MIN', 'LAST']","*** TRAN is the ""transformation code"" used to aggregate data from the basic
 *** interval (internal time step) to the REPORT interval. Valid values are:
 *** SUM, AVER, MAX, MIN, and LAST."
 REPORT,REPORT-CON,SIGD,int,35,40,,5,2,5,5,2,5,,*** SIGD is the number of significant digits for reporting.
@@ -6076,15 +6076,15 @@ REPORT,REPORT-FLAGS,PCODE,int,45,50,,5,3,5,5,3,5,,"*** PCODE is the print interv
 REPORT,REPORT-FLAGS,PYREND,int,50,55,,9,1,12,9,1,12,,*** PYREND is the month ending the print year for the report.
 REPORT,REPORT-SRC,OPNID,int,0,5,,,,,,,,,*** REPORT operations to which these data apply.
 REPORT,REPORT-SRC,OPNIDLAST,int,5,10,,,,,,,,,*** REPORT operations to which these data apply.
-REPORT,REPORT-SRC,SRCID1,string,10,30,,,,,,,,,*** SRCID is the 20-character name for a source.
+REPORT,REPORT-SRC,SRCID1,str,10,30,,,,,,,,,*** SRCID is the 20-character name for a source.
 REPORT,REPORT-SUMM,OPNID,int,0,5,,,,,,,,,*** REPORT operations to which these data apply.
 REPORT,REPORT-SUMM,OPNIDLAST,int,5,10,,,,,,,,,*** REPORT operations to which these data apply.
-REPORT,REPORT-SUMM,SRCHED,string,10,30,,,,,,,,,*** SRCHED is the header used to mark the summary over all sources.
-REPORT,REPORT-SUMM,SRCTRN,string,30,34,SUM,,,,,,,"['SUM', 'AVER', 'MAX', 'MIN', 'LAST', 'PCT']","*** SRCTRN is the ""transformation code"" used to aggregate data across all
+REPORT,REPORT-SUMM,SRCHED,str,10,30,,,,,,,,,*** SRCHED is the header used to mark the summary over all sources.
+REPORT,REPORT-SUMM,SRCTRN,str,30,34,SUM,,,,,,,"['SUM', 'AVER', 'MAX', 'MIN', 'LAST', 'PCT']","*** SRCTRN is the ""transformation code"" used to aggregate data across all
 *** sources. Valid values are: SUM, AVER, MAX, MIN, LAST, and PCT."
-REPORT,REPORT-SUMM,TIMHED,string,34,54,,,,,,,,,"*** TIMHED is the header used to mark the summary over the REPORT time
+REPORT,REPORT-SUMM,TIMHED,str,34,54,,,,,,,,,"*** TIMHED is the header used to mark the summary over the REPORT time
 *** intervals."
-REPORT,REPORT-SUMM,TIMTRN,string,54,58,SUM,,,,,,,"['SUM', 'AVER', 'MAX', 'MIN', 'LAST']","*** TIMTRN is the ""transformation code"" used to aggregate data from the
+REPORT,REPORT-SUMM,TIMTRN,str,54,58,SUM,,,,,,,"['SUM', 'AVER', 'MAX', 'MIN', 'LAST']","*** TIMTRN is the ""transformation code"" used to aggregate data from the
 *** REPORT intervals to their summary. This value is independent of TRAN in
 *** REPORT-CON, which is used to aggregate from the run interval to the
 *** REPORT interval. Valid values are: SUM, AVER, MAX, MIN, and LAST."
@@ -6094,44 +6094,44 @@ REPORT,REPORT-SUMM,STTRFG,int,58,63,,2,1,2,2,1,2,,"*** STTRFG indicates how to c
 *** source summaries for each REPORT interval."
 REPORT,REPORT-TITLE,OPNID,int,0,5,,,,,,,,,*** REPORT operations to which these data apply.
 REPORT,REPORT-TITLE,OPNIDLAST,int,5,10,,,,,,,,,*** REPORT operations to which these data apply.
-REPORT,REPORT-TITLE,TITLE,string,10,70,,,,,,,,,"*** TITLE is the title of the report, to appear at the top of each
+REPORT,REPORT-TITLE,TITLE,str,10,70,,,,,,,,,"*** TITLE is the title of the report, to appear at the top of each
 *** page."
-SCHEMATIC,,SVOL,string,0,6,,,,,,,,,
+SCHEMATIC,,SVOL,str,0,6,,,,,,,,,
 SCHEMATIC,,SVOLNO,int,6,10,,,1,,,1,,,
 SCHEMATIC,,AFACTR,float,28,38,,1,,,1,,,,
-SCHEMATIC,,TVOL,string,43,49,,,,,,,,,
-SCHEMATIC,,TVOLNO,string,49,53,,,,,,,,,
+SCHEMATIC,,TVOL,str,43,49,,,,,,,,,
+SCHEMATIC,,TVOLNO,str,49,53,,,,,,,,,
 SCHEMATIC,,MLNO,int,56,60,,,,,,,,,
-SCHEMATIC,,TMEMSB1,string,71,73,1,,,,,,,,
-SCHEMATIC,,TMEMSB2,string,73,75,1,,,,,,,,
-SPEC-ACTIONS,ACTION,OPTYP,string,2,8,,,,,,,,,
-SPEC-ACTIONS,ACTION,RANGE1,string,8,11,,,,,,,,,
-SPEC-ACTIONS,ACTION,RANGE2,string,11,15,,,,,,,,,
-SPEC-ACTIONS,ACTION,DC,string,15,17,,,,,,,,,
-SPEC-ACTIONS,ACTION,DS,string,17,20,,,,,,,,,
-SPEC-ACTIONS,ACTION,YR,string,20,24,,,,,,,,,
-SPEC-ACTIONS,ACTION,MO,string,25,27,,,,,,,,,
-SPEC-ACTIONS,ACTION,DA,string,28,30,,,,,,,,,
-SPEC-ACTIONS,ACTION,HR,string,31,33,,,,,,,,,
-SPEC-ACTIONS,ACTION,MN,string,34,36,,,,,,,,,
-SPEC-ACTIONS,ACTION,D,string,36,38,,2,,,2,,,,
-SPEC-ACTIONS,ACTION,T,string,38,40,,3,,,3,,,,
-SPEC-ACTIONS,ACTION,VARI,string,42,48,,,,,,,,,
-SPEC-ACTIONS,ACTION,S1,string,48,51,,,,,,,,,
-SPEC-ACTIONS,ACTION,S2,string,51,54,,,,,,,,,
-SPEC-ACTIONS,ACTION,S3,string,54,57,,,,,,,,,
-SPEC-ACTIONS,ACTION,AC,string,57,60,,,,,,,,,
-SPEC-ACTIONS,ACTION,VALUE,string,60,70,,0,,,0,,,,
-SPEC-ACTIONS,ACTION,TC,string,71,73,,,,,,,,,
-SPEC-ACTIONS,ACTION,TS,string,74,77,,,,,,,,,
-SPEC-ACTIONS,ACTION,NUM,string,77,80,,,,,,,,,
+SCHEMATIC,,TMEMSB1,str,71,73,1,,,,,,,,
+SCHEMATIC,,TMEMSB2,str,73,75,1,,,,,,,,
+SPEC-ACTIONS,ACTION,OPTYP,str,2,8,,,,,,,,,
+SPEC-ACTIONS,ACTION,RANGE1,str,8,11,,,,,,,,,
+SPEC-ACTIONS,ACTION,RANGE2,str,11,15,,,,,,,,,
+SPEC-ACTIONS,ACTION,DC,str,15,17,,,,,,,,,
+SPEC-ACTIONS,ACTION,DS,str,17,20,,,,,,,,,
+SPEC-ACTIONS,ACTION,YR,str,20,24,,,,,,,,,
+SPEC-ACTIONS,ACTION,MO,str,25,27,,,,,,,,,
+SPEC-ACTIONS,ACTION,DA,str,28,30,,,,,,,,,
+SPEC-ACTIONS,ACTION,HR,str,31,33,,,,,,,,,
+SPEC-ACTIONS,ACTION,MN,str,34,36,,,,,,,,,
+SPEC-ACTIONS,ACTION,D,str,36,38,,2,,,2,,,,
+SPEC-ACTIONS,ACTION,T,str,38,40,,3,,,3,,,,
+SPEC-ACTIONS,ACTION,VARI,str,42,48,,,,,,,,,
+SPEC-ACTIONS,ACTION,S1,str,48,51,,,,,,,,,
+SPEC-ACTIONS,ACTION,S2,str,51,54,,,,,,,,,
+SPEC-ACTIONS,ACTION,S3,str,54,57,,,,,,,,,
+SPEC-ACTIONS,ACTION,AC,str,57,60,,,,,,,,,
+SPEC-ACTIONS,ACTION,VALUE,str,60,70,,0,,,0,,,,
+SPEC-ACTIONS,ACTION,TC,str,71,73,,,,,,,,,
+SPEC-ACTIONS,ACTION,TS,str,74,77,,,,,,,,,
+SPEC-ACTIONS,ACTION,NUM,str,77,80,,,,,,,,,
 SPEC-ACTIONS,ACTION,condition,int,80,90,,,,,,,,,
-SPEC-ACTIONS,DISTRB,KWRD,string,2,8,,,,,,,,,
+SPEC-ACTIONS,DISTRB,KWRD,str,2,8,,,,,,,,,
 SPEC-ACTIONS,DISTRB,DSIND,int,8,11,,,,,,,,,
 SPEC-ACTIONS,DISTRB,CNT,int,12,15,,,,,,,,,
-SPEC-ACTIONS,DISTRB,CTCODE,string,16,18,,,,,,,,,
+SPEC-ACTIONS,DISTRB,CTCODE,str,16,18,,,,,,,,,
 SPEC-ACTIONS,DISTRB,TSTEP,int,19,22,,,,,,,,,
-SPEC-ACTIONS,DISTRB,CDEFFG,string,23,28,,,,,,,,,
+SPEC-ACTIONS,DISTRB,CDEFFG,str,23,28,,,,,,,,,
 SPEC-ACTIONS,DISTRB,FRACT01,float,30,35,,,,,,,,,
 SPEC-ACTIONS,DISTRB,FRACT02,float,35,40,,,,,,,,,
 SPEC-ACTIONS,DISTRB,FRACT03,float,40,45,,,,,,,,,
@@ -6142,30 +6142,30 @@ SPEC-ACTIONS,DISTRB,FRACT07,float,60,65,,,,,,,,,
 SPEC-ACTIONS,DISTRB,FRACT08,float,65,70,,,,,,,,,
 SPEC-ACTIONS,DISTRB,FRACT09,float,70,75,,,,,,,,,
 SPEC-ACTIONS,DISTRB,FRACT10,float,75,80,,,,,,,,,
-SPEC-ACTIONS,UVNAME,KWRD,string,2,8,,,,,,,,,
-SPEC-ACTIONS,UVNAME,UNAME,string,10,16,,,,,,,,,
+SPEC-ACTIONS,UVNAME,KWRD,str,2,8,,,,,,,,,
+SPEC-ACTIONS,UVNAME,UNAME,str,10,16,,,,,,,,,
 SPEC-ACTIONS,UVNAME,CNT,int,16,19,,,,,,,,,
-SPEC-ACTIONS,UVNAME,VNAME,string,20,26,,,,,,,,,
-SPEC-ACTIONS,UVNAME,CSUB1,string,26,29,,,,,,,,,
-SPEC-ACTIONS,UVNAME,CSUB2,string,29,32,,,,,,,,,
-SPEC-ACTIONS,UVNAME,CSUB3,string,32,35,,,,,,,,,
+SPEC-ACTIONS,UVNAME,VNAME,str,20,26,,,,,,,,,
+SPEC-ACTIONS,UVNAME,CSUB1,str,26,29,,,,,,,,,
+SPEC-ACTIONS,UVNAME,CSUB2,str,29,32,,,,,,,,,
+SPEC-ACTIONS,UVNAME,CSUB3,str,32,35,,,,,,,,,
 SPEC-ACTIONS,UVNAME,FRAC,float,36,41,,,,,,,,,
-SPEC-ACTIONS,UVNAME,ACTCD,string,42,46,,,,,,,,,
-SPEC-ACTIONS,UVQUAN,KWRD,string,2,8,,,,,,,,,
-SPEC-ACTIONS,UVQUAN,UVQUAN,string,9,15,,,,,,,,,
-SPEC-ACTIONS,UVQUAN,OPTYP,string,16,22,,,,,,,,,
+SPEC-ACTIONS,UVNAME,ACTCD,str,42,46,,,,,,,,,
+SPEC-ACTIONS,UVQUAN,KWRD,str,2,8,,,,,,,,,
+SPEC-ACTIONS,UVQUAN,UVQUAN,str,9,15,,,,,,,,,
+SPEC-ACTIONS,UVQUAN,OPTYP,str,16,22,,,,,,,,,
 SPEC-ACTIONS,UVQUAN,OPTNO,int,23,26,,,,,,,,,
-SPEC-ACTIONS,UVQUAN,VNAME,string,27,33,,,,,,,,,
-SPEC-ACTIONS,UVQUAN,CSUB1,string,33,36,,,,,,,,,
-SPEC-ACTIONS,UVQUAN,CSUB2,string,36,39,,,,,,,,,
-SPEC-ACTIONS,UVQUAN,CSUB3,string,39,42,,,,,,,,,
+SPEC-ACTIONS,UVQUAN,VNAME,str,27,33,,,,,,,,,
+SPEC-ACTIONS,UVQUAN,CSUB1,str,33,36,,,,,,,,,
+SPEC-ACTIONS,UVQUAN,CSUB2,str,36,39,,,,,,,,,
+SPEC-ACTIONS,UVQUAN,CSUB3,str,39,42,,,,,,,,,
 SPEC-ACTIONS,UVQUAN,TYPCODE,int,42,44,,,,,,,,,
 SPEC-ACTIONS,UVQUAN,UVQMUL,float,44,54,,,,,,,,,
-SPEC-ACTIONS,UVQUAN,CTCODE1,string,55,57,,,,,,,,,
+SPEC-ACTIONS,UVQUAN,CTCODE1,str,55,57,,,,,,,,,
 SPEC-ACTIONS,UVQUAN,TSTEP1,int,57,60,,,,,,,,,
-SPEC-ACTIONS,UVQUAN,CTCODE2,string,61,63,,,,,,,,,
+SPEC-ACTIONS,UVQUAN,CTCODE2,str,61,63,,,,,,,,,
 SPEC-ACTIONS,UVQUAN,TSTEP2,int,63,66,,,,,,,,,
-SPEC-ACTIONS,UVQUAN,CTRAN,string,67,71,,,,,,,,,
+SPEC-ACTIONS,UVQUAN,CTRAN,str,67,71,,,,,,,,,
 SPEC-ACTIONS,conditions,cond_id,int,0,10,,,,,,,,,
 SPEC-ACTIONS,conditions,parent_id,int,10,20,,,,,,,,,
 SPEC-ACTIONS,conditions,sibling_id,int,20,30,,,,,,,,,
