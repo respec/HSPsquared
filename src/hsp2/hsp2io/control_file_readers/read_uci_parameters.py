@@ -177,7 +177,7 @@ def _reader(filename: str):
             yield nline
 
 
-def read_uci_parameters(uciname: str | Path) -> dict:
+def read_uci_parameters(uciname: Union[str, Path]) -> dict:
     """
     Read and parse a Users Control Input (UCI) file.
 

@@ -178,7 +178,7 @@ def default_and_validation(parameters):
         )
 
         # Fill in the numerical defaults.
-        nparms = nparms.infer_objects(copy=False).fillna(
+        nparms = nparms.infer_objects().fillna(
             dict(zip(defaults.index, defaults["DEFAULT"].values))
         )
 

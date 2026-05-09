@@ -11,6 +11,7 @@ import datetime
 import urllib.request
 import warnings
 from pathlib import Path
+from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -56,7 +57,7 @@ freq = {
 }  # pandas date_range() frequency by TCODE, TGROUP
 
 
-def read_wdm_ts(wdmfile: str | Path, dsns=None, ts_number_shift=0):
+def read_wdm_ts(wdmfile: Union[str, Path], dsns=None, ts_number_shift=0):
     """
     Read time series data from a WDM file.
 
