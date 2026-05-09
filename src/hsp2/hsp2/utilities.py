@@ -223,7 +223,16 @@ def transform(ts, name, how, siminfo):
     if ts.index[-1] < stop:
         ts[stop] = ts.iloc[-1]
 
-    if freq == tsfreq.nanos:
+    try:
+        nanos = tsfreq.nanos
+    except ValueError:
+        # average hours -> nanoseconds
+        if "M" in str(tsfreq):
+            nanos = 730.5 * 3_600_000_000_000
+        elif "Y" in str(tsfreq):
+            nanos = 8766.0 * 3_600_000_000_000
+
+    if freq == nanos:
         pass
     elif tsfreq is None:  # Sparse time base, frequency not defined
         ts = ts.reindex(siminfo["tbase"]).ffill().bfill()
@@ -231,18 +240,18 @@ def transform(ts, name, how, siminfo):
         ts = ts.resample(fmins).ffill()  # tsfreq.nanos >= freq assumed, or bad user choice
     elif not how:
         if name in flowtype:
-            if "Y" in str(tsfreq) or "M" in str(tsfreq) or tsfreq.nanos > freq:
+            if "Y" in str(tsfreq) or "M" in str(tsfreq) or nanos > freq:
                 if "M" in str(tsfreq):
                     ratio = 1.0 / 730.5
                 elif "Y" in str(tsfreq):
                     ratio = 1.0 / 8766.0
                 else:
-                    ratio = freq / tsfreq.nanos
+                    ratio = freq / nanos
                 ts = (ratio * ts).resample(fmins).ffill()  # HSP2 how = div
             else:
                 ts = ts.resample(fmins).sum()
         else:
-            if "Y" in str(tsfreq) or "M" in str(tsfreq) or tsfreq.nanos > freq:
+            if "Y" in str(tsfreq) or "M" in str(tsfreq) or nanos > freq:
                 ts = ts.resample(fmins).ffill()
             else:
                 ts = ts.resample(fmins).mean()
@@ -269,10 +278,10 @@ def transform(ts, name, how, siminfo):
             elif "Y" in str(tsfreq):
                 ratio = 1.0 / (8766.0 * mult)
             else:
-                ratio = freq / tsfreq.nanos
+                ratio = freq / nanos
             ts = (ratio * ts).resample(fmins).ffill()  # HSP2 how = div
         else:
-            ts = (ts * (freq / tsfreq.nanos)).resample(fmins).ffill()
+            ts = (ts * (freq / nanos)).resample(fmins).ffill()
     elif how == "ZEROFILL":
         ts = ts.resample(fmins).fillna(0.0)
     elif how == "INTERPOLATE":

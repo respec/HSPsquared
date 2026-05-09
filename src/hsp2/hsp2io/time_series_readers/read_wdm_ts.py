@@ -17,6 +17,8 @@ import numpy as np
 import pandas as pd
 from numba import njit
 
+from hsp2.hsp2.utilities import pandas_offset_by_version
+
 # look up attributes NAME, data type (Integer; Real; String) and data length by attribute number
 attrinfo = {
     1: ("TSTYPE", "S", 4),
@@ -47,9 +49,9 @@ attrinfo = {
 }
 
 freq = {
-    7: "100YS",
-    6: "YS",
-    5: "MS",
+    7: f"100{pandas_offset_by_version('YS')}",
+    6: f"{pandas_offset_by_version('YS')}",
+    5: f"{pandas_offset_by_version('MS')}",
     4: "D",
     3: "h",
     2: "min",
