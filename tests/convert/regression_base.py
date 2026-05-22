@@ -1,12 +1,12 @@
 import inspect
 import os
 import webbrowser
-from concurrent.futures import ThreadPoolExecutor, as_completed, thread
-from datetime import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Dict, List, Tuple, Union
 
 import numpy as np
 import pandas as pd
+
 from hsp2.hsp2tools.HBNOutput import HBNOutput
 from hsp2.hsp2tools.HDF5 import HDF5
 
@@ -104,8 +104,8 @@ class RegressTest:
         style_th = 'style="text-align:left"'
         style_header = 'style="border:1px solid; background-color:#EEEEEE"'
 
-        html = f"<html><header><h1>CONVERSION TEST REPORT</h1></header><body>\n"
-        html += f'<table style="border:1px solid">\n'
+        html = "<html><header><h1>CONVERSION TEST REPORT</h1></header><body>\n"
+        html += '<table style="border:1px solid">\n'
 
         for key in self.hspf_data_collection.keys():
             operation, activity, opn_id, tcode = key.split("_")
@@ -121,8 +121,8 @@ class RegressTest:
                     cons, no_data_hsp2, no_data_hspf, match, diff
                 )
 
-        html += f"</table>\n"
-        html += f"</body></html>\n"
+        html += "</table>\n"
+        html += "</body></html>\n"
         return html
 
     def make_html_comp_row(
@@ -139,22 +139,22 @@ class RegressTest:
                 if match:
                     pass
                 else:
-                    match_symbol = f'<span style="font-weight:bold;color:red">X</span>'
+                    match_symbol = '<span style="font-weight:bold;color:red">X</span>'
                     html = f"<tr><td>-</td><td>{con}</td><td>{diff}</td><td>{match_symbol}</td><td></td></tr>\n"
         else:
             if no_data_hsp2 or no_data_hspf:
                 if not eliminateNotIns:
                     html = f"<tr><td>-</td><td>{con}</td><td>NA</td><td>NA</td><td>"
-                    html += f'{"Not in HSP2" if no_data_hsp2 else ""}<br>'
-                    html += f'{"Not in HSPF" if no_data_hspf else ""}'
-                    html += f"</td></tr>\n"
+                    html += f"{'Not in HSP2' if no_data_hsp2 else ''}<br>"
+                    html += f"{'Not in HSPF' if no_data_hspf else ''}"
+                    html += "</td></tr>\n"
             else:
                 if match:
                     match_symbol = (
-                        f'<span style="font-weight:bold;color:green">&#10003;</span>'
+                        '<span style="font-weight:bold;color:green">&#10003;</span>'
                     )
                 else:
-                    match_symbol = f'<span style="font-weight:bold;color:red">X</span>'
+                    match_symbol = '<span style="font-weight:bold;color:red">X</span>'
                 html = f"<tr><td>-</td><td>{con}</td><td>{diff}</td><td>{match_symbol}</td><td></td></tr>\n"
         return html
 
@@ -185,8 +185,6 @@ class RegressTest:
     def check_con(self, params: OperationsTuple) -> ResultsTuple:
         """Performs comparision of single constituent"""
         operation, activity, id, constituent, tcode = params
-        if not self.quiet:
-            print(f"    {operation}_{id}  {activity}  {constituent}\n")
 
         ts_hsp2 = self.hsp2_data.get_time_series(operation, id, constituent, activity)
         ts_hspf = self.get_hspf_time_series(params)
@@ -228,6 +226,11 @@ class RegressTest:
             )
 
             match, diff = self.compare_time_series(ts_hsp2, ts_hspf, tolerance)
+            if not match:
+                print(operation, activity, id, constituent, tcode)
+                print(match, diff)
+                print(ts_hsp2.values)
+                print(ts_hspf.values)
 
         return (no_data_hsp2, no_data_hspf, match, diff)
 

@@ -29,18 +29,13 @@ class Gener:
 
         self.opcode = ddgener["OPCODE"][segment]
         if self.opcode in [9, 10, 11, 24, 25, 26]:
-            if segment in ddgener["PARM"]:
-                self.k = ddgener["PARM"][segment]
-            else:
-                self.k = 1.0
-
+            self.k = ddgener["PARM"][segment] if segment in ddgener["PARM"] else 1.0
         # special case for power series case 8
         if self.opcode == 8:
             # need tables NTERMS and COEFFS
-            if segment in ddgener["NTERMS"]:
-                self.nterms = ddgener["NTERMS"][segment]
-            else:
-                self.nterms = 2
+            self.nterms = (
+                ddgener["NTERMS"][segment] if segment in ddgener["NTERMS"] else 2
+            )
             self.k1 = ddgener["K1"][segment]
             self.k2 = ddgener["K2"][segment]
             self.k3 = ddgener["K3"][segment]
@@ -51,8 +46,7 @@ class Gener:
 
         # special case for k as constant case 24
         if self.opcode == 24:
-            start, stop, steps = siminfo["start"], siminfo["stop"], siminfo["steps"]
-            ts = zeros(steps)
+            ts = zeros(siminfo["steps"])
             self.ts_input_1 = ts
 
         for link in ddlinks[segment]:
@@ -63,15 +57,14 @@ class Gener:
                 if link.MFACTOR != 1:
                     ts *= link.MFACTOR
             elif link.SVOL == "GENER":
-                if link.SVOLNO in geners:
-                    gener = geners[link.SVOLNO]
-                    ts = gener.get_ts()
-                    if link.MFACTOR != 1 and link.MFACTOR != "":
-                        ts *= link.MFACTOR
-                else:
+                if link.SVOLNO not in geners:
                     raise NotImplementedError(
                         f"Invalid SVOL. This GENER operation does not exist. '{link.SVOLNO}'"
                     )
+                gener = geners[link.SVOLNO]
+                ts = gener.get_ts()
+                if link.MFACTOR not in [1, ""]:
+                    ts *= link.MFACTOR
             else:
                 # get timeseries from other operations
                 if "ONE" in tsin:
@@ -81,7 +74,7 @@ class Gener:
                 if "ONE" not in tsin and "TWO" not in tsin:
                     raise NotImplementedError(f"Invalid SVOL for '{link.SVOLNO}'")
 
-            if link.SVOL == "COPY" or link.SVOL == "GENER":
+            if link.SVOL in ["COPY", "GENER"]:
                 if link.MLNO != "":
                     # also have to loop thru associated masslinks
                     mldata = ddmasslinks[link.MLNO]
@@ -108,12 +101,12 @@ class Gener:
                             f"No attribute {link.TGRPN}{link.THEMN} to assign TimeSeries. Should be either 'INPUTONE' or 'INPUTTWO'"
                         )
 
-        if self.opcode in [16, 17, 18, 19, 20, 21, 22, 23]:
-            # need to have 2 input timeseries for these
-            if self.ts_input_1.size == 0 or self.ts_input_2.size == 0:
-                raise NotImplementedError(
-                    f"Need 2 input timeseries for this gener '{link.SVOLNO}'"
-                )
+        if self.opcode in [16, 17, 18, 19, 20, 21, 22, 23] and (
+            self.ts_input_1.size == 0 or self.ts_input_2.size == 0
+        ):
+            raise NotImplementedError(
+                f"Need 2 input timeseries for this gener '{link.SVOLNO}'"
+            )
 
         self._execute_gener()
 

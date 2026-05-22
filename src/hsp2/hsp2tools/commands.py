@@ -1,14 +1,24 @@
-from pathlib import Path
+"""
+Copyright (c) 2020 by RESPEC, INC.
+Author: Robert Heaphy, Ph.D.
+"""
+
+import pandas as pd
 
 from hsp2.hsp2.main import main
+from hsp2.hsp2io.control_file_readers.read_uci_parameters import (
+    read_uci_parameters as readUCI,
+)
 from hsp2.hsp2io.hdf import HDF5
 from hsp2.hsp2io.io import IOManager
-from hsp2.hsp2tools.readUCI import readUCI
-from hsp2.hsp2tools.readWDM import readWDM
+from hsp2.hsp2io.time_series_readers.read_wdm_ts import read_wdm_ts as readWDM
+
+_WDM_OFFSET = {"WDM": 0, "WDM1": 100000, "WDM2": 200000, "WDM3": 300000, "WDM4": 400000}
 
 
 def run(h5file, saveall=True, compress=True):
-    """Run a HSPsquared model.
+    """
+    Run a HSPsquared model.
 
     Parameters
     ----------
@@ -27,7 +37,8 @@ def run(h5file, saveall=True, compress=True):
 
 
 def import_uci(ucifile, h5file):
-    """Import UCI and WDM files into HDF5 file.
+    """
+    Import UCI and WDM files into HDF5 file.
 
     Parameters
     ----------
@@ -36,33 +47,36 @@ def import_uci(ucifile, h5file):
     h5file: str
         The destination HDF5 file.
     """
+    # Read parameters.
+    ddf = readUCI(ucifile)
 
-    readUCI(ucifile, h5file)
+    # Write parameters to HDF5 file.
+    with pd.HDFStore(h5file, mode="a") as store:
+        for path, df in ddf.items():
+            df.to_hdf(store, key=path, data_columns=True)
 
-    with open(ucifile) as fp:
-        uci = []
-        for line in fp.readlines():
-            if "***" in line[:81]:
-                continue
-            if not line[:81].strip():
-                continue
-            uci.append(line[:81].rstrip())
+    uci_dir = "/".join(ucifile.split("/")[:-1])
 
-    files_start = uci.index("FILES")
-    files_end = uci.index("END FILES")
+    wdmfiles = pd.read_hdf(h5file, key="/FILES/FILES").query(
+        "FTYPE.str.startswith('WDM')"
+    )
 
-    uci_dir = Path(ucifile).parent
-    for nline in uci[files_start : files_end + 1]:
-        if (nline[:10].strip())[:3] == "WDM":
-            wdmfile = (uci_dir / nline[16:].strip()).resolve()
-            if wdmfile.exists():
-                readWDM(wdmfile, h5file)
-
-
+    for row in wdmfiles.itertuples():
+        time_series = readWDM(
+            f"{uci_dir}/{row.FNAME}", ts_number_shift=_WDM_OFFSET[row.FTYPE]
+        )
+        with pd.HDFStore(h5file) as store:
+            for path, df in time_series.items():
+                df.to_hdf(
+                    store, key=f"/TIMESERIES/{path}", data_columns=True, format="table"
+                )
 
 
 def update_uci(ucifile, h5file):
-    """Import UCI only into HDF5 file.
+    """
+    Import parameters from User Control Interface file into HDF5 file.
+
+    Note: this will NOT update time-series from WDM files.
 
     Parameters
     ----------
@@ -70,9 +84,16 @@ def update_uci(ucifile, h5file):
         The UCI file to import into HDF file.
     h5file: str
         The destination HDF5 file.
+
+    See Also
+    --------
+    import_uci : Import parameters from UCI and time-series from WDM files into
+    HDF5 file.
     """
-    # we send False here to prevent deleting and recreating the UCI
-    print("Updating parameters in h5 file from UCI.", ucifile)
-    print("Note: this will NOT update external data such as WDM, mutsin etc.")
-    print("To update all data, use the command 'hsp2 import_uci ...' ")
-    readUCI(ucifile, h5file, False)
+    # Read parameters.
+    ddf = readUCI(ucifile)
+
+    # Write parameters to HDF5 file.
+    with pd.HDFStore(h5file, mode="a") as store:
+        for path, df in ddf.items():
+            df.to_hdf(store, key=path, data_columns=True)

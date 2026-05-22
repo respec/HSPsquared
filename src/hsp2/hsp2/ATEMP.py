@@ -34,17 +34,23 @@ def _atemp_(ui, ts):
     """computes airtemp by correcting gage temp with prec and elevation
     general, ui, ts are Python dictionaries for user input and time series,
     gatmp is the reference gauge temperature time series, required,
-    prec  is the preciptation time series,required,
-    eldat is difference in elevation between LS and air temp gage, feet,
+    prec  is the precipitation time series,required,
+    eldat is difference in elevation between land surface and air temp gage, feet,
     lapse is dry air lapse rate for each hour of the day, optional."""
     errors = zeros(int(ui["errlen"])).astype(int64)
 
+    eldat = ui["ELDAT"]
+    if eldat == 0:
+        # no elevation difference, so air temp = gage temp, skip rest of code
+        ts["AIRTMP"] = ts["GATMP"]
+        return errors
+
     # pay for lookup once
     k = ui["k"]  # calculated in atemp()
-    eldat = ui["ELDAT"]
+
     steps = int(ui["steps"])
 
-    # all series already aggregated/disaggregated to runtime delt frequecy
+    # all series already aggregated/disaggregated to runtime delt frequency
     LAPSE = ts["LAPSE"]
     PREC = ts["PREC"]
     GATMP = ts["GATMP"]

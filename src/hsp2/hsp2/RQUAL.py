@@ -6,14 +6,14 @@ License: LGPL2
 import numpy as np
 from numba import njit, types
 from numba.typed import Dict
-from numpy import full, zeros, asarray
+from numpy import asarray, full, zeros
 
+from hsp2.hsp2.om import model_domain_dependencies
 from hsp2.hsp2.RQUAL_Class import RQUAL_Class
 from hsp2.hsp2.utilities import initm, initmd, make_numba_dict
 
 # the following imports added to handle special actions
 from hsp2.state.state import rqual_init_ix, rqual_state_vars
-from hsp2.hsp2.om import model_domain_dependencies
 
 ERRMSGS_oxrx = (
     "OXRX: Warning -- SATDO is less than zero. This usually occurs when water temperature is very high (above ~66 deg. C). This usually indicates an error in input GATMP (or TW, if HTRCH is not being simulated).",
@@ -53,7 +53,6 @@ def rqual(
     # simulation information:
     delt60 = siminfo["delt"] / 60  # delt60 - simulation time interval in hours
     simlen = siminfo["steps"]
-    delts = siminfo["delt"] * 60
     uunits = siminfo["units"]
 
     siminfo_ = Dict.empty(key_type=types.unicode_type, value_type=types.float64)
@@ -101,19 +100,12 @@ def rqual(
     ts["EROVOL"] = EROVOL
 
     for i in range(nexits):
-        ts["SOVOL" + str(i + 1)] = SOVOL[:, i]
-        ts["EOVOL" + str(i + 1)] = EOVOL[:, i]
+        ts[f"SOVOL{i + 1}"] = SOVOL[:, i]
+        ts[f"EOVOL{i + 1}"] = EOVOL[:, i]
 
-    phval_init = 7.0
-    tamfg = 0
-    phflag = 2
-    if "NH3FG" in ui_nutrx:
-        tamfg = ui_nutrx["NH3FG"]
-    if "PHFLAG" in ui_nutrx:
-        phflag = ui_nutrx["PHFLAG"]
-    if tamfg == 1:
-        if "PHVAL" in ui_nutrx:
-            phval_init = ui_nutrx["PHVAL"]
+    tamfg = ui_nutrx["NH3FG"] if "NH3FG" in ui_nutrx else 0
+    phflag = ui_nutrx["PHFLAG"] if "PHFLAG" in ui_nutrx else 2
+    phval_init = ui_nutrx["PHVAL"] if tamfg == 1 and "PHVAL" in ui_nutrx else 7.0
     if "PHVAL" not in ts:
         ts["PHVAL"] = full(simlen, phval_init)
     if phflag == 3:
@@ -128,54 +120,47 @@ def rqual(
             n = (2 * j) - 1
 
             # dry deposition:
-            nuadfg_dd = int(ui_nutrx["NUADFG" + str(n)])
+            nuadfg_dd = int(ui_nutrx[f"NUADFG{n}"])
             NUADFX = zeros(simlen)
 
             if nuadfg_dd > 0:
                 NUADFX = initmd(
-                    siminfo, monthdata, "MONTHDATA/MONTHDATA" + str(nuadfg_dd), 0.0
+                    siminfo, monthdata, f"MONTHDATA/MONTHDATA{nuadfg_dd}", 0.0
                 )
             elif nuadfg_dd == -1:
-                if "NUADFX" + str(j) in ts:
-                    NUADFX = ts["NUADFX" + str(j)]
-                elif "NUADFX" + str(j) + " 1" in ts:
-                    NUADFX = ts["NUADFX" + str(j) + " 1"]
-                else:
-                    pass  # ERRMSG?
-            ts["NUADFX" + str(j)] = NUADFX
+                if f"NUADFX{j}" in ts:
+                    NUADFX = ts[f"NUADFX{j}"]
+                elif f"NUADFX{j} 1" in ts:
+                    NUADFX = ts[f"NUADFX{j} 1"]
+            ts[f"NUADFX{j}"] = NUADFX
 
             # wet deposition:
-            nuadfg_wd = int(ui_nutrx["NUADFG" + str(n + 1)])
+            nuadfg_wd = int(ui_nutrx[f"NUADFG{n + 1}"])
             NUADCN = zeros(simlen)
 
             if nuadfg_wd > 0:
                 NUADCN = initmd(
-                    siminfo, monthdata, "MONTHDATA/MONTHDATA" + str(nuadfg_wd), 0.0
+                    siminfo, monthdata, f"MONTHDATA/MONTHDATA{nuadfg_wd}", 0.0
                 )
             elif nuadfg_wd == -1:
-                if "NUADCN" + str(j) in ts:
-                    NUADCN = ts["NUADCN" + str(j)]
-                elif "NUADCN" + str(j) + " 1" in ts:
-                    NUADCN = ts["NUADCN" + str(j) + " 1"]
-                else:
-                    pass  # ERRMSG?
-            ts["NUADCN" + str(j)] = NUADCN
+                if f"NUADCN{j}" in ts:
+                    NUADCN = ts[f"NUADCN{j}"]
+                elif f"NUADCN{j} 1" in ts:
+                    NUADCN = ts[f"NUADCN{j} 1"]
+            ts[f"NUADCN{j}"] = NUADCN
 
             if nuadfg_dd > 0:
-                # convert units to internal
-                if uunits == 1:  # convert from lb/ac.day to mg.ft3/l.ft2.ivl
-                    if "NUADFX" + str(j) in ts:
-                        ts["NUADFX" + str(j)] *= 0.3677 * delt60 / 24.0
-                else:  # convert from kg/ha.day to mg.m3/l.m2.ivl
-                    if "NUADFX" + str(j) in ts:
-                        ts["NUADFX" + str(j)] *= 0.1 * delt60 / 24.0
+                if f"NUADFX{j}" in ts:
+                    if uunits == 1:
+                        ts[f"NUADFX{j}"] *= 0.3677 * delt60 / 24.0
+                    else:
+                        ts[f"NUADFX{j}"] *= 0.1 * delt60 / 24.0
             elif nuadfg_dd == -1:
-                if uunits == 1:  # convert from lb/ac.day to mg.ft3/l.ft2.ivl
-                    if "NUADFX" + str(j) in ts:
-                        ts["NUADFX" + str(j)] *= 0.3677
-                else:  # convert from kg/ha.day to mg.m3/l.m2.ivl
-                    if "NUADFX" + str(j) in ts:
-                        ts["NUADFX" + str(j)] *= 0.1
+                if f"NUADFX{j}" in ts:
+                    if uunits == 1:
+                        ts[f"NUADFX{j}"] *= 0.3677
+                    else:
+                        ts[f"NUADFX{j}"] *= 0.1
 
     if PLKFG == 1:
         # PLANK atmospheric deposition - initialize time series:
@@ -184,60 +169,50 @@ def rqual(
 
             # dry deposition:
             PLADFX = zeros(simlen)
-            pladfg_dd = int(ui_plank["PLADFG" + str(j)])
+            pladfg_dd = int(ui_plank[f"PLADFG{j}"])
 
             if pladfg_dd > 0:
                 PLADFX = initmd(
-                    siminfo, monthdata, "MONTHDATA/MONTHDATA" + str(pladfg_dd), 0.0
+                    siminfo, monthdata, f"MONTHDATA/MONTHDATA{pladfg_dd}", 0.0
                 )
             elif pladfg_dd == -1:
-                if "PLADFX" + str(j) in ts:
-                    PLADFX = ts["PLADFX" + str(j)]
-                elif "PLADFX" + str(j) + " 1" in ts:
-                    PLADFX = ts["PLADFX" + str(j) + " 1"]
-                else:
-                    pass  # ERRMSG?
-            ts["PLADFX" + str(j)] = PLADFX
+                if f"PLADFX{j}" in ts:
+                    PLADFX = ts[f"PLADFX{j}"]
+                elif f"PLADFX{j} 1" in ts:
+                    PLADFX = ts[f"PLADFX{j} 1"]
+            ts[f"PLADFX{j}"] = PLADFX
 
             # wet deposition:
             PLADCN = zeros(simlen)
-            pladfg_wd = int(ui_plank["PLADFG" + str(n + 1)])
+            pladfg_wd = int(ui_plank[f"PLADFG{n + 1}"])
 
             if pladfg_wd > 0:
                 PLADCN = initmd(
-                    siminfo, monthdata, "MONTHDATA/MONTHDATA" + str(pladfg_wd), 0.0
+                    siminfo, monthdata, f"MONTHDATA/MONTHDATA{pladfg_wd}", 0.0
                 )
             elif pladfg_wd == -1:
-                if "PLADCN" + str(j) in ts:
-                    PLADCN = ts["PLADCN" + str(j)]
-                elif "PLADCN" + str(j) + " 1" in ts:
-                    PLADCN = ts["PLADCN" + str(j) + " 1"]
-                else:
-                    pass  # ERRMSG?
-            ts["PLADCN" + str(j)] = PLADCN
+                if f"PLADCN{j}" in ts:
+                    PLADCN = ts[f"PLADCN{j}"]
+                elif f"PLADCN{j} 1" in ts:
+                    PLADCN = ts[f"PLADCN{j} 1"]
+            ts[f"PLADCN{j}"] = PLADCN
 
             if pladfg_dd > 0:
-                # convert units to internal
-                if uunits == 1:  # convert from lb/ac.day to mg.ft3/l.ft2.ivl
-                    if "PLADFX" + str(j) in ts:
-                        ts["PLADFX" + str(j)] *= 0.3677 * delt60 / 24.0
-                else:  # convert from kg/ha.day to mg.m3/l.m2.ivl
-                    if "PLADFX" + str(j) in ts:
-                        ts["PLADFX" + str(j)] *= 0.1 * delt60 / 24.0
+                if f"PLADFX{j}" in ts:
+                    if uunits == 1:
+                        ts[f"PLADFX{j}"] *= 0.3677 * delt60 / 24.0
+                    else:
+                        ts[f"PLADFX{j}"] *= 0.1 * delt60 / 24.0
             elif pladfg_dd == -1:
-                if uunits == 1:  # convert from lb/ac.day to mg.ft3/l.ft2.ivl
-                    if "PLADFX" + str(j) in ts:
-                        ts["PLADFX" + str(j)] *= 0.3677
-                else:  # convert from kg/ha.day to mg.m3/l.m2.ivl
-                    if "PLADFX" + str(j) in ts:
-                        ts["PLADFX" + str(j)] *= 0.1
+                if f"PLADFX{j}" in ts:
+                    if uunits == 1:
+                        ts[f"PLADFX{j}"] *= 0.3677
+                    else:
+                        ts[f"PLADFX{j}"] *= 0.1
 
-        # PLANK - benthic invertebrates:
-        balfg = 0
         binv_init = 0.0
         binvfg = 2
-        if "BALFG" in ui_plank:
-            balfg = ui_plank["BALFG"]
+        balfg = ui_plank["BALFG"] if "BALFG" in ui_plank else 0
         if balfg == 2:  # user has selected multiple species with more complex kinetics
             if "BINV" in ui_plank:
                 binv_init = ui_plank["BINV"]
@@ -453,10 +428,7 @@ def _compile_errors(NUTFG, PLKFG, PHFG, err_oxrx, err_nutrx, err_plank, err_phca
 def expand_OXRX_masslinks(flags, parameters, dat, recs):
     if flags["OXRX"]:
         for i in range(1, 3):
-            rec = {}
-            rec["MFACTOR"] = dat.MFACTOR
-            rec["SGRPN"] = "OXRX"
-
+            rec = {"MFACTOR": dat.MFACTOR, "SGRPN": "OXRX"}
             if dat.SGRPN == "ROFLOW":
                 rec["SMEMN"] = "OXCF1"
                 rec["SMEMSB1"] = str(i)  # species index
@@ -480,10 +452,7 @@ def expand_NUTRX_masslinks(flags, parameters, dat, recs):
     if flags["NUTRX"]:
         # dissolved species:
         for i in range(1, 5):
-            rec = {}
-            rec["MFACTOR"] = dat.MFACTOR
-            rec["SGRPN"] = "NUTRX"
-
+            rec = {"MFACTOR": dat.MFACTOR, "SGRPN": "NUTRX"}
             if dat.SGRPN == "ROFLOW":
                 rec["SMEMN"] = "NUCF1"
                 rec["SMEMSB1"] = str(i)  # species index
@@ -549,16 +518,13 @@ def expand_NUTRX_masslinks(flags, parameters, dat, recs):
 def expand_PLANK_masslinks(flags, parameters, dat, recs):
     if flags["PLANK"]:
         for i in range(1, 6):
-            rec = {}
-            rec["MFACTOR"] = dat.MFACTOR
-            rec["SGRPN"] = "PLANK"
-
+            rec = {"MFACTOR": dat.MFACTOR, "SGRPN": "PLANK"}
             if dat.SGRPN == "ROFLOW":
-                rec["SMEMN"] = "PKCF1_"
+                rec["SMEMN"] = "PKCF1"
                 rec["SMEMSB1"] = str(i)  # species index
                 rec["SMEMSB2"] = ""
             else:
-                rec["SMEMN"] = "PKCF2_"
+                rec["SMEMN"] = "PKCF2"
                 rec["SMEMSB1"] = dat.SMEMSB1  # exit number
                 rec["SMEMSB2"] = str(i)  # species index
 
@@ -574,25 +540,20 @@ def expand_PLANK_masslinks(flags, parameters, dat, recs):
 def expand_PHCARB_masslinks(flags, parameters, dat, recs):
     if flags["PHCARB"]:
         for i in range(1, 3):
-            rec = {}
-            rec["MFACTOR"] = dat.MFACTOR
-            rec["SGRPN"] = "PHCARB"
-
+            rec = {"MFACTOR": dat.MFACTOR, "SGRPN": "PHCARB"}
             if dat.SGRPN == "ROFLOW":
                 if i == 1:
                     rec["SMEMN"] = "ROTIC"
                 elif i == 2:
                     rec["SMEMN"] = "ROCO2"
                 rec["SMEMSB1"] = ""
-                rec["SMEMSB2"] = ""
             else:
                 if i == 1:
                     rec["SMEMN"] = "OTIC"
                 elif i == 2:
                     rec["SMEMN"] = "OCO2"
                 rec["SMEMSB1"] = dat.SMEMSB1  # exit number
-                rec["SMEMSB2"] = ""  # species index
-
+            rec["SMEMSB2"] = ""
             rec["TMEMN"] = "PHIF"
             rec["TMEMSB1"] = str(i)  # species index
             rec["TMEMSB2"] = ""
