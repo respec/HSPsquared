@@ -5,7 +5,7 @@ channels:
   - nodefaults  # Speeds solving env, by limiting the number of options
 
 dependencies:
-  - python >=3.10
+  - python >=3.11
 
   # Running HSP2
   - scipy  # Scipy also installs numpy
