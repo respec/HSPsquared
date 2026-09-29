@@ -683,7 +683,7 @@ def hsp2_domain_dependencies(state, opseq, activities, om_operations, debug=Fals
     # This sets up the state entries for all state compatible HSP2 model variables
     # print("STATE initializing contexts.")
     for _, operation, segment, delt in opseq.itertuples():
-        if operation != "GENER" and operation != "COPY":
+        if operation in activities.items():
             for activity, function in activities[operation].items():
                 # set up named paths for model operations
                 seg_name = operation + "_" + segment
