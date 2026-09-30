@@ -2,6 +2,7 @@
 Copyright (c) 2020 by RESPEC, INC.
 Author: Robert Heaphy, Ph.D.
 """
+from pathlib import Path
 
 import pandas as pd
 
@@ -55,7 +56,7 @@ def import_uci(ucifile, h5file):
         for path, df in ddf.items():
             df.to_hdf(store, key=path, data_columns=True)
 
-    uci_dir = "/".join(ucifile.split("/")[:-1])
+    uci_dir = Path(ucifile).parent
 
     wdmfiles = pd.read_hdf(h5file, key="/FILES/FILES").query(
         "FTYPE.str.startswith('WDM')"
@@ -63,7 +64,7 @@ def import_uci(ucifile, h5file):
 
     for row in wdmfiles.itertuples():
         time_series = readWDM(
-            f"{uci_dir}/{row.FNAME}", ts_number_shift=_WDM_OFFSET[row.FTYPE]
+            str(uci_dir / row.FNAME), ts_number_shift=_WDM_OFFSET[row.FTYPE]
         )
         with pd.HDFStore(h5file) as store:
             for path, df in time_series.items():
