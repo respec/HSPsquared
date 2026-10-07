@@ -12,7 +12,11 @@ from numpy import array, asarray, int64, where, zeros
 from hsp2.hsp2.ADCALC import advect
 from hsp2.hsp2.om import model_domain_dependencies, pre_step_model, step_model
 from hsp2.hsp2.utilities import make_numba_dict
-from hsp2.state.state import sedtrn_get_ix, sedtrn_init_ix, sedtrn_state_vars
+
+# the following imports added to handle special actions
+from hsp2.state.state import sedtrn_get_ix, get_state_ix
+from hsp2.hsp2.om import pre_step_model, step_model
+from numba.typed import Dict
 
 ERRMSGS = (
     "SEDTRN: Warning -- bed storage of sediment size fraction sand is empty",  # ERRMSG0
@@ -25,7 +29,7 @@ ERRMSGS = (
 )  # ERRMSG6
 
 
-def sedtrn(io_manager, siminfo, parameters, ts, state):
+def sedtrn(siminfo, parameters, ts, state):
     """Simulate behavior of inorganic sediment"""
 
     # simlen = siminfo['steps']
@@ -82,23 +86,9 @@ def sedtrn(io_manager, siminfo, parameters, ts, state):
     # convert erodibility coeff from /day to /ivl
     ui["clay_m"] = ui_clay["M"] * delt60 / 24.0 * 4.880
 
-    ###########################################################################
-    # the following section (1 of 3) added to SEDTRN by pbd to handle special
-    # actions
-    ###########################################################################
-    # state_info is some generic things about the simulation
-    # must be numba safe, so we don't just pass the whole state which is not
-    state_info = Dict.empty(key_type=types.unicode_type, value_type=types.unicode_type)
-    state_info["operation"], state_info["segment"], state_info["activity"] = (
-        state["operation"],
-        state["segment"],
-        state["activity"],
-    )
-    state_info["domain"], state_info["state_step_hydr"], state_info["state_step_om"] = (
-        state["domain"],
-        state["state_step_hydr"],
-        state["state_step_om"],
-    )
+    #######################################################################################
+    # the following section (1 of 3) added to SEDTRN by pbd to handle special actions
+    #######################################################################################
     # hsp2_local_py = state['hsp2_local_py']
     # It appears necessary to load this here, instead of from main.py,
     # otherwise, _hydr_() does not recognize the function state_step_hydr()?
@@ -106,34 +96,19 @@ def sedtrn(io_manager, siminfo, parameters, ts, state):
     #     from hsp2_local_py import state_step_hydr
     # else:
     #     from hsp2.state.state_fn_defaults import state_step_hydr
-    # must split dicts out of state Dict since numba cannot handle mixed-type
-    # nested Dicts initialize the sedtrn paths in case they don't already
-    # reside here
-    sedtrn_init_ix(state, state["domain"])
-    state_ix, dict_ix, ts_ix = state["state_ix"], state["dict_ix"], state["ts_ix"]
-    state_paths = state["state_paths"]
-    op_tokens = state["op_tokens"]
-    # Aggregate the list of all SEDTRN end point dependencies define all
-    # eligible for state integration in state.py
-    ep_list = sedtrn_state_vars()
-    model_exec_list = model_domain_dependencies(
-        state, state_info["domain"], ep_list, True
-    )
-    # format for use in
-    model_exec_list = asarray(model_exec_list, dtype="i8")
-    ###########################################################################
+    # must split dicts out of state Dict since numba cannot handle mixed-type nested Dicts
+    # Aggregate the list of all SEDTRN end point dependencies
+    activity_path = state.domain + "/" + 'SEDTRN'
+    activity_id = get_state_ix(state.state_paths, activity_path)
+    model_exec_list = state.op_exec_lists[activity_id]
+    #######################################################################################
 
     ###########################################################################
     # run SEDTRN simulation code
     errors = _sedtrn_(
         ui,
         ts,
-        state_info,
-        state_paths,
-        state_ix,
-        dict_ix,
-        ts_ix,
-        op_tokens,
+        state,
         model_exec_list,
     )
     ###########################################################################
@@ -162,12 +137,7 @@ def sedtrn(io_manager, siminfo, parameters, ts, state):
 def _sedtrn_(
     ui,
     ts,
-    state_info,
-    state_paths,
-    state_ix,
-    dict_ix,
-    ts_ix,
-    op_tokens,
+    state,
     model_exec_list,
 ):
     """Simulate behavior of inorganic sediment"""
@@ -384,13 +354,11 @@ def _sedtrn_(
 
     # END PSED
 
-    ###########################################################################
-    # the following section (2 of 3) added by pbd to SEDTRN, this one to
-    # prepare for special actions
-    ###########################################################################
-    sedtrn_ix = sedtrn_get_ix(state_ix, state_paths, state_info["domain"])
-    # these are integer placeholders faster than calling the array look each
-    # timestep
+    #######################################################################################
+    # the following section (2 of 3) added by pbd to SEDTRN, this one to prepare for special actions
+    #######################################################################################
+    sedtrn_ix = sedtrn_get_ix(state, state.domain)
+    # these are integer placeholders faster than calling the array look each timestep
     rsed4_ix, rsed5_ix, rsed6_ix = (
         sedtrn_ix["RSED4"],
         sedtrn_ix["RSED5"],
@@ -404,24 +372,26 @@ def _sedtrn_(
         # actions
         #######################################################################
         # set state_ix with value of local state variables and/or needed vars
-        state_ix[rsed4_ix] = sand_wt_rsed4
-        state_ix[rsed5_ix] = silt_wt_rsed5
-        state_ix[rsed6_ix] = clay_wt_rsed6
-        if state_info["state_step_om"] == "enabled":
+        state.state_ix[rsed4_ix] = sand_wt_rsed4
+        state.state_ix[rsed5_ix] = silt_wt_rsed5
+        state.state_ix[rsed6_ix] = clay_wt_rsed6
+        if state.state_step_om == "enabled":
             pre_step_model(
-                model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step=loop
+                model_exec_list, state.op_tokens, state.state_ix, state.dict_ix, state.ts_ix, step=loop
             )
 
         # (todo) Insert code hook for dynamic python modification of state
 
-        if state_info["state_step_om"] == "enabled":
-            # traditional 'ACTIONS' done in here
-            step_model(model_exec_list, op_tokens, state_ix, dict_ix, ts_ix, step=loop)
+        if state.state_step_om == "enabled":
+            # (todo) migrate runtime jit code to new state object model
+            step_model(
+                model_exec_list, state.op_tokens, state.state_ix, state.dict_ix, state.ts_ix, step=loop
+            )  # traditional 'ACTIONS' done in here
             # Do write-backs for editable STATE variables
-            sand_wt_rsed4 = state_ix[rsed4_ix]
-            silt_wt_rsed5 = state_ix[rsed5_ix]
-            clay_wt_rsed6 = state_ix[rsed6_ix]
-        #######################################################################
+            sand_wt_rsed4 = state.state_ix[rsed4_ix]
+            silt_wt_rsed5 = state.state_ix[rsed5_ix]
+            clay_wt_rsed6 = state.state_ix[rsed6_ix]
+        #######################################################################################
 
         # perform any necessary unit conversions
         if uunits == 2:  # parameters are in metric units

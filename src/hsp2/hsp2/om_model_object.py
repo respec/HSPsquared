@@ -4,12 +4,13 @@ It handles all Dict management functions, but provides for no runtime execution 
 All runtime exec is done by child classes.
 """
 
-from hsp2.state.state import set_state, get_state_ix
-from numba.typed import Dict
-from hsp2.hsp2.om import get_exec_order, is_float_digit
-from pandas import HDFStore
-from numpy import pad, asarray, zeros, int32
 from numba import njit, types
+from numba.typed import Dict
+from numpy import asarray, int64, pad, zeros
+from pandas import HDFStore
+
+from hsp2.hsp2.om import is_float_digit
+from hsp2.state.state import nkey_exists
 
 
 class ModelObject:
@@ -32,27 +33,44 @@ class ModelObject:
     ]  # runnable components important for optimization
     ops_data_type = "ndarray"  # options are ndarray or Dict - Dict appears slower, but unsure of the cause, so keep as option.
 
-    def __init__(self, name, container=False, model_props=None, state=None):
+    def __init__(
+        self,
+        name,
+        container=False,
+        model_props=None,
+        state=None,
+        model_object_cache=None,
+    ):
         self.name = name
+        self.container = container  # will be a link to another object
+        if state is None:
+            # we must verify that we have a properly formatted state Dictionary, or that our parent does.
+            if self.container == False:
+                raise Exception(
+                    "Error: State object must be passed to root object. ",
+                    +name + " cannot be created.  See state::init_state_dicts()",
+                )
+            else:
+                state = self.container.state
+        if model_object_cache is None:
+            # we must verify that we have a properly formatted state Dictionary, or that our parent does.
+            if self.container == False:
+                raise Exception(
+                    "Error: model_object_cache object must be available on to root object. "
+                    + name
+                    + " cannot be created.  See state::init_state_dicts()"
+                )
+            else:
+                model_object_cache = self.container.model_object_cache
+        self.state = state  # make a copy here. is this efficient?
+        self.model_object_cache = (
+            model_object_cache  # make a copy here. is this efficient?
+        )
         self.handle_deprecated_args(name, container, model_props, state)
         # END - handle deprecated
         if model_props is None:
             model_props = {}
-        self.container = container  # will be a link to another object
         self.state_path = self.handle_prop(model_props, "state_path", False, False)
-        if type(state) != dict:
-            # we must verify that we have a properly formatted state Dictionary, or that our parent does.
-            if self.container == False:
-                raise Exception(
-                    "Error: State dictionary must be passed to root object. ",
-                    type(state),
-                    "passed instead."
-                    + name
-                    + " cannot be created.  See state::init_state_dicts()",
-                )
-            else:
-                state = self.container.state
-        self.state = state  # make a copy here. is this efficient?
         # Local properties
         self.model_props_parsed = {}  # a place to stash parse record for debugging
         self.log_path = ""  # Ex: "/RESULTS/RCHRES_001/SPECL"
@@ -109,7 +127,7 @@ class ModelObject:
     @staticmethod
     def make_op_tokens(num_ops=5000):
         if ModelObject.ops_data_type == "ndarray":
-            op_tokens = int32(
+            op_tokens = int64(
                 zeros((num_ops, 64))
             )  # was Dict.empty(key_type=types.int64, value_type=types.i8[:])
         else:
@@ -123,6 +141,7 @@ class ModelObject:
         run_ops = {}
         for ops in op_tokens:
             # the base class defines the type of objects that are runnable (i.e. have a step() method)
+            #print("Handling ops", ops)
             if ops[0] in ModelObject.runnables:
                 run_ops[ops[1]] = ops
                 if debug == True:
@@ -191,6 +210,8 @@ class ModelObject:
                 + self.name
                 + " and strict = True.  Object creation halted. Path to object with error is "
                 + self.state_path
+                + "This objects inputs are:",
+                self.inputs,
             )
         if (prop_val == None) and not (default_value == None):
             prop_val = default_value
@@ -207,19 +228,11 @@ class ModelObject:
         return True
 
     def set_state(self, set_value):
-        var_ix = set_state(
-            self.state["state_ix"],
-            self.state["state_paths"],
+        var_ix = self.state.set_state(
             self.state_path,
             set_value,
         )
         return var_ix
-
-    def load_state_dicts(self, op_tokens, state_paths, state_ix, dict_ix):
-        self.state["op_tokens"] = op_tokens
-        self.state["state_paths"] = state_paths
-        self.state["state_ix"] = state_ix
-        self.state["dict_ix"] = dict_ix
 
     def save_object_hdf(self, hdfname, overwrite=False):
         # save the object in the full hdf5 path
@@ -232,6 +245,7 @@ class ModelObject:
         # print("calling make_paths from", self.name, "with base path", base_path)
         if base_path == False:  # we are NOT forcing paths
             if not (self.container == False):
+                # print("Using container path as base:", self.container.state_path + "/" + str(self.name))
                 self.state_path = self.container.state_path + "/" + str(self.name)
                 self.attribute_path = (
                     self.container.attribute_path + "/" + str(self.name)
@@ -250,55 +264,58 @@ class ModelObject:
 
     def get_state(self, var_name=False):
         if var_name == False:
-            return self.state["state_ix"][self.ix]
+            return self.state.state_ix[self.ix]
         else:
             var_path = self.find_var_path(var_name)
-            var_ix = get_state_ix(
-                self.state["state_ix"], self.state["state_paths"], var_path
-            )
+            # print("Looking for state ix of:", var_path)
+            var_ix = self.state.get_state_ix(var_path)
         if var_ix == False:
             return False
-        return self.state["state_ix"][var_ix]
+        return self.state.state_ix[var_ix]
 
-    def get_exec_order(self, var_name=False):
-        if var_name == False:
-            var_ix = self.ix
-        else:
-            var_path = self.find_var_path(var_name)
-            var_ix = get_state_ix(
-                self.state["state_ix"], self.state["state_paths"], var_path
-            )
-        exec_order = get_exec_order(self.state["model_exec_list"], var_ix)
-        return exec_order
+    def get_tindex(self):
+        timer = self.get_object("timer")
+        tindex = self.state.dict_ix[timer.ix]
+        return tindex
 
     def get_object(self, var_name=False):
         if var_name == False:
-            return self.state["model_object_cache"][self.state_path]
+            return self.model_object_cache[self.state_path]
         else:
             var_path = self.find_var_path(var_name)
-            return self.state["model_object_cache"][var_path]
+            if var_path in self.model_object_cache:
+                return self.model_object_cache[var_path]
+            else:
+                return False
 
     def find_var_path(self, var_name, local_only=False):
         # check local inputs for name
+        if var_name is None:
+            print("NULL var searched from", self.name, "child of", self.container.name)
         if type(var_name) == str:
             # print("Expanding aliases for", var_name)
             var_name = self.handle_path_aliases(var_name)  # sub out any wildcards
         # print(self.name, "called", "find_var_path(self, ", var_name, ", local_only = False)")
         if var_name in self.inputs.keys():
             return self.inputs[var_name]
+        # check for state vars in my path + var_name
+        if nkey_exists(self.state.state_paths, self.state_path + "/" + var_name):
+            return self.state_path + "/" + var_name
         if local_only:
+            #print("Cannot find var", var_name, "in local scope", self.name)
             return False  # we are limiting the scope, so just return
         # check parent for name
         if not (self.container == False):
+            #print("Searching for var", var_name, "in container scope", self.container.name, self.container.state_path)
             return self.container.find_var_path(var_name)
         # check for root state vars STATE + var_name
-        if ("/STATE/" + var_name) in self.state["state_paths"].keys():
-            # return self.state['state_paths'][("/STATE/" + var_name)]
+        if ("/STATE/" + var_name) in self.state.state_paths:
             return "/STATE/" + var_name
         # check for full paths
-        if var_name in self.state["state_paths"].keys():
+        if nkey_exists(self.state.state_paths, var_name):
             # return self.state['state_paths'][var_name]
             return var_name
+        #print("Cannot find var in global scope", self.state_path, "var", var_name)
         return False
 
     def constant_or_path(self, keyname, keyval, trust=False):
@@ -318,14 +335,10 @@ class ModelObject:
         # print("register_path called for", self.name, "with state_path", self.state_path)
         if self.state_path == "" or self.state_path == False:
             self.make_paths()
-        self.ix = set_state(
-            self.state["state_ix"],
-            self.state["state_paths"],
-            self.state_path,
-            self.default_value,
-        )
+        self.ix = self.state.set_state(self.state_path, self.default_value)
         # store object in model_object_cache - always, if we have reached this point we need to overwrite
-        self.state["model_object_cache"][self.state_path] = self
+        # print("Adding ", self.name, "with state_path", self.state_path, "to model_object_cache")
+        self.model_object_cache[self.state_path] = self
         # this should check to see if this object has a parent, and if so, register the name on the parent
         # default is as a child object.
         if not (self.container == False):
@@ -350,10 +363,10 @@ class ModelObject:
         #       BUT this only works if both var_name and var_path are month
         #       so add_input('month', 'month', 1, True) works.
         found_path = self.find_var_path(var_path)
-        # print("Searched", var_name, "with path", var_path,"found", found_path)
-        var_ix = get_state_ix(
-            self.state["state_ix"], self.state["state_paths"], found_path
-        )
+        if found_path == False:
+            var_ix = False
+        else:
+            var_ix = self.state.get_state_ix(found_path)
         if var_ix == False:
             if trust == False:
                 raise Exception(
@@ -365,6 +378,10 @@ class ModelObject:
                     + var_name
                     + " ... process terminated. Path to object with error is "
                     + self.state_path
+                    + "This objects inputs are:",
+                    self.inputs,
+                    "State paths=",
+                    self.state.state_paths,
                 )
             var_ix = self.insure_path(var_path)
         else:
@@ -408,15 +425,13 @@ class ModelObject:
         # if this path can be found in the hdf5 make sure that it is registered in state
         # and that it has needed object class to render it at runtime (some are automatic)
         # RIGHT NOW THIS DOES NOTHING TO CHECK IF THE VAR EXISTS THIS MUST BE FIXED
-        var_ix = set_state(
-            self.state["state_ix"], self.state["state_paths"], var_path, 0.0
-        )
+        var_ix = self.state.set_state(var_path, 0.0)
         return var_ix
 
     def get_dict_state(self, ix=-1):
         if ix >= 0:
-            return self.state["dict_ix"][ix]
-        return self.state["dict_ix"][self.ix]
+            return self.state.dict_ix[ix]
+        return self.state.dict_ix[self.ix]
 
     def find_paths(self):
         # Note: every single piece of data used by objects, even constants, are resolved to a PATH in the hdf5
@@ -446,7 +461,7 @@ class ModelObject:
         if register_path == False:
             register_path = register_container.find_var_path(var_name, True)
         if (register_path == False) or (
-            register_path not in self.state["model_object_cache"].keys()
+            register_path not in self.model_object_cache.keys()
         ):
             # create a register as a placeholder for the data at the hub path
             # in case there are no senders, or in the case of a timeseries logger, we need to register it so that its path can be set to hold data
@@ -466,7 +481,7 @@ class ModelObject:
                     var_name, register_container, reg_props, self.state
                 )
         else:
-            var_register = self.state["model_object_cache"][register_path]
+            var_register = self.model_object_cache[register_path]
         return var_register
 
     def tokenize(self):
@@ -495,18 +510,20 @@ class ModelObject:
                 + self.state_path
                 + "). "
             )
-        self.state["op_tokens"][self.ix] = self.format_ops()
+        self.state.set_token(self.ix, self.format_ops())
 
     def step(self, step):
         # this tests the model for a single timestep.
         # this is not the method that is used for high-speed runs, but can theoretically be used for
         # easier to understand demonstrations
+        # this has not been tested since changes to the state from array to object
         step_one(
-            self.state["op_tokens"],
-            self.state["op_tokens"][self.ix],
-            self.state["state_ix"],
-            self.state["dict_ix"],
-            self.state["ts_ix"],
+            self.state.op_tokens,
+            self.state.op_tokens[self.ix],
+            self.state.state_ix,
+            self.state.dict_ix,
+            self.state.state_ix,
+            self.state.ts_ix,
             step,
         )
         # step_model({self.state['op_tokens'][self.ix]}, self.state['state_ix'], self.state['dict_ix'], self.state['ts_ix'], step)
@@ -517,14 +534,10 @@ class ModelObject:
         return True
 
 
-"""
-The class ModelVariable is a base cass for storing numerical values.  Used for UVQUAN and misc numerical constants...
-"""
-
-
 class ModelVariable(ModelObject):
+    #:The class ModelVariable is a base cass for storing numerical values.  Used for UVQUAN and misc numerical constants...
     def __init__(self, name, container=False, model_props=None, state=None):
-        super(ModelVariable, self).__init__(name, container, model_props, state)
+        super().__init__(name, container, model_props, state)
         # print("ModelVariable named", name, "with path", self.state_path,"beginning")
         value = self.handle_prop(model_props, "value")
         self.default_value = float(value)
@@ -540,28 +553,20 @@ class ModelVariable(ModelObject):
         return req_props
 
 
-"""
-The class ModelConstant is for storing non-changing values.
-"""
-
-
 class ModelConstant(ModelVariable):
+    #: The class ModelConstant is for storing non-changing values.
     def __init__(self, name, container=False, model_props=None, state=None):
-        super(ModelConstant, self).__init__(name, container, model_props, state)
+        super().__init__(name, container, model_props, state)
         self.optype = 16  # 0 - shell object, 1 - equation, 2 - datamatrix, 3 - input, 4 - broadcastChannel, 5 - SimTimer, 6 - Conditional, 7 - ModelVariable (numeric)
         # print("ModelVariable named",self.name, "with path", self.state_path,"and ix", self.ix, "value", value)
 
 
-"""
-The class ModelRegister is for storing push values.
-Behavior is to zero each timestep.  This could be amended later.
-Maybe combined with stack behavior?  Or accumulator?
-"""
-
-
 class ModelRegister(ModelVariable):
+    #: The class ModelRegister is for storing push values.
+    #: Behavior is to zero each timestep.  This could be amended later.
+    #: Maybe combined with stack behavior?  Or accumulator?
     def __init__(self, name, container=None, model_props=False, state=False):
-        super(ModelRegister, self).__init__(name, container, model_props, state)
+        super().__init__(name, container, model_props, state)
         self.optype = 12  #
         # self.state['state_ix'][self.ix] = self.default_value
 

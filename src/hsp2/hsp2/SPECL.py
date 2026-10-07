@@ -7,51 +7,39 @@ Notes:
 """
 
 from numba import njit
-from hsp2.hsp2tools.names import hsp2_sequence_id
-import warnings
 
-def specl_load_om(state, parameter_obj):
-    active_segs = list(zip(parameter_obj.opseq['OPERATION'], parameter_obj.opseq['SEGMENT']))
-    if "ACTIONS" in state["specactions"]:
-        dc = state["specactions"]["ACTIONS"]
+
+def specl_load_om(om_operations, specactions):
+    if "ACTIONS" in specactions:
+        dc = specactions["ACTIONS"]
         for ix in dc.index:
             # add the items to the state['model_data'] dict
             speca = dc[ix : (ix + 1)]
             # need to add a name attribute
             opname = "SPEC" + "ACTION" + str(ix)
-            segtype = speca['OPTYP'].iloc[0]
-            segno = speca['RANGE1'].iloc[0]
-            # must check to see if the action refers to an active OPSEQ segment
-            # since hsp* allows segments to be defined but not OPNed
-            id = hsp2_sequence_id(segtype, segno)
-            if (segtype, id) not in active_segs:
-                raise Exception(
-                    "HSP* ERROR - Missing/inactive segment " + segtype + " " + 
-                    segno + " referenced in SPECIAL ACTIONS. Quitting."
-                )
-#                warnings.warn(
-#                    "Missing/inactive segment" + id + "referenced.",
-#                    DeprecationWarning)
-#                continue
-            state["model_data"][opname] = {}
-            state["model_data"][opname]["name"] = opname
+            om_operations["model_data"][opname] = {}
+            om_operations["model_data"][opname]["name"] = opname
+            # now, by this point the model domain should have been loaded to include all active segments
+            # so, because HSP* allows SPEC-ACTIONS and other items to exist in the UCI even if they are 
+            # not ACTIVE (i.e. not in the OPN SEQUENCE block), then we must screen out those SPECACTIONS
+            # that operate on an inactive endpoint
             for ik in speca.keys():
                 # print("looking for speca key ", ik)
-                state["model_data"][opname][ik] = speca.to_dict()[ik][
+                om_operations["model_data"][opname][ik] = speca.to_dict()[ik][
                     ix
                 ]  # add subscripts?
                 if ik == "VARI":
                     if len(speca.to_dict()["S1"][ix]) > 0:
-                        state["model_data"][opname][ik] += speca.to_dict()["S1"][ix]
+                        om_operations["model_data"][opname][ik] += speca.to_dict()["S1"][ix]
                     if len(speca.to_dict()["S2"][ix]) > 0:
-                        state["model_data"][opname][ik] += speca.to_dict()["S2"][ix]
-            state["model_data"][opname]["object_class"] = "SpecialAction"
+                        om_operations["model_data"][opname][ik] += speca.to_dict()["S2"][ix]
+            om_operations["model_data"][opname]["object_class"] = "SpecialAction"
             # print("model_data", ix, " = ", state['model_data'][opname])
     return
 
 
-def specl_load_state(state, parameter_obj):
-    specl_load_om(state, parameter_obj)
+def specl_load_state(om_operations, specactions):
+    specl_load_om(om_operations, specactions)
     # others defined below, like:
     # specl_load_uvnames(state, io_manager, siminfo)
     # ...
