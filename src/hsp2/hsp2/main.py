@@ -3,22 +3,25 @@ Author: Robert Heaphy, Ph.D.
 License: LGPL2
 """
 
-import os
-from datetime import datetime as dt
-from typing import Union
+# Future imports
+from __future__ import annotations
 
+# Standard library imports
+from datetime import datetime as dt
+from typing import TYPE_CHECKING
+from pathlib import Path
+
+# Third party imports
 from numpy import float64
 from pandas import DataFrame, date_range
 from pandas.tseries.offsets import Minute
 
+# First party imports
 from hsp2.hsp2.configuration import activities, expand_masslinks, noop
 from hsp2.hsp2.om import (
-    om_init_state,
-    state_load_dynamics_om,
+    om_state_hsp2_run_setup,
     state_om_model_run_finish,
-    state_om_model_run_prep,
 )
-from hsp2.hsp2.SPECL import specl_load_state
 from hsp2.hsp2.utilities import (
     expand_timeseries_names,
     get_gener_timeseries,
@@ -26,45 +29,45 @@ from hsp2.hsp2.utilities import (
     save_timeseries,
     versions,
 )
-from hsp2.hsp2.configuration import activities, noop, expand_masslinks
+from hsp2.hsp2io.protocols import Category
 from hsp2.state.state import state_context_hsp2, state_copy
-from hsp2.hsp2.om import (
-    om_state_hsp2_run_setup,
-    state_om_model_run_finish,
-)
-from hsp2.hsp2.SPECL import specl_load_state
 
-from hsp2.hsp2io.hdf import HDF5
-from hsp2.hsp2io.io import Category, IOManager, SupportsReadTS
+if TYPE_CHECKING:
+    # First party imports
+    from hsp2.hsp2io.io import IOManager
+
 
 def main(
-    io_manager: Union[str, IOManager], saveall: bool = False, jupyterlab: bool = True
+    io_manager: str | IOManager, saveall: bool = False, jupyterlab: bool = True
 ) -> None:
     """
     Run main HSP2 program.
+
     Parameters
     ----------
     io_manager
-        An instance of IOManager class.
+        An instance of IOManager class or a string path to an HDF5 file.
     saveall: bool, default=False
         Saves all calculated data ignoring SAVE tables.
     jupyterlab: bool, default=True
         Flag for specific output behavior for  jupyter lab.
 
-    Return
-    ------------
+    Returns
+    -------
     None
-
     """
-    if isinstance(io_manager, str):
-        hdf5_instance = HDF5(io_manager)
-        io_manager = IOManager(hdf5_instance)
-    hdfname = io_manager._input.file_path
-    if not os.path.exists(hdfname):
-        raise FileNotFoundError(f"{hdfname} HDF5 File Not Found")
+    if isinstance(io_manager, (str, Path)):
+        # Imported here because hsp2.hsp2io.io imports hsp2.hsp2 at module level.
+        # First party imports
+        from hsp2.hsp2io.io import IOManager
+
+        io_manager = IOManager(io_manager)
 
     msg = messages()
-    msg(1, f"Processing started for file {hdfname}; saveall={saveall}")
+    msg(
+        1,
+        f"Processing started parameters from {io_manager.parameter_source}; saveall={saveall}",
+    )
 
     # read user control, parameters, states, and flags parameters and map to local variables
     parameter_obj = io_manager.read_parameters()
@@ -87,7 +90,9 @@ def main(
     # initialize STATE dicts
     #######################################################################################
     # Set up Things in state that will be used in all modular activities like SPECL
-    (state, om_operations, statenb) = om_state_hsp2_run_setup(parameter_obj, io_manager, activities)
+    (state, om_operations, statenb) = om_state_hsp2_run_setup(
+        parameter_obj, io_manager, activities
+    )
     #######################################################################################
 
     # main processing loop
@@ -227,9 +232,9 @@ def main(
                             "NEXITS"
                         ]
                         for index in range(nexits):
-                            ui["PARAMETERS"][f"OS{str(index + 1)}"] = model[
+                            ui["PARAMETERS"][f"OS{index + 1!s}"] = model[
                                 (operation, "HYDR", segment)
-                            ]["PARAMETERS"][f"OS{str(index + 1)}"]
+                            ]["PARAMETERS"][f"OS{index + 1!s}"]
                     elif activity == "CONS":
                         ui["advectData"] = model[(operation, "ADCALC", segment)][
                             "adcalcData"
@@ -279,14 +284,13 @@ def main(
                             ui["PARAMETERS"]["CFSAEX"] = model[
                                 (operation, "HTRCH", segment)
                             ]["PARAMETERS"]["CFSAEX"]
-                        elif flags["PLANK"]:
-                            if (
-                                "CFSAEX"
-                                in model[(operation, "PLANK", segment)]["PARAMETERS"]
-                            ):
-                                ui["PARAMETERS"]["CFSAEX"] = model[
-                                    (operation, "PLANK", segment)
-                                ]["PARAMETERS"]["CFSAEX"]
+                        elif flags["PLANK"] and (
+                            "CFSAEX"
+                            in model[(operation, "PLANK", segment)]["PARAMETERS"]
+                        ):
+                            ui["PARAMETERS"]["CFSAEX"] = model[
+                                (operation, "PLANK", segment)
+                            ]["PARAMETERS"]["CFSAEX"]
 
                     elif activity == "HTRCH":
                         ui["PARAMETERS"]["ADFG"] = flags["ADCALC"]
@@ -387,9 +391,7 @@ def main(
                             siminfo, ui, ts, ftables, statenb
                         )
                     elif activity in ["SEDTRN", "SEDMNT"]:
-                        errors, errmessages = function(
-                            siminfo, ui, ts, statenb
-                        )
+                        errors, errmessages = function(siminfo, ui, ts, statenb)
                     elif activity != "RQUAL":
                         errors, errmessages = function(io_manager, siminfo, ui, ts)
                     else:
@@ -516,7 +518,6 @@ def main(
         df = versions(["jupyterlab", "notebook"])
         io_manager.write_versioning(df)
         print("\n\n", df)
-    return
 
 
 def messages():
@@ -531,7 +532,6 @@ def messages():
             mn, sc = divmod((now - start).seconds, 60)
             ms = (now - start).microseconds // 100_000
             m = "; ".join((m, f"Run time is about {mn:02}:{sc:02}.{ms} (mm:ss)"))
-        print(m)
         mlist.append(m)
         return mlist
 
@@ -539,7 +539,7 @@ def messages():
 
 
 def get_flows(
-    io_manager: SupportsReadTS,
+    io_manager,
     ts,
     flags,
     parameters,
@@ -718,5 +718,3 @@ def get_flows(
 
                 except KeyError:
                     print("ERROR in FLOWS, cant resolve ", path + " " + smemn)
-
-    return

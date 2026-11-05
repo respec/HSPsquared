@@ -1,11 +1,17 @@
+# Standard library imports
 from pathlib import Path
+from pprint import pprint
 
+# Third party imports
 import pytest
 
+# First party imports
+from hsp2.hsp2io.time_series_readers.read_hdf_ts import HDF5Reader
 from hsp2.hsp2tools.commands import import_uci, run
 
+# Local folder imports
 from .convert.regression_base import RegressTest as RegressTestBase
-from .utils.HDF5 import HDF5
+from .convert.regression_base import _read_test_hbn_aliases
 
 
 class RegressTest(RegressTestBase):
@@ -22,7 +28,9 @@ class RegressTest(RegressTestBase):
 
         import_uci(str(hspf_uci), str(self.temp_h5file))
         run(self.temp_h5file, saveall=True, compress=False)
-        self.hsp2_data = HDF5(str(self.temp_h5file))
+        self.hsp2_data = HDF5Reader(
+            str(self.temp_h5file), aliases=_read_test_hbn_aliases()
+        )
 
     def _init_files(self):
         test_dir = Path(__file__).resolve().parent
@@ -52,17 +60,17 @@ def test_case(case):
 
     found = False
     mismatches = []
-    for key, results in results.items():
-        no_data_hsp2, no_data_hspf, match, diff = results
+    for key, res in results.items():
+        no_data_hsp2, no_data_hspf, match, _diff = res
         if any([no_data_hsp2, no_data_hspf]):
             continue
         if not match:
-            mismatches.append((case, key, results))
+            mismatches.append((case, key, res))
         found = True
     assert found
 
     if mismatches:
-        for case, key, results in mismatches:
-            _, _, _, diff = results
-            print(case, key, f"{diff:0.00%}")
+        pprint(mismatches)
+        for _cas, _key, results in mismatches:
+            _, _, _, _diff = results
         raise ValueError("results don't match hspf output")

@@ -19,8 +19,8 @@ application = QApplication(sys.argv)
 
 if command_line == "":
     file_filter = (
-        "Run HDF5 (*.h5) Full Output;;"
-        "Run HDF5 (*.h5) Light Output;;"
+        "Run HDF5 Full Output (*.h5);;"
+        "Run HDF5 Light Output (*.h5);;"
         "Import UCI to HDF5 (*.uci);;"
         "Import WDM to HDF5 (*.wdm)"
     )
@@ -31,32 +31,30 @@ else:
     filename = command_line
     filetype = ""
 
-file_ext = filename[-3:]
+file_ext = os.path.splitext(filename)[1].lstrip(".")
 dir_name = os.path.dirname(filename)
 os.chdir(dir_name)
 
+print(file_ext)
 if file_ext.upper() == "UCI":
     h5_name = filename[:-3] + "h5"
-    from hsp2.hsp2tools.readUCI import readUCI
+    from hsp2.hsp2io.convert_control_files import convert_control_files
 
-    readUCI(filename, h5_name)
-    # readUCI('HSPF.uci', 'test.h5')
+    convert_control_parameters(filename, h5_name)
 
 if file_ext.upper() == "WDM":
     h5_name = filename[:-3] + "h5"
-    from hsp2.hsp2tools.readWDM import readWDM
+    from hsp2.hsp2io.convert_time_series import convert_time_series
 
-    readWDM(filename, h5_name)
+    convert_time_series(filename, h5_name)
     # readWDM('GRICM.wdm', 'test.h5')
     # readWDM('ZUMBROSCEN.WDM', 'test.h5')
 
 if file_ext.upper() == ".H5":
-    from hsp2.hsp2.main import main
-    from hsp2.hsp2io.hdf import HDF5
     from hsp2.hsp2io.io import IOManager
+    from hsp2.hsp2.main import main
 
-    hdf5_instance = HDF5(filename)
-    io_manager = IOManager(hdf5_instance)
+    io_manager = IOManager(filename)
 
     SaveLevel = True
     if "Light" in filetype:

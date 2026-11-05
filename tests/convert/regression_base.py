@@ -1,36 +1,60 @@
+# Future imports
+from __future__ import annotations
+
+# Standard library imports
 import inspect
 import os
 import webbrowser
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Dict, List, Tuple, Union
+from importlib import resources
+from pathlib import Path
 
+# Third party imports
 import numpy as np
 import pandas as pd
 
-from hsp2.hsp2tools.HBNOutput import HBNOutput
-from hsp2.hsp2tools.HDF5 import HDF5
+# First party imports
+from hsp2.hsp2io.time_series_readers.read_hbn_ts import HBNReader
+from hsp2.hsp2io.time_series_readers.read_hdf_ts import HDF5Reader
 
-OperationsTuple = Tuple[str, str, str, str, str]
-ResultsTuple = Tuple[bool, bool, bool, float]
+OperationsTuple = tuple[str, str, str, str, str]
+ResultsTuple = tuple[bool, bool, bool, float]
+
+
+def _read_test_hbn_aliases() -> dict[tuple[str, str, str], str]:
+    aliases_path = Path(str(resources.files('hsp2.data'))) / "HBNAliases.csv"
+    print(f"Reading HBN aliases from {aliases_path}")
+    aliases = pd.read_csv(str(aliases_path)).set_index(
+        ["operation", "activity", "hspf_name"]
+    )
+    return aliases["hsp2_name"].to_dict()
 
 
 class RegressTest:
     def __init__(
         self,
         compare_case: str,
-        operations: List[str] = [],
-        activities: List[str] = [],
-        tcodes: List[str] = ["2"],
-        ids: List[str] = [],
+        operations: list[str] | None = None,
+        activities: list[str] | None = None,
+        tcodes: list[str] | None = None,
+        ids: list[str] | None = None,
         threads: int = os.cpu_count() - 1,
     ) -> None:
+        if operations is None:
+            operations = []
+        if activities is None:
+            activities = []
+        if tcodes is None:
+            tcodes = ["2"]
+        if ids is None:
+            ids = []
         self.compare_case = compare_case
         self.operations = operations
         self.activities = activities
         self.tcodes = tcodes
         self.ids = ids
         self.threads = threads
-        self.quiet = False # allows users to set this later
+        self.quiet = False  # allows users to set this later
         self._init_files()
 
     def _init_files(self):
@@ -56,25 +80,26 @@ class RegressTest:
         self.hspf_data_collection = {}
         for file in os.listdir(sub_dir):
             if file.lower().endswith(".hbn"):
-                hspf_data = HBNOutput(os.path.join(test_dir, sub_dir, file))
+                hspf_data = HBNReader(os.path.join(test_dir, sub_dir, file))
                 hspf_data.read_data()
-                for key in hspf_data.output_dictionary.keys():
+                for key in hspf_data.output_dictionary:
                     self.hspf_data_collection[key] = hspf_data
 
-    def get_hspf_time_series(self, ops: OperationsTuple) -> Union[pd.Series, None]:
+    def get_hspf_time_series(self, ops: OperationsTuple) -> pd.Series | None:
         operation, activity, id, constituent, tcode = ops
         key = f"{operation}_{activity}_{id}_{tcode}"
         hspf_data = self.hspf_data_collection[key]
-        series = hspf_data.get_time_series(
+        return hspf_data.get_time_series(
             operation, int(id), constituent, activity, "hourly"
         )
-        return series
 
     def _get_hdf5_data(self, test_dir: str) -> None:
         sub_dir = os.path.join(test_dir, "HSP2results")
         for file in os.listdir(sub_dir):
             if file.lower().endswith(".h5") or file.lower().endswith(".hdf"):
-                self.hsp2_data = HDF5(os.path.join(sub_dir, file))
+                self.hsp2_data = HDF5Reader(
+                    os.path.join(sub_dir, file), aliases=_read_test_hbn_aliases()
+                )
                 break
 
     def should_compare(
@@ -86,28 +111,27 @@ class RegressTest:
             return False
         if len(self.ids) > 0 and id not in self.ids:
             return False
-        if len(self.tcodes) > 0 and tcode not in self.tcodes:
-            return False
-        return True
+        return len(self.tcodes) <= 0 or tcode in self.tcodes
 
     def generate_report(
-        self, file: str, results: Dict[OperationsTuple, ResultsTuple]
+        self, file: str, results: dict[OperationsTuple, ResultsTuple]
     ) -> None:
         html = self.make_html_report(results)
         self.write_html(file, html)
-        webbrowser.open_new_tab("file://" + file)
+        webbrowser.open_new_tab(f"file://{file}")
 
     def make_html_report(
-        self, results_dict: Dict[OperationsTuple, ResultsTuple]
+        self, results_dict: dict[OperationsTuple, ResultsTuple]
     ) -> str:
         """populates html table"""
         style_th = 'style="text-align:left"'
         style_header = 'style="border:1px solid; background-color:#EEEEEE"'
 
-        html = "<html><header><h1>CONVERSION TEST REPORT</h1></header><body>\n"
-        html += '<table style="border:1px solid">\n'
-
-        for key in self.hspf_data_collection.keys():
+        html = (
+            "<html><header><h1>CONVERSION TEST REPORT</h1></header><body>\n"
+            + '<table style="border:1px solid">\n'
+        )
+        for key in self.hspf_data_collection:
             operation, activity, opn_id, tcode = key.split("_")
             if not self.should_compare(operation, activity, opn_id, tcode):
                 continue
@@ -130,44 +154,42 @@ class RegressTest:
     ) -> str:
         """populates each constituents rows"""
         diffsOnly = False
-        eliminateNotIns = True
         html = ""
         if diffsOnly:
-            if no_data_hsp2 or no_data_hspf:
-                pass
-            else:
-                if match:
-                    pass
-                else:
-                    match_symbol = '<span style="font-weight:bold;color:red">X</span>'
-                    html = f"<tr><td>-</td><td>{con}</td><td>{diff}</td><td>{match_symbol}</td><td></td></tr>\n"
-        else:
-            if no_data_hsp2 or no_data_hspf:
-                if not eliminateNotIns:
-                    html = f"<tr><td>-</td><td>{con}</td><td>NA</td><td>NA</td><td>"
-                    html += f"{'Not in HSP2' if no_data_hsp2 else ''}<br>"
-                    html += f"{'Not in HSPF' if no_data_hspf else ''}"
-                    html += "</td></tr>\n"
-            else:
-                if match:
-                    match_symbol = (
-                        '<span style="font-weight:bold;color:green">&#10003;</span>'
-                    )
-                else:
-                    match_symbol = '<span style="font-weight:bold;color:red">X</span>'
+            if (
+                (no_data_hsp2 or no_data_hspf or not match)
+                and not no_data_hsp2
+                and not no_data_hspf
+            ):
+                match_symbol = '<span style="font-weight:bold;color:red">X</span>'
                 html = f"<tr><td>-</td><td>{con}</td><td>{diff}</td><td>{match_symbol}</td><td></td></tr>\n"
+        elif no_data_hsp2 or no_data_hspf:
+            eliminateNotIns = True
+            if not eliminateNotIns:
+                html = f"<tr><td>-</td><td>{con}</td><td>NA</td><td>NA</td><td>"
+                html += f"{'Not in HSP2' if no_data_hsp2 else ''}<br>"
+                html += f"{'Not in HSPF' if no_data_hspf else ''}"
+                html += "</td></tr>\n"
+        else:
+            if match:
+                match_symbol = (
+                    '<span style="font-weight:bold;color:green">&#10003;</span>'
+                )
+            else:
+                match_symbol = '<span style="font-weight:bold;color:red">X</span>'
+            html = f"<tr><td>-</td><td>{con}</td><td>{diff}</td><td>{match_symbol}</td><td></td></tr>\n"
         return html
 
     def write_html(self, file: str, html: str) -> None:
         with open(file, "w") as f:
             f.write(html)
 
-    def run_test(self) -> Dict[OperationsTuple, ResultsTuple]:
+    def run_test(self) -> dict[OperationsTuple, ResultsTuple]:
         futures = {}
         results_dict = {}
 
         with ThreadPoolExecutor(max_workers=self.threads) as executor:
-            for key in self.hspf_data_collection.keys():
+            for key in self.hspf_data_collection:
                 (operation, activity, opn_id, tcode) = key.split("_")
                 if not self.should_compare(operation, activity, opn_id, tcode):
                     continue
@@ -183,8 +205,8 @@ class RegressTest:
         return results_dict
 
     def check_con(self, params: OperationsTuple) -> ResultsTuple:
-        """Performs comparision of single constituent"""
-        operation, activity, id, constituent, tcode = params
+        """Performs comparison of single constituent"""
+        operation, activity, id, constituent, _tcode = params
 
         ts_hsp2 = self.hsp2_data.get_time_series(operation, id, constituent, activity)
         ts_hspf = self.get_hspf_time_series(params)
@@ -194,43 +216,34 @@ class RegressTest:
 
         if no_data_hsp2 or no_data_hspf:
             return (no_data_hsp2, no_data_hspf, False, 0)
-        else:
-            # Special case, for some parameters (e.g PLANK.BENAL1) HSPF results look to be array.
-            # Working assumption is that only the first index of that array are the values of interest.
-            if len(ts_hspf.shape) > 1:
-                ts_hspf = ts_hspf.iloc[:, 0]
 
-            tolerance = 1e-2  # may want to change default to max(abs(ts_hsp2.values.min()), abs(ts_hsp2.values.max())) * 1e-3
-            # if heat related term, compute special tolerance
-            if (
-                constituent == "IHEAT"
-                or constituent == "ROHEAT"
-                or constituent.startswith("OHEAT")
-                or constituent == "QSOLAR"
-                or constituent == "QLONGW"
-                or constituent == "QEVAP"
-                or constituent == "QCON"
-                or constituent == "QPREC"
-                or constituent == "QBED"
-            ):
-                tolerance = (
-                    max(abs(ts_hsp2.values.min()), abs(ts_hsp2.values.max())) * 1e-4
-                )
-            elif constituent == "QTOTAL" or constituent == "HTEXCH":
-                tolerance = (
-                    max(abs(ts_hsp2.values.min()), abs(ts_hsp2.values.max())) * 1e-3
-                )
+        # Special case, for some parameters (e.g PLANK.BENAL1) HSPF results look to be array.
+        # Working assumption is that only the first index of that array are the values of interest.
+        if len(ts_hspf.shape) > 1:
+            ts_hspf = ts_hspf.iloc[:, 0]
 
-            ts_hsp2, ts_hspf = self.validate_time_series(
-                ts_hsp2, ts_hspf, operation, activity, id, constituent
-            )
+        tolerance = 1e-2  # may want to change default to max(abs(ts_hsp2.values.min()), abs(ts_hsp2.values.max())) * 1e-3
+        # if heat related term, compute special tolerance
+        if (
+            constituent == "IHEAT"
+            or constituent == "ROHEAT"
+            or constituent.startswith("OHEAT")
+            or constituent == "QSOLAR"
+            or constituent == "QLONGW"
+            or constituent == "QEVAP"
+            or constituent == "QCON"
+            or constituent == "QPREC"
+            or constituent == "QBED"
+        ):
+            tolerance = max(abs(ts_hsp2.values.min()), abs(ts_hsp2.values.max())) * 1e-4
+        elif constituent in ["QTOTAL", "HTEXCH"]:
+            tolerance = max(abs(ts_hsp2.values.min()), abs(ts_hsp2.values.max())) * 1e-3
 
-            match, diff = self.compare_time_series(ts_hsp2, ts_hspf, tolerance)
-            if not match:
-                print(operation, activity, id, constituent, tcode)
-                print(match, diff)
-                print(ts_hsp2.values)
-                print(ts_hspf.values)
+        ts_hsp2, ts_hspf = self.validate_time_series(
+            ts_hsp2, ts_hspf, operation, activity, id, constituent
+        )
+
+        match, diff = self.compare_time_series(ts_hsp2, ts_hspf, tolerance)
 
         return (no_data_hsp2, no_data_hspf, match, diff)
 
@@ -250,80 +263,61 @@ class RegressTest:
         activity: str,
         id: str,
         cons: str,
-    ) -> Tuple[pd.Series, pd.Series]:
+    ) -> tuple[pd.Series, pd.Series]:
         """validates a corrects time series to avoid false differences"""
 
         # In some test cases it looked like HSP2 was executing for a single extra time step
         # Trim h5 (HSP2) results to be same length as hbn (HSPF)
         # This is a bandaid to get testing working. Long term should identify why HSP2 runs for additional time step.
         if len(ts_hsp2) > len(ts_hspf):
-            ts_hsp2 = ts_hsp2[0 : len(ts_hspf)]
+            ts_hsp2 = ts_hsp2[: len(ts_hspf)]
 
         ts_hsp2 = self.fill_nan_and_null(ts_hsp2)
         ts_hspf = self.fill_nan_and_null(ts_hspf)
 
         ### special cases
         # if tiny suro in one and no suro in the other, don't trigger on suro-dependent numbers
-        if activity == "PWTGAS" and cons in ["SOTMP", "SODOX", "SOCO2"]:
-            ts_suro_hsp2 = self.hsp2_data.get_time_series(
-                operation, id, "SURO", "PWATER"
+        if activity == "PWTGAS" and cons in {"SOTMP", "SODOX", "SOCO2"}:
+            self._extracted_from_validate_time_series_24(
+                operation, id, ts_hsp2, ts_hspf
             )
-            ts_suro_hsp2 = self.fill_nan_and_null(ts_suro_hsp2)
-            ts_suro_hspf = self.get_hspf_time_series(
-                (operation, "PWATER", id, "SURO", 2)
-            )
-            ts_suro_hspf = self.fill_nan_and_null(ts_suro_hspf)
-
-            idx_zero_suro_hsp2 = ts_suro_hsp2 == 0
-            idx_low_suro_hsp2 = ts_suro_hsp2 < 1.0e-8
-            idx_zero_suro_hspf = ts_suro_hspf == 0
-            idx_low_suro_hspf = ts_suro_hspf < 1.0e-8
-
-            ts_hsp2.loc[idx_zero_suro_hsp2 & idx_low_suro_hspf] = ts_hspf.loc[
-                idx_zero_suro_hsp2 & idx_low_suro_hspf
-            ] = 0
-            ts_hspf.loc[idx_zero_suro_hspf & idx_low_suro_hsp2] = ts_hsp2.loc[
-                idx_zero_suro_hspf & idx_low_suro_hsp2
-            ] = 0
-
         # if volume in reach is going to zero, small concentration differences are not signficant
         if (
-            (activity == "SEDTRN" and cons in ["SSEDCLAY", "SSEDTOT"])
-            or (activity == "OXRX" and cons in ["BODCONC", "DOXCONC"])
-            or (
-                activity == "NUTRX"
-                and cons
-                in [
-                    "TAMCONCDIS",
-                    "NH4CONCDIS",
-                    "NH3CONCDIS",
-                    "NO3CONCDIS",
-                    "NO2CONCDIS",
-                    "PO4CONCDIS",
-                    "PO4CONCSUSPSAND",
-                    "PO4CONCSUSPSILT",
-                    "PO4CONCSUSPCLAY",
-                    "NH4CONCSUSPSAND",
-                    "NH4CONCSUSPSILT",
-                    "NH4CONCSUSPCLAY",
-                ]
-            )
-            or (
-                activity == "PLANK"
-                and cons
-                in [
-                    "PHYTO",
-                    "PHYCLA",
-                    "ZOO",
-                    "CTOTORGCONC",
-                    "POTBOD",
-                    "NTOTCONC",
-                    "PTOTCONC",
-                    "NTOTORGCONC",
-                    "PTOTORGCONC",
-                ]
-            )
-            or (activity == "PHCARB" and cons in ["TICCONC", "CO2CONC"])
+            activity == "SEDTRN"
+            and cons in {"SSEDCLAY", "SSEDTOT"}
+            or activity == "OXRX"
+            and cons in {"BODCONC", "DOXCONC"}
+            or activity == "NUTRX"
+            and cons
+            in {
+                "TAMCONCDIS",
+                "NH4CONCDIS",
+                "NH3CONCDIS",
+                "NO3CONCDIS",
+                "NO2CONCDIS",
+                "PO4CONCDIS",
+                "PO4CONCSUSPSAND",
+                "PO4CONCSUSPSILT",
+                "PO4CONCSUSPCLAY",
+                "NH4CONCSUSPSAND",
+                "NH4CONCSUSPSILT",
+                "NH4CONCSUSPCLAY",
+            }
+            or activity == "PLANK"
+            and cons
+            in {
+                "PHYTO",
+                "PHYCLA",
+                "ZOO",
+                "CTOTORGCONC",
+                "POTBOD",
+                "NTOTCONC",
+                "PTOTCONC",
+                "NTOTORGCONC",
+                "PTOTORGCONC",
+            }
+            or activity == "PHCARB"
+            and cons in {"TICCONC", "CO2CONC"}
         ):
             ts_vol_hsp2 = self.hsp2_data.get_time_series(operation, id, "VOL", "HYDR")
             ts_vol_hsp2 = self.fill_nan_and_null(ts_vol_hsp2)
@@ -335,9 +329,28 @@ class RegressTest:
 
         return ts_hsp2, ts_hspf
 
+    # TODO Rename this here and in `validate_time_series`
+    def _extracted_from_validate_time_series_24(self, operation, id, ts_hsp2, ts_hspf):
+        ts_suro_hsp2 = self.hsp2_data.get_time_series(operation, id, "SURO", "PWATER")
+        ts_suro_hsp2 = self.fill_nan_and_null(ts_suro_hsp2)
+        ts_suro_hspf = self.get_hspf_time_series((operation, "PWATER", id, "SURO", 2))
+        ts_suro_hspf = self.fill_nan_and_null(ts_suro_hspf)
+
+        idx_zero_suro_hsp2 = ts_suro_hsp2 == 0
+        idx_low_suro_hsp2 = ts_suro_hsp2 < 1.0e-8
+        idx_zero_suro_hspf = ts_suro_hspf == 0
+        idx_low_suro_hspf = ts_suro_hspf < 1.0e-8
+
+        ts_hsp2.loc[idx_zero_suro_hsp2 & idx_low_suro_hspf] = ts_hspf.loc[
+            idx_zero_suro_hsp2 & idx_low_suro_hspf
+        ] = 0
+        ts_hspf.loc[idx_zero_suro_hspf & idx_low_suro_hsp2] = ts_hsp2.loc[
+            idx_zero_suro_hspf & idx_low_suro_hsp2
+        ] = 0
+
     def compare_time_series(
         self, ts_hsp2: pd.Series, ts_hspf: pd.Series, tol: float
-    ) -> Tuple[bool, float]:
+    ) -> tuple[bool, float]:
         max_diff1 = (ts_hspf.values - ts_hsp2.values).max()
         max_diff2 = (ts_hsp2.values - ts_hspf.values).max()
         max_diff = max(max_diff1, max_diff2)

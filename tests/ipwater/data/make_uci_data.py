@@ -1,8 +1,12 @@
+# Standard library imports
 import json
 import os
 from pathlib import Path
 
+# Third party imports
 from hsp2.hsp2io.hdf import HDF5
+
+# First party imports
 from hsp2.hsp2tools import readUCI
 
 this_dir = Path(__file__).parent

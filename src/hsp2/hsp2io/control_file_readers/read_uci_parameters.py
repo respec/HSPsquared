@@ -3,130 +3,45 @@ Copyright 2020 by RESPEC, INC. - see License.txt with this HSP2 distribution
 Author: Robert Heaphy, Ph.D.
 """
 
+# Future imports
 from __future__ import annotations
 
+# Standard library imports
+import contextlib
+import os
 import re
 import textwrap
 import urllib.request
-import warnings
 from io import StringIO
 from pathlib import Path
-from typing import Optional, Union
+from typing import TypedDict
 
-import numpy as np
+# Third party imports
 import pandas as pd
 
-from ..common import ops
-from .utils import default_and_validation, hspf_tables_to_hdf_tables
+# First party imports
+from hsp2.hsp2io.common import ops
+from hsp2.hsp2io.utilities import (
+    _continuation_keys,
+    _multiple_table_names,
+    _number_prefix_columns,
+    _operation_prefix_columns,
+    _operation_prefix_map,
+    _parameters,
+    _tables,
+    default_and_validation,
+    hspf_tables_to_hdf_tables,
+    is_valid_url,
+)
+
+with contextlib.suppress(Exception):
+    # To use "str" type instead of "object" type in pandas 2.3+
+    pd.options.future.infer_string = True
 
 wrapper = textwrap.TextWrapper()
 
-# There are several tables that appear multiple times in the UCI file, and the
-# order matters.  For example, the SILT-CLAY-PM table appears twice, the first
-# table are the parameters for silt and the second table the parameters for
-# clay. Use the following mappings to adjust the table name when reading.
-_gq_daughter_map = {
-    0: "hydrolysis",
-    1: "oxidation",
-    2: "photolysis",
-    3: "reserved",
-    4: "biodegredation",
-    5: "first_order",
-}
-_silt_clay_pm_map = {0: "silt", 1: "clay"}
-_10_map = {i: f"{i + 1}" for i in range(10)}
-_03_map = {i: f"{i + 1}" for i in range(3)}
-_119_map = {i: f"{i + 1}" for i in range(119)}
-_four_layer_map = {0: "surface", 1: "upper", 2: "lower", 3: "groundwater"}
-_layer_10_map = {
-    key + j: f"{val}_{j}" for key, val in _four_layer_map.items() for j in range(10)
-}
-_layer_03_map = {
-    key + j: f"{val}_{j}" for key, val in _four_layer_map.items() for j in range(3)
-}
-_two_layer_map = {0: "surface", 1: "upper"}
 
-_multiple_table_names = {
-    ("IMPLND", "MON-ACCUM"): _10_map,
-    ("IMPLND", "MON-POTFW"): _10_map,
-    ("IMPLND", "MON-SQOLIM"): _10_map,
-    ("IMPLND", "QUAL-INPUT"): _10_map,
-    ("IMPLND", "QUAL-PROPS"): _10_map,
-    ("PERLND", "MON-ACCUM"): _10_map,
-    ("PERLND", "MON-GRND-CONC"): _10_map,
-    ("PERLND", "MON-IFLW-CONC"): _10_map,
-    ("PERLND", "MON-NITAGUTF"): _four_layer_map,
-    ("PERLND", "MON-NITIMAM"): _four_layer_map,
-    ("PERLND", "MON-NITIMNI"): _four_layer_map,
-    ("PERLND", "MON-NITUPAM"): _four_layer_map,
-    ("PERLND", "MON-NITUPNI"): _four_layer_map,
-    ("PERLND", "MON-NITUPT"): _four_layer_map,
-    ("PERLND", "MON-NPRETBG"): _four_layer_map,
-    ("PERLND", "MON-NPRETLI"): _two_layer_map,
-    ("PERLND", "MON-NUPT-FR2"): _four_layer_map,
-    ("PERLND", "MON-PUPT-FR2"): _four_layer_map,
-    ("PERLND", "MON-PHOSUPT"): _four_layer_map,
-    ("PERLND", "MON-POTFS"): _10_map,
-    ("PERLND", "MON-POTFW"): _10_map,
-    ("PERLND", "MON-SQOLIM"): _10_map,
-    ("PERLND", "NIT-FSTPM"): _four_layer_map,
-    ("PERLND", "NIT-ORGPM"): _four_layer_map,
-    ("PERLND", "NIT-STOR1"): _four_layer_map,
-    ("PERLND", "NIT-SVALPM"): _four_layer_map,
-    ("PERLND", "NIT-UPIMCSAT"): _four_layer_map,
-    ("PERLND", "NIT-UPIMKMAX"): _four_layer_map,
-    ("PERLND", "PEST-FIRSTPM"): _layer_03_map,
-    ("PERLND", "PEST-NONSVPM"): _layer_03_map,
-    ("PERLND", "PEST-STOR1"): _layer_03_map,
-    ("PERLND", "PEST-SVALPM"): _layer_03_map,
-    ("PERLND", "PHOS-FSTPM"): _four_layer_map,
-    ("PERLND", "PHOS-STOR1"): _four_layer_map,
-    ("PERLND", "PHOS-SVALPM"): _four_layer_map,
-    ("PERLND", "QUAL-INPUT"): _10_map,
-    ("PERLND", "QUAL-PROPS"): _10_map,
-    ("PLTGEN", "CURV-DATA"): _119_map,
-    ("RCHRES", "CONS-DATA"): _10_map,
-    ("RCHRES", "GQ-DAUGHTER"): _gq_daughter_map,
-    ("RCHRES", "SILT-CLAY-PM"): _silt_clay_pm_map,
-    ("RCHRES", "GQ-QALDATA"): _03_map,
-    ("RCHRES", "GQ-QALFG"): _03_map,
-    ("RCHRES", "GQ-HYDPM"): _03_map,
-    ("RCHRES", "GQ-ROXPM"): _03_map,
-    ("RCHRES", "GQ-CFGAS"): _03_map,
-    ("RCHRES", "GQ-BIOPM"): _03_map,
-    ("RCHRES", "GQ-GENDECAY"): _03_map,
-    ("RCHRES", "GQ-SEDDECAY"): _03_map,
-    ("RCHRES", "GQ-KD"): _03_map,
-    ("RCHRES", "GQ-ADRATE"): _03_map,
-    ("RCHRES", "GQ-SEDCONC"): _03_map,
-    ("RCHRES", "GQ-VALUES"): _03_map,
-}
-
-_dirname = Path(__file__).parent.parent.parent
-fill_table_name = {"HSPF_TABLE": ""}
-_tables = pd.read_csv(_dirname / "data" / "Tables.csv").fillna(fill_table_name)
-_parameters = pd.read_csv(_dirname / "data" / "Parameters.csv").fillna(fill_table_name)
-_req_tables = pd.read_csv(_dirname / "data" / "DefaultableTables.csv").fillna(
-    fill_table_name
-)
-
-# Bring over HDF_TABLE from _tables to _parameters.
-_parameters = pd.merge(
-    _tables[
-        [
-            "HSPF_BLOCK",
-            "HSPF_TABLE_EXT",
-            "HDF_TABLE",
-            "HSPF_TABLE",
-        ]
-    ],
-    _parameters,
-    on=["HSPF_BLOCK", "HSPF_TABLE"],
-    how="left",
-)
-
-
-def _reader(filename: str):
+def _reader(filename: str | os.PathLike):
     """
     Simple generator that reads a Users Control Input (UCI) file.
 
@@ -136,7 +51,7 @@ def _reader(filename: str):
 
     Parameters
     ----------
-    filename : str or Path
+    filename : str or os.PathLike
         The path to the UCI file to read.
 
     Yields
@@ -144,46 +59,27 @@ def _reader(filename: str):
     str
         Each line from the UCI file that is not a comment or blank.
     """
-    if filename.startswith("http://") or filename.startswith("https://"):
-        lopen = urllib.request.urlopen
-    else:
-        lopen = open
-
+    lopen = urllib.request.urlopen if is_valid_url(filename) else open
     with lopen(filename) as uci_file:
-        for line_number, line in enumerate(uci_file):
+        for line in uci_file:
             nline = line.decode("ascii") if isinstance(line, bytes) else line
 
             # UCI max line length is 80
             nline = nline.rstrip()
-            if len(nline) > 80:
-                warnings.warn(
-                    textwrap.dedent(f"""\
-                        Everything after 80 characters in a UCI file is
-                        completely ignored, even '***' comment identifier.
-
-                        file: {filename}
-                        line number: {line_number + 1}
-                        length: {len(line)}
-                        line:
-                        '{line}'
-                        """)
-                )
             nline = nline[:80].rstrip()
 
             # If line is a comment or blank, skip it.
-            if "***" in nline or not nline:
-                continue
-
-            yield nline
+            if "***" not in nline and nline:
+                yield nline
 
 
-def read_uci_parameters(uciname: Union[str, Path]) -> dict:
+def read_uci_parameters(uciname: str | os.PathLike) -> dict:
     """
     Read and parse a Users Control Input (UCI) file.
 
     Parameters
     ----------
-    uciname : str
+    uciname : str or os.PathLike
         The path to the local UCI file or http:// or https:// URI.
 
     Returns
@@ -205,10 +101,7 @@ def read_uci_parameters(uciname: Union[str, Path]) -> dict:
     block_name = ""
     hspf_table = ""
     table_num = None
-    collected = {}
-
-    sa_conditions = []
-    open_conditions = []
+    collected: dict[tuple[str, str | None, int | None], list] = {}
 
     _table_counter: dict[tuple, int] = {}
 
@@ -223,6 +116,9 @@ def read_uci_parameters(uciname: Union[str, Path]) -> dict:
             table_names = _tables[(_tables["HSPF_BLOCK"] == block_name)][
                 "HSPF_TABLE_EXT"
             ].unique()
+            # SPEC-ACTIONS has no explicit tables; lines are classified later.
+            if block_name == "SPEC-ACTIONS":
+                table_names = []
 
             continue
 
@@ -235,7 +131,7 @@ def read_uci_parameters(uciname: Union[str, Path]) -> dict:
                 continue
 
             # Identify the end of a table.
-            if hspf_table and words[0] == "END":
+            if hspf_table and words[0].strip() == "END":
                 hspf_table = ""
                 continue
 
@@ -250,7 +146,7 @@ def read_uci_parameters(uciname: Union[str, Path]) -> dict:
 
             # We are inside a block, now identify the start of a table.
             if words[0] in table_names and not hspf_table:
-                hspf_table = words[0]
+                hspf_table = words[0].strip()
                 table_num = None
                 # For FTABLE, MONTH-DATA, and MASS-LINK tables, get the table
                 # number.
@@ -287,7 +183,7 @@ def read_uci_parameters(uciname: Union[str, Path]) -> dict:
         # Read entire PEST supplemental file into 'sfplines' which becomes the
         # 'pest_sup' dictionary with the record id as the key and list of
         # floats as the value.
-        pestsu = Path(uciname).parent / pestsu
+        pestsu = str(Path(uciname).parent / pestsu)
         with open(pestsu, encoding="ascii") as sfp:
             sfplines = sfp.readlines()
 
@@ -320,28 +216,13 @@ def read_uci_parameters(uciname: Union[str, Path]) -> dict:
     #
     # NOTE: At the present time, you cannot use a pest supplemental file to
     # modify parameters in tables that use continuation lines.
-    for key, n_cont_lines in [
-        (("GLOBAL", "", None), 4),
-        (("RCHRES", "GQ-PHOTPM", None), 3),
-        (("RCHRES", "GQ-ALPHA", None), 3),
-        (("RCHRES", "GQ-GAMMA", None), 3),
-        (("RCHRES", "GQ-DAUGHTER_hydrolysis", None), 6),
-        (("RCHRES", "GQ-DAUGHTER_oxidation", None), 6),
-        (("RCHRES", "GQ-DAUGHTER_photolysis", None), 6),
-        (("RCHRES", "GQ-DAUGHTER_reserved", None), 6),
-        (("RCHRES", "GQ-DAUGHTER_biodegredation", None), 6),
-        (("RCHRES", "GQ-DAUGHTER_first_order", None), 6),
-        (("RCHRES", "GQ-DELTA", None), 3),
-        (("RCHRES", "GQ-CLDFACT", None), 3),
-        (("DURANL", "LCONC", None), 2),
-        (("DURANL", "LEVELS", None), 2),
-    ]:
+    for key, n_cont_lines in _continuation_keys:
         if key in collected:
             extended = collected[key]
             newlines = []
-            for first in range(0, len(extended), n_cont_lines):
+            for first_operation in range(0, len(extended), n_cont_lines):
                 newstr = "".join(
-                    f"{extended[first + i]:<80}" for i in range(n_cont_lines)
+                    f"{extended[first_operation + i]:<80}" for i in range(n_cont_lines)
                 )
                 newlines.append(newstr)
             collected[key] = newlines
@@ -349,17 +230,21 @@ def read_uci_parameters(uciname: Union[str, Path]) -> dict:
     # FTABLE has a rows/columns row as the first line that we don't want as the
     # first line of the dataframe.  Append instead to each line in the table
     # and define the new 'rows' and 'columns' parameters in Parameters.csv.
-    for key in [k for k in collected if k[0] == "FTABLES"]:
-        rows, cols = collected[key][0].split()
+    for ftable_key in [k for k in collected if k[0] == "FTABLES"]:
+        rows, cols = collected[ftable_key][0].split()
         nlines = [
-            f"{line:<80}{int(rows):<10}{int(cols):<10}" for line in collected[key][1:]
+            f"{line:<80}{int(rows):<10}{int(cols):<10}"
+            for line in collected[ftable_key][1:]
         ]
-        collected[key] = nlines
+        collected[ftable_key] = nlines
 
     # Need to add a MLNO column to the MASS-LINK that is the table_num.
-    for key in [k for k in collected if k[0] == "MASS-LINK"]:
-        nlines = [f"{line:<80}{int(key[2]):<10}" for line in collected[key]]
-        collected[key] = nlines
+    for mass_link_key in [k for k in collected if k[0] == "MASS-LINK"]:
+        nlines = [
+            f"{line:<80}{int(mass_link_key[2]):<10}"
+            for line in collected[mass_link_key]
+        ]
+        collected[mass_link_key] = nlines
 
     # Set the INDELT explicitly for each entry in the OPN SEQUENCE table based
     # on the last INDELT entry read in the OPN SEQUENCE block.  This allows us
@@ -399,21 +284,28 @@ def read_uci_parameters(uciname: Union[str, Path]) -> dict:
     # Each ACTION has a logical condition that is built up as the lines
     # are read to establish whether an action is to be taken or not.  The
     # default logical condition is True for ACTION lines outside of a "IF/END
-    # IF" block.  A "condition" table, linked by "conf_id", is created to store
+    # IF" block.  A "conditions" table, linked by "cond_id", is created to store
     # the logical conditions for each ACTION line.
+    default_d_info = TypedDict(
+        "default_d_info",
+        {"cond_id": int, "parent_id": int, "sibling_id": int, "condition": str},
+    )
+
     sa_actions = []
     sa_uvquan = []
-    open_conditions = []
+    open_conditions: list[int] = []
     sa_distrb = []
     sa_uvname = []
-    sa_conditions = []
-    default_d: dict[str, Union[str, int]] = {
+    sa_conditions: list[default_d_info] = []
+
+    default_d: default_d_info = {
         "cond_id": -1,
         "parent_id": -1,
         "sibling_id": -1,
         "condition": "",
     }
-    for sa_line in collected.get(("SPEC-ACTIONS", "", None), []):
+    sa_iter = iter(collected.get(("SPEC-ACTIONS", "", None), []))
+    for sa_line in sa_iter:
         words = sa_line.split()
         # Notes:
         # - Only "classic" special actions are currently active.
@@ -429,20 +321,18 @@ def read_uci_parameters(uciname: Union[str, Path]) -> dict:
             sa_distrb.append(sa_line)
         elif words[0] == "UVNAME":
             sa_uvname.append(sa_line)
-        elif words[0] == "IF" or f"{words[0]} {words[1]}" == "ELSE IF":
+        elif words[0] == "IF" or " ".join(words[:2]) == "ELSE IF":
             # The condition for an IF or ELSE IF can be spread over multiple
             # lines until a THEN is encountered at the end of a line.  So we
             # need to loop through the lines until we find the THEN and combine
             # those lines into a single line to get the full condition.
             continuation_lines = [" ".join(sa_line.strip().split())]
             while continuation_lines[-1].split()[-1] != "THEN":
-                continuation_lines.append(" ".join(sa_line.next().strip().split()))
+                continuation_lines.append(" ".join(next(sa_iter).strip().split()))
             continuation_line = " ".join(continuation_lines)
 
             d = default_d.copy()
-
             d["cond_id"] = len(sa_conditions)
-            d["parent_id"] = open_conditions[-1] if open_conditions else -1
             d["condition"] = (
                 continuation_line.removeprefix("IF ")
                 .removeprefix("ELSE IF ")
@@ -450,26 +340,29 @@ def read_uci_parameters(uciname: Union[str, Path]) -> dict:
                 .strip()
             )
             for i, j in [("[", "("), ("{", "("), ("]", ")"), ("}", ")")]:
-                d["condition"].replace(i, j)
+                d["condition"] = d["condition"].replace(i, j)
 
             if words[0] == "IF":
-                d["sibling_id"] = -1
-            elif f"{words[0]} {words[1]}" == "ELSE IF":
-                d["sibling_id"] = sa_conditions[-1]["cond_id"]
+                d["parent_id"] = open_conditions[-1] if open_conditions else -1
+            else:
+                # ELSE IF replaces the branch that is currently open.
+                d["sibling_id"] = open_conditions.pop()
+                d["parent_id"] = sa_conditions[d["sibling_id"]]["parent_id"]
 
             open_conditions.append(d["cond_id"])
             sa_conditions.append(d)
         elif words[0] == "ELSE":
             d = default_d.copy()
-            d["sibling_id"] = sa_conditions[-1]["cond_id"]
-            d["parent_id"] = open_conditions[-1] if open_conditions else -1
-        elif f"{words[0]} {words[1]}" == "END IF":
+            d["cond_id"] = len(sa_conditions)
+            d["sibling_id"] = open_conditions.pop()
+            d["parent_id"] = sa_conditions[d["sibling_id"]]["parent_id"]
+            open_conditions.append(d["cond_id"])
+            sa_conditions.append(d)
+        elif " ".join(words[:2]) == "END IF":
             open_conditions.pop()
         else:
-            d = default_d.copy()
-            d["condition"] = open_conditions[-1] if open_conditions else -1
-
-            sa_actions.append(f"{sa_line:<80}{d['condition']:<10}")
+            cond_id = open_conditions[-1] if open_conditions else -1
+            sa_actions.append(f"{sa_line:<80}{cond_id:<10}")
 
     collected.pop(("SPEC-ACTIONS", "", None), None)
     for list_lines, table_name in [
@@ -477,9 +370,11 @@ def read_uci_parameters(uciname: Union[str, Path]) -> dict:
         (sa_distrb, "DISTRB"),
         (sa_uvname, "UVNAME"),
         (sa_actions, "ACTION"),
-        (sa_conditions, "conditions"),
     ]:
-        collected[("SPEC-ACTIONS", table_name, None)] = list_lines
+        if list_lines:
+            collected[("SPEC-ACTIONS", table_name, None)] = list_lines
+    if sa_conditions:
+        collected[("SPEC-ACTIONS", "conditions", None)] = pd.DataFrame(sa_conditions)
 
     # Convert 'collected' dictionary of list of strings to 'ncollected'
     # dictionary of DataFrames
@@ -495,8 +390,11 @@ def read_uci_parameters(uciname: Union[str, Path]) -> dict:
     #         Parameters.csv file.  Uses "explode" to expand the (OPNID,
     #         OPNIDLAST) into unique rows for each range of ids in (OPNID,
     #         OPNIDLAST).  The last row for duplicate OPNIDs is kept.
-    ncollected: [tuple[str, str, Optional[str]], pd.DataFrame] = {}
+    ncollected: dict[tuple[str, str | None, str | int | None], pd.DataFrame] = {}
     for (hspf_block, hspf_table, table_num), lines in collected.items():
+        if isinstance(lines, pd.DataFrame):
+            ncollected[(hspf_block, hspf_table, table_num)] = lines
+            continue
         table_metadata = _parameters.loc[
             (_parameters["HSPF_BLOCK"] == hspf_block)
             & (
@@ -505,7 +403,7 @@ def read_uci_parameters(uciname: Union[str, Path]) -> dict:
             )
         ]
 
-        names = table_metadata["PARAMETER_NAME"].values
+        names = table_metadata["PARAMETER_NAME"].to_list()
 
         if pest_sup and ("OPNID" in names):
             # Have to read separately for PEST supplemental file and create two
@@ -530,8 +428,13 @@ def read_uci_parameters(uciname: Union[str, Path]) -> dict:
             for line in lines:
                 if tilde := re.match("~([0-9][0-9]*)~", line[10:]):
                     tilde = tilde[0][1:-1]
+                    # Have to use read_csv instead of read_fwf since the
+                    # supplemental file is space delimited instead of fixed
+                    # width format.
                     try:
-                        nlines.append(",".join([line[:10]] + pest_sup[tilde]))
+                        nlines.append(
+                            ",".join([line[:5], line[5:10]] + pest_sup[tilde])
+                        )
                     except KeyError as exc:
                         raise ValueError(
                             wrapper.wrap(
@@ -544,14 +447,16 @@ def read_uci_parameters(uciname: Union[str, Path]) -> dict:
                         ) from exc
                     pass_through_lines.append(line[:10])
                 else:
-                    nlines.append(",".join([line[:10]] + [""] * len(names)))
+                    nlines.append(
+                        ",".join([line[:5], line[5:10]] + [""] * (len(names) - 2))
+                    )
                     pass_through_lines.append(line)
             lines = pass_through_lines
             pest_sup_df = pd.read_csv(
                 StringIO("\n".join(nlines)),
                 names=names,
                 index_col=False,
-                na_values="na",
+                skipinitialspace=True,
             )
 
         # Read the lines into a DataFrame using the START and STOP columns.
@@ -571,23 +476,25 @@ def read_uci_parameters(uciname: Union[str, Path]) -> dict:
         # columns to use ranges of operations.  If there are ranges specified,
         # explode those ranges into individual rows and then drop duplicates
         # keeping the last row for each operation or target volume number.
-        for exploder_col, first, last in [
+        for exploder_col, first_operation_col, last_operation_col in [
             ("OPNID", "OPNID", "OPNIDLAST"),
             ("TVOLNO", "TOPFST", "TOPLST"),
         ]:
-            if first in ndf.columns and last in ndf.columns:
+            if first_operation_col in ndf.columns and last_operation_col in ndf.columns:
                 exploder = pd.DataFrame()
-                exploder["FIRSTID"] = pd.to_numeric(ndf[first]).astype(int)
-                exploder["LASTID"] = pd.to_numeric(ndf[last].fillna(ndf[first])).astype(
+                exploder["FIRSTID"] = pd.to_numeric(ndf[first_operation_col]).astype(
                     int
                 )
+                exploder["LASTID"] = pd.to_numeric(
+                    ndf[last_operation_col].fillna(ndf[first_operation_col])
+                ).astype(int)
 
                 exploder[exploder_col] = [
                     list(range(i, j + 1)) for i, j in exploder.values
                 ]
                 exploder = exploder.drop(columns=["FIRSTID", "LASTID"])
 
-                ndf = ndf.drop(columns=[first, last])
+                ndf = ndf.drop(columns=[first_operation_col, last_operation_col])
                 ndf = pd.concat([exploder, ndf], axis="columns")
                 ndf = ndf.explode(exploder_col)
                 if exploder_col == "OPNID":
@@ -630,10 +537,11 @@ def read_uci_parameters(uciname: Union[str, Path]) -> dict:
                     source_hdf_table
                 ][par]
 
-    # Special processing of /CONTROL/GLOBAL and /CONTROL/EXT_SOURCES tables.
+    # Special processing of /CONTROL/GLOBAL tables.
     cgl = nhdf_collected["/CONTROL/GLOBAL"]
     cgl["Comment"] = cgl["COMMENT"]
 
+    # Special processing of /CONTROL/GLOBAL tables: start and end times
     cgl = cgl.fillna(
         {
             "SYR": 1900,
@@ -663,80 +571,61 @@ def read_uci_parameters(uciname: Union[str, Path]) -> dict:
         + pd.Timedelta(minutes=int(cgl.loc[0, "EMI"]))
     )[:16]
 
+    # Special processing of /CONTROL/GLOBAL tables: units, transpose, and
+    # replace.
     cgl["Units"] = cgl.loc[0, "UFG"] or 1
-    cgl = cgl[["Comment", "Start", "Stop", "Units"]].transpose()
+    cgl = cgl[
+        ["Comment", "Start", "Stop", "Units", "LEV", "SPA", "RES", "RUN"]
+    ].transpose()
     cgl.columns = ["Info"]
     cgl["Info"] = cgl["Info"].astype(str)
     nhdf_collected["/CONTROL/GLOBAL"] = cgl
 
+    # Special processing of /CONTROL/EXT_SOURCES table to handle multiple WDM
+    # files.
     ext_sources = nhdf_collected["/CONTROL/EXT_SOURCES"]
     for svol, baseno in [
-        ("WDM", 0),
         ("WDM1", 100000),
         ("WDM2", 200000),
         ("WDM3", 300000),
         ("WDM4", 400000),
     ]:
-        mask = ext_sources["SVOL"] == svol
+        if svol == "WDM1":
+            # WDM and WDM1 are synonymous
+            mask = ext_sources["SVOL"].isin(("WDM1", "WDM"))
+        else:
+            mask = ext_sources["SVOL"] == svol
         if not mask.any():
             continue
-        ext_sources.loc[mask, "SVOLNO"] = baseno + ext_sources.loc[
-            mask, "SVOLNO"
-        ].astype(int)
         ext_sources["SVOLNO"] = ext_sources["SVOLNO"].astype(str)
-        ext_sources.loc[mask, "SVOLNO"] = ext_sources.loc[mask, "SVOLNO"].apply(
-            lambda x: f"TS{int(x):03}"
-        )
+        tmpcol = baseno + ext_sources.loc[mask, "SVOLNO"].astype(int)
+        tmpcol = tmpcol.apply(lambda x: f"TS{x:03}")
+        ext_sources.loc[mask, "SVOLNO"] = tmpcol
     nhdf_collected["/CONTROL/EXT_SOURCES"] = ext_sources
 
     # HSPsquared in several tables require that operation and id be combined.
-    # So ("PERLND", 101) is changed to "P101", ("IMLND", 67) becomes "I067",
-    # ...etc.
-    #
-    # Currently HSP2 only uses PERLND, IMPLND, RCHRES, and GENER.  The others
-    # are used by HSPF and are kept in order to (eventually) be able to go UCI
-    # -> HDF5 -> UCI.
-    operation_prefix_map = {
-        "PERLND": "P",
-        "IMPLND": "I",
-        "RCHRES": "R",
-        "DISPLY": "D",
-        "GENER": "G",
-        "PLTGEN": "L",
-        "DURANL": "U",
-        "MUTSIN": "M",
-        "BMPRAC": "B",
-        "REPORT": "E",
-    }
-    for table, tlink, tlabel in [
-        ("/CONTROL/OP_SEQUENCE", "SEGMENT", "OPERATION"),
-        ("/CONTROL/LINKS", "SVOLNO", "SVOL"),
-        ("/CONTROL/LINKS", "TVOLNO", "TVOL"),
-        ("/CONTROL/EXT_SOURCES", "TVOLNO", "TVOL"),
-    ]:
+    for table, tlink, tlabel in _operation_prefix_columns:
+        if table not in nhdf_collected:
+            continue
         ndf = nhdf_collected[table]
-        ndf[tlink] = ndf[tlabel].replace(operation_prefix_map) + ndf[tlink].apply(
+        ndf[tlink] = ndf[tlabel].replace(_operation_prefix_map) + ndf[tlink].apply(
             lambda x: f"{int(x):03d}"
         )
         nhdf_collected[table] = ndf
 
     # All MASS-LINK need the "ML" prefix added and all FTBUCI need the "FT"
     # prefix added.
-    for table, tlink, iprefix in [
-        ("/CONTROL/MASS_LINKS", "MLNO", "ML"),
-        ("/RCHRES/HYDR/PARAMETERS", "FTBUCI", "FT"),
-        ("/CONTROL/LINKS", "MLNO", "ML"),
-    ]:
+    for table, tlink, iprefix in _number_prefix_columns:
         if table not in nhdf_collected:
             continue
         if tlink not in nhdf_collected[table].columns:
             continue
         ndf = nhdf_collected[table]
-        mask = np.isfinite(ndf[tlink])
+        mask = ~pd.isna(ndf[tlink])
         tmp_col = f"{tlink}_TMP"
         ndf[tmp_col] = ""
         ndf.loc[mask, tmp_col] = ndf.loc[mask, tlink].apply(
-            lambda x: f"{iprefix}{int(x):03d}"
+            lambda x, iprefix=iprefix: f"{iprefix}{int(x):03d}"
         )
         ndf[tlink] = ndf[tmp_col]
         ndf = ndf.drop(columns=[tmp_col])

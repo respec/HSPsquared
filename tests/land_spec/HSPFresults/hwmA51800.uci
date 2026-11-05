@@ -79,7 +79,7 @@ PERLND
 
   PRINT-INFO
     #    # ATMP SNOW PWAT  SED  PST  PWG PQAL MSTL PEST NITR PHOS TRAC PIVL***PY
-    1         5    5    5    5    5    5    0    5    0    5    5    0    0   12
+    1         5    5    5    5    5    5         5         5    5             12
   END PRINT-INFO
 
   GEN-INFO
@@ -324,7 +324,7 @@ PERLND
 
   CROP-DATES
     # -  # NCRP    PM1PD1  HM1HD1    PM2PD2  HM2HD2    PM3PD3  HM3HD3  ***
-    1         1      1  1   12 31      0  0    0  0      0  0    0  0
+    1         1      1  1   12 31
   END CROP-DATES
 
   NIT-YIELD
