@@ -3,6 +3,7 @@ Author: Robert Heaphy, Ph.D.
 License: LGPL2
 """
 
+# Third party imports
 from pandas import HDFStore, concat
 
 
@@ -29,7 +30,7 @@ def clone(hdfname, operation, fromID, toID):
     """
 
     with HDFStore(hdfname) as store:
-        paths = [key for key in store.keys() if key.startswith(f"/{operation}")]
+        paths = [key for key in store if key.startswith(f"/{operation}")]
         for path in paths:
             df = store[path]
             if fromID in df.index:
@@ -51,7 +52,6 @@ def clone(hdfname, operation, fromID, toID):
         newdf["SVOLNO"] = toID
         dff = concat([df, newdf], ignore_index=True)
         dff.to_hdf(store, path, format="table", data_columns=True)
-    return
 
 
 def removeClone(hdfname, operation, ID):
@@ -73,7 +73,7 @@ def removeClone(hdfname, operation, ID):
     """
 
     with HDFStore(hdfname) as store:
-        paths = [key for key in store.keys() if key.startswith(f"/{operation}")]
+        paths = [key for key in store if key.startswith(f"/{operation}")]
         for path in paths:
             df = store[path]
             if ID in df.index:
@@ -97,4 +97,3 @@ def removeClone(hdfname, operation, ID):
         indx = df[(df.SVOL == operation) & (df.SVOLNO == ID)].index
         df = df.drop(index=indx)
         df.to_hdf(store, path, format="table", data_columns=True)
-    return

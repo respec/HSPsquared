@@ -1,6 +1,5 @@
-import sys
-
-from numba import float32, int8, njit, typed, types  # import the types
+# Third party imports
+from numba import njit  # import the types
 
 print("Loaded a set of  HSP2 code!")
 
@@ -25,4 +24,3 @@ def state_step_hydr(state_info, state_paths, state_ix, dict_ix, ts_ix, hydr_ix, 
         )
         if step <= 1:
             print("IVOL after", state_ix[hydr_ix["IVOL"]])
-    return

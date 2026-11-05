@@ -520,21 +520,21 @@ EXT SOURCES,,MFACTOR,float,28,38,,1,,,1,,,,"*** The factor by which data from th
 EXT SOURCES,,TRAN,str,38,42,,,,,,,,"['SAME', 'AVER', 'DIV', 'INTP', 'LAST', 'MAX', 'MIN', 'SUM', 'DEF', '']","*** String indicating which transformation function to use in transf time
 *** series from source to target."
 EXT SOURCES,,TVOL,str,43,49,,,,,,,,"['PERLND', 'IMPLND', 'RCHRES', 'COPY', 'PLTGEN', 'DISPLY', 'DURANL', 'GENER', 'MUTSIN']",*** Operation-type of the target opn.
-EXT SOURCES,,TOPFST,int,50,54,,,1,,,1,,,*** TOPFST is the first target Operation-type No.
-EXT SOURCES,,TOPLST,int,54,58,,,1,,,1,,,*** TOPFST is the first target Operation-type No.
-EXT SOURCES,,TGRPN,str,58,64,,,,,,,,,*** Group to which the target time series belongs.
+EXT SOURCES,,TOPFST,int,50,53,,,1,,,1,,,*** TOPFST is the first target Operation-type No.
+EXT SOURCES,,TOPLST,int,54,57,,,1,,,1,,,*** TOPFST is the first target Operation-type No.
+EXT SOURCES,,TGRPN,str,58,63,,,,,,,,,*** Group to which the target time series belongs.
 EXT SOURCES,,TMEMN,str,65,71,,,,,,,,,"*** Target member name. Default: all members. Refer to Time Series Catalog
 *** for more information."
-EXT SOURCES,,TMEMSB1,str,71,73,1,,,,,,,,*** Target member name first subscript.
-EXT SOURCES,,TMEMSB2,str,73,75,1,,,,,,,,*** Target member name second subscript.
+EXT SOURCES,,TMEMSB1,str,71,73,,,,,,,,,*** Target member name first subscript.
+EXT SOURCES,,TMEMSB2,str,73,75,,,,,,,,,*** Target member name second subscript.
 EXT SOURCES,,TMEMSB,str,71,75,,,,,,,,,*** Target member name second subscript.
 EXT TARGETS,,SVOL,str,0,6,,,,,,,,"['PERLND', 'IMPLND', 'RCHRES', 'COPY', 'PLTGEN', 'DISPLY', 'DURANL', 'GENER', 'MUTSIN']",*** Operation-type of the source opn.
 EXT TARGETS,,SVOLNO,int,6,10,,,1,,,1,,,*** Source Operation-type No.
 EXT TARGETS,,SGRPN,str,11,17,,,,,,,,,*** Group to which the source time series belongs.
 EXT TARGETS,,SMEMN,str,18,24,,,,,,,,,"*** Source member name. Default: all members. Refer to time series catalogue
 *** for more information."
-EXT TARGETS,,SMEMSB1,str,24,26,1,,,,,,,,*** Source member name first subscript.
-EXT TARGETS,,SMEMSB2,str,26,28,1,,,,,,,,*** Source member name second subscript.
+EXT TARGETS,,SMEMSB1,str,24,26,,,,,,,,,*** Source member name first subscript.
+EXT TARGETS,,SMEMSB2,str,26,28,,,,,,,,,*** Source member name second subscript.
 EXT TARGETS,,MFACTOR,float,28,38,,1,,,1,,,,"*** The factor by which data from the source will be multiplied before being
 *** added to the target."
 EXT TARGETS,,TRAN,str,38,42,,,,,,,,"['SAME', 'AVER', 'DIV', 'INTP', 'LAST', 'MAX', 'MIN', 'SUM', 'DEF', '']","*** String indicating which transformation function to use in transferring
@@ -609,7 +609,7 @@ IMPLND,ACTIVITY,IWATER,int,20,25,,0,0,1,0,0,1,,*** value of 1 indicates section 
 IMPLND,ACTIVITY,SOLIDS,int,25,30,,0,0,1,0,0,1,,*** value of 1 indicates section SOLIDS is active.
 IMPLND,ACTIVITY,IWTGAS,int,30,35,,0,0,1,0,0,1,,*** value of 1 indicates section IWTGAS is active.
 IMPLND,ACTIVITY,IQUAL,int,35,40,,0,0,1,0,0,1,,*** value of 1 indicates section IQUAL is active
-IMPLND,ATEMP-DAT,OPNID,int,0,80,,,,,,,,,*** ILS to which these data apply.
+IMPLND,ATEMP-DAT,OPNID,int,0,5,,,,,,,,,*** ILS to which these data apply.
 IMPLND,ATEMP-DAT,OPNIDLAST,int,5,10,,,,,,,,,*** ILS to which these data apply.
 IMPLND,ATEMP-DAT,ELDAT,float,10,20,,0,,,0,,,,"*** ELDAT is the difference in elevation between the temperature gage and
 *** the ILS; it is used to estimate the temperature over the ILS by
@@ -1109,16 +1109,16 @@ MASS-LINK,MASS-LINK,SVOL,str,0,6,,,,,,,,"['PERLND', 'IMPLND', 'RCHRES', 'COPY', 
 MASS-LINK,MASS-LINK,SGRPN,str,11,17,,,,,,,,,*** Group to which the source time series belongs.
 MASS-LINK,MASS-LINK,SMEMN,str,18,24,,,,,,,,,"*** Source member name. Default: all members. Refer to Time Series Catalogue
 *** for more information."
-MASS-LINK,MASS-LINK,SMEMSB1,str,24,26,1,,,,,,,,*** Source member name first subscript.
-MASS-LINK,MASS-LINK,SMEMSB2,str,26,28,1,,,,,,,,*** Source member name second subscript.
+MASS-LINK,MASS-LINK,SMEMSB1,str,24,26,,,,,,,,,*** Source member name first subscript.
+MASS-LINK,MASS-LINK,SMEMSB2,str,26,28,,,,,,,,,*** Source member name second subscript.
 MASS-LINK,MASS-LINK,MFACTOR,float,28,38,,1,,,1,,,,"*** The factor by which data from the source will be multiplied before being
 *** added to the target."
 MASS-LINK,MASS-LINK,TVOL,str,43,49,,,,,,,,"['PERLND', 'IMPLND', 'RCHRES', 'COPY', 'PLTGEN', 'DISPLY', 'DURANL', 'GENER', 'MUTSIN']",*** Operation-type of the target.
 MASS-LINK,MASS-LINK,TGRPN,str,58,64,,,,,,,,,*** Group to which the target time series belongs.
 MASS-LINK,MASS-LINK,TMEMN,str,65,71,,,,,,,,,"*** Target member name. Default: all members. Refer to Time Series Catalogue
 *** for more information."
-MASS-LINK,MASS-LINK,TMEMSB1,str,71,73,1,,,,,,,,*** Target member name first subscript.
-MASS-LINK,MASS-LINK,TMEMSB2,str,73,75,1,,,,,,,,*** Target member name second subscript.
+MASS-LINK,MASS-LINK,TMEMSB1,str,71,73,,,,,,,,,*** Target member name first subscript.
+MASS-LINK,MASS-LINK,TMEMSB2,str,73,75,,,,,,,,,*** Target member name second subscript.
 MASS-LINK,MASS-LINK,MLNO,str,80,85,,,1,,,1,,,*** Mass link number
 MONTH-DATA,MONTH-DATA,MTHVAL1,float,0,6,,,,,,,,,
 MONTH-DATA,MONTH-DATA,MTHVAL2,float,6,12,,,,,,,,,
@@ -1145,20 +1145,20 @@ NETWORK,,SVOLNO,int,6,10,,,1,,,1,,,*** Source Operation-type No.
 NETWORK,,SGRPN,str,11,17,,,,,,,,,*** Group to which the source time series belongs.
 NETWORK,,SMEMN,str,18,24,,,,,,,,,"*** Source member name. Default: all members. Refer to Time Series Catalogue
 *** for more information."
-NETWORK,,SMEMSB1,str,24,26,1,,,,,,,,*** Source member name first subscript.
-NETWORK,,SMEMSB2,str,26,28,1,,,,,,,,*** Source member name second subscript.
+NETWORK,,SMEMSB1,str,24,26,,,,,,,,,*** Source member name first subscript.
+NETWORK,,SMEMSB2,str,26,28,,,,,,,,,*** Source member name second subscript.
 NETWORK,,MFACTOR,float,28,38,,1,,,1,,,,"*** The factor by which data from the source will be multiplied before being
 *** added to the target."
 NETWORK,,TRAN,str,38,42,,,,,,,,"['SAME', 'AVER', 'DIV', 'INTP', 'LAST', 'MAX', 'MIN', 'SUM', 'DEF', '']","*** String indicating which transformation function to use in transferring
 *** time series from source to target."
 NETWORK,,TVOL,str,43,49,,,,,,,,"['PERLND', 'IMPLND', 'RCHRES', 'COPY', 'PLTGEN', 'DISPLY', 'DURANL', 'GENER', 'MUTSIN']",*** Operation-type of the target.
-NETWORK,,TOPFST,int,50,54,,,1,,,1,,,*** TOPFST is the first target Operation-type No.
-NETWORK,,TOPLST,int,54,58,,,1,,,1,,,*** TOPFST is the first target Operation-type No.
+NETWORK,,TOPFST,int,50,53,,,1,,,1,,,*** TOPFST is the first target Operation-type No.
+NETWORK,,TOPLST,int,54,57,,,1,,,1,,,*** TOPFST is the first target Operation-type No.
 NETWORK,,TGRPN,str,58,64,,,,,,,,,*** Group to which the target time series belongs.
 NETWORK,,TMEMN,str,65,71,,,,,,,,,"*** Target member name. Default: all members. Refer to Time Series Catalogue
 *** for more information."
-NETWORK,,TMEMSB1,str,71,73,1,,,,,,,,*** Target member name first subscript.
-NETWORK,,TMEMSB2,str,73,75,1,,,,,,,,*** Target member name second subscript.
+NETWORK,,TMEMSB1,str,71,73,,,,,,,,,*** Target member name first subscript.
+NETWORK,,TMEMSB2,str,73,75,,,,,,,,,*** Target member name second subscript.
 OPN SEQUENCE,INGRP,OPERATION,str,6,12,,,,,,,,,
 OPN SEQUENCE,INGRP,SEGMENT,str,17,20,,,,,,,,,
 OPN SEQUENCE,INGRP,INDELT_minutes,int,80,90,,,1,1440,,1,1440,,
@@ -1675,346 +1675,91 @@ PERLND,MON-MELT-FAC,SEP,float,50,55,,0,0,,0,0,,,
 PERLND,MON-MELT-FAC,OCT,float,55,60,,0,0,,0,0,,,
 PERLND,MON-MELT-FAC,NOV,float,60,65,,0,0,,0,0,,,
 PERLND,MON-MELT-FAC,DEC,float,65,70,,0,0,,0,0,,,
-PERLND,MON-NITAGUTFgroundwater,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITAGUTFgroundwater,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITAGUTFgroundwater,JAN_groundwater,float,10,15,,0,0,1,0,0,1,,"*** AGFJAN is the fraction of plant uptake from the soil layer that goes to
+PERLND,MON-NITAGUTF,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,MON-NITAGUTF,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,MON-NITAGUTF,JAN,float,10,15,,0,0,1,0,0,1,,"*** AGFJAN is the fraction of plant uptake from the soil layer that goes to
 *** above-ground plant storage in January."
-PERLND,MON-NITAGUTFgroundwater,FEB_groundwater,float,15,20,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFgroundwater,MAR_groundwater,float,20,25,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFgroundwater,APR_groundwater,float,25,30,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFgroundwater,MAY_groundwater,float,30,35,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFgroundwater,JUN_groundwater,float,35,40,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFgroundwater,JUL_groundwater,float,40,45,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFgroundwater,AUG_groundwater,float,45,50,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFgroundwater,SEP_groundwater,float,50,55,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFgroundwater,OCT_groundwater,float,55,60,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFgroundwater,NOV_groundwater,float,60,65,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFgroundwater,DEC_groundwater,float,65,70,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFlower,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITAGUTFlower,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITAGUTFlower,JAN_lower,float,10,15,,0,0,1,0,0,1,,"*** AGFJAN is the fraction of plant uptake from the soil layer that goes to
-*** above-ground plant storage in January."
-PERLND,MON-NITAGUTFlower,FEB_lower,float,15,20,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFlower,MAR_lower,float,20,25,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFlower,APR_lower,float,25,30,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFlower,MAY_lower,float,30,35,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFlower,JUN_lower,float,35,40,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFlower,JUL_lower,float,40,45,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFlower,AUG_lower,float,45,50,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFlower,SEP_lower,float,50,55,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFlower,OCT_lower,float,55,60,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFlower,NOV_lower,float,60,65,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFlower,DEC_lower,float,65,70,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFsurface,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITAGUTFsurface,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITAGUTFsurface,JAN_surface,float,10,15,,0,0,1,0,0,1,,"*** AGFJAN is the fraction of plant uptake from the soil layer that goes to
-*** above-ground plant storage in January."
-PERLND,MON-NITAGUTFsurface,FEB_surface,float,15,20,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFsurface,MAR_surface,float,20,25,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFsurface,APR_surface,float,25,30,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFsurface,MAY_surface,float,30,35,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFsurface,JUN_surface,float,35,40,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFsurface,JUL_surface,float,40,45,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFsurface,AUG_surface,float,45,50,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFsurface,SEP_surface,float,50,55,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFsurface,OCT_surface,float,55,60,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFsurface,NOV_surface,float,60,65,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFsurface,DEC_surface,float,65,70,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFupper,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITAGUTFupper,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITAGUTFupper,JAN_upper,float,10,15,,0,0,1,0,0,1,,"*** AGFJAN is the fraction of plant uptake from the soil layer that goes to
-*** above-ground plant storage in January."
-PERLND,MON-NITAGUTFupper,FEB_upper,float,15,20,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFupper,MAR_upper,float,20,25,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFupper,APR_upper,float,25,30,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFupper,MAY_upper,float,30,35,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFupper,JUN_upper,float,35,40,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFupper,JUL_upper,float,40,45,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFupper,AUG_upper,float,45,50,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFupper,SEP_upper,float,50,55,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFupper,OCT_upper,float,55,60,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFupper,NOV_upper,float,60,65,,0,0,1,0,0,1,,
-PERLND,MON-NITAGUTFupper,DEC_upper,float,65,70,,0,0,1,0,0,1,,
-PERLND,MON-NITIMAMgroundwater,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITIMAMgroundwater,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITIMAMgroundwater,JAN_groundwater,float,10,15,,0,0,,0,0,,,*** KIAJAN is the maximum immobilization rate for ammonia in January.
-PERLND,MON-NITIMAMgroundwater,FEB_groundwater,float,15,20,,0,0,,0,0,,,
-PERLND,MON-NITIMAMgroundwater,MAR_groundwater,float,20,25,,0,0,,0,0,,,
-PERLND,MON-NITIMAMgroundwater,APR_groundwater,float,25,30,,0,0,,0,0,,,
-PERLND,MON-NITIMAMgroundwater,MAY_groundwater,float,30,35,,0,0,,0,0,,,
-PERLND,MON-NITIMAMgroundwater,JUN_groundwater,float,35,40,,0,0,,0,0,,,
-PERLND,MON-NITIMAMgroundwater,JUL_groundwater,float,40,45,,0,0,,0,0,,,
-PERLND,MON-NITIMAMgroundwater,AUG_groundwater,float,45,50,,0,0,,0,0,,,
-PERLND,MON-NITIMAMgroundwater,SEP_groundwater,float,50,55,,0,0,,0,0,,,
-PERLND,MON-NITIMAMgroundwater,OCT_groundwater,float,55,60,,0,0,,0,0,,,
-PERLND,MON-NITIMAMgroundwater,NOV_groundwater,float,60,65,,0,0,,0,0,,,
-PERLND,MON-NITIMAMgroundwater,DEC_groundwater,float,65,70,,0,0,,0,0,,,
-PERLND,MON-NITIMAMlower,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITIMAMlower,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITIMAMlower,JAN_lower,float,10,15,,0,0,,0,0,,,*** KIAJAN is the maximum immobilization rate for ammonia in January.
-PERLND,MON-NITIMAMlower,FEB_lower,float,15,20,,0,0,,0,0,,,
-PERLND,MON-NITIMAMlower,MAR_lower,float,20,25,,0,0,,0,0,,,
-PERLND,MON-NITIMAMlower,APR_lower,float,25,30,,0,0,,0,0,,,
-PERLND,MON-NITIMAMlower,MAY_lower,float,30,35,,0,0,,0,0,,,
-PERLND,MON-NITIMAMlower,JUN_lower,float,35,40,,0,0,,0,0,,,
-PERLND,MON-NITIMAMlower,JUL_lower,float,40,45,,0,0,,0,0,,,
-PERLND,MON-NITIMAMlower,AUG_lower,float,45,50,,0,0,,0,0,,,
-PERLND,MON-NITIMAMlower,SEP_lower,float,50,55,,0,0,,0,0,,,
-PERLND,MON-NITIMAMlower,OCT_lower,float,55,60,,0,0,,0,0,,,
-PERLND,MON-NITIMAMlower,NOV_lower,float,60,65,,0,0,,0,0,,,
-PERLND,MON-NITIMAMlower,DEC_lower,float,65,70,,0,0,,0,0,,,
-PERLND,MON-NITIMAMsurface,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITIMAMsurface,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITIMAMsurface,JAN_surface,float,10,15,,0,0,,0,0,,,*** KIAJAN is the maximum immobilization rate for ammonia in January.
-PERLND,MON-NITIMAMsurface,FEB_surface,float,15,20,,0,0,,0,0,,,
-PERLND,MON-NITIMAMsurface,MAR_surface,float,20,25,,0,0,,0,0,,,
-PERLND,MON-NITIMAMsurface,APR_surface,float,25,30,,0,0,,0,0,,,
-PERLND,MON-NITIMAMsurface,MAY_surface,float,30,35,,0,0,,0,0,,,
-PERLND,MON-NITIMAMsurface,JUN_surface,float,35,40,,0,0,,0,0,,,
-PERLND,MON-NITIMAMsurface,JUL_surface,float,40,45,,0,0,,0,0,,,
-PERLND,MON-NITIMAMsurface,AUG_surface,float,45,50,,0,0,,0,0,,,
-PERLND,MON-NITIMAMsurface,SEP_surface,float,50,55,,0,0,,0,0,,,
-PERLND,MON-NITIMAMsurface,OCT_surface,float,55,60,,0,0,,0,0,,,
-PERLND,MON-NITIMAMsurface,NOV_surface,float,60,65,,0,0,,0,0,,,
-PERLND,MON-NITIMAMsurface,DEC_surface,float,65,70,,0,0,,0,0,,,
-PERLND,MON-NITIMAMupper,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITIMAMupper,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITIMAMupper,JAN_upper,float,10,15,,0,0,,0,0,,,*** KIAJAN is the maximum immobilization rate for ammonia in January.
-PERLND,MON-NITIMAMupper,FEB_upper,float,15,20,,0,0,,0,0,,,
-PERLND,MON-NITIMAMupper,MAR_upper,float,20,25,,0,0,,0,0,,,
-PERLND,MON-NITIMAMupper,APR_upper,float,25,30,,0,0,,0,0,,,
-PERLND,MON-NITIMAMupper,MAY_upper,float,30,35,,0,0,,0,0,,,
-PERLND,MON-NITIMAMupper,JUN_upper,float,35,40,,0,0,,0,0,,,
-PERLND,MON-NITIMAMupper,JUL_upper,float,40,45,,0,0,,0,0,,,
-PERLND,MON-NITIMAMupper,AUG_upper,float,45,50,,0,0,,0,0,,,
-PERLND,MON-NITIMAMupper,SEP_upper,float,50,55,,0,0,,0,0,,,
-PERLND,MON-NITIMAMupper,OCT_upper,float,55,60,,0,0,,0,0,,,
-PERLND,MON-NITIMAMupper,NOV_upper,float,60,65,,0,0,,0,0,,,
-PERLND,MON-NITIMAMupper,DEC_upper,float,65,70,,0,0,,0,0,,,
-PERLND,MON-NITIMNIgroundwater,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITIMNIgroundwater,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITIMNIgroundwater,JAN_groundwater,float,10,15,,0,0,,0,0,,,*** KINJAN is the maximum immobilization rate for nitrate in January.
-PERLND,MON-NITIMNIgroundwater,FEB_groundwater,float,15,20,,0,0,,0,0,,,
-PERLND,MON-NITIMNIgroundwater,MAR_groundwater,float,20,25,,0,0,,0,0,,,
-PERLND,MON-NITIMNIgroundwater,APR_groundwater,float,25,30,,0,0,,0,0,,,
-PERLND,MON-NITIMNIgroundwater,MAY_groundwater,float,30,35,,0,0,,0,0,,,
-PERLND,MON-NITIMNIgroundwater,JUN_groundwater,float,35,40,,0,0,,0,0,,,
-PERLND,MON-NITIMNIgroundwater,JUL_groundwater,float,40,45,,0,0,,0,0,,,
-PERLND,MON-NITIMNIgroundwater,AUG_groundwater,float,45,50,,0,0,,0,0,,,
-PERLND,MON-NITIMNIgroundwater,SEP_groundwater,float,50,55,,0,0,,0,0,,,
-PERLND,MON-NITIMNIgroundwater,OCT_groundwater,float,55,60,,0,0,,0,0,,,
-PERLND,MON-NITIMNIgroundwater,NOV_groundwater,float,60,65,,0,0,,0,0,,,
-PERLND,MON-NITIMNIgroundwater,DEC_groundwater,float,65,70,,0,0,,0,0,,,
-PERLND,MON-NITIMNIlower,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITIMNIlower,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITIMNIlower,JAN_lower,float,10,15,,0,0,,0,0,,,*** KINJAN is the maximum immobilization rate for nitrate in January.
-PERLND,MON-NITIMNIlower,FEB_lower,float,15,20,,0,0,,0,0,,,
-PERLND,MON-NITIMNIlower,MAR_lower,float,20,25,,0,0,,0,0,,,
-PERLND,MON-NITIMNIlower,APR_lower,float,25,30,,0,0,,0,0,,,
-PERLND,MON-NITIMNIlower,MAY_lower,float,30,35,,0,0,,0,0,,,
-PERLND,MON-NITIMNIlower,JUN_lower,float,35,40,,0,0,,0,0,,,
-PERLND,MON-NITIMNIlower,JUL_lower,float,40,45,,0,0,,0,0,,,
-PERLND,MON-NITIMNIlower,AUG_lower,float,45,50,,0,0,,0,0,,,
-PERLND,MON-NITIMNIlower,SEP_lower,float,50,55,,0,0,,0,0,,,
-PERLND,MON-NITIMNIlower,OCT_lower,float,55,60,,0,0,,0,0,,,
-PERLND,MON-NITIMNIlower,NOV_lower,float,60,65,,0,0,,0,0,,,
-PERLND,MON-NITIMNIlower,DEC_lower,float,65,70,,0,0,,0,0,,,
-PERLND,MON-NITIMNIsurface,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITIMNIsurface,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITIMNIsurface,JAN_surface,float,10,15,,0,0,,0,0,,,*** KINJAN is the maximum immobilization rate for nitrate in January.
-PERLND,MON-NITIMNIsurface,FEB_surface,float,15,20,,0,0,,0,0,,,
-PERLND,MON-NITIMNIsurface,MAR_surface,float,20,25,,0,0,,0,0,,,
-PERLND,MON-NITIMNIsurface,APR_surface,float,25,30,,0,0,,0,0,,,
-PERLND,MON-NITIMNIsurface,MAY_surface,float,30,35,,0,0,,0,0,,,
-PERLND,MON-NITIMNIsurface,JUN_surface,float,35,40,,0,0,,0,0,,,
-PERLND,MON-NITIMNIsurface,JUL_surface,float,40,45,,0,0,,0,0,,,
-PERLND,MON-NITIMNIsurface,AUG_surface,float,45,50,,0,0,,0,0,,,
-PERLND,MON-NITIMNIsurface,SEP_surface,float,50,55,,0,0,,0,0,,,
-PERLND,MON-NITIMNIsurface,OCT_surface,float,55,60,,0,0,,0,0,,,
-PERLND,MON-NITIMNIsurface,NOV_surface,float,60,65,,0,0,,0,0,,,
-PERLND,MON-NITIMNIsurface,DEC_surface,float,65,70,,0,0,,0,0,,,
-PERLND,MON-NITIMNIupper,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITIMNIupper,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITIMNIupper,JAN_upper,float,10,15,,0,0,,0,0,,,*** KINJAN is the maximum immobilization rate for nitrate in January.
-PERLND,MON-NITIMNIupper,FEB_upper,float,15,20,,0,0,,0,0,,,
-PERLND,MON-NITIMNIupper,MAR_upper,float,20,25,,0,0,,0,0,,,
-PERLND,MON-NITIMNIupper,APR_upper,float,25,30,,0,0,,0,0,,,
-PERLND,MON-NITIMNIupper,MAY_upper,float,30,35,,0,0,,0,0,,,
-PERLND,MON-NITIMNIupper,JUN_upper,float,35,40,,0,0,,0,0,,,
-PERLND,MON-NITIMNIupper,JUL_upper,float,40,45,,0,0,,0,0,,,
-PERLND,MON-NITIMNIupper,AUG_upper,float,45,50,,0,0,,0,0,,,
-PERLND,MON-NITIMNIupper,SEP_upper,float,50,55,,0,0,,0,0,,,
-PERLND,MON-NITIMNIupper,OCT_upper,float,55,60,,0,0,,0,0,,,
-PERLND,MON-NITIMNIupper,NOV_upper,float,60,65,,0,0,,0,0,,,
-PERLND,MON-NITIMNIupper,DEC_upper,float,65,70,,0,0,,0,0,,,
-PERLND,MON-NITUPAMgroundwater,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITUPAMgroundwater,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITUPAMgroundwater,JAN_groundwater,float,10,15,,0,0,,0,0,,,*** KUAJAN is the maximum plant uptake rate for ammonia in January.
-PERLND,MON-NITUPAMgroundwater,FEB_groundwater,float,15,20,,0,0,,0,0,,,
-PERLND,MON-NITUPAMgroundwater,MAR_groundwater,float,20,25,,0,0,,0,0,,,
-PERLND,MON-NITUPAMgroundwater,APR_groundwater,float,25,30,,0,0,,0,0,,,
-PERLND,MON-NITUPAMgroundwater,MAY_groundwater,float,30,35,,0,0,,0,0,,,
-PERLND,MON-NITUPAMgroundwater,JUN_groundwater,float,35,40,,0,0,,0,0,,,
-PERLND,MON-NITUPAMgroundwater,JUL_groundwater,float,40,45,,0,0,,0,0,,,
-PERLND,MON-NITUPAMgroundwater,AUG_groundwater,float,45,50,,0,0,,0,0,,,
-PERLND,MON-NITUPAMgroundwater,SEP_groundwater,float,50,55,,0,0,,0,0,,,
-PERLND,MON-NITUPAMgroundwater,OCT_groundwater,float,55,60,,0,0,,0,0,,,
-PERLND,MON-NITUPAMgroundwater,NOV_groundwater,float,60,65,,0,0,,0,0,,,
-PERLND,MON-NITUPAMgroundwater,DEC_groundwater,float,65,70,,0,0,,0,0,,,
-PERLND,MON-NITUPAMlower,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITUPAMlower,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITUPAMlower,JAN_lower,float,10,15,,0,0,,0,0,,,*** KUAJAN is the maximum plant uptake rate for ammonia in January.
-PERLND,MON-NITUPAMlower,FEB_lower,float,15,20,,0,0,,0,0,,,
-PERLND,MON-NITUPAMlower,MAR_lower,float,20,25,,0,0,,0,0,,,
-PERLND,MON-NITUPAMlower,APR_lower,float,25,30,,0,0,,0,0,,,
-PERLND,MON-NITUPAMlower,MAY_lower,float,30,35,,0,0,,0,0,,,
-PERLND,MON-NITUPAMlower,JUN_lower,float,35,40,,0,0,,0,0,,,
-PERLND,MON-NITUPAMlower,JUL_lower,float,40,45,,0,0,,0,0,,,
-PERLND,MON-NITUPAMlower,AUG_lower,float,45,50,,0,0,,0,0,,,
-PERLND,MON-NITUPAMlower,SEP_lower,float,50,55,,0,0,,0,0,,,
-PERLND,MON-NITUPAMlower,OCT_lower,float,55,60,,0,0,,0,0,,,
-PERLND,MON-NITUPAMlower,NOV_lower,float,60,65,,0,0,,0,0,,,
-PERLND,MON-NITUPAMlower,DEC_lower,float,65,70,,0,0,,0,0,,,
-PERLND,MON-NITUPAMsurface,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITUPAMsurface,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITUPAMsurface,JAN_surface,float,10,15,,0,0,,0,0,,,*** KUAJAN is the maximum plant uptake rate for ammonia in January.
-PERLND,MON-NITUPAMsurface,FEB_surface,float,15,20,,0,0,,0,0,,,
-PERLND,MON-NITUPAMsurface,MAR_surface,float,20,25,,0,0,,0,0,,,
-PERLND,MON-NITUPAMsurface,APR_surface,float,25,30,,0,0,,0,0,,,
-PERLND,MON-NITUPAMsurface,MAY_surface,float,30,35,,0,0,,0,0,,,
-PERLND,MON-NITUPAMsurface,JUN_surface,float,35,40,,0,0,,0,0,,,
-PERLND,MON-NITUPAMsurface,JUL_surface,float,40,45,,0,0,,0,0,,,
-PERLND,MON-NITUPAMsurface,AUG_surface,float,45,50,,0,0,,0,0,,,
-PERLND,MON-NITUPAMsurface,SEP_surface,float,50,55,,0,0,,0,0,,,
-PERLND,MON-NITUPAMsurface,OCT_surface,float,55,60,,0,0,,0,0,,,
-PERLND,MON-NITUPAMsurface,NOV_surface,float,60,65,,0,0,,0,0,,,
-PERLND,MON-NITUPAMsurface,DEC_surface,float,65,70,,0,0,,0,0,,,
-PERLND,MON-NITUPAMupper,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITUPAMupper,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITUPAMupper,JAN_upper,float,10,15,,0,0,,0,0,,,*** KUAJAN is the maximum plant uptake rate for ammonia in January.
-PERLND,MON-NITUPAMupper,FEB_upper,float,15,20,,0,0,,0,0,,,
-PERLND,MON-NITUPAMupper,MAR_upper,float,20,25,,0,0,,0,0,,,
-PERLND,MON-NITUPAMupper,APR_upper,float,25,30,,0,0,,0,0,,,
-PERLND,MON-NITUPAMupper,MAY_upper,float,30,35,,0,0,,0,0,,,
-PERLND,MON-NITUPAMupper,JUN_upper,float,35,40,,0,0,,0,0,,,
-PERLND,MON-NITUPAMupper,JUL_upper,float,40,45,,0,0,,0,0,,,
-PERLND,MON-NITUPAMupper,AUG_upper,float,45,50,,0,0,,0,0,,,
-PERLND,MON-NITUPAMupper,SEP_upper,float,50,55,,0,0,,0,0,,,
-PERLND,MON-NITUPAMupper,OCT_upper,float,55,60,,0,0,,0,0,,,
-PERLND,MON-NITUPAMupper,NOV_upper,float,60,65,,0,0,,0,0,,,
-PERLND,MON-NITUPAMupper,DEC_upper,float,65,70,,0,0,,0,0,,,
-PERLND,MON-NITUPNIgroundwater,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITUPNIgroundwater,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITUPNIgroundwater,JAN_groundwater,float,10,15,,0,0,,0,0,,,*** KUNJAN is the maximum plant uptake rate for nitrate in January.
-PERLND,MON-NITUPNIgroundwater,FEB_groundwater,float,15,20,,0,0,,0,0,,,
-PERLND,MON-NITUPNIgroundwater,MAR_groundwater,float,20,25,,0,0,,0,0,,,
-PERLND,MON-NITUPNIgroundwater,APR_groundwater,float,25,30,,0,0,,0,0,,,
-PERLND,MON-NITUPNIgroundwater,MAY_groundwater,float,30,35,,0,0,,0,0,,,
-PERLND,MON-NITUPNIgroundwater,JUN_groundwater,float,35,40,,0,0,,0,0,,,
-PERLND,MON-NITUPNIgroundwater,JUL_groundwater,float,40,45,,0,0,,0,0,,,
-PERLND,MON-NITUPNIgroundwater,AUG_groundwater,float,45,50,,0,0,,0,0,,,
-PERLND,MON-NITUPNIgroundwater,SEP_groundwater,float,50,55,,0,0,,0,0,,,
-PERLND,MON-NITUPNIgroundwater,OCT_groundwater,float,55,60,,0,0,,0,0,,,
-PERLND,MON-NITUPNIgroundwater,NOV_groundwater,float,60,65,,0,0,,0,0,,,
-PERLND,MON-NITUPNIgroundwater,DEC_groundwater,float,65,70,,0,0,,0,0,,,
-PERLND,MON-NITUPNIlower,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITUPNIlower,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITUPNIlower,JAN_lower,float,10,15,,0,0,,0,0,,,*** KUNJAN is the maximum plant uptake rate for nitrate in January.
-PERLND,MON-NITUPNIlower,FEB_lower,float,15,20,,0,0,,0,0,,,
-PERLND,MON-NITUPNIlower,MAR_lower,float,20,25,,0,0,,0,0,,,
-PERLND,MON-NITUPNIlower,APR_lower,float,25,30,,0,0,,0,0,,,
-PERLND,MON-NITUPNIlower,MAY_lower,float,30,35,,0,0,,0,0,,,
-PERLND,MON-NITUPNIlower,JUN_lower,float,35,40,,0,0,,0,0,,,
-PERLND,MON-NITUPNIlower,JUL_lower,float,40,45,,0,0,,0,0,,,
-PERLND,MON-NITUPNIlower,AUG_lower,float,45,50,,0,0,,0,0,,,
-PERLND,MON-NITUPNIlower,SEP_lower,float,50,55,,0,0,,0,0,,,
-PERLND,MON-NITUPNIlower,OCT_lower,float,55,60,,0,0,,0,0,,,
-PERLND,MON-NITUPNIlower,NOV_lower,float,60,65,,0,0,,0,0,,,
-PERLND,MON-NITUPNIlower,DEC_lower,float,65,70,,0,0,,0,0,,,
-PERLND,MON-NITUPNIsurface,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITUPNIsurface,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITUPNIsurface,JAN_surface,float,10,15,,0,0,,0,0,,,*** KUNJAN is the maximum plant uptake rate for nitrate in January.
-PERLND,MON-NITUPNIsurface,FEB_surface,float,15,20,,0,0,,0,0,,,
-PERLND,MON-NITUPNIsurface,MAR_surface,float,20,25,,0,0,,0,0,,,
-PERLND,MON-NITUPNIsurface,APR_surface,float,25,30,,0,0,,0,0,,,
-PERLND,MON-NITUPNIsurface,MAY_surface,float,30,35,,0,0,,0,0,,,
-PERLND,MON-NITUPNIsurface,JUN_surface,float,35,40,,0,0,,0,0,,,
-PERLND,MON-NITUPNIsurface,JUL_surface,float,40,45,,0,0,,0,0,,,
-PERLND,MON-NITUPNIsurface,AUG_surface,float,45,50,,0,0,,0,0,,,
-PERLND,MON-NITUPNIsurface,SEP_surface,float,50,55,,0,0,,0,0,,,
-PERLND,MON-NITUPNIsurface,OCT_surface,float,55,60,,0,0,,0,0,,,
-PERLND,MON-NITUPNIsurface,NOV_surface,float,60,65,,0,0,,0,0,,,
-PERLND,MON-NITUPNIsurface,DEC_surface,float,65,70,,0,0,,0,0,,,
-PERLND,MON-NITUPNIupper,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITUPNIupper,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITUPNIupper,JAN_upper,float,10,15,,0,0,,0,0,,,*** KUNJAN is the maximum plant uptake rate for nitrate in January.
-PERLND,MON-NITUPNIupper,FEB_upper,float,15,20,,0,0,,0,0,,,
-PERLND,MON-NITUPNIupper,MAR_upper,float,20,25,,0,0,,0,0,,,
-PERLND,MON-NITUPNIupper,APR_upper,float,25,30,,0,0,,0,0,,,
-PERLND,MON-NITUPNIupper,MAY_upper,float,30,35,,0,0,,0,0,,,
-PERLND,MON-NITUPNIupper,JUN_upper,float,35,40,,0,0,,0,0,,,
-PERLND,MON-NITUPNIupper,JUL_upper,float,40,45,,0,0,,0,0,,,
-PERLND,MON-NITUPNIupper,AUG_upper,float,45,50,,0,0,,0,0,,,
-PERLND,MON-NITUPNIupper,SEP_upper,float,50,55,,0,0,,0,0,,,
-PERLND,MON-NITUPNIupper,OCT_upper,float,55,60,,0,0,,0,0,,,
-PERLND,MON-NITUPNIupper,NOV_upper,float,60,65,,0,0,,0,0,,,
-PERLND,MON-NITUPNIupper,DEC_upper,float,65,70,,0,0,,0,0,,,
-PERLND,MON-NITUPTgroundwater,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITUPTgroundwater,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITUPTgroundwater,JAN_groundwater,float,10,15,,0,0,,0,0,,,*** KPLJAN is the plant uptake parameter for nitrogen in January.
-PERLND,MON-NITUPTgroundwater,FEB_groundwater,float,15,20,,0,0,,0,0,,,
-PERLND,MON-NITUPTgroundwater,MAR_groundwater,float,20,25,,0,0,,0,0,,,
-PERLND,MON-NITUPTgroundwater,APR_groundwater,float,25,30,,0,0,,0,0,,,
-PERLND,MON-NITUPTgroundwater,MAY_groundwater,float,30,35,,0,0,,0,0,,,
-PERLND,MON-NITUPTgroundwater,JUN_groundwater,float,35,40,,0,0,,0,0,,,
-PERLND,MON-NITUPTgroundwater,JUL_groundwater,float,40,45,,0,0,,0,0,,,
-PERLND,MON-NITUPTgroundwater,AUG_groundwater,float,45,50,,0,0,,0,0,,,
-PERLND,MON-NITUPTgroundwater,SEP_groundwater,float,50,55,,0,0,,0,0,,,
-PERLND,MON-NITUPTgroundwater,OCT_groundwater,float,55,60,,0,0,,0,0,,,
-PERLND,MON-NITUPTgroundwater,NOV_groundwater,float,60,65,,0,0,,0,0,,,
-PERLND,MON-NITUPTgroundwater,DEC_groundwater,float,65,70,,0,0,,0,0,,,
-PERLND,MON-NITUPTlower,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITUPTlower,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITUPTlower,JAN_lower,float,10,15,,0,0,,0,0,,,*** KPLJAN is the plant uptake parameter for nitrogen in January.
-PERLND,MON-NITUPTlower,FEB_lower,float,15,20,,0,0,,0,0,,,
-PERLND,MON-NITUPTlower,MAR_lower,float,20,25,,0,0,,0,0,,,
-PERLND,MON-NITUPTlower,APR_lower,float,25,30,,0,0,,0,0,,,
-PERLND,MON-NITUPTlower,MAY_lower,float,30,35,,0,0,,0,0,,,
-PERLND,MON-NITUPTlower,JUN_lower,float,35,40,,0,0,,0,0,,,
-PERLND,MON-NITUPTlower,JUL_lower,float,40,45,,0,0,,0,0,,,
-PERLND,MON-NITUPTlower,AUG_lower,float,45,50,,0,0,,0,0,,,
-PERLND,MON-NITUPTlower,SEP_lower,float,50,55,,0,0,,0,0,,,
-PERLND,MON-NITUPTlower,OCT_lower,float,55,60,,0,0,,0,0,,,
-PERLND,MON-NITUPTlower,NOV_lower,float,60,65,,0,0,,0,0,,,
-PERLND,MON-NITUPTlower,DEC_lower,float,65,70,,0,0,,0,0,,,
-PERLND,MON-NITUPTsurface,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITUPTsurface,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITUPTsurface,JAN_surface,float,10,15,,0,0,,0,0,,,*** KPLJAN is the plant uptake parameter for nitrogen in January.
-PERLND,MON-NITUPTsurface,FEB_surface,float,15,20,,0,0,,0,0,,,
-PERLND,MON-NITUPTsurface,MAR_surface,float,20,25,,0,0,,0,0,,,
-PERLND,MON-NITUPTsurface,APR_surface,float,25,30,,0,0,,0,0,,,
-PERLND,MON-NITUPTsurface,MAY_surface,float,30,35,,0,0,,0,0,,,
-PERLND,MON-NITUPTsurface,JUN_surface,float,35,40,,0,0,,0,0,,,
-PERLND,MON-NITUPTsurface,JUL_surface,float,40,45,,0,0,,0,0,,,
-PERLND,MON-NITUPTsurface,AUG_surface,float,45,50,,0,0,,0,0,,,
-PERLND,MON-NITUPTsurface,SEP_surface,float,50,55,,0,0,,0,0,,,
-PERLND,MON-NITUPTsurface,OCT_surface,float,55,60,,0,0,,0,0,,,
-PERLND,MON-NITUPTsurface,NOV_surface,float,60,65,,0,0,,0,0,,,
-PERLND,MON-NITUPTsurface,DEC_surface,float,65,70,,0,0,,0,0,,,
-PERLND,MON-NITUPTupper,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITUPTupper,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NITUPTupper,JAN_upper,float,10,15,,0,0,,0,0,,,*** KPLJAN is the plant uptake parameter for nitrogen in January.
-PERLND,MON-NITUPTupper,FEB_upper,float,15,20,,0,0,,0,0,,,
-PERLND,MON-NITUPTupper,MAR_upper,float,20,25,,0,0,,0,0,,,
-PERLND,MON-NITUPTupper,APR_upper,float,25,30,,0,0,,0,0,,,
-PERLND,MON-NITUPTupper,MAY_upper,float,30,35,,0,0,,0,0,,,
-PERLND,MON-NITUPTupper,JUN_upper,float,35,40,,0,0,,0,0,,,
-PERLND,MON-NITUPTupper,JUL_upper,float,40,45,,0,0,,0,0,,,
-PERLND,MON-NITUPTupper,AUG_upper,float,45,50,,0,0,,0,0,,,
-PERLND,MON-NITUPTupper,SEP_upper,float,50,55,,0,0,,0,0,,,
-PERLND,MON-NITUPTupper,OCT_upper,float,55,60,,0,0,,0,0,,,
-PERLND,MON-NITUPTupper,NOV_upper,float,60,65,,0,0,,0,0,,,
-PERLND,MON-NITUPTupper,DEC_upper,float,65,70,,0,0,,0,0,,,
+PERLND,MON-NITAGUTF,FEB,float,15,20,,0,0,1,0,0,1,,
+PERLND,MON-NITAGUTF,MAR,float,20,25,,0,0,1,0,0,1,,
+PERLND,MON-NITAGUTF,APR,float,25,30,,0,0,1,0,0,1,,
+PERLND,MON-NITAGUTF,MAY,float,30,35,,0,0,1,0,0,1,,
+PERLND,MON-NITAGUTF,JUN,float,35,40,,0,0,1,0,0,1,,
+PERLND,MON-NITAGUTF,JUL,float,40,45,,0,0,1,0,0,1,,
+PERLND,MON-NITAGUTF,AUG,float,45,50,,0,0,1,0,0,1,,
+PERLND,MON-NITAGUTF,SEP,float,50,55,,0,0,1,0,0,1,,
+PERLND,MON-NITAGUTF,OCT,float,55,60,,0,0,1,0,0,1,,
+PERLND,MON-NITAGUTF,NOV,float,60,65,,0,0,1,0,0,1,,
+PERLND,MON-NITAGUTF,DEC,float,65,70,,0,0,1,0,0,1,,
+PERLND,MON-NITIMAM,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,MON-NITIMAM,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,MON-NITIMAM,JAN,float,10,15,,0,0,,0,0,,,*** KIAJAN is the maximum immobilization rate for ammonia in January.
+PERLND,MON-NITIMAM,FEB,float,15,20,,0,0,,0,0,,,
+PERLND,MON-NITIMAM,MAR,float,20,25,,0,0,,0,0,,,
+PERLND,MON-NITIMAM,APR,float,25,30,,0,0,,0,0,,,
+PERLND,MON-NITIMAM,MAY,float,30,35,,0,0,,0,0,,,
+PERLND,MON-NITIMAM,JUN,float,35,40,,0,0,,0,0,,,
+PERLND,MON-NITIMAM,JUL,float,40,45,,0,0,,0,0,,,
+PERLND,MON-NITIMAM,AUG,float,45,50,,0,0,,0,0,,,
+PERLND,MON-NITIMAM,SEP,float,50,55,,0,0,,0,0,,,
+PERLND,MON-NITIMAM,OCT,float,55,60,,0,0,,0,0,,,
+PERLND,MON-NITIMAM,NOV,float,60,65,,0,0,,0,0,,,
+PERLND,MON-NITIMAM,DEC,float,65,70,,0,0,,0,0,,,
+PERLND,MON-NITIMNI,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,MON-NITIMNI,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,MON-NITIMNI,JAN,float,10,15,,0,0,,0,0,,,*** KINJAN is the maximum immobilization rate for nitrate in January.
+PERLND,MON-NITIMNI,FEB,float,15,20,,0,0,,0,0,,,
+PERLND,MON-NITIMNI,MAR,float,20,25,,0,0,,0,0,,,
+PERLND,MON-NITIMNI,APR,float,25,30,,0,0,,0,0,,,
+PERLND,MON-NITIMNI,MAY,float,30,35,,0,0,,0,0,,,
+PERLND,MON-NITIMNI,JUN,float,35,40,,0,0,,0,0,,,
+PERLND,MON-NITIMNI,JUL,float,40,45,,0,0,,0,0,,,
+PERLND,MON-NITIMNI,AUG,float,45,50,,0,0,,0,0,,,
+PERLND,MON-NITIMNI,SEP,float,50,55,,0,0,,0,0,,,
+PERLND,MON-NITIMNI,OCT,float,55,60,,0,0,,0,0,,,
+PERLND,MON-NITIMNI,NOV,float,60,65,,0,0,,0,0,,,
+PERLND,MON-NITIMNI,DEC,float,65,70,,0,0,,0,0,,,
+PERLND,MON-NITUPAM,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,MON-NITUPAM,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,MON-NITUPAM,JAN,float,10,15,,0,0,,0,0,,,*** KUAJAN is the maximum plant uptake rate for ammonia in January.
+PERLND,MON-NITUPAM,FEB,float,15,20,,0,0,,0,0,,,
+PERLND,MON-NITUPAM,MAR,float,20,25,,0,0,,0,0,,,
+PERLND,MON-NITUPAM,APR,float,25,30,,0,0,,0,0,,,
+PERLND,MON-NITUPAM,MAY,float,30,35,,0,0,,0,0,,,
+PERLND,MON-NITUPAM,JUN,float,35,40,,0,0,,0,0,,,
+PERLND,MON-NITUPAM,JUL,float,40,45,,0,0,,0,0,,,
+PERLND,MON-NITUPAM,AUG,float,45,50,,0,0,,0,0,,,
+PERLND,MON-NITUPAM,SEP,float,50,55,,0,0,,0,0,,,
+PERLND,MON-NITUPAM,OCT,float,55,60,,0,0,,0,0,,,
+PERLND,MON-NITUPAM,NOV,float,60,65,,0,0,,0,0,,,
+PERLND,MON-NITUPAM,DEC,float,65,70,,0,0,,0,0,,,
+PERLND,MON-NITUPNI,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,MON-NITUPNI,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,MON-NITUPNI,JAN,float,10,15,,0,0,,0,0,,,*** KUNJAN is the maximum plant uptake rate for nitrate in January.
+PERLND,MON-NITUPNI,FEB,float,15,20,,0,0,,0,0,,,
+PERLND,MON-NITUPNI,MAR,float,20,25,,0,0,,0,0,,,
+PERLND,MON-NITUPNI,APR,float,25,30,,0,0,,0,0,,,
+PERLND,MON-NITUPNI,MAY,float,30,35,,0,0,,0,0,,,
+PERLND,MON-NITUPNI,JUN,float,35,40,,0,0,,0,0,,,
+PERLND,MON-NITUPNI,JUL,float,40,45,,0,0,,0,0,,,
+PERLND,MON-NITUPNI,AUG,float,45,50,,0,0,,0,0,,,
+PERLND,MON-NITUPNI,SEP,float,50,55,,0,0,,0,0,,,
+PERLND,MON-NITUPNI,OCT,float,55,60,,0,0,,0,0,,,
+PERLND,MON-NITUPNI,NOV,float,60,65,,0,0,,0,0,,,
+PERLND,MON-NITUPNI,DEC,float,65,70,,0,0,,0,0,,,
+PERLND,MON-NITUPT,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,MON-NITUPT,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,MON-NITUPT,JAN,float,10,15,,0,0,,0,0,,,*** KPLJAN is the plant uptake parameter for nitrogen in January.
+PERLND,MON-NITUPT,FEB,float,15,20,,0,0,,0,0,,,
+PERLND,MON-NITUPT,MAR,float,20,25,,0,0,,0,0,,,
+PERLND,MON-NITUPT,APR,float,25,30,,0,0,,0,0,,,
+PERLND,MON-NITUPT,MAY,float,30,35,,0,0,,0,0,,,
+PERLND,MON-NITUPT,JUN,float,35,40,,0,0,,0,0,,,
+PERLND,MON-NITUPT,JUL,float,40,45,,0,0,,0,0,,,
+PERLND,MON-NITUPT,AUG,float,45,50,,0,0,,0,0,,,
+PERLND,MON-NITUPT,SEP,float,50,55,,0,0,,0,0,,,
+PERLND,MON-NITUPT,OCT,float,55,60,,0,0,,0,0,,,
+PERLND,MON-NITUPT,NOV,float,60,65,,0,0,,0,0,,,
+PERLND,MON-NITUPT,DEC,float,65,70,,0,0,,0,0,,,
 PERLND,MON-NPRETAG,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
 PERLND,MON-NPRETAG,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
 PERLND,MON-NPRETAG,ANRJAN,float,10,15,,0,0,,0,0,,,"*** ANRJAN is the first-order return rate for above-ground plant N to the
@@ -2030,66 +1775,21 @@ PERLND,MON-NPRETAG,ANRSEP,float,50,55,,0,0,,0,0,,,
 PERLND,MON-NPRETAG,ANROCT,float,55,60,,0,0,,0,0,,,
 PERLND,MON-NPRETAG,ANRNOV,float,60,65,,0,0,,0,0,,,
 PERLND,MON-NPRETAG,ANRDEC,float,65,70,,0,0,,0,0,,,
-PERLND,MON-NPRETBGgroundwater,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NPRETBGgroundwater,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NPRETBGgroundwater,JAN_groundwater,float,10,15,,0,0,1,0,0,1,,"*** BNRJAN is the first-order return rate for below-ground plant N to the
+PERLND,MON-NPRETBG,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,MON-NPRETBG,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,MON-NPRETBG,JAN,float,10,15,,0,0,1,0,0,1,,"*** BNRJAN is the first-order return rate for below-ground plant N to the
 *** soil layer in January."
-PERLND,MON-NPRETBGgroundwater,FEB_groundwater,float,15,20,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGgroundwater,MAR_groundwater,float,20,25,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGgroundwater,APR_groundwater,float,25,30,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGgroundwater,MAY_groundwater,float,30,35,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGgroundwater,JUN_groundwater,float,35,40,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGgroundwater,JUL_groundwater,float,40,45,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGgroundwater,AUG_groundwater,float,45,50,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGgroundwater,SEP_groundwater,float,50,55,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGgroundwater,OCT_groundwater,float,55,60,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGgroundwater,NOV_groundwater,float,60,65,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGgroundwater,DEC_groundwater,float,65,70,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGlower,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NPRETBGlower,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NPRETBGlower,JAN_lower,float,10,15,,0,0,1,0,0,1,,"*** BNRJAN is the first-order return rate for below-ground plant N to the
-*** soil layer in January."
-PERLND,MON-NPRETBGlower,FEB_lower,float,15,20,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGlower,MAR_lower,float,20,25,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGlower,APR_lower,float,25,30,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGlower,MAY_lower,float,30,35,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGlower,JUN_lower,float,35,40,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGlower,JUL_lower,float,40,45,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGlower,AUG_lower,float,45,50,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGlower,SEP_lower,float,50,55,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGlower,OCT_lower,float,55,60,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGlower,NOV_lower,float,60,65,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGlower,DEC_lower,float,65,70,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGsurface,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NPRETBGsurface,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NPRETBGsurface,JAN_surface,float,10,15,,0,0,1,0,0,1,,"*** BNRJAN is the first-order return rate for below-ground plant N to the
-*** soil layer in January."
-PERLND,MON-NPRETBGsurface,FEB_surface,float,15,20,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGsurface,MAR_surface,float,20,25,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGsurface,APR_surface,float,25,30,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGsurface,MAY_surface,float,30,35,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGsurface,JUN_surface,float,35,40,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGsurface,JUL_surface,float,40,45,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGsurface,AUG_surface,float,45,50,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGsurface,SEP_surface,float,50,55,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGsurface,OCT_surface,float,55,60,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGsurface,NOV_surface,float,60,65,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGsurface,DEC_surface,float,65,70,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGupper,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NPRETBGupper,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NPRETBGupper,JAN_upper,float,10,15,,0,0,1,0,0,1,,"*** BNRJAN is the first-order return rate for below-ground plant N to the
-*** soil layer in January."
-PERLND,MON-NPRETBGupper,FEB_upper,float,15,20,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGupper,MAR_upper,float,20,25,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGupper,APR_upper,float,25,30,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGupper,MAY_upper,float,30,35,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGupper,JUN_upper,float,35,40,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGupper,JUL_upper,float,40,45,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGupper,AUG_upper,float,45,50,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGupper,SEP_upper,float,50,55,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGupper,OCT_upper,float,55,60,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGupper,NOV_upper,float,60,65,,0,0,1,0,0,1,,
-PERLND,MON-NPRETBGupper,DEC_upper,float,65,70,,0,0,1,0,0,1,,
+PERLND,MON-NPRETBG,FEB,float,15,20,,0,0,1,0,0,1,,
+PERLND,MON-NPRETBG,MAR,float,20,25,,0,0,1,0,0,1,,
+PERLND,MON-NPRETBG,APR,float,25,30,,0,0,1,0,0,1,,
+PERLND,MON-NPRETBG,MAY,float,30,35,,0,0,1,0,0,1,,
+PERLND,MON-NPRETBG,JUN,float,35,40,,0,0,1,0,0,1,,
+PERLND,MON-NPRETBG,JUL,float,40,45,,0,0,1,0,0,1,,
+PERLND,MON-NPRETBG,AUG,float,45,50,,0,0,1,0,0,1,,
+PERLND,MON-NPRETBG,SEP,float,50,55,,0,0,1,0,0,1,,
+PERLND,MON-NPRETBG,OCT,float,55,60,,0,0,1,0,0,1,,
+PERLND,MON-NPRETBG,NOV,float,60,65,,0,0,1,0,0,1,,
+PERLND,MON-NPRETBG,DEC,float,65,70,,0,0,1,0,0,1,,
 PERLND,MON-NPRETFBG,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
 PERLND,MON-NPRETFBG,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
 PERLND,MON-NPRETFBG,JAN,float,10,15,,0,0,1,0,0,1,,"*** BNFJAN is the fraction of below-ground plant N return which returns as
@@ -2122,36 +1822,21 @@ PERLND,MON-NPRETFLI,SEP,float,50,55,,0,0,1,0,0,1,,
 PERLND,MON-NPRETFLI,OCT,float,55,60,,0,0,1,0,0,1,,
 PERLND,MON-NPRETFLI,NOV,float,60,65,,0,0,1,0,0,1,,
 PERLND,MON-NPRETFLI,DEC,float,65,70,,0,0,1,0,0,1,,
-PERLND,MON-NPRETLIsurface,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NPRETLIsurface,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NPRETLIsurface,JAN_surface,float,10,15,,0,0,,0,0,,,"*** LNRJAN is the first-order return rate for litter compartment nitrogen to
+PERLND,MON-NPRETLI,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,MON-NPRETLI,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,MON-NPRETLI,JAN,float,10,15,,0,0,,0,0,,,"*** LNRJAN is the first-order return rate for litter compartment nitrogen to
 *** the soil layer in January."
-PERLND,MON-NPRETLIsurface,FEB_surface,float,15,20,,0,0,,0,0,,,
-PERLND,MON-NPRETLIsurface,MAR_surface,float,20,25,,0,0,,0,0,,,
-PERLND,MON-NPRETLIsurface,APR_surface,float,25,30,,0,0,,0,0,,,
-PERLND,MON-NPRETLIsurface,MAY_surface,float,30,35,,0,0,,0,0,,,
-PERLND,MON-NPRETLIsurface,JUN_surface,float,35,40,,0,0,,0,0,,,
-PERLND,MON-NPRETLIsurface,JUL_surface,float,40,45,,0,0,,0,0,,,
-PERLND,MON-NPRETLIsurface,AUG_surface,float,45,50,,0,0,,0,0,,,
-PERLND,MON-NPRETLIsurface,SEP_surface,float,50,55,,0,0,,0,0,,,
-PERLND,MON-NPRETLIsurface,OCT_surface,float,55,60,,0,0,,0,0,,,
-PERLND,MON-NPRETLIsurface,NOV_surface,float,60,65,,0,0,,0,0,,,
-PERLND,MON-NPRETLIsurface,DEC_surface,float,65,70,,0,0,,0,0,,,
-PERLND,MON-NPRETLIupper,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NPRETLIupper,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NPRETLIupper,JAN_upper,float,10,15,,0,0,,0,0,,,"*** LNRJAN is the first-order return rate for litter compartment nitrogen to
-*** the soil layer in January."
-PERLND,MON-NPRETLIupper,FEB_upper,float,15,20,,0,0,,0,0,,,
-PERLND,MON-NPRETLIupper,MAR_upper,float,20,25,,0,0,,0,0,,,
-PERLND,MON-NPRETLIupper,APR_upper,float,25,30,,0,0,,0,0,,,
-PERLND,MON-NPRETLIupper,MAY_upper,float,30,35,,0,0,,0,0,,,
-PERLND,MON-NPRETLIupper,JUN_upper,float,35,40,,0,0,,0,0,,,
-PERLND,MON-NPRETLIupper,JUL_upper,float,40,45,,0,0,,0,0,,,
-PERLND,MON-NPRETLIupper,AUG_upper,float,45,50,,0,0,,0,0,,,
-PERLND,MON-NPRETLIupper,SEP_upper,float,50,55,,0,0,,0,0,,,
-PERLND,MON-NPRETLIupper,OCT_upper,float,55,60,,0,0,,0,0,,,
-PERLND,MON-NPRETLIupper,NOV_upper,float,60,65,,0,0,,0,0,,,
-PERLND,MON-NPRETLIupper,DEC_upper,float,65,70,,0,0,,0,0,,,
+PERLND,MON-NPRETLI,FEB,float,15,20,,0,0,,0,0,,,
+PERLND,MON-NPRETLI,MAR,float,20,25,,0,0,,0,0,,,
+PERLND,MON-NPRETLI,APR,float,25,30,,0,0,,0,0,,,
+PERLND,MON-NPRETLI,MAY,float,30,35,,0,0,,0,0,,,
+PERLND,MON-NPRETLI,JUN,float,35,40,,0,0,,0,0,,,
+PERLND,MON-NPRETLI,JUL,float,40,45,,0,0,,0,0,,,
+PERLND,MON-NPRETLI,AUG,float,45,50,,0,0,,0,0,,,
+PERLND,MON-NPRETLI,SEP,float,50,55,,0,0,,0,0,,,
+PERLND,MON-NPRETLI,OCT,float,55,60,,0,0,,0,0,,,
+PERLND,MON-NPRETLI,NOV,float,60,65,,0,0,,0,0,,,
+PERLND,MON-NPRETLI,DEC,float,65,70,,0,0,,0,0,,,
 PERLND,MON-NUPT-FR1,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
 PERLND,MON-NUPT-FR1,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
 PERLND,MON-NUPT-FR1,JAN,float,10,15,,0,0,1,0,0,1,,*** TNUJAN is the fraction of the total annual N uptake in January.
@@ -2166,66 +1851,21 @@ PERLND,MON-NUPT-FR1,SEP,float,50,55,,0,0,1,0,0,1,,
 PERLND,MON-NUPT-FR1,OCT,float,55,60,,0,0,1,0,0,1,,
 PERLND,MON-NUPT-FR1,NOV,float,60,65,,0,0,1,0,0,1,,
 PERLND,MON-NUPT-FR1,DEC,float,65,70,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2groundwater,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NUPT-FR2groundwater,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NUPT-FR2groundwater,JAN_groundwater,float,10,15,,0,0,1,0,0,1,,"*** LNUJAN is the fraction of the monthly N uptake taken from the soil layer
+PERLND,MON-NUPT-FR2,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,MON-NUPT-FR2,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,MON-NUPT-FR2,JAN,float,10,15,,0,0,1,0,0,1,,"*** LNUJAN is the fraction of the monthly N uptake taken from the soil layer
 *** in January."
-PERLND,MON-NUPT-FR2groundwater,FEB_groundwater,float,15,20,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2groundwater,MAR_groundwater,float,20,25,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2groundwater,APR_groundwater,float,25,30,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2groundwater,MAY_groundwater,float,30,35,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2groundwater,JUN_groundwater,float,35,40,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2groundwater,JUL_groundwater,float,40,45,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2groundwater,AUG_groundwater,float,45,50,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2groundwater,SEP_groundwater,float,50,55,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2groundwater,OCT_groundwater,float,55,60,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2groundwater,NOV_groundwater,float,60,65,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2groundwater,DEC_groundwater,float,65,70,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2lower,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NUPT-FR2lower,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NUPT-FR2lower,JAN_lower,float,10,15,,0,0,1,0,0,1,,"*** LNUJAN is the fraction of the monthly N uptake taken from the soil layer
-*** in January."
-PERLND,MON-NUPT-FR2lower,FEB_lower,float,15,20,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2lower,MAR_lower,float,20,25,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2lower,APR_lower,float,25,30,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2lower,MAY_lower,float,30,35,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2lower,JUN_lower,float,35,40,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2lower,JUL_lower,float,40,45,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2lower,AUG_lower,float,45,50,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2lower,SEP_lower,float,50,55,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2lower,OCT_lower,float,55,60,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2lower,NOV_lower,float,60,65,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2lower,DEC_lower,float,65,70,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2surface,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NUPT-FR2surface,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NUPT-FR2surface,JAN_surface,float,10,15,,0,0,1,0,0,1,,"*** LNUJAN is the fraction of the monthly N uptake taken from the soil layer
-*** in January."
-PERLND,MON-NUPT-FR2surface,FEB_surface,float,15,20,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2surface,MAR_surface,float,20,25,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2surface,APR_surface,float,25,30,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2surface,MAY_surface,float,30,35,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2surface,JUN_surface,float,35,40,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2surface,JUL_surface,float,40,45,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2surface,AUG_surface,float,45,50,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2surface,SEP_surface,float,50,55,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2surface,OCT_surface,float,55,60,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2surface,NOV_surface,float,60,65,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2surface,DEC_surface,float,65,70,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2upper,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NUPT-FR2upper,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-NUPT-FR2upper,JAN_upper,float,10,15,,0,0,1,0,0,1,,"*** LNUJAN is the fraction of the monthly N uptake taken from the soil layer
-*** in January."
-PERLND,MON-NUPT-FR2upper,FEB_upper,float,15,20,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2upper,MAR_upper,float,20,25,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2upper,APR_upper,float,25,30,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2upper,MAY_upper,float,30,35,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2upper,JUN_upper,float,35,40,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2upper,JUL_upper,float,40,45,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2upper,AUG_upper,float,45,50,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2upper,SEP_upper,float,50,55,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2upper,OCT_upper,float,55,60,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2upper,NOV_upper,float,60,65,,0,0,1,0,0,1,,
-PERLND,MON-NUPT-FR2upper,DEC_upper,float,65,70,,0,0,1,0,0,1,,
+PERLND,MON-NUPT-FR2,FEB,float,15,20,,0,0,1,0,0,1,,
+PERLND,MON-NUPT-FR2,MAR,float,20,25,,0,0,1,0,0,1,,
+PERLND,MON-NUPT-FR2,APR,float,25,30,,0,0,1,0,0,1,,
+PERLND,MON-NUPT-FR2,MAY,float,30,35,,0,0,1,0,0,1,,
+PERLND,MON-NUPT-FR2,JUN,float,35,40,,0,0,1,0,0,1,,
+PERLND,MON-NUPT-FR2,JUL,float,40,45,,0,0,1,0,0,1,,
+PERLND,MON-NUPT-FR2,AUG,float,45,50,,0,0,1,0,0,1,,
+PERLND,MON-NUPT-FR2,SEP,float,50,55,,0,0,1,0,0,1,,
+PERLND,MON-NUPT-FR2,OCT,float,55,60,,0,0,1,0,0,1,,
+PERLND,MON-NUPT-FR2,NOV,float,60,65,,0,0,1,0,0,1,,
+PERLND,MON-NUPT-FR2,DEC,float,65,70,,0,0,1,0,0,1,,
 PERLND,MON-NVSI,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
 PERLND,MON-NVSI,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
 PERLND,MON-NVSI,NVSJAN,float,10,15,,0,,,0,,,,*** NVSJAN is the net vertical sediment input in January.
@@ -2240,62 +1880,20 @@ PERLND,MON-NVSI,NVSSEP,float,50,55,,0,,,0,,,,
 PERLND,MON-NVSI,NVSOCT,float,55,60,,0,,,0,,,,
 PERLND,MON-NVSI,NVSNOV,float,60,65,,0,,,0,,,,
 PERLND,MON-NVSI,NVSDEC,float,65,70,,0,,,0,,,,
-PERLND,MON-PHOSUPTgroundwater,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-PHOSUPTgroundwater,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-PHOSUPTgroundwater,JAN_groundwater,float,10,15,,0,0,,0,0,,,*** PLPJAN is the phosphorus uptake parameter in January.
-PERLND,MON-PHOSUPTgroundwater,FEB_groundwater,float,15,20,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTgroundwater,MAR_groundwater,float,20,25,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTgroundwater,APR_groundwater,float,25,30,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTgroundwater,MAY_groundwater,float,30,35,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTgroundwater,JUN_groundwater,float,35,40,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTgroundwater,JUL_groundwater,float,40,45,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTgroundwater,AUG_groundwater,float,45,50,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTgroundwater,SEP_groundwater,float,50,55,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTgroundwater,OCT_groundwater,float,55,60,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTgroundwater,NOV_groundwater,float,60,65,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTgroundwater,DEC_groundwater,float,65,70,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTlower,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-PHOSUPTlower,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-PHOSUPTlower,JAN_lower,float,10,15,,0,0,,0,0,,,*** PLPJAN is the phosphorus uptake parameter in January.
-PERLND,MON-PHOSUPTlower,FEB_lower,float,15,20,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTlower,MAR_lower,float,20,25,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTlower,APR_lower,float,25,30,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTlower,MAY_lower,float,30,35,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTlower,JUN_lower,float,35,40,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTlower,JUL_lower,float,40,45,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTlower,AUG_lower,float,45,50,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTlower,SEP_lower,float,50,55,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTlower,OCT_lower,float,55,60,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTlower,NOV_lower,float,60,65,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTlower,DEC_lower,float,65,70,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTsurface,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-PHOSUPTsurface,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-PHOSUPTsurface,JAN_surface,float,10,15,,0,0,,0,0,,,*** PLPJAN is the phosphorus uptake parameter in January.
-PERLND,MON-PHOSUPTsurface,FEB_surface,float,15,20,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTsurface,MAR_surface,float,20,25,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTsurface,APR_surface,float,25,30,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTsurface,MAY_surface,float,30,35,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTsurface,JUN_surface,float,35,40,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTsurface,JUL_surface,float,40,45,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTsurface,AUG_surface,float,45,50,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTsurface,SEP_surface,float,50,55,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTsurface,OCT_surface,float,55,60,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTsurface,NOV_surface,float,60,65,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTsurface,DEC_surface,float,65,70,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTupper,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-PHOSUPTupper,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,MON-PHOSUPTupper,JAN_upper,float,10,15,,0,0,,0,0,,,*** PLPJAN is the phosphorus uptake parameter in January.
-PERLND,MON-PHOSUPTupper,FEB_upper,float,15,20,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTupper,MAR_upper,float,20,25,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTupper,APR_upper,float,25,30,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTupper,MAY_upper,float,30,35,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTupper,JUN_upper,float,35,40,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTupper,JUL_upper,float,40,45,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTupper,AUG_upper,float,45,50,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTupper,SEP_upper,float,50,55,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTupper,OCT_upper,float,55,60,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTupper,NOV_upper,float,60,65,,0,0,,0,0,,,
-PERLND,MON-PHOSUPTupper,DEC_upper,float,65,70,,0,0,,0,0,,,
+PERLND,MON-PHOSUPT,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,MON-PHOSUPT,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,MON-PHOSUPT,JAN,float,10,15,,0,0,,0,0,,,*** PLPJAN is the phosphorus uptake parameter in January.
+PERLND,MON-PHOSUPT,FEB,float,15,20,,0,0,,0,0,,,
+PERLND,MON-PHOSUPT,MAR,float,20,25,,0,0,,0,0,,,
+PERLND,MON-PHOSUPT,APR,float,25,30,,0,0,,0,0,,,
+PERLND,MON-PHOSUPT,MAY,float,30,35,,0,0,,0,0,,,
+PERLND,MON-PHOSUPT,JUN,float,35,40,,0,0,,0,0,,,
+PERLND,MON-PHOSUPT,JUL,float,40,45,,0,0,,0,0,,,
+PERLND,MON-PHOSUPT,AUG,float,45,50,,0,0,,0,0,,,
+PERLND,MON-PHOSUPT,SEP,float,50,55,,0,0,,0,0,,,
+PERLND,MON-PHOSUPT,OCT,float,55,60,,0,0,,0,0,,,
+PERLND,MON-PHOSUPT,NOV,float,60,65,,0,0,,0,0,,,
+PERLND,MON-PHOSUPT,DEC,float,65,70,,0,0,,0,0,,,
 PERLND,MON-POTFS,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
 PERLND,MON-POTFS,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
 PERLND,MON-POTFS,SPFJAN,float,10,15,,0,0,,0,0,,,*** SPFJAN is the scour potency factor at the start of January.
@@ -2606,137 +2204,38 @@ PERLND,NIT-FSTGEN,THKAM,float,40,45,,1.07,1,2,1.07,1,2,,*** THKAM is the tempera
 PERLND,NIT-FSTGEN,THKDNI,float,45,50,,1.07,1,2,1.07,1,2,,*** THKDNI is the temperature coefficient for NO3 denitrification.
 PERLND,NIT-FSTGEN,THKNI,float,50,55,,1.05,1,2,1.05,1,2,,*** THKNI is the temperature coefficient (theta) for nitrification.
 PERLND,NIT-FSTGEN,THKIMA,float,55,60,,1.07,1,2,1.07,1,2,,*** THKIMA is the temperature coefficient (theta) for ammonium immobilization.
-PERLND,NIT-FSTPMgroundwater,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-FSTPMgroundwater,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-FSTPMgroundwater,KDSAM_groundwater,float,10,20,,0,0,,0,0,,,"*** KDSAM is the first-order reaction rate parameter for ammonium desorption
+PERLND,NIT-FSTPM,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,NIT-FSTPM,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,NIT-FSTPM,KDSAM,float,10,20,,0,0,,0,0,,,"*** KDSAM is the first-order reaction rate parameter for ammonium desorption
 *** (irrelevant if FORAFG= 1)"
-PERLND,NIT-FSTPMgroundwater,KADAM_groundwater,float,20,30,,0,0,,0,0,,,"*** KADAM is the first-order reaction rate parameter for ammonium adsorption
+PERLND,NIT-FSTPM,KADAM,float,20,30,,0,0,,0,0,,,"*** KADAM is the first-order reaction rate parameter for ammonium adsorption
 *** (irrelevant if FORAFG= 1)."
-PERLND,NIT-FSTPMgroundwater,KIMNI_groundwater,float,30,40,,0,0,,0,0,,,"*** KIMNI is the first-order reaction rate parameter for nitrate immobilization
+PERLND,NIT-FSTPM,KIMNI,float,30,40,,0,0,,0,0,,,"*** KIMNI is the first-order reaction rate parameter for nitrate immobilization
 *** (irrelevant if NUPFTG= 2)."
-PERLND,NIT-FSTPMgroundwater,KAM_groundwater,float,40,50,,0,0,,0,0,,,*** KAM is the first-order reaction rate parameter for organic N ammonification.
-PERLND,NIT-FSTPMgroundwater,KDNI_groundwater,float,50,60,,0,0,,0,0,,,*** KDNI is the first-order reaction rate parameter for denitrification.
-PERLND,NIT-FSTPMgroundwater,KNI_groundwater,float,60,70,,0,0,,0,0,,,*** KNI is the first-order reaction rate parameter for nitrification.
-PERLND,NIT-FSTPMgroundwater,KIMAM_groundwater,float,70,80,,0,0,,0,0,,,*** KIMAM is the first-order reaction rate parameter for ammonium immobilization.
-PERLND,NIT-FSTPMlower,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-FSTPMlower,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-FSTPMlower,KDSAM_lower,float,10,20,,0,0,,0,0,,,"*** KDSAM is the first-order reaction rate parameter for ammonium desorption
-*** (irrelevant if FORAFG= 1)"
-PERLND,NIT-FSTPMlower,KADAM_lower,float,20,30,,0,0,,0,0,,,"*** KADAM is the first-order reaction rate parameter for ammonium adsorption
-*** (irrelevant if FORAFG= 1)."
-PERLND,NIT-FSTPMlower,KIMNI_lower,float,30,40,,0,0,,0,0,,,"*** KIMNI is the first-order reaction rate parameter for nitrate immobilization
-*** (irrelevant if NUPFTG= 2)."
-PERLND,NIT-FSTPMlower,KAM_lower,float,40,50,,0,0,,0,0,,,*** KAM is the first-order reaction rate parameter for organic N ammonification.
-PERLND,NIT-FSTPMlower,KDNI_lower,float,50,60,,0,0,,0,0,,,*** KDNI is the first-order reaction rate parameter for denitrification.
-PERLND,NIT-FSTPMlower,KNI_lower,float,60,70,,0,0,,0,0,,,*** KNI is the first-order reaction rate parameter for nitrification.
-PERLND,NIT-FSTPMlower,KIMAM_lower,float,70,80,,0,0,,0,0,,,*** KIMAM is the first-order reaction rate parameter for ammonium immobilization.
-PERLND,NIT-FSTPMsurface,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-FSTPMsurface,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-FSTPMsurface,KDSAM_surface,float,10,20,,0,0,,0,0,,,"*** KDSAM is the first-order reaction rate parameter for ammonium desorption
-*** (irrelevant if FORAFG= 1)"
-PERLND,NIT-FSTPMsurface,KADAM_surface,float,20,30,,0,0,,0,0,,,"*** KADAM is the first-order reaction rate parameter for ammonium adsorption
-*** (irrelevant if FORAFG= 1)."
-PERLND,NIT-FSTPMsurface,KIMNI_surface,float,30,40,,0,0,,0,0,,,"*** KIMNI is the first-order reaction rate parameter for nitrate immobilization
-*** (irrelevant if NUPFTG= 2)."
-PERLND,NIT-FSTPMsurface,KAM_surface,float,40,50,,0,0,,0,0,,,*** KAM is the first-order reaction rate parameter for organic N ammonification.
-PERLND,NIT-FSTPMsurface,KDNI_surface,float,50,60,,0,0,,0,0,,,*** KDNI is the first-order reaction rate parameter for denitrification.
-PERLND,NIT-FSTPMsurface,KNI_surface,float,60,70,,0,0,,0,0,,,*** KNI is the first-order reaction rate parameter for nitrification.
-PERLND,NIT-FSTPMsurface,KIMAM_surface,float,70,80,,0,0,,0,0,,,*** KIMAM is the first-order reaction rate parameter for ammonium immobilization.
-PERLND,NIT-FSTPMupper,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-FSTPMupper,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-FSTPMupper,KDSAM_upper,float,10,20,,0,0,,0,0,,,"*** KDSAM is the first-order reaction rate parameter for ammonium desorption
-*** (irrelevant if FORAFG= 1)"
-PERLND,NIT-FSTPMupper,KADAM_upper,float,20,30,,0,0,,0,0,,,"*** KADAM is the first-order reaction rate parameter for ammonium adsorption
-*** (irrelevant if FORAFG= 1)."
-PERLND,NIT-FSTPMupper,KIMNI_upper,float,30,40,,0,0,,0,0,,,"*** KIMNI is the first-order reaction rate parameter for nitrate immobilization
-*** (irrelevant if NUPFTG= 2)."
-PERLND,NIT-FSTPMupper,KAM_upper,float,40,50,,0,0,,0,0,,,*** KAM is the first-order reaction rate parameter for organic N ammonification.
-PERLND,NIT-FSTPMupper,KDNI_upper,float,50,60,,0,0,,0,0,,,*** KDNI is the first-order reaction rate parameter for denitrification.
-PERLND,NIT-FSTPMupper,KNI_upper,float,60,70,,0,0,,0,0,,,*** KNI is the first-order reaction rate parameter for nitrification.
-PERLND,NIT-FSTPMupper,KIMAM_upper,float,70,80,,0,0,,0,0,,,*** KIMAM is the first-order reaction rate parameter for ammonium immobilization.
-PERLND,NIT-ORGPMgroundwater,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-ORGPMgroundwater,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-ORGPMgroundwater,KLON_groundwater,float,10,20,,1E+020,0,1E+020,1E+020,0,1E+020,,"*** KLON is the partition coefficient for labile organic N. _PNAME
+PERLND,NIT-FSTPM,KAM,float,40,50,,0,0,,0,0,,,*** KAM is the first-order reaction rate parameter for organic N ammonification.
+PERLND,NIT-FSTPM,KDNI,float,50,60,,0,0,,0,0,,,*** KDNI is the first-order reaction rate parameter for denitrification.
+PERLND,NIT-FSTPM,KNI,float,60,70,,0,0,,0,0,,,*** KNI is the first-order reaction rate parameter for nitrification.
+PERLND,NIT-FSTPM,KIMAM,float,70,80,,0,0,,0,0,,,*** KIMAM is the first-order reaction rate parameter for ammonium immobilization.
+PERLND,NIT-ORGPM,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,NIT-ORGPM,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,NIT-ORGPM,KLON,float,10,20,,1E+020,0,1E+020,1E+020,0,1E+020,,"*** KLON is the partition coefficient for labile organic N. _PNAME
 *** KLON"
-PERLND,NIT-ORGPMgroundwater,KRON_groundwater,float,20,30,,1E+020,0,1E+020,1E+020,0,1E+020,,"*** KRON is the partition coefficient for refractory organic N. _PNAME
+PERLND,NIT-ORGPM,KRON,float,20,30,,1E+020,0,1E+020,1E+020,0,1E+020,,"*** KRON is the partition coefficient for refractory organic N. _PNAME
 *** KRON"
-PERLND,NIT-ORGPMgroundwater,KONLR_groundwater,float,30,40,,0,0,,0,0,,,"*** KONLR is the first-order conversion rate of particulate labile organic N
+PERLND,NIT-ORGPM,KONLR,float,30,40,,0,0,,0,0,,,"*** KONLR is the first-order conversion rate of particulate labile organic N
 *** to particulate refractory organic N. _PNAME KONLR"
-PERLND,NIT-ORGPMgroundwater,THNLR_groundwater,float,40,50,,1.07,1,2,1.07,1,2,,"*** THNLR is the temperature correction coefficient for the conversion of
+PERLND,NIT-ORGPM,THNLR,float,40,50,,1.07,1,2,1.07,1,2,,"*** THNLR is the temperature correction coefficient for the conversion of
 *** particulate labile organic N to particulate refractory organic N. _PNAME
 *** THNLR"
-PERLND,NIT-ORGPMlower,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-ORGPMlower,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-ORGPMlower,KLON_lower,float,10,20,,1E+020,0,1E+020,1E+020,0,1E+020,,"*** KLON is the partition coefficient for labile organic N. _PNAME
-*** KLON"
-PERLND,NIT-ORGPMlower,KRON_lower,float,20,30,,1E+020,0,1E+020,1E+020,0,1E+020,,"*** KRON is the partition coefficient for refractory organic N. _PNAME
-*** KRON"
-PERLND,NIT-ORGPMlower,KONLR_lower,float,30,40,,0,0,,0,0,,,"*** KONLR is the first-order conversion rate of particulate labile organic N
-*** to particulate refractory organic N. _PNAME KONLR"
-PERLND,NIT-ORGPMlower,THNLR_lower,float,40,50,,1.07,1,2,1.07,1,2,,"*** THNLR is the temperature correction coefficient for the conversion of
-*** particulate labile organic N to particulate refractory organic N. _PNAME
-*** THNLR"
-PERLND,NIT-ORGPMsurface,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-ORGPMsurface,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-ORGPMsurface,KLON_surface,float,10,20,,1E+020,0,1E+020,1E+020,0,1E+020,,"*** KLON is the partition coefficient for labile organic N. _PNAME
-*** KLON"
-PERLND,NIT-ORGPMsurface,KRON_surface,float,20,30,,1E+020,0,1E+020,1E+020,0,1E+020,,"*** KRON is the partition coefficient for refractory organic N. _PNAME
-*** KRON"
-PERLND,NIT-ORGPMsurface,KONLR_surface,float,30,40,,0,0,,0,0,,,"*** KONLR is the first-order conversion rate of particulate labile organic N
-*** to particulate refractory organic N. _PNAME KONLR"
-PERLND,NIT-ORGPMsurface,THNLR_surface,float,40,50,,1.07,1,2,1.07,1,2,,"*** THNLR is the temperature correction coefficient for the conversion of
-*** particulate labile organic N to particulate refractory organic N. _PNAME
-*** THNLR"
-PERLND,NIT-ORGPMupper,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-ORGPMupper,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-ORGPMupper,KLON_upper,float,10,20,,1E+020,0,1E+020,1E+020,0,1E+020,,"*** KLON is the partition coefficient for labile organic N. _PNAME
-*** KLON"
-PERLND,NIT-ORGPMupper,KRON_upper,float,20,30,,1E+020,0,1E+020,1E+020,0,1E+020,,"*** KRON is the partition coefficient for refractory organic N. _PNAME
-*** KRON"
-PERLND,NIT-ORGPMupper,KONLR_upper,float,30,40,,0,0,,0,0,,,"*** KONLR is the first-order conversion rate of particulate labile organic N
-*** to particulate refractory organic N. _PNAME KONLR"
-PERLND,NIT-ORGPMupper,THNLR_upper,float,40,50,,1.07,1,2,1.07,1,2,,"*** THNLR is the temperature correction coefficient for the conversion of
-*** particulate labile organic N to particulate refractory organic N. _PNAME
-*** THNLR"
-PERLND,NIT-STOR1groundwater,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-STOR1groundwater,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-STOR1groundwater,LORGN_groundwater,float,10,20,,0,0,,0,0,,,"*** LORGN is the initial total labile organic N storage (solution plus
+PERLND,NIT-STOR1,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,NIT-STOR1,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,NIT-STOR1,LORGN,float,10,20,,0,0,,0,0,,,"*** LORGN is the initial total labile organic N storage (solution plus
 *** particulate)."
-PERLND,NIT-STOR1groundwater,AMAD_groundwater,float,20,30,,0,0,,0,0,,,*** AMAD is the initial adsorbed ammonium storage.
-PERLND,NIT-STOR1groundwater,AMSU_groundwater,float,30,40,,0,0,,0,0,,,*** AMSU is the initial solution ammonium storage.
-PERLND,NIT-STOR1groundwater,NO3_groundwater,float,40,50,,0,0,,0,0,,,*** NO3 is the initial nitrate storage.
-PERLND,NIT-STOR1groundwater,PLTN_groundwater,float,50,60,,0,0,,0,0,,,*** PLTN is the initial N stored in plants.
-PERLND,NIT-STOR1groundwater,RORGN_groundwater,float,60,70,,0,0,,0,0,,,"*** RORGN is the initial total refractory organic N storage (solution plus
-*** particulate)."
-PERLND,NIT-STOR1lower,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-STOR1lower,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-STOR1lower,LORGN_lower,float,10,20,,0,0,,0,0,,,"*** LORGN is the initial total labile organic N storage (solution plus
-*** particulate)."
-PERLND,NIT-STOR1lower,AMAD_lower,float,20,30,,0,0,,0,0,,,*** AMAD is the initial adsorbed ammonium storage.
-PERLND,NIT-STOR1lower,AMSU_lower,float,30,40,,0,0,,0,0,,,*** AMSU is the initial solution ammonium storage.
-PERLND,NIT-STOR1lower,NO3_lower,float,40,50,,0,0,,0,0,,,*** NO3 is the initial nitrate storage.
-PERLND,NIT-STOR1lower,PLTN_lower,float,50,60,,0,0,,0,0,,,*** PLTN is the initial N stored in plants.
-PERLND,NIT-STOR1lower,RORGN_lower,float,60,70,,0,0,,0,0,,,"*** RORGN is the initial total refractory organic N storage (solution plus
-*** particulate)."
-PERLND,NIT-STOR1surface,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-STOR1surface,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-STOR1surface,LORGN_surface,float,10,20,,0,0,,0,0,,,"*** LORGN is the initial total labile organic N storage (solution plus
-*** particulate)."
-PERLND,NIT-STOR1surface,AMAD_surface,float,20,30,,0,0,,0,0,,,*** AMAD is the initial adsorbed ammonium storage.
-PERLND,NIT-STOR1surface,AMSU_surface,float,30,40,,0,0,,0,0,,,*** AMSU is the initial solution ammonium storage.
-PERLND,NIT-STOR1surface,NO3_surface,float,40,50,,0,0,,0,0,,,*** NO3 is the initial nitrate storage.
-PERLND,NIT-STOR1surface,PLTN_surface,float,50,60,,0,0,,0,0,,,*** PLTN is the initial N stored in plants.
-PERLND,NIT-STOR1surface,RORGN_surface,float,60,70,,0,0,,0,0,,,"*** RORGN is the initial total refractory organic N storage (solution plus
-*** particulate)."
-PERLND,NIT-STOR1upper,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-STOR1upper,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-STOR1upper,LORGN_upper,float,10,20,,0,0,,0,0,,,"*** LORGN is the initial total labile organic N storage (solution plus
-*** particulate)."
-PERLND,NIT-STOR1upper,AMAD_upper,float,20,30,,0,0,,0,0,,,*** AMAD is the initial adsorbed ammonium storage.
-PERLND,NIT-STOR1upper,AMSU_upper,float,30,40,,0,0,,0,0,,,*** AMSU is the initial solution ammonium storage.
-PERLND,NIT-STOR1upper,NO3_upper,float,40,50,,0,0,,0,0,,,*** NO3 is the initial nitrate storage.
-PERLND,NIT-STOR1upper,PLTN_upper,float,50,60,,0,0,,0,0,,,*** PLTN is the initial N stored in plants.
-PERLND,NIT-STOR1upper,RORGN_upper,float,60,70,,0,0,,0,0,,,"*** RORGN is the initial total refractory organic N storage (solution plus
+PERLND,NIT-STOR1,AMAD,float,20,30,,0,0,,0,0,,,*** AMAD is the initial adsorbed ammonium storage.
+PERLND,NIT-STOR1,AMSU,float,30,40,,0,0,,0,0,,,*** AMSU is the initial solution ammonium storage.
+PERLND,NIT-STOR1,NO3,float,40,50,,0,0,,0,0,,,*** NO3 is the initial nitrate storage.
+PERLND,NIT-STOR1,PLTN,float,50,60,,0,0,,0,0,,,*** PLTN is the initial N stored in plants.
+PERLND,NIT-STOR1,RORGN,float,60,70,,0,0,,0,0,,,"*** RORGN is the initial total refractory organic N storage (solution plus
 *** particulate)."
 PERLND,NIT-STOR2,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
 PERLND,NIT-STOR2,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
@@ -2751,122 +2250,35 @@ PERLND,NIT-STOR2,ISRON,float,40,50,,0,0,,0,0,,,"*** ISRON specifies the initial 
 PERLND,NIT-STOR2,AGPLTN,float,50,60,,0,0,,0,0,,,"*** AGPLTN specifies the initial storage of N in the above-ground plant
 *** compartment."
 PERLND,NIT-STOR2,LITTRN,float,60,70,,0,0,,0,0,,,*** LITTRN specifies the initial storage of N in the litter compartment.
-PERLND,NIT-SVALPMgroundwater,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-SVALPMgroundwater,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-SVALPMgroundwater,XFIX_groundwater,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of ammonium which is
+PERLND,NIT-SVALPM,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,NIT-SVALPM,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,NIT-SVALPM,XFIX,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of ammonium which is
 *** permanently fixed to the soil. The system expects this table to appear
 *** four times: surface layer, upper layer, lower layer, groundwater
 *** layer."
-PERLND,NIT-SVALPMgroundwater,K1_groundwater,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the single-value Freundlich
+PERLND,NIT-SVALPM,K1,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the single-value Freundlich
 *** adsorption/desorption equation. The system expects this table to appear
 *** four times: surface layer, upper layer, lower layer, groundwater
 *** layer."
-PERLND,NIT-SVALPMgroundwater,N1_groundwater,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the single-value Freundlich adsorption/
+PERLND,NIT-SVALPM,N1,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the single-value Freundlich adsorption/
 *** desorption equation. The system expects this table to appear four times:
 *** surface layer, upper layer, lower layer, groundwater layer."
-PERLND,NIT-SVALPMlower,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-SVALPMlower,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-SVALPMlower,XFIX_lower,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of ammonium which is
-*** permanently fixed to the soil. The system expects this table to appear
-*** four times: surface layer, upper layer, lower layer, groundwater
-*** layer."
-PERLND,NIT-SVALPMlower,K1_lower,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the single-value Freundlich
-*** adsorption/desorption equation. The system expects this table to appear
-*** four times: surface layer, upper layer, lower layer, groundwater
-*** layer."
-PERLND,NIT-SVALPMlower,N1_lower,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the single-value Freundlich adsorption/
-*** desorption equation. The system expects this table to appear four times:
-*** surface layer, upper layer, lower layer, groundwater layer."
-PERLND,NIT-SVALPMsurface,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-SVALPMsurface,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-SVALPMsurface,XFIX_surface,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of ammonium which is
-*** permanently fixed to the soil. The system expects this table to appear
-*** four times: surface layer, upper layer, lower layer, groundwater
-*** layer."
-PERLND,NIT-SVALPMsurface,K1_surface,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the single-value Freundlich
-*** adsorption/desorption equation. The system expects this table to appear
-*** four times: surface layer, upper layer, lower layer, groundwater
-*** layer."
-PERLND,NIT-SVALPMsurface,N1_surface,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the single-value Freundlich adsorption/
-*** desorption equation. The system expects this table to appear four times:
-*** surface layer, upper layer, lower layer, groundwater layer."
-PERLND,NIT-SVALPMupper,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-SVALPMupper,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-SVALPMupper,XFIX_upper,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of ammonium which is
-*** permanently fixed to the soil. The system expects this table to appear
-*** four times: surface layer, upper layer, lower layer, groundwater
-*** layer."
-PERLND,NIT-SVALPMupper,K1_upper,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the single-value Freundlich
-*** adsorption/desorption equation. The system expects this table to appear
-*** four times: surface layer, upper layer, lower layer, groundwater
-*** layer."
-PERLND,NIT-SVALPMupper,N1_upper,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the single-value Freundlich adsorption/
-*** desorption equation. The system expects this table to appear four times:
-*** surface layer, upper layer, lower layer, groundwater layer."
-PERLND,NIT-UPIMCSATgroundwater,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-UPIMCSATgroundwater,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-UPIMCSATgroundwater,CSUNI_groundwater,float,10,20,,0,0,,0,0,,,"*** CSUNI is the nitrate half saturation constant for plant uptake. _PNAME
+PERLND,NIT-UPIMCSAT,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,NIT-UPIMCSAT,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,NIT-UPIMCSAT,CSUNI,float,10,20,,0,0,,0,0,,,"*** CSUNI is the nitrate half saturation constant for plant uptake. _PNAME
 *** CSUNI"
-PERLND,NIT-UPIMCSATgroundwater,CSUAM_groundwater,float,20,30,,0,0,,0,0,,,"*** CSUAM is the ammonia half saturation constant for plant uptake. _PNAME
+PERLND,NIT-UPIMCSAT,CSUAM,float,20,30,,0,0,,0,0,,,"*** CSUAM is the ammonia half saturation constant for plant uptake. _PNAME
 *** CSUAM"
-PERLND,NIT-UPIMCSATgroundwater,CSINI_groundwater,float,30,40,,0,0,,0,0,,,"*** CSINI is the nitrate half saturation constant for immobilization. _PNAME
+PERLND,NIT-UPIMCSAT,CSINI,float,30,40,,0,0,,0,0,,,"*** CSINI is the nitrate half saturation constant for immobilization. _PNAME
 *** CSINI"
-PERLND,NIT-UPIMCSATgroundwater,CSIAM_groundwater,float,40,50,,0,0,,0,0,,,"*** CSIAM is the ammonia half saturation constant for immobilization. _PNAME
+PERLND,NIT-UPIMCSAT,CSIAM,float,40,50,,0,0,,0,0,,,"*** CSIAM is the ammonia half saturation constant for immobilization. _PNAME
 *** CSIAM"
-PERLND,NIT-UPIMCSATlower,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-UPIMCSATlower,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-UPIMCSATlower,CSUNI_lower,float,10,20,,0,0,,0,0,,,"*** CSUNI is the nitrate half saturation constant for plant uptake. _PNAME
-*** CSUNI"
-PERLND,NIT-UPIMCSATlower,CSUAM_lower,float,20,30,,0,0,,0,0,,,"*** CSUAM is the ammonia half saturation constant for plant uptake. _PNAME
-*** CSUAM"
-PERLND,NIT-UPIMCSATlower,CSINI_lower,float,30,40,,0,0,,0,0,,,"*** CSINI is the nitrate half saturation constant for immobilization. _PNAME
-*** CSINI"
-PERLND,NIT-UPIMCSATlower,CSIAM_lower,float,40,50,,0,0,,0,0,,,"*** CSIAM is the ammonia half saturation constant for immobilization. _PNAME
-*** CSIAM"
-PERLND,NIT-UPIMCSATsurface,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-UPIMCSATsurface,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-UPIMCSATsurface,CSUNI_surface,float,10,20,,0,0,,0,0,,,"*** CSUNI is the nitrate half saturation constant for plant uptake. _PNAME
-*** CSUNI"
-PERLND,NIT-UPIMCSATsurface,CSUAM_surface,float,20,30,,0,0,,0,0,,,"*** CSUAM is the ammonia half saturation constant for plant uptake. _PNAME
-*** CSUAM"
-PERLND,NIT-UPIMCSATsurface,CSINI_surface,float,30,40,,0,0,,0,0,,,"*** CSINI is the nitrate half saturation constant for immobilization. _PNAME
-*** CSINI"
-PERLND,NIT-UPIMCSATsurface,CSIAM_surface,float,40,50,,0,0,,0,0,,,"*** CSIAM is the ammonia half saturation constant for immobilization. _PNAME
-*** CSIAM"
-PERLND,NIT-UPIMCSATupper,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-UPIMCSATupper,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-UPIMCSATupper,CSUNI_upper,float,10,20,,0,0,,0,0,,,"*** CSUNI is the nitrate half saturation constant for plant uptake. _PNAME
-*** CSUNI"
-PERLND,NIT-UPIMCSATupper,CSUAM_upper,float,20,30,,0,0,,0,0,,,"*** CSUAM is the ammonia half saturation constant for plant uptake. _PNAME
-*** CSUAM"
-PERLND,NIT-UPIMCSATupper,CSINI_upper,float,30,40,,0,0,,0,0,,,"*** CSINI is the nitrate half saturation constant for immobilization. _PNAME
-*** CSINI"
-PERLND,NIT-UPIMCSATupper,CSIAM_upper,float,40,50,,0,0,,0,0,,,"*** CSIAM is the ammonia half saturation constant for immobilization. _PNAME
-*** CSIAM"
-PERLND,NIT-UPIMKMAXlower,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-UPIMKMAXlower,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-UPIMKMAXlower,KUPNI_lower,float,10,20,,0,0,,0,0,,,*** KUPNI is the maximum plant uptake rate for nitrate. _PNAME KUPNI
-PERLND,NIT-UPIMKMAXlower,KUPAM_lower,float,20,30,,0,0,,0,0,,,*** KUPAM is the maximum plant uptake rate for ammonia. _PNAME KUPAM
-PERLND,NIT-UPIMKMAXlower,KIMNI_lower,float,30,40,,0,0,,0,0,,,*** KIMNI is the maximum immobilization rate for nitrate. _PNAME KIMNI
-PERLND,NIT-UPIMKMAXlower,KIMAM_lower,float,40,50,,0,0,,0,0,,,*** KIMAM is the maximum immobilization rate for ammonia. _PNAME KIMAM
-PERLND,NIT-UPIMKMAXsurface,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-UPIMKMAXsurface,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-UPIMKMAXsurface,KUPNI_surface,float,10,20,,0,0,,0,0,,,*** KUPNI is the maximum plant uptake rate for nitrate. _PNAME KUPNI
-PERLND,NIT-UPIMKMAXsurface,KUPAM_surface,float,20,30,,0,0,,0,0,,,*** KUPAM is the maximum plant uptake rate for ammonia. _PNAME KUPAM
-PERLND,NIT-UPIMKMAXsurface,KIMNI_surface,float,30,40,,0,0,,0,0,,,*** KIMNI is the maximum immobilization rate for nitrate. _PNAME KIMNI
-PERLND,NIT-UPIMKMAXsurface,KIMAM_surface,float,40,50,,0,0,,0,0,,,*** KIMAM is the maximum immobilization rate for ammonia. _PNAME KIMAM
-PERLND,NIT-UPIMKMAXupper,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-UPIMKMAXupper,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-UPIMKMAXupper,KUPNI_upper,float,10,20,,0,0,,0,0,,,*** KUPNI is the maximum plant uptake rate for nitrate. _PNAME KUPNI
-PERLND,NIT-UPIMKMAXupper,KUPAM_upper,float,20,30,,0,0,,0,0,,,*** KUPAM is the maximum plant uptake rate for ammonia. _PNAME KUPAM
-PERLND,NIT-UPIMKMAXupper,KIMNI_upper,float,30,40,,0,0,,0,0,,,*** KIMNI is the maximum immobilization rate for nitrate. _PNAME KIMNI
-PERLND,NIT-UPIMKMAXupper,KIMAM_upper,float,40,50,,0,0,,0,0,,,*** KIMAM is the maximum immobilization rate for ammonia. _PNAME KIMAM
-PERLND,NIT-UPIMKMAX-groundwater,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-UPIMKMAX-groundwater,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,NIT-UPIMKMAX-groundwater,KUPNI_groundwater,float,10,20,,0,0,,0,0,,,*** KUPNI is the maximum plant uptake rate for nitrate. _PNAME KUPNI
-PERLND,NIT-UPIMKMAX-groundwater,KUPAM_groundwater,float,20,30,,0,0,,0,0,,,*** KUPAM is the maximum plant uptake rate for ammonia. _PNAME KUPAM
-PERLND,NIT-UPIMKMAX-groundwater,KIMNI_groundwater,float,30,40,,0,0,,0,0,,,*** KIMNI is the maximum immobilization rate for nitrate. _PNAME KIMNI
-PERLND,NIT-UPIMKMAX-groundwater,KIMAM_groundwater,float,40,50,,0,0,,0,0,,,*** KIMAM is the maximum immobilization rate for ammonia. _PNAME KIMAM
+PERLND,NIT-UPIMKMAX,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,NIT-UPIMKMAX,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,NIT-UPIMKMAX,KUPNI,float,10,20,,0,0,,0,0,,,*** KUPNI is the maximum plant uptake rate for nitrate. _PNAME KUPNI
+PERLND,NIT-UPIMKMAX,KUPAM,float,20,30,,0,0,,0,0,,,*** KUPAM is the maximum plant uptake rate for ammonia. _PNAME KUPAM
+PERLND,NIT-UPIMKMAX,KIMNI,float,30,40,,0,0,,0,0,,,*** KIMNI is the maximum immobilization rate for nitrate. _PNAME KIMNI
+PERLND,NIT-UPIMKMAX,KIMAM,float,40,50,,0,0,,0,0,,,*** KIMAM is the maximum immobilization rate for ammonia. _PNAME KIMAM
 PERLND,NIT-UPTAKE,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
 PERLND,NIT-UPTAKE,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
 PERLND,NIT-UPTAKE,SKPLN,float,10,20,,0,0,,0,0,,,"*** SKPLN is the plant nitrogen uptake reaction rate parameter for the
@@ -2977,15 +2389,9 @@ PERLND,PEST-AD-FLAGS,PEADFG18,int,72,75,,0,-1,999,0,-1,999,,"*** Value of 0 indi
 *** as a direct time series as PEADCN. A value greater than 0 indicates the
 *** index number of the MONTH-DATA block to be used to supply atmospheric
 *** deposition data. _PNAME PEADFG(18)"
-PERLND,PEST-CMAX01,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-CMAX01,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-CMAX01,CMAX,float,10,20,,0,0,,0,0,,,*** CMAX is the maximum solubility of the pesticide in water.
-PERLND,PEST-CMAX02,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-CMAX02,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-CMAX02,CMAX,float,10,20,,0,0,,0,0,,,*** CMAX is the maximum solubility of the pesticide in water.
-PERLND,PEST-CMAX03,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-CMAX03,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-CMAX03,CMAX,float,10,20,,0,0,,0,0,,,*** CMAX is the maximum solubility of the pesticide in water.
+PERLND,PEST-CMAX,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,PEST-CMAX,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,PEST-CMAX,CMAX,float,10,20,,0,0,,0,0,,,*** CMAX is the maximum solubility of the pesticide in water.
 PERLND,PEST-DEGRAD,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
 PERLND,PEST-DEGRAD,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
 PERLND,PEST-DEGRAD,SDGCON,float,10,20,,0,0,1,0,0,1,,*** SDGCON is the degradation rate of pesticide in the surface layer.
@@ -2993,22 +2399,10 @@ PERLND,PEST-DEGRAD,UDGCON,float,20,30,,0,0,1,0,0,1,,*** UDGCON is the degradatio
 PERLND,PEST-DEGRAD,LDGCON,float,30,40,,0,0,1,0,0,1,,*** LDGCON is the degradation rate of pesticide in the lower layer.
 PERLND,PEST-DEGRAD,ADGCON,float,40,50,,0,0,1,0,0,1,,"*** ADGCON is the degradation rate of pesticide in the groundwater
 *** layer."
-PERLND,PEST-FIRSTPMgroundwater,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-FIRSTPMgroundwater,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-FIRSTPMgroundwater,KDSPS_groundwater,float,10,20,,0,0,,0,0,,,*** KDSPS is the first-order desorption rate at 35 deg C.
-PERLND,PEST-FIRSTPMgroundwater,KADPS_groundwater,float,20,30,,0,0,,0,0,,,*** KADPS is the first-order adsorption rate at 35 deg C.
-PERLND,PEST-FIRSTPMlower,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-FIRSTPMlower,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-FIRSTPMlower,KDSPS_lower,float,10,20,,0,0,,0,0,,,*** KDSPS is the first-order desorption rate at 35 deg C.
-PERLND,PEST-FIRSTPMlower,KADPS_lower,float,20,30,,0,0,,0,0,,,*** KADPS is the first-order adsorption rate at 35 deg C.
-PERLND,PEST-FIRSTPMsurface,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-FIRSTPMsurface,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-FIRSTPMsurface,KDSPS_surface,float,10,20,,0,0,,0,0,,,*** KDSPS is the first-order desorption rate at 35 deg C.
-PERLND,PEST-FIRSTPMsurface,KADPS_surface,float,20,30,,0,0,,0,0,,,*** KADPS is the first-order adsorption rate at 35 deg C.
-PERLND,PEST-FIRSTPMupper,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-FIRSTPMupper,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-FIRSTPMupper,KDSPS_upper,float,10,20,,0,0,,0,0,,,*** KDSPS is the first-order desorption rate at 35 deg C.
-PERLND,PEST-FIRSTPMupper,KADPS_upper,float,20,30,,0,0,,0,0,,,*** KADPS is the first-order adsorption rate at 35 deg C.
+PERLND,PEST-FIRSTPM,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,PEST-FIRSTPM,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,PEST-FIRSTPM,KDSPS,float,10,20,,0,0,,0,0,,,*** KDSPS is the first-order desorption rate at 35 deg C.
+PERLND,PEST-FIRSTPM,KADPS,float,20,30,,0,0,,0,0,,,*** KADPS is the first-order adsorption rate at 35 deg C.
 PERLND,PEST-FLAGS,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
 PERLND,PEST-FLAGS,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
 PERLND,PEST-FLAGS,NPST,int,10,15,,1,1,3,1,1,3,,*** NPST is the number of pesticides being simulated in the operation.
@@ -3031,180 +2425,29 @@ PERLND,PEST-FLAGS,ADOPF3,int,40,45,,2,1,3,2,1,3,,"*** ADOPFG(3) is the flag whic
 *** simulate adsorption/desorption, for pesticide 3; value of 1 means
 *** first-order kinetics, 2 means single-value Freundlich method, and 3
 *** means non-single value Freundlich method."
-PERLND,PEST-ID01,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-ID01,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-ID01,PESTID,str,10,30,,,,,,,,,"*** PESTID(*) is a string of up to 20 characters which specifies the
+PERLND,PEST-ID,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,PEST-ID,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,PEST-ID,PESTID,str,10,30,,,,,,,,,"*** PESTID(*) is a string of up to 20 characters which specifies the
 *** pesticide name."
-PERLND,PEST-ID02,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-ID02,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-ID02,PESTID,str,10,30,,,,,,,,,"*** PESTID(*) is a string of up to 20 characters which specifies the
-*** pesticide name."
-PERLND,PEST-ID03,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-ID03,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-ID03,PESTID,str,10,30,,,,,,,,,"*** PESTID(*) is a string of up to 20 characters which specifies the
-*** pesticide name."
-PERLND,PEST-NONSVPMgroundwater01,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-NONSVPMgroundwater01,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-NONSVPMgroundwater01,XFIX_groundwater,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
+PERLND,PEST-NONSVPM,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,PEST-NONSVPM,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,PEST-NONSVPM,XFIX,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
 *** permanently fixed in the soil."
-PERLND,PEST-NONSVPMgroundwater01,K1_groundwater,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the non-single-value Freundlich
+PERLND,PEST-NONSVPM,K1,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the non-single-value Freundlich
 *** curve used for adsorption."
-PERLND,PEST-NONSVPMgroundwater01,N1_groundwater,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the non-single-value Freundlich curve
+PERLND,PEST-NONSVPM,N1,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the non-single-value Freundlich curve
 *** used for adsorption."
-PERLND,PEST-NONSVPMgroundwater01,N2_groundwater,float,40,50,,,1,,,1,,,"*** N2 is the exponent parameter for the auxiliary (""desorption"") curve for
+PERLND,PEST-NONSVPM,N2,float,40,50,,,1,,,1,,,"*** N2 is the exponent parameter for the auxiliary (""desorption"") curve for
 *** the non-single-value Freundlich method."
-PERLND,PEST-NONSVPMlower01,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-NONSVPMlower01,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-NONSVPMlower01,XFIX_lower,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
-*** permanently fixed in the soil."
-PERLND,PEST-NONSVPMlower01,K1_lower,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the non-single-value Freundlich
-*** curve used for adsorption."
-PERLND,PEST-NONSVPMlower01,N1_lower,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the non-single-value Freundlich curve
-*** used for adsorption."
-PERLND,PEST-NONSVPMlower01,N2_lower,float,40,50,,,1,,,1,,,"*** N2 is the exponent parameter for the auxiliary (""desorption"") curve for
-*** the non-single-value Freundlich method."
-PERLND,PEST-NONSVPMsurface01,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-NONSVPMsurface01,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-NONSVPMsurface01,XFIX_surface,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
-*** permanently fixed in the soil."
-PERLND,PEST-NONSVPMsurface01,K1_surface,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the non-single-value Freundlich
-*** curve used for adsorption."
-PERLND,PEST-NONSVPMsurface01,N1_surface,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the non-single-value Freundlich curve
-*** used for adsorption."
-PERLND,PEST-NONSVPMsurface01,N2_surface,float,40,50,,,1,,,1,,,"*** N2 is the exponent parameter for the auxiliary (""desorption"") curve for
-*** the non-single-value Freundlich method."
-PERLND,PEST-NONSVPMupper01,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-NONSVPMupper01,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-NONSVPMupper01,XFIX_upper,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
-*** permanently fixed in the soil."
-PERLND,PEST-NONSVPMupper01,K1_upper,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the non-single-value Freundlich
-*** curve used for adsorption."
-PERLND,PEST-NONSVPMupper01,N1_upper,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the non-single-value Freundlich curve
-*** used for adsorption."
-PERLND,PEST-NONSVPMupper01,N2_upper,float,40,50,,,1,,,1,,,"*** N2 is the exponent parameter for the auxiliary (""desorption"") curve for
-*** the non-single-value Freundlich method."
-PERLND,PEST-NONSVPMgroundwater02,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-NONSVPMgroundwater02,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-NONSVPMgroundwater02,XFIX_groundwater,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
-*** permanently fixed in the soil."
-PERLND,PEST-NONSVPMgroundwater02,K1_groundwater,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the non-single-value Freundlich
-*** curve used for adsorption."
-PERLND,PEST-NONSVPMgroundwater02,N1_groundwater,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the non-single-value Freundlich curve
-*** used for adsorption."
-PERLND,PEST-NONSVPMgroundwater02,N2_groundwater,float,40,50,,,1,,,1,,,"*** N2 is the exponent parameter for the auxiliary (""desorption"") curve for
-*** the non-single-value Freundlich method."
-PERLND,PEST-NONSVPMlower02,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-NONSVPMlower02,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-NONSVPMlower02,XFIX_lower,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
-*** permanently fixed in the soil."
-PERLND,PEST-NONSVPMlower02,K1_lower,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the non-single-value Freundlich
-*** curve used for adsorption."
-PERLND,PEST-NONSVPMlower02,N1_lower,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the non-single-value Freundlich curve
-*** used for adsorption."
-PERLND,PEST-NONSVPMlower02,N2_lower,float,40,50,,,1,,,1,,,"*** N2 is the exponent parameter for the auxiliary (""desorption"") curve for
-*** the non-single-value Freundlich method."
-PERLND,PEST-NONSVPMsurface02,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-NONSVPMsurface02,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-NONSVPMsurface02,XFIX_surface,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
-*** permanently fixed in the soil."
-PERLND,PEST-NONSVPMsurface02,K1_surface,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the non-single-value Freundlich
-*** curve used for adsorption."
-PERLND,PEST-NONSVPMsurface02,N1_surface,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the non-single-value Freundlich curve
-*** used for adsorption."
-PERLND,PEST-NONSVPMsurface02,N2_surface,float,40,50,,,1,,,1,,,"*** N2 is the exponent parameter for the auxiliary (""desorption"") curve for
-*** the non-single-value Freundlich method."
-PERLND,PEST-NONSVPMupper02,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-NONSVPMupper02,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-NONSVPMupper02,XFIX_upper,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
-*** permanently fixed in the soil."
-PERLND,PEST-NONSVPMupper02,K1_upper,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the non-single-value Freundlich
-*** curve used for adsorption."
-PERLND,PEST-NONSVPMupper02,N1_upper,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the non-single-value Freundlich curve
-*** used for adsorption."
-PERLND,PEST-NONSVPMupper02,N2_upper,float,40,50,,,1,,,1,,,"*** N2 is the exponent parameter for the auxiliary (""desorption"") curve for
-*** the non-single-value Freundlich method."
-PERLND,PEST-NONSVPMgroundwater03,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-NONSVPMgroundwater03,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-NONSVPMgroundwater03,XFIX_groundwater,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
-*** permanently fixed in the soil."
-PERLND,PEST-NONSVPMgroundwater03,K1_groundwater,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the non-single-value Freundlich
-*** curve used for adsorption."
-PERLND,PEST-NONSVPMgroundwater03,N1_groundwater,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the non-single-value Freundlich curve
-*** used for adsorption."
-PERLND,PEST-NONSVPMgroundwater03,N2_groundwater,float,40,50,,,1,,,1,,,"*** N2 is the exponent parameter for the auxiliary (""desorption"") curve for
-*** the non-single-value Freundlich method."
-PERLND,PEST-NONSVPMlower03,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-NONSVPMlower03,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-NONSVPMlower03,XFIX_lower,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
-*** permanently fixed in the soil."
-PERLND,PEST-NONSVPMlower03,K1_lower,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the non-single-value Freundlich
-*** curve used for adsorption."
-PERLND,PEST-NONSVPMlower03,N1_lower,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the non-single-value Freundlich curve
-*** used for adsorption."
-PERLND,PEST-NONSVPMlower03,N2_lower,float,40,50,,,1,,,1,,,"*** N2 is the exponent parameter for the auxiliary (""desorption"") curve for
-*** the non-single-value Freundlich method."
-PERLND,PEST-NONSVPMsurface03,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-NONSVPMsurface03,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-NONSVPMsurface03,XFIX_surface,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
-*** permanently fixed in the soil."
-PERLND,PEST-NONSVPMsurface03,K1_surface,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the non-single-value Freundlich
-*** curve used for adsorption."
-PERLND,PEST-NONSVPMsurface03,N1_surface,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the non-single-value Freundlich curve
-*** used for adsorption."
-PERLND,PEST-NONSVPMsurface03,N2_surface,float,40,50,,,1,,,1,,,"*** N2 is the exponent parameter for the auxiliary (""desorption"") curve for
-*** the non-single-value Freundlich method."
-PERLND,PEST-NONSVPMupper03,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-NONSVPMupper03,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-NONSVPMupper03,XFIX_upper,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
-*** permanently fixed in the soil."
-PERLND,PEST-NONSVPMupper03,K1_upper,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the non-single-value Freundlich
-*** curve used for adsorption."
-PERLND,PEST-NONSVPMupper03,N1_upper,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the non-single-value Freundlich curve
-*** used for adsorption."
-PERLND,PEST-NONSVPMupper03,N2_upper,float,40,50,,,1,,,1,,,"*** N2 is the exponent parameter for the auxiliary (""desorption"") curve for
-*** the non-single-value Freundlich method."
-PERLND,PEST-STOR1groundwater,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-STOR1groundwater,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-STOR1groundwater,PSCY_groundwater,float,10,20,,0,0,,0,0,,,"*** PSCY is the initial pesticide storage in crystalline form. The values
+PERLND,PEST-STOR1,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,PEST-STOR1,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,PEST-STOR1,PSCY,float,10,20,,0,0,,0,0,,,"*** PSCY is the initial pesticide storage in crystalline form. The values
 *** given in this table apply to one of the following four soil storages:
 *** surface, upper principal, lower or groundwater."
-PERLND,PEST-STOR1groundwater,PSAD_groundwater,float,20,30,,0,0,,0,0,,,"*** PSAD is the initial pesticide storage in adsorbed form. The values given
+PERLND,PEST-STOR1,PSAD,float,20,30,,0,0,,0,0,,,"*** PSAD is the initial pesticide storage in adsorbed form. The values given
 *** in this table apply to one of the following four soil storages: surface,
 *** upper principal, lower or groundwater."
-PERLND,PEST-STOR1groundwater,PSSU_groundwater,float,30,40,,0,0,,0,0,,,"*** PSSU is the initial pesticide storage in solution. The values given in
-*** this table apply to one of the following four soil storages: surface,
-*** upper principal, lower or groundwater."
-PERLND,PEST-STOR1lower,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-STOR1lower,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-STOR1lower,PSCY_lower,float,10,20,,0,0,,0,0,,,"*** PSCY is the initial pesticide storage in crystalline form. The values
-*** given in this table apply to one of the following four soil storages:
-*** surface, upper principal, lower or groundwater."
-PERLND,PEST-STOR1lower,PSAD_lower,float,20,30,,0,0,,0,0,,,"*** PSAD is the initial pesticide storage in adsorbed form. The values given
-*** in this table apply to one of the following four soil storages: surface,
-*** upper principal, lower or groundwater."
-PERLND,PEST-STOR1lower,PSSU_lower,float,30,40,,0,0,,0,0,,,"*** PSSU is the initial pesticide storage in solution. The values given in
-*** this table apply to one of the following four soil storages: surface,
-*** upper principal, lower or groundwater."
-PERLND,PEST-STOR1surface,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-STOR1surface,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-STOR1surface,PSCY_surface,float,10,20,,0,0,,0,0,,,"*** PSCY is the initial pesticide storage in crystalline form. The values
-*** given in this table apply to one of the following four soil storages:
-*** surface, upper principal, lower or groundwater."
-PERLND,PEST-STOR1surface,PSAD_surface,float,20,30,,0,0,,0,0,,,"*** PSAD is the initial pesticide storage in adsorbed form. The values given
-*** in this table apply to one of the following four soil storages: surface,
-*** upper principal, lower or groundwater."
-PERLND,PEST-STOR1surface,PSSU_surface,float,30,40,,0,0,,0,0,,,"*** PSSU is the initial pesticide storage in solution. The values given in
-*** this table apply to one of the following four soil storages: surface,
-*** upper principal, lower or groundwater."
-PERLND,PEST-STOR1upper,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-STOR1upper,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-STOR1upper,PSCY_upper,float,10,20,,0,0,,0,0,,,"*** PSCY is the initial pesticide storage in crystalline form. The values
-*** given in this table apply to one of the following four soil storages:
-*** surface, upper principal, lower or groundwater."
-PERLND,PEST-STOR1upper,PSAD_upper,float,20,30,,0,0,,0,0,,,"*** PSAD is the initial pesticide storage in adsorbed form. The values given
-*** in this table apply to one of the following four soil storages: surface,
-*** upper principal, lower or groundwater."
-PERLND,PEST-STOR1upper,PSSU_upper,float,30,40,,0,0,,0,0,,,"*** PSSU is the initial pesticide storage in solution. The values given in
+PERLND,PEST-STOR1,PSSU,float,30,40,,0,0,,0,0,,,"*** PSSU is the initial pesticide storage in solution. The values given in
 *** this table apply to one of the following four soil storages: surface,
 *** upper principal, lower or groundwater."
 PERLND,PEST-STOR2,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
@@ -3212,171 +2455,45 @@ PERLND,PEST-STOR2,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
 PERLND,PEST-STOR2,IPS,float,10,20,,0,0,,0,0,,,"*** IPS is the initial storage of pesticide in the upper layer transitory
 *** (interflow) storage. Since only dissolved pesticide is modeled in that
 *** storage, only one value is needed (no crystalline or adsorbed material)."
-PERLND,PEST-SVALPMgroundwater,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-SVALPMgroundwater,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-SVALPMgroundwater,XFIX_groundwater,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
+PERLND,PEST-SVALPM,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,PEST-SVALPM,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,PEST-SVALPM,XFIX,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
 *** permanently fixed to the soil. The system expects this table to appear
 *** four times for each pesticide: surface layer, upper layer, lower layer,
 *** groundwater layer."
-PERLND,PEST-SVALPMgroundwater,K1_groundwater,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the single-value Freundlich
+PERLND,PEST-SVALPM,K1,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the single-value Freundlich
 *** adsorption/desorption equation. The system expects this table to appear
 *** four times for each pesticide: surface layer, upper layer, lower layer,
 *** groundwater layer."
-PERLND,PEST-SVALPMgroundwater,N1_groundwater,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the single-value Freundlich adsorption/desorption
+PERLND,PEST-SVALPM,N1,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the single-value Freundlich adsorption/desorption
 *** equation. The system expects this table to appear four times for each
 *** pesticide: surface layer, upper layer, lower layer, groundwater
 *** layer."
-PERLND,PEST-SVALPMlower,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-SVALPMlower,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-SVALPMlower,XFIX_lower,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
+PERLND,PEST-SVALPM,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,PEST-SVALPM,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,PEST-SVALPM,XFIX,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
 *** permanently fixed to the soil. The system expects this table to appear
 *** four times for each pesticide: surface layer, upper layer, lower layer,
 *** groundwater layer."
-PERLND,PEST-SVALPMlower,K1_lower,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the single-value Freundlich
+PERLND,PEST-SVALPM,K1,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the single-value Freundlich
 *** adsorption/desorption equation. The system expects this table to appear
 *** four times for each pesticide: surface layer, upper layer, lower layer,
 *** groundwater layer."
-PERLND,PEST-SVALPMlower,N1_lower,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the single-value Freundlich adsorption/desorption
+PERLND,PEST-SVALPM,N1,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the single-value Freundlich adsorption/desorption
 *** equation. The system expects this table to appear four times for each
 *** pesticide: surface layer, upper layer, lower layer, groundwater
 *** layer."
-PERLND,PEST-SVALPMsurface,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-SVALPMsurface,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-SVALPMsurface,XFIX_surface,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
+PERLND,PEST-SVALPM,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,PEST-SVALPM,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,PEST-SVALPM,XFIX,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
 *** permanently fixed to the soil. The system expects this table to appear
 *** four times for each pesticide: surface layer, upper layer, lower layer,
 *** groundwater layer."
-PERLND,PEST-SVALPMsurface,K1_surface,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the single-value Freundlich
+PERLND,PEST-SVALPM,K1,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the single-value Freundlich
 *** adsorption/desorption equation. The system expects this table to appear
 *** four times for each pesticide: surface layer, upper layer, lower layer,
 *** groundwater layer."
-PERLND,PEST-SVALPMsurface,N1_surface,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the single-value Freundlich adsorption/desorption
-*** equation. The system expects this table to appear four times for each
-*** pesticide: surface layer, upper layer, lower layer, groundwater
-*** layer."
-PERLND,PEST-SVALPMupper,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-SVALPMupper,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-SVALPMupper,XFIX_upper,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
-*** permanently fixed to the soil. The system expects this table to appear
-*** four times for each pesticide: surface layer, upper layer, lower layer,
-*** groundwater layer."
-PERLND,PEST-SVALPMupper,K1_upper,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the single-value Freundlich
-*** adsorption/desorption equation. The system expects this table to appear
-*** four times for each pesticide: surface layer, upper layer, lower layer,
-*** groundwater layer."
-PERLND,PEST-SVALPMupper,N1_upper,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the single-value Freundlich adsorption/desorption
-*** equation. The system expects this table to appear four times for each
-*** pesticide: surface layer, upper layer, lower layer, groundwater
-*** layer."
-PERLND,PEST-SVALPMgroundwater,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-SVALPMgroundwater,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-SVALPMgroundwater,XFIX_groundwater,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
-*** permanently fixed to the soil. The system expects this table to appear
-*** four times for each pesticide: surface layer, upper layer, lower layer,
-*** groundwater layer."
-PERLND,PEST-SVALPMgroundwater,K1_groundwater,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the single-value Freundlich
-*** adsorption/desorption equation. The system expects this table to appear
-*** four times for each pesticide: surface layer, upper layer, lower layer,
-*** groundwater layer."
-PERLND,PEST-SVALPMgroundwater,N1_groundwater,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the single-value Freundlich adsorption/desorption
-*** equation. The system expects this table to appear four times for each
-*** pesticide: surface layer, upper layer, lower layer, groundwater
-*** layer."
-PERLND,PEST-SVALPMlower,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-SVALPMlower,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-SVALPMlower,XFIX_lower,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
-*** permanently fixed to the soil. The system expects this table to appear
-*** four times for each pesticide: surface layer, upper layer, lower layer,
-*** groundwater layer."
-PERLND,PEST-SVALPMlower,K1_lower,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the single-value Freundlich
-*** adsorption/desorption equation. The system expects this table to appear
-*** four times for each pesticide: surface layer, upper layer, lower layer,
-*** groundwater layer."
-PERLND,PEST-SVALPMlower,N1_lower,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the single-value Freundlich adsorption/desorption
-*** equation. The system expects this table to appear four times for each
-*** pesticide: surface layer, upper layer, lower layer, groundwater
-*** layer."
-PERLND,PEST-SVALPMsurface,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-SVALPMsurface,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-SVALPMsurface,XFIX_surface,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
-*** permanently fixed to the soil. The system expects this table to appear
-*** four times for each pesticide: surface layer, upper layer, lower layer,
-*** groundwater layer."
-PERLND,PEST-SVALPMsurface,K1_surface,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the single-value Freundlich
-*** adsorption/desorption equation. The system expects this table to appear
-*** four times for each pesticide: surface layer, upper layer, lower layer,
-*** groundwater layer."
-PERLND,PEST-SVALPMsurface,N1_surface,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the single-value Freundlich adsorption/desorption
-*** equation. The system expects this table to appear four times for each
-*** pesticide: surface layer, upper layer, lower layer, groundwater
-*** layer."
-PERLND,PEST-SVALPMupper,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-SVALPMupper,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-SVALPMupper,XFIX_upper,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
-*** permanently fixed to the soil. The system expects this table to appear
-*** four times for each pesticide: surface layer, upper layer, lower layer,
-*** groundwater layer."
-PERLND,PEST-SVALPMupper,K1_upper,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the single-value Freundlich
-*** adsorption/desorption equation. The system expects this table to appear
-*** four times for each pesticide: surface layer, upper layer, lower layer,
-*** groundwater layer."
-PERLND,PEST-SVALPMupper,N1_upper,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the single-value Freundlich adsorption/desorption
-*** equation. The system expects this table to appear four times for each
-*** pesticide: surface layer, upper layer, lower layer, groundwater
-*** layer."
-PERLND,PEST-SVALPMgroundwater,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-SVALPMgroundwater,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-SVALPMgroundwater,XFIX_groundwater,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
-*** permanently fixed to the soil. The system expects this table to appear
-*** four times for each pesticide: surface layer, upper layer, lower layer,
-*** groundwater layer."
-PERLND,PEST-SVALPMgroundwater,K1_groundwater,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the single-value Freundlich
-*** adsorption/desorption equation. The system expects this table to appear
-*** four times for each pesticide: surface layer, upper layer, lower layer,
-*** groundwater layer."
-PERLND,PEST-SVALPMgroundwater,N1_groundwater,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the single-value Freundlich adsorption/desorption
-*** equation. The system expects this table to appear four times for each
-*** pesticide: surface layer, upper layer, lower layer, groundwater
-*** layer."
-PERLND,PEST-SVALPMlower,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-SVALPMlower,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-SVALPMlower,XFIX_lower,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
-*** permanently fixed to the soil. The system expects this table to appear
-*** four times for each pesticide: surface layer, upper layer, lower layer,
-*** groundwater layer."
-PERLND,PEST-SVALPMlower,K1_lower,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the single-value Freundlich
-*** adsorption/desorption equation. The system expects this table to appear
-*** four times for each pesticide: surface layer, upper layer, lower layer,
-*** groundwater layer."
-PERLND,PEST-SVALPMlower,N1_lower,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the single-value Freundlich adsorption/desorption
-*** equation. The system expects this table to appear four times for each
-*** pesticide: surface layer, upper layer, lower layer, groundwater
-*** layer."
-PERLND,PEST-SVALPMsurface,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-SVALPMsurface,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-SVALPMsurface,XFIX_surface,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
-*** permanently fixed to the soil. The system expects this table to appear
-*** four times for each pesticide: surface layer, upper layer, lower layer,
-*** groundwater layer."
-PERLND,PEST-SVALPMsurface,K1_surface,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the single-value Freundlich
-*** adsorption/desorption equation. The system expects this table to appear
-*** four times for each pesticide: surface layer, upper layer, lower layer,
-*** groundwater layer."
-PERLND,PEST-SVALPMsurface,N1_surface,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the single-value Freundlich adsorption/desorption
-*** equation. The system expects this table to appear four times for each
-*** pesticide: surface layer, upper layer, lower layer, groundwater
-*** layer."
-PERLND,PEST-SVALPMupper,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-SVALPMupper,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PEST-SVALPMupper,XFIX_upper,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of pesticide which is
-*** permanently fixed to the soil. The system expects this table to appear
-*** four times for each pesticide: surface layer, upper layer, lower layer,
-*** groundwater layer."
-PERLND,PEST-SVALPMupper,K1_upper,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the single-value Freundlich
-*** adsorption/desorption equation. The system expects this table to appear
-*** four times for each pesticide: surface layer, upper layer, lower layer,
-*** groundwater layer."
-PERLND,PEST-SVALPMupper,N1_upper,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the single-value Freundlich adsorption/desorption
+PERLND,PEST-SVALPM,N1,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the single-value Freundlich adsorption/desorption
 *** equation. The system expects this table to appear four times for each
 *** pesticide: surface layer, upper layer, lower layer, groundwater
 *** layer."
@@ -3476,116 +2593,35 @@ PERLND,PHOS-FSTGEN,THKADP,float,30,40,,1.05,1,2,1.05,1,2,,"*** THKADP is the tem
 *** (only relevant if FORAFG=0)."
 PERLND,PHOS-FSTGEN,THKIMP,float,40,50,,1.07,1,2,1.07,1,2,,*** THKIMP is the temperature coefficient (theta) for phosphate immobilization.
 PERLND,PHOS-FSTGEN,THKMP,float,50,60,,1.07,1,2,1.07,1,2,,*** THKMP is the temperature coefficient (theta) for organic P mineralization.
-PERLND,PHOS-FSTPMgroundwater,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PHOS-FSTPMgroundwater,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PHOS-FSTPMgroundwater,KDSP_groundwater,float,10,20,,0,0,,0,0,,,"*** KDSP is the first-order reaction rate parameter for phosphate desorption
+PERLND,PHOS-FSTPM,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,PHOS-FSTPM,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,PHOS-FSTPM,KDSP,float,10,20,,0,0,,0,0,,,"*** KDSP is the first-order reaction rate parameter for phosphate desorption
 *** (only used if FORPFG=0)."
-PERLND,PHOS-FSTPMgroundwater,KADP_groundwater,float,20,30,,0,0,,0,0,,,"*** KADP is the first-order reaction rate parameter for phosphate adsorption
+PERLND,PHOS-FSTPM,KADP,float,20,30,,0,0,,0,0,,,"*** KADP is the first-order reaction rate parameter for phosphate adsorption
 *** (only used if FORAFG=0)."
-PERLND,PHOS-FSTPMgroundwater,KIMP_groundwater,float,30,40,,0,0,,0,0,,,*** KIMP is the first-order reaction rate parameter for phosphate immobilization.
-PERLND,PHOS-FSTPMgroundwater,KMP_groundwater,float,40,50,,0,0,,0,0,,,*** KMP is the first-order reaction rate parameter for organic P mineralization.
-PERLND,PHOS-FSTPMlower,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PHOS-FSTPMlower,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PHOS-FSTPMlower,KDSP_lower,float,10,20,,0,0,,0,0,,,"*** KDSP is the first-order reaction rate parameter for phosphate desorption
-*** (only used if FORPFG=0)."
-PERLND,PHOS-FSTPMlower,KADP_lower,float,20,30,,0,0,,0,0,,,"*** KADP is the first-order reaction rate parameter for phosphate adsorption
-*** (only used if FORAFG=0)."
-PERLND,PHOS-FSTPMlower,KIMP_lower,float,30,40,,0,0,,0,0,,,*** KIMP is the first-order reaction rate parameter for phosphate immobilization.
-PERLND,PHOS-FSTPMlower,KMP_lower,float,40,50,,0,0,,0,0,,,*** KMP is the first-order reaction rate parameter for organic P mineralization.
-PERLND,PHOS-FSTPMsurface,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PHOS-FSTPMsurface,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PHOS-FSTPMsurface,KDSP_surface,float,10,20,,0,0,,0,0,,,"*** KDSP is the first-order reaction rate parameter for phosphate desorption
-*** (only used if FORPFG=0)."
-PERLND,PHOS-FSTPMsurface,KADP_surface,float,20,30,,0,0,,0,0,,,"*** KADP is the first-order reaction rate parameter for phosphate adsorption
-*** (only used if FORAFG=0)."
-PERLND,PHOS-FSTPMsurface,KIMP_surface,float,30,40,,0,0,,0,0,,,*** KIMP is the first-order reaction rate parameter for phosphate immobilization.
-PERLND,PHOS-FSTPMsurface,KMP_surface,float,40,50,,0,0,,0,0,,,*** KMP is the first-order reaction rate parameter for organic P mineralization.
-PERLND,PHOS-FSTPMupper,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PHOS-FSTPMupper,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PHOS-FSTPMupper,KDSP_upper,float,10,20,,0,0,,0,0,,,"*** KDSP is the first-order reaction rate parameter for phosphate desorption
-*** (only used if FORPFG=0)."
-PERLND,PHOS-FSTPMupper,KADP_upper,float,20,30,,0,0,,0,0,,,"*** KADP is the first-order reaction rate parameter for phosphate adsorption
-*** (only used if FORAFG=0)."
-PERLND,PHOS-FSTPMupper,KIMP_upper,float,30,40,,0,0,,0,0,,,*** KIMP is the first-order reaction rate parameter for phosphate immobilization.
-PERLND,PHOS-FSTPMupper,KMP_upper,float,40,50,,0,0,,0,0,,,*** KMP is the first-order reaction rate parameter for organic P mineralization.
-PERLND,PHOS-STOR1groundwater,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PHOS-STOR1groundwater,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PHOS-STOR1groundwater,ORGP_groundwater,float,10,20,,0,0,,0,0,,,*** ORGP is the initial organic P storage.
-PERLND,PHOS-STOR1groundwater,P4AD_groundwater,float,20,30,,0,0,,0,0,,,*** P4AD is the initial adsorbed phosphate storage.
-PERLND,PHOS-STOR1groundwater,P4SU_groundwater,float,30,40,,0,0,,0,0,,,*** P4SU is the initial solution phosphate storage.
-PERLND,PHOS-STOR1groundwater,PLTP_groundwater,float,40,50,,0,0,,0,0,,,*** PLTP is the initial P stored in plants.
-PERLND,PHOS-STOR1lower,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PHOS-STOR1lower,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PHOS-STOR1lower,ORGP_lower,float,10,20,,0,0,,0,0,,,*** ORGP is the initial organic P storage.
-PERLND,PHOS-STOR1lower,P4AD_lower,float,20,30,,0,0,,0,0,,,*** P4AD is the initial adsorbed phosphate storage.
-PERLND,PHOS-STOR1lower,P4SU_lower,float,30,40,,0,0,,0,0,,,*** P4SU is the initial solution phosphate storage.
-PERLND,PHOS-STOR1lower,PLTP_lower,float,40,50,,0,0,,0,0,,,*** PLTP is the initial P stored in plants.
-PERLND,PHOS-STOR1surface,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PHOS-STOR1surface,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PHOS-STOR1surface,ORGP_surface,float,10,20,,0,0,,0,0,,,*** ORGP is the initial organic P storage.
-PERLND,PHOS-STOR1surface,P4AD_surface,float,20,30,,0,0,,0,0,,,*** P4AD is the initial adsorbed phosphate storage.
-PERLND,PHOS-STOR1surface,P4SU_surface,float,30,40,,0,0,,0,0,,,*** P4SU is the initial solution phosphate storage.
-PERLND,PHOS-STOR1surface,PLTP_surface,float,40,50,,0,0,,0,0,,,*** PLTP is the initial P stored in plants.
-PERLND,PHOS-STOR1upper,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PHOS-STOR1upper,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PHOS-STOR1upper,ORGP_upper,float,10,20,,0,0,,0,0,,,*** ORGP is the initial organic P storage.
-PERLND,PHOS-STOR1upper,P4AD_upper,float,20,30,,0,0,,0,0,,,*** P4AD is the initial adsorbed phosphate storage.
-PERLND,PHOS-STOR1upper,P4SU_upper,float,30,40,,0,0,,0,0,,,*** P4SU is the initial solution phosphate storage.
-PERLND,PHOS-STOR1upper,PLTP_upper,float,40,50,,0,0,,0,0,,,*** PLTP is the initial P stored in plants.
+PERLND,PHOS-FSTPM,KIMP,float,30,40,,0,0,,0,0,,,*** KIMP is the first-order reaction rate parameter for phosphate immobilization.
+PERLND,PHOS-FSTPM,KMP,float,40,50,,0,0,,0,0,,,*** KMP is the first-order reaction rate parameter for organic P mineralization.
+PERLND,PHOS-STOR1,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,PHOS-STOR1,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,PHOS-STOR1,ORGP,float,10,20,,0,0,,0,0,,,*** ORGP is the initial organic P storage.
+PERLND,PHOS-STOR1,P4AD,float,20,30,,0,0,,0,0,,,*** P4AD is the initial adsorbed phosphate storage.
+PERLND,PHOS-STOR1,P4SU,float,30,40,,0,0,,0,0,,,*** P4SU is the initial solution phosphate storage.
+PERLND,PHOS-STOR1,PLTP,float,40,50,,0,0,,0,0,,,*** PLTP is the initial P stored in plants.
 PERLND,PHOS-STOR2,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
 PERLND,PHOS-STOR2,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
 PERLND,PHOS-STOR2,IP4SU,float,10,20,,0,0,,0,0,,,"*** IP4SU specifies the initial storage of phosphate in the upper layer
 *** transitory (interflow) storage."
-PERLND,PHOS-SVALPMgroundwater,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PHOS-SVALPMgroundwater,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PHOS-SVALPMgroundwater,XFIX_groundwater,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of phosphorus which is
+PERLND,PHOS-SVALPM,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
+PERLND,PHOS-SVALPM,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
+PERLND,PHOS-SVALPM,XFIX,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of phosphorus which is
 *** permanently fixed to the soil. The system expects this table to appear
 *** four times: surface layer, upper layer, lower layer, groundwater
 *** layer."
-PERLND,PHOS-SVALPMgroundwater,K1_groundwater,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the single-value Freundlich
+PERLND,PHOS-SVALPM,K1,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the single-value Freundlich
 *** adsorption/desorption equation. The system expects this table to appear
 *** four times: surface layer, upper layer, lower layer, groundwater
 *** layer."
-PERLND,PHOS-SVALPMgroundwater,N1_groundwater,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the single-value Freundlich adsorption/
-*** desorption equation. The system expects this table to appear four times:
-*** surface layer, upper layer, lower layer, groundwater layer."
-PERLND,PHOS-SVALPMlower,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PHOS-SVALPMlower,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PHOS-SVALPMlower,XFIX_lower,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of phosphorus which is
-*** permanently fixed to the soil. The system expects this table to appear
-*** four times: surface layer, upper layer, lower layer, groundwater
-*** layer."
-PERLND,PHOS-SVALPMlower,K1_lower,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the single-value Freundlich
-*** adsorption/desorption equation. The system expects this table to appear
-*** four times: surface layer, upper layer, lower layer, groundwater
-*** layer."
-PERLND,PHOS-SVALPMlower,N1_lower,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the single-value Freundlich adsorption/
-*** desorption equation. The system expects this table to appear four times:
-*** surface layer, upper layer, lower layer, groundwater layer."
-PERLND,PHOS-SVALPMsurface,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PHOS-SVALPMsurface,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PHOS-SVALPMsurface,XFIX_surface,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of phosphorus which is
-*** permanently fixed to the soil. The system expects this table to appear
-*** four times: surface layer, upper layer, lower layer, groundwater
-*** layer."
-PERLND,PHOS-SVALPMsurface,K1_surface,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the single-value Freundlich
-*** adsorption/desorption equation. The system expects this table to appear
-*** four times: surface layer, upper layer, lower layer, groundwater
-*** layer."
-PERLND,PHOS-SVALPMsurface,N1_surface,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the single-value Freundlich adsorption/
-*** desorption equation. The system expects this table to appear four times:
-*** surface layer, upper layer, lower layer, groundwater layer."
-PERLND,PHOS-SVALPMupper,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PHOS-SVALPMupper,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PHOS-SVALPMupper,XFIX_upper,float,10,20,,0,0,,0,0,,,"*** XFIX is the maximum concentration (on the soil) of phosphorus which is
-*** permanently fixed to the soil. The system expects this table to appear
-*** four times: surface layer, upper layer, lower layer, groundwater
-*** layer."
-PERLND,PHOS-SVALPMupper,K1_upper,float,20,30,,0,0,,0,0,,,"*** K1 is the coefficient parameter for the single-value Freundlich
-*** adsorption/desorption equation. The system expects this table to appear
-*** four times: surface layer, upper layer, lower layer, groundwater
-*** layer."
-PERLND,PHOS-SVALPMupper,N1_upper,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the single-value Freundlich adsorption/
+PERLND,PHOS-SVALPM,N1,float,30,40,,,1,,,1,,,"*** N1 is the exponent parameter for the single-value Freundlich adsorption/
 *** desorption equation. The system expects this table to appear four times:
 *** surface layer, upper layer, lower layer, groundwater layer."
 PERLND,PHOS-UPTAKE,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
@@ -4782,156 +3818,31 @@ RCHRES,GQ-CLDFACT,KCLD14,float,170,180,,0,0,1,0,0,1,,
 RCHRES,GQ-CLDFACT,KCLD15,float,180,190,,0,0,1,0,0,1,,
 RCHRES,GQ-CLDFACT,KCLD16,float,190,200,,0,0,1,0,0,1,,
 RCHRES,GQ-CLDFACT,KCLD17,float,200,210,,0,0,1,0,0,1,,
-RCHRES,GQ-DAUGHTER_biodegradation,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,GQ-DAUGHTER_biodegradation,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,GQ-DAUGHTER_biodegradation,ZERO,float,10,20,,0,0,,0,0,,,
-RCHRES,GQ-DAUGHTER_biodegradation,C21,float,20,30,,0,0,,0,0,,,"*** Variable C2F1 indicates the amount of qual no. 2 which is produced by
+RCHRES,GQ-DAUGHTER,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
+RCHRES,GQ-DAUGHTER,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
+RCHRES,GQ-DAUGHTER,ZERO,float,10,20,,0,0,,0,0,,,
+RCHRES,GQ-DAUGHTER,C21,float,20,30,,0,0,,0,0,,,"*** Variable C2F1 indicates the amount of qual no. 2 which is produced by
 *** decay of qual no. 1 through one of the six decay processes."
-RCHRES,GQ-DAUGHTER_biodegradation,C31,float,30,40,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_biodegradation,C41,float,40,50,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_biodegradation,C51,float,50,60,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_biodegradation,C61,float,60,70,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_biodegradation,C71,float,70,80,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_biodegradation,C32,float,110,120,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_biodegradation,C42,float,120,130,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_biodegradation,C52,float,130,140,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_biodegradation,C62,float,140,150,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_biodegradation,C72,float,150,160,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_biodegradation,C43,float,180,190,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_biodegradation,C53,float,190,200,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_biodegradation,C63,float,200,210,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_biodegradation,C73,float,210,220,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_biodegradation,C54,float,270,280,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_biodegradation,C64,float,280,290,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_biodegradation,C74,float,290,300,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_biodegradation,C65,float,360,370,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_biodegradation,C75,float,370,380,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_biodegradation,C76,float,450,460,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_first_order,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,GQ-DAUGHTER_first_order,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,GQ-DAUGHTER_first_order,ZERO,float,10,20,,0,0,,0,0,,,
-RCHRES,GQ-DAUGHTER_first_order,C21,float,20,30,,0,0,,0,0,,,"*** Variable C2F1 indicates the amount of qual no. 2 which is produced by
-*** decay of qual no. 1 through one of the six decay processes."
-RCHRES,GQ-DAUGHTER_first_order,C31,float,30,40,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_first_order,C41,float,40,50,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_first_order,C51,float,50,60,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_first_order,C61,float,60,70,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_first_order,C71,float,70,80,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_first_order,C32,float,110,120,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_first_order,C42,float,120,130,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_first_order,C52,float,130,140,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_first_order,C62,float,140,150,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_first_order,C72,float,150,160,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_first_order,C43,float,180,190,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_first_order,C53,float,190,200,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_first_order,C63,float,200,210,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_first_order,C73,float,210,220,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_first_order,C54,float,270,280,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_first_order,C64,float,280,290,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_first_order,C74,float,290,300,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_first_order,C65,float,360,370,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_first_order,C75,float,370,380,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_first_order,C76,float,450,460,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_hydrolysis,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,GQ-DAUGHTER_hydrolysis,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,GQ-DAUGHTER_hydrolysis,ZERO,float,10,20,,0,0,,0,0,,,
-RCHRES,GQ-DAUGHTER_hydrolysis,C21,float,20,30,,0,0,,0,0,,,"*** Variable C2F1 indicates the amount of qual no. 2 which is produced by
-*** decay of qual no. 1 through one of the six decay processes."
-RCHRES,GQ-DAUGHTER_hydrolysis,C31,float,30,40,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_hydrolysis,C41,float,40,50,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_hydrolysis,C51,float,50,60,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_hydrolysis,C61,float,60,70,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_hydrolysis,C71,float,70,80,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_hydrolysis,C32,float,110,120,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_hydrolysis,C42,float,120,130,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_hydrolysis,C52,float,130,140,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_hydrolysis,C62,float,140,150,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_hydrolysis,C72,float,150,160,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_hydrolysis,C43,float,180,190,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_hydrolysis,C53,float,190,200,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_hydrolysis,C63,float,200,210,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_hydrolysis,C73,float,210,220,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_hydrolysis,C54,float,270,280,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_hydrolysis,C64,float,280,290,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_hydrolysis,C74,float,290,300,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_hydrolysis,C65,float,360,370,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_hydrolysis,C75,float,370,380,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_hydrolysis,C76,float,450,460,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_oxidation,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,GQ-DAUGHTER_oxidation,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,GQ-DAUGHTER_oxidation,ZERO,float,10,20,,0,0,,0,0,,,
-RCHRES,GQ-DAUGHTER_oxidation,C21,float,20,30,,0,0,,0,0,,,"*** Variable C2F1 indicates the amount of qual no. 2 which is produced by
-*** decay of qual no. 1 through one of the six decay processes."
-RCHRES,GQ-DAUGHTER_oxidation,C31,float,30,40,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_oxidation,C41,float,40,50,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_oxidation,C51,float,50,60,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_oxidation,C61,float,60,70,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_oxidation,C71,float,70,80,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_oxidation,C32,float,110,120,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_oxidation,C42,float,120,130,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_oxidation,C52,float,130,140,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_oxidation,C62,float,140,150,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_oxidation,C72,float,150,160,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_oxidation,C43,float,180,190,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_oxidation,C53,float,190,200,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_oxidation,C63,float,200,210,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_oxidation,C73,float,210,220,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_oxidation,C54,float,270,280,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_oxidation,C64,float,280,290,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_oxidation,C74,float,290,300,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_oxidation,C65,float,360,370,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_oxidation,C75,float,370,380,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_oxidation,C76,float,450,460,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_photolysis,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,GQ-DAUGHTER_photolysis,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,GQ-DAUGHTER_photolysis,ZERO,float,10,20,,0,0,,0,0,,,
-RCHRES,GQ-DAUGHTER_photolysis,C21,float,20,30,,0,0,,0,0,,,"*** Variable C2F1 indicates the amount of qual no. 2 which is produced by
-*** decay of qual no. 1 through one of the six decay processes."
-RCHRES,GQ-DAUGHTER_photolysis,C31,float,30,40,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_photolysis,C41,float,40,50,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_photolysis,C51,float,50,60,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_photolysis,C61,float,60,70,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_photolysis,C71,float,70,80,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_photolysis,C32,float,110,120,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_photolysis,C42,float,120,130,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_photolysis,C52,float,130,140,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_photolysis,C62,float,140,150,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_photolysis,C72,float,150,160,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_photolysis,C43,float,180,190,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_photolysis,C53,float,190,200,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_photolysis,C63,float,200,210,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_photolysis,C73,float,210,220,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_photolysis,C54,float,270,280,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_photolysis,C64,float,280,290,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_photolysis,C74,float,290,300,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_photolysis,C65,float,360,370,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_photolysis,C75,float,370,380,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_photolysis,C76,float,450,460,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_reserved,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,GQ-DAUGHTER_reserved,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,GQ-DAUGHTER_reserved,ZERO,float,10,20,,0,0,,0,0,,,
-RCHRES,GQ-DAUGHTER_reserved,C21,float,20,30,,0,0,,0,0,,,"*** Variable C2F1 indicates the amount of qual no. 2 which is produced by
-*** decay of qual no. 1 through one of the six decay processes."
-RCHRES,GQ-DAUGHTER_reserved,C31,float,30,40,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_reserved,C41,float,40,50,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_reserved,C51,float,50,60,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_reserved,C61,float,60,70,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_reserved,C71,float,70,80,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_reserved,C32,float,110,120,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_reserved,C42,float,120,130,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_reserved,C52,float,130,140,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_reserved,C62,float,140,150,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_reserved,C72,float,150,160,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_reserved,C43,float,180,190,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_reserved,C53,float,190,200,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_reserved,C63,float,200,210,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_reserved,C73,float,210,220,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_reserved,C54,float,270,280,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_reserved,C64,float,280,290,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_reserved,C74,float,290,300,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_reserved,C65,float,360,370,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_reserved,C75,float,370,380,,0,0,,0,0,,,*** See help for C2F1.
-RCHRES,GQ-DAUGHTER_reserved,C76,float,450,460,,0,0,,0,0,,,*** See help for C2F1.
+RCHRES,GQ-DAUGHTER,C31,float,30,40,,0,0,,0,0,,,*** See help for C2F1.
+RCHRES,GQ-DAUGHTER,C41,float,40,50,,0,0,,0,0,,,*** See help for C2F1.
+RCHRES,GQ-DAUGHTER,C51,float,50,60,,0,0,,0,0,,,*** See help for C2F1.
+RCHRES,GQ-DAUGHTER,C61,float,60,70,,0,0,,0,0,,,*** See help for C2F1.
+RCHRES,GQ-DAUGHTER,C71,float,70,80,,0,0,,0,0,,,*** See help for C2F1.
+RCHRES,GQ-DAUGHTER,C32,float,110,120,,0,0,,0,0,,,*** See help for C2F1.
+RCHRES,GQ-DAUGHTER,C42,float,120,130,,0,0,,0,0,,,*** See help for C2F1.
+RCHRES,GQ-DAUGHTER,C52,float,130,140,,0,0,,0,0,,,*** See help for C2F1.
+RCHRES,GQ-DAUGHTER,C62,float,140,150,,0,0,,0,0,,,*** See help for C2F1.
+RCHRES,GQ-DAUGHTER,C72,float,150,160,,0,0,,0,0,,,*** See help for C2F1.
+RCHRES,GQ-DAUGHTER,C43,float,180,190,,0,0,,0,0,,,*** See help for C2F1.
+RCHRES,GQ-DAUGHTER,C53,float,190,200,,0,0,,0,0,,,*** See help for C2F1.
+RCHRES,GQ-DAUGHTER,C63,float,200,210,,0,0,,0,0,,,*** See help for C2F1.
+RCHRES,GQ-DAUGHTER,C73,float,210,220,,0,0,,0,0,,,*** See help for C2F1.
+RCHRES,GQ-DAUGHTER,C54,float,270,280,,0,0,,0,0,,,*** See help for C2F1.
+RCHRES,GQ-DAUGHTER,C64,float,280,290,,0,0,,0,0,,,*** See help for C2F1.
+RCHRES,GQ-DAUGHTER,C74,float,290,300,,0,0,,0,0,,,*** See help for C2F1.
+RCHRES,GQ-DAUGHTER,C65,float,360,370,,0,0,,0,0,,,*** See help for C2F1.
+RCHRES,GQ-DAUGHTER,C75,float,370,380,,0,0,,0,0,,,*** See help for C2F1.
+RCHRES,GQ-DAUGHTER,C76,float,450,460,,0,0,,0,0,,,*** See help for C2F1.
 RCHRES,GQ-DELTA,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,GQ-DELTA,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,GQ-DELTA,DEL0,float,10,20,,0,0,,0,0,,,"*** DEL(1) through DEL(18) are increments to the base absorption coefficient
@@ -5352,19 +4263,19 @@ RCHRES,HYDR-IRRIG,IRMINV,float,20,30,,0,0,,0,0,,,"*** IRMINV is a floor value fo
 *** may be made."
 RCHRES,HYDR-PARM1,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,HYDR-PARM1,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,HYDR-PARM1,VCONFG,int,12,15,,0,0,1,0,0,1,,"*** A value of 1 for VCONFG means that F(VOL) outflow demand components are
+RCHRES,HYDR-PARM1,VCONFG,int,11,14,,0,0,1,0,0,1,,"*** A value of 1 for VCONFG means that F(VOL) outflow demand components are
 *** multiplied by a factor which is allowed to vary."
-RCHRES,HYDR-PARM1,AUX1FG,int,15,18,,0,0,2,0,0,2,,"*** A value of 1 for AUX1FG means subroutine AUXIL will be called to compute
+RCHRES,HYDR-PARM1,AUX1FG,int,14,17,,0,0,2,0,0,2,,"*** A value of 1 for AUX1FG means subroutine AUXIL will be called to compute
 *** depth, stage, surface area, average depth, and topwidth, and values for
 *** these parameters will be reported in the printout. A value of 0
 *** supresses the calculation and printout of this information. A value of 2
 *** forces AUXIL to compute the variables even if VOL=0."
-RCHRES,HYDR-PARM1,AUX2FG,int,18,21,,0,0,1,0,0,1,,"*** A value of 1 for AUX2FG means average velocity and average cross
+RCHRES,HYDR-PARM1,AUX2FG,int,17,20,,0,0,1,0,0,1,,"*** A value of 1 for AUX2FG means average velocity and average cross
 *** sectional area will be calculated, and values for these parameters will
 *** be reported in the printout. A value of 0 supresses the calculation and
 *** printout of this information. If AUX2FG is 1, AUX1FG must also be
 *** 1."
-RCHRES,HYDR-PARM1,AUX3FG,int,22,25,,0,0,1,0,0,1,,"*** A value of 1 for AUX3FG means the shear velocity and bed shear stress
+RCHRES,HYDR-PARM1,AUX3FG,int,20,23,,0,0,1,0,0,1,,"*** A value of 1 for AUX3FG means the shear velocity and bed shear stress
 *** will be calculated. These are used in the calculation of deposition and
 *** scour of sediment (inorganic and organic). AUX3FG may only be turned ON
 *** (=1) if AUX1FG and AUX2FG are also =1."
@@ -5472,18 +4383,18 @@ RCHRES,MON-CLOUD,CLDM11,float,60,65,,0,0,10,0,0,10,,
 RCHRES,MON-CLOUD,CLDM12,float,65,70,,0,0,10,0,0,10,,
 RCHRES,MON-CONVF,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,MON-CONVF,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
-RCHRES,MON-CONVF,VOLJAN,float,10,15,,0,0,,0,0,,,*** Value of F(VOL) adjustment factor at start of January.
-RCHRES,MON-CONVF,VOLFEB,float,15,20,,0,0,,0,0,,,
-RCHRES,MON-CONVF,VOLMAR,float,20,25,,0,0,,0,0,,,
-RCHRES,MON-CONVF,VOLAPR,float,25,30,,0,0,,0,0,,,
-RCHRES,MON-CONVF,VOLMAY,float,30,35,,0,0,,0,0,,,
-RCHRES,MON-CONVF,VOLJUN,float,35,40,,0,0,,0,0,,,
-RCHRES,MON-CONVF,VOLJUL,float,40,45,,0,0,,0,0,,,
-RCHRES,MON-CONVF,VOLAUG,float,45,50,,0,0,,0,0,,,
-RCHRES,MON-CONVF,VOLSEP,float,50,55,,0,0,,0,0,,,
-RCHRES,MON-CONVF,VOLOCT,float,55,60,,0,0,,0,0,,,
-RCHRES,MON-CONVF,VOLNOV,float,60,65,,0,0,,0,0,,,
-RCHRES,MON-CONVF,VOLDEC,float,65,70,,0,0,,0,0,,,
+RCHRES,MON-CONVF,VOLJAN,float,10,15,,1,0,,1,0,,,*** Value of F(VOL) adjustment factor at start of January. Set default to 1 instead of 0 in the HSPF manual.
+RCHRES,MON-CONVF,VOLFEB,float,15,20,,1,0,,1,0,,,*** Value of F(VOL) adjustment factor at start of February. Set default to 1 instead of 0 in the HSPF manual.
+RCHRES,MON-CONVF,VOLMAR,float,20,25,,1,0,,1,0,,,*** Value of F(VOL) adjustment factor at start of March. Set default to 1 instead of 0 in the HSPF manual.
+RCHRES,MON-CONVF,VOLAPR,float,25,30,,1,0,,1,0,,,*** Value of F(VOL) adjustment factor at start of April. Set default to 1 instead of 0 in the HSPF manual.
+RCHRES,MON-CONVF,VOLMAY,float,30,35,,1,0,,1,0,,,*** Value of F(VOL) adjustment factor at start of May. Set default to 1 instead of 0 in the HSPF manual.
+RCHRES,MON-CONVF,VOLJUN,float,35,40,,1,0,,1,0,,,*** Value of F(VOL) adjustment factor at start of June. Set default to 1 instead of 0 in the HSPF manual.
+RCHRES,MON-CONVF,VOLJUL,float,40,45,,1,0,,1,0,,,*** Value of F(VOL) adjustment factor at start of July. Set default to 1 instead of 0 in the HSPF manual.
+RCHRES,MON-CONVF,VOLAUG,float,45,50,,1,0,,1,0,,,*** Value of F(VOL) adjustment factor at start of August. Set default to 1 instead of 0 in the HSPF manual.
+RCHRES,MON-CONVF,VOLSEP,float,50,55,,1,0,,1,0,,,*** Value of F(VOL) adjustment factor at start of September. Set default to 1 instead of 0 in the HSPF manual.
+RCHRES,MON-CONVF,VOLOCT,float,55,60,,1,0,,1,0,,,*** Value of F(VOL) adjustment factor at start of October. Set default to 1 instead of 0 in the HSPF manual.
+RCHRES,MON-CONVF,VOLNOV,float,60,65,,1,0,,1,0,,,*** Value of F(VOL) adjustment factor at start of November. Set default to 1 instead of 0 in the HSPF manual.
+RCHRES,MON-CONVF,VOLDEC,float,65,70,,1,0,,1,0,,,
 RCHRES,MON-HT-TGRND,OPNID,int,0,5,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,MON-HT-TGRND,OPNIDLAST,int,5,10,,,,,,,,,*** RCHRES to which these data apply.
 RCHRES,MON-HT-TGRND,TGRND1,float,10,15,,,-10,45,,14,113,,*** TGRND1 is the ground temperature in January.
@@ -6102,8 +5013,8 @@ SCHEMATIC,,AFACTR,float,28,38,,1,,,1,,,,
 SCHEMATIC,,TVOL,str,43,49,,,,,,,,,
 SCHEMATIC,,TVOLNO,str,49,53,,,,,,,,,
 SCHEMATIC,,MLNO,int,56,60,,,,,,,,,
-SCHEMATIC,,TMEMSB1,str,71,73,1,,,,,,,,
-SCHEMATIC,,TMEMSB2,str,73,75,1,,,,,,,,
+SCHEMATIC,,TMEMSB1,str,71,73,,,,,,,,,
+SCHEMATIC,,TMEMSB2,str,73,75,,,,,,,,,
 SPEC-ACTIONS,ACTION,OPTYP,str,2,8,,,,,,,,,
 SPEC-ACTIONS,ACTION,RANGE1,str,8,11,,,,,,,,,
 SPEC-ACTIONS,ACTION,RANGE2,str,11,15,,,,,,,,,
@@ -6125,7 +5036,7 @@ SPEC-ACTIONS,ACTION,VALUE,str,60,70,,0,,,0,,,,
 SPEC-ACTIONS,ACTION,TC,str,71,73,,,,,,,,,
 SPEC-ACTIONS,ACTION,TS,str,74,77,,,,,,,,,
 SPEC-ACTIONS,ACTION,NUM,str,77,80,,,,,,,,,
-SPEC-ACTIONS,ACTION,condition,int,80,90,,,,,,,,,
+SPEC-ACTIONS,ACTION,cond_id,int,80,90,,,,,,,,,
 SPEC-ACTIONS,DISTRB,KWRD,str,2,8,,,,,,,,,
 SPEC-ACTIONS,DISTRB,DSIND,int,8,11,,,,,,,,,
 SPEC-ACTIONS,DISTRB,CNT,int,12,15,,,,,,,,,
@@ -6169,4 +5080,4 @@ SPEC-ACTIONS,UVQUAN,CTRAN,str,67,71,,,,,,,,,
 SPEC-ACTIONS,conditions,cond_id,int,0,10,,,,,,,,,
 SPEC-ACTIONS,conditions,parent_id,int,10,20,,,,,,,,,
 SPEC-ACTIONS,conditions,sibling_id,int,20,30,,,,,,,,,
-SPEC-ACTIONS,conditions,condition,int,30,1000,,,,,,,,,
+SPEC-ACTIONS,conditions,condition,str,30,1000,,,,,,,,,

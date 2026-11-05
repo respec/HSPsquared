@@ -13,8 +13,8 @@ description = "Hydrological Simulation Program - Python"
 dependencies = [
     "cltoolbox",
     "numba",
-    "numpy<2.0",
-    "pandas<3.0.0",
+    "numpy",
+    "pandas",
     "tables",
     "pyparsing"
 ]
@@ -65,6 +65,13 @@ fix = true
 
 [tool.ruff.lint]
 extend-select = ["I"]
+
+[tool.ruff.lint.isort.import-heading]
+future = "Future imports"
+standard-library = "Standard library imports"
+third-party = "Third party imports"
+first-party = "First party imports"
+local-folder = "Local folder imports"
 
 [tool.setuptools]
 license-files = ["LICENSE"]

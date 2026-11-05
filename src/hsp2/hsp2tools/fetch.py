@@ -3,12 +3,14 @@ Author: Robert Heaphy, Ph.D.
 License: LGPL2
 """
 
+# Standard library imports
 from io import StringIO
 
+# Third party imports
 from pandas import HDFStore, read_csv
 
 
-def fetchtable(hdfname, path, names=[], usercol=None, usercolvalue=None, CSV=False):
+def fetchtable(hdfname, path, names=None, usercol=None, usercolvalue=None, CSV=False):
     """
     Fetch HSP2 table and after user modification, use it to update HDF5 file.
     If CSV=True is used, the return to fetch() must also be a CSV string!
@@ -41,6 +43,8 @@ def fetchtable(hdfname, path, names=[], usercol=None, usercolvalue=None, CSV=Fal
         Call this function with modified table to update table in HDF5 file
     """
 
+    if names is None:
+        names = []
     with HDFStore(hdfname) as store:
         dforiginal = store[path]
 
@@ -54,7 +58,7 @@ def fetchtable(hdfname, path, names=[], usercol=None, usercolvalue=None, CSV=Fal
             df = df.to_csv()
 
         def replace(dff):
-            nonlocal dforiginal  # noqa F824
+            nonlocal dforiginal
             if CSV:
                 dff = read_csv(StringIO(dff), index_col=0)
                 print(dff)

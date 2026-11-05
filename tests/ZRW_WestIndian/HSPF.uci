@@ -3417,7 +3417,7 @@ RCHRES
 ***         Flags for HYDR section
 ***RC HRES  VC A1 A2 A3  ODFVFG for each *** ODGTFG for each     FUNCT  for each
 *** x  - x  FG FG FG FG  possible   exit *** possible   exit     possible   exit
-    1  612   0  1  1  1    4  0  0  0  0       0  0  0  0  0       1  0  0  0  0
+    1  612   0  1  1  1    4  0  0  0  0       0  0  0  0  0       1 
   END HYDR-PARM1
 
   HYDR-PARM2

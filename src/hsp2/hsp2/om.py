@@ -97,7 +97,7 @@ def state_load_om_json(state, io_manager, siminfo, om_operations):
     # - model objects defined in file named '[model h5 base].json -- this will populate an array of object definitions that will
     #   be loadable by "model_loader_recursive()"
     # JSON file would be in same path as hdf5
-    hdf5_path = io_manager._input.file_path
+    hdf5_path = io_manager._input_file_path
     (fbase, fext) = os.path.splitext(hdf5_path)
     # see if there is custom json
     fjson = fbase + ".json"
@@ -122,7 +122,7 @@ def state_load_om_python(state, io_manager, siminfo, om_operations):
     # - this file may also contain other dynamically redefined functions such as state_step_hydr()
     #   which can contain code that is executed every timestep inside the _hydr_() function
     #   and can literally supply hooks for any desired user customizable code
-    hdf5_path = io_manager._input.file_path
+    hdf5_path = io_manager._input_file_path
     (fbase, fext) = os.path.splitext(hdf5_path)
     # see if there is a code module with custom python
     # print("Looking for custom om loader in python code ", (fbase + ".py"))

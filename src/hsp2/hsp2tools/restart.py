@@ -3,6 +3,7 @@ Author: Robert Heaphy, Ph.D.
 License: LGPL2
 """
 
+# Third party imports
 from pandas import HDFStore, Timestamp, date_range
 from pandas.tseries.offsets import Minute
 
@@ -69,7 +70,7 @@ def restart(hdfname, newstart):
         df.loc["Start", "Info"] = str(startdate)
         df.to_hdf(hdfname, "CONTROL/GLOBAL", format="table", data_columns=True)
 
-        for path in [p[1:] for p in store.keys() if p.startswith("/RESULTS")]:
+        for path in [p[1:] for p in store if p.startswith("/RESULTS")]:
             _, x, activity = path.split("/")
             operation, segment = x.split("_")
             if (operation, activity) not in states:
@@ -83,4 +84,3 @@ def restart(hdfname, newstart):
             dff = store[storepath]
             dff.update(df.T)
             dff.to_hdf(store, storepath, format="table", data_columns=True)
-    return

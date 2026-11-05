@@ -39,7 +39,7 @@ jobs:
         continue-on-error: true
         strategy:
             matrix:
-                python-version: ['3.9', '3.10', '3.11', '3.12']
+                python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
                 pandas-version: ['']
                 include:
                     - python-version: '3.11'
@@ -73,7 +73,7 @@ jobs:
         continue-on-error: true
         strategy:
             matrix:
-                python-version: ['3.9', '3.10', '3.11', '3.12']
+                python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
         steps:
             - uses: actions/checkout@v4
             - name: Set up Python
@@ -89,6 +89,6 @@ jobs:
               run: |
                   # TODO: find much shorter test case.
                   hsp2 import_uci \
-                      ./tests/test10/HSP2results/test10.uci \
+                      ./tests/test10/HSPFresults/test10.uci \
                       _temp_test10.h5
                   hsp2 run _temp_test10.h5

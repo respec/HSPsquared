@@ -67,8 +67,8 @@ def cons(io_manager, siminfo, parameters, ts):
         if "NCONS" in parameters["PARAMETERS"]:
             ncons = parameters["PARAMETERS"]["NCONS"]
 
-    for index in range(ncons):
-        icon = str(index + 1)
+    for index in range(1, ncons+1):
+        icon = str(index)
         parms = parameters["CONS" + icon]
         conid = parms["CONID"]  # string name of the conservative constituent
         con = parms["CON"]  # initial concentration of the conservative
@@ -82,7 +82,7 @@ def cons(io_manager, siminfo, parameters, ts):
             "QTYID"
         ]  # string which specifies the units for inflow or outflow of constituent; e.g. kg
         name = "CONS" + icon  # arbitrary identification, default CONxx
-        ui["icon"] = index + 1
+        ui["icon"] = index
         ui["con"] = con
 
         # # dry deposition; flag: COADFG; monthly COAFXM; value: COADFX
