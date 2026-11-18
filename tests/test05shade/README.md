@@ -9,7 +9,7 @@ of the test set run hourly or without shading, so none of them showed it.
 ## The case
 
 HSPF test05 (`tests/test05`, 30-minute step, PERLND with SNOW and PWATER) with these
-changes, made by `make_case.py` from `tests/test05/HSPFresults/TEST05bin.UCI`:
+changes to `tests/test05/HSPFresults/TEST05bin.UCI`:
 
 - SNOW-PARM1: SHADE 0.0 on PERLND 1 (control), 0.3 on PERLND 2 and 0.72 on PERLND 3
   (test05 has 0.0 on all three).
