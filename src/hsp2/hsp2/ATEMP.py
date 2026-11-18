@@ -4,7 +4,7 @@ License: LGPL2
 Conversion of HSPF HPERAIR.FOR module."""
 
 from numba import njit
-from numpy import empty, int64, ones, zeros
+from numpy import asarray, empty, int64, ones, zeros
 
 from hsp2.hsp2.utilities import LAPSE, hoursval, make_numba_dict
 from hsp2.hsp2io.protocols import SupportsReadTS
@@ -15,7 +15,11 @@ ERRMSGS = ()
 def atemp(io_manager: SupportsReadTS, siminfo, parameters, ts):
     """high level driver for air temperature module"""
 
-    ts["LAPSE"] = hoursval(siminfo, LAPSE, lapselike=True)
+    # dry lapse rate of the hour in which each interval ends, LAPSE(HR) with HR
+    # from 1 to 24 as in ATEMP of HSPF, at any time step
+    end = siminfo["tindex"]
+    minutes = end.hour.to_numpy() * 60 + end.minute.to_numpy()
+    ts["LAPSE"] = asarray(LAPSE, dtype=float)[((minutes - 1) % 1440) // 60]
     # first interval of each hour
     ts["HRFG"] = hoursval(siminfo, ones(24), dofirst=True).astype(float)
 
