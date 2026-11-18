@@ -35,6 +35,10 @@ def snow(io_manager: SupportsReadTS, siminfo, parameters, ts):
 
     ts["SVP"] = SVP
     ts["SEASONS"] = monthval(siminfo, SEASONS)
+    # south of the equator the summer and winter albedo equations are exchanged,
+    # as in ALBED of HSPF
+    if float(parameters["PARAMETERS"].get("LAT", 0.0)) < 0.0:
+        ts["SEASONS"] = 1.0 - ts["SEASONS"].astype(float)
 
     cloudfg = "CLOUD" in ts
 
