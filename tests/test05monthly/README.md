@@ -17,8 +17,7 @@ as they are.
 ## The case
 
 HSPF test05 (`tests/test05`, PERLND with SNOW and PWATER; VCSFG, VUZFG, VNNFG and VLEFG
-on) with these changes, made by `make_case.py` from
-`tests/test05/HSPFresults/TEST05bin.UCI`:
+on) with these changes to `tests/test05/HSPFresults/TEST05bin.UCI`:
 
 - INDELT 01:00 (test05: 00:30); at a sub-hourly step the PETADJ output of PWATER is
   item P1 of issue #232.
