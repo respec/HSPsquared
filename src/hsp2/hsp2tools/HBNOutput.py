@@ -51,13 +51,15 @@ def record_positions(data) -> Union[list, None]:
     (record type, operation, id, activity, ...) starts at index + 4, and reclen is
     the length of the body less its first 24 bytes. Two layouts are read:
 
+    - the layout of the Lahey Fortran runtime, which the canonical HSPF
+      (https://github.com/respec/FORTRAN, and the executable installed with BASINS)
+      writes through its compiler independent binary output routines: a first byte
+      0xFD, then for each record a 4-byte packed length, the body and a 1- or 2-byte
+      back pointer;
     - the unformatted sequential layout of compilers such as gfortran, in which
-      4-byte length markers frame each record; HSPF builds that write the binary
-      output with plain unformatted WRITE statements give it;
-    - the layout of the Lahey Fortran runtime, which HSPF also writes with other
-      compilers through its compiler independent binary output routines: a first
-      byte 0xFD, then for each record a 4-byte packed length, the body and a
-      1- or 2-byte back pointer.
+      4-byte length markers frame each record. The HSPF source distributed with
+      PyHSPF 0.2.4 gives it: that source does not have the compiler independent
+      routines and writes the records with plain unformatted WRITE statements.
 
     The markers are checked first, because the first marker of an unformatted
     sequential file can also begin with the byte 0xFD.
