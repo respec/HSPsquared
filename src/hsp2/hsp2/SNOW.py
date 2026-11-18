@@ -396,7 +396,14 @@ def _snow_(ui, ts):
             # back in PSNOW
             if snocov < 1.0:
                 sumht = sumht * snocov
-            paktmp = 32.0 if neghts <= 0.0 else 32.0 - neghts / (0.00695 * packf)
+            # evaporation can remove the whole pack while it still holds a heat
+            # deficit; HSPF then divides by zero here and carries an infinite pack
+            # temperature until the pack is removed at the end of the interval
+            # (NOPACK). 32 F leaves the same state at the end of the interval.
+            if neghts <= 0.0 or packf <= 0.0:
+                paktmp = 32.0
+            else:
+                paktmp = 32.0 - neghts / (0.00695 * packf)
 
             # COOLER
             if iregfg:
