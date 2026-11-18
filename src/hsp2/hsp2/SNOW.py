@@ -371,9 +371,14 @@ def _snow_(ui, ts):
                     albedo = summer if SEASONS[step] else winter
                     # END ALBEDO
 
-                    k = (1.0 - shade) * delt60
-                    long1 = (shade * 0.26 * reltmp) + k * (0.20 * reltmp - 6.6)
-                    long2 = (shade * 0.20 * reltmp) + k * (0.17 * reltmp - 6.6)
+                    # longwave energy in langleys per interval: as in HEXCHR of
+                    # HSPF, the whole term, shaded part included, is scaled by delt60
+                    long1 = (
+                        shade * 0.26 * reltmp + (1.0 - shade) * (0.20 * reltmp - 6.6)
+                    ) * delt60
+                    long2 = (
+                        shade * 0.20 * reltmp + (1.0 - shade) * (0.17 * reltmp - 6.6)
+                    ) * delt60
                     long_ = long1 if reltmp > 0.0 else long2
                     if long_ < 0.0:  # back radiation
                         long_ *= skyclr
