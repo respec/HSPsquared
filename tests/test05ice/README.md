@@ -16,9 +16,8 @@ below one hour.
 
 ## The case
 
-HSPF test05 (`tests/test05`, 30-minute step, PERLND with SNOW and PWATER, ICEFG 1,
-SHADE 0) with these changes, made by `make_case.py` from
-`tests/test05/HSPFresults/TEST05bin.UCI`:
+HSPF test05 (`tests/test05`, 30-minute step, PERLND with SNOW and PWATER, ICEFG 1, SHADE
+0) with these changes to `tests/test05/HSPFresults/TEST05bin.UCI`:
 
 - Run from 1976-01-02 00:00 to 1976-04-30 24:00, which covers the snow season of the
   case (test05: the whole of 1976). Starting on 2 January also keeps out a defect of
