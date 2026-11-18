@@ -60,9 +60,11 @@ both to 0. The build scripts, `wdm_write` included, are in the archive
 https://doi.org/10.5281/zenodo.24292492 (`fortran_engine/`).
 
 The sections of that source write the binary output with plain unformatted WRITE
-statements, so the gfortran build gives unformatted sequential records framed by
-4-byte length markers rather than the Lahey layout of the Windows builds. `HBNOutput`
-reads both layouts, and the file is kept as HSPF wrote it.
+statements, so the gfortran build gives unformatted sequential records framed by 4-byte
+length markers rather than the Lahey layout that the canonical HSPF
+(https://github.com/respec/FORTRAN, and the executable installed with BASINS) writes
+through its compiler independent routines. `HBNOutput` reads both layouts, and the file
+is kept as HSPF wrote it.
 
 ## Expected result
 
