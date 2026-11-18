@@ -1,11 +1,14 @@
 """HBNOutput reads both layouts of the HSPF binary output (HBN) file.
 
-HSPF writes the layout of the Lahey Fortran runtime (first byte 0xFD) through its
-compiler independent binary output routines. Builds of HSPF sources that write the
-binary output with plain unformatted WRITE statements give, with compilers such as
-gfortran, an unformatted sequential file in which each record is framed by 4-byte
-length markers. The test rewrites the records of test05.hbn in that layout and
-checks that HBNOutput reads the same data from both files.
+The canonical HSPF (https://github.com/respec/FORTRAN, and the executable installed
+with BASINS) writes the binary output in the layout of the Lahey Fortran runtime
+(first byte 0xFD) through its compiler independent routines. The HSPF source
+distributed with PyHSPF 0.2.4 does not have these routines: it writes the records with
+plain unformatted WRITE statements, so its gfortran build gives an unformatted
+sequential file in which 4-byte length markers frame each record. The reference
+outputs of the regression cases added for issue #232 come from that build. The test
+rewrites the records of test05.hbn in that layout and checks that HBNOutput reads the
+same data from both files.
 """
 
 import os
