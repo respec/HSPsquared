@@ -37,8 +37,8 @@ both to 0. The build scripts are in the archive
 https://doi.org/10.5281/zenodo.24292492 (`fortran_engine/`).
 
 The gfortran build writes the binary output as unformatted sequential records;
-`hbn_to_windows.py` rewrites them in the layout of the Windows build that
-`HBNOutput` reads, copying the record bodies unchanged. Check: the same engine and
+`tests/convert/hbn_to_windows.py` rewrites them in the layout of the Windows build
+that `HBNOutput` reads, copying the record bodies unchanged. Check: the same engine and
 converter applied to test05 as shipped give a file of the same size, with the same
 record headers, names and record markers, as `tests/test05/HSPFresults/test05.hbn`;
 the values agree within 2e-5.

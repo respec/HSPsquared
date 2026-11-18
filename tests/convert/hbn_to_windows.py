@@ -7,7 +7,7 @@ word (length << 2 | 3), the record body, and a trailing word ((length + 4) << 2 
 of n bytes, big-endian, n being the smallest number of bytes (1 to 4) that holds it. The
 record bodies are copied unchanged.
 
-usage: python hbn_to_windows.py <gfortran.hbn> <windows.hbn>
+usage: python tests/convert/hbn_to_windows.py <gfortran.hbn> <windows.hbn>
 """
 
 import sys
