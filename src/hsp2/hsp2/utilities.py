@@ -295,7 +295,10 @@ def transform(ts, name, how, siminfo):
 
 
 def hoursval(siminfo, hours24, dofirst=False, lapselike=False):
-    """create hours flags, flag on the hour or lapse table over full simulation"""
+    """create hours flags, flag on the hour or lapse table over full simulation
+
+    With dofirst the flag is also on in the first interval of the run, where HSPF
+    always sets its hour and day flags."""
     start = siminfo["start"]
     stop = siminfo["stop"]
     fmins = Minute(siminfo["delt"])
@@ -307,8 +310,6 @@ def hoursval(siminfo, hours24, dofirst=False, lapselike=False):
         start=f"{start.year}-01-01", end=f"{stop.year + 1}-12-31", freq=Minute(60)
     )
     hours = tile(hours24, (len(dr) + 23) // 24).astype(float)
-    if dofirst:
-        hours[0] = 1
 
     ts = Series(hours[0 : len(dr)], dr)
     tsfreq = ts.index.freq
@@ -322,7 +323,10 @@ def hoursval(siminfo, hours24, dofirst=False, lapselike=False):
             ts = ts.resample(fmins).asfreq().fillna(0.0)
         elif tsfreq.nanos < freq:  # downsample
             ts = ts.resample(fmins).max()
-    return ts.truncate(start, stop).to_numpy()
+    values = ts.truncate(start, stop).to_numpy(copy=True)
+    if dofirst:
+        values[0] = 1.0
+    return values
 
 
 def hourflag(siminfo, hourfg, dofirst=False):

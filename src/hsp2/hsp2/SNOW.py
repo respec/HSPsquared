@@ -602,7 +602,11 @@ def vapor(lsvp, temp):
 
 
 def hour6flag(siminfo, dofirst=False):
-    """timeseries with 1 at 6am and earlier each day, and zero otherwise"""
+    """timeseries with 1 at 6am and earlier each day, and zero otherwise
+
+    The flag follows the clock only: ICING of HSPF has no rule for the first
+    interval of the run, whose 6 a.m. flag is set in _snow_ as in PSNOW of HSPF.
+    dofirst is therefore not used."""
     hours24 = zeros(24)
     hours24[0] = 1.0
     hours24[1] = 1.0
@@ -610,4 +614,4 @@ def hour6flag(siminfo, dofirst=False):
     hours24[3] = 1.0
     hours24[4] = 1.0
     hours24[5] = 1.0
-    return hoursval(siminfo, hours24, dofirst)
+    return hoursval(siminfo, hours24)
