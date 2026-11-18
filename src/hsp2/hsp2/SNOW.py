@@ -89,7 +89,7 @@ def snow(io_manager: SupportsReadTS, siminfo, parameters, ts):
     errors = _snow_(ui, ts)
     ############################################################################
 
-    if siminfo["delt"] > 360 and int(siminfo["ICEFLG"]):
+    if siminfo["delt"] > 360 and int(siminfo["ICEFG"]):
         errors[0] += 1
 
     return errors, ERRMSGS
