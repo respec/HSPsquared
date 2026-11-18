@@ -36,12 +36,12 @@ the routine HSPF_INI is an empty stub that leaves two outputs undefined; the bui
 both to 0. The build scripts are in the archive
 https://doi.org/10.5281/zenodo.24292492 (`fortran_engine/`).
 
-The gfortran build writes the binary output as unformatted sequential records;
-`tests/convert/hbn_to_windows.py` rewrites them in the layout of the Windows build
-that `HBNOutput` reads, copying the record bodies unchanged. Check: the same engine and
-converter applied to test05 as shipped give a file of the same size, with the same
-record headers, names and record markers, as `tests/test05/HSPFresults/test05.hbn`;
-the values agree within 2e-5.
+The sections of that source write the binary output with plain unformatted WRITE
+statements, so the gfortran build gives unformatted sequential records framed by
+4-byte length markers rather than the Lahey layout of the Windows builds. `HBNOutput`
+reads both layouts, and the file is kept as HSPF wrote it. Check: the same engine run on
+test05 as shipped writes the same 84 records as `tests/test05/HSPFresults/test05.hbn`
+(same headers, names and dates), with values within 2e-5.
 
 ## Expected result
 
