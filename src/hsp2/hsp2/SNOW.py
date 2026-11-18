@@ -75,6 +75,13 @@ def snow(io_manager: SupportsReadTS, siminfo, parameters, ts):
     ui["delt"] = siminfo["delt"]
     ui["errlen"] = len(ERRMSGS)
     ui["cloudfg"] = cloudfg
+    # 6 a.m. flag of the ground-ice routine at the start of the run, as in PSNOW of
+    # HSPF: on when the run starts before hour 7, the hour (1 to 24) being counted
+    # as in HSPF, where an instant on the hour ends the hour before it (06:00 is in
+    # hour 6, 00:00 in hour 24)
+    start = siminfo["start"]
+    hr0 = ((start.hour * 60 + start.minute - 1) % 1440) // 60 + 1
+    ui["HR6FG0"] = 1.0 if hr0 < 7 else 0.0
 
     u = parameters["PARAMETERS"]
 
@@ -189,8 +196,10 @@ def _snow_(ui, ts):
     ts["WYIELD"] = WYIELD = zeros(steps)  # not initialized
     ts["XLNMLT"] = XLNMLT = zeros(steps)
 
+    hr6fg = int(ui["HR6FG0"])
     if packf + packw <= 1.0e-5:  # reset state variables
         # NOPACK
+        hr6fg = 1
         albedo = 0.0
         covinx = 0.1 * COVIND[0]
         dull = 0.0
@@ -232,11 +241,6 @@ def _snow_(ui, ts):
     satvap = 0.0
     snowep = 0.0
     vap = 0.0
-
-    if HR6IND[0] > 0:
-        hr6fg = 1
-    else:
-        hr6fg = 0
 
     # MAIN LOOP
     for step in range(steps):
