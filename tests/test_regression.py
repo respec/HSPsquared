@@ -39,6 +39,7 @@ class RegressTest(RegressTestBase):
     "case",
     [
         # "test05",
+        "test05monthly",
         # "test09",
         "test10",
         "test10specl",
