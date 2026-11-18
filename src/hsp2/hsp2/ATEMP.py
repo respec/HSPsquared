@@ -4,7 +4,7 @@ License: LGPL2
 Conversion of HSPF HPERAIR.FOR module."""
 
 from numba import njit
-from numpy import empty, int64, zeros
+from numpy import asarray, empty, int64, ones, zeros
 
 from hsp2.hsp2.utilities import LAPSE, hoursval, make_numba_dict
 from hsp2.hsp2io.protocols import SupportsReadTS
@@ -15,7 +15,13 @@ ERRMSGS = ()
 def atemp(io_manager: SupportsReadTS, siminfo, parameters, ts):
     """high level driver for air temperature module"""
 
-    ts["LAPSE"] = hoursval(siminfo, LAPSE, lapselike=True)
+    # dry lapse rate of the hour in which each interval ends, LAPSE(HR) with HR
+    # from 1 to 24 as in ATEMP of HSPF, at any time step
+    end = siminfo["tindex"]
+    minutes = end.hour.to_numpy() * 60 + end.minute.to_numpy()
+    ts["LAPSE"] = asarray(LAPSE, dtype=float)[((minutes - 1) % 1440) // 60]
+    # first interval of each hour
+    ts["HRFG"] = hoursval(siminfo, ones(24), dofirst=True).astype(float)
 
     ui = make_numba_dict(parameters)  # Note: all values coverted to float automatically
     ui["k"] = siminfo["delt"] * 0.000833  # convert to in/timestep
@@ -39,13 +45,8 @@ def _atemp_(ui, ts):
     lapse is dry air lapse rate for each hour of the day, optional."""
     errors = zeros(int(ui["errlen"])).astype(int64)
 
-    eldat = ui["ELDAT"]
-    if eldat == 0:
-        # no elevation difference, so air temp = gage temp, skip rest of code
-        ts["AIRTMP"] = ts["GATMP"]
-        return errors
-
     # pay for lookup once
+    eldat = ui["ELDAT"]
     k = ui["k"]  # calculated in atemp()
 
     steps = int(ui["steps"])
@@ -54,11 +55,22 @@ def _atemp_(ui, ts):
     LAPSE = ts["LAPSE"]
     PREC = ts["PREC"]
     GATMP = ts["GATMP"]
+    HRFG = ts["HRFG"]
 
     # like MATLAB, faster to preallocate array storage, stores in Dict automatically
     ts["AIRTMP"] = AIRTMP = empty(steps)
+    ts["GATMP"] = GATMPH = empty(steps)
 
+    # as in ATEMP of HSPF, the gage temperature is read and the air temperature
+    # updated in the first interval of each hour, and both are held for the rest
+    # of the hour; the first interval of the run always updates them
+    gatmp = 0.0
+    airtmp = 0.0
     for step in range(steps):
-        lapse = 0.0035 if PREC[step] > k else LAPSE[step]  # use wet lapse if prec
-        AIRTMP[step] = GATMP[step] - lapse * eldat
+        if step == 0 or HRFG[step] > 0.0:
+            gatmp = GATMP[step]
+            lapse = 0.0035 if PREC[step] > k else LAPSE[step]  # use wet lapse if prec
+            airtmp = gatmp - lapse * eldat
+        GATMPH[step] = gatmp
+        AIRTMP[step] = airtmp
     return errors
