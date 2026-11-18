@@ -22,8 +22,7 @@ still cold; this case reaches it with SNOEVP at its upper limit.
 ## The case
 
 HSPF test05 (`tests/test05`, PERLND with SNOW and PWATER) at a daily step, with these
-changes, made by `make_case.py` from `tests/test05/HSPFresults/TEST05bin.UCI` and
-`TEST.WDM`:
+changes to `tests/test05/HSPFresults/TEST05bin.UCI` and `TEST.WDM`:
 
 - INDELT 24:00 (test05: 00:30).
 - Input data brought to the daily step: hourly precipitation and 2-hour solar
@@ -50,8 +49,8 @@ changes, made by `make_case.py` from `tests/test05/HSPFresults/TEST05bin.UCI` an
 
 ## Reference output
 
-`make_case.py` writes the daily data as text files; the program `wdm_write` of the HSPF
-build below wrote them to `HSPFresults/test05daily.wdm` with the WDM library of HSPF.
+The program `wdm_write` of the HSPF build below wrote the daily data to
+`HSPFresults/test05daily.wdm` with the WDM library of HSPF.
 
 `HSPFresults/test05daily.hbn` was written by HSPF built from the source distributed
 with PyHSPF 0.2.4 (Lampert and Wu, 2015, Environmental Modelling & Software 68,
