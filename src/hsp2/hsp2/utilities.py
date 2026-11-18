@@ -301,8 +301,10 @@ def hoursval(siminfo, hours24, dofirst=False, lapselike=False):
     fmins = Minute(siminfo["delt"])
     freq = fmins.nanos
 
+    # the calendar series runs to the end of the year after the end of the run, so
+    # that it also covers a run that ends in December
     dr = date_range(
-        start=f"{start.year}-01-01", end=f"{stop.year}-12-31", freq=Minute(60)
+        start=f"{start.year}-01-01", end=f"{stop.year + 1}-12-31", freq=Minute(60)
     )
     hours = tile(hours24, (len(dr) + 23) // 24).astype(float)
     if dofirst:
@@ -337,8 +339,12 @@ def monthval(siminfo, monthly):
     fmins = Minute(siminfo["delt"])
     freq = fmins.nanos
 
-    months = tile(monthly, stop.year - start.year + 1).astype(float)
-    dr = date_range(start=f"{start.year}-01-01", end=f"{stop.year}-12-31", freq="MS")
+    # calendar series to the end of the year after the end of the run, so that it
+    # also covers a run that ends in December
+    months = tile(monthly, stop.year - start.year + 2).astype(float)
+    dr = date_range(
+        start=f"{start.year}-01-01", end=f"{stop.year + 1}-12-31", freq="MS"
+    )
     ts = Series(months, index=dr).resample("D").ffill()
     tsfreq = ts.index.freq
 
@@ -357,8 +363,12 @@ def dayval(siminfo, monthly):
     fmins = Minute(siminfo["delt"])
     freq = fmins.nanos
 
-    months = tile(monthly, stop.year - start.year + 1).astype(float)
-    dr = date_range(start=f"{start.year}-01-01", end=f"{stop.year}-12-31", freq="MS")
+    # calendar series to the end of the year after the end of the run, so that it
+    # also covers a run that ends in December
+    months = tile(monthly, stop.year - start.year + 2).astype(float)
+    dr = date_range(
+        start=f"{start.year}-01-01", end=f"{stop.year + 1}-12-31", freq="MS"
+    )
     ts = Series(months, index=dr).resample("D").interpolate("time")
     tsfreq = ts.index.freq
 
