@@ -9,9 +9,8 @@ divided by that depth: a snow run with an initial pack stopped with
 
 ## The case
 
-HSPF test05 (`tests/test05`, 30-minute step, PERLND with SNOW and PWATER, initial
-pack) with these changes, made by `tests/test05start/make_cases.py` from
-`tests/test05/HSPFresults/TEST05bin.UCI`:
+HSPF test05 (`tests/test05`, 30-minute step, PERLND with SNOW and PWATER, initial pack)
+with these changes to `tests/test05/HSPFresults/TEST05bin.UCI`:
 
 - Run from 1976-01-02 00:30 to 1976-01-31 24:00 (test05: the whole of 1976, from
   00:00).

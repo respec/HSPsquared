@@ -30,8 +30,8 @@ Regression case for items M1, S1, F3 and F5 of issue #232.
 
 ## The case
 
-HSPF test05 (`tests/test05`, PERLND with SNOW and PWATER, ICEFG 1) with these changes,
-made by `make_cases.py` from `tests/test05/HSPFresults/TEST05bin.UCI`:
+HSPF test05 (`tests/test05`, PERLND with SNOW and PWATER, ICEFG 1) with these changes to
+`tests/test05/HSPFresults/TEST05bin.UCI`:
 
 - INDELT 01:00 (test05: 00:30); at this step the ground-ice items of a sub-hourly step
   (F2 and P1 of issue #232) do not arise.
