@@ -57,8 +57,12 @@ def snow(io_manager: SupportsReadTS, siminfo, parameters, ts):
         if name not in ts and name in parameters["PARAMETERS"]:
             ts[name] = full(steps, parameters["PARAMETERS"][name])
 
-    # true the first time and at 6am and earlier every day of simulation
-    ts["HR6IND"] = hour6flag(siminfo, dofirst=True).astype(float)
+    # 6 a.m. flag of the ground-ice routine, as HR6FG in ICING of HSPF: set while
+    # HR < 7, HR being the hour (1 to 24) in which the interval ends
+    end = siminfo["tindex"]
+    mins = end.hour.to_numpy() * 60 + end.minute.to_numpy()
+    hr = ((mins - 1) % 1440) // 60 + 1
+    ts["HR6IND"] = (hr < 7).astype(float)
 
     # true the first time and at every hour of simulation
     ts["HRFG"] = hoursval(siminfo, ones(24), dofirst=True).astype(float)

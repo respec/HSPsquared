@@ -38,6 +38,7 @@ class RegressTest(RegressTestBase):
 @pytest.mark.parametrize(
     "case",
     [
+        "test05ice",
         # "test05",
         # "test09",
         "test10",
