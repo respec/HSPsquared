@@ -200,6 +200,7 @@ def _snow_(ui, ts):
     if packf + packw <= 1.0e-5:  # reset state variables
         # NOPACK
         hr6fg = 1
+        xlnmlt = 0.0
         albedo = 0.0
         covinx = 0.1 * COVIND[0]
         dull = 0.0
