@@ -20,8 +20,8 @@ Regression case for items A1 and E1 of issue #232.
 
 ## The case
 
-HSPF test05 (`tests/test05`, 30-minute step, PERLND) with these changes, made by
-`make_cases.py` from `tests/test05/HSPFresults/TEST05bin.UCI` and `TEST.WDM`:
+HSPF test05 (`tests/test05`, 30-minute step, PERLND) with these changes to
+`tests/test05/HSPFresults/TEST05bin.UCI` and `TEST.WDM`:
 
 - ATEMP active (test05: inactive, with the air temperature read as AIRTMP); the gage
   temperature goes to EXTNL GATMP. ATEMP-DAT: ELDAT 0 on PERLND 1, 1111 ft on PERLND 2
@@ -48,9 +48,8 @@ HSPF test05 (`tests/test05`, 30-minute step, PERLND) with these changes, made by
 
 ## Reference output
 
-`make_cases.py` writes the input data as text files; the program `wdm_write` of the
-HSPF build below wrote them to `HSPFresults/test05atemp.wdm` with the WDM library of
-HSPF.
+The program `wdm_write` of the HSPF build below wrote the input data to
+`HSPFresults/test05atemp.wdm` with the WDM library of HSPF.
 
 `HSPFresults/test05atemp.hbn` was written by HSPF built from the source distributed
 with PyHSPF 0.2.4 (Lampert and Wu, 2015, Environmental Modelling & Software 68,

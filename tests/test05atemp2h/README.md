@@ -8,9 +8,8 @@ differs whenever ELDAT is not 0.
 
 ## The case
 
-As `tests/test05atemp` and made by the same script, `tests/test05atemp/make_cases.py`
-(ATEMP active with ELDAT 0, 1111 and -1111 ft; ICEFG 0; input data at the run step;
-DISPLY dropped), with these differences:
+As `tests/test05atemp` (ATEMP active with ELDAT 0, 1111 and -1111 ft; ICEFG 0; input
+data at the run step; DISPLY dropped), with these differences:
 
 - INDELT 02:00. Input data at 2 hours: hourly precipitation summed in pairs; the 2-hour
   air temperature and solar radiation of test05 as they are; daily evaporation and wind
