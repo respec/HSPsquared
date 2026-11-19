@@ -294,6 +294,17 @@ def transform(ts, name, how, siminfo):
     return ts[start:stop].to_numpy().astype(float64)[0:steps]
 
 
+def _calendar_index(siminfo, freq):
+    """calendar index from 1 January of the first year of the run to 00:00 on
+    1 January of the year after its last year, so that it also covers a run that
+    ends in December"""
+    start = siminfo["start"]
+    stop = siminfo["stop"]
+    return date_range(
+        start=f"{start.year}-01-01", end=f"{stop.year + 1}-01-01", freq=freq
+    )
+
+
 def hoursval(siminfo, hours24, dofirst=False, lapselike=False):
     """create hours flags, flag on the hour or lapse table over full simulation
 
@@ -304,11 +315,7 @@ def hoursval(siminfo, hours24, dofirst=False, lapselike=False):
     fmins = Minute(siminfo["delt"])
     freq = fmins.nanos
 
-    # the calendar series runs to 00:00 on 1 January of the year after the end of the
-    # run, so that it also covers a run that ends in December
-    dr = date_range(
-        start=f"{start.year}-01-01", end=f"{stop.year + 1}-01-01", freq=Minute(60)
-    )
+    dr = _calendar_index(siminfo, Minute(60))
     hours = tile(hours24, (len(dr) + 23) // 24).astype(float)
 
     ts = Series(hours[0 : len(dr)], dr)
@@ -336,52 +343,37 @@ def hourflag(siminfo, hourfg, dofirst=False):
     return hoursval(siminfo, hours24, dofirst)
 
 
-def monthval(siminfo, monthly):
-    """returns value at start of month for all times within the month"""
+def _monthly_values(siminfo, monthly, interpolate):
+    """HSPF monthly values on the time steps of the run, constant within each day:
+    the value of the month, or with interpolate a value interpolated linearly
+    between the first days of the months, as HSPF does for its monthly tables"""
     start = siminfo["start"]
     stop = siminfo["stop"]
     fmins = Minute(siminfo["delt"])
     freq = fmins.nanos
 
-    # calendar series to 1 January of the year after the end of the run, so that it
-    # also covers a run that ends in December
-    dr = date_range(
-        start=f"{start.year}-01-01", end=f"{stop.year + 1}-01-01", freq="MS"
-    )
+    dr = _calendar_index(siminfo, "MS")
     months = tile(monthly, stop.year - start.year + 2)[: len(dr)].astype(float)
-    ts = Series(months, index=dr).resample("D").ffill()
+    days = Series(months, index=dr).resample("D")
+    ts = days.interpolate("time") if interpolate else days.ffill()
     tsfreq = ts.index.freq
-
-    if tsfreq.nanos > freq:  # upsample
-        ts = ts.resample(fmins).asfreq().ffill()
-    elif tsfreq.nanos < freq:  # downsample
-        ts = ts.resample(fmins).mean()
-    return ts.truncate(start, stop).to_numpy()
-
-
-def dayval(siminfo, monthly):
-    """broadcasts HSPF monthly data onto timeseries at desired freq with HSPF
-    interpolation to day, but constant within day"""
-    start = siminfo["start"]
-    stop = siminfo["stop"]
-    fmins = Minute(siminfo["delt"])
-    freq = fmins.nanos
-
-    # calendar series to 1 January of the year after the end of the run, so that it
-    # also covers a run that ends in December
-    dr = date_range(
-        start=f"{start.year}-01-01", end=f"{stop.year + 1}-01-01", freq="MS"
-    )
-    months = tile(monthly, stop.year - start.year + 2)[: len(dr)].astype(float)
-    ts = Series(months, index=dr).resample("D").interpolate("time")
-    tsfreq = ts.index.freq
-
 
     if tsfreq.nanos > freq:  # upsample
         ts = ts.resample(fmins).ffill()
     elif tsfreq.nanos < freq:  # downsample
         ts = ts.resample(fmins).mean()
     return ts.truncate(start, stop).to_numpy()
+
+
+def monthval(siminfo, monthly):
+    """returns value at start of month for all times within the month"""
+    return _monthly_values(siminfo, monthly, interpolate=False)
+
+
+def dayval(siminfo, monthly):
+    """broadcasts HSPF monthly data onto timeseries at desired freq with HSPF
+    interpolation to day, but constant within day"""
+    return _monthly_values(siminfo, monthly, interpolate=True)
 
 
 def initm(siminfo, ui, flag, monthly, default):
