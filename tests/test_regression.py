@@ -41,6 +41,8 @@ class RegressTest(RegressTestBase):
         # "test05",
         # "test09",
         "test10",
+        "test05start",
+        "test05start30",
         "test10specl",
         # "test10b",
     ],
