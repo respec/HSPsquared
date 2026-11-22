@@ -43,10 +43,10 @@ jobs:
                 pandas-version: ['']
                 include:
                     - python-version: '3.11'
-                      pandas-version: pandas>2.0
+                      pandas-version: pandas>=2.0
                       coverage: true
                     - python-version: '3.11'
-                      pandas-version: pandas>1.5,<2.0
+                      pandas-version: pandas<2.0
         steps:
             - uses: actions/checkout@v4
             - name: Set up Python
