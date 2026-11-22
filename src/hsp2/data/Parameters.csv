@@ -2879,10 +2879,10 @@ PERLND,PWAT-PARM2,AGWRC,float,70,80,,,0.001,0.999,,0.001,0.999,,"*** AGWRC is th
 *** is no inflow to groundwater (rate of flow today/rate yesterday)."
 PERLND,PWAT-PARM3,OPNID,int,0,5,,,,,,,,,*** PLSs to which these data apply.
 PERLND,PWAT-PARM3,OPNIDLAST,int,5,10,,,,,,,,,*** PLSs to which these data apply.
-PERLND,PWAT-PARM3,PETMAX,float,10,20,,40,,,4.4,,,,"*** PETMAX is the air temperature below which E-T will arbitrarily be
+PERLND,PWAT-PARM3,PETMAX,float,10,20,,4.4,,,40,,,,"*** PETMAX is the air temperature below which E-T will arbitrarily be
 *** reduced below the value obtained from the input time series. Input only
 *** if CSNOFG=1."
-PERLND,PWAT-PARM3,PETMIN,float,20,30,,35,,,1.7,,,,"*** PETMIN is the temperature below which E-T will be zero regardless of the
+PERLND,PWAT-PARM3,PETMIN,float,20,30,,1.7,,,35,,,,"*** PETMIN is the temperature below which E-T will be zero regardless of the
 *** value in the input time series. Input only if CSNOFG=1."
 PERLND,PWAT-PARM3,INFEXP,float,30,40,,2,0,10,2,0,10,,*** INFEXP is the exponent in the infiltration equation.
 PERLND,PWAT-PARM3,INFILD,float,40,50,,2,1,2,2,1,2,,"*** INFILD is the ratio between the maximum and mean infiltration capacities

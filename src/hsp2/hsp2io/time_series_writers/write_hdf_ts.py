@@ -61,7 +61,7 @@ def write_hdf_ts(
     if data_frame.empty:
         with contextlib.suppress(KeyError):
             return pd.read_hdf(hdffile, path)
-    complevel = 9 if kwargs.get("compress") else None
+    complevel = kwargs.get("compress", 9)
 
     data_frame.to_hdf(
         hdffile,
