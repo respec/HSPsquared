@@ -54,12 +54,12 @@ jobs:
               with:
                   python-version: ${{ matrix.python-version }}
                   cache: pip
+            - if: ${{ matrix.pandas-version }}
+              run: pip install "${{ matrix.pandas-version }}"
             - name: Install hsp2
               run: |
                   # install the hsp2 executable
                   pip install .[dev]
-            - if: ${{ matrix.pandas-version }}
-              run: pip install "${{ matrix.pandas-version }}"
             - if: ${{ matrix.coverage }}
               run: |
                   # python coverage
