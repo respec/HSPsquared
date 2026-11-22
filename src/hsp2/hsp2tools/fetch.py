@@ -58,11 +58,17 @@ def fetchtable(hdfname, path, names=None, usercol=None, usercolvalue=None, CSV=F
             df = df.to_csv()
 
         def replace(dff):
-            nonlocal dforiginal
             if CSV:
                 dff = read_csv(StringIO(dff), index_col=0)
-                print(dff)
-            dforiginal.update(dff)
-            dforiginal.to_hdf(store, path, format="table", data_columns=True)
+
+            with HDFStore(hdfname) as replacement_store:
+                dforiginal = replacement_store[path]
+                dforiginal.update(dff)
+                dforiginal.to_hdf(
+                    replacement_store,
+                    key=path,
+                    format="table",
+                    data_columns=True,
+                )
 
     return df, replace
