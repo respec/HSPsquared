@@ -33,7 +33,7 @@ RCHRES
 
   PRINT-INFO
     # -  # HYFG ADFG CNFG HTFG SDFG GQFG OXFG NUFG PKFG PHFG PIVL***PY
-    1         5    5    0    0    0    0    0    0    0    0    0   12
+    1         5    5                                                12
   END PRINT-INFO
 
   GEN-INFO
@@ -48,7 +48,7 @@ RCHRES
             FG FG FG FG  possible   exit     possible   exit *** possible   exit
                            1  2  3  4  5       1  2  3  4  5 ***   1  2  3  4  5
             VC A1 A2 A3   V1 V2 V3 V4 V5      G1 G2 G3 G4 G5 ***  F1 F2 F3 F4 F5
-    1        0  1  1  1    0  0  4  0  0       1  2  0  0  0       0  0  0  0  0
+    1        0  1  1  1    0  0  4  0  0       1  2  0  0  0
   END HYDR-PARM1
 
   HYDR-PARM2

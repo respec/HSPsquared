@@ -1,7 +1,7 @@
 [build-system]
 build-backend = "setuptools.build_meta"
 requires = [
-    "setuptools>=45",
+    "setuptools>=77",
     "wheel",
     "oldest-supported-numpy"
 ]
@@ -13,8 +13,8 @@ description = "Hydrological Simulation Program - Python"
 dependencies = [
     "cltoolbox",
     "numba",
-    "numpy<2.0",
-    "pandas<3.0.0",
+    "numpy",
+    "pandas",
     "tables",
     "pyparsing"
 ]
@@ -27,7 +27,6 @@ classifiers = [
     "Intended Audience :: End Users/Desktop",
     "Intended Audience :: Developers",
     "Environment :: Console",
-    "License :: OSI Approved :: GNU Affero General Public License v3",
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3.9",
@@ -45,7 +44,8 @@ keywords = [
     "simulation",
     "python"
 ]
-license = {file = "LICENSE"}
+license = "AGPL-3.0-or-later"
+license-files = ["LICENSE"]
 requires-python = ">=3.9"
 
 [project.optional-dependencies]
@@ -66,8 +66,14 @@ fix = true
 [tool.ruff.lint]
 extend-select = ["I"]
 
+[tool.ruff.lint.isort.import-heading]
+future = "Future imports"
+standard-library = "Standard library imports"
+third-party = "Third party imports"
+first-party = "First party imports"
+local-folder = "Local folder imports"
+
 [tool.setuptools]
-license-files = ["LICENSE"]
 include-package-data = true
 
 [tool.setuptools.dynamic]

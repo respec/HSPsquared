@@ -1,5 +1,7 @@
+# Standard library imports
 from datetime import datetime
 
+# First party imports
 from tests.convert.regression_base import RegressTest
 
 if __name__ == "__main__":
