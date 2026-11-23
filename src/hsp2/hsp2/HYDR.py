@@ -716,6 +716,7 @@ def _hydr_(
                 twid = 0.0
                 avdep = 0.0
 
+            avvel = 0.0
             if AUX2FG:
                 avvel = (length * ro / vol) if vol > 0.0 else 0.0
             if AUX3FG:
