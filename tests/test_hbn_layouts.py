@@ -1,4 +1,4 @@
-"""HBNOutput reads both layouts of the HSPF binary output (HBN) file.
+"""HBNReader reads both layouts of the HSPF binary output (HBN) file.
 
 The canonical HSPF (https://github.com/respec/FORTRAN, and the executable installed
 with BASINS) writes the binary output in the layout of the Lahey Fortran runtime
@@ -7,7 +7,7 @@ distributed with PyHSPF 0.2.4 does not have these routines: it writes the record
 plain unformatted WRITE statements, so its gfortran build gives an unformatted
 sequential file in which 4-byte length markers frame each record. The reference
 outputs of the regression cases added for issue #232 come from that build. The test
-rewrites the records of test05.hbn in that layout and checks that HBNOutput reads the
+rewrites the records of test05.hbn in that layout and checks that HBNReader reads the
 same data from both files.
 """
 
@@ -16,7 +16,7 @@ from struct import pack
 
 import numpy as np
 import pandas as pd
-from hsp2.hsp2tools.HBNOutput import HBNOutput, record_positions
+from hsp2.hsp2io.time_series_readers.read_hbn_ts import HBNReader, record_positions
 
 TEST05_HBN = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "test05", "HSPFresults", "test05.hbn"
@@ -35,9 +35,9 @@ def test_unformatted_sequential_layout(tmp_path):
     path = tmp_path / "test05_sequential.hbn"
     path.write_bytes(bytes(sequential))
 
-    first = HBNOutput(TEST05_HBN)
+    first = HBNReader(TEST05_HBN)
     first.read_data()
-    second = HBNOutput(str(path))
+    second = HBNReader(str(path))
     second.read_data()
 
     assert len(first.data_frames) > 0
@@ -58,6 +58,6 @@ def test_first_marker_beginning_with_0xfd():
 def test_unknown_layout(tmp_path):
     path = tmp_path / "not_hbn.hbn"
     path.write_bytes(b"\x01\x02\x03\x04\x05\x06\x07\x08")
-    hbn = HBNOutput(str(path))
+    hbn = HBNReader(str(path))
     hbn.read_data()
     assert hbn.data_frames == []

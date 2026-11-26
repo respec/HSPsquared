@@ -12,6 +12,66 @@ from numpy import fromfile
 from pandas import DataFrame
 
 
+def _unformatted_sequential_positions(data) -> list[tuple[int, int]] | None:
+    """Records framed by 4-byte length markers, or None if the data are not."""
+    positions = []
+    index = 0
+    while index < len(data):
+        if index + 8 > len(data):
+            return None
+        (length,) = unpack("<i", data[index : index + 4])
+        end = index + 4 + length
+        if length < 24 or end + 4 > len(data):
+            return None
+        if unpack("<i", data[end : end + 4])[0] != length:
+            return None
+        positions.append((index, length - 24))
+        index = end + 4
+    return positions if positions else None
+
+
+def _lahey_positions(data) -> list[tuple[int, int]]:
+    """Records of the Lahey layout, after the first byte 0xFD."""
+    positions = []
+    index = 1  # already used first byte (magic number)
+    while index < len(data):
+        rc1, rc2, rc3, rc = unpack("4B", data[index : index + 4])
+        rc1 = int(rc1 >> 2)
+        rc2 = int(rc2) * 64 + rc1  # 2**6
+        rc3 = int(rc3) * 16384 + rc2  # 2**14
+        reclen = int(rc) * 4194304 + rc3 - 24  # 2**22
+        positions.append((index, reclen))
+        index += reclen + 29 if reclen < 36 else reclen + 30
+    return positions
+
+
+def record_positions(data) -> list[tuple[int, int]] | None:
+    """Positions of the records of an HSPF binary output (HBN) file.
+
+    Returns a list of (index, reclen) pairs, one per record: the record body
+    (record type, operation, id, activity, ...) starts at index + 4, and reclen is
+    the length of the body less its first 24 bytes. Two layouts are read:
+
+    - the layout of the Lahey Fortran runtime, which the canonical HSPF
+      (https://github.com/respec/FORTRAN, and the executable installed with BASINS)
+      writes through its compiler independent binary output routines: a first byte
+      0xFD, then for each record a 4-byte packed length, the body and a 1- or 2-byte
+      back pointer;
+    - the unformatted sequential layout of compilers such as gfortran, in which
+      4-byte length markers frame each record. The HSPF source distributed with
+      PyHSPF 0.2.4 gives it: that source does not have the compiler independent
+      routines and writes the records with plain unformatted WRITE statements.
+
+    The markers are checked first, because the first marker of an unformatted
+    sequential file can also begin with the byte 0xFD.
+    Returns None when the data are in neither layout.
+    """
+    positions = _unformatted_sequential_positions(data)
+    if positions is None and len(data) > 0 and data[0] == 0xFD:
+        positions = _lahey_positions(data)
+    return positions
+
+
 class HBNReader:
     def __init__(self, file_name: str) -> None:
         self.data_frames: list[pd.DataFrame] = []
@@ -48,22 +108,21 @@ class HBNReader:
         """
 
         data = fromfile(self.file_name, "B")
-        if data[0] != 0xFD:
-            print("BAD HBN FILE - must start with magic number 0xFD")
+        positions = record_positions(data)
+        if positions is None:
+            print(
+                "BAD HBN FILE - must start with magic number 0xFD, or be an "
+                "unformatted sequential file with 4-byte record markers"
+            )
             return
 
         # Build layout maps of the file's contents
         mapn = defaultdict(list)
         mapd = defaultdict(list)
-        index = 1  # already used first byte (magic number)
-        while index < len(data):
-            rc1, rc2, rc3, rc, rectype, operation, id, activity = unpack(
-                "4BI8sI8s", data[index : index + 28]
+        for index, reclen in positions:
+            rectype, operation, id, activity = unpack(
+                "I8sI8s", data[index + 4 : index + 28]
             )
-            rc1 = int(rc1 >> 2)
-            rc2 = int(rc2) * 64 + rc1  # 2**6
-            rc3 = int(rc3) * 16384 + rc2  # 2**14
-            reclen = int(rc) * 4194304 + rc3 - 24  # 2**22
 
             operation = operation.decode(
                 "ascii"
@@ -90,7 +149,6 @@ class HBNReader:
                     slen += 4 + ln
             else:
                 print("UNKNOW RECTYPE", rectype)
-            index += reclen + 29 if reclen < 36 else reclen + 30
         self.data_frames = []
         self.summary = []
         self.summarycols = [
