@@ -8,11 +8,13 @@ table with these defaults when the table is given for other land segments; when 
 table is absent altogether it wrote no monthly table, and PWATER fell back without a
 message to the constant value of PWAT-PARM4.
 
-The correction lists the three tables in `src/hsp2/data/DefaultableTables.csv`, so
-that the importer writes them with their defaults when they are absent, as it does for
-the other tables listed there. When the flag is off PWATER does not read them.
-MON-UZSN, MON-INTERFLW and MON-IRC have no defaults in `Parameters.csv` and are left
-as they are.
+This pull request first listed the three tables in `src/hsp2/data/DefaultableTables.csv`.
+Since #231 the importer no longer reads that file: `src/hsp2/data/Tables.csv` gives each
+table that may be left out the table it requires (REQ_TABLE), and the three tables
+require PWAT-PARM2, so the importer writes them with their defaults when they are
+absent. When the flag is off PWATER does not read them. MON-UZSN, MON-INTERFLW and
+MON-IRC have no defaults in `Parameters.csv` and no REQ_TABLE. The case checks this
+behaviour.
 
 ## The case
 
@@ -53,8 +55,8 @@ is kept as HSPF wrote it.
 
 `tests/test_regression.py` compares 87 PWATER series (29 per segment).
 
-- Code before the correction: 26 series fail, 14 of PERLND 2 (interception storage up
-  to 0.1 in, total storage up to 0.96 in) and 12 of PERLND 3 (lower zone storage up to
-  8.1 in). On PERLND 1 the larger Manning's n changes no series by more than the
+- develop before #231 (6c797eb): 26 series fail, 14 of PERLND 2 (interception storage
+  up to 0.1 in, total storage up to 0.96 in) and 12 of PERLND 3 (lower zone storage up
+  to 8.1 in). On PERLND 1 the larger Manning's n changes no series by more than the
   tolerance in this period.
-- With the correction all 87 pass; the largest difference is 1.7e-5 in (PERS).
+- develop since #231: all 87 pass; the largest difference is 1.7e-5 in (PERS).
