@@ -1,12 +1,19 @@
-from enum import Enum
-from typing import Dict, Protocol, Union, runtime_checkable
+# Future imports
+from __future__ import annotations
 
+# Standard library imports
+from enum import Enum
+from typing import TYPE_CHECKING, Protocol, runtime_checkable
+
+# Third party imports
 import numpy as np
 import pandas as pd
 
-from hsp2.hsp2.model import Model
+if TYPE_CHECKING:
+    # First party imports
+    from hsp2.hsp2.model import Model
 
-TimeSeriesDict = Dict[str, np.float64]
+TimeSeriesDict = dict[str, np.float64]
 
 
 class Category(Enum):
@@ -20,8 +27,8 @@ class SupportsReadParameters(Protocol):
 
 
 @runtime_checkable
-class SupportsWriteUCI(Protocol):
-    def write_uci(self, UCI) -> None: ...
+class SupportsWriteParameters(Protocol):
+    def write_parameters(self, model: Model) -> None: ...
 
 
 @runtime_checkable
@@ -29,9 +36,9 @@ class SupportsReadTS(Protocol):
     def read_ts(
         self,
         category: Category,
-        operation: Union[str, None] = None,
-        segment: Union[str, None] = None,
-        activity: Union[str, None] = None,
+        operation: str | None = None,
+        segment: str | None = None,
+        activity: str | None = None,
     ) -> pd.DataFrame: ...
 
 
@@ -41,9 +48,9 @@ class SupportsWriteTS(Protocol):
         self,
         data_frame: pd.DataFrame,
         category: Category,
-        operation: Union[str, None] = None,
-        segment: Union[str, None] = None,
-        activity: Union[str, None] = None,
+        operation: str | None = None,
+        segment: str | None = None,
+        activity: str | None = None,
     ) -> None: ...
 
 

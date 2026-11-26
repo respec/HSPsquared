@@ -11,15 +11,15 @@ END GLOBAL
 
 FILES      
 <FILE>  <UN#>***<----FILE NAME------------------------------------------------->
-WDM        21   test0eq.wdm
-MESSU      22   test0eq.ech
-           01   test0eq.out
-           66   test0eq.d66
-           94   test0eq.p94
-           95   test0eq.p95
-BINO       81   test0eqP.hbn
-BINO       82   test0eqI.hbn
-BINO       83   test0eqR.hbn
+WDM        21   test10eq.wdm
+MESSU      22   test10eq.ech
+           01   test10eq.out
+           66   test10eq.d66
+           94   test10eq.p94
+           95   test10eq.p95
+BINO       81   test10eqP.hbn
+BINO       82   test10eqI.hbn
+BINO       83   test10eqR.hbn
 END FILES
 
 OPN SEQUENCE

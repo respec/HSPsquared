@@ -237,7 +237,9 @@ def transform(ts, name, how, siminfo):
     elif tsfreq is None:  # Sparse time base, frequency not defined
         ts = ts.reindex(siminfo["tbase"]).ffill().bfill()
     elif how == "SAME":
-        ts = ts.resample(fmins).ffill()  # tsfreq.nanos >= freq assumed, or bad user choice
+        ts = ts.resample(
+            fmins
+        ).ffill()  # tsfreq.nanos >= freq assumed, or bad user choice
     elif not how:
         if name in flowtype:
             if "Y" in str(tsfreq) or "M" in str(tsfreq) or nanos > freq:
@@ -527,7 +529,7 @@ def _normalize_memsb(memsb):
     # supports categories).
     # Need to convert 1.0, '1', '1.0' -> '1', and if using categories "SF" ->
     # "SF", ...etc.
-    if not memsb:
+    if not memsb or pd.isnull(memsb):
         return ""
     if isinstance(memsb, str):
         memsb = memsb.strip()

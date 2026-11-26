@@ -1,17 +1,22 @@
 """General routines for SPECL"""
 
-import importlib.util
+# Standard library imports
+import importlib
 import os
-import sys
 
-import numpy as np
+# Third party imports
 import numba as nb
-from numba import njit, types, typeof  # import the types supplies int64, float64
+import numpy as np
+from numba import njit, typeof, types  # import the types supplies int64, float64
 from numba.experimental import jitclass
 from numba.typed import Dict as ntdict
-from numpy import zeros, float64 as npfloat64, int64 as npint64
-from pandas import date_range, DataFrame
+from numpy import float64 as npfloat64
+from numpy import int64 as npint64
+from numpy import zeros
+from pandas import DataFrame, date_range
 from pandas.tseries.offsets import Minute
+
+# First party imports
 from hsp2.state.state_timer import timer_class
 
 # Beginning in operation these are likely to be located in model objects when we go fully to that level.
@@ -21,17 +26,17 @@ tindex = date_range("1984-01-01", "2020-12-31", freq=Minute(60))
 
 state_spec = [
     # the first entries here are NP arrays, fixed dimenstions, and fast
-    ("state_ix", typeof(np.asarray(zeros(1), dtype="float64")) ),
-    ("op_tokens", typeof(types.int64(zeros((1, 64)))) ),
-    ("op_exec_lists", typeof(types.int64(zeros((1, 1024)))) ),
-    ("model_exec_list", typeof(np.asarray(zeros(1), dtype="int64")) ),
-    ("tindex", typeof(tindex.to_numpy()) ),
+    ("state_ix", typeof(np.asarray(zeros(1), dtype="float64"))),
+    ("op_tokens", typeof(types.int64(zeros((1, 64))))),
+    ("op_exec_lists", typeof(types.int64(zeros((1, 1024))))),
+    ("model_exec_list", typeof(np.asarray(zeros(1), dtype="int64"))),
+    ("tindex", typeof(tindex.to_numpy())),
     # dict_ix SHOULD BE an array, this is TBD.  Likely defer till OM class runtimes
-    ("dict_ix", types.DictType(types.int64, types.float64[:, :]) ),
+    ("dict_ix", types.DictType(types.int64, types.float64[:, :])),
     # below here are dictionaries as they are not used in runtime and can be slow
-    ("state_paths", types.DictType(types.unicode_type, types.int64) ),
-    ("ts_paths", types.DictType(types.unicode_type, types.float64[:]) ),
-    ("ts_ix", types.DictType(types.int64, types.float64[:]) ),
+    ("state_paths", types.DictType(types.unicode_type, types.int64)),
+    ("ts_paths", types.DictType(types.unicode_type, types.float64[:])),
+    ("ts_ix", types.DictType(types.int64, types.float64[:])),
     ("last_id", types.int64),
     ("model_root_name", types.unicode_type),
     ("state_step_hydr", types.unicode_type),
@@ -43,7 +48,7 @@ state_spec = [
     ("activity", types.unicode_type),
     ("domain", types.unicode_type),
     ("state_step_om", types.unicode_type),
-    ("hsp_segments", types.DictType(types.unicode_type, types.unicode_type) )
+    ("hsp_segments", types.DictType(types.unicode_type, types.unicode_type)),
 ]
 
 
@@ -51,14 +56,14 @@ state_numba = [
     ("num_ops", nb.int64),
     # the first entries here are NP arrays, fixed dimenstions, and fast
     ("state_ix", nb.float64[:]),
-    ("op_tokens", typeof(types.int64(zeros((1, 64)))) ),
-    ("op_exec_lists", typeof(types.int64(zeros((1, 1024)))) ),
-    ("model_exec_list", typeof(np.asarray(zeros(1), dtype="int64")) ),
-    ("tindex", typeof(tindex.to_numpy()) ),
+    ("op_tokens", typeof(types.int64(zeros((1, 64))))),
+    ("op_exec_lists", typeof(types.int64(zeros((1, 1024))))),
+    ("model_exec_list", typeof(np.asarray(zeros(1), dtype="int64"))),
+    ("tindex", typeof(tindex.to_numpy())),
     # dict_ix SHOULD BE an array, this is TBD.  Likely defer till OM class runtimes
-    ("dict_ix", types.DictType(types.int64, types.float64[:, :]) ),
-    ("ts_ix", types.DictType(types.int64, types.float64[:]) ),
-    ("state_paths", types.DictType(types.unicode_type, types.int64) ),
+    ("dict_ix", types.DictType(types.int64, types.float64[:, :])),
+    ("ts_ix", types.DictType(types.int64, types.float64[:])),
+    ("state_paths", types.DictType(types.unicode_type, types.int64)),
     ("last_id", types.int64),
     ("model_root_name", types.unicode_type),
     ("state_step_hydr", types.unicode_type),
@@ -69,10 +74,12 @@ state_numba = [
     ("activity", types.unicode_type),
     ("domain", types.unicode_type),
     ("state_step_om", types.unicode_type),
-    ("hsp_segments", types.DictType(types.unicode_type, types.unicode_type) )
+    ("hsp_segments", types.DictType(types.unicode_type, types.unicode_type)),
 ]
 
 """ state_numba is a numbafied version of state"""
+
+
 @jitclass(state_numba)
 class state_class_numba:
     def __init__(self, num_ops):
@@ -93,10 +100,12 @@ class state_class_numba:
         self.domain = ""
         self.model_root_name = ""
 
+
 @njit(cache=True)
 def make_state_numba(num_ops):
     sc = state_class_numba(num_ops)
     return sc
+
 
 def state_copy(statesrc, statedest):
     # copies from a non-jit to a jit or vice versa
@@ -115,6 +124,7 @@ def state_copy(statesrc, statedest):
     statedest.state_step_om = statesrc.state_step_om
     statedest.domain = statesrc.domain
 
+
 """
 This function is a simple numba compiled fn to append to a numba dict quickly
 This is necessary because there is no way to just cast a normal dictionary to a numba Dict
@@ -122,24 +132,39 @@ And appending a numba Dict in regular python is super super slow.
 If this does not provide good enough performance when adding a large amount of variables
 We may consider using a jitted loop to copy all elements from a dictionary to Dict
 """
+
+
 @njit(cache=True)
 def append_numba_dict(var_dict, var_key, var_val):
     var_dict[var_key] = var_val
     return var_dict
+
 
 @njit(cache=True)
 def set_numba_value(var_dict, var_key, var_val):
     var_dict[var_key] = var_val
     return var_dict
 
+
 @njit(cache=True)
 def nkey_exists(var_dict, var_key):
-    return (var_key in var_dict)
+    return var_key in var_dict
+
 
 class state_class:
-    def __init__(self, state_ix, op_tokens, state_paths, op_exec_lists, model_exec_list, dict_ix, ts_ix, hsp_segments):
+    def __init__(
+        self,
+        state_ix,
+        op_tokens,
+        state_paths,
+        op_exec_lists,
+        model_exec_list,
+        dict_ix,
+        ts_ix,
+        hsp_segments,
+    ):
         self.num_ops = 0
-        # IMPORTANT these are handled as nparray as numba Dict would be super slow. 
+        # IMPORTANT these are handled as nparray as numba Dict would be super slow.
         # Note: in the type declaration above we are alloweed to use the shortened form op_tokens = int64(zeros((1,64)))
         #       but in jited class that throws an error and we have to use the form op_tokens.astype(int64)
         #       to do the type cast
@@ -166,21 +191,21 @@ class state_class:
         self.domain = ""
         self.last_id = 0
         self.hsp2_local_py = False
-        self.op_len = 64 # how wide is an op list array
-        self.timer = timer_class() # allow us to benchmark performance here
+        self.op_len = 64  # how wide is an op list array
+        self.timer = timer_class()  # allow us to benchmark performance here
         return
-    
+
     @property
     def size(self):
         return self.state_ix.size
-    
+
     def append_state(self, var_value):
         val_ix = self.size  # next ix value= size since ix starts from zero
         self.state_ix = np.append(self.state_ix, var_value)
         self.last_id = val_ix
         self.resize()
         return val_ix
-    
+
     def set_token(self, var_ix, tokens, debug=False):
         if var_ix not in range(len(self.state_ix)):
             if debug:
@@ -195,7 +220,7 @@ class state_class:
         # and its methods add_op_tokens() and model_format_ops(ops) enforce the
         # length limit described by ModelObject.max_token_length (64) which must match
         self.op_tokens[var_ix] = tokens
-    
+
     def resize(self, debug=False):
         num_ops = self.size
         # print("state_ix has", num_ops, "elements")
@@ -205,7 +230,7 @@ class state_class:
             return
         if debug:
             print("op_tokens needs", ops_needed, "slots")
-        add_ops = np.full((ops_needed,self.op_len),-1) # fill with -1
+        add_ops = np.full((ops_needed, self.op_len), -1)  # fill with -1
         zeros((ops_needed, 64))
         # print("Created add_ops with", ops_needed, "slots")
         # we use the 3rd param "axis=1" to prevent flattening of array
@@ -236,11 +261,11 @@ class state_class:
             add_ops = np.append(self.op_exec_lists, add_ops, 0)
             self.op_exec_lists = add_ops.astype(npint64)
         return
-    
+
     def set_exec_list(self, ix, op_exec_list):
         for i in range(len(op_exec_list)):
             self.op_exec_lists[ix][i] = op_exec_list[i]
-    
+
     def set_state(self, var_path, var_value=0.0, debug=False):
         """
         Given an hdf5 style path to a variable, set the value
@@ -248,19 +273,19 @@ class state_class:
         Returns the integer key of the variable in the state_ix Dict
         """
         if not nkey_exists(self.state_paths, var_path):
-        #if var_path not in self.state_paths:
+            # if var_path not in self.state_paths:
             # we need to add this to the state
             var_ix = self.append_state(var_value)
             self.state_paths = append_numba_dict(self.state_paths, var_path, var_ix)
         else:
             var_ix = self.get_state_ix(var_path)
-            #self.state_ix[var_ix] = var_value
+            # self.state_ix[var_ix] = var_value
             self.state_ix = set_numba_value(self.state_ix, var_ix, var_value)
-            #append_numba_dict(self.state_ix, var_value, var_ix)
+            # append_numba_dict(self.state_ix, var_value, var_ix)
         if debug:
             print("Setting state_ix[", var_ix, "], to", var_value)
         return var_ix
-    
+
     def get_state_ix(self, var_path):
         """
         Find the integer key of a variable name in state_ix
@@ -273,7 +298,7 @@ class state_class:
             return False  # should throw an error
         var_ix = self.state_paths[var_path]
         return var_ix
-    
+
     def get_ix_path(self, var_ix):
         """
         Find the path of a variable with integer key in state_ix
@@ -293,6 +318,7 @@ def op_path_name(operation, id):
     tid = str(id).zfill(3)
     path_name = f"{operation}_{operation[0]}{tid}"
     return path_name
+
 
 @njit(cache=True)
 def get_state_ix(state_paths, var_path):
@@ -316,7 +342,7 @@ def set_state(state_ix, state_paths, var_path, default_value=0.0, debug=False):
         # we need to add this to the state
         state_paths[var_path] = append_state(state_ix, default_value)
     var_ix = get_state_ix(state_ix, state_paths, var_path)
-    if debug is True:
+    if debug == True:
         print("Setting state_ix[", var_ix, "], to", default_value)
     state_ix[var_ix] = default_value
     return var_ix
@@ -376,11 +402,12 @@ def state_siminfo_hsp2(state, parameter_obj, io_manager):
     )[1:]
     parameter_obj.siminfo["steps"] = len(parameter_obj.siminfo["tindex"])
     state.tindex = parameter_obj.siminfo["tindex"].to_numpy()
-    hdf5_path = io_manager._input.file_path
+    hdf5_path = io_manager._input_file_path
     (fbase, fext) = os.path.splitext(hdf5_path)
     state.model_root_name = os.path.split(fbase)[1]  # takes the text before .h5
 
-#@njit(cache=True)
+
+# @njit(cache=True)
 def state_context_hsp2(state, operation, segment, activity):
     # this establishes domain info so that a module can know its paths
     state.operation = operation
@@ -389,20 +416,24 @@ def state_context_hsp2(state, operation, segment, activity):
     # give shortcut to state path for the upcoming function
     # insure that there is a model object container
     (seg_name, seg_path) = state_segname(state, operation, segment)
-    #if seg_name not in state.hsp_segments.keys():
-    if not nkey_exists(state.hsp_segments, seg_name): # test this for njit
+    # if seg_name not in state.hsp_segments.keys():
+    if not nkey_exists(state.hsp_segments, seg_name):  # test this for njit
         state.hsp_segments = append_numba_dict(state.hsp_segments, seg_name, seg_path)
     state.domain = state_domain(state, operation, segment, activity)
-    
+
+
 def state_domain(state, operation, segment, activity):
     (seg_name, seg_path) = state_segname(state, operation, segment)
-    domain = seg_path # later we may make his custom depending on the operation/activity
-    # like + "/" + activity 
+    domain = (
+        seg_path  # later we may make his custom depending on the operation/activity
+    )
+    # like + "/" + activity
     return domain
-    
+
+
 def state_segname(state, operation, segment):
     seg_name = operation + "_" + segment
-    seg_path = "/STATE/" + state.model_root_name + "/" + seg_name 
+    seg_path = "/STATE/" + state.model_root_name + "/" + seg_name
     return (seg_name, seg_path)
 
 
@@ -410,9 +441,7 @@ def state_init_hsp2(state, opseq, activities):
     # This sets up the state entries for all state compatible HSP2 model variables
     # print("STATE initializing contexts.")W
     for _, operation, segment, delt in opseq.itertuples():
-        if operation in ["DISPLY", "PLTGEN"]:
-            continue
-        if operation != "GENER" and operation != "COPY":
+        if operation not in ["COPY", "DISPLY", "GENER", "PLTGEN"]:
             for activity, function in activities[operation].items():
                 if activity == "HYDR":
                     state_context_hsp2(state, operation, segment, activity)
@@ -508,7 +537,7 @@ def hydr_state_vars():
     ]
 
 
-def hydr_init_ix(state, domain, debug = False):
+def hydr_init_ix(state, domain, debug=False):
     # get a list of keys for all hydr state variables
     hydr_state = hydr_state_vars()
     hydr_ix = DataFrame()
@@ -568,6 +597,7 @@ def rqual_state_vars():
         "CFOREA",
     ]
     return rqual_state
+
 
 def rqual_init_ix(state, domain):
     # get a list of keys for all rqual state variables
@@ -670,7 +700,7 @@ def dynamic_module_import(local_name, local_path, module_name):
     try:
         # load_module dynamically loads the module
         # the parameters are pointer, path and description of the module
-        if local_spec is True:
+        if local_spec != False:
             module = importlib.util.module_from_spec(local_spec)
             sys.modules[local_spec.name] = module
             sys.modules[module_name] = module
@@ -683,8 +713,9 @@ def dynamic_module_import(local_name, local_path, module_name):
 
 
 def load_dynamics(io_manager, siminfo):
+    local_path = os.getcwd()
     # try this
-    hdf5_path = io_manager._input.file_path
+    hdf5_path = io_manager._input_file_path
     (fbase, fext) = os.path.splitext(hdf5_path)
     # see if there is a code module with custom python
     # print("Looking for SPECL with custom python code ", (fbase + ".py"))
