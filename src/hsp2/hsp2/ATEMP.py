@@ -23,7 +23,7 @@ def atemp(io_manager: SupportsReadTS, siminfo, parameters, ts):
     # first interval of each hour
     ts["HRFG"] = hoursval(siminfo, ones(24), dofirst=True).astype(float)
 
-    ui = make_numba_dict(parameters)  # Note: all values coverted to float automatically
+    ui = make_numba_dict(parameters)  # Note: all values converted to float automatically
     ui["k"] = siminfo["delt"] * 0.000833  # convert to in/timestep
     ui["steps"] = siminfo["steps"]
     ui["errlen"] = len(ERRMSGS)
@@ -50,7 +50,6 @@ def _atemp_(ui, ts):
     k = ui["k"]  # calculated in atemp()
 
     steps = int(ui["steps"])
-
     # all series already aggregated/disaggregated to runtime delt frequency
     LAPSE = ts["LAPSE"]
     PREC = ts["PREC"]

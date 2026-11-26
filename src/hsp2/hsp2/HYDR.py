@@ -5,25 +5,26 @@ Conversion of no category version of HSPF HRCHHYD.FOR into Python
 
 Development Notes:
   Categories not implimented in this version
-  Irregation only partially implimented in this version
+  Irrigation only partially implimented in this version
   Only English units currently supported
   FTABLE can come from WDM or UCI file based on FTBDSN 1 or 0
 """
 
+# Standard library imports
 from math import log10, sqrt
 
-from numpy import zeros, any, full, nan, array, int64, arange
-from pandas import DataFrame
-from math import sqrt, log10
+# Third party imports
 from numba import njit
 from numba.typed import List
+from numpy import any, arange, array, full, int64, nan, zeros
+from pandas import DataFrame
+
+# First party imports
+from hsp2.hsp2.om import pre_step_model, step_model
 from hsp2.hsp2.utilities import initm, make_numba_dict
 
 # the following imports added by rb to handle dynamic code and special actions
-from hsp2.state.state import hydr_get_ix, get_state_ix
-from hsp2.hsp2.om import pre_step_model, step_model
-from numba.typed import Dict
-
+from hsp2.state.state import get_state_ix, hydr_get_ix
 
 ERRMSGS = (
     "HYDR: SOLVE equations are indeterminate",  # ERRMSG0
@@ -65,27 +66,27 @@ def hydr(siminfo, parameters, ts, ftables, state):
         AFACT = 10000.0
 
     u = parameters["PARAMETERS"]
-    funct = array([u[name] for name in u.keys() if name.startswith("FUNCT")]).astype(
-        int
-    )[:nexits]
-    ODGTF = array([u[name] for name in u.keys() if name.startswith("ODGTF")]).astype(
-        int
-    )[:nexits]
-    ODFVF = array([u[name] for name in u.keys() if name.startswith("ODFVF")]).astype(
-        int
-    )[:nexits]
+    funct = array([u[name] for name in u if name.startswith("FUNCT")]).astype(int)[
+        :nexits
+    ]
+    ODGTF = array([u[name] for name in u if name.startswith("ODGTF")]).astype(int)[
+        :nexits
+    ]
+    ODFVF = array([u[name] for name in u if name.startswith("ODFVF")]).astype(int)[
+        :nexits
+    ]
 
     u = parameters["STATES"]
 
     # COLIND timeseries might come in as COLIND, COLIND0, etc. otherwise UCI default
-    names = list(sorted([n for n in ts if n.startswith("COLIND")], reverse=True))
+    names = sorted([n for n in ts if n.startswith("COLIND")], reverse=True)
     df = DataFrame()
     for i, c in enumerate(ODFVF):
         df[i] = ts[names.pop()][:steps] if c < 0 else full(steps, c)
     COLIND = df.to_numpy()
 
     # OUTDGT timeseries might come in as OUTDGT, OUTDGT0, etc. otherwise UCI default
-    names = list(sorted([n for n in ts if n.startswith("OUTDG")], reverse=True))
+    names = sorted([n for n in ts if n.startswith("OUTDG")], reverse=True)
     df = DataFrame()
     for i, c in enumerate(ODGTF):
         df[i] = ts[names.pop()][:steps] if c > 0 else zeros(steps)
@@ -108,17 +109,27 @@ def hydr(siminfo, parameters, ts, ftables, state):
     for name in ("IVOL", "POTEV", "PREC"):
         if name not in ts:
             ts[name] = zeros(steps)
-    ts["CONVF"] = initm(siminfo, parameters, "VCONFG", "MONTHLY_CONVF", 1.0)
+    ts["CONVF"] = initm(
+        siminfo,
+        parameters,
+        parameters["PARAMETERS"]["VCONFG"],
+        "MONTHLY_CONVF",
+        1.0,
+    )
 
     # extract key columns of specified FTable for faster access (1d vs. 2d)
     rchtab = ftables[f"{parameters['PARAMETERS']['FTBUCI']}"]
-    # rchtab = store[f"FTABLES/{parameters['PARAMETERS']['FTBUCI']}"]
+    rows = int(rchtab["rows"].iloc[0])
+    cols = int(rchtab["cols"].iloc[0])
+    rchtab = rchtab.iloc[:rows, :cols]
     ts["volumeFT"] = rchtab["Volume"].to_numpy() * VFACT
     ts["depthFT"] = rchtab["Depth"].to_numpy()
     ts["sareaFT"] = rchtab["Area"].to_numpy() * AFACT
     rchtab = rchtab.to_numpy()
 
-    ui = make_numba_dict(parameters)  # Note: all values coverted to float automatically
+    ui = make_numba_dict(
+        parameters
+    )  # Note: all values converted to float automatically
     ui["steps"] = steps
     ui["delt"] = siminfo["delt"]
     ui["nexits"] = nexits
@@ -146,12 +157,12 @@ def hydr(siminfo, parameters, ts, ftables, state):
         from hsp2.state.state_definitions import state_step_hydr
     # note: get executable dynamic operation model components
     # TBD: this will be set as a property on each RCHRES object when we move to a class framework
-    activity_path = state.domain + "/" + 'HYDR'
-    #print("HYDR activity_path", activity_path)
+    activity_path = state.domain + "/" + "HYDR"
+    # print("HYDR activity_path", activity_path)
     activity_id = get_state_ix(state.state_paths, activity_path)
     model_exec_list = state.op_exec_lists[activity_id]
-    #print("model_exec_list", model_exec_list)
-    #print(state.domain, "HYDR called with", state.domain, len(model_exec_list), "op elements.")
+    # print("model_exec_list", model_exec_list)
+    # print(state.domain, "HYDR called with", state.domain, len(model_exec_list), "op elements.")
     #######################################################################################
 
     # Do the simulation with _hydr_   (ie run reaches simulation code)
@@ -166,7 +177,7 @@ def hydr(siminfo, parameters, ts, ftables, state):
         OVOLlabels,
         state,
         state_step_hydr,
-        model_exec_list
+        model_exec_list,
     )
 
     if "O" in ts:
@@ -177,11 +188,11 @@ def hydr(siminfo, parameters, ts, ftables, state):
     # save initial outflow(s) from reach:
     parameters["PARAMETERS"]["ROS"] = ui["ROS"]
     for i in range(nexits):
-        parameters["PARAMETERS"][f"OS{str(i + 1)}"] = ui[f"OS{str(i + 1)}"]
+        parameters["PARAMETERS"][f"OS{i + 1!s}"] = ui[f"OS{i + 1!s}"]
     return errors, ERRMSGS
 
 
-#@njit(cache=True)
+# @njit(cache=True)
 def _hydr_(
     ui,
     ts,
@@ -193,7 +204,7 @@ def _hydr_(
     OVOLlabels,
     state,
     state_step_hydr,
-    model_exec_list
+    model_exec_list,
 ):
     errors = zeros(int(ui["errlen"])).astype(int64)
     steps = int(ui["steps"])  # number of simulation steps
@@ -262,7 +273,7 @@ def _hydr_(
     colind[:] = COLIND[0, :]
 
     # numba limitation, ts can't have both 1-d and 2-d arrays in save Dict
-    O = zeros((steps, nexits))  # noqa E741
+    O = zeros((steps, nexits))
     OVOL = zeros((steps, nexits))
 
     ts["PRSUPY"] = PRSUPY = zeros(steps)
@@ -309,7 +320,7 @@ def _hydr_(
 
     # back to PHYDR
     if AUX1FG >= 1:
-        dep, stage, sarea, avdep, twid, hrad = auxil(
+        dep, _stage, sarea, avdep, twid, hrad = auxil(
             volumeFT, depthFT, sareaFT, indx, vol, length, stcor, AUX1FG, errors
         )  # initial
 
@@ -338,7 +349,7 @@ def _hydr_(
     #######################################################################################
     hydr_ix = hydr_get_ix(state, state.domain)
     # these are integer placeholders faster than calling the array look each timestep
-    # TBD: These will be replaced by class properties in HYDR_class 
+    # TBD: These will be replaced by class properties in HYDR_class
     o1_ix, o2_ix, o3_ix, ivol_ix = (
         hydr_ix["O1"],
         hydr_ix["O2"],
@@ -383,35 +394,43 @@ def _hydr_(
         #######################################################################################
         # set state.state_ix with value of local state variables and/or needed vars
         state.state_ix[ro_ix], state.state_ix[rovol_ix] = ro, rovol
-        di = 0
+
         for oi in range(nexits):
             # Write OVOL for use in equations/specacts.  Note: this must be improved! too much code...
             state.state_ix[ovol_ix[oi]] = ovol[oi]
-        
+
         state.state_ix[vol_ix], state.state_ix[ivol_ix] = vol, IVOL[step]
         state.state_ix[volev_ix] = volev
         # - these if statements may be irrelevant if default functions simply return
         #   when no objects are defined.
         if state.state_step_om == "enabled":
-            pre_step_model(model_exec_list, state.op_tokens, state.state_ix, state.dict_ix, state.ts_ix, step)
-        
-        if state.state_step_hydr == "enabled":
-            state_step_hydr(
-                state, step
+            pre_step_model(
+                model_exec_list,
+                state.op_tokens,
+                state.state_ix,
+                state.dict_ix,
+                state.ts_ix,
+                step,
             )
-        
+
+        if state.state_step_hydr == "enabled":
+            state_step_hydr(state, step)
+
         if state.state_step_om == "enabled":
             # print("trying to execute state_step_om()")
             # model_exec_list contains the model exec list in dependency order
             # now these are all executed at once, but we need to make them only for domain end points
-            #if step < 2:
+            # if step < 2:
             #    print("Calling step_model with", len(model_exec_list), "out of", len(state.op_tokens), "tokens")
             step_model(
-                model_exec_list, state.op_tokens, state.state_ix, state.dict_ix, state.ts_ix, step
+                model_exec_list,
+                state.op_tokens,
+                state.state_ix,
+                state.dict_ix,
+                state.ts_ix,
+                step,
             )  # traditional 'ACTIONS' done in here
-        if (state.state_step_hydr == "enabled") or (
-            state.state_step_om == "enabled"
-        ):
+        if (state.state_step_hydr == "enabled") or (state.state_step_om == "enabled"):
             # Do write-backs for editable STATE variables
             # OUTDGT is writeable
             for oi in range(nexits):
@@ -426,7 +445,7 @@ def _hydr_(
         # vols, sas variables and their initializations  not needed.
         if irexit >= 0:  # irrigation exit is set, zero based number
             if rirwdl > 0.0:  # equivalent to OVOL for the irrigation exit
-                vol = irminv if irminv > vol - rirwdl else vol - rirwdl
+                vol = max(vol - rirwdl, irminv)
                 if vol >= volumeFT[-1]:
                     errors[1] += 1  # ERRMSG1: extrapolation of rchtab will take place
 
@@ -453,7 +472,7 @@ def _hydr_(
 
                 # back to HYDR
                 if AUX1FG >= 1:  # recompute surface area and depth
-                    dep, stage, sarea, avdep, twid, hrad = auxil(
+                    dep, _stage, sarea, avdep, twid, hrad = auxil(
                         volumeFT,
                         depthFT,
                         sareaFT,
@@ -494,6 +513,7 @@ def _hydr_(
             o[:] = 0.0
             rovol = volt
 
+            # sourcery skip
             if roseff > 0.0:
                 # numba limitation, cant combine into one line
                 ovol[:] = (rovol / roseff) * oseff[:]
@@ -680,7 +700,7 @@ def _hydr_(
             if vol >= topvolume:
                 errors[1] += 1  # ERRMSG1: extrapolation of rchtab
             indx = fndrow(vol, volumeFT)
-            dep, stage, sarea, avdep, twid, hrad = auxil(
+            dep, _stage, sarea, avdep, twid, hrad = auxil(
                 volumeFT, depthFT, sareaFT, indx, vol, length, stcor, AUX1FG, errors
             )
             DEP[step] = dep
@@ -737,6 +757,8 @@ def _hydr_(
 @njit(cache=True)
 def fndrow(v, volFT):
     """finds highest index in FTable volume column whose volume  < v"""
+    # Don't combine into a one-liner, as it doesn't work with Numba's njit.
+    # sourcery skip
     for indx, vol in enumerate(volFT):
         if v < vol:
             return indx - 1
@@ -764,7 +786,7 @@ def demand(vol, rowFT, funct, nexits, delts, convf, colind, outdgt):
             od[i] = 0.0
         elif odfv != 0.0 and odgt == 0.0:
             od[i] = odfv
-        elif odfv == 0.0 and odgt != 0.0:
+        elif odfv == 0.0:
             od[i] = odgt
         elif funct[i] == 1:
             od[i] = min(odfv, odgt)

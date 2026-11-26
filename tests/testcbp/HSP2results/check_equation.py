@@ -1,10 +1,13 @@
-# this is a simple tester that should be kept up to date with the code in main.py 
+# this is a simple tester that should be kept up to date with the code in main.py
 # alternative to step debugger
 fpath = "./tests/testcbp/HSP2results/JL1_6562_6560.h5"
 
+# Third party imports
+from hsp2.hsp2io.hdf import HDF5
+
+# First party imports
 from hsp2.hsp2.main import *
 from hsp2.hsp2.om import *
-from hsp2.hsp2io.hdf import HDF5
 from hsp2.hsp2io.io import IOManager
 from hsp2.state.state import *
 
