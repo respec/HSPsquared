@@ -3,4 +3,5 @@ out of HSP2 for flexibility and performance and also to support future
 automation and model coupling.
 """
 
-from .. import __version__
+# Local folder imports
+from .. import __version__ as __version__
