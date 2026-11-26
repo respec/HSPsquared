@@ -40,7 +40,7 @@ The sections of that source write the binary output with plain unformatted WRITE
 statements, so the gfortran build gives unformatted sequential records framed by 4-byte
 length markers rather than the Lahey layout that the canonical HSPF
 (https://github.com/respec/FORTRAN, and the executable installed with BASINS) writes
-through its compiler independent routines. `HBNOutput` reads both layouts, and the file
+through its compiler independent routines. `HBNReader` reads both layouts, and the file
 is kept as HSPF wrote it. Check: the same engine run on test05 as shipped writes the
 same 84 records as `tests/test05/HSPFresults/test05.hbn` (same headers, names and
 dates), with values within 2e-5.
