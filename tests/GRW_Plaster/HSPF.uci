@@ -2075,7 +2075,7 @@ RCHRES
 ***         Flags for HYDR section
 ***RC HRES  VC A1 A2 A3  ODFVFG for each *** ODGTFG for each     FUNCT  for each
 *** x  - x  FG FG FG FG  possible   exit *** possible   exit     possible   exit
-   11  331   0  1  1  1    4  0  0  0  0       0  0  0  0  0       1  0  0  0  0
+   11  331   0  1  1  1    4  0  0  0  0       0  0  0  0  0
   END HYDR-PARM1
 
   HYDR-PARM2
@@ -2624,7 +2624,7 @@ RCHRES
 
   GQ-GENDATA
 *** x -  x NGQL TPFG PHFG ROFG CDFG SDFG PYFG  LAT
-   11  331    1    3    0    0    0    0    0   40
+   11  331    1    3    2    2    2    2    2   40
   END GQ-GENDATA
 
   GQ-AD-FLAGS
