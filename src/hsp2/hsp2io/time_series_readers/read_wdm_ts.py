@@ -6,18 +6,23 @@ Based on MATLAB program by Seth Kenner, RESPEC
 License: LGPL2
 """
 
-import calendar
+# Future imports
+from __future__ import annotations
+
+# Standard library imports
 import datetime
 import urllib.request
-import warnings
 from pathlib import Path
-from typing import Union
+from typing import Literal
 
+# Third party imports
 import numpy as np
 import pandas as pd
 from numba import njit
 
+# First party imports
 from hsp2.hsp2.utilities import pandas_offset_by_version
+from hsp2.hsp2io.protocols import Category
 
 # look up attributes NAME, data type (Integer; Real; String) and data length by attribute number
 attrinfo = {
@@ -59,7 +64,15 @@ freq = {
 }  # pandas date_range() frequency by TCODE, TGROUP
 
 
-def read_wdm_ts(wdmfile: Union[str, Path], dsns=None, ts_number_shift=0):
+def read_wdm_ts(
+    wdmfile: str | Path,
+    category: Category | Literal["RESULT", "INPUT"] = Category.INPUTS,
+    operation: str | None = None,
+    segment: str | None = None,
+    activity: str | None = None,
+    dsns=None,
+    ts_number_shift=0,
+):
     """
     Read time series data from a WDM file.
 
@@ -68,24 +81,59 @@ def read_wdm_ts(wdmfile: Union[str, Path], dsns=None, ts_number_shift=0):
     wdmfile : str
         Local path to the WDM file or http:// or https:// URI.  If a URI the
         WDM file will be downloaded to a temporary file and deleted after use.
+    category : Category or str
+        Category of the time series data to read. Currently for WDM files this
+        can only be category.INPUTS or "INPUT".
+    operation : str, optional
+        Not used for WDM files, included to have identical function signature
+        compatibility with other time series readers. Default is None.
+    segment : str, optional
+        The TSXXXXXX ID of the time series data to read. The XXXXXX is
+        converted to a DSN number and used to find the correct series from the
+        WDM file. Default is None, which then uses the `dsns` and
+        `ts_number_shift` parameters to find and return the correct time
+        series.  In the returned dictionary `segment` is used as the key for
+        the time series data.  Default is None, which generates keys in the
+        returned dictionary as "TS" followed by the `ts_number_shift` + `dsns`
+        numbers.
+    activity : str, optional
+        Not used for WDM files, included to have identical function signature
+        compatibility with other time series readers. Default is None.
     dsns : int or list of int, optional
         Data set numbers to read. If None, all time series data sets are read.
-        Default is None.
+        Default is None.  Overridden by `segment` if provided, which is
+        converted to a DSN number and `ts_offset_number` and is used to find
+        the correct series from the WDM file.
     ts_number_shift : int, optional
         Shift to apply to the WDM DSN numbers when constructing dataset names.
-        Default is 0.
+        Default is 0.  For WDM/WDM1 files in the UCI file the offset is 100000,
+        WDM2 is 200000, WDM3 is 300000, WDM4 is 400000.  This allows the
+        dataset names to be consistent with the UCI file when multiple WDM
+        files are used.
 
     Returns
     -------
     dict
-        A dictionary where keys are dataset names (e.g., "TS001") and values are
-        pandas Series containing the time series data.
+        A dictionary where keys are dataset names (e.g., "TS100001") and values
+        are pandas Series containing the time series data.
     """
+    if category not in (Category.INPUTS, "INPUT"):
+        raise ValueError(
+            f"Unsupported category '{category}' for WDM files. Only 'INPUT' is supported."
+        )
+
+    if segment:
+        if not isinstance(segment, str) or not segment.startswith("TS"):
+            raise ValueError("segment must be a string starting with 'TS'")
+        dsns = [int(segment[2:]) % 100000]
+        ts_number_shift = int(segment[2]) * 100000
     wdmfile = str(wdmfile)
+
     delete_tmp_file = False
-    if wdmfile.startswith("http://") or wdmfile.startswith("https://"):
+    if wdmfile.startswith(("http://", "https://", "ftp://", "ftps://", "s3://")):
         delete_tmp_file = True
         wdmfile, _ = urllib.request.urlretrieve(wdmfile)
+
     iarray = np.fromfile(wdmfile, dtype=np.int32)
     farray = np.fromfile(wdmfile, dtype=np.float32)
 
@@ -101,11 +149,11 @@ def read_wdm_ts(wdmfile: Union[str, Path], dsns=None, ts_number_shift=0):
         raise ValueError(
             "Provided file does not match WDM format. First int32 should be -998."
         )
-    nrecords = iarray[28]  # first record is File Definition Record
     ntimeseries = iarray[31]
 
     if dsns is None:
-        dsnlist = []
+        dsnlist: list[int] = []
+        nrecords = iarray[28]  # first record is File Definition Record
         dsnlist.extend(
             index
             for index in range(512, nrecords * 512, 512)
@@ -409,7 +457,7 @@ def _process_groups(iarray, farray, records, offsets, tgroup):
         index += 1
 
         while current_date < group_enddate:
-            nval, ltstep, ltcode, comp, qual = _splitcontrol(iarray[index])
+            nval, ltstep, ltcode, comp, _qual = _splitcontrol(iarray[index])
             # compressed - only has single value which applies to full range
             if comp == 1:
                 for i in range(nval):
@@ -438,332 +486,3 @@ def _process_groups(iarray, farray, records, offsets, tgroup):
     value_array = value_array[1:]
 
     return date_array, value_array, group_enddate
-
-
-def get_wdm_data_set(wdmfile, attributes):
-    """
-    Get single time series data from a WDM file
-    based on a collection of attributes (name-value pairs)
-    """
-    if attributes is None:
-        return None
-
-    search_cons = attributes["constituent"]
-    search_dsn = attributes["dsn"]
-
-    iarray = np.fromfile(wdmfile, dtype=np.int32)
-    farray = np.fromfile(wdmfile, dtype=np.float32)
-
-    if iarray[0] != -998:
-        print("Not a WDM file, magic number is not -990. Stopping!")
-        return None
-    nrecords = iarray[28]  # first record is File Definition Record
-    ntimeseries = iarray[31]
-
-    dsnlist = []
-    dsnlist.extend(
-        index
-        for index in range(512, nrecords * 512, 512)
-        if (
-            iarray[index] != 0
-            or iarray[index + 1] != 0
-            or iarray[index + 2] != 0
-            or iarray[index + 3] != 0
-        )
-        and iarray[index + 5] == 1
-    )
-    if len(dsnlist) != ntimeseries:
-        print("PROGRAM ERROR, wrong number of DSN records found")
-
-    """
-    summary = []
-    summaryindx = []
-
-    # check to see which extra attributes are on each dsn
-    columns_to_add = []
-    search = ["STAID", "STNAM", "SCENARIO", "CONSTITUENT", "LOCATION"]
-    for att in search:
-        found_in_all = True
-        for index in dsnlist:
-            dattr = {}
-            psa = iarray[index + 9]
-            if psa > 0:
-                sacnt = iarray[index + psa - 1]
-            for i in range(psa + 1, psa + 1 + 2 * sacnt, 2):
-                id = iarray[index + i]
-                ptr = iarray[index + i + 1] - 1 + index
-                if id not in attrinfo:
-                    continue
-                name, atype, length = attrinfo[id]
-                if atype == 'I':
-                    dattr[name] = iarray[ptr]
-                elif atype == 'R':
-                    dattr[name] = farray[ptr]
-                else:
-                    dattr[name] = ''.join([itostr(iarray[k]) for k in range(ptr, ptr + length // 4)]).strip()
-            if att not in dattr:
-                found_in_all = False
-        if found_in_all:
-            columns_to_add.append(att)
-    """
-
-    for index in dsnlist:
-        # get layout information for TimeSeries Dataset frame
-        dsn = iarray[index + 4]
-        psa = iarray[index + 9]
-        if psa > 0:
-            sacnt = iarray[index + psa - 1]
-        pdat = iarray[index + 10]
-        pdatv = iarray[index + 11]
-        frepos = iarray[index + pdat]
-
-        print(f"{dsn} reading from wdm")
-
-        # get attributes
-        dattr = {
-            "TSBDY": 1,
-            "TSBHR": 1,
-            "TSBMO": 1,
-            "TSBYR": 1900,
-            "TFILL": -999.0,
-        }  # preset defaults
-        for i in range(psa + 1, psa + 1 + 2 * sacnt, 2):
-            lid = iarray[index + i]
-            ptr = iarray[index + i + 1] - 1 + index
-            if lid not in attrinfo:
-                # print('PROGRAM ERROR: ATTRIBUTE INDEX not found', id, 'Attribute pointer', iarray[index + i+1])
-                continue
-
-            name, atype, length = attrinfo[lid]
-            if atype == "I":
-                dattr[name] = iarray[ptr]
-            elif atype == "R":
-                dattr[name] = farray[ptr]
-            else:
-                dattr[name] = "".join(
-                    [itostr(iarray[k]) for k in range(ptr, ptr + length // 4)]
-                ).strip()
-
-        if (
-            search_dsn > 0 and search_dsn == dsn or search_cons != dattr["TSTYPE"]
-        ) and (search_dsn <= 0 or search_dsn != dsn):
-            continue
-
-        # Get timeseries timebase data
-        records = []
-        for i in range(pdat + 1, pdatv - 1):
-            a = iarray[index + i]
-            if a != 0:
-                records.append(splitposition(a))
-        if not records:
-            continue  # WDM preallocation, but nothing saved here yet
-
-        srec, soffset = records[0]
-        start = splitdate(iarray[srec * 512 + soffset])
-
-        sprec, spoffset = splitposition(frepos)
-        finalindex = sprec * 512 + spoffset
-
-        # calculate number of data points in each group, tindex is final index for storage
-        tgroup = dattr["TGROUP"]
-        tstep = dattr["TSSTEP"]
-        tcode = dattr["TCODE"]
-        cindex = pd.date_range(start=start, periods=len(records) + 1, freq=freq[tgroup])
-        tindex = pd.date_range(
-            start=start, end=cindex[-1], freq=str(tstep) + freq[tcode]
-        )
-        counts = np.diff(np.searchsorted(tindex, cindex))
-
-        ## Get timeseries data
-        floats = np.zeros(sum(counts), dtype=np.float32)
-        findex = 0
-        for (rec, offset), count in zip(records, counts):
-            findex = getfloats(
-                iarray,
-                farray,
-                floats,
-                findex,
-                rec,
-                offset,
-                count,
-                finalindex,
-                tcode,
-                tstep,
-            )
-
-        ts = pd.Series(floats[:findex], index=tindex[:findex])
-        return pd.DataFrame({"ts": ts})
-    return None
-
-
-########################
-### legacy functions ###
-########################
-
-
-def todatetime(yr=1900, mo=1, dy=1, hr=0):
-    """takes yr,mo,dy,hr information then returns its datetime64"""
-    warnings.warn(
-        "use '_date_convert' instead; Removed for numba compatible datetime handling; reference commit 1b52a1736e45a497ccdf78cd6e2eab8c0b7a444f",
-        DeprecationWarning,
-    )
-    if hr == 24:
-        return datetime.datetime(yr, mo, dy, 23) + pd.Timedelta(1, "h")
-    else:
-        return datetime.datetime(yr, mo, dy, hr)
-
-
-def splitdate(x):
-    """splits WDM int32 DATWRD into year, month, day, hour -> then returns its datetime64"""
-    warnings.warn(
-        "use '_splitdate' instead; naming updated to indicate internal function",
-        DeprecationWarning,
-    )
-    return todatetime(
-        x >> 14, x >> 10 & 0xF, x >> 5 & 0x1F, x & 0x1F
-    )  # args: year, month, day, hour
-
-
-def splitcontrol(x):
-    """splits int32 into (qual, compcode, units, tstep, nvalues)"""
-    warnings.warn(
-        "use '_splitcontrol' instead; naming updated to indicate internal function",
-        DeprecationWarning,
-    )
-    return (x & 0x1F, x >> 5 & 0x3, x >> 7 & 0x7, x >> 10 & 0x3F, x >> 16)
-
-
-def splitposition(x):
-    """splits int32 into (record, offset), converting to Pyton zero based indexing"""
-    warnings.warn(
-        "use '_spiltposition' instead; naming updated to indicate internal function",
-        DeprecationWarning,
-    )
-    return ((x >> 9) - 1, (x & 0x1FF) - 1)
-
-
-def itostr(i):
-    warnings.warn(
-        "use '_inttostr' instead; naming updated to indicate internal function; method also handles integer argments so updated name from 'i' to 'int' for additonal clarity",
-        DeprecationWarning,
-    )
-    return (
-        chr(i & 0xFF) + chr(i >> 8 & 0xFF) + chr(i >> 16 & 0xFF) + chr(i >> 24 & 0xFF)
-    )
-
-
-def getfloats(
-    iarray, farray, floats, findex, rec, offset, count, finalindex, tcode, tstep
-):
-    warnings.warn(
-        "discontinue use and replace with new 'process_groups' instead; Function replaced by incompatible group/block processing approach; reference commit c5b2a1cdd6a55eccc0db67d7840ec3eaf904dcec .",
-        DeprecationWarning,
-    )
-    index = rec * 512 + offset + 1
-    stop = (rec + 1) * 512
-    cntr = 0
-    while cntr < count and findex < len(floats):
-        if index == stop - 1:
-            print("Problem?", rec)
-        if index >= stop - 1:
-            rec = (
-                iarray[rec * 512 + 3] - 1
-            )  # 3 is forward data pointer, -1 is python indexing
-            print("Process record ", rec)
-            index = rec * 512 + 4  # 4 is index of start of new data
-            stop = (rec + 1) * 512
-
-        x = iarray[index]  # block control word or maybe date word at start of group
-        nval, ltstep, ltcode, comp, _ = _splitcontrol(x)
-        ldate = todatetime()  # dummy
-        if ltstep != tstep or ltcode != tcode:
-            nval = adjustNval(ldate, ltstep, tstep, ltcode, tcode, comp, nval)
-            if nval == -1:  # unable to convert block
-                try:
-                    ldate = splitdate(x)
-                    if isinstance(ldate, datetime.date):
-                        print("Problem resolved - date found ", ldate)
-                        nval = 1
-                    else:
-                        print("BlockConversionFailure at ", rec + 1, " ", index % 512)
-                except:  # noqa E722
-                    print("BlockConversionFailure at ", rec + 1, " ", index % 512)
-                # try next word
-                comp = -1
-        index += 1
-        if comp == 0:
-            for k in range(nval):
-                if findex >= len(floats):
-                    return findex
-                floats[findex] = farray[index + k]
-                findex += 1
-            index += nval
-        elif comp > 0:
-            for _ in range(nval):
-                if findex >= len(floats):
-                    return findex
-                floats[findex] = farray[index]
-                findex += 1
-            index += 1
-        cntr += nval
-    return findex
-
-
-def adjustNval(ldate, ltstep, tstep, ltcode, tcode, comp, nval):
-    warnings.warn(
-        "supporting function for deprecated 'get_floats' function;", DeprecationWarning
-    )
-    lnval = nval
-    if comp != 1:
-        nval = -1  # only can adjust compressed data
-    elif tcode == 2:  # minutes
-        if ltcode == 6:  # from years
-            ldays = 366 if calendar.isleap(ldate.year) else 365
-            nval = ldays * lnval * 60 / ltstep
-        elif ltcode == 5:  # from months
-            ldateRange = calendar.monthrange(ldate.year, ldate.month)
-            print("month block ", ldateRange)
-            nval = ldateRange[2] * lnval * 60 / ltstep
-        elif ltcode == 4:  # from days
-            nval = lnval * 60 / ltstep
-        elif ltcode == 3:  # from hours
-            nval = lnval * 1440 / ltstep
-        else:  # dont know how to convert
-            nval = -1
-    elif tcode == 3:  # hours
-        nval = -1 if ltcode == 6 or ltcode == 5 or ltcode != 4 else lnval * 24 / ltstep
-    else:
-        nval = -1  # dont know how to convert
-
-    nval = int(nval)
-    if nval == -1:  # conversion problem
-        print(
-            "Conversion problem (tcode ",
-            tcode,
-            ", ",
-            ltcode,
-            "), (tstep ",
-            tstep,
-            ",",
-            ltstep,
-            "), (comp ",
-            comp,
-            ")",
-        )
-    else:
-        print(
-            "Conversion complete (tcode ",
-            tcode,
-            ", ",
-            ltcode,
-            "), (tstep ",
-            tstep,
-            ",",
-            ltstep,
-            "), (nval ",
-            f"{nval},",
-            lnval,
-            ")",
-        )
-
-    return nval
