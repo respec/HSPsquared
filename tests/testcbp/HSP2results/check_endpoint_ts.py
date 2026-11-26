@@ -1,12 +1,12 @@
 # Must be run from the HSPsquared source directory, the h5 file has already been setup with hsp import_uci test10.uci
 # bare bones tester - must be run from the HSPsquared source directory
-import os
 
-import numpy
-from hsp2 import hsp2iO
+# Third party imports
+from hsp2.hsp2io.hdf import HDF5
+
+# First party imports
 from hsp2.hsp2.main import *
 from hsp2.hsp2.om import *
-from hsp2.hsp2io.hdf import HDF5
 from hsp2.hsp2io.io import IOManager
 
 fpath = "./tests/test10/HSP2results/test10.h5"

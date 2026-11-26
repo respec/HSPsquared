@@ -3,6 +3,7 @@ Author: Robert Heaphy, Ph.D.
 License: LGPL2
 """
 
+# Third party imports
 from pandas import DataFrame, read_hdf
 
 # from networkx import DiGraph, Graph, topological_sort, connected_components
@@ -65,7 +66,6 @@ def make_opsequence(hdfname, delt=60):
         hdfname,
         "CONTROL/OP_SEQUENCE",
     )
-    return
 
 
 def HDF5_isconnected(hdfname):
@@ -85,7 +85,7 @@ def HDF5_isconnected(hdfname):
 
     dg = graph_from_HDF5(hdfname)
     a = list(connected_components(Graph(dg)))
-    return True if len(a) == 1 else False
+    return len(a) == 1
 
 
 def component_list(hdfname):
