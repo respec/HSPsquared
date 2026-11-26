@@ -263,13 +263,16 @@ def _pwater_(ui, ts):
     ifwk2 = nan
     ifwk1 = nan
 
+    # PETADJ and INFFAC are recomputed on the hour and kept in between, as in HSPF
+    petadj = 1.0
+    inffac = 1.0
+
     # MASTER lOOP
     for step in range(steps):
         oldmsupy = msupy
 
         dayfg = int(DAYFG[step])
         hrfg = int(HRFG[step])
-        inffac = INFFAC[step]
         kgw = kgwV[step]
 
         # These lines allow constant parameters to be replaced by timeseries
@@ -294,16 +297,22 @@ def _pwater_(ui, ts):
                     petadj = 0.5
                 if airtmp < petmin:
                     petadj = 0.0
-                PETADJ[step] = petadj
+                if ICEFG:
+                    # factor to reduce infiltration and percolation to account
+                    # for frozen ground
+                    if IFFCFG == 1:
+                        inffac = max(fzgl, 1.0 - fzg * PACKI[step])
+                else:
+                    inffac = 1.0
+            PETADJ[step] = petadj
             PET[step] = petinp * petadj
-            if ICEFG:  # calculate factor to reduce infiltration and percolation to account for frozen ground
-                inffac = max(fzgl, 1.0 - fzg * PACKI[step])
         else:
             SUPY[step] = PREC[step]
             PET[step] = petinp
+            inffac = 1.0
 
-        # adjust inffac based on soil temperature
-        if IFFCFG == 2:
+        # adjust inffac based on soil temperature, on the hour as in HSPF
+        if IFFCFG == 2 and hrfg:
             inffac = fzgl if LGTMP[step] <= 0.0 else 1.0
 
         # ICEPT
