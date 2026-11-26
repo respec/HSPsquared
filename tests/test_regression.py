@@ -50,6 +50,8 @@ class RegressTest(RegressTestBase):
         # "test09",
         "test10",
         "test10specl",
+        "test05atemp",
+        "test05atemp2h",
         # "test10b",
     ],
 )

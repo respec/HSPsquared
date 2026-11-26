@@ -228,7 +228,11 @@ def _snow_(ui, ts):
     gmeltr = 0.0
     mostht = 0.0
     neght = 0.0
-    rdnsn = 0.0
+    # density of new snow, set at the first snowfall of an hour or of a
+    # precipitation event; it starts at RDCSN, so that a run whose first snowfall
+    # begins within an hour, after rain, does not divide by zero (in HSPF it is
+    # undefined until it is first set)
+    rdnsn = rdcsn
     satvap = 0.0
     snowep = 0.0
     vap = 0.0
