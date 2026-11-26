@@ -51,6 +51,7 @@ class RegressTest(RegressTestBase):
         "test10",
         "test10specl",
         # "test10b",
+        "test05shade",
     ],
 )
 def test_case(case):
