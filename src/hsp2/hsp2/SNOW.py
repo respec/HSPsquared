@@ -35,6 +35,10 @@ def snow(io_manager: SupportsReadTS, siminfo, parameters, ts):
 
     ts["SVP"] = SVP
     ts["SEASONS"] = monthval(siminfo, SEASONS)
+    # south of the equator the summer and winter albedo equations are exchanged,
+    # as in ALBED of HSPF
+    if float(parameters["PARAMETERS"].get("LAT", 0.0)) < 0.0:
+        ts["SEASONS"] = 1.0 - ts["SEASONS"].astype(float)
 
     cloudfg = "CLOUD" in ts
 
@@ -89,7 +93,7 @@ def snow(io_manager: SupportsReadTS, siminfo, parameters, ts):
     errors = _snow_(ui, ts)
     ############################################################################
 
-    if siminfo["delt"] > 360 and int(siminfo["ICEFLG"]):
+    if siminfo["delt"] > 360 and int(siminfo["ICEFG"]):
         errors[0] += 1
 
     return errors, ERRMSGS
@@ -392,7 +396,14 @@ def _snow_(ui, ts):
             # back in PSNOW
             if snocov < 1.0:
                 sumht = sumht * snocov
-            paktmp = 32.0 if neghts <= 0.0 else 32.0 - neghts / (0.00695 * packf)
+            # evaporation can remove the whole pack while it still holds a heat
+            # deficit; HSPF then divides by zero here and carries an infinite pack
+            # temperature until the pack is removed at the end of the interval
+            # (NOPACK). 32 F leaves the same state at the end of the interval.
+            if neghts <= 0.0 or packf <= 0.0:
+                paktmp = 32.0
+            else:
+                paktmp = 32.0 - neghts / (0.00695 * packf)
 
             # COOLER
             if iregfg:
